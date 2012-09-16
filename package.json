@@ -1,0 +1,34 @@
+{
+  "name": "joi",
+  "description": "Object schema validation",
+  "version": "0.0.1",
+  "author": "Van Nguyen <the.gol.effect@gmail.com>",
+  "contributors":[
+    "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)"
+  ],
+  "repository": "git://github.com/walmartlabs/joi",
+  "main": "index",
+  "keywords": [
+    "schema",
+    "validation"
+  ],
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "mocha": "1.x.x",
+    "should": "1.x.x",
+    "sinon": "1.3.4"
+  },
+  "scripts": {
+    "test": "make test && make unit"
+  },
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "http://github.com/walmartlabs/joi/raw/master/LICENSE"
+    }
+  ]
+}
