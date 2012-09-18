@@ -57,6 +57,13 @@ describe("test/types/string.js", function(){
         done();
       })
       
+      it('should not validate [] as string', function(done){
+        var text = S();
+        var result = text.validate('[]');
+        result.should.equal(false);
+        done()
+      })
+      
       it('should, by default, allow undefined, deny empty string', function(done){
         var conditions = [
           [undefined, true],
