@@ -1,4 +1,4 @@
-var Types = require("../../lib/types");
+var Types = require("../lib/types");
 var should = require("should");
 
 describe("Types", function(){
