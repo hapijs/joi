@@ -1,5 +1,6 @@
 var should = require("should");
 
+
 module.exports.verifyValidatorBehavior = function(typeObj, config, callback) {
   for(var i in config){
     var result = typeObj.validate(config[i][0]);
