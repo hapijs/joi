@@ -3,6 +3,7 @@ var should = require("should");
 var verifyBehavior = require("../support/meta").verifyValidatorBehavior;
 
 describe("tests/types/array.js", function(){
+  
   describe("Types.Array", function(){
     var A = Types.Array,
         N = Types.Number,
