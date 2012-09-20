@@ -12,7 +12,6 @@ describe("test/types/string.js", function(){
       var result2 = S().max(5);
       
       Object.keys(result1).should.not.equal(Object.keys(result2));
-      // console.log(result1)
       done();
     })
     
@@ -55,13 +54,6 @@ describe("test/types/string.js", function(){
           var result = text.validate("joi");
         }).should.not.throw();
         done();
-      })
-      
-      it('should not validate [] as string', function(done){
-        var text = S();
-        var result = text.validate('[]');
-        result.should.equal(false);
-        done()
       })
       
       it('should, by default, allow undefined, deny empty string', function(done){
