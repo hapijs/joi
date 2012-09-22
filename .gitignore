@@ -1,8 +1,16 @@
-*node_modules/
-*.tap
-results.xml
-sftp-config.json
+.idea
+*.iml
 npm-debug.log
-*.DS_Store
-lib-cov
+dump.rdb
+node_modules
+results.tap
+results.xml
+npm-shrinkwrap.json
+config.json
+.DS_Store
+*/.DS_Store
+*/*/.DS_Store
+._*
+*/._*
+*/*/._*
 
