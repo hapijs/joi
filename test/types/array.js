@@ -47,6 +47,44 @@ describe("tests/types/array.js", function(){
           [["walmart", "everydaylowprices", 5000], true]
         ], done);
       })
+      
+      it("should not validate array of unallowed mixed types (Array)", function(done){
+        verifyBehavior(A().includes(N()), [
+          [[1,2,3], true],
+          [[1, 2, [1]], false]
+        ], done)
+      })
+    })
+
+    describe("#_exclude", function(){
+      it("should work", function(done){
+        var validator = A()._excludes(N());
+        
+        var n = [1,2,"hippo"];
+        var result = validator(n);
+        
+        result.should.equal(false);
+        
+        var m = ['x', 'y', 'z'];
+        var result2 = validator(m);
+        
+        result2.should.equal(true);
+        
+        
+        done();
+        
+        // var validator = A()._includes(N())
+        // var val2 = A()._includes(S())
+        
+        // // var n = [1,2,"hippo"];
+        // var n = [[1],[2],[3]];
+        
+        // var result = validator(n);
+        // var result2 = val2(n)
+        
+        // console.log(result, result2);
+        // done();
+      })
     })
   })
 })
