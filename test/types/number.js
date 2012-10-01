@@ -6,6 +6,13 @@ describe("test/types/number.js", function(){
   describe("Types.Number", function(){
     var N = Types.Number;
     
+    it("should have mixins", function(done){
+      var result = N();
+      
+      should.exist(result.validate);
+      done();
+    })
+    
     describe("#validate", function(){
       it('should work', function(done){
         (function(){

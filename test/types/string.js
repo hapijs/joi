@@ -7,6 +7,13 @@ describe("test/types/string.js", function(){
   describe("Types.String", function(){
     var S = Types.String;
     
+    it("should have mixins", function(done){
+      var result = S();
+      
+      should.exist(result.validate);
+      done();
+    })
+    
     it("should instantiate separate copies on invocation", function(done){
       var result1 = S().min(5);
       var result2 = S().max(5);

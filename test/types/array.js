@@ -8,6 +8,13 @@ describe("tests/types/array.js", function(){
     var A = Types.Array,
         N = Types.Number,
         S = Types.String;
+        
+    it("should have mixins", function(done){
+      var result = A();
+      
+      should.exist(result.validate);
+      done();
+    })
     
     describe("#validate", function(){
       it('should work', function(done){
