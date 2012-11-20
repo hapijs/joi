@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Van Nguyen <the.gol.effect@gmail.com>",
   "contributors":[
     "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)"
