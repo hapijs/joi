@@ -14,11 +14,11 @@ rm-lib-cov:
 	@rm -rf ./lib-cov/
 
 test-cov: lib-cov
-	@$(MAKE) test EXPRESS_COV=1 REPORTER=json-cov > coverage.json
+	@$(MAKE) test TEST_COV=1 REPORTER=json-cov > coverage.json
 	@$(MAKE) rm-lib-cov
 
 test-cov-html: lib-cov
-	@$(MAKE) test EXPRESS_COV=1 REPORTER=html-cov > coverage.html
+	@$(MAKE) test TEST_COV=1 REPORTER=html-cov > coverage.html
 	@$(MAKE) rm-lib-cov
 
 tap: lib-cov
