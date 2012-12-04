@@ -13,4 +13,6 @@ config.json
 ._*
 */._*
 */*/._*
+coverage.*
+lib-cov
 
