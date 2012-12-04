@@ -41,9 +41,67 @@ describe("test/types/number.js", function () {
                 result.should.equal(false);
                 done();
             });
-        })
-    })
-})
+
+            it("should validate float", function (done) {
+                var t = N().float();
+                verifyBehavior(t, [
+                    [100, false],
+                    [0, false],
+                    [null, false],
+                    [1.02, true],
+                    [0.01, true]
+                ], done);
+            });
+
+            it("should validate integer", function (done) {
+                var t = N().integer();
+                verifyBehavior(t, [
+                    [100, true],
+                    [0, true],
+                    [null, false],
+                    [1.02, false],
+                    [0.01, false]
+                ], done);
+            });
+
+            it("should validate empty", function (done) {
+                var t = N().empty();
+                verifyBehavior(t, [
+                    [NaN, false],
+                    [null, true]
+                ], done);
+            });
+
+            it("can convert strings to numbers", function (done) {
+                var t = N();
+                verifyBehavior(t, [
+                    ['1', true],
+                    ['100', true]
+                ], done);
+            });
+
+            it("required validates correctly", function (done) {
+                var t = N().required();
+                verifyBehavior(t, [
+                    [NaN, false],
+                    ['100', true]
+                ], done);
+            });
+
+            it("convert will convert a string to a number", function (done) {
+                var t = N().convert('1');
+                t.should.equal(1);
+                done();
+            });
+
+            it("convert will not convert a null", function (done) {
+                var t = N().convert(null);
+                should.not.exist(t);
+                done();
+            });
+        });
+    });
+});
 
 describe("Types.Number", function () {
     var N = Types.Number;
@@ -54,7 +112,7 @@ describe("Types.Number", function () {
 
         Object.keys(result1).should.not.equal(Object.keys(result2));
         done();
-    })
+    });
 
     it("should inherit functions from BaseType", function (done) {
         var fns = ["required", "add"];
@@ -63,13 +121,13 @@ describe("Types.Number", function () {
             should.exist(N()[fns[i]]);
         }
         done();
-    })
+    });
 
     it("should show resulting object with #valueOf", function (done) {
         var result = N().min(5);
         should.exist(result.valueOf());
         done();
-    })
+    });
 
     describe("#min", function (done) {
         it('should exist', function (done) {
@@ -132,7 +190,7 @@ describe("Types.Number", function () {
                 currentResult.should.equal(true);
             }
             done();
-        })
+        });
 
         it('should invalidate on known invalid inputs', function (done) {
             // var inputs = ["abcde", "fghij", "klmnopqrstuv"];
@@ -144,6 +202,6 @@ describe("Types.Number", function () {
                 currentResult.should.equal(false);
             }
             done();
-        })
-    })
-})
+        });
+    });
+});
