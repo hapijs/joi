@@ -19,6 +19,7 @@ describe("tests/types/array.js", function () {
         describe('#convert', function () {
 
             it("should convert a string to an array", function (done) {
+
                 var result = A().convert('[1,2,3]');
 
                 result.length.should.equal(3);
@@ -26,6 +27,7 @@ describe("tests/types/array.js", function () {
             });
 
             it("should return a non array", function (done) {
+
                 var result = A().convert(3);
 
                 result.should.equal(3);
@@ -33,6 +35,7 @@ describe("tests/types/array.js", function () {
             });
 
             it("should convert a non-array string", function (done) {
+
                 var result = A().convert('3');
 
                 result.length.should.equal(1);
@@ -41,6 +44,7 @@ describe("tests/types/array.js", function () {
         });
 
         describe("#validate", function () {
+
             it('should work', function (done) {
 
                 (function () {
@@ -51,6 +55,7 @@ describe("tests/types/array.js", function () {
             });
 
             it('should, by default, allow undefined, allow empty array', function (done) {
+
                 verifyBehavior(A(), [
                     [undefined, true],
                     [
@@ -85,6 +90,7 @@ describe("tests/types/array.js", function () {
             });
 
             it("should validate array of Numbers", function (done) {
+
                 verifyBehavior(A().includes(N()), [
                     [
                         [1, 2, 3],
@@ -102,6 +108,7 @@ describe("tests/types/array.js", function () {
             });
 
             it("should validate array of mixed Numbers & Strings", function (done) {
+
                 verifyBehavior(A().includes(N(), S()), [
                     [
                         [1, 2, 3],
@@ -123,6 +130,7 @@ describe("tests/types/array.js", function () {
             });
 
             it("should not validate array of unallowed mixed types (Array)", function (done) {
+
                 verifyBehavior(A().includes(N()), [
                     [
                         [1, 2, 3],
@@ -137,7 +145,9 @@ describe("tests/types/array.js", function () {
         });
 
         describe("#_exclude", function () {
+
             it("should work", function (done) {
+
                 var validator = A()._excludes(N());
 
                 var n = [1, 2, "hippo"];
