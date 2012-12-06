@@ -288,7 +288,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of required and min', function (done) {
 
-            var rule = Joi.types.String().required().min(3);
+            var rule = S().required().min(3);
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', true],
@@ -299,7 +299,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of required and max', function (done) {
 
-            var rule = Joi.types.String().required().max(3);
+            var rule = S().required().max(3);
             verifyBehavior(rule, [
                 ['x', true],
                 ['123', true],
@@ -311,7 +311,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of emptyOk and min', function (done) {
 
-            var rule = Joi.types.String().emptyOk().min(3);
+            var rule = S().emptyOk().min(3);
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', true],
@@ -323,7 +323,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of emptyOk and max', function (done) {
 
-            var rule = Joi.types.String().emptyOk().max(3);
+            var rule = S().emptyOk().max(3);
             verifyBehavior(rule, [
                 ['x', true],
                 ['123', true],
@@ -335,7 +335,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min and max', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3);
+            var rule = S().min(2).max(3);
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', true],
@@ -348,7 +348,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).emptyOk();
+            var rule = S().min(2).max(3).emptyOk();
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', true],
@@ -361,7 +361,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, and required', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).required();
+            var rule = S().min(2).max(3).required();
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', true],
@@ -374,7 +374,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, and regex', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).regex(/^a/);
+            var rule = S().min(2).max(3).regex(/^a/);
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', false],
@@ -390,7 +390,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, regex, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).regex(/^a/).emptyOk();
+            var rule = S().min(2).max(3).regex(/^a/).emptyOk();
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', false],
@@ -406,7 +406,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, regex, and required', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).regex(/^a/).required();
+            var rule = S().min(2).max(3).regex(/^a/).required();
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', false],
@@ -422,7 +422,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, and alphanum', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).alphanum();
+            var rule = S().min(2).max(3).alphanum();
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', true],
@@ -439,7 +439,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, alphanum, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).alphanum().emptyOk();
+            var rule = S().min(2).max(3).alphanum().emptyOk();
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', true],
@@ -456,7 +456,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, alphanum, and required', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).alphanum().required();
+            var rule = S().min(2).max(3).alphanum().required();
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', true],
@@ -473,7 +473,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, alphanum, and regex', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).alphanum().regex(/^a/);
+            var rule = S().min(2).max(3).alphanum().regex(/^a/);
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', false],
@@ -491,7 +491,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, alphanum, required, and regex', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).alphanum().required().regex(/^a/);
+            var rule = S().min(2).max(3).alphanum().required().regex(/^a/);
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', false],
@@ -509,7 +509,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, alphanum, emptyOk, and regex', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).alphanum().emptyOk().regex(/^a/);
+            var rule = S().min(2).max(3).alphanum().emptyOk().regex(/^a/);
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', false],
@@ -527,7 +527,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of min, max, and date', function (done) {
 
-            var rule = Joi.types.String().min(2).max(3).date();
+            var rule = S().min(2).max(3).date();
             verifyBehavior(rule, [
                 ['12', true],
                 ['1-2', true],
@@ -542,7 +542,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date and regex', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/);
+            var rule = S().date().regex(/^1/);
             verifyBehavior(rule, [
                 ['x', false],
                 ['1-2-1990', true],
@@ -554,7 +554,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, and min', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).min(4);
+            var rule = S().date().regex(/^1/).min(4);
             verifyBehavior(rule, [
                 ['x', false],
                 ['1-2-1990', true],
@@ -567,7 +567,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, and max', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).max(4);
+            var rule = S().date().regex(/^1/).max(4);
             verifyBehavior(rule, [
                 ['x', false],
                 ['1-2-1990', false],
@@ -580,7 +580,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, min, and max', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).min(3).max(4);
+            var rule = S().date().regex(/^1/).min(3).max(4);
             verifyBehavior(rule, [
                 ['x', false],
                 ['1-2-1990', false],
@@ -593,7 +593,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, min, max, and allow', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).min(3).max(4).allow('x');
+            var rule = S().date().regex(/^1/).min(3).max(4).allow('x');
             verifyBehavior(rule, [
                 ['x', true],
                 ['1-2-1990', false],
@@ -606,7 +606,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, min, max, allow, and deny', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).min(3).max(4).allow('x').deny('1-2');
+            var rule = S().date().regex(/^1/).min(3).max(4).allow('x').deny('1-2');
             verifyBehavior(rule, [
                 ['x', true],
                 ['1-2-1990', false],
@@ -619,7 +619,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, min, max, allow, deny, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).min(3).max(4).allow('x').deny('1-2').emptyOk();
+            var rule = S().date().regex(/^1/).min(3).max(4).allow('x').deny('1-2').emptyOk();
             verifyBehavior(rule, [
                 ['x', true],
                 ['1-2-1990', false],
@@ -632,7 +632,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, min, max, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).min(3).max(4).emptyOk();
+            var rule = S().date().regex(/^1/).min(3).max(4).emptyOk();
             verifyBehavior(rule, [
                 ['x', false],
                 ['1-2-1990', false],
@@ -645,7 +645,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, min, max, and nullOk', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).min(3).max(4).nullOk();
+            var rule = S().date().regex(/^1/).min(3).max(4).nullOk();
             verifyBehavior(rule, [
                 ['x', false],
                 ['1-2-1990', false],
@@ -658,7 +658,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, min, max, nullOk, emptyOk', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).min(3).max(4).nullOk().emptyOk();
+            var rule = S().date().regex(/^1/).min(3).max(4).nullOk().emptyOk();
             verifyBehavior(rule, [
                 ['x', false],
                 ['1-2-1990', false],
@@ -671,7 +671,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of date, regex, min, max, and required', function (done) {
 
-            var rule = Joi.types.String().date().regex(/^1/).min(3).max(4).required();
+            var rule = S().date().regex(/^1/).min(3).max(4).required();
             verifyBehavior(rule, [
                 ['x', false],
                 ['1-2-1990', false],
@@ -684,7 +684,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email and min', function (done) {
 
-            var rule = Joi.types.String().email().min(8);
+            var rule = S().email().min(8);
             verifyBehavior(rule, [
                 ['x@x.com', false],
                 ['123@x.com', true],
@@ -695,7 +695,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, and max', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10);
+            var rule = S().email().min(8).max(10);
             verifyBehavior(rule, [
                 ['x@x.com', false],
                 ['123@x.com', true],
@@ -708,7 +708,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, and deny', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).deny('123@x.com');
+            var rule = S().email().min(8).max(10).deny('123@x.com');
             verifyBehavior(rule, [
                 ['x@x.com', false],
                 ['123@x.com', false],
@@ -721,7 +721,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, and allow', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).allow('x@x.com');
+            var rule = S().email().min(8).max(10).allow('x@x.com');
             verifyBehavior(rule, [
                 ['x@x.com', true],
                 ['123@x.com', true],
@@ -734,7 +734,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, allow, and deny', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).allow('x@x.com').deny('123@x.com');
+            var rule = S().email().min(8).max(10).allow('x@x.com').deny('123@x.com');
             verifyBehavior(rule, [
                 ['x@x.com', true],
                 ['123@x.com', false],
@@ -747,7 +747,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, allow, deny, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).allow('x@x.com').deny('123@x.com').emptyOk();
+            var rule = S().email().min(8).max(10).allow('x@x.com').deny('123@x.com').emptyOk();
             verifyBehavior(rule, [
                 ['x@x.com', true],
                 ['123@x.com', false],
@@ -760,7 +760,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, allow, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).allow('x@x.com').emptyOk();
+            var rule = S().email().min(8).max(10).allow('x@x.com').emptyOk();
             verifyBehavior(rule, [
                 ['x@x.com', true],
                 ['123@x.com', true],
@@ -773,7 +773,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, allow, deny, and regex', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).allow('x@x.com').deny('123@x.com').regex(/^1/);
+            var rule = S().email().min(8).max(10).allow('x@x.com').deny('123@x.com').regex(/^1/);
             verifyBehavior(rule, [
                 ['x@x.com', true],
                 ['123@x.com', false],
@@ -786,7 +786,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, allow, deny, regex, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).allow('x@x.com').deny('123@x.com').regex(/^1/).emptyOk();
+            var rule = S().email().min(8).max(10).allow('x@x.com').deny('123@x.com').regex(/^1/).emptyOk();
             verifyBehavior(rule, [
                 ['x@x.com', true],
                 ['123@x.com', false],
@@ -799,7 +799,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).emptyOk();
+            var rule = S().email().min(8).max(10).emptyOk();
             verifyBehavior(rule, [
                 ['x@x.com', false],
                 ['123@x.com', true],
@@ -812,7 +812,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, and regex', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).regex(/^1234/);
+            var rule = S().email().min(8).max(10).regex(/^1234/);
             verifyBehavior(rule, [
                 ['x@x.com', false],
                 ['123@x.com', false],
@@ -825,7 +825,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, regex, and emptyOk', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).regex(/^1234/).emptyOk();
+            var rule = S().email().min(8).max(10).regex(/^1234/).emptyOk();
             verifyBehavior(rule, [
                 ['x@x.com', false],
                 ['123@x.com', false],
@@ -838,7 +838,7 @@ describe('Joi.types.String', function () {
 
         it('should handle combination of email, min, max, regex, and required', function (done) {
 
-            var rule = Joi.types.String().email().min(8).max(10).regex(/^1234/).required();
+            var rule = S().email().min(8).max(10).regex(/^1234/).required();
             verifyBehavior(rule, [
                 ['x@x.com', false],
                 ['123@x.com', false],
