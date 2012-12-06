@@ -367,15 +367,24 @@ String.required().optional() # This input will be considered optional
 String.required(false).required() # This input will be considered required
 ```
 
-Constraints that can override modify the query validation state upon the function's evocation. The actual evaluation is performed at the end of the chain (or once the entire querystring validation is finished). These constraint functions are special cases:
+Constraints that can override modify the query validation state upon the function's evocation. The actual evaluation is performed at the end of the chain (or once the entire querystring validation is finished).
 
+These constraint functions are special cases:
 * required/optional
 * with/without
 * rename
 
 Rename is always performed at the end of the chain.
 
-TODO: with/without rules
+
+###### With/Without
+
+Below is an example of a schema that is likely to be used for defining a username/password constraint.  Notice that _'with'_ is used on the _'username'_ to indicate that _'password'_ is required to appear whenever _'username'_ exists.  Similarly, _'password'_ has a constraint indicating that the key _'access_token'_ must not exist when _'password'_ exists.
+
+```javascript
+username: Joi.types.String().with('password'),
+password: Joi.types.String().without('access_token')
+```
 
 #### Overrules
 
