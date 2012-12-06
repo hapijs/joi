@@ -127,6 +127,22 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should invalid undefined if min set', function (done) {
+
+            var t = S().min(3);
+            verifyBehavior(t, [
+                [undefined, false]
+            ], done);
+        });
+
+        it('should invalid undefined if max set', function (done) {
+
+            var t = S().max(3);
+            verifyBehavior(t, [
+                [undefined, false]
+            ], done);
+        });
+
         it('should invalidate invalid values', function (done) {
 
             var t = S().valid('a', 'b', 'c');
