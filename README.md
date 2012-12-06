@@ -78,11 +78,11 @@ The above constraints point out some non-obvious features:
 The Types object is pre-populated with a mutable list of JavaScript's valid data types. However, for convenience, the registry also includes subset helpers (marked with #):
 
 * String
-    * Date # String.date()
-    * Email # String.email()
+    * Date ```String.date()```
+    * Email ```String.email()```
 * Number
-    * Int # Number.integer()
-    * Float # Number.float()
+    * Int ```Number.integer()```
+    * Float ```Number.float()```
 * Boolean
 * Array
 * Object
@@ -197,7 +197,7 @@ Specifies a key to rename the current parameter to.
 
 Options take the form of an object with the follow default values:
 
-```json
+```javascript
 {
     deleteOrig: false,
     allowMult: false,
@@ -308,7 +308,7 @@ Array values take the querystring form of
 ```
 and get converted to
 ```
-    { cars: [ '1', '2' ] }
+{ cars: [ '1', '2' ] }
 ```
 by the server.
 
@@ -336,9 +336,9 @@ Specifies allowed types for the array value to exclude. The values of n1, n2, ..
 In Hapi's routes configuration array, the routes are listed as JavaScript objects. Route objects may include an optional "query" key, the value of which should be an object. This object should associate querystring input names to validation constraints.
 
 ```javascript
-    var queryObj = {
-      input_name: constraints
-    };
+var queryObj = {
+  input_name: constraints
+};
 ```
 
 In the above code example, "input_name" must conform to typical JavaScript object key constraints (no spaces, no quotes unless escaped and surrounded by quotes, etc).
@@ -346,10 +346,10 @@ In the above code example, "input_name" must conform to typical JavaScript objec
 In place of "constraints", there should be a combination of constraints. The combination of constraints must be formed starting from a valid base type. The base type may be followed by zero or more pre-defined constraint functions chained consecutively. These combinations can be pre-combined into "alias" variables that may also be followed by zero or more pre-defined constraint functions chained consecutively. An example is shown below:
 
 ```javascript
-    Base().constraint_one().constraint_two()...
-    
-    BaseAlias = Base().constraint()
-    BaseAlias.constraint_one().constraint_two()...
+Base().constraint_one().constraint_two()...
+
+BaseAlias = Base().constraint()
+BaseAlias.constraint_one().constraint_two()...
 ```
 
 Constraint functions may accept optional and arbitrary parameters.
@@ -362,8 +362,10 @@ Every call must have its own `Base()` prefix. This creates a new validation obje
 
 Each constraint is evaluated independantly and in order of chaining. In some cases, a subsequent constraint may override a prior constraint:
 
-    String.required().optional() # This input will be considered optional
-    String.required(false).required() # This input will be considered required
+```javascript
+String.required().optional() # This input will be considered optional
+String.required(false).required() # This input will be considered required
+```
 
 Constraints that can override modify the query validation state upon the function's evocation. The actual evaluation is performed at the end of the chain (or once the entire querystring validation is finished). These constraint functions are special cases:
 
@@ -379,8 +381,10 @@ TODO: with/without rules
 
 Yet, in another case, a prior constraint may overrule a subsequent constraint:
 
-    ```Types.String().max(5).max(10)``` # This input cannot be larger than 5 characters
-    ```Types.String().max(3).regex(/.{0,5}/)``` # This input cannot be larger than 3 characters
+```javascript
+Types.String().max(5).max(10) # This input cannot be larger than 5 characters
+Types.String().max(3).regex(/.{0,5}/) # This input cannot be larger than 3 characters
+```
 
 This should apply to all other constraints that do not override.
 
