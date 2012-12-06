@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Van Nguyen <the.gol.effect@gmail.com>",
   "contributors":[
     "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)",
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "mocha": "1.x.x",
-    "chai": "1.2.x"
+    "chai": "1.0.x"
   },
   "scripts": {
     "test": "make test && make unit"
