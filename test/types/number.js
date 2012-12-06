@@ -125,6 +125,201 @@ describe('Number', function () {
             expect(t).to.not.exist;
             done();
         });
+
+        it('should handle combination of min and max', function (done) {
+
+            var rule = N().min(8).max(10);
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, true],
+                [9, true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, and nullOk', function (done) {
+
+            var rule = N().min(8).max(10).nullOk();
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, true],
+                [9, true],
+                [null, true]
+            ], done);
+        });
+
+        it('should handle combination of min, max, and allow', function (done) {
+
+            var rule = N().min(8).max(10).allow(1);
+            verifyBehavior(rule, [
+                [1, true],
+                [11, false],
+                [8, true],
+                [9, true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, allow, and nullOk', function (done) {
+
+            var rule = N().min(8).max(10).allow(1).nullOk();
+            verifyBehavior(rule, [
+                [1, true],
+                [11, false],
+                [8, true],
+                [9, true],
+                [null, true]
+            ], done);
+        });
+
+        it('should handle combination of min, max, allow, and deny', function (done) {
+
+            var rule = N().min(8).max(10).allow(1).deny(9);
+            verifyBehavior(rule, [
+                [1, true],
+                [11, false],
+                [8, true],
+                [9, false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, allow, deny, and nullOk', function (done) {
+
+            var rule = N().min(8).max(10).allow(1).deny(9).nullOk();
+            verifyBehavior(rule, [
+                [1, true],
+                [11, false],
+                [8, true],
+                [9, false],
+                [null, true]
+            ], done);
+        });
+
+        it('should handle combination of min, max, and float', function (done) {
+
+            var rule = N().min(8).max(10).float();
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, false],
+                [9, false],
+                [9.1, true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, float, and allow', function (done) {
+
+            var rule = N().min(8).max(10).float().allow(9);
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, false],
+                [9, true],
+                [9.1, true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, float, and deny', function (done) {
+
+            var rule = N().min(8).max(10).float().deny(9.1);
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, false],
+                [9, false],
+                [9.1, false],
+                [9.2, true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, float, allow, and deny', function (done) {
+
+            var rule = N().min(8).max(10).float().allow(9).deny(9.1);
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, false],
+                [9, true],
+                [9.1, false],
+                [9.2, true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, float, allow, deny, and nullOk', function (done) {
+
+            var rule = N().min(8).max(10).float().allow(9).deny(9.1).nullOk();
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, false],
+                [9, true],
+                [9.1, false],
+                [9.2, true],
+                [null, true]
+            ], done);
+        });
+
+        it('should handle combination of min, max, and integer', function (done) {
+
+            var rule = N().min(8).max(10).integer();
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, true],
+                [9, true],
+                [9.1, false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, integer, and allow', function (done) {
+
+            var rule = N().min(8).max(10).integer().allow(9.1);
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, true],
+                [9, true],
+                [9.1, true],
+                [9.2, false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, integer, allow, and deny', function (done) {
+
+            var rule = N().min(8).max(10).integer().allow(9.1).deny(8);
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, false],
+                [9, true],
+                [9.1, true],
+                [9.2, false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, integer, allow, deny, and nullOk', function (done) {
+
+            var rule = N().min(8).max(10).integer().allow(9.1).deny(8).nullOk();
+            verifyBehavior(rule, [
+                [1, false],
+                [11, false],
+                [8, false],
+                [9, true],
+                [9.1, true],
+                [9.2, false],
+                [null, true]
+            ], done);
+        });
     });
 
     it('should instantiate separate copies on invocation', function (done) {
