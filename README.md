@@ -1,3 +1,4 @@
+<a href="/walmartlabs/blammo"><img src="https://raw.github.com/walmartlabs/blammo/master/images/from.png" align="right" /></a>
 # joi
 
 Object schema validation
