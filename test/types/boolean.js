@@ -1,34 +1,48 @@
-var Types = process.env.TEST_COV ? require('../../lib-cov/types') : require('../../lib/types');
-var should = require("should");
+// Load modules
 
-describe("Boolean", function () {
+var Chai = require('chai');
+var Joi = process.env.TEST_COV ? require('../../lib-cov') : require('../../lib');
 
-    var B = Types.Boolean;
 
-    it("should have mixins", function (done) {
+// Declare internals
 
-        var result = B();
+var internals = {};
 
-        should.exist(result.validate);
-        done();
-    });
 
-    describe('#convert', function () {
+// Test shortcuts
 
-        it("should convert a string to a boolean", function (done) {
+var expect = Chai.expect;
 
-            var result = B().convert('true');
 
-            result.should.equal(true);
+describe('Types', function () {
+
+    describe('Boolean', function () {
+
+        var B = Joi.types.Boolean;
+
+        it('should have mixins', function (done) {
+
+            var result = B();
+            expect(result.validate).to.exist;
             done();
         });
 
-        it("should not convert a number to a boolean", function (done) {
+        describe('#convert', function () {
 
-            var result = B().convert(1);
+            it('should convert a string to a boolean', function (done) {
 
-            result.should.equal(1);
-            done();
+                var result = B().convert('true');
+                expect(result).to.equal(true);
+                done();
+            });
+
+            it('should not convert a number to a boolean', function (done) {
+
+                var result = B().convert(1);
+                expect(result).to.equal(1);
+                done();
+            });
         });
     });
 });
+

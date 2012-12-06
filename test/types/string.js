@@ -1,88 +1,114 @@
-var Types = process.env.TEST_COV ? require('../../lib-cov/types') : require('../../lib/types');
-var should = require("should");
-var verifyBehavior = require("../support/meta").verifyValidatorBehavior;
+// Load modules
+
+var Chai = require('chai');
+var Joi = process.env.TEST_COV ? require('../../lib-cov') : require('../../lib');
+var Support = require('../support/meta');
 
 
-describe("Types.String", function () {
+// Declare internals
 
-    var S = Types.String;
+var internals = {};
 
-    it("should have mixins", function (done) {
+
+// Test shortcuts
+
+var expect = Chai.expect;
+var verifyBehavior = Support.verifyValidatorBehavior;
+
+
+describe('Joi.types.String', function () {
+
+    var S = Joi.types.String;
+
+    it('should have mixins', function (done) {
+
         var result = S();
-
-        should.exist(result.validate);
+        expect(result.validate).to.exist;
         done();
     });
 
-    it("should instantiate separate copies on invocation", function (done) {
+    it('should instantiate separate copies on invocation', function (done) {
+
         var result1 = S().min(5);
         var result2 = S().max(5);
-
-        Object.keys(result1).should.not.equal(Object.keys(result2));
+        expect(Object.keys(result1)).to.not.equal(Object.keys(result2));
         done();
     });
 
-    describe("#valid", function () {
+    describe('#valid', function () {
 
-        it("should throw error on input not matching type", function (done) {
-            (function () {
+        it('should throw error on input not matching type', function (done) {
+
+            expect(function () {
+
                 S().valid(1);
-            }).should.throw();
+            }).to.throw;
             done();
         });
 
-        it("should not throw on input matching type", function (done) {
-            (function () {
-                S().valid("walmart");
-            }).should.not.throw();
+        it('should not throw on input matching type', function (done) {
+
+            expect(function () {
+
+                S().valid('walmart');
+            }).to.not.throw;
             done();
         });
     });
 
-    describe("#invalid", function () {
+    describe('#invalid', function () {
 
-        it("should throw error on input not matching type", function (done) {
-            (function () {
+        it('should throw error on input not matching type', function (done) {
+
+            expect(function () {
+
                 S().invalid(1);
-            }).should.throw();
+            }).to.throw;
             done();
         });
 
-        it("should not throw on input matching type", function (done) {
-            (function () {
-                S().invalid("walmart");
-            }).should.not.throw();
+        it('should not throw on input matching type', function (done) {
+
+            expect(function () {
+
+                S().invalid('walmart');
+            }).to.not.throw;
             done();
         });
     });
 
-    describe("#validate", function () {
+    describe('#validate', function () {
 
         it('should work', function (done) {
-            (function () {
+
+            expect(function () {
+
                 var text = S();
-                var result = text.validate("joi");
-            }).should.not.throw();
+                var result = text.validate('joi');
+            }).to.not.throw;
             done();
         });
 
         it('should, by default, allow undefined, deny empty string', function (done) {
+
             var conditions = [
                 [undefined, true],
-                ["", false]
+                ['', false]
             ];
             verifyBehavior(S(), conditions, done);
         });
 
-        it("should, when .required(), deny undefined, deny empty string", function (done) {
+        it('should, when .required(), deny undefined, deny empty string', function (done) {
+
             var t = S().required();
             verifyBehavior(t, [
                 [undefined, false],
-                ["", false]
+                ['', false]
             ], done);
         });
 
-        it("should, when .required(), validate non-empty strings", function (done) {
+        it('should, when .required(), validate non-empty strings', function (done) {
+
             var t = S().required();
             verifyBehavior(t, [
                 ['test', true],
@@ -91,7 +117,28 @@ describe("Types.String", function () {
             ], done);
         });
 
-        it("should validate minimum length when min is used", function (done) {
+        it('should validate invalid values', function (done) {
+
+            var t = S().invalid('a', 'b', 'c');
+            verifyBehavior(t, [
+                ['x', true],
+                ['a', false],
+                ['c', false]
+            ], done);
+        });
+
+        it('should invalidate invalid values', function (done) {
+
+            var t = S().valid('a', 'b', 'c');
+            verifyBehavior(t, [
+                ['x', false],
+                ['a', true],
+                ['c', true]
+            ], done);
+        });
+
+        it('should validate minimum length when min is used', function (done) {
+
             var t = S().min(3);
             verifyBehavior(t, [
                 ['test', true],
@@ -100,7 +147,8 @@ describe("Types.String", function () {
             ], done);
         });
 
-        it("should validate minimum length when min is 0", function (done) {
+        it('should validate minimum length when min is 0', function (done) {
+
             var t = S().min(0);
             verifyBehavior(t, [
                 ['0', true],
@@ -108,21 +156,23 @@ describe("Types.String", function () {
             ], done);
         });
 
-        it("should return false with minimum length and a null value passed in", function (done) {
-            var t = S()._min(3);
+        it('should return false with minimum length and a null value passed in', function (done) {
 
-            t(null).should.equal(false);
+            var t = S()._min(3);
+            expect(t(null)).to.equal(false);
             done();
         });
 
-        it("nullOk overrides min length requirement", function (done) {
+        it('nullOk overrides min length requirement', function (done) {
+
             var t = S().min(3).nullOk();
             verifyBehavior(t, [
                 [null, true]
             ], done);
         });
 
-        it("should validate maximum length when max is used", function (done) {
+        it('should validate maximum length when max is used', function (done) {
+
             var t = S().max(3);
             verifyBehavior(t, [
                 ['test', false],
@@ -131,7 +181,8 @@ describe("Types.String", function () {
             ], done);
         });
 
-        it("should validate regex", function (done) {
+        it('should validate regex', function (done) {
+
             var t = S().regex(/^[0-9][-][a-z]+$/);
             verifyBehavior(t, [
                 ['van', false],
@@ -139,7 +190,8 @@ describe("Types.String", function () {
             ], done);
         });
 
-        it("should validate alphanum when alphanum allows spaces", function (done) {
+        it('should validate alphanum when alphanum allows spaces', function (done) {
+
             var t = S().alphanum(true);
             verifyBehavior(t, [
                 ['w0rld of w4lm4rtl4bs', true],
@@ -147,7 +199,8 @@ describe("Types.String", function () {
             ], done);
         });
 
-        it("should validate alphanum when alphanum doesn\'t allow spaces", function (done) {
+        it('should validate alphanum when alphanum doesn\'t allow spaces', function (done) {
+
             var t = S().alphanum(false);
             verifyBehavior(t, [
                 ['w0rld of w4lm4rtl4bs', false],
@@ -156,7 +209,8 @@ describe("Types.String", function () {
             ], done);
         });
 
-        it("should validate email", function (done) {
+        it('should validate email', function (done) {
+
             var t = S().email();
             verifyBehavior(t, [
                 ['van@walmartlabs.com', true],
@@ -164,7 +218,8 @@ describe("Types.String", function () {
             ], done);
         });
 
-        it("should validate date", function (done) {
+        it('should validate date', function (done) {
+
             var t = S().date();
             verifyBehavior(t, [
                 ['Mon Aug 20 2012 12:14:33 GMT-0700 (PDT)', true],
@@ -174,53 +229,59 @@ describe("Types.String", function () {
             ], done);
         });
 
-        it("should return false for denied value", function (done) {
-            var text = S().deny("joi");
-            var result = text.validate("joi");
-            should.exist(result);
-            result.should.equal(false);
+        it('should return false for denied value', function (done) {
+
+            var text = S().deny('joi');
+            var result = text.validate('joi');
+            expect(result).to.exist;
+            expect(result).to.equal(false);
             done();
         });
 
-        it("should return true for allowed value", function (done) {
-            var text = S().allow("hapi");
-            var result = text.validate("result");
-            should.exist(result);
-            result.should.equal(true);
+        it('should return true for allowed value', function (done) {
+
+            var text = S().allow('hapi');
+            var result = text.validate('result');
+            expect(result).to.exist;
+            expect(result).to.equal(true);
             done();
         });
 
-        it("should validate with one validator (min)", function (done) {
+        it('should validate with one validator (min)', function (done) {
+
             var text = S().min(3);
-            var result = text.validate("walmart");
-            should.exist(result);
-            result.should.equal(true);
+            var result = text.validate('walmart');
+            expect(result).to.exist;
+            expect(result).to.equal(true);
             done();
         });
 
-        it("should validate with two validators (min, required)", function (done) {
+        it('should validate with two validators (min, required)', function (done) {
+
             var text = S().min(3).required();
-            var result = text.validate("walmart");
-            should.exist(result);
-            result.should.equal(true);
+            var result = text.validate('walmart');
+            expect(result).to.exist;
+            expect(result).to.equal(true);
 
             var result2 = text.validate();
-            should.exist(result2);
-            result2.should.equal(false);
+            expect(result2).to.exist;
+            expect(result2).to.equal(false);
 
             done();
         });
 
-        it("should validate null with nullOk()", function (done) {
+        it('should validate null with nullOk()', function (done) {
+
             verifyBehavior(S().nullOk(), [
                 [null, true]
             ], done);
         });
 
-        it("should validate '' (empty string) with emptyOk()", function (done) {
+        it('should validate "" (empty string) with emptyOk()', function (done) {
+
             verifyBehavior(S().emptyOk(), [
                 ['', true],
-                ["", true]
+                ['', true]
             ], done);
         });
     });

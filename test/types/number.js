@@ -1,26 +1,40 @@
-var Types = process.env.TEST_COV ? require('../../lib-cov/types') : require('../../lib/types');
-var should = require("should");
-var verifyBehavior = require("../support/meta").verifyValidatorBehavior;
+// Load modules
 
-describe("Number", function () {
+var Chai = require('chai');
+var Joi = process.env.TEST_COV ? require('../../lib-cov') : require('../../lib');
+var Support = require('../support/meta');
 
-    var N = Types.Number;
 
-    it("should have mixins", function (done) {
+// Declare internals
+
+var internals = {};
+
+
+// Test shortcuts
+
+var expect = Chai.expect;
+var verifyBehavior = Support.verifyValidatorBehavior;
+
+
+describe('Number', function () {
+
+    var N = Joi.types.Number;
+
+    it('should have mixins', function (done) {
         var result = N();
 
-        should.exist(result.validate);
+        expect(result.validate).to.exist;
         done();
     });
 
-    describe("#validate", function () {
+    describe('#validate', function () {
 
         it('should work', function (done) {
 
-            (function () {
+            expect(function () {
                 var num = N();
                 var result = num.validate(100);
-            }).should.not.throw();
+            }).to.not.throw;
             done();
         });
 
@@ -31,23 +45,23 @@ describe("Number", function () {
             ], done);
         });
 
-        it("should, when .required(), deny undefined", function (done) {
+        it('should, when .required(), deny undefined', function (done) {
 
             verifyBehavior(N().required(), [
                 [undefined, false]
             ], done);
         });
 
-        it("should return false for denied value", function (done) {
+        it('should return false for denied value', function (done) {
 
             var text = N().deny(50);
             var result = text.validate(50);
-            should.exist(result);
-            result.should.equal(false);
+            expect(result).to.exist;
+            expect(result).to.equal(false);
             done();
         });
 
-        it("should validate float", function (done) {
+        it('should validate float', function (done) {
 
             var t = N().float();
             verifyBehavior(t, [
@@ -59,7 +73,7 @@ describe("Number", function () {
             ], done);
         });
 
-        it("should validate integer", function (done) {
+        it('should validate integer', function (done) {
 
             var t = N().integer();
             verifyBehavior(t, [
@@ -71,7 +85,7 @@ describe("Number", function () {
             ], done);
         });
 
-        it("should validate empty", function (done) {
+        it('should validate empty', function (done) {
 
             var t = N().empty();
             verifyBehavior(t, [
@@ -80,7 +94,7 @@ describe("Number", function () {
             ], done);
         });
 
-        it("can convert strings to numbers", function (done) {
+        it('can convert strings to numbers', function (done) {
 
             var t = N();
             verifyBehavior(t, [
@@ -89,7 +103,7 @@ describe("Number", function () {
             ], done);
         });
 
-        it("required validates correctly", function (done) {
+        it('required validates correctly', function (done) {
 
             var t = N().required();
             verifyBehavior(t, [
@@ -98,17 +112,17 @@ describe("Number", function () {
             ], done);
         });
 
-        it("convert will convert a string to a number", function (done) {
+        it('convert will convert a string to a number', function (done) {
 
             var t = N().convert('1');
-            t.should.equal(1);
+            expect(t).to.equal(1);
             done();
         });
 
-        it("convert will not convert a null", function (done) {
+        it('convert will not convert a null', function (done) {
 
             var t = N().convert(null);
-            should.not.exist(t);
+            expect(t).to.not.exist;
             done();
         });
     });
@@ -118,43 +132,43 @@ describe("Number", function () {
         var result1 = N().min(5);
         var result2 = N().max(5);
 
-        Object.keys(result1).should.not.equal(Object.keys(result2));
+        expect(Object.keys(result1)).to.not.equal(Object.keys(result2));
         done();
     });
 
-    it("should inherit functions from BaseType", function (done) {
+    it('should inherit functions from BaseType', function (done) {
 
-        var fns = ["required", "add"];
+        var fns = ['required', 'add'];
 
         for (var i in fns) {
-            should.exist(N()[fns[i]]);
+            expect(N()[fns[i]]).to.exist;
         }
         done();
     });
 
-    it("should show resulting object with #valueOf", function (done) {
+    it('should show resulting object with #valueOf', function (done) {
 
         var result = N().min(5);
-        should.exist(result.valueOf());
+        expect(result.valueOf()).to.exist;
         done();
     });
 
-    describe("#min", function () {
+    describe('#min', function () {
 
         it('should exist', function (done) {
 
-            should.exist(N().min);
+            expect(N().min).to.exist;
             done();
         });
 
-        it("should have corresponding validator function", function (done) {
+        it('should have corresponding validator function', function (done) {
 
-            should.exist(N()._min);
+            expect(N()._min).to.exist;
             done();
         });
     })
 
-    describe("#_min", function () {
+    describe('#_min', function () {
 
         it('should validate on known valid input', function (done) {
 
@@ -162,8 +176,8 @@ describe("Number", function () {
             var validator = N()._min(5);
             for (var i in inputs) {
                 var currentResult = validator(inputs[i]);
-                should.exist(currentResult);
-                currentResult.should.equal(true);
+                expect(currentResult).to.exist;
+                expect(currentResult).to.equal(true);
             }
             done();
         })
@@ -174,28 +188,28 @@ describe("Number", function () {
             var validator = N()._min(5);
             for (var i in inputs) {
                 var currentResult = validator(inputs[i]);
-                should.exist(currentResult);
-                currentResult.should.equal(false);
+                expect(currentResult).to.exist;
+                expect(currentResult).to.equal(false);
             }
             done();
         })
     })
 
-    describe("#max", function () {
+    describe('#max', function () {
 
         it('should exist', function (done) {
 
-            should.exist(N().max);
+            expect(N().max).to.exist;
             done();
         });
 
-        it("should have corresponding validator function", function (done) {
-            should.exist(N()._max);
+        it('should have corresponding validator function', function (done) {
+            expect(N()._max).to.exist;
             done();
         });
     });
 
-    describe("#_max", function () {
+    describe('#_max', function () {
 
         it('should validate on known valid input', function (done) {
 
@@ -203,8 +217,8 @@ describe("Number", function () {
             var validator = N()._max(4);
             for (var i in inputs) {
                 var currentResult = validator(inputs[i]);
-                should.exist(currentResult);
-                currentResult.should.equal(true);
+                expect(currentResult).to.exist;
+                expect(currentResult).to.equal(true);
             }
             done();
         });
@@ -215,8 +229,8 @@ describe("Number", function () {
             var validator = N()._max(4);
             for (var i in inputs) {
                 var currentResult = validator(inputs[i]);
-                should.exist(currentResult);
-                currentResult.should.equal(false);
+                expect(currentResult).to.exist;
+                expect(currentResult).to.equal(false);
             }
             done();
         });

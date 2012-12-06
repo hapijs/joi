@@ -1,29 +1,50 @@
-var O = process.env.TEST_COV ? require('../../lib-cov/types/object') : require('../../lib/types/object');
-var should = require("should");
-var verifyBehavior = require("../support/meta").verifyValidatorBehavior;
+// Load modules
+
+var Chai = require('chai');
+var Joi = process.env.TEST_COV ? require('../../lib-cov') : require('../../lib');
+var Object = process.env.TEST_COV ? require('../../lib-cov/types/object') : require('../../lib/types/object');
+var Support = require('../support/meta');
 
 
-describe("Types.Object", function () {
+// Declare internals
 
-    it("should have mixins", function (done) {
-        var result = O();
+var internals = {};
 
-        should.exist(result.validate);
-        done();
-    });
 
-    it("can convert a json string to an object", function (done) {
-        var result = O().convert('{"hi":true}');
+// Test shortcuts
 
-        result.hi.should.be.true;
-        done();
-    });
+var expect = Chai.expect;
+var verifyBehavior = Support.verifyValidatorBehavior;
 
-    it("should validate an object", function (done) {
-        var t = O().required();
-        verifyBehavior(t, [
-            [{hi: true}, true],
-            ["", false]
-        ], done);
+
+describe('Types', function () {
+
+    describe('Object', function () {
+
+        var O = Object; // Joi.types.Object;
+
+        it('should have mixins', function (done) {
+
+            var result = O();
+            expect(result.validate).to.exist;
+            done();
+        });
+
+        it('can convert a json string to an object', function (done) {
+
+            var result = O().convert('{"hi":true}');
+            expect(result.hi).to.be.true;
+            done();
+        });
+
+        it('should validate an object', function (done) {
+
+            var t = O().required();
+            verifyBehavior(t, [
+                [{ hi: true }, true],
+                ['', false]
+            ], done);
+        });
     });
 });
+

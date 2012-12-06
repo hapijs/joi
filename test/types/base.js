@@ -1,221 +1,234 @@
-var should = require("should");
+// Load modules
 
-var Types = process.env.TEST_COV ? require('../../lib-cov/types') : require('../../lib/types');
-var BaseType = Types.Base;
-var Utils = require("../../lib/utils");
-var sys = require("sys");
+var Chai = require('chai');
+var Joi = process.env.TEST_COV ? require('../../lib-cov') : require('../../lib');
 
-describe("BaseType", function () {
 
-    var B = Types.Base;
+// Declare internals
 
-    describe('#toString', function () {
+var internals = {};
 
-        it('should return JSON string of values', function (done) {
 
-            var b = new B().valid('test');
+// Test shortcuts
 
-            b.toString().should.include('test');
-            done();
+var expect = Chai.expect;
+
+
+describe('Types', function () {
+
+    describe('Base', function () {
+
+        var B = Joi.types.Base;
+
+        describe('#toString', function () {
+
+            it('should return JSON string of values', function (done) {
+
+                var b = new B().valid('test');
+
+                expect(b.toString()).to.include('test');
+                done();
+            });
         });
-    });
 
-    describe('#add', function () {
+        describe('#add', function () {
 
-        it('should throw an error when null is passed in', function (done) {
+            it('should throw an error when null is passed in', function (done) {
 
-            (function () {
+                expect(function () {
+
+                    var b = new B();
+                    var result = b.add(null);
+                }).to.throw;
+                done();
+            });
+
+            it('should not throw an error when valid values are provided', function (done) {
+
+                expect(function () {
+
+                    var b = new B();
+                    var result = b.add('test', true);
+                }).to.not.throw;
+                done();
+            });
+        });
+
+        describe('#exists', function () {
+
+            it('should return false when null is passed in', function (done) {
 
                 var b = new B();
-                var result = b.add(null);
-            }).should.throw();
-            done();
-        });
+                var result = b.exists(null);
 
-        it('should not throw an error when valid values are provided', function (done) {
+                expect(result).to.equal(false);
+                done();
+            });
 
-            (function () {
+            it('should return true when passed true', function (done) {
 
                 var b = new B();
-                var result = b.add('test', true);
-            }).should.not.throw();
-            done();
-        });
-    });
+                var result = b.exists(true);
 
-    describe('#exists', function () {
-
-        it('should return false when null is passed in', function (done) {
-
-            var b = new B();
-            var result = b.exists(null);
-
-            result.should.equal(false);
-            done();
+                expect(result).to.equal(true);
+                done();
+            });
         });
 
-        it('should return true when passed true', function (done) {
+        describe('#with', function () {
 
-            var b = new B();
-            var result = b.exists(true);
+            it('should set related check', function (done) {
 
-            result.should.equal(true);
-            done();
-        });
-    });
+                var b1 = new B();
+                var b2 = new B();
+                var result = b1.with(b2);
 
-    describe('#with', function () {
+                expect(result.__checks).to.include('with');
+                done();
+            });
 
-        it('should set related check', function (done) {
+            it('should return false when related type not found', function (done) {
 
-            var b1 = new B();
-            var b2 = new B();
-            var result = b1.with(b2);
+                var b1 = new B();
+                var b2 = new B();
+                var result = b1.with(b2);
 
-            result.__checks.should.include('with');
-            done();
-        });
+                expect(result.validate('test')).to.equal(false);
+                done();
+            });
 
-        it('should return false when related type not found', function (done) {
+            it('should return true when peers are null', function (done) {
 
-            var b1 = new B();
-            var b2 = new B();
-            var result = b1.with(b2);
+                var b1 = new B();
+                var result = b1._with(null);
 
-            result.validate('test').should.equal(false);
-            done();
-        });
-
-        it('should return true when peers are null', function (done) {
-
-            var b1 = new B();
-            var result = b1._with(null);
-
-            result(null).should.equal(true);
-            done();
-        });
-    });
-
-    describe('#without', function () {
-
-        it('should set related check', function (done) {
-
-            var b1 = new B();
-            var b2 = new B();
-            var result = b1.without(b2);
-
-            result.__checks.should.include('without');
-            done();
+                expect(result(null)).to.equal(true);
+                done();
+            });
         });
 
-        it('should return true when related type not found', function (done) {
+        describe('#without', function () {
 
-            var b1 = new B();
-            var b2 = new B();
-            var result = b1.without(b2);
+            it('should set related check', function (done) {
 
-            result.validate('test').should.equal(true);
-            done();
-        });
-    });
+                var b1 = new B();
+                var b2 = new B();
+                var result = b1.without(b2);
 
-    describe('#rename', function () {
+                expect(result.__checks).to.include('without');
+                done();
+            });
 
-        it('should rename the type', function (done) {
+            it('should return true when related type not found', function (done) {
 
-            var b = new B();
-            var result = b.rename('test');
+                var b1 = new B();
+                var b2 = new B();
+                var result = b1.without(b2);
 
-            result.validate('test').should.equal(true);
-            done();
-        });
-
-        it('using allowMult enabled should allow renaming multiple times', function (done) {
-
-            var b = new B();
-            var result = b.rename('test1', { allowMult: true });
-
-            result.validate({ test: true}, { test: true }, 'test', { add: function() {}, _renamed: { test1: true }}).should.equal(true);
-            done();
+                expect(result.validate('test')).to.equal(true);
+                done();
+            });
         });
 
-        it('with allowMult disabled should not allow renaming multiple times', function (done) {
+        describe('#rename', function () {
 
-            var b = new B();
-            var result = b.rename('test1', { allowMult: false });
+            it('should rename the type', function (done) {
 
-            result.validate({ test: true}, { test: true }, 'test', { add: function() {}, _renamed: { test1: true }}).should.equal(false);
-            done();
+                var b = new B();
+                var result = b.rename('test');
+
+                expect(result.validate('test')).to.equal(true);
+                done();
+            });
+
+            it('using allowMult enabled should allow renaming multiple times', function (done) {
+
+                var b = new B();
+                var result = b.rename('test1', { allowMult: true });
+
+                expect(result.validate({ test: true }, { test: true }, 'test', { add: function () { }, _renamed: { test1: true } })).to.equal(true);
+                done();
+            });
+
+            it('with allowMult disabled should not allow renaming multiple times', function (done) {
+
+                var b = new B();
+                var result = b.rename('test1', { allowMult: false });
+
+                expect(result.validate({ test: true }, { test: true }, 'test', { add: function () { }, _renamed: { test1: true } })).to.equal(false);
+                done();
+            });
+
+            it('with allowOverwrite disabled should not allow overwriting existing value', function (done) {
+
+                var b = new B();
+                var result = b.rename('test1', { allowOverwrite: false });
+
+                expect(result.validate({ test1: true }, { test1: true }, { test1: true })).to.equal(false);
+                done();
+            });
+
+            it('with allowOverwrite enabled should allow overwriting existing value', function (done) {
+
+                var b = new B();
+                var result = b.rename('test1', { allowOverwrite: true, deleteOrig: true });
+
+                expect(result.validate({ test1: true }, { test1: true }, { test1: true })).to.equal(true);
+                done();
+            });
         });
 
-        it('with allowOverwrite disabled should not allow overwriting existing value', function (done) {
+        describe('#description', function () {
 
-            var b = new B();
-            var result = b.rename('test1', { allowOverwrite: false });
+            it('sets the description', function (done) {
 
-            result.validate({ test1: true}, { test1: true }, { test1: true}).should.equal(false);
-            done();
+                var b = new B();
+                b.description('my description');
+                expect(b.description).to.equal('my description');
+
+                done();
+            });
         });
 
-        it('with allowOverwrite enabled should allow overwriting existing value', function (done) {
+        describe('#notes', function () {
 
-            var b = new B();
-            var result = b.rename('test1', { allowOverwrite: true, deleteOrig: true });
+            it('sets the notes', function (done) {
 
-            result.validate({ test1: true}, { test1: true }, { test1: true}).should.equal(true);
-            done();
+                var b = new B();
+                b.notes('my notes');
+                expect(b.notes).to.equal('my notes');
+
+                done();
+            });
         });
-    });
 
-    describe('#description', function () {
+        describe('#tags', function () {
 
-        it('sets the description', function (done) {
+            it('sets the tags', function (done) {
 
-            var b = new B();
-            b.description('my description');
-            b.description.should.equal('my description');
+                var b = new B();
+                b.tags(['tag1', 'tag2']);
+                expect(b.tags).to.include('tag1');
+                expect(b.tags).to.include('tag2');
 
-            done();
+                done();
+            });
         });
-    });
 
-    describe('#notes', function () {
+        describe('#RequestErrorFactory', function () {
 
-        it('sets the notes', function (done) {
+            it('adds the error to the request object', function (done) {
 
-            var b = new B();
-            b.notes('my notes');
-            b.notes.should.equal('my notes');
+                var b = new B();
+                var err = new Error('my message');
+                var req = {};
+                b.RequestErrorFactory(req)(err);
 
-            done();
-        });
-    });
+                expect(req.validationErrors).to.include('[ValidationError]: Error: my message');
 
-    describe('#tags', function () {
-
-        it('sets the tags', function (done) {
-
-            var b = new B();
-            b.tags(['tag1', 'tag2']);
-            b.tags.should.include('tag1');
-            b.tags.should.include('tag2');
-
-            done();
-        });
-    });
-
-    describe('#RequestErrorFactory', function () {
-
-        it('adds the error to the request object', function (done) {
-
-            var b = new B();
-            var err = new Error('my message');
-            var req = {};
-            b.RequestErrorFactory(req)(err);
-
-            req.validationErrors.should.include('[ValidationError]: Error: my message');
-
-            done();
+                done();
+            });
         });
     });
 });
+

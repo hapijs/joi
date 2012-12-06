@@ -1,5 +1,4 @@
-joi
-===
+# joi
 
 Object schema validation
 

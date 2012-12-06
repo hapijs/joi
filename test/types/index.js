@@ -1,51 +1,66 @@
-var Types = process.env.TEST_COV ? require('../../lib-cov/types') : require('../../lib/types');
-var should = require("should");
+// Load modules
 
-describe("Types", function () {
+var Chai = require('chai');
+var Joi = process.env.TEST_COV ? require('../../lib-cov') : require('../../lib');
 
-    it("should have a String key", function (done) {
 
-        Types.String.should.exist;
+// Declare internals
+
+var internals = {};
+
+
+// Test shortcuts
+
+var expect = Chai.expect;
+
+
+describe('Types', function () {
+
+    it('should have a String key', function (done) {
+
+        expect(Joi.types.String).to.exist;
         done();
     });
 
-    it("should have a Number key", function (done) {
+    it('should have a Number key', function (done) {
 
-        Types.Number.should.exist;
+        expect(Joi.types.Number).to.exist;
         done();
     });
 
-    it("should have a Boolean key", function (done) {
+    it('should have a Boolean key', function (done) {
 
-        Types.Boolean.should.exist;
+        expect(Joi.types.Boolean).to.exist;
         done();
     });
 
-    it("should have an Array key", function (done) {
+    it('should have an Array key', function (done) {
 
-        Types.Array.should.exist;
+        expect(Joi.types.Array).to.exist;
         done();
     });
 
-    describe("#validate", function () {
+    describe('#validate', function () {
 
-        it("should validate a string value on an object", function (done) {
+        it('should validate a string value on an object', function (done) {
 
             var object = {
-                testme:"valid"
+                testme: 'valid'
             };
+
             var validator = function () {
+
                 return true;
             };
 
-            Types.validate("testme", "String", object, validator).should.equal(true);
+            expect(Joi.types.validate('testme', 'String', object, validator)).to.equal(true);
             done();
         });
 
-        it("should convert a value and validate it", function (done) {
+        it('should convert a value and validate it', function (done) {
 
             var object = {
-                testme: "1"
+                testme: '1'
             };
 
             var validator = function (val) {
@@ -53,14 +68,14 @@ describe("Types", function () {
                 return val;
             };
 
-            Types.validate("testme", "Number", object, validator).should.equal(1);
+            expect(Joi.types.validate('testme', 'Number', object, validator)).to.equal(1);
             done();
         });
 
-        it("should use a placeholder when its provided", function (done) {
+        it('should use a placeholder when its provided', function (done) {
 
             var object = {
-                testme: "1"
+                testme: '1'
             };
 
             var placeholder = {};
@@ -70,8 +85,8 @@ describe("Types", function () {
                 return val;
             };
 
-            Types.validate("testme", "Number", object, validator, placeholder).should.equal(1);
-            placeholder.validationErrors.should.exist;
+            expect(Joi.types.validate('testme', 'Number', object, validator, placeholder)).to.equal(1);
+            expect(placeholder.validationErrors).to.exist;
             done();
         });
     });

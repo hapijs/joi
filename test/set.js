@@ -1,23 +1,36 @@
+// Load modules
+
+var Chai = require('chai');
+var Joi = process.env.TEST_COV ? require('../lib-cov') : require('../lib');
 var Set = process.env.TEST_COV ? require('../lib-cov/set') : require('../lib/set');
-var should = require('should');
+
+
+// Declare internals
+
+var internals = {};
+
+
+// Test shortcuts
+
+var expect = Chai.expect;
 
 
 describe('Set', function () {
 
     it('should throw an error when not using an array as the initial value', function (done) {
 
-        (function () {
+        expect(function () {
             var s = new Set('string');
-        }).should.throw();
+        }).to.throw;
 
         done();
     });
 
     it('should allow an array as the initial value', function (done) {
 
-        (function () {
+        expect(function () {
             var s = new Set([1, 2, 3]);
-        }).should.not.throw();
+        }).to.not.throw;
 
         done();
     });
@@ -29,9 +42,9 @@ describe('Set', function () {
             var s = new Set();
             s.add(1);
             s.add(2);
-            s.get().length.should.equal(2);
+            expect(s.get().length).to.equal(2);
             s.remove(2);
-            s.get().length.should.equal(1);
+            expect(s.get().length).to.equal(1);
             done();
         });
 
@@ -39,7 +52,7 @@ describe('Set', function () {
 
             var s = new Set();
             s.add(undefined)
-            s.has(undefined).should.equal(true);
+            expect(s.has(undefined)).to.equal(true);
             done();
         });
 
@@ -47,7 +60,7 @@ describe('Set', function () {
 
             var s = new Set();
             s.add([1, 2, 3]);
-            s.has([1, 2, 3]).should.equal(true);
+            expect(s.has([1, 2, 3])).to.equal(true);
             done();
         });
     });
@@ -60,9 +73,9 @@ describe('Set', function () {
             s.add(1);
             s.add(2);
             s.add(3);
-            s.valueOf().should.include(1);
-            s.valueOf().should.include(2);
-            s.valueOf().should.include(3);
+            expect(s.valueOf()).to.include(1);
+            expect(s.valueOf()).to.include(2);
+            expect(s.valueOf()).to.include(3);
             done();
         });
     });
@@ -75,9 +88,9 @@ describe('Set', function () {
             s.add(1);
             s.add(2);
             s.add(3);
-            s.toString().should.include(1);
-            s.toString().should.include(2);
-            s.toString().should.include(3);
+            expect(s.toString()).to.include(1);
+            expect(s.toString()).to.include(2);
+            expect(s.toString()).to.include(3);
             done();
         });
     });
@@ -92,7 +105,7 @@ describe('Set', function () {
             s.add(3);
             s.map(function (value) {
 
-                [1, 2, 3].should.include(value);
+                expect([1, 2, 3]).to.include(value);
             });
             done();
         });
