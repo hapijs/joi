@@ -1,1 +1,1 @@
-module.exports = require('./lib/joi');
+module.exports = require('./lib');

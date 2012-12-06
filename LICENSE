@@ -1,4 +1,4 @@
-Copyright (c) 2011-2012, Walmart.
+Copyright (c) 2012, Walmart.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -22,12 +22,3 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-                                  *   *   *
-
-
-Portions of this project were initially based on Postmile, Copyright (c) 2011, Yahoo Inc.
-Postmile is published at https://github.com/yahoo/postmile and its licensing terms are
-published at https://github.com/yahoo/postmile/blob/master/LICENSE.
-
