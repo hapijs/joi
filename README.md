@@ -27,50 +27,50 @@ Object schema validation
 
 # Introduction
 
-The **joi** validation system can be used to validate JavaScript objects by defining a rich descriptive schema.
-Schema validation is the process of ensuring that object keys match pre-specified expectations.
+The **joi** validation system is used to validate JavaScript objects based on a rich descriptive schema.
+Schema validation is the process of ensuring that objecta match pre-defined expectations.
 
 For example, the following schema:
 ```javascript
 var Joi = require('joi');
 
 var schema = {
-username: Joi.types.String().alphanum().min(3).max(30).with('birthyear').required(),
-password: Joi.types.String().regex(/[a-zA-Z0-9]{3,30}/).without('access_token'),
-access_token: Joi.types.String(),
-birthyear: Joi.types.Number().min(1850).max(2012),
-email: Joi.types.String().email()
+    username: Joi.types.String().alphanum().min(3).max(30).with('birthyear').required(),
+    password: Joi.types.String().regex(/[a-zA-Z0-9]{3,30}/).without('access_token'),
+    access_token: Joi.types.String(),
+    birthyear: Joi.types.Number().min(1850).max(2012),
+    email: Joi.types.String().email()
 };
 ```
 
 defines these constraints:
 * 'username'
-* a required string
-* must contain only alphanumeric characters
-* at least 3 chars long but no more than 30
-* must be accompanied by 'birthyear' (logical AND)
+    * a required string
+    * must contain only alphanumeric characters
+    * at least 3 chars long but no more than 30
+    * must be accompanied by 'birthyear' (logical AND)
 * 'password'
-* an optional string
-* must satisfy the custom regex
-* cannot appear together with 'access_token'
+    * an optional string
+    * must satisfy the custom regex
+    * cannot appear together with 'access_token'
 * 'access_token'
-* an optional, unconstrained string
+    * an optional, unconstrained string
 * 'birthyear'
-* an integer between 1850 and 2012
+    * an integer between 1850 and 2012
 * 'email'
-* a valid email string
+    * a valid email address string
 
 The above constraints point out some non-obvious features:
 * Keys are optional by default
 * Strings are by default utf-8 encoded
 * relationships are defined in an additive fashion
-** "X.join(Y), Y.join(Z)" is the same as requiring all three to be present: "X AND Y AND Z"
-** Likewise "X.xor(Y), Y.xor(Z)" => requires that only one of three be present: "X XOR Y XOR Z"
+    * "X.join(Y), Y.join(Z)" is the same as requiring all three to be present: "X AND Y AND Z"
+    * Likewise "X.xor(Y), Y.xor(Z)" => requires that only one of three be present: "X XOR Y XOR Z"
 * .regex may or may not override other string-related constraints (.alphanum, .min, .max)
-** constraints are evaluated in order
+    ** constraints are evaluated in order
 * order of chained functions matter
-** ".min(0).max(100).min(1)" sets the min to 1, overwriting the result of the first min call
-** if ".regex(/[a-z]{0,3}/)" and ".max(50)" both supplied, only the overlap is valid (length 3 or less = valid)
+    ** ".min(0).max(100).min(1)" sets the min to 1, overwriting the result of the first min call
+    ** if ".regex(/[a-z]{0,3}/)" and ".max(50)" both supplied, only the overlap is valid (length 3 or less = valid)
 
 
 # Type Registry
@@ -78,38 +78,43 @@ The above constraints point out some non-obvious features:
 The Types object is pre-populated with a mutable list of JavaScript's valid data types. However, for convenience, the registry also includes subset helpers (marked with #):
 
 * String
+    * Date # String.date()
+    * Email # String.email()
 * Number
+    * Int # Number.integer()
+    * Float # Number.float()
 * Boolean
 * Array
 * Object
 * Function
-* Int # Number.integer()
-* Float # Number.float()
-* Date # String.date()
-* Email # String.email()
 
 Note that the Int is just Number with the integer constraint already applied. Any custom, user-defined data type is derived from one of the base types (although it may also combine additional types for sub-elements). Thus, there are two valid ways of creating your own types.
 
 The first method is to add the type directly to the Type Registry. This makes the new type explicitly available as a base Type.
 
-var IntDef = _.extends({}, Number, function(){
-// Constructor
-return this.integer();
+```javascript
+var IntDef = _.extends({}, Number, function () {
+
+    // Constructor
+    return this.integer();
 });
+
 Types.set("Int", IntDef);
 var Int = Types.Int;
+```
 
 The second, simpler, and more acceptable method is to alias the new Type within the config file.
 
+```javascript
 var PositiveInt = Number().integer().min(0)
 PositiveInt.max(999999);
+```
 
 Thus, subsequent calls to the new "type" will behave as fully registered types in much less code.
 
 *Note: The first method may eventually be deprecated. Then, the Type Registry becomes non-mutable which simplies the logic significantly.*
 
 *Note: See "Reference A" before suggesting a pre-included Type for the Type Registry.*
-
 
 
 ## Constraints
@@ -120,8 +125,13 @@ By default, all without explicit constraints, Types are optional.
 
 ### Implementation
 
-TODO: Show example function definition (to show logical uniformity between constraints and chainability)
+```javascript
+var schema = {
+    username: Joi.types.String().min(6).max(30).allow('admin').deny('Administrator'),
+};
+```
 
+The above example demonstrates that even though the username has a minimum length of 6 extra constraints can be appended that allow 'admin' to be used as a username.  Likewise, even though Administrator would be allowed by the other constraints, it is explicitly denied by the _'deny'_ constraint.
 
 ### By Type
 
@@ -135,7 +145,7 @@ Specifies that the input may not be undefined (unspecified).
 
 ##### BaseType.allow(value)
 
-Specifies that the input may equal this value.
+Specifies that the input may equal this value.  This is type specific, so you cannot allow a number on a string type and vice-versa.
 
 This function is idempotent.
 
@@ -185,13 +195,15 @@ Specifies that the value is allowed to be null.
 
 Specifies a key to rename the current parameter to.
 
-Options takes the form of an object with the follow default values:
+Options take the form of an object with the follow default values:
 
+```json
 {
-deleteOrig: false,
-allowMult: false,
-allowOverwrite: false
+    deleteOrig: false,
+    allowMult: false,
+    allowOverwrite: false
 }
+```
 
 The option "deleteOrig" specifies whether or not to delete the original key of the param (effectively a permanent "move").
 
@@ -291,13 +303,13 @@ Boolean values accept a case-insensitive string parameter. If the value is "true
 
 **Note**
 Array values take the querystring form of
-
+```
 ?cars=1&cars=2
-
+```
 and get converted to
-
+```
     { cars: [ '1', '2' ] }
-
+```
 by the server.
 
 *Note: Array has no special methods other than those inherited from BaseType*
@@ -317,28 +329,30 @@ Specifies allowed types for the array value to exclude. The values of n1, n2, ..
 *Note: Object has no special methods other than those inherited from BaseType*
 
 
-
-
 ## Usage
 
 ### Config Syntax
 
 In Hapi's routes configuration array, the routes are listed as JavaScript objects. Route objects may include an optional "query" key, the value of which should be an object. This object should associate querystring input names to validation constraints.
 
+```javascript
     var queryObj = {
       input_name: constraints
-    }
+    };
+```
 
 In the above code example, "input_name" must conform to typical JavaScript object key constraints (no spaces, no quotes unless escaped and surrounded by quotes, etc).
 
 In place of "constraints", there should be a combination of constraints. The combination of constraints must be formed starting from a valid base type. The base type may be followed by zero or more pre-defined constraint functions chained consecutively. These combinations can be pre-combined into "alias" variables that may also be followed by zero or more pre-defined constraint functions chained consecutively. An example is shown below:
 
+```javascript
     Base().constraint_one().constraint_two()...
     
     BaseAlias = Base().constraint()
     BaseAlias.constraint_one().constraint_two()...
+```
 
-Constraint functions may accept optional and arbitrary parameters. 
+Constraint functions may accept optional and arbitrary parameters.
 
 Every call must have its own `Base()` prefix. This creates a new validation object. Otherwise, it will retain settings from any prior constraints.
 
@@ -365,8 +379,8 @@ TODO: with/without rules
 
 Yet, in another case, a prior constraint may overrule a subsequent constraint:
 
-    Types.String().max(5).max(10) # This input cannot be larger than 5 characters
-    Types.String().max(3).regex(/.{0,5}/) # This input cannot be larger than 3 characters
+    ```Types.String().max(5).max(10)``` # This input cannot be larger than 5 characters
+    ```Types.String().max(3).regex(/.{0,5}/)``` # This input cannot be larger than 3 characters
 
 This should apply to all other constraints that do not override.
 
