@@ -152,7 +152,8 @@ describe('Joi.types.String', function () {
             var t = S().min(0);
             verifyBehavior(t, [
                 ['0', true],
-                [null, false]
+                [null, false],
+                [undefined, false]
             ], done);
         });
 
