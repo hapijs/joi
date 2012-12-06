@@ -51,6 +51,77 @@ describe('#validate', function () {
             done();
         });
     });
+
+    it('should work when the skipFunctions setting is enabled', function (done) {
+
+        Joi.settings.skipFunctions = true;
+        var schema = { username: Joi.types.String() };
+        var input = { username: 'test', func: function() { } };
+
+        Joi.validate(input, schema, function (err) {
+
+            expect(err).to.not.exist;
+            Joi.settings.skipFunctions = false;
+            done();
+        });
+    });
+
+    it('should work when the skipFunctions setting is disabled', function (done) {
+
+        Joi.settings.skipFunctions = false;
+        var schema = { username: Joi.types.String() };
+        var input = { username: 'test', func: function() { } };
+
+        Joi.validate(input, schema, function (err) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
+    it('should work when the saveConversions setting is enabled', function (done) {
+
+        Joi.settings.saveConversions = true;
+        var schema = { item: Joi.types.Number() };
+        var input = { item: '1' };
+
+        Joi.validate(input, schema, function (err) {
+
+            expect(err).to.not.exist;
+            expect(input.item).to.equal(1);
+            Joi.settings.saveConversions = false;
+            done();
+        });
+    });
+
+    it('should work when the saveConversions setting is disabled', function (done) {
+
+        Joi.settings.saveConversions = false;
+        var schema = { item: Joi.types.Number() };
+        var input = { item: '1' };
+
+        Joi.validate(input, schema, function (err) {
+
+            expect(err).to.not.exist;
+            expect(input.item).to.equal('1');
+            done();
+        });
+    });
+
+    it('should display correct processed pluralization messsage when skipFunctions is enabled', function (done) {
+
+        Joi.settings.skipFunctions = true;
+        var schema = { username: Joi.types.String() };
+        var input = { username: 'test', item1: 'test', 'item2': 'test' };
+
+        Joi.validate(input, schema, function (err) {
+
+            expect(err).to.exist;
+            expect(err.message).to.contain('keys');
+            Joi.settings.skipFunctions = false;
+            done();
+        });
+    });
 });
 
 
