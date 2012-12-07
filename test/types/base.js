@@ -1,216 +1,234 @@
-var should = require("should");
+// Load modules
 
-var Types = process.env.TEST_COV ? require('../../lib-cov/types') : require('../../lib/types');
-var BaseType = Types.Base;
-var Utils = require("../../lib/utils");
-var sys = require("sys");
+var Chai = require('chai');
+var Joi = process.env.TEST_COV ? require('../../lib-cov') : require('../../lib');
 
-describe("types/base.js", function () {
-    describe("BaseType", function () {
-        it('should', function (done) {
-            var B = new BaseType();
-            var r = B.allow(undefined);
-            // console.log("after allow", r);
-            done();
-        })
-    })
-})
 
-// describe("BaseType", function(){
-//   describe("#_required", function(){
-//     it('should return true if non-null input is given and required', function(done){
-//       var base = new BaseType();
-//       var result = base._required()("walmart");
-//       should.exist(result);
-//       result.should.equal(true);
-//       done();
-//     })
+// Declare internals
 
-//     it('should return true if null input is given and allowNull is true', function(done){
-//       var base = new BaseType();
-//       var result = base._required(true)(null);
-//       should.exist(result);
-//       result.should.equal(true);
-//       done();
-//     })
+var internals = {};
 
-//     it('should return false if null input is given and allowNull is false', function(done){
-//       var base = new BaseType();
-//       var result = base._required(false)(null);
-//       should.exist(result);
-//       result.should.equal(false);
-//       done();
-//     })
 
-//     it('should return false if no input is given and allowNull is false', function(done){
-//       var base = new BaseType();
-//       var result = base._required(false)();
-//       should.exist(result);
-//       result.should.equal(false);
-//       done();
-//     })
-//   })
+// Test shortcuts
 
-//   describe("#_rename", function(){
-//     var key = "name";
-//     var key2 = "note";
-//     var key3 = "username";
-//     var qstr = {name: "van", note: "author"};
-//     var value = qstr[key];
-//     var value2 = qstr[key2];
+var expect = Chai.expect;
 
-//     it("should alias a variable with default options", function(done){
-//       var base = new BaseType();
-//       var validator = base._rename(key3);
-//       var q = Utils.clone(qstr);
-//       var result = validator(value, q, key);
 
-//       should.exist(q[key3]);
-//       q[key3].should.equal(value);
-//       done();
-//     })
+describe('Types', function () {
 
-//     it("should move variable if deleteOrig set", function(done){
-//       var base = new BaseType();
-//       var validator = base._rename(key3, {deleteOrig: true});
-//       var q = Utils.clone(qstr);
-//       var result = validator(value, q, key);
+    describe('Base', function () {
 
-//       should.exist(q[key3]);
-//       should.not.exist(q[key]);
-//       q[key3].should.equal(value);
-//       done();
-//     })
+        var B = Joi.types.Base;
 
-//     it("should overwrite existing variable if allowOverwrite set", function(done){
-//       var base = new BaseType();
-//       var key2 = "note";
-//       var validator = base._rename(key2, {allowOverwrite: true});
-//       var q = Utils.clone(qstr);
-//       var result = validator(value, q, key)
+        describe('#toString', function () {
 
-//       should.exist(q[key2]);
-//       q[key2].should.equal(value);
-//       q[key].should.equal(value);
-//       done();
-//     })
+            it('should return JSON string of values', function (done) {
 
-//     it("should not overwrite existing variable if allowOverwrite not set", function(done){
-//       var base = new BaseType();
-//       var validator = base._rename(key2, {allowOverwrite: false});
-//       var q = Utils.clone(qstr);
-//       var result = validator(value, q, key);
+                var b = new B().valid('test');
 
-//       should.exist(result);
-//       result.should.equal(false);
+                expect(b.toString()).to.include('test');
+                done();
+            });
+        });
 
-//       should.exist(q[key2]);
-//       q[key2].should.equal(value2);
-//       q[key].should.equal(value); // Original value not deleted
-//       done();
-//     })
+        describe('#add', function () {
 
-//     it("should not allow two renames to set the same key if allowMult not set", function(done){
-//       var base = new BaseType();
-//       var q = Utils.clone(qstr);
-//       var validator = base._rename(key3, {allowMult: false})
-//       var result = validator(value, q, key);
+            it('should throw an error when null is passed in', function (done) {
 
-//       var validator = base._rename(key3, {allowMult: false})
-//       var result = validator(value2, q, key2);
+                expect(function () {
 
-//       result.should.equal(false);
+                    var b = new B();
+                    var result = b.add(null);
+                }).to.throw;
+                done();
+            });
 
-//       // first _rename will not be rolled back
-//       should.exist(q[key3]);
-//       q[key3].should.equal(value);
-//       done();
-//     })
-//   })
+            it('should not throw an error when valid values are provided', function (done) {
 
-//   describe("#description", function(){
-//     it('should set description', function(done){
-//       var value = "walmart";
-//       var base = new BaseType();
-//       var result;
-//       (function(){
-//         result = base.description(value);
-//       }).should.not.throw();
-//       should.exist(result);
-//       result.description.should.equal(value);
-//       done();
-//     })
+                expect(function () {
 
-//     it('should return error if description is not a string', function(done){
-//       var value = 1;
-//       var base = new BaseType();
-//       var result;
-//       (function(){
-//         result = base.description(value);
-//       }).should.throw();
-//       // should.exist(result);
-//       // result.description.should.equal(value);
-//       done();
-//     })
-//   })
+                    var b = new B();
+                    var result = b.add('test', true);
+                }).to.not.throw;
+                done();
+            });
+        });
 
-//   describe("#notes", function(){
-//     it('should set notes if given as string', function(done){
-//       var value = "walmart";
-//       var base = new BaseType();
-//       var result;
-//       (function(){
-//         result = base.notes(value);
-//       }).should.not.throw();
-//       should.exist(result);
-//       result.notes.should.equal(value);
-//       done();
-//     })
+        describe('#exists', function () {
 
-//     it('should set notes if given as array', function(done){
-//       var value = ["walmart", "@walmartlabs"];
-//       var base = new BaseType();
-//       var result;
-//       (function(){
-//         result = base.notes(value);
-//       }).should.not.throw();
-//       should.exist(result);
-//       result.notes.should.equal(value);
-//       done();
-//     })
+            it('should return false when null is passed in', function (done) {
 
-//     it('should return error if not given as string or array', function(done){
-//       var value = 1;
-//       var base = new BaseType();
-//       var result;
-//       (function(){
-//         result = base.notes(value);
-//       }).should.throw();
-//       done();
-//     })
-//   })
+                var b = new B();
+                var result = b.exists(null);
 
-//   describe("#tags", function(){
-//     it('should set tags if given as array', function(done){
-//       var value = ["walmart", "@walmartlabs"];
-//       var base = new BaseType();
-//       var result;
-//       (function(){
-//         result = base.tags(value);
-//       }).should.not.throw();
-//       should.exist(result);
-//       result.tags.should.equal(value);
-//       done();
-//     })
+                expect(result).to.equal(false);
+                done();
+            });
 
-//     it('should return error if not given as array', function(done){
-//       var value = 1;
-//       var base = new BaseType();
-//       var result;
-//       (function(){
-//         result = base.notes(value);
-//       }).should.throw();
-//       done();
-//     })
-//   })
-// })
+            it('should return true when passed true', function (done) {
+
+                var b = new B();
+                var result = b.exists(true);
+
+                expect(result).to.equal(true);
+                done();
+            });
+        });
+
+        describe('#with', function () {
+
+            it('should set related check', function (done) {
+
+                var b1 = new B();
+                var b2 = new B();
+                var result = b1.with(b2);
+
+                expect(result.__checks).to.include('with');
+                done();
+            });
+
+            it('should return false when related type not found', function (done) {
+
+                var b1 = new B();
+                var b2 = new B();
+                var result = b1.with(b2);
+
+                expect(result.validate('test')).to.equal(false);
+                done();
+            });
+
+            it('should return true when peers are null', function (done) {
+
+                var b1 = new B();
+                var result = b1._with(null);
+
+                expect(result(null)).to.equal(true);
+                done();
+            });
+        });
+
+        describe('#without', function () {
+
+            it('should set related check', function (done) {
+
+                var b1 = new B();
+                var b2 = new B();
+                var result = b1.without(b2);
+
+                expect(result.__checks).to.include('without');
+                done();
+            });
+
+            it('should return true when related type not found', function (done) {
+
+                var b1 = new B();
+                var b2 = new B();
+                var result = b1.without(b2);
+
+                expect(result.validate('test')).to.equal(true);
+                done();
+            });
+        });
+
+        describe('#rename', function () {
+
+            it('should rename the type', function (done) {
+
+                var b = new B();
+                var result = b.rename('test');
+
+                expect(result.validate('test')).to.equal(true);
+                done();
+            });
+
+            it('using allowMult enabled should allow renaming multiple times', function (done) {
+
+                var b = new B();
+                var result = b.rename('test1', { allowMult: true });
+
+                expect(result.validate({ test: true }, { test: true }, 'test', { add: function () { }, _renamed: { test1: true } })).to.equal(true);
+                done();
+            });
+
+            it('with allowMult disabled should not allow renaming multiple times', function (done) {
+
+                var b = new B();
+                var result = b.rename('test1', { allowMult: false });
+
+                expect(result.validate({ test: true }, { test: true }, 'test', { add: function () { }, _renamed: { test1: true } })).to.equal(false);
+                done();
+            });
+
+            it('with allowOverwrite disabled should not allow overwriting existing value', function (done) {
+
+                var b = new B();
+                var result = b.rename('test1', { allowOverwrite: false });
+
+                expect(result.validate({ test1: true }, { test1: true }, { test1: true })).to.equal(false);
+                done();
+            });
+
+            it('with allowOverwrite enabled should allow overwriting existing value', function (done) {
+
+                var b = new B();
+                var result = b.rename('test1', { allowOverwrite: true, deleteOrig: true });
+
+                expect(result.validate({ test1: true }, { test1: true }, { test1: true })).to.equal(true);
+                done();
+            });
+        });
+
+        describe('#description', function () {
+
+            it('sets the description', function (done) {
+
+                var b = new B();
+                b.description('my description');
+                expect(b.description).to.equal('my description');
+
+                done();
+            });
+        });
+
+        describe('#notes', function () {
+
+            it('sets the notes', function (done) {
+
+                var b = new B();
+                b.notes('my notes');
+                expect(b.notes).to.equal('my notes');
+
+                done();
+            });
+        });
+
+        describe('#tags', function () {
+
+            it('sets the tags', function (done) {
+
+                var b = new B();
+                b.tags(['tag1', 'tag2']);
+                expect(b.tags).to.include('tag1');
+                expect(b.tags).to.include('tag2');
+
+                done();
+            });
+        });
+
+        describe('#RequestErrorFactory', function () {
+
+            it('adds the error to the request object', function (done) {
+
+                var b = new B();
+                var err = new Error('my message');
+                var req = {};
+                b.RequestErrorFactory(req)(err);
+
+                expect(req.validationErrors).to.include('[ValidationError]: Error: my message');
+
+                done();
+            });
+        });
+    });
+});
+
