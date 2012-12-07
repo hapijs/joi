@@ -20,6 +20,7 @@ Object schema validation
 * [Usage](#usage "Usage")
   * [Config Syntax](#config-syntax "Config Syntax")
   * [Evaluation Order](#evaluation-order "Evaluation Order")
+* [Special Options](#special-options "Special Options")
 * [Security Considerations](#security-considerations "Security Considerations")
 * [References](#references "References")
   * [Reference A: Other Types](#reference-a-other-types "Reference A: Other Types")
@@ -396,6 +397,55 @@ Types.String().max(3).regex(/.{0,5}/) # This input cannot be larger than 3 chara
 ```
 
 This should apply to all other constraints that do not override.
+
+
+
+## Special Options
+
+Joi has special settings that will modify certain behaviors.
+
+### Global
+
+#### Skip Functions
+
+On occasion, an object must be validated which contains functions as properties. To force Joi to ignore validation on such functions, use the `skipFunctions` option:
+
+    Joi.settings.skipFunctions = true;
+
+
+#### Save Conversions
+
+Through the process of validation, some inputs will be converted to accommodate the various constraint functions. For example, if an input is of type Joi.Types.Number() but is defined as a string, the validator will convert to Number during validation. This does not persist and does not affect the original input.
+
+To force Joi to save the conversion, use the `saveConversions` option:
+
+    Joi.settings.saveConversions = true;
+
+
+### Type-Specific
+
+#### Short Circuit Breakout
+
+When validating an input for a specific type with lots of constraints, Joi will, by default, return error immediately upon the first error condition. In some rare cases, iterating through all of the constraint functions is actually ideal (to identify all the reasons why an input is invalid at once). To force Joi to evaluate all constraints, use the `shortCircuit` option:
+
+    var S = Joi.Types.String();
+    S.options.shortCircuit = false;
+    var schema = {
+      nickname: S().valid('Silly').min(2)
+    }
+    schema.nickname.validate('o', null, null, errors) // => populates errors with all failing constraints
+
+
+#### Non-Exclusive Valid
+
+The `.valid` constraint is currently exclusive - if the input is NOT one of the values passed to `.valid`, the validator returns false. In the event this is too strict, use the hidden `__allowOnly` option.
+
+    var S = Joi.Types.String();
+    S.__allowOnly = false;
+    var schema = {
+      username: S().valid('walmart')
+    }
+    schema.username.validate('test') // => this returns true
 
 
 
