@@ -1,5 +1,5 @@
 <a href="/walmartlabs/blammo"><img src="https://raw.github.com/walmartlabs/blammo/master/images/from.png" align="right" /></a>
-# joi
+![joi Logo](https://raw.github.com/walmartlabs/joi/master/images/joi.png)
 
 Object schema validation
 
@@ -28,6 +28,7 @@ Object schema validation
 
 # Introduction
 
+<img src="https://raw.github.com/walmartlabs/joi/master/images/validation.png" align="right" />
 The **joi** validation system is used to validate JavaScript objects based on a rich descriptive schema.
 Schema validation is the process of ensuring that objecta match pre-defined expectations.
 
