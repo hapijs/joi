@@ -8,6 +8,7 @@ Object schema validation
 
 # Table of Contents
 
+<img src="https://raw.github.com/walmartlabs/joi/master/images/validation.png" align="right" />
 * [Introduction](#introduction "Introduction")
 * [Type Registry](#type-registry "Type Registry")
 * [Constraints](#constraints "Constraints")
@@ -28,7 +29,6 @@ Object schema validation
 
 # Introduction
 
-<img src="https://raw.github.com/walmartlabs/joi/master/images/validation.png" align="right" />
 The **joi** validation system is used to validate JavaScript objects based on a rich descriptive schema.
 Schema validation is the process of ensuring that objecta match pre-defined expectations.
 
