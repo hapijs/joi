@@ -23,6 +23,7 @@ Object schema validation
   * [Evaluation Order](#evaluation-order "Evaluation Order")
 * [Special Options](#special-options "Special Options")
 * [Security Considerations](#security-considerations "Security Considerations")
+* [Examples](#examples "Examples")
 * [References](#references "References")
   * [Reference A: Other Types](#reference-a-other-types "Reference A: Other Types")
 
@@ -74,6 +75,14 @@ The above constraints point out some non-obvious features:
     ** ".min(0).max(100).min(1)" sets the min to 1, overwriting the result of the first min call
     ** if ".regex(/[a-z]{0,3}/)" and ".max(50)" both supplied, only the overlap is valid (length 3 or less = valid)
 
+Below is an example of how to validate an object against the above schema:
+
+```javascript
+Joi.validate(obj, schema, function (err) {
+
+    // err will be set if the object failed to validate against the schema
+});
+```
 
 # Type Registry
 
@@ -454,7 +463,59 @@ The `.valid` constraint is currently exclusive - if the input is NOT one of the 
 
 Encodings could potentially play a role in security - some strings in one encoding, when exec()'d in another encoding could execute malicious code. If this type of validation is enabled, it will likely provide little to no explicit protection for developers. Developers could unintentionally (and even worse, unknowingly) expose a significant security risk.
 
+## Examples
 
+### Validating username and password
+
+```javascript
+var Joi = require('joi');
+
+var schema = {
+    username: Joi.types.String().alphanum().min(3).max(30).required(),
+    password: Joi.types.String().regex(/[a-zA-Z0-9]{3,30}/).required(),
+};
+
+var invalidObj = { username: 'roger' };
+var validObj = { username: 'roger', password: 'pa55word' };
+
+Joi.validate(invalidObj, schema, function (err) {
+
+    if (err) throw err;
+});
+
+Joi.validate(validObj, schema, function (err) {
+
+    if (err) throw err;
+});
+```
+
+Executing the above code outputs the following:
+```
+Error: [ValidationError]: the value of `password` is not allowed to be undefined
+```
+
+### Validating a number
+
+```javascript
+var Joi = require('joi');
+
+var schema = {
+    num: Joi.types.Number().required()
+};
+
+var obj = { num: '1' };
+
+Joi.validate(obj, schema, function (err) {
+
+    if (err) throw err;
+    else console.log('Success!');
+});
+```
+
+Executing the above code outputs the following:
+```
+Success!
+```
 
 ## References
 ### Reference A: Other Types
