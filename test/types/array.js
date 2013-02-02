@@ -155,6 +155,21 @@ describe('Types', function () {
                     ]
                 ], done);
             });
+
+            it('should validate when conform is used', function (done) {
+
+                var t = A().conform(function (value) {
+                    var sum = value.reduce(function (p, c) {
+                      return p + c;
+                    });
+                    return sum > 10;
+                });
+
+                verifyBehavior(t, [
+                    [[1, 2, 3, 4], false],
+                    [[5, 6, 7, 8], true]
+                ], done);
+            });
         });
 
         describe('#_exclude', function () {
