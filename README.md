@@ -202,6 +202,12 @@ Specifies an arbitrary number of inputs that cannot exist alongside this input (
 
 Specifies that the value is allowed to be null.
 
+##### BaseType.conform(function (value) { ... })
+
+Specifies that the value conforms to the given function.
+
+*Note: The function should return either true or false*
+
 ##### BaseType.rename(to[, options])
 
 Specifies a key to rename the current parameter to.
