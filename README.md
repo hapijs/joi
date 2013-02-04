@@ -1,5 +1,5 @@
-<a href="/walmartlabs/blammo"><img src="https://raw.github.com/walmartlabs/blammo/master/images/from.png" align="right" /></a>
-![joi Logo](https://raw.github.com/walmartlabs/joi/master/images/joi.png)
+<a href="https://github.com/walmartlabs/blammo"><img src="https://raw.github.com/walmartlabs/blammo/master/images/from.png" align="right" /></a>
+![joi Logo](/images/joi.png)
 
 Object schema validation
 
@@ -8,7 +8,7 @@ Object schema validation
 
 # Table of Contents
 
-<img src="https://raw.github.com/walmartlabs/joi/master/images/validation.png" align="right" />
+<img src="/images/validation.png" align="right" />
 * [Introduction](#introduction "Introduction")
 * [Type Registry](#type-registry "Type Registry")
 * [Constraints](#constraints "Constraints")
