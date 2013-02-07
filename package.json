@@ -3,7 +3,7 @@
   "description": "Object schema validation",
   "version": "0.0.7",
   "author": "Van Nguyen <the.gol.effect@gmail.com>",
-  "contributors":[
+  "contributors": [
     "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)",
     "Wyatt Preul <wpreul@gmail.com>"
   ],
