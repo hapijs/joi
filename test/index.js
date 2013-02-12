@@ -22,6 +22,16 @@ describe('#validate', function () {
         c: Joi.types.String().email()
     };
 
+    var config2 = {
+        d: Joi.types.Number().min(3).max(6),
+        e: Joi.types.String().valid('d', 'e', 'f')
+    };
+
+    var configArray = [
+        config,
+        config2
+    ];
+
     it('should validate object successfully', function (done) {
 
         var obj = {
@@ -37,6 +47,35 @@ describe('#validate', function () {
         });
     });
 
+    it('should validate object successfully when config is an array', function (done) {
+
+        var obj = {
+            a: 1,
+            b: 'a',
+            c: 'joe@example.com'
+        };
+
+        Joi.validate(obj, configArray, function (err) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
+    it('should validate object successfully when config is an array and the first config fails', function (done) {
+
+        var obj = {
+            d: 4,
+            e: 'e'
+        };
+
+        Joi.validate(obj, configArray, function (err) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
     it('should fail validation', function (done) {
 
         var obj = {
@@ -46,6 +85,20 @@ describe('#validate', function () {
         };
 
         Joi.validate(obj, config, function (err) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
+    it('should fail validation when config is an array', function (done) {
+
+        var obj = {
+            a: 10,
+            b: 'a'
+        };
+
+        Joi.validate(obj, configArray, function (err) {
 
             expect(err).to.exist;
             done();
