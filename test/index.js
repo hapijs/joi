@@ -23,14 +23,14 @@ describe('#validate', function () {
     };
 
     var config2 = {
-        d: Joi.types.Number().min(3).max(6),
-        e: Joi.types.String().valid('d', 'e', 'f')
+        d: [Joi.types.String(), Joi.types.Boolean()],
+        e: [Joi.types.Number(), Joi.types.Object()]
     };
 
-    var configArray = [
-        config,
-        config2
-    ];
+    var config3 = {
+        f: [Joi.types.Number(), Joi.types.Boolean()],
+        g: [Joi.types.String(), Joi.types.Object()]
+    };
 
     it('should validate object successfully', function (done) {
 
@@ -47,29 +47,14 @@ describe('#validate', function () {
         });
     });
 
-    it('should validate object successfully when config is an array', function (done) {
+    it('should validate object successfully when config has an array of types', function (done) {
 
         var obj = {
-            a: 1,
-            b: 'a',
-            c: 'joe@example.com'
+            f: true,
+            g: 'test'
         };
 
-        Joi.validate(obj, configArray, function (err) {
-
-            expect(err).to.not.exist;
-            done();
-        });
-    });
-
-    it('should validate object successfully when config is an array and the first config fails', function (done) {
-
-        var obj = {
-            d: 4,
-            e: 'e'
-        };
-
-        Joi.validate(obj, configArray, function (err) {
+        Joi.validate(obj, config3, function (err) {
 
             expect(err).to.not.exist;
             done();
@@ -91,14 +76,28 @@ describe('#validate', function () {
         });
     });
 
-    it('should fail validation when config is an array', function (done) {
+    it('should fail validation when config is an array and fails', function (done) {
 
         var obj = {
             a: 10,
             b: 'a'
         };
 
-        Joi.validate(obj, configArray, function (err) {
+        Joi.validate(obj, config2, function (err) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
+    it('should fail validation when config is an array and fails along with conversion failing', function (done) {
+
+        var obj = {
+            d: 10,
+            e: 'a'
+        };
+
+        Joi.validate(obj, config2, function (err) {
 
             expect(err).to.exist;
             done();
