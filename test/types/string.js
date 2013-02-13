@@ -153,7 +153,7 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
-        it('should hanble array arguments correctly', function(done) {
+        it('should handle array arguments correctly', function(done) {
 
             var t = S().valid(['a', 'b', 'c']);
             verifyBehavior(t, [
