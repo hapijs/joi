@@ -32,6 +32,12 @@ describe('#validate', function () {
         g: [Joi.types.String(), Joi.types.Object()]
     };
 
+    var config4 = {
+        h: Joi.types.Number(),
+        i: Joi.types.String(),
+        j: Joi.types.Object().optional()
+    };
+
     it('should validate object successfully', function (done) {
 
         var obj = {
@@ -55,6 +61,20 @@ describe('#validate', function () {
         };
 
         Joi.validate(obj, config3, function (err) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
+    it('should validate object successfully when config allows for optional key and key is missing', function (done) {
+
+        var obj = {
+            h: 12,
+            i: 'test'
+        };
+
+        Joi.validate(obj, config4, function (err) {
 
             expect(err).to.not.exist;
             done();
