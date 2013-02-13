@@ -153,6 +153,16 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle array arguments correctly', function(done) {
+
+            var t = S().valid(['a', 'b', 'c']);
+            verifyBehavior(t, [
+                ['x', false],
+                ['a', true],
+                ['c', true]
+            ], done);
+        });
+
         it('should validate minimum length when min is used', function (done) {
 
             var t = S().min(3);

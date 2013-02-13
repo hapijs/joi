@@ -47,10 +47,19 @@ describe('Types', function () {
                 done();
             });
 
-            it('should convert a non-array string', function (done) {
+            it('should convert a non-array string with number type', function (done) {
 
                 var result = A().convert('3');
                 expect(result.length).to.equal(1);
+                expect(result[0]).to.equal('3');
+                done();
+            });
+
+            it('should convert a non-array string', function(done) {
+
+                var result = A().convert('asdf');
+                expect(result.length).to.equal(1);
+                expect(result[0]).to.equal('asdf');
                 done();
             });
         });
