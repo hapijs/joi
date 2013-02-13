@@ -22,6 +22,22 @@ describe('#validate', function () {
         c: Joi.types.String().email()
     };
 
+    var config2 = {
+        d: [Joi.types.String(), Joi.types.Boolean()],
+        e: [Joi.types.Number(), Joi.types.Object()]
+    };
+
+    var config3 = {
+        f: [Joi.types.Number(), Joi.types.Boolean()],
+        g: [Joi.types.String(), Joi.types.Object()]
+    };
+
+    var config4 = {
+        h: Joi.types.Number(),
+        i: Joi.types.String(),
+        j: Joi.types.Object().optional()
+    };
+
     it('should validate object successfully', function (done) {
 
         var obj = {
@@ -37,6 +53,34 @@ describe('#validate', function () {
         });
     });
 
+    it('should validate object successfully when config has an array of types', function (done) {
+
+        var obj = {
+            f: true,
+            g: 'test'
+        };
+
+        Joi.validate(obj, config3, function (err) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
+    it('should validate object successfully when config allows for optional key and key is missing', function (done) {
+
+        var obj = {
+            h: 12,
+            i: 'test'
+        };
+
+        Joi.validate(obj, config4, function (err) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
     it('should fail validation', function (done) {
 
         var obj = {
@@ -46,6 +90,34 @@ describe('#validate', function () {
         };
 
         Joi.validate(obj, config, function (err) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
+    it('should fail validation when config is an array and fails', function (done) {
+
+        var obj = {
+            a: 10,
+            b: 'a'
+        };
+
+        Joi.validate(obj, config2, function (err) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
+    it('should fail validation when config is an array and fails along with conversion failing', function (done) {
+
+        var obj = {
+            d: 10,
+            e: 'a'
+        };
+
+        Joi.validate(obj, config2, function (err) {
 
             expect(err).to.exist;
             done();
