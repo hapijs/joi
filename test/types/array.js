@@ -40,6 +40,13 @@ describe('Types', function () {
                 done();
             });
 
+            it('should convert a non-array string to an array', function (done) {
+
+                var result = A().convert('{ "something": false }');
+                expect(result.length).to.equal(1);
+                done();
+            });
+
             it('should return a non array', function (done) {
 
                 var result = A().convert(3);
