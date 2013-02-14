@@ -12,6 +12,7 @@ var internals = {};
 // Test shortcuts
 
 var expect = Chai.expect;
+var T = Joi.Types;
 
 
 describe('#validate', function () {
@@ -194,6 +195,45 @@ describe('#validate', function () {
             done();
         });
     });
+
+    it('should work with null options', function (done) {
+
+        var schema = { item: Joi.types.Number() };
+        var input = { item: '1' };
+
+        Joi.validate(input, schema, null, function (err) {
+
+            expect(err).to.not.exist;
+            expect(input.item).to.equal('1');
+            done();
+        });
+    });
+
+    it('should fail validation when a child object has an invalid string value but object traversal isn\'t complete', function (done) {
+
+        var input = { method: 'GET', path: '/', config: { payload: 'something' } };
+
+        Joi.validate(input, internals.routeSchema, function (err) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
+    internals.routeSchema = {
+        method: T.String().invalid('head').required(),
+        path: T.String().required(),
+        handler: [T.Object().optional(), T.Function().optional(), T.String().valid('notFound').optional()],
+        config: T.Object({
+            handler: [T.Object().optional(), T.Function().optional(), T.String().valid('notFound').optional()],
+            payload: T.String().valid(['stream', 'raw', 'parse']).optional(),
+            response: T.Object({
+                schema: T.Object().nullOk().optional(),
+                sample: T.Number().optional(),
+                failAction: T.String().optional().valid(['error', 'log', 'ignore'])
+            }).optional()
+        })
+    };
 });
 
 
