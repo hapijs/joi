@@ -1,8 +1,8 @@
 // Load modules
 
 var Chai = require('chai');
-var Joi = process.env.TEST_COV ? require('../../lib-cov') : require('../../lib');
-var Object = process.env.TEST_COV ? require('../../lib-cov/types/object') : require('../../lib/types/object');
+var Joi = require('../../lib');
+var Object = require('../../lib/types/object');
 var Support = require('../support/meta');
 
 

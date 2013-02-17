@@ -1,8 +1,8 @@
 // Load modules
 
 var Chai = require('chai');
-var Joi = process.env.TEST_COV ? require('../lib-cov') : require('../lib');
-var Set = process.env.TEST_COV ? require('../lib-cov/set') : require('../lib/set');
+var Joi = require('../lib');
+var Set = require('../lib/set');
 
 
 // Declare internals

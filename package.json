@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "author": "Van Nguyen <the.gol.effect@gmail.com>",
   "contributors": [
     "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)",
@@ -14,17 +14,21 @@
     "validation"
   ],
   "engines": {
-    "node": ">=0.8.0"
+    "node": "0.8.x"
   },
   "dependencies": {
     "hoek": "0.4.x"
   },
   "devDependencies": {
     "mocha": "1.x.x",
-    "chai": "1.0.x"
+    "chai": "1.x.x",
+    "blanket": "1.0.x",
+    "travis-cov": "0.2.x"
   },
   "scripts": {
-    "test": "make test && make unit"
+    "test": "make test && make test-cov",
+    "blanket": { "pattern": "//^((?!\/node_modules\/)(?!\/test\/).)*$/ig", "onlyCwd": true, "data-cover-flags": { "branchTracking": true } },
+    "travis-cov": { "threshold": 100 }
   },
   "licenses": [
     {
