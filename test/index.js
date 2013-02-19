@@ -97,11 +97,12 @@ describe('#validate', function () {
         });
     });
 
+
     it('should fail validation when config is an array and fails', function (done) {
 
         var obj = {
-            a: 10,
-            b: 'a'
+            d: 10,
+            e: 'a'
         };
 
         Joi.validate(obj, config2, function (err) {
@@ -111,11 +112,11 @@ describe('#validate', function () {
         });
     });
 
-    it('should fail validation when config is an array and fails along with conversion failing', function (done) {
+    it('should fail validation when config is an array and fails with extra keys', function (done) {
 
         var obj = {
-            d: 10,
-            e: 'a'
+            a: 10,
+            b: 'a'
         };
 
         Joi.validate(obj, config2, function (err) {
@@ -190,21 +191,7 @@ describe('#validate', function () {
         Joi.validate(input, schema, function (err) {
 
             expect(err).to.exist;
-            expect(err.message).to.contain('keys');
             Joi.settings.skipFunctions = false;
-            done();
-        });
-    });
-
-    it('should work with null options', function (done) {
-
-        var schema = { item: Joi.types.Number() };
-        var input = { item: '1' };
-
-        Joi.validate(input, schema, null, function (err) {
-
-            expect(err).to.not.exist;
-            expect(input.item).to.equal('1');
             done();
         });
     });
