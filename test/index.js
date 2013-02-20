@@ -97,6 +97,32 @@ describe('#validate', function () {
         });
     });
 
+    it('should fail validation when missing a required parameter', function (done) {
+
+        var obj = {
+            c: 10
+        };
+
+        Joi.validate(obj, { a: Joi.types.String().required() }, function (err) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
+    it('should fail validation when missing a required parameter within an object config', function (done) {
+
+        var obj = {
+            a: { }
+        };
+
+        Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) }, function (err) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
 
     it('should fail validation when config is an array and fails', function (done) {
 
