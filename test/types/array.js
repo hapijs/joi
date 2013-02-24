@@ -118,6 +118,22 @@ describe('Types', function () {
                 ], done);
             });
 
+            it('should allow types to be excluded', function (done) {
+
+                var validator = A().excludes(N());
+
+                var n = [1, 2, 'hippo'];
+                var result = validator.validate(n);
+
+                expect(result).to.equal(false);
+
+                var m = ['x', 'y', 'z'];
+                var result2 = validator.validate(m);
+
+                expect(result2).to.equal(true);
+                done();
+            });
+
             it('should validate array of Numbers', function (done) {
 
                 verifyBehavior(A().includes(N()), [
@@ -170,25 +186,6 @@ describe('Types', function () {
                         false
                     ]
                 ], done);
-            });
-        });
-
-        describe('#_exclude', function () {
-
-            it('should work', function (done) {
-
-                var validator = A()._excludes(N());
-
-                var n = [1, 2, 'hippo'];
-                var result = validator(n);
-
-                expect(result).to.equal(false);
-
-                var m = ['x', 'y', 'z'];
-                var result2 = validator(m);
-
-                expect(result2).to.equal(true);
-                done();
             });
         });
     });
