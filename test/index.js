@@ -233,6 +233,18 @@ describe('#validate', function () {
         });
     });
 
+    it('validation errors should provide an annotated message when making the error annotated', function (done) {
+
+        var input = { method: 'GET', path: '/', config: { payload: 'something' } };
+
+        Joi.validate(input, internals.routeSchema, function (err) {
+
+            err.annotated();
+            expect(err.message).to.contain('\u001b[0m');
+            done();
+        });
+    });
+
     internals.routeSchema = {
         method: T.String().invalid('head').required(),
         path: T.String().required(),

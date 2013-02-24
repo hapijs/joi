@@ -74,19 +74,25 @@ describe('Types', function () {
 
         it('should use a placeholder when its provided', function (done) {
 
+            var called = false;
             var object = {
                 testme: '1'
             };
 
-            var placeholder = {};
-
-            var validator = function (val) {
-
-                return val;
+            var placeholder = {
+                add: function () {
+                    called = true;
+                }
             };
 
-            expect(Joi.types.validate('testme', 'Number', object, validator, placeholder)).to.equal(1);
-            expect(placeholder.validationErrors).to.exist;
+            var validator = function (value, object, key, errors) {
+
+                errors.add();
+                return true;
+            };
+
+            expect(Joi.types.validate('testme', 'Number', object, validator, placeholder)).to.equal(true);
+            expect(called).to.be.true;
             done();
         });
     });

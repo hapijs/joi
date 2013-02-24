@@ -185,9 +185,10 @@ describe('Joi.types.String', function () {
 
         it('should return false with minimum length and a null value passed in', function (done) {
 
-            var t = S()._min(3);
-            expect(t(null)).to.equal(false);
-            done();
+            var t = S().min(3);
+            verifyBehavior(t, [
+                [null, false]
+            ], done);
         });
 
         it('nullOk overrides min length requirement', function (done) {
