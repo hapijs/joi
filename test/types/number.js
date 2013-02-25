@@ -361,7 +361,7 @@ describe('Number', function () {
             expect(N()._min).to.exist;
             done();
         });
-    })
+    });
 
     describe('#_min', function () {
 
@@ -375,20 +375,8 @@ describe('Number', function () {
                 expect(currentResult).to.equal(true);
             }
             done();
-        })
-
-        it('should invalidate on known invalid inputs', function (done) {
-
-            var inputs = [0, 1, 2, 3, 4];
-            var validator = N()._min(5);
-            for (var i in inputs) {
-                var currentResult = validator(inputs[i]);
-                expect(currentResult).to.exist;
-                expect(currentResult).to.equal(false);
-            }
-            done();
-        })
-    })
+        });
+    });
 
     describe('#max', function () {
 
@@ -414,18 +402,6 @@ describe('Number', function () {
                 var currentResult = validator(inputs[i]);
                 expect(currentResult).to.exist;
                 expect(currentResult).to.equal(true);
-            }
-            done();
-        });
-
-        it('should invalidate on known invalid inputs', function (done) {
-
-            var inputs = [5, 6, 7, 8];
-            var validator = N()._max(4);
-            for (var i in inputs) {
-                var currentResult = validator(inputs[i]);
-                expect(currentResult).to.exist;
-                expect(currentResult).to.equal(false);
             }
             done();
         });
