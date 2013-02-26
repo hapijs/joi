@@ -31,7 +31,7 @@ Object schema validation
 # Introduction
 
 The **joi** validation system is used to validate JavaScript objects based on a rich descriptive schema.
-Schema validation is the process of ensuring that objecta match pre-defined expectations.
+Schema validation is the process of ensuring that objects match pre-defined expectations.
 
 For example, the following schema:
 ```javascript
@@ -86,20 +86,15 @@ Joi.validate(obj, schema, function (err) {
 
 # Type Registry
 
-The Types object is pre-populated with a mutable list of JavaScript's valid data types. However, for convenience, the registry also includes subset helpers (marked with #):
+The Types object is pre-populated with a mutable list of JavaScript's valid data types. However, for convenience, the registry also includes subset helpers with common constraints already applied. For a list of helpers see the following sections...
 
-* String
-    * Date ```String.date()```
-    * Email ```String.email()```
-* Number
-    * Int ```Number.integer()```
-    * Float ```Number.float()```
-* Boolean
-* Array
-* Object
-* Function
+* [String](#string "String")
+* [Number](#number "Number")
+* [Boolean](#boolean "Boolean")
+* [Array](#array "Array")
+* [Object](#object "Object")
 
-Note that the Int is just Number with the integer constraint already applied. Any custom, user-defined data type is derived from one of the base types (although it may also combine additional types for sub-elements). Thus, there are two valid ways of creating your own types.
+Any custom, user-defined data type is derived from one of the base types (although it may also combine additional types for sub-elements). Thus, there are two valid ways of creating your own types.
 
 The first method is to add the type directly to the Type Registry. This makes the new type explicitly available as a base Type.
 
@@ -142,7 +137,7 @@ var schema = {
 };
 ```
 
-The above example demonstrates that even though the username has a minimum length of 6 extra constraints can be appended that allow 'admin' to be used as a username.  Likewise, even though Administrator would be allowed by the other constraints, it is explicitly denied by the _'deny'_ constraint.
+The above example demonstrates that even though the username has a minimum length of 6, extra constraints can be appended that allow 'admin' to be used as a username. Likewise, even though 'Administrator' would be allowed by the other constraints, it is explicitly denied by the _'deny'_ constraint.
 
 ### By Type
 
@@ -267,7 +262,7 @@ Specifies that this input is a valid email string.
 
 ##### String.date()
 
-Specifies that this input is a valid Date string (locale string but also accepts unix timestamp).
+Specifies that this input is a valid Date string (locale string but also accepts unix timestamp in milliseconds).
 
 ##### String.encoding(enc)
 
@@ -292,7 +287,7 @@ Specifies a minimum value for this input, inclusive.
 
 If n is not specified, it returns an Error.
 
-If n is not a positive integer, it returns an Error.
+If n is not an integer, it returns an Error.
 
 ##### Number.max(n)
 
@@ -300,7 +295,7 @@ Specifies a maximum value for this input, inclusive.
 
 If n is not specified, it returns an Error.
 
-If n is not a positive integer, it returns an Error.
+If n is not an integer, it returns an Error.
 
 
 #### Boolean
