@@ -1,14 +1,14 @@
-<a href="https://github.com/walmartlabs/blammo"><img src="https://raw.github.com/walmartlabs/blammo/master/images/from.png" align="right" /></a>
-![joi Logo](/images/joi.png)
+<a href="https://github.com/spumko"><img src="https://raw.github.com/spumko/spumko/master/images/from.png" align="right" /></a>
+![joi Logo](https://raw.github.com/spumko/joi/master/images/joi.png)
 
 Object schema validation
 
-[![Build Status](https://secure.travis-ci.org/walmartlabs/joi.png)](http://travis-ci.org/walmartlabs/joi)
+[![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 
 
 # Table of Contents
 
-<img src="/images/validation.png" align="right" />
+<img src="https://raw.github.com/spumko/joi/master/images/validation.png" align="right" />
 * [Introduction](#introduction "Introduction")
 * [Type Registry](#type-registry "Type Registry")
 * [Constraints](#constraints "Constraints")
