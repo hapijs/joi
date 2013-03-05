@@ -7,7 +7,7 @@
     "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)",
     "Wyatt Preul <wpreul@gmail.com>"
   ],
-  "repository": "git://github.com/walmartlabs/joi",
+  "repository": "git://github.com/spumko/joi",
   "main": "index",
   "keywords": [
     "schema",
@@ -33,7 +33,7 @@
   "licenses": [
     {
       "type": "BSD",
-      "url": "http://github.com/walmartlabs/joi/raw/master/LICENSE"
+      "url": "http://github.com/spumko/joi/raw/master/LICENSE"
     }
   ]
 }
