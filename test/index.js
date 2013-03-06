@@ -46,12 +46,10 @@ describe('#validate', function () {
             b: 'a',
             c: 'joe@example.com'
         };
+        var err = Joi.validate(obj, config);
 
-        Joi.validate(obj, config, function (err) {
-
-            expect(err).to.not.exist;
-            done();
-        });
+        expect(err).to.not.exist;
+        done();
     });
 
     it('should validate object successfully when config has an array of types', function (done) {
@@ -60,12 +58,10 @@ describe('#validate', function () {
             f: true,
             g: 'test'
         };
+        var err = Joi.validate(obj, config3);
 
-        Joi.validate(obj, config3, function (err) {
-
-            expect(err).to.not.exist;
-            done();
-        });
+        expect(err).to.not.exist;
+        done();
     });
 
     it('should validate object successfully when config allows for optional key and key is missing', function (done) {
@@ -74,12 +70,10 @@ describe('#validate', function () {
             h: 12,
             i: 'test'
         };
+        var err = Joi.validate(obj, config4);
 
-        Joi.validate(obj, config4, function (err) {
-
-            expect(err).to.not.exist;
-            done();
-        });
+        expect(err).to.not.exist;
+        done();
     });
 
     it('should fail validation', function (done) {
@@ -89,12 +83,10 @@ describe('#validate', function () {
             b: 'a',
             c: 'joe@example.com'
         };
+        var err = Joi.validate(obj, config);
 
-        Joi.validate(obj, config, function (err) {
-
-            expect(err).to.exist;
-            done();
-        });
+        expect(err).to.exist;
+        done();
     });
 
     it('should fail validation when missing a required parameter', function (done) {
@@ -102,12 +94,10 @@ describe('#validate', function () {
         var obj = {
             c: 10
         };
+        var err = Joi.validate(obj, { a: Joi.types.String().required() });
 
-        Joi.validate(obj, { a: Joi.types.String().required() }, function (err) {
-
-            expect(err).to.exist;
-            done();
-        });
+        expect(err).to.exist;
+        done();
     });
 
     it('should fail validation when missing a required parameter within an object config', function (done) {
@@ -115,12 +105,10 @@ describe('#validate', function () {
         var obj = {
             a: { }
         };
+        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
 
-        Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) }, function (err) {
-
-            expect(err).to.exist;
-            done();
-        });
+        expect(err).to.exist;
+        done();
     });
 
 
@@ -130,12 +118,10 @@ describe('#validate', function () {
             d: 10,
             e: 'a'
         };
+        var err = Joi.validate(obj, config2);
 
-        Joi.validate(obj, config2, function (err) {
-
-            expect(err).to.exist;
-            done();
-        });
+        expect(err).to.exist;
+        done();
     });
 
     it('should fail validation when config is an array and fails with extra keys', function (done) {
@@ -144,12 +130,10 @@ describe('#validate', function () {
             a: 10,
             b: 'a'
         };
+        var err = Joi.validate(obj, config2);
 
-        Joi.validate(obj, config2, function (err) {
-
-            expect(err).to.exist;
-            done();
-        });
+        expect(err).to.exist;
+        done();
     });
 
     it('should work when the skipFunctions setting is enabled', function (done) {
@@ -157,13 +141,11 @@ describe('#validate', function () {
         Joi.settings.skipFunctions = true;
         var schema = { username: Joi.types.String() };
         var input = { username: 'test', func: function() { } };
+        var err = Joi.validate(input, schema);
 
-        Joi.validate(input, schema, function (err) {
-
-            expect(err).to.not.exist;
-            Joi.settings.skipFunctions = false;
-            done();
-        });
+        expect(err).to.not.exist;
+        Joi.settings.skipFunctions = false;
+        done();
     });
 
     it('should work when the skipFunctions setting is disabled', function (done) {
@@ -171,12 +153,10 @@ describe('#validate', function () {
         Joi.settings.skipFunctions = false;
         var schema = { username: Joi.types.String() };
         var input = { username: 'test', func: function() { } };
+        var err = Joi.validate(input, schema);
 
-        Joi.validate(input, schema, function (err) {
-
-            expect(err).to.exist;
-            done();
-        });
+        expect(err).to.exist;
+        done();
     });
 
     it('should work when the saveConversions setting is enabled', function (done) {
@@ -184,14 +164,12 @@ describe('#validate', function () {
         Joi.settings.saveConversions = true;
         var schema = { item: Joi.types.Number() };
         var input = { item: '1' };
+        var err = Joi.validate(input, schema);
 
-        Joi.validate(input, schema, function (err) {
-
-            expect(err).to.not.exist;
-            expect(input.item).to.equal(1);
-            Joi.settings.saveConversions = false;
-            done();
-        });
+        expect(err).to.not.exist;
+        expect(input.item).to.equal(1);
+        Joi.settings.saveConversions = false;
+        done();
     });
 
     it('should work when the saveConversions setting is disabled', function (done) {
@@ -199,13 +177,11 @@ describe('#validate', function () {
         Joi.settings.saveConversions = false;
         var schema = { item: Joi.types.Number() };
         var input = { item: '1' };
+        var err = Joi.validate(input, schema);
 
-        Joi.validate(input, schema, function (err) {
-
-            expect(err).to.not.exist;
-            expect(input.item).to.equal('1');
-            done();
-        });
+        expect(err).to.not.exist;
+        expect(input.item).to.equal('1');
+        done();
     });
 
     it('should display correct processed pluralization messsage when skipFunctions is enabled', function (done) {
@@ -213,36 +189,30 @@ describe('#validate', function () {
         Joi.settings.skipFunctions = true;
         var schema = { username: Joi.types.String() };
         var input = { username: 'test', item1: 'test', 'item2': 'test' };
+        var err = Joi.validate(input, schema);
 
-        Joi.validate(input, schema, function (err) {
-
-            expect(err).to.exist;
-            Joi.settings.skipFunctions = false;
-            done();
-        });
+        expect(err).to.exist;
+        Joi.settings.skipFunctions = false;
+        done();
     });
 
     it('should fail validation when a child object has an invalid string value but object traversal isn\'t complete', function (done) {
 
         var input = { method: 'GET', path: '/', config: { payload: 'something' } };
+        var err = Joi.validate(input, internals.routeSchema);
 
-        Joi.validate(input, internals.routeSchema, function (err) {
-
-            expect(err).to.exist;
-            done();
-        });
+        expect(err).to.exist;
+        done();
     });
 
     it('validation errors should provide an annotated message when making the error annotated', function (done) {
 
         var input = { method: 'GET', path: '/', config: { payload: 'something' } };
+        var err = Joi.validate(input, internals.routeSchema);
 
-        Joi.validate(input, internals.routeSchema, function (err) {
-
-            err.annotated();
-            expect(err.message).to.contain('\u001b[0m');
-            done();
-        });
+        err.annotated();
+        expect(err.message).to.contain('\u001b[0m');
+        done();
     });
 
     internals.routeSchema = {
