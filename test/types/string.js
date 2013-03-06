@@ -246,6 +246,17 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should validate email with a friendly error message', function (done) {
+
+            var schema = { item: S().email() };
+
+            Joi.validate({ item: 'something' }, schema, function (err) {
+
+                expect(err.message).to.contain('must be a valid email');
+                done();
+            });
+        });
+
         it('should validate date', function (done) {
 
             var t = S().date();
