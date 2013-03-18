@@ -1,6 +1,6 @@
 // Load modules
 
-var Chai = require('chai');
+var Lab = require('lab');
 var Joi = require('../../lib');
 var Support = require('../support/meta');
 
@@ -12,7 +12,11 @@ var internals = {};
 
 // Test shortcuts
 
-var expect = Chai.expect;
+var expect = Lab.expect;
+var before = Lab.before;
+var after = Lab.after;
+var describe = Lab.experiment;
+var it = Lab.test;
 var verifyBehavior = Support.verifyValidatorBehavior;
 
 
@@ -233,6 +237,15 @@ describe('Joi.types.String', function () {
             verifyBehavior(t, [
                 ['w0rld of w4lm4rtl4bs', false],
                 ['w0rldofw4lm4rtl4bs', true],
+                ['abcd#f?h1j orly?', false]
+            ], done);
+        });
+
+        it('should validate alphanum when allow spaces is null', function (done) {
+
+            var t = S().alphanum(null);
+            verifyBehavior(t, [
+                ['w0rld of w4lm4rtl4bs', true],
                 ['abcd#f?h1j orly?', false]
             ], done);
         });

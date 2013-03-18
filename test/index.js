@@ -1,6 +1,6 @@
 // Load modules
 
-var Chai = require('chai');
+var Lab = require('lab');
 var Joi = require('../lib');
 
 
@@ -11,7 +11,11 @@ var internals = {};
 
 // Test shortcuts
 
-var expect = Chai.expect;
+var expect = Lab.expect;
+var before = Lab.before;
+var after = Lab.after;
+var describe = Lab.experiment;
+var it = Lab.test;
 var T = Joi.Types;
 
 
@@ -49,6 +53,19 @@ describe('#validate', function () {
         var err = Joi.validate(obj, config);
 
         expect(err).to.not.exist;
+        done();
+    });
+
+    it('should validate null', function (done) {
+
+        var obj = {
+            a: 1,
+            b: 'a',
+            c: 'joe@example.com'
+        };
+        var err = Joi.validate(null, config);
+
+        expect(err).to.exist;
         done();
     });
 

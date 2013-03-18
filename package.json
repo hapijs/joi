@@ -20,15 +20,11 @@
     "hoek": "0.6.x"
   },
   "devDependencies": {
-    "mocha": "1.x.x",
-    "chai": "1.x.x",
-    "blanket": "1.0.x",
-    "travis-cov": "0.2.x"
+    "lab": "0.0.x",
+    "complexity-report": "0.x.x"
   },
   "scripts": {
-    "test": "make test && make test-cov",
-    "blanket": { "pattern": "//^((?!\/node_modules\/)(?!\/test\/).)*$/ig", "onlyCwd": true, "data-cover-flags": { "branchTracking": true } },
-    "travis-cov": { "threshold": 100 }
+    "test": "make test-cov"
   },
   "licenses": [
     {
