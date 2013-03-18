@@ -44,8 +44,13 @@ describe('#validate', function () {
     };
 
     var config5 = {
-        txt: Joi.types.String().exclusive('upc'),
-        upc: Joi.types.String().exclusive('txt')
+        txt: Joi.types.String().xor('upc'),
+        upc: Joi.types.String().xor('txt')
+    };
+
+    var config6 = {
+        txt: Joi.types.String().required().without('upc'),
+        upc: Joi.types.String().required().without('txt')
     };
 
     it('should validate object successfully', function (done) {
@@ -69,7 +74,7 @@ describe('#validate', function () {
         done();
     });
 
-    it('should validate exclusive statements like an XOR', function (done) {
+    it('should validate xor statements', function (done) {
 
         expect(Joi.validate({ upc: null }, config5)).to.not.be.null;
         expect(Joi.validate({ upc: 'test' }, config5)).to.be.null;
@@ -77,6 +82,17 @@ describe('#validate', function () {
         expect(Joi.validate({ txt: 'test' }, config5)).to.be.null;
         expect(Joi.validate({ upc: null, txt: null }, config5)).to.not.be.null;
         expect(Joi.validate({ txt: 'test', upc: 'test' }, config5)).to.not.be.null;
+        done();
+    });
+
+    it('should validate required without statements like xor', function (done) {
+
+        expect(Joi.validate({ upc: null }, config6)).to.not.be.null;
+        expect(Joi.validate({ upc: 'test' }, config6)).to.be.null;
+        expect(Joi.validate({ txt: null }, config6)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test' }, config6)).to.be.null;
+        expect(Joi.validate({ upc: null, txt: null }, config6)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test', upc: 'test' }, config6)).to.not.be.null;
         done();
     });
 
