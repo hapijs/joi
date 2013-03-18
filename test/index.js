@@ -43,6 +43,16 @@ describe('#validate', function () {
         j: Joi.types.Object().optional()
     };
 
+    var config5 = {
+        txt: Joi.types.String().xor('upc'),
+        upc: Joi.types.String().xor('txt')
+    };
+
+    var config6 = {
+        txt: Joi.types.String().required().without('upc'),
+        upc: Joi.types.String().required().without('txt')
+    };
+
     it('should validate object successfully', function (done) {
 
         var obj = {
@@ -58,14 +68,31 @@ describe('#validate', function () {
 
     it('should validate null', function (done) {
 
-        var obj = {
-            a: 1,
-            b: 'a',
-            c: 'joe@example.com'
-        };
         var err = Joi.validate(null, config);
 
         expect(err).to.exist;
+        done();
+    });
+
+    it('should validate xor statements', function (done) {
+
+        expect(Joi.validate({ upc: null }, config5)).to.not.be.null;
+        expect(Joi.validate({ upc: 'test' }, config5)).to.be.null;
+        expect(Joi.validate({ txt: null }, config5)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test' }, config5)).to.be.null;
+        expect(Joi.validate({ upc: null, txt: null }, config5)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test', upc: 'test' }, config5)).to.not.be.null;
+        done();
+    });
+
+    it('should validate required without statements like xor', function (done) {
+
+        expect(Joi.validate({ upc: null }, config6)).to.not.be.null;
+        expect(Joi.validate({ upc: 'test' }, config6)).to.be.null;
+        expect(Joi.validate({ txt: null }, config6)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test' }, config6)).to.be.null;
+        expect(Joi.validate({ upc: null, txt: null }, config6)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test', upc: 'test' }, config6)).to.not.be.null;
         done();
     });
 
