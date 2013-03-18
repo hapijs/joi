@@ -43,6 +43,11 @@ describe('#validate', function () {
         j: Joi.types.Object().optional()
     };
 
+    var config5 = {
+        txt: Joi.types.String().exclusive('upc'),
+        upc: Joi.types.String().exclusive('txt')
+    };
+
     it('should validate object successfully', function (done) {
 
         var obj = {
@@ -58,14 +63,20 @@ describe('#validate', function () {
 
     it('should validate null', function (done) {
 
-        var obj = {
-            a: 1,
-            b: 'a',
-            c: 'joe@example.com'
-        };
         var err = Joi.validate(null, config);
 
         expect(err).to.exist;
+        done();
+    });
+
+    it('should validate exclusive statements like an XOR', function (done) {
+
+        expect(Joi.validate({ upc: null }, config5)).to.not.be.null;
+        expect(Joi.validate({ upc: 'test' }, config5)).to.be.null;
+        expect(Joi.validate({ txt: null }, config5)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test' }, config5)).to.be.null;
+        expect(Joi.validate({ upc: null, txt: null }, config5)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test', upc: 'test' }, config5)).to.not.be.null;
         done();
     });
 
