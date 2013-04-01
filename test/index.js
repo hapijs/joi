@@ -82,6 +82,17 @@ describe('#validate', function () {
         expect(Joi.validate({ txt: 'test' }, config5)).to.be.null;
         expect(Joi.validate({ upc: null, txt: null }, config5)).to.not.be.null;
         expect(Joi.validate({ txt: 'test', upc: 'test' }, config5)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test', upc: null }, config5)).to.be.null;
+        expect(Joi.validate({ txt: 'test', upc: '' }, config5)).to.be.null;
+        expect(Joi.validate({ txt: '', upc: 'test' }, config5)).to.be.null;
+        expect(Joi.validate({ txt: null, upc: 'test' }, config5)).to.be.null;
+        expect(Joi.validate({ txt: undefined, upc: 'test' }, config5)).to.be.null;
+        expect(Joi.validate({ txt: 'test', upc: undefined }, config5)).to.be.null;
+        expect(Joi.validate({ txt: 'test', upc: '' }, config5)).to.be.null;
+        expect(Joi.validate({ txt: 'test', upc: null }, config5)).to.be.null;
+        expect(Joi.validate({ txt: '', upc: undefined }, config5)).to.not.be.null;
+        expect(Joi.validate({ txt: '', upc: '' }, config5)).to.not.be.null;
+
         done();
     });
 
@@ -93,6 +104,17 @@ describe('#validate', function () {
         expect(Joi.validate({ txt: 'test' }, config6)).to.be.null;
         expect(Joi.validate({ upc: null, txt: null }, config6)).to.not.be.null;
         expect(Joi.validate({ txt: 'test', upc: 'test' }, config6)).to.not.be.null;
+        expect(Joi.validate({ txt: 'test', upc: null }, config6)).to.be.null;
+        expect(Joi.validate({ txt: 'test', upc: '' }, config6)).to.be.null;
+        expect(Joi.validate({ txt: '', upc: 'test' }, config6)).to.be.null;
+        expect(Joi.validate({ txt: null, upc: 'test' }, config6)).to.be.null;
+        expect(Joi.validate({ txt: undefined, upc: 'test' }, config6)).to.be.null;
+        expect(Joi.validate({ txt: 'test', upc: undefined }, config6)).to.be.null;
+        expect(Joi.validate({ txt: 'test', upc: '' }, config6)).to.be.null;
+        expect(Joi.validate({ txt: 'test', upc: null }, config6)).to.be.null;
+        expect(Joi.validate({ txt: '', upc: undefined }, config6)).to.not.be.null;
+        expect(Joi.validate({ txt: '', upc: '' }, config6)).to.not.be.null;
+
         done();
     });
 
