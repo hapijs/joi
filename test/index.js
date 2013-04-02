@@ -132,6 +132,65 @@ describe('#validate', function () {
 
         expect(Joi.validate({ auth: { mode: 'none' } }, config)).to.not.be.null;
         expect(Joi.validate({ auth: { mode: 'try' } }, config)).to.be.null;
+        expect(Joi.validate({ something: undefined }, config)).to.be.null;
+        expect(Joi.validate({ auth: { something: undefined }}, config)).to.be.null;
+
+        done();
+    });
+
+    it('should validate an unknown option', function (done) {
+
+        var config = {
+            auth: Joi.types.Object({
+                    mode: T.String().valid('required', 'optional', 'try').optional().nullOk()
+                }).optional().nullOk()
+        };
+
+        expect(Joi.validate({ auth: { unknown: true } }, config)).to.not.be.null;
+        expect(Joi.validate({ something: false }, config)).to.not.be.null;
+
+        done();
+    });
+
+    it('should work with complex configs', function (done) {
+
+        var config = {
+            handler: [T.Object(), T.Function(), T.String().valid('notFound').optional()],
+            payload: T.String().valid('stream', 'raw', 'parse').nullOk(),
+            response: T.Object({
+                schema: T.Object().nullOk().optional(),
+                sample: T.Number().optional(),
+                failAction: T.String().optional().valid('error', 'log', 'ignore')
+            }).optional().nullOk().allow(true).allow(false),
+            auth: [
+                T.Object({
+                    mode: T.String().valid(['required', 'optional', 'try']).nullOk(),
+                    scope: T.String().nullOk(),
+                    tos: T.Number().nullOk(),
+                    entity: T.String().nullOk(),
+                    strategy: T.String().nullOk(),
+                    strategies: T.Array().nullOk(),
+                    payload: T.String().nullOk()
+                }).optional().nullOk(),
+                T.Boolean().allow(false).optional().nullOk(),
+                T.String().optional().nullOk()
+            ]
+        };
+
+        expect(Joi.validate({ payload: 'raw' }, config)).to.be.null;
+        expect(Joi.validate({ auth: { mode: 'required', payload: 'required' }, payload: 'raw' }, config)).to.be.null;
+        done();
+    });
+
+    it('should not require optional numbers', function (done) {
+
+        var config = {
+            position: T.Number(),
+            suggestion: T.String()
+        };
+
+        expect(Joi.validate({ suggestion: 'something' }, config)).to.be.null;
+        expect(Joi.validate({ position: 1 }, config)).to.be.null;
 
         done();
     });
