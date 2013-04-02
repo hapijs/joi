@@ -118,6 +118,24 @@ describe('#validate', function () {
         done();
     });
 
+    it('should validate an array of valid types', function (done) {
+
+        var config = {
+            auth: [
+                Joi.types.Object({
+                    mode: T.String().valid('required', 'optional', 'try').optional().nullOk()
+                }).optional().nullOk(),
+                T.String().optional().nullOk(),
+                T.Boolean().optional().nullOk()
+            ]
+        };
+
+        expect(Joi.validate({ auth: { mode: 'none' } }, config)).to.not.be.null;
+        expect(Joi.validate({ auth: { mode: 'try' } }, config)).to.be.null;
+
+        done();
+    });
+
     it('should validate object successfully when config has an array of types', function (done) {
 
         var obj = {
