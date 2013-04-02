@@ -2,7 +2,6 @@
 
 var Lab = require('lab');
 var Joi = require('../../lib');
-var Object = require('../../lib/types/object');
 var Support = require('../support/meta');
 
 
@@ -25,7 +24,7 @@ describe('Types', function () {
 
     describe('Object', function () {
 
-        var O = Object; // Joi.types.Object;
+        var O = Joi.types.Object;
 
         it('should have mixins', function (done) {
 
