@@ -232,7 +232,20 @@ describe('#validate', function () {
         done();
     });
 
-    it('should fail validation when missing a required parameter', function (done) {
+	it('should fail validation when the wrong types are supplied', function (done) {
+		
+		var obj = {
+			a: 'a',
+			b: 'a',
+			c: 'joe@example.com'
+		};
+		var err = Joi.validate(obj, config);
+		
+		expect(err).to.exist;
+		done();
+	});
+	
+	it('should fail validation when missing a required parameter', function (done) {
 
         var obj = {
             c: 10
