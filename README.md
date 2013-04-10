@@ -427,6 +427,15 @@ To force Joi to save the conversion, use the `saveConversions` option:
     Joi.settings.saveConversions = true;
 
 
+#### Skip Conversions
+
+By default Joi tries to parse and convert object's values into correct type. You might want to disable this behaviour e.g. when you are validating program's internal objects instead of user input. 
+
+To force Joi to not convert object values, use the `skipConversions` option:
+
+    Joi.settings.skipConversions = true;
+
+
 ### Type-Specific
 
 #### Short Circuit Breakout
