@@ -182,6 +182,23 @@ describe('#validate', function () {
         done();
     });
 
+    it('validates required key with multiple options', function (done) {
+
+        var config = T.Object({
+            module: [T.Object({
+                compile: T.Function().required(),
+                execute: T.Function()
+            }).required(), T.String().required()]
+        });
+
+        expect(Joi.validate({}, config)).to.not.be.null;
+        expect(Joi.validate({ module: 'test' }, config)).to.be.null;
+        expect(Joi.validate({ module: {} }, config)).to.not.be.null;
+        expect(Joi.validate({ module: { compile: function () { } } }, config)).to.be.null;
+
+        done();
+    });
+
     it('should not require optional numbers', function (done) {
 
         var config = {
