@@ -332,7 +332,7 @@ Specifies allowed types for the array value to exclude. The values of n1, n2, ..
 
 #### Object
 
-##### Object.allowAnyKey()
+##### Object.allowOtherKeys()
 
 Will cause any unknown keys in the object being validated to not cause the object to be invalid.
 

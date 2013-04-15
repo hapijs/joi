@@ -60,9 +60,9 @@ describe('Types', function () {
             ], done);
         });
 
-        it('should allow extra keys when using ', function (done) {
+        it('should allow extra keys when using allowOtherKeys', function (done) {
 
-            var t = O({ item: Joi.types.String().required() }).allowAnyKey();
+            var t = O({ item: Joi.types.String().required() }).allowOtherKeys();
             verifyBehavior(t, [
                 [{ item: 'something' }, true],
                 [{ item: 'something', item2: 'something else' }, true],
