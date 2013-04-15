@@ -184,12 +184,15 @@ describe('#validate', function () {
 
     it('validates required key with multiple options', function (done) {
 
-        var config = T.Object({
-            module: [T.Object({
-                compile: T.Function().required(),
-                execute: T.Function()
-            }).required(), T.String().required()]
-        });
+        var config = {
+            module: [
+                T.Object({
+                    compile: T.Function().required(),
+                    execute: T.Function()
+                }).required(),
+                T.String().required()
+            ]
+        };
 
         expect(Joi.validate({}, config)).to.not.be.null;
         expect(Joi.validate({ module: 'test' }, config)).to.be.null;
