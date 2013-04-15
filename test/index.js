@@ -16,7 +16,7 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
-var T = Joi.Types;
+var T = Joi.types;
 
 
 describe('#validate', function () {
@@ -258,6 +258,19 @@ describe('#validate', function () {
         done();
     });
 
+    it('should fail validation when the wrong types are supplied', function (done) {
+
+        var obj = {
+            a: 'a',
+            b: 'a',
+            c: 'joe@example.com'
+        };
+        var err = Joi.validate(obj, config1);
+
+        expect(err).to.exist;
+        done();
+    });
+
     it('should fail validation when missing a required parameter', function (done) {
 
         var obj = {
@@ -362,6 +375,20 @@ describe('#validate', function () {
 
         expect(err).to.exist;
         Joi.settings.skipFunctions = false;
+        done();
+    });
+
+    it('should not convert values when skipConversions is set', function (done) {
+
+        Joi.settings.skipConversions = true;
+        var schema = {
+            arr: Joi.types.Array().includes(Joi.types.String())
+        };
+
+        var input = { arr: 'foo' };
+        var err = Joi.validate(input, schema);
+
+        expect(err).to.exist;
         done();
     });
 
