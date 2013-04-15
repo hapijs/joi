@@ -138,6 +138,17 @@ describe('#validate', function () {
         done();
     });
 
+    it('should validate config where the root item is a joi type', function (done) {
+
+        expect(Joi.validate(true, T.Boolean().nullOk())).to.be.null;
+        expect(Joi.validate({ auth: { mode: 'try' } }, T.Object())).to.be.null;
+        expect(Joi.validate(true, T.Object())).to.not.be.null;
+        expect(Joi.validate(true, T.String())).to.not.be.null;
+        expect(Joi.validate('test@test.com', T.String().email())).to.be.null;
+
+        done();
+    });
+
     it('should validate an unknown option', function (done) {
 
         var config = {
