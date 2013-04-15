@@ -327,12 +327,14 @@ Specifies allowed types for the array value to include. The values of n1, n2, ..
 
 ##### Array.excludes(n1, n2, ...)
 
-Specifies allowed types for the array value to exclude. The values of n1, n2, ... are Type Registry constraints (usually of other types). 
+Specifies allowed types for the array value to exclude. The values of n1, n2, ... are Type Registry constraints (usually of other types).
 
 
 #### Object
 
-*Note: Object has no special methods other than those inherited from BaseType*
+##### Object.allowOtherKeys()
+
+Will cause any unknown keys in the object being validated to not cause the object to be invalid.
 
 
 ## Usage
@@ -429,7 +431,7 @@ To force Joi to save the conversion, use the `saveConversions` option:
 
 #### Skip Conversions
 
-By default Joi tries to parse and convert object's values into correct type. You might want to disable this behaviour e.g. when you are validating program's internal objects instead of user input. 
+By default Joi tries to parse and convert object's values into correct type. You might want to disable this behaviour e.g. when you are validating program's internal objects instead of user input.
 
 To force Joi to not convert object values, use the `skipConversions` option:
 
