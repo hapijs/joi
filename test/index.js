@@ -21,10 +21,10 @@ var T = Joi.Types;
 
 describe('#validate', function () {
 
-    var config = {
+    var config1 = {
         a: Joi.types.Number().min(0).max(3),
         b: Joi.types.String().valid('a', 'b', 'c'),
-        c: Joi.types.String().email()
+        c: Joi.types.String().email().optional()
     };
 
     var config2 = {
@@ -40,7 +40,7 @@ describe('#validate', function () {
     var config4 = {
         h: Joi.types.Number(),
         i: Joi.types.String(),
-        j: Joi.types.Object().optional()
+        j: Joi.types.Object()
     };
 
     var config5 = {
@@ -60,7 +60,7 @@ describe('#validate', function () {
             b: 'a',
             c: 'joe@example.com'
         };
-        var err = Joi.validate(obj, config);
+        var err = Joi.validate(obj, config1);
 
         expect(err).to.not.exist;
         done();
@@ -68,7 +68,7 @@ describe('#validate', function () {
 
     it('should validate null', function (done) {
 
-        var err = Joi.validate(null, config);
+        var err = Joi.validate(null, config1);
 
         expect(err).to.exist;
         done();
@@ -123,17 +123,17 @@ describe('#validate', function () {
         var config = {
             auth: [
                 Joi.types.Object({
-                    mode: T.String().valid('required', 'optional', 'try').optional().nullOk()
-                }).optional().nullOk(),
-                T.String().optional().nullOk(),
-                T.Boolean().optional().nullOk()
+                    mode: T.String().valid('required', 'optional', 'try').nullOk()
+                }).nullOk(),
+                T.String().nullOk(),
+                T.Boolean().nullOk()
             ]
         };
 
         expect(Joi.validate({ auth: { mode: 'none' } }, config)).to.not.be.null;
         expect(Joi.validate({ auth: { mode: 'try' } }, config)).to.be.null;
         expect(Joi.validate({ something: undefined }, config)).to.be.null;
-        expect(Joi.validate({ auth: { something: undefined }}, config)).to.be.null;
+        expect(Joi.validate({ auth: { something: undefined } }, config)).to.be.null;
 
         done();
     });
@@ -142,8 +142,8 @@ describe('#validate', function () {
 
         var config = {
             auth: Joi.types.Object({
-                    mode: T.String().valid('required', 'optional', 'try').optional().nullOk()
-                }).optional().nullOk()
+                mode: T.String().valid('required', 'optional', 'try').nullOk()
+            }).nullOk()
         };
 
         expect(Joi.validate({ auth: { unknown: true } }, config)).to.not.be.null;
@@ -155,13 +155,13 @@ describe('#validate', function () {
     it('should work with complex configs', function (done) {
 
         var config = {
-            handler: [T.Object(), T.Function(), T.String().valid('notFound').optional()],
+            handler: [T.Object(), T.Function(), T.String().valid('notFound')],
             payload: T.String().valid('stream', 'raw', 'parse').nullOk(),
             response: T.Object({
-                schema: T.Object().nullOk().optional(),
-                sample: T.Number().optional(),
-                failAction: T.String().optional().valid('error', 'log', 'ignore')
-            }).optional().nullOk().allow(true).allow(false),
+                schema: T.Object().nullOk(),
+                sample: T.Number(),
+                failAction: T.String().valid('error', 'log', 'ignore')
+            }).nullOk().allow(true).allow(false),
             auth: [
                 T.Object({
                     mode: T.String().valid(['required', 'optional', 'try']).nullOk(),
@@ -171,9 +171,9 @@ describe('#validate', function () {
                     strategy: T.String().nullOk(),
                     strategies: T.Array().nullOk(),
                     payload: T.String().nullOk()
-                }).optional().nullOk(),
-                T.Boolean().allow(false).optional().nullOk(),
-                T.String().optional().nullOk()
+                }).nullOk(),
+                T.Boolean().allow(false).nullOk(),
+                T.String().nullOk()
             ]
         };
 
@@ -190,6 +190,19 @@ describe('#validate', function () {
         };
 
         expect(Joi.validate({ suggestion: 'something' }, config)).to.be.null;
+        expect(Joi.validate({ position: 1 }, config)).to.be.null;
+
+        done();
+    });
+
+    it('should not require optional objects', function (done) {
+
+        var config = {
+            position: T.Number(),
+            suggestion: T.Object()
+        };
+
+        expect(Joi.validate({ suggestion: {} }, config)).to.be.null;
         expect(Joi.validate({ position: 1 }, config)).to.be.null;
 
         done();
@@ -226,26 +239,26 @@ describe('#validate', function () {
             b: 'a',
             c: 'joe@example.com'
         };
-        var err = Joi.validate(obj, config);
+        var err = Joi.validate(obj, config1);
 
         expect(err).to.exist;
         done();
     });
 
-	it('should fail validation when the wrong types are supplied', function (done) {
-		
-		var obj = {
-			a: 'a',
-			b: 'a',
-			c: 'joe@example.com'
-		};
-		var err = Joi.validate(obj, config);
-		
-		expect(err).to.exist;
-		done();
-	});
-	
-	it('should fail validation when missing a required parameter', function (done) {
+    it('should fail validation when the wrong types are supplied', function (done) {
+
+        var obj = {
+            a: 'a',
+            b: 'a',
+            c: 'joe@example.com'
+        };
+        var err = Joi.validate(obj, config1);
+
+        expect(err).to.exist;
+        done();
+    });
+
+    it('should fail validation when missing a required parameter', function (done) {
 
         var obj = {
             c: 10
@@ -259,7 +272,7 @@ describe('#validate', function () {
     it('should fail validation when missing a required parameter within an object config', function (done) {
 
         var obj = {
-            a: { }
+            a: {}
         };
         var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
 
@@ -296,7 +309,7 @@ describe('#validate', function () {
 
         Joi.settings.skipFunctions = true;
         var schema = { username: Joi.types.String() };
-        var input = { username: 'test', func: function() { } };
+        var input = { username: 'test', func: function () { } };
         var err = Joi.validate(input, schema);
 
         expect(err).to.not.exist;
@@ -308,7 +321,7 @@ describe('#validate', function () {
 
         Joi.settings.skipFunctions = false;
         var schema = { username: Joi.types.String() };
-        var input = { username: 'test', func: function() { } };
+        var input = { username: 'test', func: function () { } };
         var err = Joi.validate(input, schema);
 
         expect(err).to.exist;
@@ -374,15 +387,15 @@ describe('#validate', function () {
     internals.routeSchema = {
         method: T.String().invalid('head').required(),
         path: T.String().required(),
-        handler: [T.Object().optional(), T.Function().optional(), T.String().valid('notFound').optional()],
+        handler: [T.Object(), T.Function(), T.String().valid('notFound')],
         config: T.Object({
-            handler: [T.Object().optional(), T.Function().optional(), T.String().valid('notFound').optional()],
-            payload: T.String().valid(['stream', 'raw', 'parse']).optional(),
+            handler: [T.Object(), T.Function(), T.String().valid('notFound')],
+            payload: T.String().valid(['stream', 'raw', 'parse']),
             response: T.Object({
-                schema: T.Object().nullOk().optional(),
-                sample: T.Number().optional(),
-                failAction: T.String().optional().valid(['error', 'log', 'ignore'])
-            }).optional()
+                schema: T.Object().nullOk(),
+                sample: T.Number(),
+                failAction: T.String().valid(['error', 'log', 'ignore'])
+            })
         })
     };
 });
