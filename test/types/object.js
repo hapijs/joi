@@ -50,6 +50,28 @@ describe('Types', function () {
             ], done);
         });
 
+        it('should prevent extra keys from existing by default', function (done) {
+
+            var t = O({ item: Joi.types.String().required() }).required();
+            verifyBehavior(t, [
+                [{ item: 'something' }, true],
+                [{ item: 'something', item2: 'something else' }, false],
+                ['', false]
+            ], done);
+        });
+
+        it('should allow extra keys when using allowOtherKeys', function (done) {
+
+            var t = O({ item: Joi.types.String().required() }).allowOtherKeys();
+            verifyBehavior(t, [
+                [{ item: 'something' }, true],
+                [{ item: 'something', item2: 'something else' }, true],
+                [{ item: 'something', item1: 'something', item2: 'something else' }, true],
+                [{ item1: 'something', item2: 'something else' }, false],
+                ['', false]
+            ], done);
+        });
+
         it('should traverse an object and validate all properties in the top level', function (done) {
 
             var t = O({
