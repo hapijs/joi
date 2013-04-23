@@ -40,6 +40,7 @@ var Joi = require('joi');
 var schema = {
     username: Joi.types.String().alphanum().min(3).max(30).with('birthyear').required(),
     password: Joi.types.String().regex(/[a-zA-Z0-9]{3,30}/).without('access_token'),
+    twitter: Joi.type.String().xregex([a-zA-Z0-9_]{3,15})
     access_token: Joi.types.String(),
     birthyear: Joi.types.Number().min(1850).max(2012),
     email: Joi.types.String().email()
@@ -56,6 +57,9 @@ defines these constraints:
     * an optional string
     * must satisfy the custom regex
     * cannot appear together with 'access_token'
+* 'twitter'
+    * an optional string
+    * must exactly match the regex
 * 'access_token'
     * an optional, unconstrained string
 * 'birthyear'
@@ -69,7 +73,7 @@ The above constraints point out some non-obvious features:
 * relationships are defined in an additive fashion
     * "X.join(Y), Y.join(Z)" is the same as requiring all three to be present: "X AND Y AND Z"
     * Likewise "X.xor(Y), Y.xor(Z)" => requires that only one of three be present: "X XOR Y XOR Z"
-* .regex may or may not override other string-related constraints (.alphanum, .min, .max)
+* .regex/.xregex may or may not override other string-related constraints (.alphanum, .min, .max)
     ** constraints are evaluated in order
 * order of chained functions matter
     ** ".min(0).max(100).min(1)" sets the min to 1, overwriting the result of the first min call
@@ -256,6 +260,14 @@ If pattern is not specified, it returns an Error.
 
 If pattern is not a valid RegExp object, it returns an error.
 
+##### String.xregex(pattern)
+
+Specifies that this input exactly matches the given RegExp pattern.
+
+If pattern is not specified, it returns an Error.
+
+If pattern is not a valid RegExp object, it returns an error.
+
 ##### String.email()
 
 Specifies that this input is a valid email string.
@@ -401,6 +413,7 @@ Yet, in another case, a prior constraint may overrule a subsequent constraint:
 ```javascript
 Types.String().max(5).max(10) # This input cannot be larger than 5 characters
 Types.String().max(3).regex(/.{0,5}/) # This input cannot be larger than 3 characters
+Types.String().max(3).xregex(/[a-z]{0,5}/) # This input cannot be larger than 3 characters
 ```
 
 This should apply to all other constraints that do not override.
