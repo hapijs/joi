@@ -222,6 +222,17 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should validate xregex', function (done) {
+
+            var t = S().xregex(/[a-z]{3,5}/);
+            verifyBehavior(t, [
+                ['van', true],
+                ['doors', true],
+                ['thedoors', false],
+                ['123ab', false],
+            ], done);
+        });
+
         it('should validate alphanum when alphanum allows spaces', function (done) {
 
             var t = S().alphanum(true);
@@ -437,9 +448,41 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of min, max, and xregex', function (done) {
+
+            var rule = S().min(2).max(3).xregex(/[a-z]+/);
+            verifyBehavior(rule, [
+                ['x', false],
+                ['123', false],
+                ['1234', false],
+                ['12', false],
+                ['ab', true],
+                ['abc', true],
+                ['abcd', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of min, max, regex, and emptyOk', function (done) {
 
             var rule = S().min(2).max(3).regex(/^a/).emptyOk();
+            verifyBehavior(rule, [
+                ['x', false],
+                ['123', false],
+                ['1234', false],
+                ['12', false],
+                ['ab', true],
+                ['abc', true],
+                ['abcd', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, xregex, and emptyOk', function (done) {
+
+            var rule = S().min(2).max(3).xregex(/[a-z]*/).emptyOk();
             verifyBehavior(rule, [
                 ['x', false],
                 ['123', false],
@@ -463,6 +506,23 @@ describe('Joi.types.String', function () {
                 ['12', false],
                 ['ab', true],
                 ['abc', true],
+                ['abcd', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, xregex, and required', function (done) {
+
+            var rule = S().min(2).max(3).xregex(/[a-c]*/).required();
+            verifyBehavior(rule, [
+                ['x', false],
+                ['123', false],
+                ['1234', false],
+                ['12', false],
+                ['ab', true],
+                ['abc', true],
+                ['abd', false],
                 ['abcd', false],
                 ['', false],
                 [null, false]
@@ -538,6 +598,25 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of min, max, alphanum, and xregex', function (done) {
+
+            var rule = S().min(2).max(3).alphanum().xregex(/[a-c0-9]*/);
+            verifyBehavior(rule, [
+                ['x', false],
+                ['123', true],
+                ['1234', false],
+                ['12', true],
+                ['ab', true],
+                ['abc', true],
+                ['a2c', true],
+                ['a2d', false],
+                ['abcd', false],
+                ['*ab', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of min, max, alphanum, required, and regex', function (done) {
 
             var rule = S().min(2).max(3).alphanum().required().regex(/^a/);
@@ -556,6 +635,25 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of min, max, alphanum, required, and xregex', function (done) {
+
+            var rule = S().min(2).max(3).alphanum().required().xregex(/[a-c0-9]*/);
+            verifyBehavior(rule, [
+                ['x', false],
+                ['123', true],
+                ['1234', false],
+                ['12', true],
+                ['ab', true],
+                ['abc', true],
+                ['a2c', true],
+                ['a2d', false],
+                ['abcd', false],
+                ['*ab', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of min, max, alphanum, emptyOk, and regex', function (done) {
 
             var rule = S().min(2).max(3).alphanum().emptyOk().regex(/^a/);
@@ -567,6 +665,26 @@ describe('Joi.types.String', function () {
                 ['ab', true],
                 ['abc', true],
                 ['a2c', true],
+                ['abcd', false],
+                ['*ab', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, alphanum, emptyOk, and xregex', function (done) {
+
+            var rule = S().min(2).max(3).alphanum().emptyOk().xregex(/[a-c0-9]*/);
+            verifyBehavior(rule, [
+                ['x', false],
+                ['2034', false], 
+                ['123', true],
+                ['1234', false],
+                ['12', true],
+                ['ab', true],
+                ['abc', true],
+                ['a2c', true],
+                ['a2d', false],
                 ['abcd', false],
                 ['*ab', false],
                 ['', true],
@@ -601,6 +719,20 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of date and xregex', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/);
+            verifyBehavior(rule, [
+                ['x', false],
+                ['2034', true], 
+                ['1990', false],
+                ['5-6-2034', true],
+                ['1-6-2034', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of date, regex, and min', function (done) {
 
             var rule = S().date().regex(/^1/).min(4);
@@ -614,6 +746,21 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of date, xregex, and min', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).min(4);
+            verifyBehavior(rule, [
+                ['x', false],
+                ['2034', true], 
+                ['1990', false],
+                ['5-6-2034', true],
+                ['1-6-2034', false],
+                ['1-2', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of date, regex, and max', function (done) {
 
             var rule = S().date().regex(/^1/).max(4);
@@ -621,6 +768,21 @@ describe('Joi.types.String', function () {
                 ['x', false],
                 ['1-2-1990', false],
                 ['1-2', true],
+                ['2-2-1990', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of date, xregex, and max', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).max(4);
+            verifyBehavior(rule, [
+                ['x', false],
+                ['2034', true], 
+                ['1990', false],
+                ['6-5-2034', false],
+                ['3-2', true],
                 ['2-2-1990', false],
                 ['', false],
                 [null, false]
@@ -640,6 +802,21 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of date, xregex, min, and max', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).min(3).max(4);
+            verifyBehavior(rule, [
+                ['x', false],
+                ['2034', true], 
+                ['1990', false],
+                ['6-5-2034', false],
+                ['3-2', true],
+                ['2-2-1990', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of date, regex, min, max, and allow', function (done) {
 
             var rule = S().date().regex(/^1/).min(3).max(4).allow('x');
@@ -647,6 +824,22 @@ describe('Joi.types.String', function () {
                 ['x', true],
                 ['1-2-1990', false],
                 ['1-2', true],
+                ['2-2-1990', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of date, xregex, min, max, and allow', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).min(3).max(4).allow('x');
+            verifyBehavior(rule, [
+                ['x', true],
+                ['2034', true], 
+                ['1990', false],
+                ['6-5-2034', false],
+                ['3-2', true],
+                ['1-2', false],
                 ['2-2-1990', false],
                 ['', false],
                 [null, false]
@@ -666,6 +859,23 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of date, xregex, min, max, allow, and deny', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).min(3).max(4).allow('x').deny('5-6');
+            verifyBehavior(rule, [
+                ['x', true],
+                ['2034', true], 
+                ['1990', false],
+                ['6-5-2034', false],
+                ['1-2', false],
+                ['5-6', false],
+                ['3-6', true],
+                ['2-2-1990', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of date, regex, min, max, allow, deny, and emptyOk', function (done) {
 
             var rule = S().date().regex(/^1/).min(3).max(4).allow('x').deny('1-2').emptyOk();
@@ -673,6 +883,23 @@ describe('Joi.types.String', function () {
                 ['x', true],
                 ['1-2-1990', false],
                 ['1-2', false],
+                ['2-2-1990', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of date, xregex, min, max, allow, deny, and emptyOk', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).min(3).max(4).allow('x').deny('5-6').emptyOk();
+            verifyBehavior(rule, [
+                ['x', true],
+                ['2034', true], 
+                ['1990', false], 
+                ['6-5-2034', false],
+                ['1-2', false],
+                ['5-6', false],
+                ['3-6', true],
                 ['2-2-1990', false],
                 ['', true],
                 [null, false]
@@ -692,6 +919,21 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of date, xregex, min, max, and emptyOk', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).min(3).max(4).emptyOk();
+            verifyBehavior(rule, [
+                ['2034', true],
+                ['1990', false], 
+                ['6-5-2034', false],
+                ['1-2', false],
+                ['3-6', true],
+                ['2-2-1990', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of date, regex, min, max, and nullOk', function (done) {
 
             var rule = S().date().regex(/^1/).min(3).max(4).nullOk();
@@ -699,6 +941,21 @@ describe('Joi.types.String', function () {
                 ['x', false],
                 ['1-2-1990', false],
                 ['1-2', true],
+                ['2-2-1990', false],
+                ['', false],
+                [null, true]
+            ], done);
+        });
+
+        it('should handle combination of date, xregex, min, max, and nullOk', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).min(3).max(4).nullOk();
+            verifyBehavior(rule, [
+                ['2034', true],
+                ['1990', false], 
+                ['6-5-2034', false],
+                ['1-2', false],
+                ['3-6', true],
                 ['2-2-1990', false],
                 ['', false],
                 [null, true]
@@ -718,6 +975,21 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of date, xregex, min, max, nullOk, emptyOk', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).min(3).max(4).nullOk().emptyOk();
+            verifyBehavior(rule, [
+                ['2034', true],
+                ['1990', false], 
+                ['6-5-2034', false],
+                ['1-2', false],
+                ['3-6', true],
+                ['2-2-1990', false],
+                ['', true],
+                [null, true]
+            ], done);
+        });
+
         it('should handle combination of date, regex, min, max, and required', function (done) {
 
             var rule = S().date().regex(/^1/).min(3).max(4).required();
@@ -725,6 +997,21 @@ describe('Joi.types.String', function () {
                 ['x', false],
                 ['1-2-1990', false],
                 ['1-2', true],
+                ['2-2-1990', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of date, xregex, min, max, and required', function (done) {
+
+            var rule = S().date().xregex(/[2-6-0]*/).min(3).max(4).required();
+            verifyBehavior(rule, [
+                ['2034', true],
+                ['1990', false],
+                ['6-5-2034', false],
+                ['1-2', false],
+                ['3-6', true],
                 ['2-2-1990', false],
                 ['', false],
                 [null, false]
@@ -833,12 +1120,44 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of email, min, max, allow, deny, and xregex', function (done) {
+
+            var rule = S().email().min(8).max(10).allow('x@x.com').deny('123@x.com').xregex(/[xc-o1-5\@\.]*/);
+            verifyBehavior(rule, [
+                ['x@x.com', true],
+                ['123@x.com', false],
+                ['cde@x.com', true],
+                ['abc@x.com', false],
+                ['126@x.com', false],
+                ['1234@x.com', true],
+                ['12345@x.com', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of email, min, max, allow, deny, regex, and emptyOk', function (done) {
 
             var rule = S().email().min(8).max(10).allow('x@x.com').deny('123@x.com').regex(/^1/).emptyOk();
             verifyBehavior(rule, [
                 ['x@x.com', true],
                 ['123@x.com', false],
+                ['1234@x.com', true],
+                ['12345@x.com', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of email, min, max, allow, deny, xregex, and emptyOk', function (done) {
+
+            var rule = S().email().min(8).max(10).allow('x@x.com').deny('123@x.com').xregex(/[xc-o1-5\@\.]*/).emptyOk();
+            verifyBehavior(rule, [
+                ['x@x.com', true],
+                ['123@x.com', false],
+                ['cde@x.com', true],
+                ['abc@x.com', false],
+                ['126@x.com', false],
                 ['1234@x.com', true],
                 ['12345@x.com', false],
                 ['', true],
@@ -872,12 +1191,44 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should handle combination of email, min, max, and xregex', function (done) {
+
+            var rule = S().email().min(8).max(10).xregex(/[xc-o1-5\@\.]*/);
+            verifyBehavior(rule, [
+                ['x@x.com', false],
+                ['123@x.com', true],
+                ['cde@x.com', true],
+                ['abc@x.com', false],
+                ['126@x.com', false],
+                ['1234@x.com', true],
+                ['12345@x.com', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
         it('should handle combination of email, min, max, regex, and emptyOk', function (done) {
 
             var rule = S().email().min(8).max(10).regex(/^1234/).emptyOk();
             verifyBehavior(rule, [
                 ['x@x.com', false],
                 ['123@x.com', false],
+                ['1234@x.com', true],
+                ['12345@x.com', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of email, min, max, xregex, and emptyOk', function (done) {
+
+            var rule = S().email().min(8).max(10).xregex(/[xc-o1-5\@\.]*/).emptyOk();
+            verifyBehavior(rule, [
+                ['x@x.com', false],
+                ['123@x.com', true],
+                ['cde@x.com', true],
+                ['abc@x.com', false],
+                ['126@x.com', false],
                 ['1234@x.com', true],
                 ['12345@x.com', false],
                 ['', true],
@@ -895,6 +1246,23 @@ describe('Joi.types.String', function () {
                 ['12345@x.com', false],
                 ['', false],
                 [null, false]
+            ], done);
+        });
+
+        it('should handle combination of email, min, max, xregex, and required', function (done) {
+
+            var rule = S().email().min(8).max(10).xregex(/[xc-o1-5\@\.]*/).required();
+            verifyBehavior(rule, [
+                ['x@x.com', false],
+                ['123@x.com', true],
+                ['cde@x.com', true],
+                ['abc@x.com', false],
+                ['126@x.com', false],
+                ['1234@x.com', true],
+                ['12345@x.com', false],
+                ['', false],
+                [null, false]
+
             ], done);
         });
     });
