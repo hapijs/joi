@@ -185,11 +185,21 @@ describe('#validate', function () {
                 }).nullOk(),
                 T.Boolean().allow(false).nullOk(),
                 T.String().nullOk()
-            ]
+            ],
+            cache: T.Object({
+                mode: T.String().valid(['server+client', 'client+server', 'client', 'server']),
+                segment: T.String(),
+                privacy: T.String().valid('default', 'public', 'private'),
+                expiresIn: T.Number().xor('expiresAt'),
+                expiresAt: T.String(),
+                staleIn: T.Number().with('staleTimeout'),
+                staleTimeout: T.Number().with('staleIn')
+            }).nullOk()
         };
 
         expect(Joi.validate({ payload: 'raw' }, config)).to.be.null;
         expect(Joi.validate({ auth: { mode: 'required', payload: 'required' }, payload: 'raw' }, config)).to.be.null;
+        expect(Joi.validate({ handler: internals.item, cache: { expiresIn: 20000, staleIn: 10000, staleTimeout: 500 } }, config)).to.be.null;
         done();
     });
 
