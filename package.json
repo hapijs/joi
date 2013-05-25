@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "author": "Van Nguyen <the.gol.effect@gmail.com>",
   "contributors": [
     "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)",
@@ -17,10 +17,10 @@
     "node": "0.10.x"
   },
   "dependencies": {
-    "hoek": "0.8.x"
+    "hoek": "0.9.x"
   },
   "devDependencies": {
-    "lab": "0.1.x",
+    "lab": "0.x.x",
     "complexity-report": "0.x.x"
   },
   "scripts": {
