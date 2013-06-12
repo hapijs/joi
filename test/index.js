@@ -334,6 +334,65 @@ describe('#validate', function () {
         done();
     });
 
+    it('should fail validation when parameter is required to be an object but is given as string', function (done) {
+
+        var obj = {
+            a: "a string"
+        };
+        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
+        expect(err).to.exist;
+        done();
+    });
+
+    it('should pass validation when parameter is required to be an object and is given correctly as a json string', function (done) {
+
+        var obj = {
+            a: '{"b":"string"}'
+        };
+        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
+        expect(err).to.be.null;
+        done();
+    });
+
+    it('should fail validation when parameter is required to be an object but is given as a json string that is incorrect (number instead of string)', function (done) {
+
+        var obj = {
+            a: '{"b":2}'
+        };
+        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
+        expect(err).to.exist;
+        done();
+    });
+
+    it('should fail validation when parameter is required to be an Array but is given as string', function (done) {
+
+        var obj = {
+            a: "an array"
+        };
+        var err = Joi.validate(obj, { a: Joi.types.Array() });
+        expect(err).to.exist;
+        done();
+    });
+
+    it('should pass validation when parameter is required to be an Array and is given correctly as a json string', function (done) {
+
+        var obj = {
+            a: '[1,2]'
+        };
+        var err = Joi.validate(obj, { a: Joi.types.Array() });
+        expect(err).to.be.null;
+        done();
+    });
+
+    it('should fail validation when parameter is required to be an Array but is given as a json that is incorrect (object instead of array)', function (done) {
+
+        var obj = {
+            a: '{"b":2}'
+        };
+        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
+        expect(err).to.exist;
+        done();
+    });
 
     it('should fail validation when config is an array and fails', function (done) {
 
