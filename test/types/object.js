@@ -40,6 +40,13 @@ describe('Types', function () {
             done();
         });
 
+        it('should convert a non-json string as a string', function (done) {
+
+            var result = O().convert('a string');
+            expect(result).to.be.equal('a string');
+            done();
+        });
+
         it('should validate an object', function (done) {
 
             var t = O().required();
