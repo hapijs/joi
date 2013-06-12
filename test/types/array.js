@@ -69,8 +69,7 @@ describe('Types', function () {
             it('should convert a non-array string', function(done) {
 
                 var result = A().convert('asdf');
-                expect(result.length).to.equal(1);
-                expect(result[0]).to.equal('asdf');
+                expect(result).to.equal('asdf');
                 done();
             });
         });
