@@ -111,6 +111,15 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
+        it('should, when .required(), print a friend error message for an empty string', function (done) {
+
+            var t = S().required();
+            var result = Joi.validate('', t);
+
+            expect(result.message).to.contain('be empty');
+            done();
+        });
+
         it('should, when .required(), validate non-empty strings', function (done) {
 
             var t = S().required();
