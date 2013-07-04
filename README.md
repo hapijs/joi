@@ -78,10 +78,8 @@ The above constraints point out some non-obvious features:
 Below is an example of how to validate an object against the above schema:
 
 ```javascript
-Joi.validate(obj, schema, function (err) {
-
-    // err will be set if the object failed to validate against the schema
-});
+var err = Joi.validate(obj, schema);
+// err will be set if the object failed to validate against the schema
 ```
 
 # Type Registry
@@ -484,15 +482,11 @@ var schema = {
 var invalidObj = { username: 'roger' };
 var validObj = { username: 'roger', password: 'pa55word' };
 
-Joi.validate(invalidObj, schema, function (err) {
+var err = Joi.validate(invalidObj, schema);
+if (err) throw err;
 
-    if (err) throw err;
-});
-
-Joi.validate(validObj, schema, function (err) {
-
-    if (err) throw err;
-});
+var err = Joi.validate(validObj, schema);
+if (err) throw err;
 ```
 
 Executing the above code outputs the following:
@@ -511,11 +505,9 @@ var schema = {
 
 var obj = { num: '1' };
 
-Joi.validate(obj, schema, function (err) {
-
-    if (err) throw err;
-    else console.log('Success!');
-});
+var err = Joi.validate(obj, schema);
+if (err) throw err;
+else console.log('Success!');
 ```
 
 Executing the above code outputs the following:
