@@ -190,6 +190,19 @@ describe('Types', function () {
                     ]
                 ], done);
             });
+
+            it('should not throw when using includes', function (done) {
+
+                var schema = {
+                    arr: Joi.types.Array().includes(Joi.types.Number().integer())
+                };
+
+                var input = { arr: [1, 2, 2.1] };
+                var err = Joi.validate(input, schema);
+
+                expect(err).to.exist;
+                done();
+            });
         });
     });
 });
