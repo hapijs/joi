@@ -410,4 +410,15 @@ describe('Number', function () {
             done();
         });
     });
+
+    describe('error message', function () {
+
+        it('should display correctly for int type', function (done) {
+
+            var t = N().integer();
+            var result = Joi.validate('', t);
+            expect(result.message).to.contain('integer');
+            done();
+        });
+    });
 });
