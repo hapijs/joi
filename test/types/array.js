@@ -26,7 +26,8 @@ describe('Types', function () {
 
         var A = Joi.types.Array,
             N = Joi.types.Number,
-            S = Joi.types.String;
+            S = Joi.types.String
+            O = Joi.types.Object;
 
         it('should have mixins', function (done) {
 
@@ -176,6 +177,24 @@ describe('Types', function () {
                     ]
                 ], done);
             });
+
+            it('should validate array of objects with schema', function (done) {
+
+                verifyBehavior(A().includes(O({ h1: N().required()})), [
+                    [
+                        [{ h1: 1 }, { h1: 2 }, { h1: 3 }],
+                        true
+                    ],
+                    [
+                        [{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }],
+                        false
+                    ],
+                    [
+                        [1, 2, [1]],
+                        false
+                    ]
+                ], done);
+            }); 
 
             it('should not validate array of unallowed mixed types (Array)', function (done) {
 
