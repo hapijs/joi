@@ -411,6 +411,14 @@ Joi has special settings that will modify certain behaviors.
 
 ### Global
 
+#### Custom Messages
+
+Joi error messages can be updated and replaced with localized versions.  Use the `languagePath` option to specify a file path to a JSON file that contains error messages.  Each message supports a mustache style template with the following keys:
+
+ - `{{key}}` - the schema property that fails validation
+ - `{{value}}` - the invalid value assigned to the key
+
+
 #### Skip Functions
 
 On occasion, an object must be validated which contains functions as properties. To force Joi to ignore validation on such functions, use the `skipFunctions` option:
