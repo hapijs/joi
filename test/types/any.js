@@ -38,7 +38,10 @@ describe('Types', function () {
                 [function(){ }, true],
                 ['', true],
                 [undefined, true],
-                [null, false]
+                [null, false],
+                [[], true],
+                [{}, true],
+                [1, true]
             ], done);
         });
 
