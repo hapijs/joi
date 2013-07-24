@@ -18,6 +18,8 @@ Object schema validation
   * [Boolean](#boolean "Boolean")
   * [Array](#array "Array")
   * [Object](#object "Object")
+  * [Function](#function "Function")
+  * [Any](#any "Any")
 * [Usage](#usage "Usage")
   * [Config Syntax](#config-syntax "Config Syntax")
   * [Evaluation Order](#evaluation-order "Evaluation Order")
@@ -91,6 +93,8 @@ The Types object is pre-populated with a mutable list of JavaScript's valid data
 * [Boolean](#boolean "Boolean")
 * [Array](#array "Array")
 * [Object](#object "Object")
+* [Function](#function "Function")
+* [Any](#any "Any")
 
 Any custom, user-defined data type is derived from one of the base types (although it may also combine additional types for sub-elements). Thus, there are two valid ways of creating your own types.
 
@@ -334,6 +338,19 @@ Specifies allowed types for the array value to exclude. The values of n1, n2, ..
 
 Will cause any unknown keys in the object being validated to not cause the object to be invalid.
 
+
+#### Function
+
+Function types accept any value that is a function.
+
+*Note: Function has no special methods other than those inherited from BaseType*
+
+
+#### Any
+
+Accept any type of value where the value is not null.  By default the value must not be null but is allowed to be undefined.  To change this behavior use either the _'required'_ or _'nullOk'_ methods.
+
+*Note: Any has no special methods other than those inherited from BaseType*
 
 ## Usage
 
