@@ -83,9 +83,8 @@ describe('Types', function () {
 
             it('should set related check', function (done) {
 
-                var b1 = new B();
-                var b2 = new B();
-                var result = b1.with(b2);
+                var b = new B();
+                var result = b.with('test');
 
                 expect(result.__checks).to.include('with');
                 done();
@@ -93,9 +92,8 @@ describe('Types', function () {
 
             it('should return false when related type not found', function (done) {
 
-                var b1 = new B();
-                var b2 = new B();
-                var result = b1.with(b2);
+                var b = new B();
+                var result = b.with('test');
 
                 expect(result.validate('test')).to.equal(false);
                 done();
@@ -103,10 +101,40 @@ describe('Types', function () {
 
             it('should return true when peers are null', function (done) {
 
-                var b1 = new B();
-                var result = b1._with(null);
+                var b = new B();
+                var result = b._with(null);
 
                 expect(result(null)).to.equal(true);
+                done();
+            });
+
+            it('should throw an error when a parameter is not a string', function (done) {
+
+                var b = new B();
+                var error = false;
+                try {
+                    b.with([]);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    b.with({});
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    b.with(123);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
                 done();
             });
         });
@@ -115,9 +143,8 @@ describe('Types', function () {
 
             it('should set related check', function (done) {
 
-                var b1 = new B();
-                var b2 = new B();
-                var result = b1.without(b2);
+                var b = new B();
+                var result = b.without('test');
 
                 expect(result.__checks).to.include('without');
                 done();
@@ -125,11 +152,40 @@ describe('Types', function () {
 
             it('should return true when related type not found', function (done) {
 
-                var b1 = new B();
-                var b2 = new B();
-                var result = b1.without(b2);
+                var b = new B();
+                var result = b.without('test');
 
                 expect(result.validate('test')).to.equal(true);
+                done();
+            });
+
+            it('should throw an error when a parameter is not a string', function (done) {
+
+                var b = new B();
+                var error = false;
+                try {
+                    b.without([]);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    b.without({});
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    b.without(123);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
                 done();
             });
         });
