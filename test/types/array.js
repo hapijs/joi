@@ -26,7 +26,7 @@ describe('Types', function () {
 
         var A = Joi.types.Array,
             N = Joi.types.Number,
-            S = Joi.types.String
+            S = Joi.types.String,
             O = Joi.types.Object;
 
         it('should have mixins', function (done) {
@@ -194,7 +194,7 @@ describe('Types', function () {
                         false
                     ]
                 ], done);
-            }); 
+            });
 
             it('should not validate array of unallowed mixed types (Array)', function (done) {
 
