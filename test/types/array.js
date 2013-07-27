@@ -26,7 +26,7 @@ describe('Types', function () {
 
         var A = Joi.types.Array,
             N = Joi.types.Number,
-            S = Joi.types.String
+            S = Joi.types.String,
             O = Joi.types.Object;
 
         it('should have mixins', function (done) {
