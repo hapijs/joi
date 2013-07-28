@@ -473,6 +473,12 @@ When validating an input for a specific type with lots of constraints, Joi will,
       nickname: S().valid('Silly').min(2)
     }
     schema.nickname.validate('o', null, null, errors) // => populates errors with all failing constraints
+    
+    // alternative way
+    var input = { amount: 2.5 };
+    var schema = { amount: T.Number().integer().min(3).max(5).noShortCircuit() };
+    
+    Joi.validate(input, schema);
 
 
 #### Non-Exclusive Valid

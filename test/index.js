@@ -149,6 +149,54 @@ describe('#validate', function () {
         done();
     });
 
+    it('should validate config where the root item is a joi Object and saveConversions setting is enabled', function (done) {
+        Joi.settings.saveConversions = true;
+        
+        var config = T.Object({
+            a: T.String()
+        });
+
+        expect(Joi.validate({ a: 'okay' }, config)).to.be.null;
+
+        Joi.settings.saveConversions = false;
+        
+        done();
+    });
+
+    it('should not alter valid top level objects when saveConversions setting is enabled', function (done) {
+        Joi.settings.saveConversions = true;
+        
+        var config = T.Object({
+            a: T.String()
+        });
+
+        var original  = { a: 'okay' };
+        var validated = { a: 'okay' };
+        
+        expect(Joi.validate(validated, config)).to.be.null;
+        expect(validated).to.deep.equal(original);
+
+        Joi.settings.saveConversions = false;
+        
+        done();
+    });
+
+    it('should allow unknown keys in objects if no schema was given', function (done) {
+
+        expect(Joi.validate({ foo: 'bar' }, T.Object())).to.not.exist;
+
+        done();
+    });
+
+    it('should fail on unkown keys in objects if a schema was given', function (done) {
+
+        expect(Joi.validate({ foo: 'bar' }, T.Object({}))).to.exist;
+        expect(Joi.validate({ foo: 'bar' }, {})).to.exist;
+        expect(Joi.validate({ foo: 'bar' }, { other: T.Number() })).to.exist;
+
+        done();
+    });
+
     it('should validate an unknown option', function (done) {
 
         var config = {
@@ -508,6 +556,20 @@ describe('#validate', function () {
 
         err.annotated();
         expect(err.message).to.contain('\u001b[0m');
+        done();
+    });
+
+    it('there should be more validation errors when short circuit is disabled', function (done) {
+
+        var input = { a: 1, b: 2 };
+
+        var resultWithShortCircuit = Joi.validate(input, T.Object({}));
+        var resultWithoutShortCircuit = Joi.validate(input, T.Object({}).noShortCircuit());
+
+        expect(resultWithShortCircuit).to.exist
+        expect(resultWithoutShortCircuit).to.exist
+        expect(resultWithoutShortCircuit._errors.length).to.be.greaterThan(resultWithShortCircuit._errors.length);
+
         done();
     });
 
