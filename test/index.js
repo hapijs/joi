@@ -145,13 +145,14 @@ describe('#validate', function () {
         expect(Joi.validate(true, T.Object())).to.not.be.null;
         expect(Joi.validate(true, T.String())).to.not.be.null;
         expect(Joi.validate('test@test.com', T.String().email())).to.be.null;
+        expect(Joi.validate({ param: 'item'}, T.Object({ param: T.String().required() }, true))).to.be.null;
 
         done();
     });
 
     it('should validate config where the root item is a joi Object and saveConversions setting is enabled', function (done) {
         Joi.settings.saveConversions = true;
-        
+
         var config = T.Object({
             a: T.String()
         });
@@ -159,25 +160,25 @@ describe('#validate', function () {
         expect(Joi.validate({ a: 'okay' }, config)).to.be.null;
 
         Joi.settings.saveConversions = false;
-        
+
         done();
     });
 
     it('should not alter valid top level objects when saveConversions setting is enabled', function (done) {
         Joi.settings.saveConversions = true;
-        
+
         var config = T.Object({
             a: T.String()
         });
 
         var original  = { a: 'okay' };
         var validated = { a: 'okay' };
-        
+
         expect(Joi.validate(validated, config)).to.be.null;
         expect(validated).to.deep.equal(original);
 
         Joi.settings.saveConversions = false;
-        
+
         done();
     });
 
