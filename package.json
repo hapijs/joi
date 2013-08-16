@@ -2,11 +2,6 @@
   "name": "joi",
   "description": "Object schema validation",
   "version": "1.0.0",
-  "author": "Van Nguyen <the.gol.effect@gmail.com>",
-  "contributors": [
-    "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)",
-    "Wyatt Preul <wpreul@gmail.com>"
-  ],
   "repository": "git://github.com/spumko/joi",
   "main": "index",
   "keywords": [
