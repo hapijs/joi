@@ -1,4 +1,16 @@
 {
+    "base": {
+        "unknown": "the key ({{key}}) is not allowed",
+        "without": "the value of {{key}} must exist without {{value}}",
+        "invalid": "the value of {{key}} is not allowed to be {{value}}",
+        "rename": {
+            "allowMult": "allowMult false and already renamed: {{key}}, {{value}}",
+            "allowOverwrite": "allowOverwrite false and target exists: {{key}}, {{value}}"
+        },
+        "validate": {
+            "allowOnly": "the value of {{key}} must be one of {{value}}"
+        }
+    },
     "array": {
         "base": "the value of {{key}} must be an Array"
     },
