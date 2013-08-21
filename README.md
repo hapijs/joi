@@ -428,14 +428,6 @@ Joi has special settings that will modify certain behaviors.
 
 ### Global
 
-#### Custom Messages
-
-Joi error messages can be updated and replaced with localized versions.  Use the `languagePath` option to specify a file path to a JSON file that contains error messages.  Each message supports a mustache style template with the following keys:
-
- - `{{key}}` - the schema property that fails validation
- - `{{value}}` - the invalid value assigned to the key
-
-
 #### Skip Functions
 
 On occasion, an object must be validated which contains functions as properties. To force Joi to ignore validation on such functions, use the `skipFunctions` option:
@@ -460,6 +452,32 @@ To force Joi to not convert object values, use the `skipConversions` option:
 
     Joi.settings.skipConversions = true;
 
+### Local
+
+All global options may be overridden by specifying the option directly on the schema object.
+
+#### Custom Messages
+
+Joi error messages can be updated and replaced with localized versions.  Use the `languagePath` option to specify a file path to a JSON file that contains error messages.  Each message supports a mustache style template with the following keys:
+
+ - `{{key}}` - the schema property that fails validation
+ - `{{value}}` - the invalid value assigned to the key
+ - `{{validTypes}}` - an optional list of acceptable inputs
+
+```javascript
+var S = Joi.Types.String();
+var config = {
+  username: S().alphanum().min(3).max(30),
+  password: S().regex(/[a-zA-Z0-9]{3,30}/),
+  languagePath: Path.join(__dirname, 'languages', 'en-US.json')
+};
+
+Joi.validate({
+  username: 'ab',
+  password: '1'
+}, config);
+```
+
 
 ### Type-Specific
 
@@ -473,11 +491,11 @@ When validating an input for a specific type with lots of constraints, Joi will,
       nickname: S().valid('Silly').min(2)
     }
     schema.nickname.validate('o', null, null, errors) // => populates errors with all failing constraints
-    
+
     // alternative way
     var input = { amount: 2.5 };
     var schema = { amount: T.Number().integer().min(3).max(5).noShortCircuit() };
-    
+
     Joi.validate(input, schema);
 
 

@@ -220,6 +220,7 @@ describe('Types', function () {
                 var err = Joi.validate(input, schema);
 
                 expect(err).to.exist;
+                expect(err.message).to.include('the value of arr must be an integer');
                 done();
             });
         });
