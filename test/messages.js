@@ -54,7 +54,9 @@ describe('Messages', function () {
         it('should return formatted resource when there are spaces in template', function (done) {
 
             var messages = new Messages();
-            var result = messages.print('number.max', 'my key', 'my value');
+            var result = messages.print('number.max', 'my key', {
+                value: 'my value'
+            });
 
             expect(result).to.contain('my key');
             expect(result).to.contain('my value');
