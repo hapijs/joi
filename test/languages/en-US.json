@@ -1,0 +1,18 @@
+{
+    "base": {
+        "unknown": "Unrecognized `{{key}}` field.",
+        "without": "The `{{key}}` field must be omitted if `{{value}}` is specified.",
+        "invalid": "Invalid value for `{{key}}`: `{{value}}`.",
+        "rename": {
+            "allowOverwrite": "`{{value}}` is already assigned to the `{{key}}` field."
+        }
+    },
+    "string": {
+        "base": "The `{{key}}` field must be a string.",
+        "email": "The `{{key}}` field must be a valid e-mail address.",
+        "date": "The `{{key}}` field must be a valid date.",
+        "min": "The `{{key}}` field must be at least {{value}} characters long.",
+        "max": "The `{{key}}` field may not exceed {{value}} characters.",
+        "regex": "The `{{key}}` field failed one or more validation constraints."
+    }
+}

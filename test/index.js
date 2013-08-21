@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Path = require('path');
 var Joi = require('../lib');
 
 
@@ -80,7 +81,12 @@ describe('#validate', function () {
         expect(Joi.validate({ upc: 'test' }, config5)).to.be.null;
         expect(Joi.validate({ txt: null }, config5)).to.not.be.null;
         expect(Joi.validate({ txt: 'test' }, config5)).to.be.null;
-        expect(Joi.validate({ upc: null, txt: null }, config5)).to.not.be.null;
+
+        var err = Joi.validate({ upc: null, txt: null }, config5);
+        expect(err).to.not.be.null;
+        expect(err.message).to.contain('the value of txt must exist without upc');
+        expect(err.message).to.contain('the value of upc must exist without txt');
+
         expect(Joi.validate({ txt: 'test', upc: 'test' }, config5)).to.not.be.null;
         expect(Joi.validate({ txt: 'test', upc: null }, config5)).to.be.null;
         expect(Joi.validate({ txt: 'test', upc: '' }, config5)).to.be.null;
@@ -103,7 +109,12 @@ describe('#validate', function () {
         expect(Joi.validate({ txt: null }, config6)).to.not.be.null;
         expect(Joi.validate({ txt: 'test' }, config6)).to.be.null;
         expect(Joi.validate({ upc: null, txt: null }, config6)).to.not.be.null;
-        expect(Joi.validate({ txt: 'test', upc: 'test' }, config6)).to.not.be.null;
+
+        var err = Joi.validate({ txt: 'test', upc: 'test' }, config6);
+        expect(err).to.not.be.null;
+        expect(err.message).to.contain('the value of txt must exist without upc');
+        expect(err.message).to.contain('the value of upc must exist without txt');
+
         expect(Joi.validate({ txt: 'test', upc: null }, config6)).to.be.null;
         expect(Joi.validate({ txt: 'test', upc: '' }, config6)).to.be.null;
         expect(Joi.validate({ txt: '', upc: 'test' }, config6)).to.be.null;
@@ -130,7 +141,13 @@ describe('#validate', function () {
             ]
         };
 
-        expect(Joi.validate({ auth: { mode: 'none' } }, config)).to.not.be.null;
+        var err = Joi.validate({ auth: { mode: 'none' } }, config);
+        expect(err).to.not.be.null;
+
+        expect(err.message).to.contain('the value of mode must be one of undefined, try, optional, required, null');
+        expect(err.message).to.contain('the value of auth must be a string');
+        expect(err.message).to.contain('the value of auth must be a boolean');
+
         expect(Joi.validate({ auth: { mode: 'try' } }, config)).to.be.null;
         expect(Joi.validate({ something: undefined }, config)).to.be.null;
         expect(Joi.validate({ auth: { something: undefined } }, config)).to.be.null;
@@ -142,8 +159,15 @@ describe('#validate', function () {
 
         expect(Joi.validate(true, T.Boolean().nullOk())).to.be.null;
         expect(Joi.validate({ auth: { mode: 'try' } }, T.Object())).to.be.null;
-        expect(Joi.validate(true, T.Object())).to.not.be.null;
-        expect(Joi.validate(true, T.String())).to.not.be.null;
+
+        var err = Joi.validate(true, T.Object());
+        expect(err).to.not.be.null;
+        expect(err.message).to.contain('the value of <root> must be an object');
+
+        err = Joi.validate(true, T.String());
+        expect(err).to.not.be.null;
+        expect(err.message).to.contain('the value of <root> must be a string');
+
         expect(Joi.validate('test@test.com', T.String().email())).to.be.null;
         expect(Joi.validate({ param: 'item'}, T.Object({ param: T.String().required() }, true))).to.be.null;
 
@@ -160,6 +184,26 @@ describe('#validate', function () {
         expect(Joi.validate({ a: 'okay' }, config)).to.be.null;
 
         Joi.settings.saveConversions = false;
+
+        done();
+    });
+
+    it('should support setting the saveConversions setting locally', function (done) {
+
+        expect(Joi.settings.saveConversions).to.equal(false);
+
+        var config = {
+            a: T.Number(),
+            saveConversions: true
+        };
+
+        var original = { a: '5' };
+        var validated = { a: 5 };
+
+        expect(Joi.validate(original, config)).to.be.null;
+        expect(validated).to.deep.equal(original);
+
+        expect(Joi.settings.saveConversions).to.equal(false);
 
         done();
     });
@@ -191,9 +235,17 @@ describe('#validate', function () {
 
     it('should fail on unkown keys in objects if a schema was given', function (done) {
 
-        expect(Joi.validate({ foo: 'bar' }, T.Object({}))).to.exist;
-        expect(Joi.validate({ foo: 'bar' }, {})).to.exist;
-        expect(Joi.validate({ foo: 'bar' }, { other: T.Number() })).to.exist;
+        var err = Joi.validate({ foo: 'bar' }, T.Object({}));
+        expect(err).to.exist;
+        expect(err.message).to.contain('the key (foo) is not allowed');
+
+        err = Joi.validate({ foo: 'bar' }, {});
+        expect(err).to.exist;
+        expect(err.message).to.contain('the key (foo) is not allowed');
+
+        err = Joi.validate({ foo: 'bar' }, { other: T.Number() });
+        expect(err).to.exist;
+        expect(err.message).to.contain('the key (foo) is not allowed');
 
         done();
     });
@@ -206,8 +258,13 @@ describe('#validate', function () {
             }).nullOk()
         };
 
-        expect(Joi.validate({ auth: { unknown: true } }, config)).to.not.be.null;
-        expect(Joi.validate({ something: false }, config)).to.not.be.null;
+        var err = Joi.validate({ auth: { unknown: true } }, config);
+        expect(err).to.not.be.null;
+        expect(err.message).to.contain('the key (unknown) is not allowed');
+
+        err = Joi.validate({ something: false }, config);
+        expect(err).to.not.be.null;
+        expect(err.message).to.contain('the key (something) is not allowed');
 
         done();
     });
@@ -264,9 +321,17 @@ describe('#validate', function () {
             ]
         };
 
-        expect(Joi.validate({}, config)).to.not.be.null;
+        var err = Joi.validate({}, config);
+        expect(err).to.not.be.null;
+        expect(err.message).to.contain('the value of module is not allowed to be undefined');
+
         expect(Joi.validate({ module: 'test' }, config)).to.be.null;
-        expect(Joi.validate({ module: {} }, config)).to.not.be.null;
+
+        err = Joi.validate({ module: {} }, config);
+        expect(err).to.not.be.null;
+        expect(err.message).to.contain('the value of compile is not allowed to be undefined');
+        expect(err.message).to.contain('the value of module must be a string');
+
         expect(Joi.validate({ module: { compile: function () { } } }, config)).to.be.null;
 
         done();
@@ -326,19 +391,6 @@ describe('#validate', function () {
 
         var obj = {
             a: 10,
-            b: 'a',
-            c: 'joe@example.com'
-        };
-        var err = Joi.validate(obj, config1);
-
-        expect(err).to.exist;
-        done();
-    });
-
-    it('should fail validation when the wrong types are supplied', function (done) {
-
-        var obj = {
-            a: 'a',
             b: 'a',
             c: 'joe@example.com'
         };
@@ -487,6 +539,7 @@ describe('#validate', function () {
         var err = Joi.validate(input, schema);
 
         expect(err).to.exist;
+        expect(err.message).to.contain('the key (func) is not allowed');
         done();
     });
 
@@ -570,6 +623,48 @@ describe('#validate', function () {
         expect(resultWithShortCircuit).to.exist
         expect(resultWithoutShortCircuit).to.exist
         expect(resultWithoutShortCircuit._errors.length).to.be.greaterThan(resultWithShortCircuit._errors.length);
+
+        done();
+    });
+
+    it('should support custom errors when validating types', function (done) {
+
+        var input = {
+            email: 'invalid-email',
+            date: 'invalid-date',
+            alphanum: '\b\n\f\r\t',
+            min: 'ab',
+            max: 'abcd',
+            required: 'hello',
+            xor: '123',
+            renamed: '456',
+            notEmpty: ''
+        };
+
+        var schema = {
+            email: T.String().email(),
+            date: T.String().date(),
+            alphanum: T.String().alphanum(),
+            min: T.String().min(3),
+            max: T.String().max(3),
+            required: T.String().required().without('xor'),
+            xor: T.String().without('required'),
+            renamed: T.String().rename('required'),
+            notEmpty: T.String().required(),
+            languagePath: Path.join(__dirname, 'languages', 'en-US.json')
+        };
+
+        var err = Joi.validate(input, schema);
+
+        expect(err).to.exist;
+        expect(err.message).to.contain('The `email` field must be a valid e-mail address.');
+        expect(err.message).to.contain('The `date` field must be a valid date.');
+        expect(err.message).to.contain('The `alphanum` field failed one or more validation constraints.');
+        expect(err.message).to.contain('The `min` field must be at least 3 characters long.');
+        expect(err.message).to.contain('The `max` field may not exceed 3 characters.');
+        expect(err.message).to.contain('The `required` field must be omitted if `xor` is specified.');
+        expect(err.message).to.contain('`required` is already assigned to the `renamed` field.');
+        expect(err.message).to.contain('Invalid value for `notEmpty`: `empty`.');
 
         done();
     });
