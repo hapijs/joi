@@ -462,7 +462,7 @@ Joi error messages can be updated and replaced with localized versions.  Use the
 
  - `{{key}}` - the schema property that fails validation
  - `{{value}}` - the invalid value assigned to the key
- - `{{validTypes}}` - a list of acceptable inputs (*optional*)
+ - `{{validTypes}}` - an optional list of acceptable inputs
 
 ```javascript
 var S = Joi.Types.String();
@@ -474,7 +474,7 @@ var config = {
 
 Joi.validate({
   username: 'ab',
-  password: '1
+  password: '1'
 }, config);
 ```
 
