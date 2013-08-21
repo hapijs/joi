@@ -22,5 +22,8 @@
         "max": "the value of {{key}} must be less than (or equal to) {{value}}",
         "float": "the value of {{key}} must be a float or double",
         "int": "the value of {{key}} must be an integer"
+    },
+    "boolean": {
+        "base": "the value of {{key}} must be a boolean"
     }
 }
