@@ -12,7 +12,9 @@
         }
     },
     "array": {
-        "base": "the value of {{key}} must be an Array"
+        "base": "the value of {{key}} must be an Array",
+        "includes": "the values(s) {{value}} in array {{key}} must be of the following type(s) {{validTypes}}",
+        "excludes": "the values supplied to array {{key}} must contain {{validTypes}}"
     },
     "number": {
         "base": "the value of {{key}} must be a number",
