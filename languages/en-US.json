@@ -25,5 +25,8 @@
     },
     "boolean": {
         "base": "the value of {{key}} must be a boolean"
+    },
+    "function": {
+        "base": "the value of {{key}} must be a Function"
     }
 }
