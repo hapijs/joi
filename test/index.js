@@ -519,6 +519,81 @@ describe('#validate', function () {
         done();
     });
 
+    it('should fail validation with extra keys', function (done) {
+
+        var obj = {
+            a: 1,
+            b: 'a',
+            d: 'c'
+        };
+        var err = Joi.validate(obj, config1);
+
+        expect(err).to.exist;
+        done();
+    });
+
+    it('should pass validation with extra keys and remove them when stripExtraKeys is set', function (done) {
+
+        Joi.settings.stripExtraKeys = true;
+
+        var obj = {
+            a: 1,
+            b: 'a',
+            d: 'c'
+        };
+        var err = Joi.validate(obj, config1);
+
+        expect(err).to.be.null;
+        expect(obj).to.deep.equal({a: 1, b: 'a'});
+
+        Joi.settings.stripExtraKeys = false;
+
+        done();
+    });
+
+    it('should pass validation with extra keys when allowExtraKeys is set', function (done) {
+
+        Joi.settings.allowExtraKeys = true;
+
+        var obj = {
+            a: 1,
+            b: 'a',
+            d: 'c'
+        };
+        var err = Joi.validate(obj, config1);
+
+        expect(err).to.be.null;
+        expect(obj).to.deep.equal({a: 1, b: 'a', d: 'c'});
+
+        Joi.settings.allowExtraKeys = false;
+
+        done();
+    });
+
+    it('should pass validation with extra keys and remove them when skipExtraKeys is set locally', function (done) {
+
+        expect(Joi.settings.stripExtraKeys).to.equal(false);
+
+        var localConfig = {
+            a: Joi.types.Number().min(0).max(3),
+            b: Joi.types.String().valid('a', 'b', 'c'),
+            stripExtraKeys: true
+        };
+
+        var obj = {
+            a: 1,
+            b: 'a',
+            d: 'c'
+        };
+        var err = Joi.validate(obj, localConfig);
+
+        expect(err).to.be.null;
+        expect(obj).to.deep.equal({a: 1, b: 'a'});
+        expect(Joi.settings.stripExtraKeys).to.equal(false);
+
+        done();
+    });
+
     it('should work when the skipFunctions setting is enabled', function (done) {
 
         Joi.settings.skipFunctions = true;
@@ -684,5 +759,3 @@ describe('#validate', function () {
         })
     };
 });
-
-
