@@ -452,6 +452,20 @@ To force Joi to not convert object values, use the `skipConversions` option:
 
     Joi.settings.skipConversions = true;
 
+
+#### Allow Extra Keys & Strip Extra Keys
+
+By default Joi will throw an error on keys that are not specified in the configuration object. 
+
+To force Joi to not throw errors when it encounters an unknown key, use the `allowExtraKeys` option:
+
+    Joi.settings.allowExtraKeys = true;
+
+If you'd like Joi to remove the unknown keys from the object, enable both the `stripExtraKeys` option and the `allowExtraKeys` option:
+    
+    Joi.settings.allowExtraKeys = true;
+    Joi.settings.stripExtraKeys = true;
+
 ### Local
 
 All global options may be overridden by specifying the option directly on the schema object.
