@@ -461,8 +461,9 @@ To force Joi to not throw errors when it encounters an unknown key, use the `all
 
     Joi.settings.allowExtraKeys = true;
 
-If you'd like Joi to remove the unknown keys from the object, use the `stripExtraKeys` option:
-
+If you'd like Joi to remove the unknown keys from the object, enable both the `stripExtraKeys` option and the `allowExtraKeys` option:
+    
+    Joi.settings.allowExtraKeys = true;
     Joi.settings.stripExtraKeys = true;
 
 ### Local

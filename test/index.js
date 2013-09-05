@@ -535,6 +535,7 @@ describe('#validate', function () {
     it('should pass validation with extra keys and remove them when stripExtraKeys is set', function (done) {
 
         Joi.settings.stripExtraKeys = true;
+        Joi.settings.allowExtraKeys = true;
 
         var obj = {
             a: 1,
@@ -547,6 +548,7 @@ describe('#validate', function () {
         expect(obj).to.deep.equal({a: 1, b: 'a'});
 
         Joi.settings.stripExtraKeys = false;
+        Joi.settings.allowExtraKeys = false;
 
         done();
     });
@@ -577,7 +579,8 @@ describe('#validate', function () {
         var localConfig = {
             a: Joi.types.Number().min(0).max(3),
             b: Joi.types.String().valid('a', 'b', 'c'),
-            stripExtraKeys: true
+            stripExtraKeys: true,
+            allowExtraKeys: true
         };
 
         var obj = {
