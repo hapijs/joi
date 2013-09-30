@@ -12,10 +12,10 @@
     "node": "0.10.x"
   },
   "dependencies": {
-    "hoek": "1.0.x"
+    "hoek": "1.x.x"
   },
   "devDependencies": {
-    "lab": "0.x.x"
+    "lab": "1.x.x"
   },
   "scripts": {
     "test": "make test-cov"

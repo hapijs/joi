@@ -532,6 +532,17 @@ describe('#validate', function () {
         done();
     });
 
+    it('should pass string validation of missing optional key with regex string condition', function (done) {
+
+        var rules = {
+            key: Joi.types.String().alphanum(false).min(8)
+        };
+
+        var err = Joi.validate({}, rules);
+        expect(err).to.not.exist;
+        done();
+    });
+
     it('should pass validation with extra keys and remove them when stripExtraKeys is set', function (done) {
 
         Joi.settings.stripExtraKeys = true;
