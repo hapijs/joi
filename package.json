@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "repository": "git://github.com/spumko/joi",
   "main": "index",
   "keywords": [
