@@ -148,14 +148,6 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
-        it('should invalid undefined if max set', function (done) {
-
-            var t = S().max(3);
-            verifyBehavior(t, [
-                [undefined, false]
-            ], done);
-        });
-
         it('should invalidate invalid values', function (done) {
 
             var t = S().valid('a', 'b', 'c');
@@ -219,6 +211,14 @@ describe('Joi.types.String', function () {
                 ['test', false],
                 ['0', true],
                 [null, false]
+            ], done);
+        });
+
+        it('should return true with max and not required when value is undefined', function (done) {
+
+            var t = S().max(3);
+            verifyBehavior(t, [
+                [undefined, true]
             ], done);
         });
 
@@ -388,6 +388,17 @@ describe('Joi.types.String', function () {
                 ['1234', false],
                 ['', true],
                 [null, false]
+            ], done);
+        });
+
+        it('should handle combination of nullOk and max', function (done) {
+            var rule = S().nullOk().max(3);
+            verifyBehavior(rule, [
+                ['x', true],
+                ['123', true],
+                ['1234', false],
+                ['', false],
+                [null, true]
             ], done);
         });
 
