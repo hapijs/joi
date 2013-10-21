@@ -583,6 +583,37 @@ describe('#validate', function () {
         done();
     });
 
+    it('should pass validation with extra keys set locally', function (done) {
+
+        expect(Joi.settings.stripExtraKeys).to.equal(false);
+
+        var localConfig = {
+            a: Joi.types.Number().min(0).max(3),
+            b: Joi.types.String().valid('a', 'b', 'c'),
+            allowExtraKeys: true
+        };
+
+        var obj = {
+            a: 1,
+            b: 'a',
+            d: 'c'
+        };
+        var err = Joi.validate(obj, localConfig);
+
+        expect(err).to.be.null;
+        expect(obj).to.deep.equal({a: 1, b: 'a', d: 'c'});
+        expect(Joi.settings.stripExtraKeys).to.equal(false);
+
+        err = Joi.validate(obj, localConfig);
+
+        expect(err).to.be.null;
+        expect(obj).to.deep.equal({a: 1, b: 'a', d: 'c'});
+        expect(Joi.settings.stripExtraKeys).to.equal(false);
+
+        done();
+    });
+
+
     it('should pass validation with extra keys and remove them when skipExtraKeys is set locally', function (done) {
 
         expect(Joi.settings.stripExtraKeys).to.equal(false);
@@ -600,6 +631,12 @@ describe('#validate', function () {
             d: 'c'
         };
         var err = Joi.validate(obj, localConfig);
+
+        expect(err).to.be.null;
+        expect(obj).to.deep.equal({a: 1, b: 'a'});
+        expect(Joi.settings.stripExtraKeys).to.equal(false);
+
+        err = Joi.validate(obj, localConfig);
 
         expect(err).to.be.null;
         expect(obj).to.deep.equal({a: 1, b: 'a'});
