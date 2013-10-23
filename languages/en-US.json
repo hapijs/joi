@@ -40,5 +40,11 @@
         "regex": "the value of {{key}} must match the RegExp {{value}}",
         "date": "the value of {{key}} must be a valid JavaScript Date format",
         "email": "The value of {{key}} must be a valid email"
+    },
+    "instanceOf": {
+        "base": "the value of {{key}} must be an instance of the defined base class"
+    },
+    "extends": {
+        "base": "the value of {{key}} must be extend the defined base class"
     }
 }
