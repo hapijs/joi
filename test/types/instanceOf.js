@@ -33,9 +33,16 @@ describe('InstanceOf', function () {
     var InstanceOf = Joi.Types.InstanceOf;
 
     it('should have mixins', function (done) {
-        var result = InstanceOf();
+        var result = InstanceOf(RefClass);
 
         expect(result.validate).to.exist;
+        done();
+    });
+
+    it('should throw error when supplied a non-function', function (done) {
+        expect(function () {
+            InstanceOf('some string');
+        }).to.throw();
         done();
     });
 
@@ -52,14 +59,14 @@ describe('InstanceOf', function () {
 
         it('should, by default, allow undefined', function (done) {
 
-            verifyBehavior(InstanceOf(), [
+            verifyBehavior(InstanceOf(RefClass), [
                 [undefined, true]
             ], done);
         });
 
         it('should, when .required(), deny undefined', function (done) {
 
-            verifyBehavior(InstanceOf().required(), [
+            verifyBehavior(InstanceOf(RefClass).required(), [
                 [undefined, false]
             ], done);
         });

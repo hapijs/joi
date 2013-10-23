@@ -30,9 +30,17 @@ describe('Extends', function () {
     var Extends = Joi.Types.Extends;
 
     it('should have mixins', function (done) {
-        var result = Extends();
+        var result = Extends(RefClass);
 
         expect(result.validate).to.exist;
+        done();
+    });
+
+    it('should throw error when supplied a non-function', function (done) {
+
+        expect(function () {
+            Extends('some string');
+        }).to.throw();
         done();
     });
 
@@ -43,20 +51,20 @@ describe('Extends', function () {
             expect(function () {
                 var e = Extends(RefClass);
                 var result = e.validate(ExtendedClass);
-            }).to.not.throw;
+            }).to.not.throw();
             done();
         });
 
         it('should, by default, allow undefined', function (done) {
 
-            verifyBehavior(Extends(), [
+            verifyBehavior(Extends(RefClass), [
                 [undefined, true]
             ], done);
         });
 
         it('should, when .required(), deny undefined', function (done) {
 
-            verifyBehavior(Extends().required(), [
+            verifyBehavior(Extends(RefClass).required(), [
                 [undefined, false]
             ], done);
         });
