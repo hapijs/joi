@@ -279,10 +279,6 @@ Specifies an explicit encoding for this input string.
 
 Specifies that this input be a valid integer.
 
-##### Number.float()
-
-Specifies that this input be a valid float or double.
-
 ##### Number.min(n)
 
 Specifies a minimum value for this input, inclusive.

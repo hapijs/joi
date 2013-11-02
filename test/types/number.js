@@ -58,18 +58,6 @@ describe('Number', function () {
             done();
         });
 
-        it('should validate float', function (done) {
-
-            var t = N().float();
-            verifyBehavior(t, [
-                [100, false],
-                [0, false],
-                [null, false],
-                [1.02, true],
-                [0.01, true]
-            ], done);
-        });
-
         it('should validate integer', function (done) {
 
             var t = N().integer();
@@ -191,74 +179,6 @@ describe('Number', function () {
                 [11, false],
                 [8, true],
                 [9, false],
-                [null, true]
-            ], done);
-        });
-
-        it('should handle combination of min, max, and float', function (done) {
-
-            var rule = N().min(8).max(10).float();
-            verifyBehavior(rule, [
-                [1, false],
-                [11, false],
-                [8, false],
-                [9, false],
-                [9.1, true],
-                [null, false]
-            ], done);
-        });
-
-        it('should handle combination of min, max, float, and allow', function (done) {
-
-            var rule = N().min(8).max(10).float().allow(9);
-            verifyBehavior(rule, [
-                [1, false],
-                [11, false],
-                [8, false],
-                [9, true],
-                [9.1, true],
-                [null, false]
-            ], done);
-        });
-
-        it('should handle combination of min, max, float, and deny', function (done) {
-
-            var rule = N().min(8).max(10).float().deny(9.1);
-            verifyBehavior(rule, [
-                [1, false],
-                [11, false],
-                [8, false],
-                [9, false],
-                [9.1, false],
-                [9.2, true],
-                [null, false]
-            ], done);
-        });
-
-        it('should handle combination of min, max, float, allow, and deny', function (done) {
-
-            var rule = N().min(8).max(10).float().allow(9).deny(9.1);
-            verifyBehavior(rule, [
-                [1, false],
-                [11, false],
-                [8, false],
-                [9, true],
-                [9.1, false],
-                [9.2, true],
-                [null, false]
-            ], done);
-        });
-
-        it('should handle combination of min, max, float, allow, deny, and nullOk', function (done) {
-
-            var rule = N().min(8).max(10).float().allow(9).deny(9.1).nullOk();
-            verifyBehavior(rule, [
-                [1, false],
-                [11, false],
-                [8, false],
-                [9, true],
-                [9.1, false],
-                [9.2, true],
                 [null, true]
             ], done);
         });
