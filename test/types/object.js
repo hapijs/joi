@@ -50,6 +50,12 @@ describe('Types', function () {
             ], done);
         });
 
+        it('errors on array', function (done) {
+
+            expect(Joi.validate([1, 2, 3], Joi.types.Object())).to.exist;
+            done();
+        });
+
         it('should prevent extra keys from existing by default', function (done) {
 
             var t = O({ item: Joi.types.String().required() }).required();

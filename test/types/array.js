@@ -60,7 +60,7 @@ describe('Types', function () {
                 done();
             });
 
-            it('should convert a non-array string', function(done) {
+            it('should convert a non-array string', function (done) {
 
                 var result = A()._convert('asdf');
                 expect(result).to.equal('asdf');
@@ -173,7 +173,7 @@ describe('Types', function () {
 
             it('should validate array of objects with schema', function (done) {
 
-                verifyBehavior(A().includes(O({ h1: N().required()})), [
+                verifyBehavior(A().includes(O({ h1: N().required() })), [
                     [
                         [{ h1: 1 }, { h1: 2 }, { h1: 3 }],
                         true
