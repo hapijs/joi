@@ -5,6 +5,9 @@
         "invalid": "Invalid value for `{{key}}`: `{{value}}`.",
         "rename": {
             "allowOverwrite": "`{{value}}` is already assigned to the `{{key}}` field."
+        },
+        "validate": {
+            "allowOnly": "the value of {{key}} must be one of {{value}}."
         }
     },
     "string": {

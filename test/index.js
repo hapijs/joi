@@ -753,6 +753,21 @@ describe('#validate', function () {
         done();
     });
 
+    it('lists all errors', function (done) {
+
+        var config = {
+            a: Joi.types.String().valid('b').invalid('a').noShortCircuit()
+        };
+
+        var obj = {
+            a: 'a'
+        };
+        var err = Joi.validate(obj, config);
+
+        expect(err.message).to.not.equal('');
+        done();
+    });
+
     it('should support custom errors when validating types', function (done) {
 
         var input = {
@@ -775,23 +790,22 @@ describe('#validate', function () {
             max: T.String().max(3),
             required: T.String().required().without('xor'),
             xor: T.String().without('required'),
-            renamed: T.String().rename('required'),
+            renamed: T.String().rename('required').valid('456'),
             notEmpty: T.String().required(),
-            languagePath: Path.join(__dirname, 'languages', 'en-US.json')
+            languagePath: Path.join(__dirname, 'languages', 'en-us.json')
         };
 
         var err = Joi.validate(input, schema);
 
         expect(err).to.exist;
-        expect(err.message).to.contain('The `email` field must be a valid e-mail address.');
-        expect(err.message).to.contain('The `date` field must be a valid date.');
-        expect(err.message).to.contain('The `alphanum` field failed one or more validation constraints.');
-        expect(err.message).to.contain('The `min` field must be at least 3 characters long.');
-        expect(err.message).to.contain('The `max` field may not exceed 3 characters.');
-        expect(err.message).to.contain('The `required` field must be omitted if `xor` is specified.');
-        expect(err.message).to.contain('`required` is already assigned to the `renamed` field.');
+        expect(err.message).to.contain('The `email` field must be a valid e-mail address..');
+        expect(err.message).to.contain('The `date` field must be a valid date..');
+        expect(err.message).to.contain('The `alphanum` field failed one or more validation constraints..');
+        expect(err.message).to.contain('The `min` field must be at least 3 characters long..');
+        expect(err.message).to.contain('The `max` field may not exceed 3 characters..');
+        expect(err.message).to.contain('The `required` field must be omitted if `xor` is specified..');
+        expect(err.message).to.contain('`required` is already assigned to the `renamed` field..');
         expect(err.message).to.contain('Invalid value for `notEmpty`: `empty`.');
-
         done();
     });
 

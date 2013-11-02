@@ -22,7 +22,7 @@ describe('Types', function () {
 
     describe('Base', function () {
 
-        var B = Joi.types.Base;
+        var Base = Joi.types.Base;
 
         describe('#_test', function () {
 
@@ -30,7 +30,7 @@ describe('Types', function () {
 
                 expect(function () {
 
-                    var b = new B();
+                    var b = new Base();
                     var result = b._test(null);
                 }).to.throw;
                 done();
@@ -40,7 +40,7 @@ describe('Types', function () {
 
                 expect(function () {
 
-                    var b = new B();
+                    var b = new Base();
                     var result = b._test('test', true);
                 }).to.not.throw;
                 done();
@@ -49,18 +49,9 @@ describe('Types', function () {
 
         describe('#with', function () {
 
-            it('should set related check', function (done) {
-
-                var b = new B();
-                var result = b.with('test');
-
-                expect(result._checks).to.include('with');
-                done();
-            });
-
             it('should return false when related type not found', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 var result = b.with('test');
 
                 expect(result.validate('test')).to.equal(false);
@@ -69,7 +60,7 @@ describe('Types', function () {
 
             it('should throw an error when a parameter is not a string', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 var error = false;
                 try {
                     b.with([]);
@@ -100,18 +91,9 @@ describe('Types', function () {
 
         describe('#without', function () {
 
-            it('should set related check', function (done) {
-
-                var b = new B();
-                var result = b.without('test');
-
-                expect(result._checks).to.include('without');
-                done();
-            });
-
             it('should return true when related type not found', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 var result = b.without('test');
 
                 expect(result.validate('test')).to.equal(true);
@@ -120,7 +102,7 @@ describe('Types', function () {
 
             it('should throw an error when a parameter is not a string', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 var error = false;
                 try {
                     b.without([]);
@@ -151,18 +133,18 @@ describe('Types', function () {
 
         describe('#rename', function () {
 
-            it('should rename the type', function (done) {
+            it('should skip rename when no parent object is provided', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 var result = b.rename('test');
 
-                expect(result.validate('test')).to.equal(true);
+                expect(result.validate('test')).to.equal(false);
                 done();
             });
 
             it('using allowMult enabled should allow renaming multiple times', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 var result = b.rename('test1', { allowMult: true });
 
                 expect(result.validate({ test: true }, { test: true }, 'test', { add: function () { }, _renamed: { test1: true } })).to.equal(true);
@@ -171,16 +153,16 @@ describe('Types', function () {
 
             it('with allowMult disabled should not allow renaming multiple times', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 var result = b.rename('test1', { allowMult: false });
 
-                expect(result.validate({ test: true }, { test: true }, 'test', { add: function () { }, _renamed: { test1: true } })).to.equal(false);
+                expect(result.validate({ test: true }, { test: true }, 'test', { add: function () { }, addLocalized: function () {}, _renamed: { test1: true } })).to.equal(false);
                 done();
             });
 
             it('with allowOverwrite disabled should not allow overwriting existing value', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 var result = b.rename('test1', { allowOverwrite: false });
 
                 expect(result.validate({ test1: true }, { test1: true }, { test1: true })).to.equal(false);
@@ -189,7 +171,7 @@ describe('Types', function () {
 
             it('with allowOverwrite enabled should allow overwriting existing value', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 var result = b.rename('test1', { allowOverwrite: true, deleteOrig: true });
 
                 expect(result.validate({ test1: true }, { test1: true }, { test1: true })).to.equal(true);
@@ -201,7 +183,7 @@ describe('Types', function () {
 
             it('sets the description', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 b.description('my description');
                 expect(b.description).to.equal('my description');
 
@@ -213,7 +195,7 @@ describe('Types', function () {
 
             it('sets the notes', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 b.notes('my notes');
                 expect(b.notes).to.equal('my notes');
 
@@ -225,7 +207,7 @@ describe('Types', function () {
 
             it('sets the tags', function (done) {
 
-                var b = new B();
+                var b = new Base();
                 b.tags(['tag1', 'tag2']);
                 expect(b.tags).to.include('tag1');
                 expect(b.tags).to.include('tag2');
