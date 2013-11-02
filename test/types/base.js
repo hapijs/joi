@@ -24,25 +24,14 @@ describe('Types', function () {
 
         var B = Joi.types.Base;
 
-        describe('#toString', function () {
-
-            it('should return JSON string of values', function (done) {
-
-                var b = new B().valid('test');
-
-                expect(b.toString()).to.include('test');
-                done();
-            });
-        });
-
-        describe('#add', function () {
+        describe('#_test', function () {
 
             it('should throw an error when null is passed in', function (done) {
 
                 expect(function () {
 
                     var b = new B();
-                    var result = b.add(null);
+                    var result = b._test(null);
                 }).to.throw;
                 done();
             });
@@ -52,29 +41,8 @@ describe('Types', function () {
                 expect(function () {
 
                     var b = new B();
-                    var result = b.add('test', true);
+                    var result = b._test('test', true);
                 }).to.not.throw;
-                done();
-            });
-        });
-
-        describe('#exists', function () {
-
-            it('should return false when null is passed in', function (done) {
-
-                var b = new B();
-                var result = b.exists(null);
-
-                expect(result).to.equal(false);
-                done();
-            });
-
-            it('should return true when passed true', function (done) {
-
-                var b = new B();
-                var result = b.exists(true);
-
-                expect(result).to.equal(true);
                 done();
             });
         });
@@ -86,7 +54,7 @@ describe('Types', function () {
                 var b = new B();
                 var result = b.with('test');
 
-                expect(result.__checks).to.include('with');
+                expect(result._checks).to.include('with');
                 done();
             });
 
@@ -96,15 +64,6 @@ describe('Types', function () {
                 var result = b.with('test');
 
                 expect(result.validate('test')).to.equal(false);
-                done();
-            });
-
-            it('should return true when peers are null', function (done) {
-
-                var b = new B();
-                var result = b._with(null);
-
-                expect(result(null)).to.equal(true);
                 done();
             });
 
@@ -146,7 +105,7 @@ describe('Types', function () {
                 var b = new B();
                 var result = b.without('test');
 
-                expect(result.__checks).to.include('without');
+                expect(result._checks).to.include('without');
                 done();
             });
 
@@ -270,21 +229,6 @@ describe('Types', function () {
                 b.tags(['tag1', 'tag2']);
                 expect(b.tags).to.include('tag1');
                 expect(b.tags).to.include('tag2');
-
-                done();
-            });
-        });
-
-        describe('#RequestErrorFactory', function () {
-
-            it('adds the error to the request object', function (done) {
-
-                var b = new B();
-                var err = new Error('my message');
-                var req = {};
-                b.RequestErrorFactory(req)(err);
-
-                expect(req.validationErrors).to.include('[ValidationError]: Error: my message');
 
                 done();
             });

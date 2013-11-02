@@ -24,13 +24,6 @@ describe('Types', function () {
 
     describe('Any', function () {
 
-        it('should have mixins', function (done) {
-
-            var result = Joi.types.Any();
-            expect(result.validate).to.exist;
-            done();
-        });
-
         it('should allow any type and not allow nulls', function (done) {
 
             var t = Joi.types.Any();

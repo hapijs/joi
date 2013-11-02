@@ -27,13 +27,6 @@ describe('Types', function () {
 
         var F = FunctionType; // Joi.types.Function;
 
-        it('should have mixins', function (done) {
-
-            var result = F();
-            expect(result.validate).to.exist;
-            done();
-        });
-
         it('should validate a function', function (done) {
 
             var t = F().required();

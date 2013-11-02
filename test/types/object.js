@@ -26,23 +26,16 @@ describe('Types', function () {
 
         var O = Joi.types.Object;
 
-        it('should have mixins', function (done) {
-
-            var result = O();
-            expect(result.validate).to.exist;
-            done();
-        });
-
         it('can convert a json string to an object', function (done) {
 
-            var result = O().convert('{"hi":true}');
+            var result = O()._convert('{"hi":true}');
             expect(result.hi).to.be.true;
             done();
         });
 
         it('should convert a non-json string as a string', function (done) {
 
-            var result = O().convert('a string');
+            var result = O()._convert('a string');
             expect(result).to.be.equal('a string');
             done();
         });

@@ -144,7 +144,7 @@ describe('#validate', function () {
         var err = Joi.validate({ auth: { mode: 'none' } }, config);
         expect(err).to.not.be.null;
 
-        expect(err.message).to.contain('the value of mode must be one of undefined, try, optional, required, null');
+        expect(err.message).to.contain('the value of mode must be one of undefined, required, optional, try, null');
         expect(err.message).to.contain('the value of auth must be a string');
         expect(err.message).to.contain('the value of auth must be a boolean');
 

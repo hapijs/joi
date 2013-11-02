@@ -29,39 +29,32 @@ describe('Types', function () {
             S = Joi.types.String,
             O = Joi.types.Object;
 
-        it('should have mixins', function (done) {
-
-            var result = A();
-            expect(result.validate).to.exist;
-            done();
-        });
-
-        describe('#convert', function () {
+        describe('#_convert', function () {
 
             it('should convert a string to an array', function (done) {
 
-                var result = A().convert('[1,2,3]');
+                var result = A()._convert('[1,2,3]');
                 expect(result.length).to.equal(3);
                 done();
             });
 
             it('should convert a non-array string to an array', function (done) {
 
-                var result = A().convert('{ "something": false }');
+                var result = A()._convert('{ "something": false }');
                 expect(result.length).to.equal(1);
                 done();
             });
 
             it('should return a non array', function (done) {
 
-                var result = A().convert(3);
+                var result = A()._convert(3);
                 expect(result).to.equal(3);
                 done();
             });
 
             it('should convert a non-array string with number type', function (done) {
 
-                var result = A().convert('3');
+                var result = A()._convert('3');
                 expect(result.length).to.equal(1);
                 expect(result[0]).to.equal('3');
                 done();
@@ -69,7 +62,7 @@ describe('Types', function () {
 
             it('should convert a non-array string', function(done) {
 
-                var result = A().convert('asdf');
+                var result = A()._convert('asdf');
                 expect(result).to.equal('asdf');
                 done();
             });

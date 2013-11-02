@@ -24,13 +24,6 @@ describe('Joi.types.String', function () {
 
     var S = Joi.types.String;
 
-    it('should have mixins', function (done) {
-
-        var result = S();
-        expect(result.validate).to.exist;
-        done();
-    });
-
     it('should instantiate separate copies on invocation', function (done) {
 
         var result1 = S().min(5);

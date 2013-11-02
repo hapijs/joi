@@ -24,13 +24,6 @@ describe('Number', function () {
 
     var N = Joi.types.Number;
 
-    it('should have mixins', function (done) {
-        var result = N();
-
-        expect(result.validate).to.exist;
-        done();
-    });
-
     describe('#validate', function () {
 
         it('should work', function (done) {
@@ -118,14 +111,14 @@ describe('Number', function () {
 
         it('convert will convert a string to a number', function (done) {
 
-            var t = N().convert('1');
+            var t = N()._convert('1');
             expect(t).to.equal(1);
             done();
         });
 
         it('convert will not convert a null', function (done) {
 
-            var t = N().convert(null);
+            var t = N()._convert(null);
             expect(t).to.not.exist;
             done();
         });
@@ -335,9 +328,9 @@ describe('Number', function () {
         done();
     });
 
-    it('should inherit functions from BaseType', function (done) {
+    it('should inherit functions from Base', function (done) {
 
-        var fns = ['required', 'add'];
+        var fns = ['required', '_test'];
 
         for (var i in fns) {
             expect(N()[fns[i]]).to.exist;
@@ -350,65 +343,6 @@ describe('Number', function () {
         var result = N().min(5);
         expect(result.valueOf()).to.exist;
         done();
-    });
-
-    describe('#min', function () {
-
-        it('should exist', function (done) {
-
-            expect(N().min).to.exist;
-            done();
-        });
-
-        it('should have corresponding validator function', function (done) {
-
-            expect(N()._min).to.exist;
-            done();
-        });
-    });
-
-    describe('#_min', function () {
-
-        it('should validate on known valid input', function (done) {
-
-            var inputs = [5, 6, 7, 8, 9];
-            var validator = N()._min(5);
-            for (var i in inputs) {
-                var currentResult = validator(inputs[i]);
-                expect(currentResult).to.exist;
-                expect(currentResult).to.equal(true);
-            }
-            done();
-        });
-    });
-
-    describe('#max', function () {
-
-        it('should exist', function (done) {
-
-            expect(N().max).to.exist;
-            done();
-        });
-
-        it('should have corresponding validator function', function (done) {
-            expect(N()._max).to.exist;
-            done();
-        });
-    });
-
-    describe('#_max', function () {
-
-        it('should validate on known valid input', function (done) {
-
-            var inputs = [0, 1, 2, 3, 4];
-            var validator = N()._max(4);
-            for (var i in inputs) {
-                var currentResult = validator(inputs[i]);
-                expect(currentResult).to.exist;
-                expect(currentResult).to.equal(true);
-            }
-            done();
-        });
     });
 
     describe('error message', function () {

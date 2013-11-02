@@ -26,25 +26,18 @@ describe('Types', function () {
 
         var B = Joi.types.Boolean;
 
-        it('should have mixins', function (done) {
-
-            var result = B();
-            expect(result.validate).to.exist;
-            done();
-        });
-
         describe('#convert', function () {
 
             it('should convert a string to a boolean', function (done) {
 
-                var result = B().convert('true');
+                var result = B()._convert('true');
                 expect(result).to.equal(true);
                 done();
             });
 
             it('should not convert a number to a boolean', function (done) {
 
-                var result = B().convert(1);
+                var result = B()._convert(1);
                 expect(result).to.equal(1);
                 done();
             });
