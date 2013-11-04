@@ -42,6 +42,7 @@
         "base": "the value of {{key}} must be a string",
         "min": "the value of {{key}} must be at least {{value}} characters long",
         "max": "the value of {{key}} must be less than (or equal to) {{value}} characters long",
+        "alphanum": "the value of {{key}} must only contain alpha-numeric characters {{spaces}} spaces",
         "regex": "the value of {{key}} must match the RegExp {{value}}",
         "date": "the value of {{key}} must be a valid JavaScript Date format",
         "email": "The value of {{key}} must be a valid email"

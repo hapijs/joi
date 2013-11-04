@@ -85,7 +85,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should validate required without statements like xor', function (done) {
+    it('validates required without statements like xor', function (done) {
 
         var schema = T.Object({
             txt: Joi.types.String().required().without('upc'),
@@ -117,33 +117,33 @@ describe('Joi', function () {
         done();
     });
 
-    it('should validate an array of valid types', function (done) {
+    it('validates an array of valid types', function (done) {
 
         var config = {
             auth: [
                 Joi.types.Object({
                     mode: T.String().valid('required', 'optional', 'try').nullOk()
                 }).nullOk(),
-                T.String().nullOk(),
-                T.Boolean().nullOk()
+                T.String(),
+                T.Boolean()
             ]
         };
 
         var err = Joi.validate({ auth: { mode: 'none' } }, config);
-        expect(err).to.not.be.null;
-
-        expect(err.message).to.contain('the value of mode must be one of undefined, required, optional, try, null');
-        expect(err.message).to.contain('the value of auth must be a string');
-        expect(err.message).to.contain('the value of auth must be a boolean');
+        expect(err).to.exist;
+        expect(err.message).to.equal('the value of mode must be one of undefined, required, optional, try, null. the value of auth must be a string. the value of auth must be a boolean');
 
         expect(Joi.validate({ auth: { mode: 'try' } }, config)).to.be.null;
-        expect(Joi.validate({ something: undefined }, config)).to.be.null;
-        expect(Joi.validate({ auth: { something: undefined } }, config)).to.be.null;
+        expect(Joi.validate({ something: undefined }, config)).to.exist;
+        expect(Joi.validate({ auth: { something: undefined } }, config)).to.exist;
+        expect(Joi.validate({ auth: null }, config)).to.be.null;
+        expect(Joi.validate({ auth: true }, config)).to.be.null;
+        expect(Joi.validate({ auth: 123 }, config)).to.exist;
 
         done();
     });
 
-    it('should validate config where the root item is a joi type', function (done) {
+    it('validates config where the root item is a joi type', function (done) {
 
         expect(Joi.validate(true, T.Boolean().nullOk())).to.be.null;
         expect(Joi.validate({ auth: { mode: 'try' } }, T.Object())).to.be.null;
@@ -162,7 +162,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should validate config where the root item is a joi Object and saveConversions setting is enabled', function (done) {
+    it('validates config where the root item is a joi Object and saveConversions setting is enabled', function (done) {
 
         var config = T.Object({
             a: T.String()
@@ -186,7 +186,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should not alter valid top level objects when saveConversions setting is enabled', function (done) {
+    it('does not alter valid top level objects when saveConversions setting is enabled', function (done) {
 
         var config = T.Object({
             a: T.String()
@@ -200,31 +200,30 @@ describe('Joi', function () {
         done();
     });
 
-    it('should allow unknown keys in objects if no schema was given', function (done) {
+    it('allows unknown keys in objects if no schema was given', function (done) {
 
         expect(Joi.validate({ foo: 'bar' }, T.Object())).to.not.exist;
-
         done();
     });
 
-    it('should fail on unkown keys in objects if a schema was given', function (done) {
+    it('fails on unknown keys in objects if a schema was given', function (done) {
 
         var err = Joi.validate({ foo: 'bar' }, T.Object({}));
         expect(err).to.exist;
-        expect(err.message).to.contain('the key (foo) is not allowed');
+        expect(err.message).to.equal('the keys foo are not allowed');
 
         err = Joi.validate({ foo: 'bar' }, {});
         expect(err).to.exist;
-        expect(err.message).to.contain('the key (foo) is not allowed');
+        expect(err.message).to.equal('the keys foo are not allowed');
 
         err = Joi.validate({ foo: 'bar' }, { other: T.Number() });
         expect(err).to.exist;
-        expect(err.message).to.contain('the key (foo) is not allowed');
+        expect(err.message).to.equal('the keys foo are not allowed');
 
         done();
     });
 
-    it('should validate an unknown option', function (done) {
+    it('validates an unknown option', function (done) {
 
         var config = {
             auth: Joi.types.Object({
@@ -234,16 +233,16 @@ describe('Joi', function () {
 
         var err = Joi.validate({ auth: { unknown: true } }, config);
         expect(err).to.not.be.null;
-        expect(err.message).to.contain('the key (unknown) is not allowed');
+        expect(err.message).to.contain('the keys unknown are not allowed');
 
         err = Joi.validate({ something: false }, config);
         expect(err).to.not.be.null;
-        expect(err.message).to.contain('the key (something) is not allowed');
+        expect(err.message).to.contain('the keys something are not allowed');
 
         done();
     });
 
-    it('should work with complex configs', function (done) {
+    it('validates complex configs', function (done) {
 
         var config = {
             handler: [T.Object(), T.Function(), T.String().valid('notFound')],
@@ -311,7 +310,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should not require optional numbers', function (done) {
+    it('does not require optional numbers', function (done) {
 
         var config = {
             position: T.Number(),
@@ -324,7 +323,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should not require optional objects', function (done) {
+    it('does not require optional objects', function (done) {
 
         var config = {
             position: T.Number(),
@@ -337,7 +336,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should validate object successfully when config has an array of types', function (done) {
+    it('validates object successfully when config has an array of types', function (done) {
 
         var schema = {
             f: [Joi.types.Number(), Joi.types.Boolean()],
@@ -354,7 +353,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should validate object successfully when config allows for optional key and key is missing', function (done) {
+    it('validates object successfully when config allows for optional key and key is missing', function (done) {
 
         var schema = {
             h: Joi.types.Number(),
@@ -372,7 +371,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation', function (done) {
+    it('fails validation', function (done) {
 
         var schema = {
             a: Joi.types.Number().min(0).max(3),
@@ -391,7 +390,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation when the wrong types are supplied', function (done) {
+    it('fails validation when the wrong types are supplied', function (done) {
 
         var schema = {
             a: Joi.types.Number().min(0).max(3),
@@ -410,7 +409,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation when missing a required parameter', function (done) {
+    it('fails validation when missing a required parameter', function (done) {
 
         var obj = {
             c: 10
@@ -421,7 +420,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation when missing a required parameter within an object config', function (done) {
+    it('fails validation when missing a required parameter within an object config', function (done) {
 
         var obj = {
             a: {}
@@ -432,17 +431,17 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation when parameter is required to be an object but is given as string', function (done) {
+    it('fails validation when parameter is required to be an object but is given as string', function (done) {
 
         var obj = {
-            a: "a string"
+            a: 'a string'
         };
         var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
         expect(err).to.exist;
         done();
     });
 
-    it('should pass validation when parameter is required to be an object and is given correctly as a json string', function (done) {
+    it('validates when parameter is required to be an object and is given correctly as a json string', function (done) {
 
         var obj = {
             a: '{"b":"string"}'
@@ -452,7 +451,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation when parameter is required to be an object but is given as a json string that is incorrect (number instead of string)', function (done) {
+    it('fails validation when parameter is required to be an object but is given as a json string that is incorrect (number instead of string)', function (done) {
 
         var obj = {
             a: '{"b":2}'
@@ -462,7 +461,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation when parameter is required to be an Array but is given as string', function (done) {
+    it('fails validation when parameter is required to be an Array but is given as string', function (done) {
 
         var obj = {
             a: "an array"
@@ -472,7 +471,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should pass validation when parameter is required to be an Array and is given correctly as a json string', function (done) {
+    it('validates when parameter is required to be an Array and is given correctly as a json string', function (done) {
 
         var obj = {
             a: '[1,2]'
@@ -482,7 +481,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation when parameter is required to be an Array but is given as a json that is incorrect (object instead of array)', function (done) {
+    it('fails validation when parameter is required to be an Array but is given as a json that is incorrect (object instead of array)', function (done) {
 
         var obj = {
             a: '{"b":2}'
@@ -492,7 +491,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation when config is an array and fails', function (done) {
+    it('fails validation when config is an array and fails', function (done) {
 
         var schema = {
             d: [Joi.types.String(), Joi.types.Boolean()],
@@ -509,7 +508,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation when config is an array and fails with extra keys', function (done) {
+    it('fails validation when config is an array and fails with extra keys', function (done) {
 
         var schema = {
             d: [Joi.types.String(), Joi.types.Boolean()],
@@ -526,7 +525,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should fail validation with extra keys', function (done) {
+    it('fails validation with extra keys', function (done) {
 
         var schema = {
             a: Joi.types.Number(),
@@ -542,13 +541,14 @@ describe('Joi', function () {
         done();
     });
 
-    it('should pass string validation of missing optional key with regex string condition', function (done) {
+    it('validates missing optional key with string condition', function (done) {
 
-        var rules = {
+        var schema = {
             key: Joi.types.String().alphanum(false).min(8)
         };
 
-        var err = Joi.validate({}, rules);
+        var err = Joi.validate({}, schema);
+        console.log(err);
         expect(err).to.not.exist;
         done();
     });
