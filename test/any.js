@@ -105,9 +105,8 @@ describe('Joi', function () {
 
             it('fails when no parent object is provided', function (done) {
 
-                var b = Joi.any().rename('test');
-
-                expect(b.validate('test')).to.exist;
+                var schema = Joi.any().rename('test');
+                expect(schema.validate('test')).to.exist;
                 done();
             });
 

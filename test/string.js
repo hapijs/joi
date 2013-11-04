@@ -218,6 +218,17 @@ describe('Joi.string', function () {
             ]); done();
         });
 
+        it('validates length requirements', function (done) {
+
+            var t = S().length(3);
+            Validate(t, [
+                ['test', false],
+                ['0', false],
+                [null, false],
+                ['abc', true]
+            ]); done();
+        });
+
         it('should validate regex', function (done) {
 
             var t = S().regex(/^[0-9][-][a-z]+$/);

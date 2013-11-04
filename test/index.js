@@ -117,6 +117,28 @@ describe('Joi', function () {
         expect(Joi.validate({ brand: ['visa', 'mc'] }, schema)).to.exist;
         done();
     });
+    
+    it('validates pre and post convert value', function (done) {
+       
+       var schema = Joi.number().valid(5);
+       
+       Validate(schema, [
+           [5, true],
+           ['5', true]
+       ]);
+       done();
+    });
+    
+    it('invalidates pre and post convert value', function (done) {
+       
+       var schema = Joi.number().invalid(5);
+       
+       Validate(schema, [
+           [5, false],
+           ['5', false]
+       ]);
+       done();
+    });
 
     it('invalidates missing peers', function (done) {
 
