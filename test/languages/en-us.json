@@ -21,13 +21,15 @@
             "allowOnly": "12"
         }
     },
+    "date": {
+        "base": "18"
+    },
     "string": {
         "base": "13",
         "min": "14",
         "max": "15",
         "alphanum": "16",
         "regex": "17",
-        "date": "18",
         "email": "19"
     }
 }

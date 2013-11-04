@@ -105,6 +105,29 @@ describe('Joi', function () {
         done();
     });
 
+    it('validates an array of string with valid condition', function (done) {
+
+        var schema = {
+                brand: T.Array().includes(T.String().valid('amex', 'visa'))
+            };
+
+        expect(Joi.validate({ brand: ['amex'] }, schema)).to.not.exist;
+        expect(Joi.validate({ brand: ['visa', 'mc'] }, schema)).to.exist;
+        done();
+    });
+
+    it('invalidates missing peers', function (done) {
+
+        var schema = {
+            username: Joi.types.String().with('password'),
+            password: Joi.types.String().without('access_token')
+        };
+
+        var err = Joi.validate({ username: 'bob' }, schema);
+        expect(err).to.exist;
+        done();
+    });
+
     it('validates config where the root item is a joi type', function (done) {
 
         expect(Joi.validate(true, T.Boolean().nullOk())).to.be.null;
@@ -714,7 +737,7 @@ describe('Joi', function () {
 
         var schema = {
             email: T.String().email(),
-            date: T.String().date(),
+            date: T.Date(),
             alphanum: T.String().alphanum(),
             min: T.String().min(3),
             max: T.String().max(3),

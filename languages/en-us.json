@@ -1,4 +1,12 @@
 {
+    "array": {
+        "base": "the value of {{key}} must be an array",
+        "includes": "the value {{value}} in {{key}} does not match any of the allowed types",
+        "excludes": "the value {{value}} in {{key}} cannot violates exclusion rule {{pos}}",
+        "min": "the length of {{key}} must include at least {{value}} items",
+        "max": "the length of {{key}} must include less than (or equal to) {{value}} items",
+        "length": "the length of {{key}} must include {{value}} items"
+    },
     "base": {
         "unknown": "the key {{key}} is not allowed",
         "without": "the value of {{key}} must exist without {{value}}",
@@ -21,23 +29,13 @@
             "allowOnly": "the value of {{key}} must be one of {{value}}"
         }
     },
-    "array": {
-        "base": "the value of {{key}} must be an array",
-        "includes": "the value {{value}} in {{key}} does not match any of the allowed types",
-        "excludes": "the value {{value}} in {{key}} cannot violates exclusion rule {{pos}}",
-        "min": "the length of {{key}} must include at least {{value}} items",
-        "max": "the length of {{key}} must include less than (or equal to) {{value}} items",
-        "length": "the length of {{key}} must include {{value}} items"
-    },
-    "number": {
-        "base": "the value of {{key}} must be a number",
-        "min": "the value of {{key}} must be larger than or equal to {{value}}",
-        "max": "the value of {{key}} must be less than or equal to {{value}}",
-        "float": "the value of {{key}} must be a float or double",
-        "int": "the value of {{key}} must be an integer"
-    },
     "boolean": {
         "base": "the value of {{key}} must be a boolean"
+    },
+    "date": {
+        "base": "the value of {{key}} must be a number of milliseconds or valid date string",
+        "min": "the value of {{key}} must be larger than or equal to {{value}}",
+        "max": "the value of {{key}} must be less than or equal to {{value}}"
     },
     "function": {
         "base": "the value of {{key}} must be a Function"
@@ -46,6 +44,13 @@
         "base": "the value of {{key}} must be an object",
         "allowUnknown": "the keys {{keys}} are not allowed"
     },
+    "number": {
+        "base": "the value of {{key}} must be a number",
+        "min": "the value of {{key}} must be larger than or equal to {{value}}",
+        "max": "the value of {{key}} must be less than or equal to {{value}}",
+        "float": "the value of {{key}} must be a float or double",
+        "int": "the value of {{key}} must be an integer"
+    },
     "string": {
         "base": "the value of {{key}} must be a string",
         "min": "the length of {{key}} must be at least {{value}} characters long",
@@ -53,7 +58,6 @@
         "length": "the length of {{key}} must be {{value}} characters long",
         "alphanum": "the value of {{key}} must only contain alpha-numeric characters {{spaces}} spaces",
         "regex": "the value of {{key}} must match the regular expression {{value}}",
-        "date": "the value of {{key}} must be a valid JavaScript date format",
         "email": "The value of {{key}} must be a valid email"
     }
 }
