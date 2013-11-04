@@ -66,12 +66,12 @@ describe('Types', function () {
 
         describe('#without', function () {
 
-            it('should return true when related type not found', function (done) {
+            it('fails when without set on root', function (done) {
 
                 var b = new Base();
                 var result = b.without('test');
 
-                expect(result.validate('test')).to.not.exist;
+                expect(result.validate('test')).to.exist;
                 done();
             });
 

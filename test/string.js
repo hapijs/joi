@@ -133,14 +133,6 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
-        it('should invalid undefined if min set', function (done) {
-
-            var t = S().min(3);
-            verifyBehavior(t, [
-                [undefined, false]
-            ], done);
-        });
-
         it('should invalidate invalid values', function (done) {
 
             var t = S().valid('a', 'b', 'c');
@@ -173,7 +165,7 @@ describe('Joi.types.String', function () {
 
         it('should validate minimum length when min is 0', function (done) {
 
-            var t = S().min(0);
+            var t = S().min(0).required();
             verifyBehavior(t, [
                 ['0', true],
                 [null, false],

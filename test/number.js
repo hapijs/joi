@@ -92,7 +92,7 @@ describe('Number', function () {
             var config = { a: Number() };
             var obj = { a: '123' };
 
-            var error = Joi.validate(obj, config, { saveConversions: true });
+            var error = Joi.validate(obj, config, { modify: true });
             expect(error).to.not.exist;
             expect(obj.a).to.equal(123);
             done();

@@ -65,10 +65,9 @@ describe('Joi', function () {
         expect(Joi.validate({ txt: null }, schema)).to.not.be.null;
         expect(Joi.validate({ txt: 'test' }, schema)).to.be.null;
 
-        var err = Joi.validate({ upc: null, txt: null }, schema, { earlyAbort: false });
+        var err = Joi.validate({ upc: null, txt: null }, schema, { abortEarly: false });
         expect(err).to.not.be.null;
-        expect(err.message).to.contain('the value of txt must exist without upc');
-        expect(err.message).to.contain('the value of upc must exist without txt');
+        expect(err.message).to.equal('txt conflict with exclusive peer upc. upc conflict with exclusive peer txt');
 
         expect(Joi.validate({ txt: 'test', upc: null }, schema)).to.be.null;
         expect(Joi.validate({ txt: 'test', upc: '' }, schema)).to.be.null;
@@ -81,38 +80,6 @@ describe('Joi', function () {
         expect(Joi.validate({ txt: '', upc: undefined }, schema)).to.not.be.null;
         expect(Joi.validate({ txt: '', upc: '' }, schema)).to.not.be.null;
         expect(Joi.validate({ txt: 'test', upc: 'test' }, schema)).to.not.be.null;
-
-        done();
-    });
-
-    it('validates required without statements like xor', function (done) {
-
-        var schema = T.Object({
-            txt: Joi.types.String().required().without('upc'),
-            upc: Joi.types.String().required().without('txt')
-        });
-
-        expect(Joi.validate({ upc: null }, schema)).to.not.be.null;
-        expect(Joi.validate({ upc: 'test' }, schema)).to.be.null;
-        expect(Joi.validate({ txt: null }, schema)).to.not.be.null;
-        expect(Joi.validate({ txt: 'test' }, schema)).to.be.null;
-        expect(Joi.validate({ upc: null, txt: null }, schema)).to.not.be.null;
-
-        var err = Joi.validate({ txt: 'test', upc: 'test' }, schema, { earlyAbort: false });
-        expect(err).to.not.be.null;
-        expect(err.message).to.contain('the value of txt must exist without upc');
-        expect(err.message).to.contain('the value of upc must exist without txt');
-
-        expect(Joi.validate({ txt: 'test', upc: null }, schema)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: '' }, schema)).to.be.null;
-        expect(Joi.validate({ txt: '', upc: 'test' }, schema)).to.be.null;
-        expect(Joi.validate({ txt: null, upc: 'test' }, schema)).to.be.null;
-        expect(Joi.validate({ txt: undefined, upc: 'test' }, schema)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: undefined }, schema)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: '' }, schema)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: null }, schema)).to.be.null;
-        expect(Joi.validate({ txt: '', upc: undefined }, schema)).to.not.be.null;
-        expect(Joi.validate({ txt: '', upc: '' }, schema)).to.not.be.null;
 
         done();
     });
@@ -162,13 +129,13 @@ describe('Joi', function () {
         done();
     });
 
-    it('validates config where the root item is a joi Object and saveConversions setting is enabled', function (done) {
+    it('validates config where the root item is a joi Object and modify setting is enabled', function (done) {
 
         var config = T.Object({
             a: T.String()
         });
 
-        expect(Joi.validate({ a: 'okay' }, config, { saveConversions: true })).to.be.null;
+        expect(Joi.validate({ a: 'okay' }, config, { modify: true })).to.be.null;
         done();
     });
 
@@ -181,12 +148,12 @@ describe('Joi', function () {
         var original = { a: '5' };
         var validated = { a: 5 };
 
-        expect(Joi.validate(original, config, { saveConversions: true })).to.be.null;
+        expect(Joi.validate(original, config, { modify: true })).to.be.null;
         expect(validated).to.deep.equal(original);
         done();
     });
 
-    it('does not alter valid top level objects when saveConversions setting is enabled', function (done) {
+    it('does not alter valid top level objects when modify setting is enabled', function (done) {
 
         var config = T.Object({
             a: T.String()
@@ -195,7 +162,7 @@ describe('Joi', function () {
         var original = { a: 'okay' };
         var validated = { a: 'okay' };
 
-        expect(Joi.validate(validated, config, { saveConversions: true })).to.be.null;
+        expect(Joi.validate(validated, config, { modify: true })).to.be.null;
         expect(validated).to.deep.equal(original);
         done();
     });
@@ -548,12 +515,11 @@ describe('Joi', function () {
         };
 
         var err = Joi.validate({}, schema);
-        console.log(err);
         expect(err).to.not.exist;
         done();
     });
 
-    it('should pass validation with extra keys and remove them when stripExtraKeys is set', function (done) {
+    it('validates with extra keys and remove them when stripUnknown is set', function (done) {
 
         var schema = {
             a: Joi.types.Number().min(0).max(3),
@@ -566,14 +532,14 @@ describe('Joi', function () {
             b: 'a',
             d: 'c'
         };
-        var err = Joi.validate(obj, schema, { stripExtraKeys: true, allowExtraKeys: true });
+        var err = Joi.validate(obj, schema, { stripUnknown: true, allowUnknown: true });
 
         expect(err).to.be.null;
         expect(obj).to.deep.equal({ a: 1, b: 'a' });
         done();
     });
 
-    it('should pass validation with extra keys when allowExtraKeys is set', function (done) {
+    it('should pass validation with extra keys when allowUnknown is set', function (done) {
 
         var schema = {
             a: Joi.types.Number().min(0).max(3),
@@ -586,7 +552,7 @@ describe('Joi', function () {
             b: 'a',
             d: 'c'
         };
-        var err = Joi.validate(obj, schema, { allowExtraKeys: true });
+        var err = Joi.validate(obj, schema, { allowUnknown: true });
 
         expect(err).to.be.null;
         expect(obj).to.deep.equal({ a: 1, b: 'a', d: 'c' });
@@ -605,12 +571,12 @@ describe('Joi', function () {
             b: 'a',
             d: 'c'
         };
-        var err = Joi.validate(obj, localConfig, { allowExtraKeys: true });
+        var err = Joi.validate(obj, localConfig, { allowUnknown: true });
 
         expect(err).to.be.null;
         expect(obj).to.deep.equal({ a: 1, b: 'a', d: 'c' });
 
-        err = Joi.validate(obj, localConfig, { allowExtraKeys: true });
+        err = Joi.validate(obj, localConfig, { allowUnknown: true });
 
         expect(err).to.be.null;
         expect(obj).to.deep.equal({ a: 1, b: 'a', d: 'c' });
@@ -630,12 +596,12 @@ describe('Joi', function () {
             b: 'a',
             d: 'c'
         };
-        var err = Joi.validate(obj, localConfig, { stripExtraKeys: true, allowExtraKeys: true });
+        var err = Joi.validate(obj, localConfig, { stripUnknown: true, allowUnknown: true });
 
         expect(err).to.be.null;
         expect(obj).to.deep.equal({ a: 1, b: 'a' });
 
-        err = Joi.validate(obj, localConfig, { stripExtraKeys: true, allowExtraKeys: true });
+        err = Joi.validate(obj, localConfig, { stripUnknown: true, allowUnknown: true });
 
         expect(err).to.be.null;
         expect(obj).to.deep.equal({ a: 1, b: 'a' });
@@ -660,26 +626,26 @@ describe('Joi', function () {
         var err = Joi.validate(input, schema, { skipFunctions: false });
 
         expect(err).to.exist;
-        expect(err.message).to.contain('the key (func) is not allowed');
+        expect(err.message).to.contain('the keys func are not allowed');
         done();
     });
 
-    it('should work when the saveConversions setting is enabled', function (done) {
+    it('should work when the modify setting is enabled', function (done) {
 
         var schema = { item: Joi.types.Number() };
         var input = { item: '1' };
-        var err = Joi.validate(input, schema, { saveConversions: true });
+        var err = Joi.validate(input, schema, { modify: true });
 
         expect(err).to.not.exist;
         expect(input.item).to.equal(1);
         done();
     });
 
-    it('should work when the saveConversions setting is disabled', function (done) {
+    it('should work when the modify setting is disabled', function (done) {
 
         var schema = { item: Joi.types.Number() };
         var input = { item: '1' };
-        var err = Joi.validate(input, schema, { saveConversions: false });
+        var err = Joi.validate(input, schema, { modify: false });
 
         expect(err).to.not.exist;
         expect(input.item).to.equal('1');
@@ -696,38 +662,14 @@ describe('Joi', function () {
         done();
     });
 
-    it('should not convert values when skipConversions is set', function (done) {
+    it('should not convert values when convert is false', function (done) {
 
         var schema = {
             arr: Joi.types.Array().includes(Joi.types.String())
         };
 
         var input = { arr: 'foo' };
-        var err = Joi.validate(input, schema, { skipConversions: true });
-
-        expect(err).to.exist;
-        done();
-    });
-
-    var routeSchema = {
-        method: T.String().invalid('head').required(),
-        path: T.String().required(),
-        handler: [T.Object(), T.Function(), T.String().valid('notFound')],
-        config: T.Object({
-            handler: [T.Object(), T.Function(), T.String().valid('notFound')],
-            payload: T.String().valid(['stream', 'raw', 'parse']),
-            response: T.Object({
-                schema: T.Object().nullOk(),
-                sample: T.Number(),
-                failAction: T.String().valid(['error', 'log', 'ignore'])
-            })
-        })
-    };
-
-    it('should fail validation when a child object has an invalid string value but object traversal isn\'t complete', function (done) {
-
-        var input = { method: 'GET', path: '/', config: { payload: 'something' } };
-        var err = Joi.validate(input, routeSchema);
+        var err = Joi.validate(input, schema, { convert: false });
 
         expect(err).to.exist;
         done();
@@ -735,7 +677,14 @@ describe('Joi', function () {
 
     it('validation errors should provide an annotated message when making the error annotated', function (done) {
 
-        var input = { method: 'GET', path: '/', config: { payload: 'something' } };
+        var routeSchema = {
+            a: T.String().required(),
+            b: T.Object({
+                c: T.String().valid(['1', '2', '3']),
+            })
+        };
+
+        var input = { a: 'x', b: { c: '4' } };
         var err = Joi.validate(input, routeSchema);
 
         err.annotated();
@@ -743,32 +692,21 @@ describe('Joi', function () {
         done();
     });
 
-    it('there should be more validation errors when short circuit is disabled', function (done) {
+    it('full errors when abortEarly is false', function (done) {
+
+        var schema = {
+            a: T.String(),
+            b: T.String()
+        };
 
         var input = { a: 1, b: 2 };
 
-        var resultWithShortCircuit = Joi.validate(input, T.Object({}));
-        var resultWithoutShortCircuit = Joi.validate(input, T.Object({}), { earlyAbort: false });
+        var errOne = Joi.validate(input, schema);
+        var errFull = Joi.validate(input, schema, { abortEarly: false });
 
-        expect(resultWithShortCircuit).to.exist
-        expect(resultWithoutShortCircuit).to.exist
-        expect(resultWithoutShortCircuit._errors.length).to.be.greaterThan(resultWithShortCircuit._errors.length);
-
-        done();
-    });
-
-    it('lists all errors', function (done) {
-
-        var config = {
-            a: Joi.types.String().valid('b').invalid('a')
-        };
-
-        var obj = {
-            a: 'a'
-        };
-        var err = Joi.validate(obj, config, { earlyAbort: false });
-
-        expect(err.message).to.not.equal('');
+        expect(errOne).to.exist
+        expect(errFull).to.exist
+        expect(errFull._errors.length).to.be.greaterThan(errOne._errors.length);
         done();
     });
 
@@ -798,17 +736,10 @@ describe('Joi', function () {
             notEmpty: ''
         };
 
-        var err = Joi.validate(input, schema, { earlyAbort: false, languagePath: Path.join(__dirname, 'languages', 'en-us.json') });
+        var err = Joi.validate(input, schema, { abortEarly: false, languagePath: Path.join(__dirname, 'languages', 'en-us.json') });
 
         expect(err).to.exist;
-        expect(err.message).to.contain('The `email` field must be a valid e-mail address..');
-        expect(err.message).to.contain('The `date` field must be a valid date..');
-        expect(err.message).to.contain('The `alphanum` field failed one or more validation constraints..');
-        expect(err.message).to.contain('The `min` field must be at least 3 characters long..');
-        expect(err.message).to.contain('The `max` field may not exceed 3 characters..');
-        expect(err.message).to.contain('The `required` field must be omitted if `xor` is specified..');
-        expect(err.message).to.contain('`required` is already assigned to the `renamed` field..');
-        expect(err.message).to.contain('Invalid value for `notEmpty`: `empty`.');
+        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. 3');
         done();
     });
 

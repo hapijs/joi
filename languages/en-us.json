@@ -4,9 +4,14 @@
         "without": "the value of {{key}} must exist without {{value}}",
         "invalid": "the value of {{key}} is not allowed to be {{value}}",
         "with": {
-            "parent": "cannot rename when key is not part of an object",
+            "parent": "cannot specify peer when key is not part of an object",
             "peer": "missing required peer {{value}}"
         },
+        "without": {
+            "parent": "cannot specify peer when key is not part of an object",
+            "peer": "conflict with forbidden peer {{value}}"
+        },
+        "xor": "{{key}} conflict with exclusive peer {{value}}",
         "rename": {
             "parent": "cannot rename when key is not part of an object",
             "allowMult": "allowMult false and already renamed: {{key}}, {{value}}",
@@ -36,7 +41,7 @@
     },
     "object": {
         "base": "the value of {{key}} must be an object",
-        "allowOtherKeys": "the keys {{keys}} are not allowed"
+        "allowUnknown": "the keys {{keys}} are not allowed"
     },
     "string": {
         "base": "the value of {{key}} must be a string",
