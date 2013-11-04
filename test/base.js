@@ -1,7 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
-var Joi = require('../../lib');
+var Joi = require('../lib');
 
 
 // Declare internals
@@ -24,37 +24,12 @@ describe('Types', function () {
 
         var Base = Joi.types.Base;
 
-        describe('#_test', function () {
-
-            it('should throw an error when null is passed in', function (done) {
-
-                expect(function () {
-
-                    var b = new Base();
-                    var result = b._test(null);
-                }).to.throw;
-                done();
-            });
-
-            it('should not throw an error when valid values are provided', function (done) {
-
-                expect(function () {
-
-                    var b = new Base();
-                    var result = b._test('test', true);
-                }).to.not.throw;
-                done();
-            });
-        });
-
         describe('#with', function () {
 
-            it('should return false when related type not found', function (done) {
+            it('returns error when related type not found', function (done) {
 
-                var b = new Base();
-                var result = b.with('test');
-
-                expect(result.validate('test')).to.equal(false);
+                var schema = new Base().with('test');
+                expect(schema.validate('test')).to.exist;
                 done();
             });
 
@@ -96,7 +71,7 @@ describe('Types', function () {
                 var b = new Base();
                 var result = b.without('test');
 
-                expect(result.validate('test')).to.equal(true);
+                expect(result.validate('test')).to.not.exist;
                 done();
             });
 
@@ -133,48 +108,58 @@ describe('Types', function () {
 
         describe('#rename', function () {
 
-            it('should skip rename when no parent object is provided', function (done) {
+            it('fails when no parent object is provided', function (done) {
 
                 var b = new Base();
                 var result = b.rename('test');
 
-                expect(result.validate('test')).to.equal(false);
+                expect(result.validate('test')).to.exist;
                 done();
             });
 
-            it('using allowMult enabled should allow renaming multiple times', function (done) {
+            it('allows renaming multiple times with allowMult enabled', function (done) {
 
-                var b = new Base();
-                var result = b.rename('test1', { allowMult: true });
+                var schema = {
+                    test1: Joi.types.String().rename('test'),
+                    test2: Joi.types.String().rename('test', { allowMult: true })
+                };
 
-                expect(result.validate({ test: true }, { test: true }, 'test', { add: function () { }, _renamed: { test1: true } })).to.equal(true);
+                var err = Joi.validate({ test1: 'a', test2: 'b' }, schema);
+                expect(err).to.not.exist;
                 done();
             });
 
-            it('with allowMult disabled should not allow renaming multiple times', function (done) {
+            it('errors renaming multiple times with allowMult disabled', function (done) {
 
-                var b = new Base();
-                var result = b.rename('test1', { allowMult: false });
+                var schema = {
+                    test1: Joi.types.String().rename('test'),
+                    test2: Joi.types.String().rename('test')
+                };
 
-                expect(result.validate({ test: true }, { test: true }, 'test', { add: function () { }, addLocalized: function () {}, _renamed: { test1: true } })).to.equal(false);
+                var err = Joi.validate({ test1: 'a', test2: 'b' }, schema);
+                expect(err).to.exist;
                 done();
             });
 
             it('with allowOverwrite disabled should not allow overwriting existing value', function (done) {
 
-                var b = new Base();
-                var result = b.rename('test1', { allowOverwrite: false });
+                var schema = {
+                    test: Joi.types.String().rename('test1')
+                };
 
-                expect(result.validate({ test1: true }, { test1: true }, { test1: true })).to.equal(false);
+                expect(Joi.validate({ test: 'b', test1: 'a' }, schema)).to.exist;
                 done();
             });
 
             it('with allowOverwrite enabled should allow overwriting existing value', function (done) {
 
-                var b = new Base();
-                var result = b.rename('test1', { allowOverwrite: true, deleteOrig: true });
+                var schema = {
+                    test: Joi.types.String().rename('test1', { allowOverwrite: true }),
+                    test1: Joi.types.Any()
+                };
 
-                expect(result.validate({ test1: true }, { test1: true }, { test1: true })).to.equal(true);
+                var err = Joi.validate({ test: 'b', test1: 'a' }, schema);
+                expect(err).to.not.exist;
                 done();
             });
         });

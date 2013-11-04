@@ -208,7 +208,6 @@ Options take the form of an object with the follow default values:
 ```javascript
 {
     deleteOrig: false,
-    allowMult: false,
     allowOverwrite: false
 }
 ```

@@ -1,8 +1,8 @@
 // Load modules
 
 var Lab = require('lab');
-var Joi = require('../../lib');
-var Support = require('../support/meta');
+var Joi = require('../lib');
+var Support = require('./support/meta');
 
 
 // Declare internals

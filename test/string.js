@@ -1,8 +1,8 @@
 // Load modules
 
 var Lab = require('lab');
-var Joi = require('../../lib');
-var Support = require('../support/meta');
+var Joi = require('../lib');
+var Support = require('./support/meta');
 
 
 // Declare internals
@@ -47,7 +47,7 @@ describe('Joi.types.String', function () {
 
             expect(function () {
 
-                S().valid('walmart');
+                S().valid('joi');
             }).to.not.throw;
             done();
         });
@@ -68,7 +68,7 @@ describe('Joi.types.String', function () {
 
             expect(function () {
 
-                S().invalid('walmart');
+                S().invalid('joi');
             }).to.not.throw;
             done();
         });
@@ -286,7 +286,6 @@ describe('Joi.types.String', function () {
             var text = S().deny('joi');
             var result = text.validate('joi');
             expect(result).to.exist;
-            expect(result).to.equal(false);
             done();
         });
 
@@ -294,30 +293,26 @@ describe('Joi.types.String', function () {
 
             var text = S().allow('hapi');
             var result = text.validate('result');
-            expect(result).to.exist;
-            expect(result).to.equal(true);
+            expect(result).to.not.exist;
             done();
         });
 
         it('should validate with one validator (min)', function (done) {
 
             var text = S().min(3);
-            var result = text.validate('walmart');
-            expect(result).to.exist;
-            expect(result).to.equal(true);
+            var result = text.validate('joi');
+            expect(result).to.not.exist;
             done();
         });
 
         it('should validate with two validators (min, required)', function (done) {
 
             var text = S().min(3).required();
-            var result = text.validate('walmart');
-            expect(result).to.exist;
-            expect(result).to.equal(true);
+            var result = text.validate('joi');
+            expect(result).to.not.exist;
 
             var result2 = text.validate();
             expect(result2).to.exist;
-            expect(result2).to.equal(false);
 
             done();
         });

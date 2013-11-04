@@ -1,8 +1,8 @@
 // Load modules
 
 var Lab = require('lab');
-var Joi = require('../../lib');
-var Support = require('../support/meta');
+var Joi = require('../lib');
+var Support = require('./support/meta');
 
 
 // Declare internals
@@ -70,16 +70,6 @@ describe('Types', function () {
 
         describe('#validate', function () {
 
-            it('should work', function (done) {
-
-                expect(function () {
-
-                    var arr = A();
-                    var result = arr.validate([1]);
-                }).to.not.throw();
-                done();
-            });
-
             it('should, by default, allow undefined, allow empty array', function (done) {
 
                 verifyBehavior(A(), [
@@ -117,17 +107,17 @@ describe('Types', function () {
 
             it('should allow types to be excluded', function (done) {
 
-                var validator = A().excludes(N());
+                var schema = A().excludes(N());
 
                 var n = [1, 2, 'hippo'];
-                var result = validator.validate(n);
+                var result = schema.validate(n);
 
-                expect(result).to.equal(false);
+                expect(result).to.exist;
 
                 var m = ['x', 'y', 'z'];
-                var result2 = validator.validate(m);
+                var result2 = schema.validate(m);
 
-                expect(result2).to.equal(true);
+                expect(result2).to.not.exist;
                 done();
             });
 
@@ -165,7 +155,7 @@ describe('Types', function () {
                         true
                     ],
                     [
-                        ['walmart', 'everydaylowprices', 5000],
+                        ['joi', 'everydaylowprices', 5000],
                         true
                     ]
                 ], done);
@@ -203,7 +193,7 @@ describe('Types', function () {
                 ], done);
             });
 
-            it('should not throw when using includes', function (done) {
+            it('errors on invalid number rule using includes', function (done) {
 
                 var schema = {
                     arr: Joi.types.Array().includes(Joi.types.Number().integer())
@@ -213,7 +203,7 @@ describe('Types', function () {
                 var err = Joi.validate(input, schema);
 
                 expect(err).to.exist;
-                expect(err.message).to.include('the value of arr must be an integer');
+                expect(err.message).to.equal('the value 2.1 in arr does not match any of the allowed types');
                 done();
             });
         });

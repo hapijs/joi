@@ -1,8 +1,8 @@
 // Load modules
 
 var Lab = require('lab');
-var Joi = require('../../lib');
-var Support = require('../support/meta');
+var Joi = require('../lib');
+var Support = require('./support/meta');
 
 
 // Declare internals
@@ -60,7 +60,7 @@ describe('Types', function () {
                 var rule = B().required();
                 verifyBehavior(rule, [
                     ['1234', false],
-                    ['true', false],
+                    ['true', true],
                     [false, true],
                     [true, true],
                     [null, false]
