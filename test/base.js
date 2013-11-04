@@ -117,11 +117,11 @@ describe('Types', function () {
                 done();
             });
 
-            it('allows renaming multiple times with allowMult enabled', function (done) {
+            it('allows renaming multiple times with multiple enabled', function (done) {
 
                 var schema = {
                     test1: Joi.types.String().rename('test'),
-                    test2: Joi.types.String().rename('test', { allowMult: true })
+                    test2: Joi.types.String().rename('test', { multiple: true })
                 };
 
                 var err = Joi.validate({ test1: 'a', test2: 'b' }, schema);
@@ -129,7 +129,7 @@ describe('Types', function () {
                 done();
             });
 
-            it('errors renaming multiple times with allowMult disabled', function (done) {
+            it('errors renaming multiple times with multiple disabled', function (done) {
 
                 var schema = {
                     test1: Joi.types.String().rename('test'),
@@ -141,7 +141,7 @@ describe('Types', function () {
                 done();
             });
 
-            it('with allowOverwrite disabled should not allow overwriting existing value', function (done) {
+            it('with override disabled should not allow overwriting existing value', function (done) {
 
                 var schema = {
                     test: Joi.types.String().rename('test1')
@@ -151,10 +151,10 @@ describe('Types', function () {
                 done();
             });
 
-            it('with allowOverwrite enabled should allow overwriting existing value', function (done) {
+            it('with override enabled should allow overwriting existing value', function (done) {
 
                 var schema = {
-                    test: Joi.types.String().rename('test1', { allowOverwrite: true }),
+                    test: Joi.types.String().rename('test1', { override: true }),
                     test1: Joi.types.Any()
                 };
 

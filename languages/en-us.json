@@ -14,8 +14,8 @@
         "xor": "{{key}} conflict with exclusive peer {{value}}",
         "rename": {
             "parent": "cannot rename when key is not part of an object",
-            "allowMult": "allowMult false and already renamed: {{key}}, {{value}}",
-            "allowOverwrite": "allowOverwrite false and target exists: {{key}}, {{value}}"
+            "multiple": "multiple false and already renamed: {{key}}, {{value}}",
+            "override": "override false and target exists: {{key}}, {{value}}"
         },
         "validate": {
             "allowOnly": "the value of {{key}} must be one of {{value}}"

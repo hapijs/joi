@@ -14,8 +14,8 @@
         "xor": "8",
         "rename": {
             "parent": "9",
-            "allowMult": "10",
-            "allowOverwrite": "11"
+            "multiple": "10",
+            "override": "11"
         },
         "validate": {
             "allowOnly": "12"

@@ -25,7 +25,7 @@ describe('Joi', function () {
     it('validates object successfully', function (done) {
 
         var schema = {
-            a: Joi.types.Number().min(0).max(3),
+            a: Joi.types.Number().min(0).max(3).without('none'),
             b: Joi.types.String().valid('a', 'b', 'c'),
             c: Joi.types.String().email().optional()
         };
@@ -43,12 +43,7 @@ describe('Joi', function () {
 
     it('validates null', function (done) {
 
-        var schema = {
-            c: Joi.types.String().email().optional()
-        };
-
-        var err = Joi.validate(null, schema);
-
+        var err = Joi.validate(null, Joi.types.String());
         expect(err).to.exist;
         done();
     });
@@ -139,7 +134,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('convers string to number in a schema', function (done) {
+    it('converts string to number in a schema', function (done) {
 
         var config = {
             a: T.Number()
@@ -150,6 +145,21 @@ describe('Joi', function () {
 
         expect(Joi.validate(original, config, { modify: true })).to.be.null;
         expect(validated).to.deep.equal(original);
+        done();
+    });
+
+    it('moves a key', function (done) {
+
+        var schema = {
+            a: T.Number().rename('b', { move: true })
+        };
+
+        var obj = { a: 10 };
+
+        var err = Joi.validate(obj, schema);
+        expect(err).to.not.exist;
+        expect(obj.a).to.not.exist;
+        expect(obj.b).to.equal(10);
         done();
     });
 
@@ -611,9 +621,9 @@ describe('Joi', function () {
 
     it('should work when the skipFunctions setting is enabled', function (done) {
 
-        var schema = { username: Joi.types.String() };
+        var schema = Joi.types.Object({ username: Joi.types.String() }).options({ skipFunctions: true });
         var input = { username: 'test', func: function () { } };
-        var err = Joi.validate(input, schema, { skipFunctions: true });
+        var err = Joi.validate(input, schema);
 
         expect(err).to.not.exist;
         done();
@@ -649,16 +659,6 @@ describe('Joi', function () {
 
         expect(err).to.not.exist;
         expect(input.item).to.equal('1');
-        done();
-    });
-
-    it('should display correct processed pluralization messsage when skipFunctions is enabled', function (done) {
-
-        var schema = { username: Joi.types.String() };
-        var input = { username: 'test', item1: 'test', 'item2': 'test' };
-        var err = Joi.validate(input, schema, { skipFunctions: true });
-
-        expect(err).to.exist;
         done();
     });
 
