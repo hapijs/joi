@@ -24,14 +24,6 @@ describe('Joi.types.String', function () {
 
     var S = Joi.types.String;
 
-    it('should instantiate separate copies on invocation', function (done) {
-
-        var result1 = S().min(5);
-        var result2 = S().max(5);
-        expect(Object.keys(result1)).to.not.equal(Object.keys(result2));
-        done();
-    });
-
     describe('#valid', function () {
 
         it('should throw error on input not matching type', function (done) {
@@ -50,6 +42,16 @@ describe('Joi.types.String', function () {
                 S().valid('joi');
             }).to.not.throw;
             done();
+        });
+
+        it('validates case sensitive values', function (done) {
+
+            verifyBehavior(S().valid('a', 'b'), [['a', true], ['b', true], ['A', false], ['B', false]], done);
+        });
+
+        it('validates case insensitive values', function (done) {
+
+            verifyBehavior(S().valid('a', 'b').insensitive(), [['a', true], ['b', true], ['A', true], ['B', true]], done);
         });
     });
 
@@ -71,6 +73,16 @@ describe('Joi.types.String', function () {
                 S().invalid('joi');
             }).to.not.throw;
             done();
+        });
+
+        it('invalidates case sensitive values', function (done) {
+
+            verifyBehavior(S().invalid('a', 'b'), [['a', false], ['b', false], ['A', true], ['B', true]], done);
+        });
+
+        it('invalidates case insensitive values', function (done) {
+
+            verifyBehavior(S().invalid('a', 'b').insensitive(), [['a', false], ['b', false], ['A', false], ['B', false]], done);
         });
     });
 
@@ -143,7 +155,7 @@ describe('Joi.types.String', function () {
             ], done);
         });
 
-        it('should handle array arguments correctly', function(done) {
+        it('should handle array arguments correctly', function (done) {
 
             var t = S().valid(['a', 'b', 'c']);
             verifyBehavior(t, [

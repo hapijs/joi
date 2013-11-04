@@ -206,6 +206,20 @@ describe('Types', function () {
                 expect(err.message).to.equal('the value 2.1 in arr does not match any of the allowed types');
                 done();
             });
+
+            it('validates an array within an object', function (done) {
+
+                var schema = Joi.types.Object({
+                    array: Joi.types.Array().includes(Joi.types.String().min(5), Joi.types.Number().min(3))
+                }).options({ convert: false });
+
+                verifyBehavior(schema, [
+                    [{ array: ['12345'] }, true],
+                    [{ array: ['1'] }, false],
+                    [{ array: [3] }, true],
+                    [{ array: ['12345', 3] }, true]
+                ], done);
+            });
         });
     });
 });
