@@ -117,27 +117,27 @@ describe('Joi', function () {
         expect(Joi.validate({ brand: ['visa', 'mc'] }, schema)).to.exist;
         done();
     });
-    
+
     it('validates pre and post convert value', function (done) {
-       
-       var schema = Joi.number().valid(5);
-       
-       Validate(schema, [
-           [5, true],
-           ['5', true]
-       ]);
-       done();
+
+        var schema = Joi.number().valid(5);
+
+        Validate(schema, [
+            [5, true],
+            ['5', true]
+        ]);
+        done();
     });
-    
+
     it('invalidates pre and post convert value', function (done) {
-       
-       var schema = Joi.number().invalid(5);
-       
-       Validate(schema, [
-           [5, false],
-           ['5', false]
-       ]);
-       done();
+
+        var schema = Joi.number().invalid(5);
+
+        Validate(schema, [
+            [5, false],
+            ['5', false]
+        ]);
+        done();
     });
 
     it('invalidates missing peers', function (done) {
@@ -714,7 +714,7 @@ describe('Joi', function () {
         done();
     });
 
-    it('should support custom errors when validating types', function (done) {
+    it('supports custom errors when validating types', function (done) {
 
         var schema = {
             email: Joi.string().email(),
@@ -762,5 +762,171 @@ describe('Joi', function () {
         expect(err).to.exist;
         expect(err.message).to.equal('notEmpty');
         done();
+    });
+
+    describe('#describe', function () {
+
+        var schema = {
+            sub: {
+                email: Joi.string().email(),
+                date: Joi.date(),
+                child: Joi.object({
+                    alphanum: Joi.string().alphanum()
+                }),
+            },
+            min: [Joi.number(), Joi.string().min(3)],
+            max: Joi.string().max(3),
+            required: Joi.string().required().without('xor'),
+            xor: Joi.string().without('required'),
+            renamed: Joi.string().rename('required').valid('456'),
+            notEmpty: Joi.string().required().description('a').notes('b').tags('c')
+        };
+
+        var result = {
+            type: 'object',
+            flags: {
+                insensitive: false,
+                allowOnly: false
+            },
+            valids: [undefined],
+            invalids: [null],
+            children: {
+                sub: {
+                    type: 'object',
+                    flags: {
+                        insensitive: false,
+                        allowOnly: false
+                    },
+                    valids: [undefined],
+                    invalids: [null],
+                    children: {
+                        email: {
+                            type: 'string',
+                            flags: {
+                                insensitive: false,
+                                allowOnly: false
+                            },
+                            valids: [undefined],
+                            invalids: [null, ''],
+                            rules: [{ name: 'email' }]
+                        },
+                        date: {
+                            type: 'date',
+                            flags: {
+                                insensitive: false,
+                                allowOnly: false
+                            },
+                            valids: [undefined],
+                            invalids: [null]
+                        },
+                        child: {
+                            type: 'object',
+                            flags: {
+                                insensitive: false,
+                                allowOnly: false
+                            },
+                            valids: [undefined],
+                            invalids: [null],
+                            children: {
+                                alphanum: {
+                                    type: 'string',
+                                    flags: {
+                                        insensitive: false,
+                                        allowOnly: false
+                                    },
+                                    valids: [undefined],
+                                    invalids: [null, ''],
+                                    rules: [{ name: 'alphanum' }]
+                                }
+                            }
+                        }
+                    }
+                },
+                min: [
+                    {
+                        type: 'number',
+                        flags: {
+                            insensitive: false,
+                            allowOnly: false
+                        },
+                        valids: [undefined],
+                        invalids: [null]
+                    },
+                    {
+                        type: 'string',
+                        flags: {
+                            insensitive: false,
+                            allowOnly: false
+                        },
+                        valids: [undefined],
+                        invalids: [null, ''],
+                        rules: [{ name: 'min', arg: 3 }]
+                    }
+                ],
+                max: {
+                    type: 'string',
+                    flags: {
+                        insensitive: false,
+                        allowOnly: false
+                    },
+                    valids: [undefined],
+                    invalids: [null, ''],
+                    rules: [{ name: 'max', arg: 3 }]
+                },
+                required: {
+                    type: 'string',
+                    flags: {
+                        insensitive: false,
+                        allowOnly: false
+                    },
+                    invalids: [null, '', undefined],
+                    rules: [{ name: 'without', arg: ['xor'] }]
+                },
+                xor: {
+                    type: 'string',
+                    flags: {
+                        insensitive: false,
+                        allowOnly: false
+                    },
+                    valids: [undefined],
+                    invalids: [null, ''],
+                    rules: [{ name: 'without', arg: ['required'] }]
+                },
+                renamed: {
+                    type: 'string',
+                    flags: {
+                        insensitive: false,
+                        allowOnly: true
+                    },
+                    valids: [undefined, '456'],
+                    invalids: [null, '']
+                },
+                notEmpty: {
+                    type: 'string',
+                    flags: {
+                        insensitive: false,
+                        allowOnly: false
+                    },
+                    invalids: [null, '', undefined],
+                    description: 'a',
+                    notes: ['b'],
+                    tags: ['c']
+                }
+            }
+        };
+
+        it('describes schema', function (done) {
+
+            var description = Joi.describe(schema);
+            expect(description).to.deep.equal(result);
+            done();
+        });
+
+        it('describes schema with object', function (done) {
+
+            var description = Joi.describe(Joi.object(schema));
+            expect(description).to.deep.equal(result);
+            done();
+        });
     });
 });
