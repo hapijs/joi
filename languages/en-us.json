@@ -1,13 +1,5 @@
 {
-    "array": {
-        "base": "the value of {{key}} must be an array",
-        "includes": "the value {{value}} in {{key}} does not match any of the allowed types",
-        "excludes": "the value {{value}} in {{key}} cannot violates exclusion rule {{pos}}",
-        "min": "the length of {{key}} must include at least {{value}} items",
-        "max": "the length of {{key}} must include less than (or equal to) {{value}} items",
-        "length": "the length of {{key}} must include {{value}} items"
-    },
-    "base": {
+    "any": {
         "unknown": "the key {{key}} is not allowed",
         "without": "the value of {{key}} must exist without {{value}}",
         "invalid": "the value of {{key}} is not allowed to be {{value}}",
@@ -28,6 +20,14 @@
         "validate": {
             "allowOnly": "the value of {{key}} must be one of {{value}}"
         }
+    },
+    "array": {
+        "base": "the value of {{key}} must be an array",
+        "includes": "the value {{value}} in {{key}} does not match any of the allowed types",
+        "excludes": "the value {{value}} in {{key}} cannot violates exclusion rule {{pos}}",
+        "min": "the length of {{key}} must include at least {{value}} items",
+        "max": "the length of {{key}} must include less than (or equal to) {{value}} items",
+        "length": "the length of {{key}} must include {{value}} items"
     },
     "boolean": {
         "base": "the value of {{key}} must be a boolean"

@@ -60,15 +60,6 @@ describe('Number', function () {
             ], done);
         });
 
-        it('should validate empty', function (done) {
-
-            var t = Number().empty();
-            verifyBehavior(t, [
-                [NaN, false],
-                [null, true]
-            ], done);
-        });
-
         it('can accept string numbers', function (done) {
 
             var t = Number();

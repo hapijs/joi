@@ -2,7 +2,6 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var FunctionType = require('../lib/function');
 var Support = require('./support/meta');
 
 
@@ -25,7 +24,7 @@ describe('Types', function () {
 
     describe('Function', function () {
 
-        var F = FunctionType; // Joi.types.Function;
+        var F = Joi.types.Function;
 
         it('should validate a function', function (done) {
 

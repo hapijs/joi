@@ -2,7 +2,6 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Support = require('./support/meta');
 
 
 // Declare internals
@@ -17,55 +16,169 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
-var verifyBehavior = Support.verifyValidatorBehavior;
 
 
 describe('Types', function () {
 
     describe('Any', function () {
 
-        it('should allow any type and not allow nulls', function (done) {
+        var Any = Joi.types.Any;
 
-            var t = Joi.types.Any();
-            verifyBehavior(t, [
-                [function(){ }, true],
-                ['', true],
-                [undefined, true],
-                [null, false],
-                [[], true],
-                [{}, true],
-                [1, true]
-            ], done);
+        describe('#with', function () {
+
+            it('returns error when related type not found', function (done) {
+
+                var schema = Any().with('test');
+                expect(schema.validate('test')).to.exist;
+                done();
+            });
+
+            it('should throw an error when a parameter is not a string', function (done) {
+
+                try {
+                    b.with({});
+                    var error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    b.with(123);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+                done();
+            });
         });
 
-        it('should work with required', function (done) {
+        describe('#without', function () {
 
-            var t = Joi.types.Any().required();
-            verifyBehavior(t, [
-                ['', true],
-                [undefined, false],
-                [null, false]
-            ], done);
+            it('fails when without set on root', function (done) {
+
+                var b = Any();
+                var result = b.without('test');
+
+                expect(result.validate('test')).to.exist;
+                done();
+            });
+
+            it('should throw an error when a parameter is not a string', function (done) {
+
+                try {
+                    b.without({});
+                    var error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    b.without(123);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+                done();
+            });
         });
 
-        it('should work with nullOk', function (done) {
+        describe('#rename', function () {
 
-            var t = Joi.types.Any().nullOk();
-            verifyBehavior(t, [
-                ['', true],
-                [undefined, true],
-                [null, true]
-            ], done);
+            it('fails when no parent object is provided', function (done) {
+
+                var b = Any();
+                var result = b.rename('test');
+
+                expect(result.validate('test')).to.exist;
+                done();
+            });
+
+            it('allows renaming multiple times with multiple enabled', function (done) {
+
+                var schema = {
+                    test1: Joi.types.String().rename('test'),
+                    test2: Joi.types.String().rename('test', { multiple: true })
+                };
+
+                var err = Joi.validate({ test1: 'a', test2: 'b' }, schema);
+                expect(err).to.not.exist;
+                done();
+            });
+
+            it('errors renaming multiple times with multiple disabled', function (done) {
+
+                var schema = {
+                    test1: Joi.types.String().rename('test'),
+                    test2: Joi.types.String().rename('test')
+                };
+
+                var err = Joi.validate({ test1: 'a', test2: 'b' }, schema);
+                expect(err).to.exist;
+                done();
+            });
+
+            it('with override disabled should not allow overwriting existing value', function (done) {
+
+                var schema = {
+                    test: Joi.types.String().rename('test1')
+                };
+
+                expect(Joi.validate({ test: 'b', test1: 'a' }, schema)).to.exist;
+                done();
+            });
+
+            it('with override enabled should allow overwriting existing value', function (done) {
+
+                var schema = {
+                    test: Joi.types.String().rename('test1', { override: true }),
+                    test1: Any()
+                };
+
+                var err = Joi.validate({ test: 'b', test1: 'a' }, schema);
+                expect(err).to.not.exist;
+                done();
+            });
         });
 
-        it('should work with optional and null ok', function (done) {
+        describe('#description', function () {
 
-            var t = Joi.types.Any().optional().nullOk();
-            verifyBehavior(t, [
-                ['', true],
-                [undefined, true],
-                [null, true]
-            ], done);
+            it('sets the description', function (done) {
+
+                var b = Any();
+                b.description('my description');
+                expect(b.description).to.equal('my description');
+
+                done();
+            });
+        });
+
+        describe('#notes', function () {
+
+            it('sets the notes', function (done) {
+
+                var b = Any();
+                b.notes('my notes');
+                expect(b.notes).to.deep.equal(['my notes']);
+
+                done();
+            });
+        });
+
+        describe('#tags', function () {
+
+            it('sets the tags', function (done) {
+
+                var b = Any();
+                b.tags(['tag1', 'tag2']);
+                expect(b.tags).to.include('tag1');
+                expect(b.tags).to.include('tag2');
+
+                done();
+            });
         });
     });
 });

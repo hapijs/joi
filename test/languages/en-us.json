@@ -1,5 +1,5 @@
 {
-    "base": {
+    "any": {
         "unknown": "1",
         "without": "2",
         "invalid": "3",
