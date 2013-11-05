@@ -163,7 +163,7 @@ describe('Joi', function () {
 
                 var b = Joi.any();
                 b.description('my description');
-                expect(b.description).to.equal('my description');
+                expect(b._description).to.equal('my description');
 
                 done();
             });
@@ -175,7 +175,7 @@ describe('Joi', function () {
 
                 var b = Joi.any();
                 b.notes('my notes');
-                expect(b.notes).to.deep.equal(['my notes']);
+                expect(b._notes).to.deep.equal(['my notes']);
 
                 done();
             });
@@ -187,8 +187,8 @@ describe('Joi', function () {
 
                 var b = Joi.any();
                 b.tags(['tag1', 'tag2']);
-                expect(b.tags).to.include('tag1');
-                expect(b.tags).to.include('tag2');
+                expect(b._tags).to.include('tag1');
+                expect(b._tags).to.include('tag2');
 
                 done();
             });

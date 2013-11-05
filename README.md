@@ -15,44 +15,48 @@ Current version: **2.x.x**
 - [Usage](#usage)
     - [`validate(value, schema, options)`](#validatevalue-schema-options)
     - [`any()`](#any)
-      - [`any.allow(value)`](#anyallowvalue)
-      - [`any.valid(value)`](#anyvalidvalue)
-      - [`any.invalid(value)`](#anyinvalidvalue)
-      - [`any.required()`](#anyrequired)
-      - [`any.optional()`](#anyoptional)
-      - [`any.nullOk()`](#anynullok)
-      - [`any.with(peer)`](#anywithpeer)
-      - [`any.without(peer)`](#anywithoutpeer)
-      - [`any.xor(peer)`](#anyxorpeer)
-      - [`description(desc)`](#descriptiondesc)
-      - [`any.notes(notes)`](#anynotesnotes)
-      - [`any.tags(tags)`](#anytagstags)
-      - [`any.options(options)`](#anyoptionsoptions)
-      - [`any.strict()`](#anystrict)
-      - [`any.rename(to, [options])`](#anyrenameto-options)
+        - [`any.allow(value)`](#anyallowvalue)
+        - [`any.valid(value)`](#anyvalidvalue)
+        - [`any.invalid(value)`](#anyinvalidvalue)
+        - [`any.required()`](#anyrequired)
+        - [`any.optional()`](#anyoptional)
+        - [`any.nullOk()`](#anynullok)
+        - [`any.with(peer)`](#anywithpeer)
+        - [`any.without(peer)`](#anywithoutpeer)
+        - [`any.xor(peer)`](#anyxorpeer)
+        - [`description(desc)`](#descriptiondesc)
+        - [`any.notes(notes)`](#anynotesnotes)
+        - [`any.tags(tags)`](#anytagstags)
+        - [`any.options(options)`](#anyoptionsoptions)
+        - [`any.strict()`](#anystrict)
+        - [`any.rename(to, [options])`](#anyrenameto-options)
     - [`array()`](#array)
-      - [`array.emptyOk()`](#arrayemptyok)
-      - [`array.includes(type)`](#arrayincludestype)
-      - [`array.excludes(type)`](#arrayexcludestype)
-      - [`array.min(limit)`](#arrayminlimit)
-      - [`array.max(limit)`](#arraymaxlimit)
-      - [`array.length(limit)`](#arraylengthlimit)
+        - [`array.emptyOk()`](#arrayemptyok)
+        - [`array.includes(type)`](#arrayincludestype)
+        - [`array.excludes(type)`](#arrayexcludestype)
+        - [`array.min(limit)`](#arrayminlimit)
+        - [`array.max(limit)`](#arraymaxlimit)
+        - [`array.length(limit)`](#arraylengthlimit)
     - [`boolean()`](#boolean)
     - [`date()`](#date)
-      - [`date.min(date)`](#datemindate)
-      - [`date.max(date)`](#datemaxdate)
+        - [`date.min(date)`](#datemindate)
+        - [`date.max(date)`](#datemaxdate)
     - [`func()`](#func)
     - [`number()`](#number)
-      - [`number.min(limit)`](#numberminlimit)
-      - [`number.max(limit)`](#numbermaxlimit)
-      - [`number.integer()`](#numberinteger)
+        - [`number.min(limit)`](#numberminlimit)
+        - [`number.max(limit)`](#numbermaxlimit)
+        - [`number.integer()`](#numberinteger)
     - [`object(schema)`](#objectschema)
     - [`string()`](#string)
-      - [`string.emptyOk()`](#stringemptyok)
-      - [`string.insensitive()`](#stringinsensitive)
-      - [`string.min(limit)`](#stringminlimit)
-      - [`string.max(limit)`](#stringmaxlimit)
-      - [`string.length(limit)`](#stringlengthlimit)
+        - [`string.emptyOk()`](#stringemptyok)
+        - [`string.insensitive()`](#stringinsensitive)
+        - [`string.min(limit)`](#stringminlimit)
+        - [`string.max(limit)`](#stringmaxlimit)
+        - [`string.length(limit)`](#stringlengthlimit)
+        - [`string.regex(pattern)`](#stringregexpattern)
+        - [`string.alphanum()`](#stringalphanum)
+        - [`string.token()`](#stringtoken)
+        - [`string.email()`](#stringemail)
 
 # Example
 
@@ -391,7 +395,7 @@ var schema = {
 
 #### `array.min(limit)`
 
-specifies the minimum number of items in the array where:
+Specifies the minimum number of items in the array where:
 - `limit` - the lowest number of array items allowed.
 
 ```javascript
@@ -402,7 +406,7 @@ var schema = {
 
 #### `array.max(limit)`
 
-specifies the maximum number of items in the array where:
+Specifies the maximum number of items in the array where:
 - `limit` - the highest number of array items allowed.
 
 ```javascript
@@ -413,7 +417,7 @@ var schema = {
 
 #### `array.length(limit)`
 
-specifies the exact number of items in the array where:
+Specifies the exact number of items in the array where:
 - `limit` - the number of array items allowed.
 
 ```javascript
@@ -450,7 +454,7 @@ var err = date.validate('12-21-2012');
 
 #### `date.min(date)`
 
-specifies the oldest date allowed where:
+Specifies the oldest date allowed where:
 - `date` - the oldest date allowed.
 
 ```javascript
@@ -461,7 +465,7 @@ var schema = {
 
 #### `date.max(date)`
 
-specifies the latest date allowed where:
+Specifies the latest date allowed where:
 - `date` - the latest date allowed.
 
 ```javascript
@@ -498,7 +502,7 @@ var err = number.validate(5);
 
 #### `number.min(limit)`
 
-specifies the minimum value where:
+Specifies the minimum value where:
 - `limit` - the minimum value allowed.
 
 ```javascript
@@ -509,7 +513,7 @@ var schema = {
 
 #### `number.max(limit)`
 
-specifies the maximum value where:
+Specifies the maximum value where:
 - `limit` - the maximum value allowed.
 
 ```javascript
@@ -579,7 +583,7 @@ var schema = {
 
 #### `string.min(limit)`
 
-specifies the minimum number string characters where:
+Specifies the minimum number string characters where:
 - `limit` - the minimum number of string characters required.
 
 ```javascript
@@ -590,7 +594,7 @@ var schema = {
 
 #### `string.max(limit)`
 
-specifies the maximum number of string characters where:
+Specifies the maximum number of string characters where:
 - `limit` - the maximum number of string characters allowed.
 
 ```javascript
@@ -601,7 +605,7 @@ var schema = {
 
 #### `string.length(limit)`
 
-specifies the exact string length required where:
+Specifies the exact string length required where:
 - `limit` - the required string length.
 
 ```javascript
@@ -610,3 +614,43 @@ var schema = {
 };
 ```
 
+#### `string.regex(pattern)`
+
+Defines a regular expression rule where:
+- `pattern` - a regular expression object the string value must match against.
+
+```javascript
+var schema = {
+    a: Joi.string().regex(\^[abc]+$\)
+};
+```
+
+#### `string.alphanum()`
+
+Requires the string value to only contain a-z, A-Z, and 0-9.
+
+```javascript
+var schema = {
+    a: Joi.string().alphanum()
+};
+```
+
+#### `string.token()`
+
+Requires the string value to only contain a-z, A-Z, 0-9, and underscore _.
+
+```javascript
+var schema = {
+    a: Joi.string().token()
+};
+```
+
+#### `string.email()`
+
+Requires the string value to be a valid email address.
+
+```javascript
+var schema = {
+    a: Joi.string().email()
+};
+```

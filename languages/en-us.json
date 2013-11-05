@@ -56,7 +56,8 @@
         "min": "the length of {{key}} must be at least {{value}} characters long",
         "max": "the length of {{key}} must be less than or equal to {{value}} characters long",
         "length": "the length of {{key}} must be {{value}} characters long",
-        "alphanum": "the value of {{key}} must only contain alpha-numeric characters {{spaces}} spaces",
+        "alphanum": "the value of {{key}} must only contain alpha-numeric characters",
+        "token": "the value of {{key}} must only contain alpha-numeric and underscore characters",
         "regex": "the value of {{key}} must match the regular expression {{value}}",
         "email": "The value of {{key}} must be a valid email"
     }

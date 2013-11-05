@@ -238,30 +238,22 @@ describe('Joi.string', function () {
             ]); done();
         });
 
-        it('should validate alphanum when alphanum allows spaces', function (done) {
+        it('validates token', function (done) {
 
-            var t = S().alphanum(true);
+            var t = S().token();
             Validate(t, [
-                ['w0rld of w4lm4rtl4bs', true],
+                ['w0rld_of_w4lm4rtl4bs', true],
+                ['w0rld of_w4lm4rtl4bs', false],
                 ['abcd#f?h1j orly?', false]
             ]); done();
         });
 
-        it('should validate alphanum when alphanum doesn\'t allow spaces', function (done) {
+        it('validates alphanum', function (done) {
 
-            var t = S().alphanum(false);
+            var t = S().alphanum();
             Validate(t, [
                 ['w0rld of w4lm4rtl4bs', false],
                 ['w0rldofw4lm4rtl4bs', true],
-                ['abcd#f?h1j orly?', false]
-            ]); done();
-        });
-
-        it('should validate alphanum when allow spaces is null', function (done) {
-
-            var t = S().alphanum(null);
-            Validate(t, [
-                ['w0rld of w4lm4rtl4bs', true],
                 ['abcd#f?h1j orly?', false]
             ]); done();
         });
