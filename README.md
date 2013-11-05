@@ -116,10 +116,10 @@ var schema = Joi.string().min(10);
 ```
 
 If the schema is a **joi** type, the `schema.validate(value)` can be called directly on the type. When passing a non-type schema object,
-the module converts it internally to an Object type equivalent to:
+the module converts it internally to an object() type equivalent to:
 
 ```javascript
-var schema = Joi.Object({
+var schema = Joi.object({
     a: Joi.string()
 });
 ```
