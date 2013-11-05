@@ -83,7 +83,7 @@ The above schema defines the following constraints:
 * `access_token`
     * an optional, unconstrained string or number
 * `birthyear`
-    * an integer between 1850 and 2012
+    * an integer between 1900 and 2013
 * `email`
     * a valid email address string
 
