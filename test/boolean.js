@@ -2,13 +2,12 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Support = require('./support/meta');
+var Validate = require('./helper');
 
 
 // Declare internals
 
 var internals = {};
-var verifyBehavior = Support.verifyValidatorBehavior;
 
 
 // Test shortcuts
@@ -24,7 +23,7 @@ describe('Types', function () {
 
     describe('Boolean', function () {
 
-        var B = Joi.types.Boolean;
+        var B = Joi.bool;
 
         describe('#convert', function () {
 
@@ -48,77 +47,77 @@ describe('Types', function () {
             it('should handle work with nullOk', function (done) {
 
                 var rule = B().nullOk();
-                verifyBehavior(rule, [
+                Validate(rule, [
                     ['1234', false],
                     [false, true],
                     [null, true]
-                ], done);
+                ]); done();
             });
 
             it('should handle work with required', function (done) {
 
                 var rule = B().required();
-                verifyBehavior(rule, [
+                Validate(rule, [
                     ['1234', false],
                     ['true', true],
                     [false, true],
                     [true, true],
                     [null, false]
-                ], done);
+                ]); done();
             });
 
             it('should handle work with allow', function (done) {
 
                 var rule = B().allow(false);
-                verifyBehavior(rule, [
+                Validate(rule, [
                     ['1234', false],
                     [false, true],
                     [null, false]
-                ], done);
+                ]); done();
             });
 
             it('should handle work with deny', function (done) {
 
                 var rule = B().deny(false);
-                verifyBehavior(rule, [
+                Validate(rule, [
                     ['1234', false],
                     [false, false],
                     [true, true],
                     [null, false]
-                ], done);
+                ]); done();
             });
 
             it('should handle work with deny and nullOk', function (done) {
 
                 var rule = B().deny(false).nullOk();
-                verifyBehavior(rule, [
+                Validate(rule, [
                     ['1234', false],
                     [false, false],
                     [true, true],
                     [null, true]
-                ], done);
+                ]); done();
             });
 
             it('should handle work with allow and deny', function (done) {
 
                 var rule = B().deny(true).allow(false);
-                verifyBehavior(rule, [
+                Validate(rule, [
                     ['1234', false],
                     [false, true],
                     [true, false],
                     [null, false]
-                ], done);
+                ]); done();
             });
 
             it('should handle work with allow, deny, and nullOk', function (done) {
 
                 var rule = B().deny(true).allow(false).nullOk();
-                verifyBehavior(rule, [
+                Validate(rule, [
                     ['1234', false],
                     [false, true],
                     [true, false],
                     [null, true]
-                ], done);
+                ]); done();
             });
         });
     });

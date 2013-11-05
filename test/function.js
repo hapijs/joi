@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Support = require('./support/meta');
+var Validate = require('./helper');
 
 
 // Declare internals
@@ -17,22 +17,21 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
-var verifyBehavior = Support.verifyValidatorBehavior;
 
 
 describe('Types', function () {
 
     describe('Function', function () {
 
-        var F = Joi.types.Function;
+        var F = Joi.func;
 
         it('should validate a function', function (done) {
 
             var t = F().required();
-            verifyBehavior(t, [
+            Validate(t, [
                 [function(){ }, true],
                 ['', false]
-            ], done);
+            ]); done();
         });
     });
 });

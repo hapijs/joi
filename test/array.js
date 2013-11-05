@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Support = require('./support/meta');
+var Validate = require('./helper');
 
 
 // Declare internals
@@ -17,44 +17,38 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
-var verifyBehavior = Support.verifyValidatorBehavior;
 
 
 describe('Types', function () {
 
     describe('Array', function () {
 
-        var A = Joi.types.Array,
-            N = Joi.types.Number,
-            S = Joi.types.String,
-            O = Joi.types.Object;
-
         describe('#_convert', function () {
 
             it('should convert a string to an array', function (done) {
 
-                var result = A()._convert('[1,2,3]');
+                var result = Joi.array()._convert('[1,2,3]');
                 expect(result.length).to.equal(3);
                 done();
             });
 
             it('should convert a non-array string to an array', function (done) {
 
-                var result = A()._convert('{ "something": false }');
+                var result = Joi.array()._convert('{ "something": false }');
                 expect(result.length).to.equal(1);
                 done();
             });
 
             it('should return a non array', function (done) {
 
-                var result = A()._convert(3);
+                var result = Joi.array()._convert(3);
                 expect(result).to.equal(3);
                 done();
             });
 
             it('should convert a non-array string with number type', function (done) {
 
-                var result = A()._convert('3');
+                var result = Joi.array()._convert('3');
                 expect(result.length).to.equal(1);
                 expect(result[0]).to.equal('3');
                 done();
@@ -62,8 +56,47 @@ describe('Types', function () {
 
             it('should convert a non-array string', function (done) {
 
-                var result = A()._convert('asdf');
+                var result = Joi.array()._convert('asdf');
                 expect(result).to.equal('asdf');
+                done();
+            });
+        });
+
+        describe('#min', function () {
+
+            it('validates array size', function (done) {
+
+                var schema = Joi.array().min(2);
+                Validate(schema, [
+                    [[1, 2], true],
+                    [[1], false]
+                ]);
+                done();
+            });
+        });
+
+        describe('#max', function () {
+
+            it('validates array size', function (done) {
+
+                var schema = Joi.array().max(1);
+                Validate(schema, [
+                    [[1, 2], false],
+                    [[1], true]
+                ]);
+                done();
+            });
+        });
+
+        describe('#length', function () {
+
+            it('validates array size', function (done) {
+
+                var schema = Joi.array().length(2);
+                Validate(schema, [
+                    [[1, 2], true],
+                    [[1], false]
+                ]);
                 done();
             });
         });
@@ -72,42 +105,43 @@ describe('Types', function () {
 
             it('should, by default, allow undefined, allow empty array', function (done) {
 
-                verifyBehavior(A(), [
+                Validate(Joi.array(), [
                     [undefined, true],
-                    [
-                        [],
-                        true
-                    ]
-                ], done);
+                    [[], true]
+                ]);
+                done();
             });
 
             it('should, when .required(), deny undefined', function (done) {
 
-                verifyBehavior(A().required(), [
+                Validate(Joi.array().required(), [
                     [undefined, false]
-                ], done);
+                ]);
+                done();
             });
 
             it('should allow empty arrays with emptyOk', function (done) {
 
-                verifyBehavior(A().emptyOk(), [
+                Validate(Joi.array().emptyOk(), [
                     [undefined, true],
                     [[], true]
-                ], done);
+                ]);
+                done();
             });
 
             it('should exclude values when excludes is called', function (done) {
 
-                verifyBehavior(A().excludes(S()), [
+                Validate(Joi.array().excludes(Joi.string()), [
                     [['2', '1'], false],
                     [['1'], false],
                     [[2], true]
-                ], done);
+                ]);
+                done();
             });
 
             it('should allow types to be excluded', function (done) {
 
-                var schema = A().excludes(N());
+                var schema = Joi.array().excludes(Joi.number());
 
                 var n = [1, 2, 'hippo'];
                 var result = schema.validate(n);
@@ -123,80 +157,48 @@ describe('Types', function () {
 
             it('should validate array of Numbers', function (done) {
 
-                verifyBehavior(A().includes(N()), [
-                    [
-                        [1, 2, 3],
-                        true
-                    ],
-                    [
-                        [50, 100, 1000],
-                        true
-                    ],
-                    [
-                        ['a', 1, 2],
-                        false
-                    ]
-                ], done);
+                Validate(Joi.array().includes(Joi.number()), [
+                    [[1, 2, 3], true],
+                    [[50, 100, 1000], true],
+                    [['a', 1, 2], false]
+                ]);
+                done();
             });
 
             it('should validate array of mixed Numbers & Strings', function (done) {
 
-                verifyBehavior(A().includes(N(), S()), [
-                    [
-                        [1, 2, 3],
-                        true
-                    ],
-                    [
-                        [50, 100, 1000],
-                        true
-                    ],
-                    [
-                        [1, 'a', 5, 10],
-                        true
-                    ],
-                    [
-                        ['joi', 'everydaylowprices', 5000],
-                        true
-                    ]
-                ], done);
+                Validate(Joi.array().includes(Joi.number(), Joi.string()), [
+                    [[1, 2, 3], true],
+                    [[50, 100, 1000], true],
+                    [[1, 'a', 5, 10], true],
+                    [['joi', 'everydaylowprices', 5000], true]
+                ]);
+                done();
             });
 
             it('should validate array of objects with schema', function (done) {
 
-                verifyBehavior(A().includes(O({ h1: N().required() })), [
-                    [
-                        [{ h1: 1 }, { h1: 2 }, { h1: 3 }],
-                        true
-                    ],
-                    [
-                        [{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }],
-                        false
-                    ],
-                    [
-                        [1, 2, [1]],
-                        false
-                    ]
-                ], done);
+                Validate(Joi.array().includes(Joi.object({ h1: Joi.number().required() })), [
+                    [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
+                    [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false],
+                    [[1, 2, [1]], false]
+                ]);
+                done();
             });
 
             it('should not validate array of unallowed mixed types (Array)', function (done) {
 
-                verifyBehavior(A().includes(N()), [
-                    [
-                        [1, 2, 3],
-                        true
-                    ],
-                    [
-                        [1, 2, [1]],
-                        false
-                    ]
-                ], done);
+                Validate(Joi.array().includes(Joi.number()), [
+                    [[1, 2, 3], true],
+                    [[1, 2, [1]], false]
+                ]);
+                done();
             });
 
             it('errors on invalid number rule using includes', function (done) {
 
                 var schema = {
-                    arr: Joi.types.Array().includes(Joi.types.Number().integer())
+                    arr: Joi.array().includes(Joi.number().integer())
                 };
 
                 var input = { arr: [1, 2, 2.1] };
@@ -209,16 +211,17 @@ describe('Types', function () {
 
             it('validates an array within an object', function (done) {
 
-                var schema = Joi.types.Object({
-                    array: Joi.types.Array().includes(Joi.types.String().min(5), Joi.types.Number().min(3))
+                var schema = Joi.object({
+                    array: Joi.array().includes(Joi.string().min(5), Joi.number().min(3))
                 }).options({ convert: false });
 
-                verifyBehavior(schema, [
+                Validate(schema, [
                     [{ array: ['12345'] }, true],
                     [{ array: ['1'] }, false],
                     [{ array: [3] }, true],
                     [{ array: ['12345', 3] }, true]
-                ], done);
+                ]);
+                done();
             });
         });
     });

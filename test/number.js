@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Support = require('./support/meta');
+var Validate = require('./helper');
 
 
 // Declare internals
@@ -17,27 +17,26 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
-var verifyBehavior = Support.verifyValidatorBehavior;
 
 
 describe('Number', function () {
 
-    var Number = Joi.types.Number;
+    var Number = Joi.number;
 
     describe('#validate', function () {
 
         it('should, by default, allow undefined', function (done) {
 
-            verifyBehavior(Number(), [
+            Validate(Number(), [
                 [undefined, true]
-            ], done);
+            ]); done();
         });
 
         it('should, when .required(), deny undefined', function (done) {
 
-            verifyBehavior(Number().required(), [
+            Validate(Number().required(), [
                 [undefined, false]
-            ], done);
+            ]); done();
         });
 
         it('should return false for denied value', function (done) {
@@ -51,31 +50,31 @@ describe('Number', function () {
         it('should validate integer', function (done) {
 
             var t = Number().integer();
-            verifyBehavior(t, [
+            Validate(t, [
                 [100, true],
                 [0, true],
                 [null, false],
                 [1.02, false],
                 [0.01, false]
-            ], done);
+            ]); done();
         });
 
         it('can accept string numbers', function (done) {
 
             var t = Number();
-            verifyBehavior(t, [
+            Validate(t, [
                 ['1', true],
                 ['100', true]
-            ], done);
+            ]); done();
         });
 
         it('required validates correctly', function (done) {
 
             var t = Number().required();
-            verifyBehavior(t, [
+            Validate(t, [
                 [NaN, false],
                 ['100', true]
-            ], done);
+            ]); done();
         });
 
         it('converts an object string to a number', function (done) {
@@ -106,92 +105,92 @@ describe('Number', function () {
         it('should handle combination of min and max', function (done) {
 
             var rule = Number().min(8).max(10);
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, false],
                 [11, false],
                 [8, true],
                 [9, true],
                 [null, false]
-            ], done);
+            ]); done();
         });
 
         it('should handle combination of min, max, and nullOk', function (done) {
 
             var rule = Number().min(8).max(10).nullOk();
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, false],
                 [11, false],
                 [8, true],
                 [9, true],
                 [null, true]
-            ], done);
+            ]); done();
         });
 
         it('should handle combination of min, max, and allow', function (done) {
 
             var rule = Number().min(8).max(10).allow(1);
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, true],
                 [11, false],
                 [8, true],
                 [9, true],
                 [null, false]
-            ], done);
+            ]); done();
         });
 
         it('should handle combination of min, max, allow, and nullOk', function (done) {
 
             var rule = Number().min(8).max(10).allow(1).nullOk();
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, true],
                 [11, false],
                 [8, true],
                 [9, true],
                 [null, true]
-            ], done);
+            ]); done();
         });
 
         it('should handle combination of min, max, allow, and deny', function (done) {
 
             var rule = Number().min(8).max(10).allow(1).deny(9);
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, true],
                 [11, false],
                 [8, true],
                 [9, false],
                 [null, false]
-            ], done);
+            ]); done();
         });
 
         it('should handle combination of min, max, allow, deny, and nullOk', function (done) {
 
             var rule = Number().min(8).max(10).allow(1).deny(9).nullOk();
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, true],
                 [11, false],
                 [8, true],
                 [9, false],
                 [null, true]
-            ], done);
+            ]); done();
         });
 
         it('should handle combination of min, max, and integer', function (done) {
 
             var rule = Number().min(8).max(10).integer();
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, false],
                 [11, false],
                 [8, true],
                 [9, true],
                 [9.1, false],
                 [null, false]
-            ], done);
+            ]); done();
         });
 
         it('should handle combination of min, max, integer, and allow', function (done) {
 
             var rule = Number().min(8).max(10).integer().allow(9.1);
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, false],
                 [11, false],
                 [8, true],
@@ -199,13 +198,13 @@ describe('Number', function () {
                 [9.1, true],
                 [9.2, false],
                 [null, false]
-            ], done);
+            ]); done();
         });
 
         it('should handle combination of min, max, integer, allow, and deny', function (done) {
 
             var rule = Number().min(8).max(10).integer().allow(9.1).deny(8);
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, false],
                 [11, false],
                 [8, false],
@@ -213,13 +212,13 @@ describe('Number', function () {
                 [9.1, true],
                 [9.2, false],
                 [null, false]
-            ], done);
+            ]); done();
         });
 
         it('should handle combination of min, max, integer, allow, deny, and nullOk', function (done) {
 
             var rule = Number().min(8).max(10).integer().allow(9.1).deny(8).nullOk();
-            verifyBehavior(rule, [
+            Validate(rule, [
                 [1, false],
                 [11, false],
                 [8, false],
@@ -227,7 +226,7 @@ describe('Number', function () {
                 [9.1, true],
                 [9.2, false],
                 [null, true]
-            ], done);
+            ]); done();
         });
     });
 
