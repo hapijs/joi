@@ -100,7 +100,7 @@ describe('Types', function () {
                 obj: O({
                     obj: O({
                         obj: O({
-                            item: Joi.bool()
+                            item: Joi.boolean()
                         })
                     })
                 })
@@ -122,7 +122,7 @@ describe('Types', function () {
                 obj: O({
                     obj: O({
                         obj: O({
-                            item: Joi.bool()
+                            item: Joi.boolean()
                         })
                     }).required()
                 })

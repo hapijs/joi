@@ -23,20 +23,18 @@ describe('Types', function () {
 
     describe('Boolean', function () {
 
-        var B = Joi.bool;
-
         describe('#convert', function () {
 
             it('should convert a string to a boolean', function (done) {
 
-                var result = B()._convert('true');
+                var result = Joi.boolean()._convert('true');
                 expect(result).to.equal(true);
                 done();
             });
 
             it('should not convert a number to a boolean', function (done) {
 
-                var result = B()._convert(1);
+                var result = Joi.boolean()._convert(1);
                 expect(result).to.equal(1);
                 done();
             });
@@ -46,7 +44,7 @@ describe('Types', function () {
 
             it('should handle work with nullOk', function (done) {
 
-                var rule = B().nullOk();
+                var rule = Joi.boolean().nullOk();
                 Validate(rule, [
                     ['1234', false],
                     [false, true],
@@ -56,7 +54,7 @@ describe('Types', function () {
 
             it('should handle work with required', function (done) {
 
-                var rule = B().required();
+                var rule = Joi.boolean().required();
                 Validate(rule, [
                     ['1234', false],
                     ['true', true],
@@ -68,7 +66,7 @@ describe('Types', function () {
 
             it('should handle work with allow', function (done) {
 
-                var rule = B().allow(false);
+                var rule = Joi.boolean().allow(false);
                 Validate(rule, [
                     ['1234', false],
                     [false, true],
@@ -78,7 +76,7 @@ describe('Types', function () {
 
             it('should handle work with deny', function (done) {
 
-                var rule = B().deny(false);
+                var rule = Joi.boolean().deny(false);
                 Validate(rule, [
                     ['1234', false],
                     [false, false],
@@ -89,7 +87,7 @@ describe('Types', function () {
 
             it('should handle work with deny and nullOk', function (done) {
 
-                var rule = B().deny(false).nullOk();
+                var rule = Joi.boolean().deny(false).nullOk();
                 Validate(rule, [
                     ['1234', false],
                     [false, false],
@@ -100,7 +98,7 @@ describe('Types', function () {
 
             it('should handle work with allow and deny', function (done) {
 
-                var rule = B().deny(true).allow(false);
+                var rule = Joi.boolean().deny(true).allow(false);
                 Validate(rule, [
                     ['1234', false],
                     [false, true],
@@ -111,7 +109,7 @@ describe('Types', function () {
 
             it('should handle work with allow, deny, and nullOk', function (done) {
 
-                var rule = B().deny(true).allow(false).nullOk();
+                var rule = Joi.boolean().deny(true).allow(false).nullOk();
                 Validate(rule, [
                     ['1234', false],
                     [false, true],

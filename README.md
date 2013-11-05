@@ -433,8 +433,8 @@ Generates a schema object that matches a boolean data type (as well as the strin
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
-var bool = Joi.boolean();
-bool.nullOk();
+var boolean = Joi.boolean();
+boolean.nullOk();
 
 var err = any.validate(true);
 ```

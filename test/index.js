@@ -87,7 +87,7 @@ describe('Joi', function () {
                     mode: Joi.string().valid('required', 'optional', 'try').nullOk()
                 }).nullOk(),
                 Joi.string(),
-                Joi.bool()
+                Joi.boolean()
             ]
         };
 
@@ -154,7 +154,7 @@ describe('Joi', function () {
 
     it('validates config where the root item is a joi type', function (done) {
 
-        expect(Joi.validate(true, Joi.bool().nullOk())).to.be.null;
+        expect(Joi.validate(true, Joi.boolean().nullOk())).to.be.null;
         expect(Joi.validate({ auth: { mode: 'try' } }, Joi.object())).to.be.null;
 
         var err = Joi.validate(true, Joi.object());
@@ -320,7 +320,7 @@ describe('Joi', function () {
     it('validates object successfully when config has an array of types', function (done) {
 
         var schema = {
-            f: [Joi.number(), Joi.bool()],
+            f: [Joi.number(), Joi.boolean()],
             g: [Joi.string(), Joi.object()]
         };
 
@@ -475,7 +475,7 @@ describe('Joi', function () {
     it('fails validation when config is an array and fails', function (done) {
 
         var schema = {
-            d: [Joi.string(), Joi.bool()],
+            d: [Joi.string(), Joi.boolean()],
             e: [Joi.number(), Joi.object()]
         };
 
@@ -492,7 +492,7 @@ describe('Joi', function () {
     it('fails validation when config is an array and fails with extra keys', function (done) {
 
         var schema = {
-            d: [Joi.string(), Joi.bool()],
+            d: [Joi.string(), Joi.boolean()],
             e: [Joi.number(), Joi.object()]
         };
 
