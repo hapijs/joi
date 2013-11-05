@@ -23,15 +23,13 @@ describe('Types', function () {
 
     describe('Function', function () {
 
-        var F = Joi.func;
-
         it('should validate a function', function (done) {
 
-            var t = F().required();
-            Validate(t, [
+            Validate(Joi.func().required(), [
                 [function(){ }, true],
                 ['', false]
-            ]); done();
+            ]);
+            done();
         });
     });
 });

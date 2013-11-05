@@ -23,30 +23,29 @@ describe('Types', function () {
 
     describe('Object', function () {
 
-        var O = Joi.object;
-
         it('can convert a json string to an object', function (done) {
 
-            var result = O()._convert('{"hi":true}');
+            var result = Joi.object()._convert('{"hi":true}');
             expect(result.hi).to.be.true;
             done();
         });
 
         it('should convert a non-json string as a string', function (done) {
 
-            var result = O()._convert('a string');
+            var result = Joi.object()._convert('a string');
             expect(result).to.be.equal('a string');
             done();
         });
 
         it('should validate an object', function (done) {
 
-            var t = O().required();
-            Validate(t, [
+            var schema = Joi.object().required();
+            Validate(schema, [
                 [{ }, true],
                 [{ hi: true }, true],
                 ['', false]
-            ]); done();
+            ]);
+            done();
         });
 
         it('errors on array', function (done) {
@@ -57,78 +56,82 @@ describe('Types', function () {
 
         it('should prevent extra keys from existing by default', function (done) {
 
-            var t = O({ item: Joi.string().required() }).required();
-            Validate(t, [
+            var schema = Joi.object({ item: Joi.string().required() }).required();
+            Validate(schema, [
                 [{ item: 'something' }, true],
                 [{ item: 'something', item2: 'something else' }, false],
                 ['', false]
-            ]); done();
+            ]);
+            done();
         });
 
         it('should traverse an object and validate all properties in the top level', function (done) {
 
-            var t = O({
+            var schema = Joi.object({
                 num: Joi.number()
             });
 
-            Validate(t, [
+            Validate(schema, [
                 [{ num: 1 }, true],
                 [{ num: [1,2,3] }, false]
-            ]); done();
+            ]);
+            done();
         });
 
         it('should traverse an object and child objects and validate all properties', function (done) {
 
-            var t = O({
+            var schema = Joi.object({
                 num: Joi.number(),
-                obj: O({
+                obj: Joi.object({
                     item: Joi.string()
                 })
             });
 
-            Validate(t, [
+            Validate(schema, [
                 [{ num: 1 }, true],
                 [{ num: [1,2,3] }, false],
                 [{ num: 1, obj: { item: 'something' }}, true],
                 [{ num: 1, obj: { item: 123 }}, false]
-            ]); done();
+            ]);
+            done();
         });
 
         it('should traverse an object several levels', function (done) {
 
-            var t = O({
-                obj: O({
-                    obj: O({
-                        obj: O({
+            var schema = Joi.object({
+                obj: Joi.object({
+                    obj: Joi.object({
+                        obj: Joi.object({
                             item: Joi.boolean()
                         })
                     })
                 })
             });
 
-            Validate(t, [
+            Validate(schema, [
                 [{ num: 1 }, false],
                 [{ obj: {} }, true],
                 [{ obj: { obj: { }}}, true],
                 [{ obj: { obj: { obj: { } }}}, true],
                 [{ obj: { obj: { obj: { item: true } }}}, true],
                 [{ obj: { obj: { obj: { item: 10 } }}}, false]
-            ]); done();
+            ]);
+            done();
         });
 
         it('should traverse an object several levels with required levels', function (done) {
 
-            var t = O({
-                obj: O({
-                    obj: O({
-                        obj: O({
+            var schema = Joi.object({
+                obj: Joi.object({
+                    obj: Joi.object({
+                        obj: Joi.object({
                             item: Joi.boolean()
                         })
                     }).required()
                 })
             });
 
-            Validate(t, [
+            Validate(schema, [
                 [null, false],
                 [undefined, true],
                 [{}, true],
@@ -137,7 +140,8 @@ describe('Types', function () {
                 [{ obj: { obj: { obj: {} } } }, true],
                 [{ obj: { obj: { obj: { item: true } } } }, true],
                 [{ obj: { obj: { obj: { item: 10 } } } }, false]
-            ]); done();
+            ]);
+            done();
         });
     });
 });
