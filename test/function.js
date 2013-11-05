@@ -1,9 +1,8 @@
 // Load modules
 
 var Lab = require('lab');
-var Joi = require('../../lib');
-var FunctionType = require('../../lib/types/function');
-var Support = require('../support/meta');
+var Joi = require('../lib');
+var Validate = require('./helper');
 
 
 // Declare internals
@@ -18,29 +17,21 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
-var verifyBehavior = Support.verifyValidatorBehavior;
 
 
 describe('Types', function () {
 
     describe('Function', function () {
 
-        var F = FunctionType; // Joi.types.Function;
-
-        it('should have mixins', function (done) {
-
-            var result = F();
-            expect(result.validate).to.exist;
-            done();
-        });
+        var F = Joi.func;
 
         it('should validate a function', function (done) {
 
             var t = F().required();
-            verifyBehavior(t, [
+            Validate(t, [
                 [function(){ }, true],
                 ['', false]
-            ], done);
+            ]); done();
         });
     });
 });

@@ -1,0 +1,35 @@
+{
+    "any": {
+        "unknown": "1",
+        "without": "2",
+        "invalid": "3",
+        "with": {
+            "parent": "4",
+            "peer": "5"
+        },
+        "without": {
+            "parent": "6",
+            "peer": "7"
+        },
+        "xor": "8",
+        "rename": {
+            "parent": "9",
+            "multiple": "10",
+            "override": "11"
+        },
+        "validate": {
+            "allowOnly": "12"
+        }
+    },
+    "date": {
+        "base": "18"
+    },
+    "string": {
+        "base": "13",
+        "min": "14",
+        "max": "15",
+        "alphanum": "16",
+        "regex": "17",
+        "email": "19"
+    }
+}

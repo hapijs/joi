@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Joi = require('../');
 
 
 // Declare internals
@@ -17,14 +18,11 @@ var describe = Lab.experiment;
 var it = Lab.test;
 
 
-exports.verifyValidatorBehavior = function (typeObj, config, callback) {
+module.exports = function (schema, config) {
 
     for (var i in config) {
-        var result = typeObj.validate(config[i][0]);
-        expect(result).to.exist;
-        expect(result).to.equal(config[i][1]);
+        var result = Joi.validate(config[i][0], schema);
+        expect(result === null).to.equal(config[i][1]);
     }
-
-    callback();
 };
 

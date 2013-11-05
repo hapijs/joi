@@ -1,8 +1,8 @@
 // Load modules
 
 var Lab = require('lab');
-var Joi = require('../../lib');
-var Support = require('../support/meta');
+var Joi = require('../lib');
+var Validate = require('./helper');
 
 
 // Declare internals
@@ -17,32 +17,24 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
-var verifyBehavior = Support.verifyValidatorBehavior;
 
 
 describe('Types', function () {
 
     describe('Object', function () {
 
-        var O = Joi.types.Object;
-
-        it('should have mixins', function (done) {
-
-            var result = O();
-            expect(result.validate).to.exist;
-            done();
-        });
+        var O = Joi.object;
 
         it('can convert a json string to an object', function (done) {
 
-            var result = O().convert('{"hi":true}');
+            var result = O()._convert('{"hi":true}');
             expect(result.hi).to.be.true;
             done();
         });
 
         it('should convert a non-json string as a string', function (done) {
 
-            var result = O().convert('a string');
+            var result = O()._convert('a string');
             expect(result).to.be.equal('a string');
             done();
         });
@@ -50,62 +42,56 @@ describe('Types', function () {
         it('should validate an object', function (done) {
 
             var t = O().required();
-            verifyBehavior(t, [
+            Validate(t, [
                 [{ }, true],
                 [{ hi: true }, true],
                 ['', false]
-            ], done);
+            ]); done();
+        });
+
+        it('errors on array', function (done) {
+
+            expect(Joi.validate([1, 2, 3], Joi.object())).to.exist;
+            done();
         });
 
         it('should prevent extra keys from existing by default', function (done) {
 
-            var t = O({ item: Joi.types.String().required() }).required();
-            verifyBehavior(t, [
+            var t = O({ item: Joi.string().required() }).required();
+            Validate(t, [
                 [{ item: 'something' }, true],
                 [{ item: 'something', item2: 'something else' }, false],
                 ['', false]
-            ], done);
-        });
-
-        it('should allow extra keys when using allowOtherKeys', function (done) {
-
-            var t = O({ item: Joi.types.String().required() }).allowOtherKeys();
-            verifyBehavior(t, [
-                [{ item: 'something' }, true],
-                [{ item: 'something', item2: 'something else' }, true],
-                [{ item: 'something', item1: 'something', item2: 'something else' }, true],
-                [{ item1: 'something', item2: 'something else' }, false],
-                ['', false]
-            ], done);
+            ]); done();
         });
 
         it('should traverse an object and validate all properties in the top level', function (done) {
 
             var t = O({
-                num: Joi.types.Number()
+                num: Joi.number()
             });
 
-            verifyBehavior(t, [
+            Validate(t, [
                 [{ num: 1 }, true],
                 [{ num: [1,2,3] }, false]
-            ], done);
+            ]); done();
         });
 
         it('should traverse an object and child objects and validate all properties', function (done) {
 
             var t = O({
-                num: Joi.types.Number(),
+                num: Joi.number(),
                 obj: O({
-                    item: Joi.types.String()
+                    item: Joi.string()
                 })
             });
 
-            verifyBehavior(t, [
+            Validate(t, [
                 [{ num: 1 }, true],
                 [{ num: [1,2,3] }, false],
                 [{ num: 1, obj: { item: 'something' }}, true],
                 [{ num: 1, obj: { item: 123 }}, false]
-            ], done);
+            ]); done();
         });
 
         it('should traverse an object several levels', function (done) {
@@ -114,20 +100,20 @@ describe('Types', function () {
                 obj: O({
                     obj: O({
                         obj: O({
-                            item: Joi.types.Boolean()
+                            item: Joi.bool()
                         })
                     })
                 })
             });
 
-            verifyBehavior(t, [
+            Validate(t, [
                 [{ num: 1 }, false],
                 [{ obj: {} }, true],
                 [{ obj: { obj: { }}}, true],
                 [{ obj: { obj: { obj: { } }}}, true],
                 [{ obj: { obj: { obj: { item: true } }}}, true],
                 [{ obj: { obj: { obj: { item: 10 } }}}, false]
-            ], done);
+            ]); done();
         });
 
         it('should traverse an object several levels with required levels', function (done) {
@@ -136,13 +122,13 @@ describe('Types', function () {
                 obj: O({
                     obj: O({
                         obj: O({
-                            item: Joi.types.Boolean()
+                            item: Joi.bool()
                         })
                     }).required()
                 })
             });
 
-            verifyBehavior(t, [
+            Validate(t, [
                 [null, false],
                 [undefined, true],
                 [{}, true],
@@ -151,7 +137,7 @@ describe('Types', function () {
                 [{ obj: { obj: { obj: {} } } }, true],
                 [{ obj: { obj: { obj: { item: true } } } }, true],
                 [{ obj: { obj: { obj: { item: 10 } } } }, false]
-            ], done);
+            ]); done();
         });
     });
 });

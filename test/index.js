@@ -17,295 +17,249 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
-var T = Joi.types;
+var Validate = require('./helper');
 
 
-describe('#validate', function () {
+describe('Joi', function () {
 
-    var config1 = {
-        a: Joi.types.Number().min(0).max(3),
-        b: Joi.types.String().valid('a', 'b', 'c'),
-        c: Joi.types.String().email().optional()
-    };
+    it('validates object', function (done) {
 
-    var config2 = {
-        d: [Joi.types.String(), Joi.types.Boolean()],
-        e: [Joi.types.Number(), Joi.types.Object()]
-    };
-
-    var config3 = {
-        f: [Joi.types.Number(), Joi.types.Boolean()],
-        g: [Joi.types.String(), Joi.types.Object()]
-    };
-
-    var config4 = {
-        h: Joi.types.Number(),
-        i: Joi.types.String(),
-        j: Joi.types.Object()
-    };
-
-    var config5 = {
-        txt: Joi.types.String().xor('upc'),
-        upc: Joi.types.String().xor('txt')
-    };
-
-    var config6 = {
-        txt: Joi.types.String().required().without('upc'),
-        upc: Joi.types.String().required().without('txt')
-    };
-
-    it('should validate object successfully', function (done) {
+        var schema = {
+            a: Joi.number().min(0).max(3).without('none'),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        };
 
         var obj = {
             a: 1,
             b: 'a',
             c: 'joe@example.com'
         };
-        var err = Joi.validate(obj, config1);
 
+        var err = Joi.validate(obj, schema);
         expect(err).to.not.exist;
         done();
     });
 
-    it('should validate null', function (done) {
+    it('validates null', function (done) {
 
-        var err = Joi.validate(null, config1);
-
+        var err = Joi.validate(null, Joi.string());
         expect(err).to.exist;
         done();
     });
 
-    it('should validate xor statements', function (done) {
+    it('validates xor', function (done) {
 
-        expect(Joi.validate({ upc: null }, config5)).to.not.be.null;
-        expect(Joi.validate({ upc: 'test' }, config5)).to.be.null;
-        expect(Joi.validate({ txt: null }, config5)).to.not.be.null;
-        expect(Joi.validate({ txt: 'test' }, config5)).to.be.null;
+        var schema = Joi.object({
+            txt: Joi.string().xor('upc'),
+            upc: Joi.string().xor('txt')
+        });
 
-        var err = Joi.validate({ upc: null, txt: null }, config5);
-        expect(err).to.not.be.null;
-        expect(err.message).to.contain('the value of txt must exist without upc');
-        expect(err.message).to.contain('the value of upc must exist without txt');
+        var err = Joi.validate({ upc: null, txt: null }, schema, { abortEarly: false });
+        expect(err.message).to.equal('txt conflict with exclusive peer upc. upc conflict with exclusive peer txt');
 
-        expect(Joi.validate({ txt: 'test', upc: 'test' }, config5)).to.not.be.null;
-        expect(Joi.validate({ txt: 'test', upc: null }, config5)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: '' }, config5)).to.be.null;
-        expect(Joi.validate({ txt: '', upc: 'test' }, config5)).to.be.null;
-        expect(Joi.validate({ txt: null, upc: 'test' }, config5)).to.be.null;
-        expect(Joi.validate({ txt: undefined, upc: 'test' }, config5)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: undefined }, config5)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: '' }, config5)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: null }, config5)).to.be.null;
-        expect(Joi.validate({ txt: '', upc: undefined }, config5)).to.not.be.null;
-        expect(Joi.validate({ txt: '', upc: '' }, config5)).to.not.be.null;
-
-        done();
-    });
-
-    it('should validate required without statements like xor', function (done) {
-
-        expect(Joi.validate({ upc: null }, config6)).to.not.be.null;
-        expect(Joi.validate({ upc: 'test' }, config6)).to.be.null;
-        expect(Joi.validate({ txt: null }, config6)).to.not.be.null;
-        expect(Joi.validate({ txt: 'test' }, config6)).to.be.null;
-        expect(Joi.validate({ upc: null, txt: null }, config6)).to.not.be.null;
-
-        var err = Joi.validate({ txt: 'test', upc: 'test' }, config6);
-        expect(err).to.not.be.null;
-        expect(err.message).to.contain('the value of txt must exist without upc');
-        expect(err.message).to.contain('the value of upc must exist without txt');
-
-        expect(Joi.validate({ txt: 'test', upc: null }, config6)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: '' }, config6)).to.be.null;
-        expect(Joi.validate({ txt: '', upc: 'test' }, config6)).to.be.null;
-        expect(Joi.validate({ txt: null, upc: 'test' }, config6)).to.be.null;
-        expect(Joi.validate({ txt: undefined, upc: 'test' }, config6)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: undefined }, config6)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: '' }, config6)).to.be.null;
-        expect(Joi.validate({ txt: 'test', upc: null }, config6)).to.be.null;
-        expect(Joi.validate({ txt: '', upc: undefined }, config6)).to.not.be.null;
-        expect(Joi.validate({ txt: '', upc: '' }, config6)).to.not.be.null;
+        Validate(schema, [
+            [{ upc: null }, false],
+            [{ upc: 'test' }, true],
+            [{ txt: null }, false],
+            [{ txt: 'test' }, true],
+            [{ txt: 'test', upc: null }, true],
+            [{ txt: 'test', upc: '' }, true],
+            [{ txt: '', upc: 'test' }, true],
+            [{ txt: null, upc: 'test' }, true],
+            [{ txt: undefined, upc: 'test' }, true],
+            [{ txt: 'test', upc: undefined }, true],
+            [{ txt: 'test', upc: '' }, true],
+            [{ txt: 'test', upc: null }, true],
+            [{ txt: '', upc: undefined }, false],
+            [{ txt: '', upc: '' }, false],
+            [{ txt: 'test', upc: 'test' }, false]
+        ]);
 
         done();
     });
 
-    it('should validate an array of valid types', function (done) {
+    it('validates an array of valid types', function (done) {
 
-        var config = {
+        var schema = {
             auth: [
-                Joi.types.Object({
-                    mode: T.String().valid('required', 'optional', 'try').nullOk()
+                Joi.object({
+                    mode: Joi.string().valid('required', 'optional', 'try').nullOk()
                 }).nullOk(),
-                T.String().nullOk(),
-                T.Boolean().nullOk()
+                Joi.string(),
+                Joi.bool()
             ]
         };
 
-        var err = Joi.validate({ auth: { mode: 'none' } }, config);
-        expect(err).to.not.be.null;
+        var err = Joi.validate({ auth: { mode: 'none' } }, schema);
+        expect(err).to.exist;
+        expect(err.message).to.equal('the value of mode must be one of undefined, required, optional, try, null. the value of auth must be a string. the value of auth must be a boolean');
 
-        expect(err.message).to.contain('the value of mode must be one of undefined, try, optional, required, null');
-        expect(err.message).to.contain('the value of auth must be a string');
-        expect(err.message).to.contain('the value of auth must be a boolean');
-
-        expect(Joi.validate({ auth: { mode: 'try' } }, config)).to.be.null;
-        expect(Joi.validate({ something: undefined }, config)).to.be.null;
-        expect(Joi.validate({ auth: { something: undefined } }, config)).to.be.null;
+        Validate(schema, [
+            [{ auth: { mode: 'try' } }, true],
+            [{ something: undefined }, false],
+            [{ auth: { something: undefined } }, false],
+            [{ auth: null }, true],
+            [{ auth: true }, true],
+            [{ auth: 123 }, false]
+        ]);
 
         done();
     });
 
-    it('should validate config where the root item is a joi type', function (done) {
+    it('validates an array of string with valid', function (done) {
 
-        expect(Joi.validate(true, T.Boolean().nullOk())).to.be.null;
-        expect(Joi.validate({ auth: { mode: 'try' } }, T.Object())).to.be.null;
+        var schema = {
+            brand: Joi.array().includes(Joi.string().valid('amex', 'visa'))
+        };
 
-        var err = Joi.validate(true, T.Object());
-        expect(err).to.not.be.null;
+        expect(Joi.validate({ brand: ['amex'] }, schema)).to.not.exist;
+        expect(Joi.validate({ brand: ['visa', 'mc'] }, schema)).to.exist;
+        done();
+    });
+    
+    it('validates pre and post convert value', function (done) {
+       
+       var schema = Joi.number().valid(5);
+       
+       Validate(schema, [
+           [5, true],
+           ['5', true]
+       ]);
+       done();
+    });
+    
+    it('invalidates pre and post convert value', function (done) {
+       
+       var schema = Joi.number().invalid(5);
+       
+       Validate(schema, [
+           [5, false],
+           ['5', false]
+       ]);
+       done();
+    });
+
+    it('invalidates missing peers', function (done) {
+
+        var schema = {
+            username: Joi.string().with('password'),
+            password: Joi.string().without('access_token')
+        };
+
+        var err = Joi.validate({ username: 'bob' }, schema);
+        expect(err).to.exist;
+        done();
+    });
+
+    it('validates config where the root item is a joi type', function (done) {
+
+        expect(Joi.validate(true, Joi.bool().nullOk())).to.be.null;
+        expect(Joi.validate({ auth: { mode: 'try' } }, Joi.object())).to.be.null;
+
+        var err = Joi.validate(true, Joi.object());
         expect(err.message).to.contain('the value of <root> must be an object');
 
-        err = Joi.validate(true, T.String());
-        expect(err).to.not.be.null;
+        err = Joi.validate(true, Joi.string());
         expect(err.message).to.contain('the value of <root> must be a string');
 
-        expect(Joi.validate('test@test.com', T.String().email())).to.be.null;
-        expect(Joi.validate({ param: 'item'}, T.Object({ param: T.String().required() }, true))).to.be.null;
-
+        expect(Joi.validate('test@test.com', Joi.string().email())).to.be.null;
+        expect(Joi.validate({ param: 'item' }, Joi.object({ param: Joi.string().required() }))).to.be.null;
         done();
     });
 
-    it('should validate config where the root item is a joi Object and saveConversions setting is enabled', function (done) {
-        Joi.settings.saveConversions = true;
+    it('validates config where the root item is a joi Object and modify setting is enabled', function (done) {
 
-        var config = T.Object({
-            a: T.String()
+        var config = Joi.object({
+            a: Joi.string()
         });
 
-        expect(Joi.validate({ a: 'okay' }, config)).to.be.null;
-
-        Joi.settings.saveConversions = false;
-
+        expect(Joi.validate({ a: 'okay' }, config, { modify: true })).to.be.null;
         done();
     });
 
-    it('should support setting the saveConversions setting locally', function (done) {
-
-        expect(Joi.settings.saveConversions).to.equal(false);
+    it('converts string to number in a schema', function (done) {
 
         var config = {
-            a: T.Number(),
-            saveConversions: true
+            a: Joi.number()
         };
 
         var original = { a: '5' };
         var validated = { a: 5 };
 
-        expect(Joi.validate(original, config)).to.be.null;
+        expect(Joi.validate(original, config, { modify: true })).to.be.null;
         expect(validated).to.deep.equal(original);
-
-        expect(Joi.settings.saveConversions).to.equal(false);
-
         done();
     });
 
-    it('should not alter valid top level objects when saveConversions setting is enabled', function (done) {
-        Joi.settings.saveConversions = true;
+    it('moves a key', function (done) {
 
-        var config = T.Object({
-            a: T.String()
+        var schema = {
+            a: Joi.number().rename('b', { move: true })
+        };
+
+        var obj = { a: 10 };
+
+        var err = Joi.validate(obj, schema);
+        expect(err).to.not.exist;
+        expect(obj.a).to.not.exist;
+        expect(obj.b).to.equal(10);
+        done();
+    });
+
+    it('does not alter valid top level objects when modify setting is enabled', function (done) {
+
+        var config = Joi.object({
+            a: Joi.string()
         });
 
-        var original  = { a: 'okay' };
+        var original = { a: 'okay' };
         var validated = { a: 'okay' };
 
-        expect(Joi.validate(validated, config)).to.be.null;
+        expect(Joi.validate(validated, config, { modify: true })).to.be.null;
         expect(validated).to.deep.equal(original);
-
-        Joi.settings.saveConversions = false;
-
         done();
     });
 
-    it('should allow unknown keys in objects if no schema was given', function (done) {
+    it('allows unknown keys in objects if no schema was given', function (done) {
 
-        expect(Joi.validate({ foo: 'bar' }, T.Object())).to.not.exist;
-
+        expect(Joi.validate({ foo: 'bar' }, Joi.object())).to.not.exist;
         done();
     });
 
-    it('should fail on unkown keys in objects if a schema was given', function (done) {
+    it('fails on unknown keys in objects if a schema was given', function (done) {
 
-        var err = Joi.validate({ foo: 'bar' }, T.Object({}));
+        var err = Joi.validate({ foo: 'bar' }, Joi.object({}));
         expect(err).to.exist;
-        expect(err.message).to.contain('the key (foo) is not allowed');
+        expect(err.message).to.equal('the keys foo are not allowed');
 
         err = Joi.validate({ foo: 'bar' }, {});
         expect(err).to.exist;
-        expect(err.message).to.contain('the key (foo) is not allowed');
+        expect(err.message).to.equal('the keys foo are not allowed');
 
-        err = Joi.validate({ foo: 'bar' }, { other: T.Number() });
+        err = Joi.validate({ foo: 'bar' }, { other: Joi.number() });
         expect(err).to.exist;
-        expect(err.message).to.contain('the key (foo) is not allowed');
+        expect(err.message).to.equal('the keys foo are not allowed');
 
         done();
     });
 
-    it('should validate an unknown option', function (done) {
+    it('validates an unknown option', function (done) {
 
         var config = {
-            auth: Joi.types.Object({
-                mode: T.String().valid('required', 'optional', 'try').nullOk()
+            auth: Joi.object({
+                mode: Joi.string().valid('required', 'optional', 'try').nullOk()
             }).nullOk()
         };
 
         var err = Joi.validate({ auth: { unknown: true } }, config);
         expect(err).to.not.be.null;
-        expect(err.message).to.contain('the key (unknown) is not allowed');
+        expect(err.message).to.contain('the keys unknown are not allowed');
 
         err = Joi.validate({ something: false }, config);
         expect(err).to.not.be.null;
-        expect(err.message).to.contain('the key (something) is not allowed');
+        expect(err.message).to.contain('the keys something are not allowed');
 
-        done();
-    });
-
-    it('should work with complex configs', function (done) {
-
-        var config = {
-            handler: [T.Object(), T.Function(), T.String().valid('notFound')],
-            payload: T.String().valid('stream', 'raw', 'parse').nullOk(),
-            response: T.Object({
-                schema: T.Object().nullOk(),
-                sample: T.Number(),
-                failAction: T.String().valid('error', 'log', 'ignore')
-            }).nullOk().allow(true).allow(false),
-            auth: [
-                T.Object({
-                    mode: T.String().valid(['required', 'optional', 'try']).nullOk(),
-                    scope: T.String().nullOk(),
-                    tos: T.Number().nullOk(),
-                    entity: T.String().nullOk(),
-                    strategy: T.String().nullOk(),
-                    strategies: T.Array().nullOk(),
-                    payload: T.String().nullOk()
-                }).nullOk(),
-                T.Boolean().allow(false).nullOk(),
-                T.String().nullOk()
-            ],
-            cache: T.Object({
-                mode: T.String().valid(['server+client', 'client+server', 'client', 'server']),
-                segment: T.String(),
-                privacy: T.String().valid('default', 'public', 'private'),
-                expiresIn: T.Number().xor('expiresAt'),
-                expiresAt: T.String(),
-                staleIn: T.Number().with('staleTimeout'),
-                staleTimeout: T.Number().with('staleIn')
-            }).nullOk()
-        };
-
-        expect(Joi.validate({ payload: 'raw' }, config)).to.be.null;
-        expect(Joi.validate({ auth: { mode: 'required', payload: 'required' }, payload: 'raw' }, config)).to.be.null;
-        expect(Joi.validate({ handler: internals.item, cache: { expiresIn: 20000, staleIn: 10000, staleTimeout: 500 } }, config)).to.be.null;
         done();
     });
 
@@ -313,11 +267,11 @@ describe('#validate', function () {
 
         var config = {
             module: [
-                T.Object({
-                    compile: T.Function().required(),
-                    execute: T.Function()
+                Joi.object({
+                    compile: Joi.func().required(),
+                    execute: Joi.func()
                 }).required(),
-                T.String().required()
+                Joi.string().required()
             ]
         };
 
@@ -337,11 +291,11 @@ describe('#validate', function () {
         done();
     });
 
-    it('should not require optional numbers', function (done) {
+    it('does not require optional numbers', function (done) {
 
         var config = {
-            position: T.Number(),
-            suggestion: T.String()
+            position: Joi.number(),
+            suggestion: Joi.string()
         };
 
         expect(Joi.validate({ suggestion: 'something' }, config)).to.be.null;
@@ -350,11 +304,11 @@ describe('#validate', function () {
         done();
     });
 
-    it('should not require optional objects', function (done) {
+    it('does not require optional objects', function (done) {
 
         var config = {
-            position: T.Number(),
-            suggestion: T.Object()
+            position: Joi.number(),
+            suggestion: Joi.object()
         };
 
         expect(Joi.validate({ suggestion: {} }, config)).to.be.null;
@@ -363,234 +317,267 @@ describe('#validate', function () {
         done();
     });
 
-    it('should validate object successfully when config has an array of types', function (done) {
+    it('validates object successfully when config has an array of types', function (done) {
+
+        var schema = {
+            f: [Joi.number(), Joi.bool()],
+            g: [Joi.string(), Joi.object()]
+        };
 
         var obj = {
             f: true,
             g: 'test'
         };
-        var err = Joi.validate(obj, config3);
+        var err = Joi.validate(obj, schema);
 
         expect(err).to.not.exist;
         done();
     });
 
-    it('should validate object successfully when config allows for optional key and key is missing', function (done) {
+    it('validates object successfully when config allows for optional key and key is missing', function (done) {
+
+        var schema = {
+            h: Joi.number(),
+            i: Joi.string(),
+            j: Joi.object()
+        };
 
         var obj = {
             h: 12,
             i: 'test'
         };
-        var err = Joi.validate(obj, config4);
+        var err = Joi.validate(obj, schema);
 
         expect(err).to.not.exist;
         done();
     });
 
-    it('should fail validation', function (done) {
+    it('fails validation', function (done) {
+
+        var schema = {
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        };
 
         var obj = {
             a: 10,
             b: 'a',
             c: 'joe@example.com'
         };
-        var err = Joi.validate(obj, config1);
+        var err = Joi.validate(obj, schema);
 
         expect(err).to.exist;
         done();
     });
 
-    it('should fail validation when the wrong types are supplied', function (done) {
+    it('fails validation when the wrong types are supplied', function (done) {
+
+        var schema = {
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        };
 
         var obj = {
             a: 'a',
             b: 'a',
             c: 'joe@example.com'
         };
-        var err = Joi.validate(obj, config1);
+        var err = Joi.validate(obj, schema);
 
         expect(err).to.exist;
         done();
     });
 
-    it('should fail validation when missing a required parameter', function (done) {
+    it('fails validation when missing a required parameter', function (done) {
 
         var obj = {
             c: 10
         };
-        var err = Joi.validate(obj, { a: Joi.types.String().required() });
+        var err = Joi.validate(obj, { a: Joi.string().required() });
 
         expect(err).to.exist;
         done();
     });
 
-    it('should fail validation when missing a required parameter within an object config', function (done) {
+    it('fails validation when missing a required parameter within an object config', function (done) {
 
         var obj = {
             a: {}
         };
-        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
+        var err = Joi.validate(obj, { a: Joi.object({ b: Joi.string().required() }) });
 
         expect(err).to.exist;
         done();
     });
 
-    it('should fail validation when parameter is required to be an object but is given as string', function (done) {
+    it('fails validation when parameter is required to be an object but is given as string', function (done) {
 
         var obj = {
-            a: "a string"
+            a: 'a string'
         };
-        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
+        var err = Joi.validate(obj, { a: Joi.object({ b: Joi.string().required() }) });
         expect(err).to.exist;
         done();
     });
 
-    it('should pass validation when parameter is required to be an object and is given correctly as a json string', function (done) {
+    it('validates when parameter is required to be an object and is given correctly as a json string', function (done) {
 
         var obj = {
             a: '{"b":"string"}'
         };
-        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
+        var err = Joi.validate(obj, { a: Joi.object({ b: Joi.string().required() }) });
         expect(err).to.be.null;
         done();
     });
 
-    it('should fail validation when parameter is required to be an object but is given as a json string that is incorrect (number instead of string)', function (done) {
+    it('fails validation when parameter is required to be an object but is given as a json string that is incorrect (number instead of string)', function (done) {
 
         var obj = {
             a: '{"b":2}'
         };
-        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
+        var err = Joi.validate(obj, { a: Joi.object({ b: Joi.string().required() }) });
         expect(err).to.exist;
         done();
     });
 
-    it('should fail validation when parameter is required to be an Array but is given as string', function (done) {
+    it('fails validation when parameter is required to be an Array but is given as string', function (done) {
 
         var obj = {
             a: "an array"
         };
-        var err = Joi.validate(obj, { a: Joi.types.Array() });
+        var err = Joi.validate(obj, { a: Joi.array() });
         expect(err).to.exist;
         done();
     });
 
-    it('should pass validation when parameter is required to be an Array and is given correctly as a json string', function (done) {
+    it('validates when parameter is required to be an Array and is given correctly as a json string', function (done) {
 
         var obj = {
             a: '[1,2]'
         };
-        var err = Joi.validate(obj, { a: Joi.types.Array() });
+        var err = Joi.validate(obj, { a: Joi.array() });
         expect(err).to.be.null;
         done();
     });
 
-    it('should fail validation when parameter is required to be an Array but is given as a json that is incorrect (object instead of array)', function (done) {
+    it('fails validation when parameter is required to be an Array but is given as a json that is incorrect (object instead of array)', function (done) {
 
         var obj = {
             a: '{"b":2}'
         };
-        var err = Joi.validate(obj, { a: Joi.types.Object({ b: Joi.types.String().required() }) });
+        var err = Joi.validate(obj, { a: Joi.object({ b: Joi.string().required() }) });
         expect(err).to.exist;
         done();
     });
 
-    it('should fail validation when config is an array and fails', function (done) {
+    it('fails validation when config is an array and fails', function (done) {
+
+        var schema = {
+            d: [Joi.string(), Joi.bool()],
+            e: [Joi.number(), Joi.object()]
+        };
 
         var obj = {
             d: 10,
             e: 'a'
         };
-        var err = Joi.validate(obj, config2);
+        var err = Joi.validate(obj, schema);
 
         expect(err).to.exist;
         done();
     });
 
-    it('should fail validation when config is an array and fails with extra keys', function (done) {
+    it('fails validation when config is an array and fails with extra keys', function (done) {
+
+        var schema = {
+            d: [Joi.string(), Joi.bool()],
+            e: [Joi.number(), Joi.object()]
+        };
 
         var obj = {
             a: 10,
             b: 'a'
         };
-        var err = Joi.validate(obj, config2);
+        var err = Joi.validate(obj, schema);
 
         expect(err).to.exist;
         done();
     });
 
-    it('should fail validation with extra keys', function (done) {
+    it('fails validation with extra keys', function (done) {
+
+        var schema = {
+            a: Joi.number(),
+        };
 
         var obj = {
             a: 1,
             b: 'a',
-            d: 'c'
         };
-        var err = Joi.validate(obj, config1);
+        var err = Joi.validate(obj, schema);
 
         expect(err).to.exist;
         done();
     });
 
-    it('should pass string validation of missing optional key with regex string condition', function (done) {
+    it('validates missing optional key with string condition', function (done) {
 
-        var rules = {
-            key: Joi.types.String().alphanum(false).min(8)
+        var schema = {
+            key: Joi.string().alphanum(false).min(8)
         };
 
-        var err = Joi.validate({}, rules);
+        var err = Joi.validate({}, schema);
         expect(err).to.not.exist;
         done();
     });
 
-    it('should pass validation with extra keys and remove them when stripExtraKeys is set', function (done) {
+    it('validates with extra keys and remove them when stripUnknown is set', function (done) {
 
-        Joi.settings.stripExtraKeys = true;
-        Joi.settings.allowExtraKeys = true;
+        var schema = {
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        };
 
         var obj = {
             a: 1,
             b: 'a',
             d: 'c'
         };
-        var err = Joi.validate(obj, config1);
+        var err = Joi.validate(obj, schema, { stripUnknown: true, allowUnknown: true });
 
         expect(err).to.be.null;
-        expect(obj).to.deep.equal({a: 1, b: 'a'});
-
-        Joi.settings.stripExtraKeys = false;
-        Joi.settings.allowExtraKeys = false;
-
+        expect(obj).to.deep.equal({ a: 1, b: 'a' });
         done();
     });
 
-    it('should pass validation with extra keys when allowExtraKeys is set', function (done) {
+    it('should pass validation with extra keys when allowUnknown is set', function (done) {
 
-        Joi.settings.allowExtraKeys = true;
+        var schema = {
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        };
 
         var obj = {
             a: 1,
             b: 'a',
             d: 'c'
         };
-        var err = Joi.validate(obj, config1);
+        var err = Joi.validate(obj, schema, { allowUnknown: true });
 
         expect(err).to.be.null;
-        expect(obj).to.deep.equal({a: 1, b: 'a', d: 'c'});
-
-        Joi.settings.allowExtraKeys = false;
-
+        expect(obj).to.deep.equal({ a: 1, b: 'a', d: 'c' });
         done();
     });
 
-    it('should pass validation with extra keys set locally', function (done) {
-
-        expect(Joi.settings.stripExtraKeys).to.equal(false);
+    it('should pass validation with extra keys set', function (done) {
 
         var localConfig = {
-            a: Joi.types.Number().min(0).max(3),
-            b: Joi.types.String().valid('a', 'b', 'c'),
-            allowExtraKeys: true
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c'),
         };
 
         var obj = {
@@ -598,31 +585,24 @@ describe('#validate', function () {
             b: 'a',
             d: 'c'
         };
-        var err = Joi.validate(obj, localConfig);
+        var err = Joi.validate(obj, localConfig, { allowUnknown: true });
 
         expect(err).to.be.null;
-        expect(obj).to.deep.equal({a: 1, b: 'a', d: 'c'});
-        expect(Joi.settings.stripExtraKeys).to.equal(false);
+        expect(obj).to.deep.equal({ a: 1, b: 'a', d: 'c' });
 
-        err = Joi.validate(obj, localConfig);
+        err = Joi.validate(obj, localConfig, { allowUnknown: true });
 
         expect(err).to.be.null;
-        expect(obj).to.deep.equal({a: 1, b: 'a', d: 'c'});
-        expect(Joi.settings.stripExtraKeys).to.equal(false);
-
+        expect(obj).to.deep.equal({ a: 1, b: 'a', d: 'c' });
         done();
     });
 
 
     it('should pass validation with extra keys and remove them when skipExtraKeys is set locally', function (done) {
 
-        expect(Joi.settings.stripExtraKeys).to.equal(false);
-
         var localConfig = {
-            a: Joi.types.Number().min(0).max(3),
-            b: Joi.types.String().valid('a', 'b', 'c'),
-            stripExtraKeys: true,
-            allowExtraKeys: true
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c')
         };
 
         var obj = {
@@ -630,100 +610,70 @@ describe('#validate', function () {
             b: 'a',
             d: 'c'
         };
-        var err = Joi.validate(obj, localConfig);
+        var err = Joi.validate(obj, localConfig, { stripUnknown: true, allowUnknown: true });
 
         expect(err).to.be.null;
-        expect(obj).to.deep.equal({a: 1, b: 'a'});
-        expect(Joi.settings.stripExtraKeys).to.equal(false);
+        expect(obj).to.deep.equal({ a: 1, b: 'a' });
 
-        err = Joi.validate(obj, localConfig);
+        err = Joi.validate(obj, localConfig, { stripUnknown: true, allowUnknown: true });
 
         expect(err).to.be.null;
-        expect(obj).to.deep.equal({a: 1, b: 'a'});
-        expect(Joi.settings.stripExtraKeys).to.equal(false);
+        expect(obj).to.deep.equal({ a: 1, b: 'a' });
 
         done();
     });
 
     it('should work when the skipFunctions setting is enabled', function (done) {
 
-        Joi.settings.skipFunctions = true;
-        var schema = { username: Joi.types.String() };
+        var schema = Joi.object({ username: Joi.string() }).options({ skipFunctions: true });
         var input = { username: 'test', func: function () { } };
         var err = Joi.validate(input, schema);
 
         expect(err).to.not.exist;
-        Joi.settings.skipFunctions = false;
         done();
     });
 
     it('should work when the skipFunctions setting is disabled', function (done) {
 
-        Joi.settings.skipFunctions = false;
-        var schema = { username: Joi.types.String() };
+        var schema = { username: Joi.string() };
         var input = { username: 'test', func: function () { } };
-        var err = Joi.validate(input, schema);
+        var err = Joi.validate(input, schema, { skipFunctions: false });
 
         expect(err).to.exist;
-        expect(err.message).to.contain('the key (func) is not allowed');
+        expect(err.message).to.contain('the keys func are not allowed');
         done();
     });
 
-    it('should work when the saveConversions setting is enabled', function (done) {
+    it('should work when the modify setting is enabled', function (done) {
 
-        Joi.settings.saveConversions = true;
-        var schema = { item: Joi.types.Number() };
+        var schema = { item: Joi.number() };
         var input = { item: '1' };
-        var err = Joi.validate(input, schema);
+        var err = Joi.validate(input, schema, { modify: true });
 
         expect(err).to.not.exist;
         expect(input.item).to.equal(1);
-        Joi.settings.saveConversions = false;
         done();
     });
 
-    it('should work when the saveConversions setting is disabled', function (done) {
+    it('should work when the modify setting is disabled', function (done) {
 
-        Joi.settings.saveConversions = false;
-        var schema = { item: Joi.types.Number() };
+        var schema = { item: Joi.number() };
         var input = { item: '1' };
-        var err = Joi.validate(input, schema);
+        var err = Joi.validate(input, schema, { modify: false });
 
         expect(err).to.not.exist;
         expect(input.item).to.equal('1');
         done();
     });
 
-    it('should display correct processed pluralization messsage when skipFunctions is enabled', function (done) {
+    it('should not convert values when convert is false', function (done) {
 
-        Joi.settings.skipFunctions = true;
-        var schema = { username: Joi.types.String() };
-        var input = { username: 'test', item1: 'test', 'item2': 'test' };
-        var err = Joi.validate(input, schema);
-
-        expect(err).to.exist;
-        Joi.settings.skipFunctions = false;
-        done();
-    });
-
-    it('should not convert values when skipConversions is set', function (done) {
-
-        Joi.settings.skipConversions = true;
         var schema = {
-            arr: Joi.types.Array().includes(Joi.types.String())
+            arr: Joi.array().includes(Joi.string())
         };
 
         var input = { arr: 'foo' };
-        var err = Joi.validate(input, schema);
-
-        expect(err).to.exist;
-        done();
-    });
-
-    it('should fail validation when a child object has an invalid string value but object traversal isn\'t complete', function (done) {
-
-        var input = { method: 'GET', path: '/', config: { payload: 'something' } };
-        var err = Joi.validate(input, internals.routeSchema);
+        var err = Joi.validate(input, schema, { convert: false });
 
         expect(err).to.exist;
         done();
@@ -731,29 +681,52 @@ describe('#validate', function () {
 
     it('validation errors should provide an annotated message when making the error annotated', function (done) {
 
-        var input = { method: 'GET', path: '/', config: { payload: 'something' } };
-        var err = Joi.validate(input, internals.routeSchema);
+        var routeSchema = {
+            a: Joi.string().required(),
+            b: Joi.object({
+                c: Joi.string().valid(['1', '2', '3']),
+            })
+        };
+
+        var input = { a: 'x', b: { c: '4' } };
+        var err = Joi.validate(input, routeSchema);
 
         err.annotated();
         expect(err.message).to.contain('\u001b[0m');
         done();
     });
 
-    it('there should be more validation errors when short circuit is disabled', function (done) {
+    it('full errors when abortEarly is false', function (done) {
+
+        var schema = {
+            a: Joi.string(),
+            b: Joi.string()
+        };
 
         var input = { a: 1, b: 2 };
 
-        var resultWithShortCircuit = Joi.validate(input, T.Object({}));
-        var resultWithoutShortCircuit = Joi.validate(input, T.Object({}).noShortCircuit());
+        var errOne = Joi.validate(input, schema);
+        var errFull = Joi.validate(input, schema, { abortEarly: false });
 
-        expect(resultWithShortCircuit).to.exist
-        expect(resultWithoutShortCircuit).to.exist
-        expect(resultWithoutShortCircuit._errors.length).to.be.greaterThan(resultWithShortCircuit._errors.length);
-
+        expect(errOne).to.exist
+        expect(errFull).to.exist
+        expect(errFull._errors.length).to.be.greaterThan(errOne._errors.length);
         done();
     });
 
     it('should support custom errors when validating types', function (done) {
+
+        var schema = {
+            email: Joi.string().email(),
+            date: Joi.date(),
+            alphanum: Joi.string().alphanum(),
+            min: Joi.string().min(3),
+            max: Joi.string().max(3),
+            required: Joi.string().required().without('xor'),
+            xor: Joi.string().without('required'),
+            renamed: Joi.string().rename('required').valid('456'),
+            notEmpty: Joi.string().required()
+        };
 
         var input = {
             email: 'invalid-email',
@@ -767,46 +740,27 @@ describe('#validate', function () {
             notEmpty: ''
         };
 
-        var schema = {
-            email: T.String().email(),
-            date: T.String().date(),
-            alphanum: T.String().alphanum(),
-            min: T.String().min(3),
-            max: T.String().max(3),
-            required: T.String().required().without('xor'),
-            xor: T.String().without('required'),
-            renamed: T.String().rename('required'),
-            notEmpty: T.String().required(),
-            languagePath: Path.join(__dirname, 'languages', 'en-US.json')
-        };
-
-        var err = Joi.validate(input, schema);
+        var err = Joi.validate(input, schema, { abortEarly: false, languagePath: Path.join(__dirname, 'languages', 'en-us.json') });
 
         expect(err).to.exist;
-        expect(err.message).to.contain('The `email` field must be a valid e-mail address.');
-        expect(err.message).to.contain('The `date` field must be a valid date.');
-        expect(err.message).to.contain('The `alphanum` field failed one or more validation constraints.');
-        expect(err.message).to.contain('The `min` field must be at least 3 characters long.');
-        expect(err.message).to.contain('The `max` field may not exceed 3 characters.');
-        expect(err.message).to.contain('The `required` field must be omitted if `xor` is specified.');
-        expect(err.message).to.contain('`required` is already assigned to the `renamed` field.');
-        expect(err.message).to.contain('Invalid value for `notEmpty`: `empty`.');
-
+        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. 3');
         done();
     });
 
-    internals.routeSchema = {
-        method: T.String().invalid('head').required(),
-        path: T.String().required(),
-        handler: [T.Object(), T.Function(), T.String().valid('notFound')],
-        config: T.Object({
-            handler: [T.Object(), T.Function(), T.String().valid('notFound')],
-            payload: T.String().valid(['stream', 'raw', 'parse']),
-            response: T.Object({
-                schema: T.Object().nullOk(),
-                sample: T.Number(),
-                failAction: T.String().valid(['error', 'log', 'ignore'])
-            })
-        })
-    };
+    it('returns key when language file missing item', function (done) {
+
+        var input = {
+            notEmpty: ''
+        };
+
+        var schema = {
+            notEmpty: Joi.string().required()
+        };
+
+        var err = Joi.validate(input, schema, { languagePath: Path.join(__dirname, 'languages', 'empty.json') });
+
+        expect(err).to.exist;
+        expect(err.message).to.equal('notEmpty');
+        done();
+    });
 });
