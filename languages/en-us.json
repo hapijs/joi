@@ -42,7 +42,7 @@
     },
     "object": {
         "base": "the value of {{key}} must be an object",
-        "allowUnknown": "the keys {{keys}} are not allowed"
+        "allowUnknown": "the key {{key}} is not allowed"
     },
     "number": {
         "base": "the value of {{key}} must be a number",

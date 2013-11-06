@@ -246,15 +246,15 @@ describe('Joi', function () {
 
         var err = Joi.validate({ foo: 'bar' }, Joi.object({}));
         expect(err).to.exist;
-        expect(err.message).to.equal('the keys foo are not allowed');
+        expect(err.message).to.equal('the key foo is not allowed');
 
         err = Joi.validate({ foo: 'bar' }, {});
         expect(err).to.exist;
-        expect(err.message).to.equal('the keys foo are not allowed');
+        expect(err.message).to.equal('the key foo is not allowed');
 
         err = Joi.validate({ foo: 'bar' }, { other: Joi.number() });
         expect(err).to.exist;
-        expect(err.message).to.equal('the keys foo are not allowed');
+        expect(err.message).to.equal('the key foo is not allowed');
 
         done();
     });
@@ -269,11 +269,11 @@ describe('Joi', function () {
 
         var err = Joi.validate({ auth: { unknown: true } }, config);
         expect(err).to.not.be.null;
-        expect(err.message).to.contain('the keys unknown are not allowed');
+        expect(err.message).to.contain('the key unknown is not allowed');
 
         err = Joi.validate({ something: false }, config);
         expect(err).to.not.be.null;
-        expect(err.message).to.contain('the keys something are not allowed');
+        expect(err.message).to.contain('the key something is not allowed');
 
         done();
     });
@@ -655,7 +655,7 @@ describe('Joi', function () {
         var err = Joi.validate(input, schema, { skipFunctions: false });
 
         expect(err).to.exist;
-        expect(err.message).to.contain('the keys func are not allowed');
+        expect(err.message).to.contain('the key func is not allowed');
         done();
     });
 
