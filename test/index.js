@@ -750,7 +750,8 @@ describe('Joi', function () {
     it('annotates error', function (done) {
 
         var object = {
-            a: {
+            a: 'm',
+            y: {
                 b: {
                     c: 10
                 }
@@ -758,25 +759,21 @@ describe('Joi', function () {
         };
 
         var schema = {
-            a: [
-                Joi.string().valid('a', 'b', 'c', 'd'),
-                Joi.object({
-                    x: Joi.string().valid(['e', 'f', 'g', 'h']),
-                    b: [
-                        Joi.string().valid('i', 'j').allow(false),
-                        Joi.object({
-                            x: Joi.string().valid('k', 'l').required(),
-                            c: Joi.number()
-                        })
-                    ]
+            a: Joi.string().valid('a', 'b', 'c', 'd'),
+            y: Joi.object({
+                u: Joi.string().valid(['e', 'f', 'g', 'h']).required(),
+                b: Joi.string().valid('i', 'j').allow(false),
+                d: Joi.object({
+                    x: Joi.string().valid('k', 'l').required(),
+                    c: Joi.number()
                 })
-            ]
+            })
         };
 
-        var err = Joi.validate(object, schema);
+        var err = Joi.validate(object, schema, { abortEarly: false });
         expect(err).to.exist;
         err.annotated();
-        expect(err.message).to.equal('{\n  \"a\" \u001b[31m[1]\u001b[0m: {\n    \"b\" \u001b[31m[2]\u001b[0m: {\n      \"c\": 10,\n      \u001b[41m\"x\"\u001b[0m\u001b[31m [3]: -- missing --\u001b[0m\n    }\n  }\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of b must be one of i, j, false\n[3] the value of x is not allowed to be undefined\u001b[0m');
+        expect(err.message).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[5]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"b\"\u001b[0m\u001b[31m [4]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [3]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of u is not allowed to be undefined\n[3] the value of u must be one of e, f, g, h\n[4] the value of b must be one of i, j, false\n[5] the value of b must be a string\u001b[0m');
         done();
     });
 
