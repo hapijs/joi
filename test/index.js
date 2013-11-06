@@ -93,7 +93,7 @@ describe('Joi', function () {
 
         var err = Joi.validate({ auth: { mode: 'none' } }, schema);
         expect(err).to.exist;
-        expect(err.message).to.equal('the value of mode must be one of undefined, required, optional, try, null. the value of auth must be a string. the value of auth must be a boolean');
+        expect(err.message).to.equal('the value of mode must be one of required, optional, try, null. the value of auth must be a string. the value of auth must be a boolean');
 
         Validate(schema, [
             [{ auth: { mode: 'try' } }, true],
@@ -679,23 +679,6 @@ describe('Joi', function () {
         done();
     });
 
-    it('validation errors should provide an annotated message when making the error annotated', function (done) {
-
-        var routeSchema = {
-            a: Joi.string().required(),
-            b: Joi.object({
-                c: Joi.string().valid(['1', '2', '3']),
-            })
-        };
-
-        var input = { a: 'x', b: { c: '4' } };
-        var err = Joi.validate(input, routeSchema);
-
-        err.annotated();
-        expect(err.message).to.contain('\u001b[0m');
-        done();
-    });
-
     it('full errors when abortEarly is false', function (done) {
 
         var schema = {
@@ -761,6 +744,39 @@ describe('Joi', function () {
 
         expect(err).to.exist;
         expect(err.message).to.equal('notEmpty');
+        done();
+    });
+
+    it('annotates error', function (done) {
+
+        var object = {
+            a: {
+                b: {
+                    c: 10
+                }
+            }
+        };
+
+        var schema = {
+            a: [
+                Joi.string().valid('a', 'b', 'c', 'd'),
+                Joi.object({
+                    x: Joi.string().valid(['e', 'f', 'g', 'h']),
+                    b: [
+                        Joi.string().valid('i', 'j').allow(false),
+                        Joi.object({
+                            x: Joi.string().valid('k', 'l').required(),
+                            c: Joi.number()
+                        })
+                    ]
+                })
+            ]
+        };
+
+        var err = Joi.validate(object, schema);
+        expect(err).to.exist;
+        err.annotated();
+        expect(err.message).to.equal('{\n  \"a\" \u001b[31m[1]\u001b[0m: {\n    \"b\" \u001b[31m[2]\u001b[0m: {\n      \"c\": 10,\n      \u001b[41m\"x\"\u001b[0m\u001b[31m [3]: -- missing --\u001b[0m\n    }\n  }\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of b must be one of i, j, false\n[3] the value of x is not allowed to be undefined\u001b[0m');
         done();
     });
 
