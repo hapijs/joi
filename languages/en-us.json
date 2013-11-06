@@ -58,6 +58,8 @@
         "length": "the length of {{key}} must be {{value}} characters long",
         "alphanum": "the value of {{key}} must only contain alpha-numeric characters {{spaces}} spaces",
         "regex": "the value of {{key}} must match the regular expression {{value}}",
-        "email": "The value of {{key}} must be a valid email"
+        "email": "The value of {{key}} must be a valid email",
+        "isoDate": "the value of {{key}} must be a valid ISO 8601 date",
+        "guid": "the value of {{key}} must be a valid GUID"
     }
 }
