@@ -129,6 +129,21 @@ describe('Joi', function () {
         done();
     });
 
+    it('does not change object when validation fails', function (done) {
+
+        var schema = {
+            a: Joi.number().valid(2)
+        };
+
+        var obj = {
+            a: '5'
+        };
+
+        expect(Joi.validate(obj, schema, { modify: true })).to.exist;
+        expect(obj.a).to.equal('5');
+        done();
+    });
+
     it('invalidates pre and post convert value', function (done) {
 
         var schema = Joi.number().invalid(5);
