@@ -1,9 +1,9 @@
-﻿<a href="https://github.com/spumko"><img src="https://raw.github.com/spumko/spumko/master/images/from.png" align="right" /></a>
+<a href="https://github.com/spumko"><img src="https://raw.github.com/spumko/spumko/master/images/from.png" align="right" /></a>
 ![joi Logo](https://raw.github.com/spumko/joi/master/images/joi.png)
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **2.x.x**
+Current version: **2.0.x**
 
 [![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 
@@ -20,7 +20,6 @@ Current version: **2.x.x**
         - [`any.invalid(value)`](#anyinvalidvalue)
         - [`any.required()`](#anyrequired)
         - [`any.optional()`](#anyoptional)
-        - [`any.nullOk()`](#anynullok)
         - [`any.with(peer)`](#anywithpeer)
         - [`any.without(peer)`](#anywithoutpeer)
         - [`any.xor(peer)`](#anyxorpeer)
@@ -31,7 +30,6 @@ Current version: **2.x.x**
         - [`any.strict()`](#anystrict)
         - [`any.rename(to, [options])`](#anyrenameto-options)
     - [`array()`](#array)
-        - [`array.emptyOk()`](#arrayemptyok)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
         - [`array.min(limit)`](#arrayminlimit)
@@ -48,7 +46,6 @@ Current version: **2.x.x**
         - [`number.integer()`](#numberinteger)
     - [`object(schema)`](#objectschema)
     - [`string()`](#string)
-        - [`string.emptyOk()`](#stringemptyok)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit)`](#stringminlimit)
         - [`string.max(limit)`](#stringmaxlimit)
@@ -231,16 +228,6 @@ var schema = {
 };
 ```
 
-#### `any.nullOk()`
-
-Allows `null` as valid value. Note that while `undefined` is a valid value for an optional key, `null` is not and must be explicitly allowed.
-
-```javascript
-var schema = {
-    a: Joi.any().nullOk()
-};
-```
-
 #### `any.with(peer)`
 
 Requires the presence of another key whenever this value is present where:
@@ -344,7 +331,6 @@ Generates a schema object that matches an array data type.
 Supports the following subset of the [`any()`](#any) type:
 - `required()`
 - `optional()`
-- `nullOk()`
 - `with(peer)`
 - `without(peer)`
 - `xor(peer)`
@@ -359,16 +345,6 @@ var array = Joi.array();
 array.includes(Joi.string().valid('a', 'b'));
 
 var err = array.validate(['a', 'b', 'a']);
-```
-
-#### `array.emptyOk()`
-
-Allows the value to be assigned an empty array.
-
-```javascript
-var schema = {
-    a: Joi.array().emptyOk()
-};
 ```
 
 #### `array.includes(type)`
@@ -428,13 +404,13 @@ var schema = {
 
 ### `boolean()`
 
-Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no').
+Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via `bool()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var boolean = Joi.boolean();
-boolean.nullOk();
+boolean.allow(null);
 
 var err = any.validate(true);
 ```
@@ -482,7 +458,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var func = Joi.func();
-func.nullOk();
+func.allow(null);
 
 var err = func.validate(function () {});
 ```
@@ -550,7 +526,7 @@ var err = object.validate({ a: 5 });
 
 ### `string()`
 
-Generates a schema object that matches a string data type.
+Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with `allow('')`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -559,16 +535,6 @@ var string = Joi.string();
 string.min(1).max(10);
 
 var err = string.validate('12345');
-```
-
-#### `string.emptyOk()`
-
-Allows the value to be assigned an empty string.
-
-```javascript
-var schema = {
-    a: Joi.string().emptyOk()
-};
 ```
 
 #### `string.insensitive()`

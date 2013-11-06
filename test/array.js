@@ -120,9 +120,9 @@ describe('Types', function () {
                 done();
             });
 
-            it('should allow empty arrays with emptyOk', function (done) {
+            it('allows empty arrays', function (done) {
 
-                Validate(Joi.array().emptyOk(), [
+                Validate(Joi.array(), [
                     [undefined, true],
                     [[], true]
                 ]);
