@@ -54,6 +54,8 @@ Current version: **2.0.x**
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
+- [Migration notes](#migration-notes)
+
 
 # Example
 
@@ -620,3 +622,37 @@ var schema = {
     a: Joi.string().email()
 };
 ```
+
+# Migration notes
+
+**joi** 2.0 is a complete rewrite of the previous version. While largely backward compatible, it includes a few changes that are
+not as well as a large number of bug fixes that dramatically changes existing behavior. The following is an incomplete list of changes.
+Please test your existing validation rules to ensure they behave as expected with this new version.
+
+* `Joi.types` and `Joi.Types` deprecated - use `Joi.string()` etc. instead.
+* Uppercase type names deprecated - use lowercase function names instead.
+* Top level global config options no longer supported (e.g. `{ languagePath: './file.json' }`). Use the `.options()` method instead.
+* `noShortCircuit()` no longer supported - use the `abortEarly` option instead.
+* Options renamed:
+    * `saveConversions` changed to `modify`.
+    * `skipConversions` changed to `convert` (with reversed meaning).
+    * `stripExtraKeys` changed to `stripUnknown`.
+    * `allowExtraKeys` changed to `allowUnknown`.
+    * In `rename()` options:
+        * `deleteOrig` changed to `move`.
+        * `allowMult` changed to `multiple`.
+        * `allowOverwrite` changed to `override`.
+* `nullOk()` and `emptyOk()` are deprecated - use `allow(null)` and `allow('')` instead.
+* `number().float()` no longer supported.
+* Completely new internal representation of the data. If you were accessing _variables, your code is most likely broken now. Use `describe()` instead.
+* `string().alphanum()` no longer allows spaces and underscores and does not take an arguement.
+* `string().date()` no longer supported - use new `date()` type.
+* `deny()` deprecated - use `invalid()` instead.
+* `array().includes()` and `array.excludes()` now validates correctly (not just the base type).
+* `allow()`, `valid()`, and `invalid()` values are now compared against the original and converted values (not just after conversion).
+* `string().min()` no longer implies `required()`.
+
+
+
+
+
