@@ -620,3 +620,23 @@ var schema = {
     a: Joi.string().email()
 };
 ```
+
+#### `string.guid()`
+
+Requires the string value to be a valid GUID.
+
+```javascript
+var schema = {
+    a: Joi.string().guid()
+};
+```
+
+#### `string.isoDate()`
+
+Requires the string value to be in valid ISO 8601 date format.
+
+```javascript
+var schema = {
+    a: Joi.string().isoDate()
+};
+```
