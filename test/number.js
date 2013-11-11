@@ -65,7 +65,10 @@ describe('Joi.number', function () {
             var t = Joi.number();
             Validate(t, [
                 ['1', true],
-                ['100', true]
+                ['100', true],
+                ['1e3', true],
+                ['1 some text', false],
+                ['', false]
             ]);
             done();
         });
@@ -264,7 +267,7 @@ describe('Joi.number', function () {
         it('should display correctly for int type', function (done) {
 
             var t = Joi.number().integer();
-            var result = Joi.validate('', t);
+            var result = Joi.validate('1.1', t);
             expect(result.message).to.contain('integer');
             done();
         });
