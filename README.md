@@ -313,7 +313,7 @@ Sets the `options.convert` options to `false` which prevent type casting for the
 
 ```javascript
 var schema = {
-    a: Joi.any().strinct()
+    a: Joi.any().strict()
 };
 ```
 
