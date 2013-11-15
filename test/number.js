@@ -205,6 +205,59 @@ describe('Joi.number', function () {
             done();
         });
 
+        it('should handle combination of positive, allow, and nullOk', function (done) {
+
+            var rule = Joi.number().positive().allow(-1).nullOk();
+            Validate(rule, [
+                [1, true],
+                [-1, true],
+                [8, true],
+                [-10, false],
+                [null, true]
+            ]);
+            done();
+        });
+
+        it('should handle combination of negative, allow, and nullOk', function (done) {
+
+            var rule = Joi.number().negative().allow(1).nullOk();
+            Validate(rule, [
+                [1, true],
+                [-10, true],
+                [8, false],
+                [0, false],
+                [null, true]
+            ]);
+            done();
+        });
+
+        it('should handle combination of positive, allow, nullOk, and deny', function (done) {
+
+            var rule = Joi.number().positive().allow(-1).nullOk().deny(1);
+            Validate(rule, [
+                [1, false],
+                [-1, true],
+                [8, true],
+                [-10, false],
+                [null, true]
+            ]);
+            done();
+        });
+
+        it('should handle combination of negative, allow, nullOk, and deny', function (done) {
+
+            var rule = Joi.number().negative().allow(1).nullOk().deny(-5);
+            Validate(rule, [
+                [1, true],
+                [-10, true],
+                [-5, false],
+                [8, false],
+                [0, false],
+                [null, true]
+            ]);
+            done();
+        });
+
         it('should handle combination of min, max, and allow', function (done) {
 
             var rule = Joi.number().min(8).max(10).allow(1);
