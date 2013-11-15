@@ -131,6 +131,80 @@ describe('Joi.number', function () {
             done();
         });
 
+        it('should handle combination of min and positive', function (done) {
+
+            var rule = Joi.number().min(-3).positive();
+            Validate(rule, [
+                [1, true],
+                [-2, false],
+                [8, true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of max and positive', function (done) {
+
+            var rule = Joi.number().max(5).positive();
+            Validate(rule, [
+                [4, true],
+                [-2, false],
+                [8, false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of min and negative', function (done) {
+
+            var rule = Joi.number().min(-3).negative();
+            Validate(rule, [
+                [4, false],
+                [-2, true],
+                [-4, false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of negative and positive', function (done) {
+
+            var rule = Joi.number().negative().positive();
+            Validate(rule, [
+                [4, false],
+                [-2, false],
+                [0, false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of negative and allow', function (done) {
+
+            var rule = Joi.number().negative().allow(1);
+            Validate(rule, [
+                [1, true],
+                [-10, true],
+                [8, false],
+                [0, false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of positive and allow', function (done) {
+
+            var rule = Joi.number().positive().allow(-1);
+            Validate(rule, [
+                [1, true],
+                [-1, true],
+                [8, true],
+                [-10, false],
+                [null, false]
+            ]);
+            done();
+        });
+
         it('should handle combination of min, max, and allow', function (done) {
 
             var rule = Joi.number().min(8).max(10).allow(1);
