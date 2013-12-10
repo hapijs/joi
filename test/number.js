@@ -68,6 +68,11 @@ describe('Joi.number', function () {
                 ['100', true],
                 ['1e3', true],
                 ['1 some text', false],
+                ['\t\r', false],
+                [' ', false],
+                [' 2', true],
+                ['\t\r43', true],
+                ['43 ', true],
                 ['', false]
             ]);
             done();
