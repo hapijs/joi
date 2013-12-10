@@ -65,6 +65,55 @@ describe('Types', function () {
             done();
         });
 
+        it('should validate the key count when min is set', function (done) {
+
+            var schema = Joi.object().min(3);
+            Validate(schema, [
+                [{ item: 'something' }, false],
+                [{ item: 'something', item2: 'something else' }, false],
+                [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
+                ['', false]
+            ]);
+            done();
+        });
+
+        it('should validate the key count when max is set', function (done) {
+
+            var schema = Joi.object().max(2);
+            Validate(schema, [
+                [{ item: 'something' }, true],
+                [{ item: 'something', item2: 'something else' }, true],
+                [{ item: 'something', item2: 'something else', item3: 'something something else' }, false],
+                ['', false]
+            ]);
+            done();
+        });
+
+        it('should validate the key count when min and max is set', function (done) {
+
+            var schema = Joi.object().max(3).min(2);
+            Validate(schema, [
+                [{ item: 'something' }, false],
+                [{ item: 'something', item2: 'something else' }, true],
+                [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
+                [{ item: 'something', item2: 'something else', item3: 'something something else', item4: 'item4' }, false],
+                ['', false]
+            ]);
+            done();
+        });
+
+        it('should validate the key count when length is set', function (done) {
+
+            var schema = Joi.object().length(2);
+            Validate(schema, [
+                [{ item: 'something' }, false],
+                [{ item: 'something', item2: 'something else' }, true],
+                [{ item: 'something', item2: 'something else', item3: 'something something else' }, false],
+                ['', false]
+            ]);
+            done();
+        });
+
         it('should traverse an object and validate all properties in the top level', function (done) {
 
             var schema = Joi.object({
