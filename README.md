@@ -623,6 +623,26 @@ var schema = {
 };
 ```
 
+#### `string.guid()`
+
+Requires the string value to be a valid GUID.
+
+```javascript
+var schema = {
+    a: Joi.string().guid()
+};
+```
+
+#### `string.isoDate()`
+
+Requires the string value to be in valid ISO 8601 date format.
+
+```javascript
+var schema = {
+    a: Joi.string().isoDate()
+};
+```
+
 # Migration notes
 
 **joi** 2.0 is a complete rewrite of the previous version. While largely backward compatible, it includes a few changes that are
@@ -651,7 +671,6 @@ Please test your existing validation rules to ensure they behave as expected wit
 * `array().includes()` and `array.excludes()` now validates correctly (not just the base type).
 * `allow()`, `valid()`, and `invalid()` values are now compared against the original and converted values (not just after conversion).
 * `string().min()` no longer implies `required()`.
-
 
 
 

@@ -812,5 +812,626 @@ describe('Joi.string', function () {
             ]);
             done();
         });
+
+        it('should validate isoDate', function (done) {
+
+            Validate(Joi.string().isoDate(), [
+                ['2013-06-07T14:21:46.295Z', true],
+                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295-07:00', true],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', true],
+                ['2013-06-07T14:21:46-07:00', true],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false]
+            ]);
+            done();
+        });
+
+        it('should validate isoDate with a friendly error message', function (done) {
+
+            var schema = { item: Joi.string().isoDate() };
+            var err = Joi.validate({ item: 'something' }, schema);
+
+            expect(err.message).to.contain('must be a valid ISO 8601 date');
+            done();
+        });
+
+        it('should handle combination of isoDate and min', function (done) {
+
+            var rule = Joi.string().isoDate().min(23);
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', true],
+                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295-07:00', true],
+                ['2013-06-07T14:21:46Z', false],
+                ['2013-06-07T14:21:46+07:00', true],
+                ['2013-06-07T14:21:46-07:00', true],
+                ['2013-06-07T14:21Z', false],
+                ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21-07:00', false],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min and max', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23);
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min and max', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23);
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max and deny', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).deny('2013-06-07T14:21+07:00');
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max and allow', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00');
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max, allow and deny', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').deny('2013-06-07T14:21+07:00');
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max, allow, deny and emptyOK', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').deny('2013-06-07T14:21+07:00').emptyOk();
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max, allow, deny and emptyOK', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').emptyOk();
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max, allow, deny and regex', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').deny('2013-06-07T14:21Z').regex(/Z$/);
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', false],
+                ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21-07:00', false],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max, allow, deny, regex and emptyOK', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').deny('2013-06-07T14:21Z').regex(/Z$/).emptyOk();
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', false],
+                ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21-07:00', false],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max and emptyOK', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).emptyOk();
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max and regex', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/);
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21-07:00', false],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max, regex and emptyOK', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).emptyOk();
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21-07:00', false],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of isoDate, min, max, regex and required', function (done) {
+
+            var rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).required();
+            Validate(rule, [
+                ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295-07:00', false],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46+07:00', false],
+                ['2013-06-07T14:21:46-07:00', false],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21-07:00', false],
+                ['2013-06-07T14:21Z+7:00', false],
+                ['1-1-2013', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should validate guid', function (done) {
+
+            Validate(Joi.string().guid(), [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', true],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', true],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', true],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false]
+            ]);
+            done();
+        });
+
+        it('should validate guid with a friendly error message', function (done) {
+
+            var schema = { item: Joi.string().guid() };
+            var err = Joi.validate({ item: 'something' }, schema);
+
+            expect(err.message).to.contain('must be a valid GUID');
+            done();
+        });
+
+        it('should handle combination of guid and min', function (done) {
+
+            var rule = Joi.string().guid().min(36);
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', true],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false],
+                ['69593D62-71EA-4548-85E4-04FC71357423', true],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', true],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', false],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min and max', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34);
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max and deny', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).deny('b4b2fb69c6244e5eb0698e0c6ec66618');
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max and allow', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D');
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max, allow and deny', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').deny('b4b2fb69c6244e5eb0698e0c6ec66618');
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max, allow, deny and emptyOK', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').deny('b4b2fb69c6244e5eb0698e0c6ec66618').emptyOk();
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max, allow and emptyOK', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').emptyOk();
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max, allow, deny and regex', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08').deny('b4b2fb69c6244e5eb0698e0c6ec66618').regex(/^{7e908/);
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08', true],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max, allow, deny, regex and emptyOK', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08').deny('b4b2fb69c6244e5eb0698e0c6ec66618').regex(/^{7e908/).emptyOk();
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08', true],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max and emptyOK', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).emptyOk();
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max and regex', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i);
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max, regex and emptyOK', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i).emptyOk();
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', true],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle combination of guid, min, max, regex and required', function (done) {
+
+            var rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i).required();
+            Validate(rule, [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
     });
 });
