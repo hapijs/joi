@@ -414,7 +414,7 @@ Supports the same methods of the [`any()`](#any) type.
 var boolean = Joi.boolean();
 boolean.allow(null);
 
-var err = any.validate(true);
+var err = boolean.validate(true);
 ```
 
 ### `date()`
