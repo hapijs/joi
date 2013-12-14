@@ -589,7 +589,7 @@ Defines a regular expression rule where:
 
 ```javascript
 var schema = {
-    a: Joi.string().regex(\^[abc]+$\)
+    a: Joi.string().regex(/^[abc]+$/)
 };
 ```
 
