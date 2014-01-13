@@ -101,6 +101,38 @@ describe('Joi', function () {
             });
         });
 
+        describe('#or', function () {
+
+            it('fails when without set on root', function (done) {
+
+                var b = Joi.any();
+                var result = b.or('test');
+
+                expect(result.validate('test')).to.exist;
+                done();
+            });
+
+            it('should throw an error when a parameter is not a string', function (done) {
+
+                try {
+                    b.or({});
+                    var error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    b.or(123);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+                done();
+            });
+        });
+
         describe('#rename', function () {
 
             it('fails when no parent object is provided', function (done) {

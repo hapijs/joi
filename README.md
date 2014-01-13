@@ -23,6 +23,7 @@ Current version: **2.0.x**
         - [`any.with(peer)`](#anywithpeer)
         - [`any.without(peer)`](#anywithoutpeer)
         - [`any.xor(peer)`](#anyxorpeer)
+        - [`any.or(peer)`](#anyorpeer)
         - [`description(desc)`](#descriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
@@ -265,6 +266,19 @@ Defines an exclusive relationship with another key where this or one of the peer
 ```javascript
 var schema = {
     a: Joi.any().xor('b'),
+    b: Joi.any()
+};
+```
+
+#### `any.or(peer)`
+
+Defines a relationship with another key where this or one of the peers is required (and more than one is allowed) where:
+- `peer` - the key name that must appear if the current value is missing. `peer` can be an array of values, or multiple
+  values can be passed as individual arguments.
+
+```javascript
+var schema = {
+    a: Joi.any().or('b'),
     b: Joi.any()
 };
 ```

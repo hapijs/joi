@@ -79,6 +79,44 @@ describe('Joi', function () {
         done();
     });
 
+    it('validates or', function (done) {
+
+        var schema = Joi.object({
+            txt: Joi.string().or('upc', 'code'),
+            upc: Joi.string().allow(null, ''),
+            code: Joi.number()
+        });
+
+        var err = Joi.validate({}, schema, { abortEarly: false });
+        expect(err.message).to.equal('missing alternative peers upc,code');
+
+        Validate(schema, [
+            [{ upc: null }, false],
+            [{ upc: 'test' }, true],
+            [{ txt: null }, false],
+            [{ txt: 'test' }, true],
+            [{ code: null }, false],
+            [{ code: 123 }, true],
+            [{ txt: 'test', upc: null }, true],
+            [{ txt: 'test', upc: '' }, true],
+            [{ txt: '', upc: 'test' }, true],
+            [{ txt: null, upc: 'test' }, true],
+            [{ txt: undefined, upc: 'test' }, true],
+            [{ txt: 'test', upc: undefined }, true],
+            [{ txt: 'test', upc: '' }, true],
+            [{ txt: 'test', upc: null }, true],
+            [{ txt: '', upc: undefined }, false],
+            [{ txt: '', upc: undefined, code: 999 }, true],
+            [{ txt: '', upc: undefined, code: undefined }, false],
+            [{ txt: '', upc: '' }, false],
+            [{ txt: 'test', upc: 'test' }, true],
+            [{ txt: 'test', upc: 'test', code: 322 }, true]
+
+        ]);
+
+        done();
+    });
+
     it('validates an array of valid types', function (done) {
 
         var schema = {
