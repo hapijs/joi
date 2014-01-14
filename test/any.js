@@ -42,6 +42,15 @@ describe('Joi', function () {
 
         describe('#with', function () {
 
+            it('fails when with set on root', function (done) {
+
+                var b = Joi.any();
+                var result = b.with('test');
+
+                expect(result.validate('test')).to.exist;
+                done();
+            });
+
             it('returns error when related type not found', function (done) {
 
                 Validate(Joi.any().with('test'), [['test', false]])
@@ -92,6 +101,38 @@ describe('Joi', function () {
 
                 try {
                     b.without(123);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+                done();
+            });
+        });
+
+        describe('#xor', function () {
+
+            it('fails when without set on root', function (done) {
+
+                var b = Joi.any();
+                var result = b.xor('test');
+
+                expect(result.validate('test')).to.exist;
+                done();
+            });
+
+            it('should throw an error when a parameter is not a string', function (done) {
+
+                try {
+                    b.xor({});
+                    var error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    b.xor(123);
                     error = false;
                 } catch (e) {
                     error = true;

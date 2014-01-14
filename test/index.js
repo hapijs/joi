@@ -48,6 +48,25 @@ describe('Joi', function () {
         done();
     });
 
+    it('validated with', function (done) {
+
+        var schema = Joi.object({
+            txt: Joi.string().with('upc'),
+            upc: Joi.string()
+        });
+
+        Validate(schema, [
+            [{ upc: 'test' }, true],
+            [{ txt: 'test' }, false],
+            [{ txt: 'test', upc: null }, false],
+            [{ txt: 'test', upc: '' }, false],
+            [{ txt: 'test', upc: undefined }, false],
+            [{ txt: 'test', upc: 'test' }, true]
+        ]);
+
+        done();
+    });
+
     it('validates xor', function (done) {
 
         var schema = Joi.object({
@@ -56,7 +75,7 @@ describe('Joi', function () {
         });
 
         var err = Joi.validate({ upc: null, txt: null }, schema, { abortEarly: false });
-        expect(err.message).to.equal('txt conflict with exclusive peer upc. upc conflict with exclusive peer txt');
+        expect(err.message).to.equal('at least one of txt upc is required. at least one of upc txt is required');
 
         Validate(schema, [
             [{ upc: null }, false],

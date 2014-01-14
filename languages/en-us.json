@@ -11,7 +11,11 @@
             "parent": "cannot specify peer when key is not part of an object",
             "peer": "conflict with forbidden peer {{value}}"
         },
-        "xor": "{{key}} conflict with exclusive peer {{value}}",
+        "xor": {
+            "parent": "cannot specify peer when key is not part of an object",
+            "peer": "{{key}} conflict with exclusive peer {{value}}",
+            "missing": "at least one of {{key}} {{value}} is required"
+        },
         "or": {
             "parent": "cannot specify peer when key is not part of an object",
             "peer": "missing alternative peers {{value}}"
