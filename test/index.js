@@ -79,6 +79,23 @@ describe('Joi', function () {
         done();
     });
 
+    it('validates multiple peers xor', function (done) {
+
+        var schema = Joi.object({
+            txt: Joi.string().xor('upc', 'code'),
+            upc: Joi.string(),
+            code: Joi.string()
+        });
+
+        Validate(schema, [
+            [{ upc: 'test' }, true],
+            [{ txt: 'test' }, true],
+            [{ }, false]
+        ]);
+
+        done();
+    });
+
     it('validates or', function (done) {
 
         var schema = Joi.object({
