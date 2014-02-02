@@ -677,6 +677,25 @@ describe('Joi', function () {
         done();
     });
 
+    it('fails to validate with incorrect property when asked to strip unkown keys without aborting early', function (done) {
+
+        var schema = {
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        };
+
+        var obj = {
+            a: 1,
+            b: 'f',
+            d: 'c'
+        };
+        var err = Joi.validate(obj, schema, { stripUnknown: true, abortEarly: false });
+
+        expect(err).to.exist;
+        done();
+    });
+
     it('should pass validation with extra keys when allowUnknown is set', function (done) {
 
         var schema = {
