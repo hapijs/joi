@@ -67,6 +67,25 @@ describe('Joi', function () {
         done();
     });
 
+    it('validated without', function (done) {
+
+        var schema = Joi.object({
+            txt: Joi.string().without('upc'),
+            upc: Joi.string()
+        });
+
+        Validate(schema, [
+            [{ upc: 'test' }, true],
+            [{ txt: 'test' }, true],
+            [{ txt: 'test', upc: null }, false],
+            [{ txt: 'test', upc: '' }, false],
+            [{ txt: 'test', upc: undefined }, true],
+            [{ txt: 'test', upc: 'test' }, false]
+        ]);
+
+        done();
+    });
+
     it('validates xor', function (done) {
 
         var schema = Joi.object({
@@ -162,7 +181,7 @@ describe('Joi', function () {
         expect(err.message).to.equal('missing alternative peers upc,code');
 
         Validate(schema, [
-            [{ upc: null }, false],
+            [{ upc: null }, true],
             [{ upc: 'test' }, true],
             [{ txt: null }, false],
             [{ txt: 'test' }, true],
