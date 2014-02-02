@@ -23,6 +23,17 @@ describe('Joi', function () {
 
     describe('any', function () {
 
+        it('validates both valid() and with()', function (done) {
+
+            var b = Joi.object({
+                first: Joi.any().valid('value').with('second'),
+                second: Joi.any()
+            });
+            Validate(b, [[{ first: 'value' }, false]]);
+
+            done();
+        });
+
         describe('#strict', function () {
 
             it('validates without converting', function (done) {
