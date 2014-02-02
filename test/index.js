@@ -74,7 +74,7 @@ describe('Joi', function () {
             upc: Joi.string().xor('txt')
         });
 
-        var err = Joi.validate({ upc: null, txt: null }, schema, { abortEarly: false });
+        var err = Joi.validate({}, schema, { abortEarly: false });
         expect(err.message).to.equal('at least one of txt upc is required. at least one of upc txt is required');
 
         Validate(schema, [
@@ -82,14 +82,14 @@ describe('Joi', function () {
             [{ upc: 'test' }, true],
             [{ txt: null }, false],
             [{ txt: 'test' }, true],
-            [{ txt: 'test', upc: null }, true],
-            [{ txt: 'test', upc: '' }, true],
-            [{ txt: '', upc: 'test' }, true],
-            [{ txt: null, upc: 'test' }, true],
+            [{ txt: 'test', upc: null }, false],
+            [{ txt: 'test', upc: '' }, false],
+            [{ txt: '', upc: 'test' }, false],
+            [{ txt: null, upc: 'test' }, false],
             [{ txt: undefined, upc: 'test' }, true],
             [{ txt: 'test', upc: undefined }, true],
-            [{ txt: 'test', upc: '' }, true],
-            [{ txt: 'test', upc: null }, true],
+            [{ txt: 'test', upc: '' }, false],
+            [{ txt: 'test', upc: null }, false],
             [{ txt: '', upc: undefined }, false],
             [{ txt: '', upc: '' }, false],
             [{ txt: 'test', upc: 'test' }, false]
@@ -109,7 +109,42 @@ describe('Joi', function () {
         Validate(schema, [
             [{ upc: 'test' }, true],
             [{ txt: 'test' }, true],
-            [{ }, false]
+            [{}, false]
+        ]);
+
+        done();
+    });
+
+    it('validates xor with number types', function (done) {
+
+        var schema = Joi.object({
+            code: Joi.number().xor('upc'),
+            upc: Joi.number()
+        });
+
+        Validate(schema, [
+            [{ upc: 123 }, true],
+            [{ code: 456 }, true],
+            [{ code: 456, upc: 123 }, false],
+            [{}, false]
+        ]);
+
+        done();
+    });
+
+    it('validates xor when empty value of peer allowed', function (done) {
+
+        var schema = Joi.object({
+            code: Joi.string().xor('upc'),
+            upc: Joi.string().allow('')
+        });
+
+        Validate(schema, [
+            [{ upc: '' }, true],
+            [{ upc: '123' }, true],
+            [{ code: '456' }, true],
+            [{ code: '456', upc: '' }, false],
+            [{}, false]
         ]);
 
         done();
@@ -135,14 +170,14 @@ describe('Joi', function () {
             [{ code: 123 }, true],
             [{ txt: 'test', upc: null }, true],
             [{ txt: 'test', upc: '' }, true],
-            [{ txt: '', upc: 'test' }, true],
-            [{ txt: null, upc: 'test' }, true],
+            [{ txt: '', upc: 'test' }, false],
+            [{ txt: null, upc: 'test' }, false],
             [{ txt: undefined, upc: 'test' }, true],
             [{ txt: 'test', upc: undefined }, true],
             [{ txt: 'test', upc: '' }, true],
             [{ txt: 'test', upc: null }, true],
             [{ txt: '', upc: undefined }, false],
-            [{ txt: '', upc: undefined, code: 999 }, true],
+            [{ txt: '', upc: undefined, code: 999 }, false],
             [{ txt: '', upc: undefined, code: undefined }, false],
             [{ txt: '', upc: '' }, false],
             [{ txt: 'test', upc: 'test' }, true],
