@@ -42,13 +42,20 @@ describe('Types', function () {
 
         describe('#validate', function () {
 
-            it('should handle work with nullOk', function (done) {
+            it('converts string values and validates', function (done) {
 
-                var rule = Joi.boolean().nullOk();
+                var rule = Joi.boolean();
                 Validate(rule, [
                     ['1234', false],
                     [false, true],
-                    [null, true]
+                    [true, true],
+                    [null, false],
+                    ['on', true],
+                    ['off', true],
+                    ['true', true],
+                    ['false', true],
+                    ['yes', true],
+                    ['no', true]
                 ]); done();
             });
 
