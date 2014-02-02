@@ -22,6 +22,9 @@ module.exports = function (schema, config) {
 
     for (var i in config) {
         var result = Joi.validate(config[i][0], schema);
+        if (result !== null && config[i][1]) {
+            console.log(result);
+        }
         expect(result === null).to.equal(config[i][1]);
     }
 };
