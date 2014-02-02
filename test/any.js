@@ -57,6 +57,30 @@ describe('Joi', function () {
                 done();
             });
 
+            it('fails when a missing peer is required after value is validated with valid()', function (done) {
+
+                var b = Joi.object({
+                    first: Joi.any().valid('value').with('second'),
+                    second: Joi.any()
+                });
+                Validate(b, [[{first:'value'}, false]]);
+
+                done();
+            });
+
+            it('fails when multiple missing peers are required after value is validated with valid()', function (done) {
+
+                var b = Joi.object({
+                    first: Joi.any().valid('value').with('second','third'),
+                    second: Joi.any(),
+                    third: Joi.any()
+                });
+                Validate(b, [[{first:'value'}, false]]);
+
+                done();
+            });
+
+
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
