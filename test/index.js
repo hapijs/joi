@@ -909,6 +909,30 @@ describe('Joi', function () {
         done();
     });
 
+    it('returns error type in validation error', function (done) {
+
+        var input = {
+            notNumber: '',
+            notString: true,
+            notBoolean: 9
+        };
+
+        var schema = {
+            notNumber: Joi.number().required(),
+            notString: Joi.string().required(),
+            notBoolean: Joi.boolean().required()
+        }
+
+        var err = Joi.validate(input, schema, { abortEarly: false });
+
+        expect(err).to.exist;
+        expect(err._errors).to.have.length(3);
+        expect(err._errors[0].type).to.equal('number.base');
+        expect(err._errors[1].type).to.equal('string.base');
+        expect(err._errors[2].type).to.equal('boolean.base');
+        done();
+    });
+
     it('annotates error', function (done) {
 
         var object = {
