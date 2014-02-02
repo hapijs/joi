@@ -57,6 +57,17 @@ describe('Joi', function () {
                 done();
             });
 
+            it('fails when a missing peer is required after value is validated with valid()', function (done) {
+
+                var b = Joi.object({
+                    first: Joi.any().valid('value').with('second'),
+                    second: Joi.any()
+                });
+                Validate(b, [[{first:'value'}, false]]);
+
+                done();
+            });
+
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
@@ -108,6 +119,18 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
                 done();
             });
+
+            it('fails when peer is present after value is validated with valid()', function (done) {
+
+                var b = Joi.object({
+                    first: Joi.any().valid('value').without('second'),
+                    second: Joi.any()
+                });
+                Validate(b, [[{first:'value',second:'present'}, false]]);
+
+                done();
+            });
+
         });
 
         describe('#xor', function () {
@@ -140,6 +163,18 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
                 done();
             });
+
+            it('fails when peer is present after value is validated with valid()', function (done) {
+
+                var b = Joi.object({
+                    first: Joi.any().valid('value').xor('second'),
+                    second: Joi.any()
+                });
+                Validate(b, [[{first:'value',second:'present'}, false]]);
+
+                done();
+            });
+
         });
 
         describe('#or', function () {
