@@ -3,6 +3,7 @@
         "unknown": "the key {{key}} is not allowed",
         "without": "the value of {{key}} must exist without {{value}}",
         "invalid": "the value of {{key}} is not allowed to be {{value}}",
+        "empty": "the value of {{key}} is not allowed to be empty",
         "with": {
             "parent": "cannot specify peer when key is not part of an object",
             "peer": "missing required peer {{value}}"

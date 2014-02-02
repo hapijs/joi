@@ -2,7 +2,7 @@
     "any": {
         "unknown": "1",
         "without": "2",
-        "invalid": "3",
+        "empty": "3",
         "with": {
             "parent": "4",
             "peer": "5"
