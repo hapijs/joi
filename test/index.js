@@ -132,6 +132,24 @@ describe('Joi', function () {
         done();
     });
 
+    it('validates xor when empty value of peer allowed', function (done) {
+
+        var schema = Joi.object({
+            code: Joi.string().xor('upc'),
+            upc: Joi.string().allow('')
+        });
+
+        Validate(schema, [
+            [{ upc: '' }, true],
+            [{ upc: '123' }, true],
+            [{ code: '456' }, true],
+            [{ code: '456', upc: '' }, false],
+            [{}, false]
+        ]);
+
+        done();
+    });
+
     it('validates or', function (done) {
 
         var schema = Joi.object({
