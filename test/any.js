@@ -241,6 +241,19 @@ describe('Joi', function () {
             });
         });
 
+        describe('#validateCallback', function () {
+
+            it('validates using callback interface', function (done) {
+
+                var schema = Joi.number();
+                schema.validateCallback(4, {}, function (err) {
+
+                    expect(err).to.not.exist;
+                    done();
+                });
+            });
+        });
+
         describe('#description', function () {
 
             it('sets the description', function (done) {
