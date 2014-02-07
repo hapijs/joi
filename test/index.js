@@ -41,6 +41,27 @@ describe('Joi', function () {
         done();
     });
 
+    it('validates object with callback interface', function (done) {
+
+        var schema = {
+            a: Joi.number().min(0).max(3).without('none'),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        };
+
+        var obj = {
+            a: 1,
+            b: 'a',
+            c: 'joe@example.com'
+        };
+
+        Joi.validateCallback(obj, schema, null, function (err) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
     it('validates null', function (done) {
 
         var err = Joi.validate(null, Joi.string());
@@ -855,7 +876,7 @@ describe('Joi', function () {
 
         expect(errOne).to.exist
         expect(errFull).to.exist
-        expect(errFull._errors.length).to.be.greaterThan(errOne._errors.length);
+        expect(errFull.details.length).to.be.greaterThan(errOne.details.length);
         done();
     });
 
@@ -926,10 +947,10 @@ describe('Joi', function () {
         var err = Joi.validate(input, schema, { abortEarly: false });
 
         expect(err).to.exist;
-        expect(err._errors).to.have.length(3);
-        expect(err._errors[0].type).to.equal('number.base');
-        expect(err._errors[1].type).to.equal('string.base');
-        expect(err._errors[2].type).to.equal('boolean.base');
+        expect(err.details).to.have.length(3);
+        expect(err.details[0].type).to.equal('number.base');
+        expect(err.details[1].type).to.equal('string.base');
+        expect(err.details[2].type).to.equal('boolean.base');
         done();
     });
 
