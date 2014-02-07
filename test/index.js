@@ -207,6 +207,37 @@ describe('Joi', function () {
         done();
     });
 
+    it('validates matches', function (done) {
+
+        var schema = Joi.object({
+            bar: Joi.string(),
+            txt: Joi.string(),
+            upc: Joi.string().matches('txt'),
+            code: Joi.string().matches('bar', 'txt')
+        });
+
+        Validate(schema, [
+            [{ bar: 'test' }, true],
+            [{ txt: 'test' }, true],
+            [{ upc: 'test' }, false],
+            [{ code: 'test' }, false],
+            [{ txt: null, upc: 'test' }, false],
+            [{ txt: '', upc: 'test' }, false],
+            [{ txt: undefined, upc: 'test' }, false],
+            [{ txt: 'test', upc: 'this' }, false],
+            [{ txt: 'test', upc: 'test' }, true],
+            [{ bar: null, txt: 'test', upc: 'test', code: 'test' }, false],
+            [{ bar: '', txt: 'test', upc: 'test', code: 'test' }, false],
+            [{ bar: undefined, txt: 'test', upc: 'test', code: 'test' }, false],
+            [{ bar: 'test', txt: 'test', upc: 'test', code: 'this' }, false],
+            [{ bar: 'this', txt: 'test', upc: 'test', code: 'test' }, false],
+            [{ bar: 'test', txt: 'this', upc: 'this', code: 'test' }, false],
+            [{ bar: 'test', txt: 'test', upc: 'test', code: 'test' }, true]
+        ]);
+
+        done();
+    });
+
     it('validates an array of valid types', function (done) {
 
         var schema = {

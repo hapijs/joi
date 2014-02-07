@@ -21,6 +21,12 @@
             "parent": "cannot specify peer when key is not part of an object",
             "peer": "missing alternative peers {{value}}"
         },
+        "matches": {
+            "parent": "cannot specify peer when key is not part of an object",
+            "peer": "missing required peer {{value}}",
+            "length": "cannot specify more then one peer",
+            "match": "{{key}} must match {{value}}"
+        },
         "rename": {
             "parent": "cannot rename when key is not part of an object",
             "multiple": "cannot rename {{key}} because multiple renames are disabled and target {{value}} already used in a rename",
