@@ -24,6 +24,7 @@ Current version: **2.4.x**
         - [`any.without(peer)`](#anywithoutpeer)
         - [`any.xor(peer)`](#anyxorpeer)
         - [`any.or(peer)`](#anyorpeer)
+        - [`any.matches(peer)`](#anymatchespeer)
         - [`description(desc)`](#descriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
@@ -280,6 +281,19 @@ Defines a relationship with another key where this or one of the peers is requir
 var schema = {
     a: Joi.any().or('b'),
     b: Joi.any()
+};
+```
+
+#### `any.matches(peer)`
+
+Defines a relationship with another key where this matches one of the peers is required (and more than one is allowed) where:
+- `peer` - the key name that must match the current value. `peer` can be an array of values, or multiple
+  values can be passed as individual arguments.
+
+```javascript
+var schema = {
+    a: Joi.any(),
+    b: Joi.any().matches('a')
 };
 ```
 

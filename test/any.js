@@ -185,6 +185,54 @@ describe('Joi', function () {
             });
         });
 
+        describe('#matches', function () {
+
+            it('fails when matches set on root', function (done) {
+
+                var b = Joi.any();
+                var result = b.matches('test');
+
+                expect(result.validate('test')).to.exist;
+                done();
+            });
+
+            it('returns error when related type not found', function (done) {
+
+                Validate(Joi.any().matches('test'), [['test', false]])
+                done();
+            });
+
+            it('returns error when related type does not match', function (done) {
+
+                var schema = Joi.object({
+                    string: Joi.string(),
+                    test: Joi.string().matches('string')
+                });
+                Validate(schema, [[{string: 'test', test: 'this'}, false]])
+                done();
+            });
+
+            it('should throw an error when a parameter is not a string', function (done) {
+
+                try {
+                    Joi.any().matches({});
+                    var error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    Joi.any().matches(123);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+                done();
+            });
+        });
+
         describe('#rename', function () {
 
             it('fails when no parent object is provided', function (done) {
