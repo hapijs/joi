@@ -136,7 +136,7 @@ Validates a value using the given schema and options where:
 - `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object.
 - `options` - an optional object with the following optional keys:
 - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
-- `convert` - when `true`, attepmts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
+- `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
 - `modify` - when `true`, converted values are written back to the provided value (only when value is an object). Defaults to `false`.
 - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
 - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
