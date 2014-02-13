@@ -257,6 +257,25 @@ describe('Joi', function () {
                 expect(data.arr[0].two).to.equal(2);
                 done();
             });
+
+            it('should rename when data is nested in an array via includes', function (done) {
+
+                var schema = {
+                    arr: Joi.array().includes(Joi.object({
+                        uno: Joi.string().rename('one'),
+                        dos: Joi.string().rename('two')
+                    }))
+                };
+
+                var data = { arr: [{ uno: 1, dos: 2 }] };   
+
+                var err = Joi.validate(data, schema);
+                console.log(err)
+                expect(err).to.not.exist;
+                expect(data.arr[0].one).to.equal(1);
+                expect(data.arr[0].two).to.equal(2);
+                done();
+            });
         });
 
         describe('#validateCallback', function () {
