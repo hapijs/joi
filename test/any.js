@@ -270,7 +270,6 @@ describe('Joi', function () {
                 var data = { arr: [{ uno: 1, dos: 2 }] };   
 
                 var err = Joi.validate(data, schema);
-                console.log(err)
                 expect(err).to.not.exist;
                 expect(data.arr[0].one).to.equal(1);
                 expect(data.arr[0].two).to.equal(2);
