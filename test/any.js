@@ -241,6 +241,40 @@ describe('Joi', function () {
             });
         });
 
+        describe('#default', function () {
+
+            it('should fail when no parent is provided', function (done) {
+
+                var schema = Joi.any().default('test');
+                expect(schema.validate(undefined)).to.exist;
+
+                done();
+
+            });
+
+            it('sets the value', function (done) {
+
+                var schema = { foo: Joi.string().default('test') };
+                var input = {};
+
+                expect(Joi.validate(input, schema)).to.not.exist;
+                expect(input.foo).to.equal('test');
+
+                done();
+            });
+
+            it('should not overide a value when value is given', function (done) {
+
+                var schema = { foo: Joi.string().default('bar') };
+                var input = { foo: 'test' };
+
+                expect(Joi.validate(input, schema)).to.not.exist;
+                expect(input.foo).to.equal('test');
+                
+                done();
+            });
+        }); 
+
         describe('#validateCallback', function () {
 
             it('validates using callback interface', function (done) {
