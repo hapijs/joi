@@ -240,25 +240,7 @@ describe('Joi', function () {
                 done();
             });
 
-            it('should rename when data is nested in an array', function (done) {
-
-                var schema = {
-                    arr: Joi.array({
-                        uno: Joi.string().rename('one'),
-                        dos: Joi.string().rename('two')
-                    })
-                };
-
-                var data = { arr: [{ uno: 1, dos: 2 }] };   
-
-                var err = Joi.validate(data, schema);
-                expect(err).to.not.exist;
-                expect(data.arr[0].one).to.equal(1);
-                expect(data.arr[0].two).to.equal(2);
-                done();
-            });
-
-            it('should rename when data is nested in an array via includes', function (done) {
+            it('renames when data is nested in an array via includes', function (done) {
 
                 var schema = {
                     arr: Joi.array().includes(Joi.object({
@@ -267,12 +249,12 @@ describe('Joi', function () {
                     }))
                 };
 
-                var data = { arr: [{ uno: 1, dos: 2 }] };   
-
+                var data = { arr: [{ uno: '1', dos: '2' }] };
                 var err = Joi.validate(data, schema);
+
                 expect(err).to.not.exist;
-                expect(data.arr[0].one).to.equal(1);
-                expect(data.arr[0].two).to.equal(2);
+                expect(data.arr[0].one).to.equal('1');
+                expect(data.arr[0].two).to.equal('2');
                 done();
             });
         });
