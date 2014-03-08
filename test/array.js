@@ -62,6 +62,19 @@ describe('Types', function () {
             });
         });
 
+        describe('#includes', function () {
+
+            it('converts members', function (done) {
+
+                var array = ['1', '2', '3'];
+                var schema = Joi.array().includes(Joi.number());
+                var err = Joi.validate(array, schema, { modify: true });
+                expect(err).to.not.exist;
+                expect(array).to.deep.equal([1, 2, 3]);
+                done();
+            });
+        });
+
         describe('#min', function () {
 
             it('validates array size', function (done) {
