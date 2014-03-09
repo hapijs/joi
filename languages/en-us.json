@@ -1,7 +1,6 @@
 {
     "any": {
         "unknown": "the key {{key}} is not allowed",
-        "without": "the value of {{key}} must exist without {{value}}",
         "invalid": "the value of {{key}} is not allowed to be {{value}}",
         "empty": "the value of {{key}} is not allowed to be empty",
         "with": {
@@ -32,7 +31,8 @@
     },
     "array": {
         "base": "the value of {{key}} must be an array",
-        "includes": "the value {{value}} in {{key}} does not match any of the allowed types",
+        "includes": "the {{key}} array value in position {{pos}} does not match any of the allowed types",
+        "includes-single": "the {{key}} array value in position {{pos}} fails because {{reason}}",
         "excludes": "the value {{value}} in {{key}} cannot violates exclusion rule {{pos}}",
         "min": "the length of {{key}} must include at least {{value}} items",
         "max": "the length of {{key}} must include less than (or equal to) {{value}} items",

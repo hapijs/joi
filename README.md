@@ -3,7 +3,7 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **2.4.x**
+Current version: **2.8.x**
 
 [![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 

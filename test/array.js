@@ -73,6 +73,34 @@ describe('Types', function () {
                 expect(array).to.deep.equal([1, 2, 3]);
                 done();
             });
+
+            it('allows zero size', function (done) {
+
+                var data = { test: [] };
+                var schema = {
+                    test: Joi.array().includes(Joi.object({
+                        foo: Joi.string().required()
+                    }))
+                };
+
+                var err = Joi.validate(data, schema);
+                expect(err).to.not.exist;
+                done();
+            });
+
+            it('returns the first error when only one inclusion', function (done) {
+
+                var data = { test: [{ foo: 'a' }, { bar: 2 }] };
+                var schema = {
+                    test: Joi.array().includes(Joi.object({
+                        foo: Joi.string().required()
+                    }))
+                };
+
+                var err = Joi.validate(data, schema);
+                expect(err.message).to.equal('the test array value in position 1 fails because the value of foo is not allowed to be undefined');
+                done();
+            });
         });
 
         describe('#min', function () {
@@ -218,7 +246,7 @@ describe('Types', function () {
                 var err = Joi.validate(input, schema);
 
                 expect(err).to.exist;
-                expect(err.message).to.equal('the value 2.1 in arr does not match any of the allowed types');
+                expect(err.message).to.equal('the arr array value in position 2 fails because the value of 2 must be an integer');
                 done();
             });
 
