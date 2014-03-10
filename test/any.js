@@ -333,6 +333,19 @@ describe('Joi', function () {
                 done();
             });
         });
+
+        describe('Set', function () {
+
+            describe('#toString', function () {
+
+                it('includes undefined', function (done) {
+
+                    var b = Joi.any();
+                    expect(b._valids.toString(true)).to.equal('undefined');
+                    done();
+                });
+            });
+        });
     });
 });
 
