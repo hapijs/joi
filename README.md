@@ -30,6 +30,7 @@ Current version: **2.8.x**
         - [`any.options(options)`](#anyoptionsoptions)
         - [`any.strict()`](#anystrict)
         - [`any.rename(to, [options])`](#anyrenameto-options)
+        - [`any.default(value)`](#anydefault)
     - [`array()`](#array)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
@@ -339,6 +340,20 @@ Renames a key to another name where:
     - `move` - if `true`, deletes the old key name, otherwise both old and new keys are kept. Defaults to `false`.
     - `multiple` - if `true`, allows renaming multiple keys to the same destination where the last rename wins. Defaults to `false`.
     - `override` - if `true`, allows renaming a key over an existing key. Defaults to `false`.
+
+#### `any.default(value)`
+
+Sets a default value if the original value is undefined where:
+- `value` - the value.
+
+```javascript
+var schema = {
+    username: Joi.string().default('new_user')
+};
+var input = {};
+Joi.validate(input, schema);
+// input === { username: "new_user" }
+```
 
 ### `array()`
 
