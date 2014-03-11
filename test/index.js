@@ -249,6 +249,36 @@ describe('Joi', function () {
             [{ something: undefined }, false],
             [{ auth: { something: undefined } }, false],
             [{ auth: null }, true],
+            [{ auth: undefined }, true],
+            [{}, true],
+            [{ auth: true }, true],
+            [{ auth: 123 }, false]
+        ]);
+
+        done();
+    });
+
+    it('validates alternatives', function (done) {
+
+        var schema = {
+            auth: Joi.alternatives(
+                Joi.object({ mode: Joi.string().valid('required', 'optional', 'try').nullOk() }).nullOk(),
+                Joi.string(),
+                Joi.boolean()
+            )
+        };
+
+        var err = Joi.validate({ auth: { mode: 'none' } }, schema);
+        expect(err).to.exist;
+        expect(err.message).to.equal('the value of mode must be one of required, optional, try, null. the value of auth must be a string. the value of auth must be a boolean');
+
+        Validate(schema, [
+            [{ auth: { mode: 'try' } }, true],
+            [{ something: undefined }, false],
+            [{ auth: { something: undefined } }, false],
+            [{ auth: null }, true],
+            [{ auth: undefined }, true],
+            [{}, true],
             [{ auth: true }, true],
             [{ auth: 123 }, false]
         ]);
@@ -440,7 +470,7 @@ describe('Joi', function () {
         };
 
         var err = Joi.validate({}, config);
-        expect(err).to.not.be.null;
+        expect(err).to.exist;
         expect(err.message).to.contain('the value of module is not allowed to be undefined');
 
         expect(Joi.validate({ module: 'test' }, config)).to.be.null;
@@ -452,6 +482,41 @@ describe('Joi', function () {
 
         expect(Joi.validate({ module: { compile: function () { } } }, config)).to.be.null;
 
+        done();
+    });
+
+    it('validates key with required alternatives', function (done) {
+
+        var config = {
+            module: Joi.alt(
+                Joi.object({
+                    compile: Joi.func().required(),
+                    execute: Joi.func()
+                }).required(),
+                Joi.string().required()
+            )
+        };
+
+        var err = Joi.validate({}, config);
+        expect(err).to.not.exist;
+        done();
+    });
+
+    it('validates required key with alternatives', function (done) {
+
+        var config = {
+            module: Joi.alt(
+                Joi.object({
+                    compile: Joi.func().required(),
+                    execute: Joi.func()
+                }),
+                Joi.string()
+            ).required()
+        };
+
+        var err = Joi.validate({}, config);
+        expect(err).to.exist;
+        expect(err.message).to.contain('the value of module is not allowed to be undefined');
         done();
     });
 
