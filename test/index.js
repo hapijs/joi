@@ -323,6 +323,20 @@ describe('Joi', function () {
         done();
     });
 
+    it('does not set optional keys when missing', function (done) {
+
+        var schema = {
+            a: Joi.number()
+        };
+
+        var obj = {};
+
+        var err = Joi.validate(obj, schema, { modify: true });
+        expect(err).to.not.exist;
+        expect(obj.hasOwnProperty('a')).to.equal(false);
+        done();
+    });
+
     it('invalidates pre and post convert value', function (done) {
 
         var schema = Joi.number().invalid(5);
