@@ -978,6 +978,48 @@ describe('Joi', function () {
         done();
     });
 
+    it('supports custom errors and localized errors when validating types', function (done) {
+
+        var schema = {
+            email: Joi.string().email(),
+            date: Joi.date(),
+            alphanum: Joi.string().alphanum(),
+            min: Joi.string().min(3),
+            max: Joi.string().max(3),
+            required: Joi.string().required().without('xor'),
+            xor: Joi.string().without('required'),
+            renamed: Joi.string().rename('required').valid('456'),
+            notEmpty: Joi.string().required()
+        };
+
+        var input = {
+            email: 'invalid-email',
+            date: 'invalid-date',
+            alphanum: '\b\n\f\r\t',
+            min: 'ab',
+            max: 'abcd',
+            required: 'hello',
+            xor: '123',
+            renamed: '456',
+            notEmpty: ''
+        };
+
+        var options = {
+            abortEarly: false,
+            language: {
+                any: {
+                    empty: 'Custome!'
+                }
+            },
+            languagePath: Path.join(__dirname, 'languages', 'en-us.json')
+        };
+        var err = Joi.validate(input, schema, options);
+
+        expect(err).to.exist;
+        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. Custome!');
+        done();
+    });
+
     it('returns key when language file missing item', function (done) {
 
         var input = {

@@ -56,6 +56,7 @@ Current version: **2.8.x**
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
+    - [`alternatives(types)`](#alternativestypes)
 - [Migration notes](#migration-notes)
 
 
@@ -142,6 +143,8 @@ Validates a value using the given schema and options where:
 - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
 - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
 - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
+- `language` - a localized langugage object using the format of the `languagePath` file. Error formats are looked up in the `language`
+  object first, and then in the `languagePath` file. Defaults to no override (`{}`).
 - `languagePath` - the location of the language file used to localize error messages. Defaults to `'languages/en-us.json'`.
 
 ```javascript
@@ -549,7 +552,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var object = Joi.object({
-    a: number.min(1).max(10).integer()
+    a: Joi.number.min(1).max(10).integer()
 });
 
 var err = object.validate({ a: 5 });
@@ -671,6 +674,22 @@ var schema = {
     a: Joi.string().isoDate()
 };
 ```
+
+### `alternatives(types)`
+
+Generates a type that will match one of the provided alternative schemas where:
+- `types` - an array of alternaitve **joi** types. Also supports providing each type as a separate argument.
+
+Supports the same methods of the [`any()`](#any) type.
+
+```javascript
+var alt = Joi.alternatives(Joi.number(), Joi.string());
+var err = alt.validate('a');
+```
+
+Note that the `alternatives()` type does not behave the same way as passing multiple alternatives directly using an
+array of types (e.g. `{ a: [Joi.number(), Joi.string()] }`). When passing an array directly, the value must match one
+of the provided types while when using the `alternatives()` type, the key is optional by default.
 
 # Migration notes
 
