@@ -272,6 +272,17 @@ describe('Joi', function () {
                 done();
             });
 
+            it('sets the value after key is renamed', function (done) {
+
+                var schema = { foo: Joi.string().rename('foo2').default('test') };
+                var input = {};
+
+                expect(Joi.validate(input, schema)).to.not.exist;
+                expect(input.foo2).to.equal('test');
+
+                done();
+            });
+
             it('should not overide a value when value is given', function (done) {
 
                 var schema = { foo: Joi.string().default('bar') };
@@ -282,6 +293,7 @@ describe('Joi', function () {
 
                 done();
             });
+
         });
 
         describe('#validateCallback', function () {
