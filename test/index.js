@@ -249,6 +249,36 @@ describe('Joi', function () {
             [{ something: undefined }, false],
             [{ auth: { something: undefined } }, false],
             [{ auth: null }, true],
+            [{ auth: undefined }, true],
+            [{}, true],
+            [{ auth: true }, true],
+            [{ auth: 123 }, false]
+        ]);
+
+        done();
+    });
+
+    it('validates alternatives', function (done) {
+
+        var schema = {
+            auth: Joi.alternatives(
+                Joi.object({ mode: Joi.string().valid('required', 'optional', 'try').nullOk() }).nullOk(),
+                Joi.string(),
+                Joi.boolean()
+            )
+        };
+
+        var err = Joi.validate({ auth: { mode: 'none' } }, schema);
+        expect(err).to.exist;
+        expect(err.message).to.equal('the value of mode must be one of required, optional, try, null. the value of auth must be a string. the value of auth must be a boolean');
+
+        Validate(schema, [
+            [{ auth: { mode: 'try' } }, true],
+            [{ something: undefined }, false],
+            [{ auth: { something: undefined } }, false],
+            [{ auth: null }, true],
+            [{ auth: undefined }, true],
+            [{}, true],
             [{ auth: true }, true],
             [{ auth: 123 }, false]
         ]);
@@ -290,6 +320,20 @@ describe('Joi', function () {
 
         expect(Joi.validate(obj, schema, { modify: true })).to.exist;
         expect(obj.a).to.equal('5');
+        done();
+    });
+
+    it('does not set optional keys when missing', function (done) {
+
+        var schema = {
+            a: Joi.number()
+        };
+
+        var obj = {};
+
+        var err = Joi.validate(obj, schema, { modify: true });
+        expect(err).to.not.exist;
+        expect(obj.hasOwnProperty('a')).to.equal(false);
         done();
     });
 
@@ -440,7 +484,7 @@ describe('Joi', function () {
         };
 
         var err = Joi.validate({}, config);
-        expect(err).to.not.be.null;
+        expect(err).to.exist;
         expect(err.message).to.contain('the value of module is not allowed to be undefined');
 
         expect(Joi.validate({ module: 'test' }, config)).to.be.null;
@@ -452,6 +496,41 @@ describe('Joi', function () {
 
         expect(Joi.validate({ module: { compile: function () { } } }, config)).to.be.null;
 
+        done();
+    });
+
+    it('validates key with required alternatives', function (done) {
+
+        var config = {
+            module: Joi.alt(
+                Joi.object({
+                    compile: Joi.func().required(),
+                    execute: Joi.func()
+                }).required(),
+                Joi.string().required()
+            )
+        };
+
+        var err = Joi.validate({}, config);
+        expect(err).to.not.exist;
+        done();
+    });
+
+    it('validates required key with alternatives', function (done) {
+
+        var config = {
+            module: Joi.alt(
+                Joi.object({
+                    compile: Joi.func().required(),
+                    execute: Joi.func()
+                }),
+                Joi.string()
+            ).required()
+        };
+
+        var err = Joi.validate({}, config);
+        expect(err).to.exist;
+        expect(err.message).to.contain('the value of module is not allowed to be undefined');
         done();
     });
 
@@ -910,6 +989,48 @@ describe('Joi', function () {
 
         expect(err).to.exist;
         expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. 3');
+        done();
+    });
+
+    it('supports custom errors and localized errors when validating types', function (done) {
+
+        var schema = {
+            email: Joi.string().email(),
+            date: Joi.date(),
+            alphanum: Joi.string().alphanum(),
+            min: Joi.string().min(3),
+            max: Joi.string().max(3),
+            required: Joi.string().required().without('xor'),
+            xor: Joi.string().without('required'),
+            renamed: Joi.string().rename('required').valid('456'),
+            notEmpty: Joi.string().required()
+        };
+
+        var input = {
+            email: 'invalid-email',
+            date: 'invalid-date',
+            alphanum: '\b\n\f\r\t',
+            min: 'ab',
+            max: 'abcd',
+            required: 'hello',
+            xor: '123',
+            renamed: '456',
+            notEmpty: ''
+        };
+
+        var options = {
+            abortEarly: false,
+            language: {
+                any: {
+                    empty: 'Custome!'
+                }
+            },
+            languagePath: Path.join(__dirname, 'languages', 'en-us.json')
+        };
+        var err = Joi.validate(input, schema, options);
+
+        expect(err).to.exist;
+        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. Custome!');
         done();
     });
 

@@ -192,6 +192,31 @@ describe('Types', function () {
             ]);
             done();
         });
+
+        it('should traverse an object several levels with required levels (without Joi.obj())', function (done) {
+
+            var schema = {
+                obj: {
+                    obj: {
+                        obj: {
+                            item: Joi.boolean().required()
+                        }
+                    }
+                }
+            };
+
+            Validate(schema, [
+                [null, false],
+                [undefined, true],
+                [{}, true],
+                [{ obj: {} }, true],
+                [{ obj: { obj: {} } }, true],
+                [{ obj: { obj: { obj: {} } } }, false],
+                [{ obj: { obj: { obj: { item: true } } } }, true],
+                [{ obj: { obj: { obj: { item: 10 } } } }, false]
+            ]);
+            done();
+        });
     });
 });
 

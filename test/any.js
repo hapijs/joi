@@ -239,6 +239,49 @@ describe('Joi', function () {
                 expect(err).to.not.exist;
                 done();
             });
+
+            it('renames when data is nested in an array via includes', function (done) {
+
+                var schema = {
+                    arr: Joi.array().includes(Joi.object({
+                        uno: Joi.string().rename('one'),
+                        dos: Joi.string().rename('two')
+                    }))
+                };
+
+                var data = { arr: [{ uno: '1', dos: '2' }] };
+                var err = Joi.validate(data, schema);
+
+                expect(err).to.not.exist;
+                expect(data.arr[0].one).to.equal('1');
+                expect(data.arr[0].two).to.equal('2');
+                done();
+            });
+        });
+
+        describe('#default', function () {
+
+            it('sets the value', function (done) {
+
+                var schema = { foo: Joi.string().default('test') };
+                var input = {};
+
+                expect(Joi.validate(input, schema)).to.not.exist;
+                expect(input.foo).to.equal('test');
+
+                done();
+            });
+
+            it('should not overide a value when value is given', function (done) {
+
+                var schema = { foo: Joi.string().default('bar') };
+                var input = { foo: 'test' };
+
+                expect(Joi.validate(input, schema)).to.not.exist;
+                expect(input.foo).to.equal('test');
+
+                done();
+            });
         });
 
         describe('#validateCallback', function () {
@@ -288,6 +331,19 @@ describe('Joi', function () {
                 expect(b._tags).to.include('tag2');
 
                 done();
+            });
+        });
+
+        describe('Set', function () {
+
+            describe('#toString', function () {
+
+                it('includes undefined', function (done) {
+
+                    var b = Joi.any();
+                    expect(b._valids.toString(true)).to.equal('undefined');
+                    done();
+                });
             });
         });
     });
