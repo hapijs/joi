@@ -1433,5 +1433,156 @@ describe('Joi.string', function () {
             ]);
             done();
         });
+
+        it('should handle a minimum bytes-size requirement', function (done) {
+
+            var rule = Joi.string().bytes(5);
+            Validate(rule, [
+                ['a', false],
+                ['abcde', true],
+                ['オ', false],
+                ['オケ', true],
+                ['オa', false],
+                ['オab', true],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle undefined minimum bytes-size as 0', function (done) {
+
+            var rule = Joi.string().bytes();
+            Validate(rule, [
+                ['a', true],
+                ['abcde', true],
+                ['オ', true],
+                ['オケ', true],
+                ['オa', true],
+                ['オab', true],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle null minimum bytes-size as 0', function (done) {
+
+            var rule = Joi.string().bytes(null);
+            Validate(rule, [
+                ['a', true],
+                ['abcde', true],
+                ['オ', true],
+                ['オケ', true],
+                ['オa', true],
+                ['オab', true],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle a minimum and maximum required bytes-size', function (done) {
+
+            var rule = Joi.string().bytes(4, 6);
+            Validate(rule, [
+                ['a', false],
+                ['abcd', true],
+                ['abcde', true],
+                ['abcdefg', false],
+                ['オ', false],
+                ['オケ', true],
+                ['オa', true],
+                ['オab', true],
+                ['オケa', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle a undefined minimum as 0 and deal with maximum required bytes-size', function (done) {
+
+            var rule = Joi.string().bytes(undefined, 6);
+            Validate(rule, [
+                ['a', true],
+                ['abcd', true],
+                ['abcde', true],
+                ['abcdefg', false],
+                ['オ', true],
+                ['オケ', true],
+                ['オa', true],
+                ['オab', true],
+                ['オケa', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle a undefined minimum as 0 and deal with maximum required bytes-size', function (done) {
+
+            var rule = Joi.string().bytes(undefined, 6);
+            Validate(rule, [
+                ['a', true],
+                ['abcd', true],
+                ['abcde', true],
+                ['abcdefg', false],
+                ['オ', true],
+                ['オケ', true],
+                ['オa', true],
+                ['オab', true],
+                ['オケa', false],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+
+        it('should handle a undefined minimum as 0 and deal with maximum required bytes-size', function (done) {
+
+            var rule = Joi.string().bytes(undefined, null);
+            Validate(rule, [
+                ['a', true],
+                ['abcd', true],
+                ['abcde', true],
+                ['abcdefg', true],
+                ['オ', true],
+                ['オケ', true],
+                ['オa', true],
+                ['オab', true],
+                ['オケa', true],
+                ['', false],
+                [null, false]
+            ]);
+            done();
+        });
+        it('should throw error on min smaller than max bytes', function (done) {
+
+            expect(function () {
+                Joi.string().bytes(3, 2);
+            }).to.throw();
+            done();
+        });
+
+        it('should throw error on negative min or max bytes', function (done) {
+            expect(function () {
+                Joi.string().bytes(-1);
+            }).to.throw();
+            expect(function () {
+                Joi.string().bytes(null, -1);
+            }).to.throw();
+            done();
+        });
+        
+        it('should throw error on negative min or max bytes', function (done) {
+            expect(function () {
+                Joi.string().bytes(-1);
+            }).to.throw();
+            expect(function () {
+                Joi.string().bytes(null, -1);
+            }).to.throw();
+            done();
+        });
     });
 });

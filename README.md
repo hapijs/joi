@@ -56,6 +56,7 @@ Current version: **2.8.x**
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
+        - [`string.bytes()`](#stringbytes)
     - [`alternatives(types)`](#alternativestypes)
 - [Migration notes](#migration-notes)
 
@@ -672,6 +673,19 @@ Requires the string value to be in valid ISO 8601 date format.
 ```javascript
 var schema = {
     a: Joi.string().isoDate()
+};
+```
+
+#### `string.bytes(min[, max])`
+
+Requires a string to have its size in bytes matched to a defined range.
+
+```javascript
+var schema = {
+    a: Joi.string().bytes(3), // Minimum 3 bytes
+    b: Joi.string().bytes(2, 4), // 2, 3, or 4 bytes
+    c: Joi.string().bytes(4, 4), // Exactly four bytes
+    c: Joi.string().bytes(0, 4).allow(''), // Maximum 4 bytes
 };
 ```
 
