@@ -248,7 +248,6 @@ describe('Types', function () {
               cheese_2: { age: 1, variety: 'pinot grigio' }
             };
 
-            debugger
             Validate(schema, [
               [valid, true],
               [invalid, false]
