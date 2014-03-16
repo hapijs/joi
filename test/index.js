@@ -1269,5 +1269,32 @@ describe('Joi', function () {
             expect(description).to.deep.equal(result);
             done();
         });
+
+        it ('describes dynamic properties', function (done) {
+            var schema = Joi.object().matchKeys(/_age$/, Joi.number());
+            var description = Joi.describe(schema);
+            var result = {
+                type: 'object',
+                flags: {
+                    insensitive: false,
+                    allowOnly: false
+                },
+                valids: [undefined],
+                invalids: [null],
+                children: {
+                    '/_age$/': {
+                        type: 'number',
+                        flags: {
+                            insensitive: false,
+                            allowOnly: false
+                        },
+                        valids: [undefined],
+                        invalids: [null]
+                    }
+                }
+            };
+            expect(description).to.deep.equal(result);
+            done();
+        });
     });
 });
