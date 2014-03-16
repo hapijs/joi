@@ -217,6 +217,44 @@ describe('Types', function () {
             ]);
             done();
         });
+
+        it('should validate properties based on a pattern', function (done) {
+            var schema = Joi.object()
+                .matchKeys(/^cheese_/, {
+                    age: Joi.number().min(0),
+                    variety: Joi.string().valid([
+                        'brie',
+                        'camembert',
+                        'gouda',
+                        'cheddar'
+                    ]),
+                })
+                .matchKeys(/^wine_/, {
+                    age: Joi.number().min(0),
+                    variety: Joi.string().valid([
+                        'merlot',
+                        'chardonnay',
+                        'syrah',
+                        'pinot grigio'
+                    ]),
+                });
+
+            var valid = {
+              cheese_1: { age: 1, variety: 'brie' },
+              wine_1: { age: 3, variety: 'merlot' }
+            };
+
+            var invalid = {
+              cheese_2: { age: 1, variety: 'pinot grigio' }
+            };
+
+            debugger
+            Validate(schema, [
+              [valid, true],
+              [invalid, false]
+            ]);
+            done();
+        });
     });
 });
 
