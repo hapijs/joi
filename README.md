@@ -56,6 +56,8 @@ Current version: **2.8.x**
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
+        - [`string.guid()`](#stringguid)
+        - [`string.isoDate()`](#stringisodate)
     - [`alternatives(types)`](#alternativestypes)
 - [Migration notes](#migration-notes)
 
