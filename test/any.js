@@ -121,6 +121,44 @@ describe('Joi', function () {
             });
         });
 
+        describe('#when', function () {
+
+            it('fails when when set on root', function (done) {
+
+                var b = Joi.any();
+                var result = b.when('test', Joi.any(), Joi.any().required());
+
+                expect(result.validate('test')).to.exist;
+                done();
+            });
+
+            it('returns error when related type not found', function (done) {
+
+                Validate(Joi.any().when('test', Joi.any(), Joi.any().required()), [['test', false]]);
+                done();
+            });
+
+            it('should throw an error when first parameter is not a string', function (done) {
+
+                try {
+                    Joi.any().when({});
+                    var error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    Joi.any().when(123);
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+                done();
+            });
+        });
+
         describe('#xor', function () {
 
             it('fails when without set on root', function (done) {
