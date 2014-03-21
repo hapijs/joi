@@ -107,6 +107,26 @@ describe('Joi', function () {
         done();
     });
 
+    it('validated when', function (done) {
+
+        var schema = Joi.object({
+            txt: Joi.string().when('upc', Joi.string(), Joi.any().required(), Joi.string().length(4)),
+            upc: Joi.any()
+        });
+
+        Validate(schema, [
+            [{}, true],
+            [{ upc: 'test' }, false],
+            [{ txt: 'test' }, true],
+            [{ txt: 'test', upc: null }, false],
+            [{ txt: 'test', upc: '' }, false],
+            [{ txt: 'test', upc: undefined }, true],
+            [{ txt: 'test', upc: 'test' }, true]
+        ]);
+
+        done();
+    });
+
     it('validates xor', function (done) {
 
         var schema = Joi.object({

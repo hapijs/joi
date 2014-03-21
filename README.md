@@ -22,6 +22,7 @@ Current version: **2.8.x**
         - [`any.optional()`](#anyoptional)
         - [`any.with(peer)`](#anywithpeer)
         - [`any.without(peer)`](#anywithoutpeer)
+        - [`any.when(peer, peerType, type)`](#anywhenpeerpeertypetype)
         - [`any.xor(peer)`](#anyxorpeer)
         - [`any.or(peer)`](#anyorpeer)
         - [`description(desc)`](#descriptiondesc)
@@ -261,6 +262,21 @@ var schema = {
 };
 ```
 
+#### `any.when(peer, peerType, type)`
+
+Enforces extra rules when another key is present and passes validation:
+- `peer` - the key name that will be validated against peerType. `peer` must be a string.
+- `peerType` - the type the peer will be validated against. `peerType` must be a Joi value.
+- `type` - the additional types that the value will be validated against. `type` can be an array of value, or multiple values can be passed as
+individual arguments.
+
+```javascript
+var schema = {
+    a: Joi.any().when('b', Joi.string(), Joi.string()),
+    b: Joi.any()
+};
+```
+
 #### `any.xor(peer)`
 
 Defines an exclusive relationship with another key where this or one of the peers is required but not at the same time where:
@@ -367,6 +383,7 @@ Supports the following subset of the [`any()`](#any) type:
 - `optional()`
 - `with(peer)`
 - `without(peer)`
+- `when(peer, peerType, type)`
 - `xor(peer)`
 - `description(desc)`
 - `notes(notes)`
