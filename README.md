@@ -675,6 +675,16 @@ var schema = {
 };
 ```
 
+#### `string.hostname()`
+
+Requires the string value to be a valid hostname as per [RFC1123](http://tools.ietf.org/html/rfc1123).
+
+```javascript
+var schema = {
+    a: Joi.string().hostname()
+};
+```
+
 ### `alternatives(types)`
 
 Generates a type that will match one of the provided alternative schemas where:
