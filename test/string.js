@@ -1433,5 +1433,18 @@ describe('Joi.string', function () {
             ]);
             done();
         });
+        
+        it ('should validate hostnames', function(done) {
+            
+            var rule = Joi.string().hostname();
+            Validate(rule, [
+                ["domain.local", true],
+                ["3domain.local", true],
+                ["hostname", true],
+                ["host:name", false],
+                ["-", false]
+            ]);
+            done();
+        });
     });
 });
