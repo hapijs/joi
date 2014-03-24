@@ -56,6 +56,7 @@ Current version: **2.8.x**
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
+        - [`string.hostname()`](#stringhostname)
     - [`alternatives(types)`](#alternativestypes)
 - [Migration notes](#migration-notes)
 
