@@ -51,6 +51,92 @@ describe('Joi', function () {
             });
         });
 
+        describe('#when', function () {
+            it('has different required fields depending on peer', function (done) {
+                var postSchema = {
+                    country:    Joi.string().valid('USA', 'CAN').required(),
+                    zipCode:    Joi.string().length(5).when('country', Joi.string().valid('USA')),
+                    postalCode: Joi.string().length(6).when('country', Joi.string().valid('CAN'))
+                };
+
+                Validate(postSchema, [
+                    [{ country: 'USA', zipCode: '12345' }, true],
+                    [{ country: 'USA', postalCode: '123456' }, false],
+                    [{ country: 'USA', zipCode: '12345', postalCode: '123456' }, false],
+                    [{ country: 'CAN', postalCode: '123456' }, true],
+                    [{ country: 'CAN', zipCode: '12345' }, false],
+                    [{ country: 'CAN', postalCode: '123456', zipCode: '12345' }, false]
+                ]);
+
+                done();
+            });
+
+            it('should traverse alternatives till a match is made', function (done) {
+                var schema = {
+                    type: Joi.string().required(),
+                    data: Joi.alternatives(
+                        Joi.object({ bar: Joi.string().required() }).when('type', Joi.string().valid('foo')),
+                        Joi.object({ baz: Joi.string().required() }).when('type', Joi.string().valid('bar')),
+
+                        // matches all `type` values.
+                        Joi.number().when('type', Joi.any()).strict(),
+                        Joi.string().when('type', Joi.any())
+                    ).required()
+                };
+
+                Validate(schema, [
+                    [{ type: 'foo', data: { bar: 'baz' }}, true],
+                    [{ type: 'foo', data: { baz: 'baz' }}, false],
+                    [{ type: 'foo', data: {}}, false],
+                    [{ type: 'foo', data: 'some string'}, true],
+                    [{ type: 'foo', data: 1234}, true],
+                    [{ type: 'foo', data: false}, false],
+                    [{ type: 'bar', data: { baz: 'haz' }}, true],
+                    [{ type: 'bar', data: { bar: 'baz' }}, false],
+                    [{ type: 'bar', data: {}}, false],
+                    [{ type: 'bar', data: 'some string'}, true],
+                    [{ type: 'bar', data: 1234}, true],
+                    [{ type: 'bar', data: false}, false],
+                    [{ type: 'haz', data: 1234 }, true],
+                    [{ type: 'haz', data: 'i am a string' }, true],
+                    [{ type: 'haz', data: false }, false],
+                    [{ type: 'haz', data: { bar: 'bar' } }, false],
+                    [{ type: 'haz', data: { baz: 'baz' } }, false],
+                    [{ type: 'haz' }, false]
+                ]);
+
+                done();
+            });
+
+            it('should throw an error when a parameter is not a string', function (done) {
+
+                try {
+                    Joi.any().when({});
+                    var error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    Joi.any().when('string');
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(true);
+
+                try {
+                    Joi.any().when('string', Joi.string());
+                    error = false;
+                } catch (e) {
+                    error = true;
+                }
+                expect(error).to.equal(false);
+                done();
+            });
+        });
+
         describe('#with', function () {
 
             it('fails when with set on root', function (done) {
