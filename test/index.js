@@ -128,6 +128,40 @@ describe('Joi', function () {
         done();
     });
 
+    it('validates complex literal', function (done) {
+
+        var schema = ['key', 5, { a: true, b: [/^a/, 'boom'] }];
+        Validate(schema, [
+            ['key', true],
+            [5, true],
+            ['other', false],
+            [6, false],
+            [{ c: 5 }, false],
+            [{}, true],
+            [{ b: 'abc' }, true],
+            [{ a: true, b: 'boom' }, true],
+            [{ a: 5, b: 'a' }, false]
+        ]);
+        done();
+    });
+
+    it('validates a compiled complex literal', function (done) {
+
+        var schema = Joi.compile(['key', 5, { a: true, b: [/^a/, 'boom'] }]);
+        Validate(schema, [
+            ['key', true],
+            [5, true],
+            ['other', false],
+            [6, false],
+            [{ c: 5 }, false],
+            [{}, true],
+            [{ b: 'abc' }, true],
+            [{ a: true, b: 'boom' }, true],
+            [{ a: 5, b: 'a' }, false]
+        ]);
+        done();
+    });
+
     it('validates regex directly', function (done) {
 
         expect(Joi.validate('5', /^5$/)).to.not.exist;

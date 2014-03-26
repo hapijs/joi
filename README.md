@@ -14,6 +14,7 @@ Current version: **3.1.x**
 - [Example](#example)
 - [Usage](#usage)
     - [`validate(value, schema, options)`](#validatevalue-schema-options)
+    - [`compile(schema)`](#compileschema)
     - [`any()`](#any)
         - [`any.allow(value)`](#anyallowvalue)
         - [`any.valid(value)`](#anyvalidvalue)
@@ -163,6 +164,30 @@ var err = Joi.validate(value, schema, { modify: true });
 
 // err -> null
 // value.a -> 123 (number, not string)
+```
+
+### `compile(schema)`
+
+Converts literal schema definition to **joi** schema object (or returns the same back if already a **joi** schema object) where:
+- `schema` - the schema definition to compile.
+
+```javascript
+var definition = ['key', 5, { a: true, b: [/^a/, 'boom'] }];
+var schema = Joi.compile(definition);
+
+// Same as:
+
+var schema = Joi.alternatives([
+    Joi.string().valid('key'),
+    Joi.number().valid(5),
+    Joi.object({
+        a: Joi.boolean().valid(true),
+        b: Joi.alternatives([
+            Joi.string().regex(/^a/),
+            Joi.string().valid('boom')
+        ])
+    })
+]);
 ```
 
 ### `any()`
