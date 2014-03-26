@@ -1009,69 +1009,32 @@ describe('Joi', function () {
             notEmpty: ''
         };
 
-        var err = Joi.validate(input, schema, { abortEarly: false, languagePath: Path.join(__dirname, 'languages', 'en-us.json') });
+        var lang = {
+            any: {
+                empty: '3',
+                without: {
+                    peer: '7'
+                },
+                rename: {
+                    override: '11'
+                }
+            },
+            date: {
+                base: '18'
+            },
+            string: {
+                base: '13',
+                min: '14',
+                max: '15',
+                alphanum: '16',
+                email: '19'
+            }
+        };
+
+        var err = Joi.validate(input, schema, { abortEarly: false, language: lang });
 
         expect(err).to.exist;
         expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. 3. 13');
-        done();
-    });
-
-    it('supports custom errors and localized errors when validating types', function (done) {
-
-        var schema = {
-            email: Joi.string().email(),
-            date: Joi.date(),
-            alphanum: Joi.string().alphanum(),
-            min: Joi.string().min(3),
-            max: Joi.string().max(3),
-            required: Joi.string().required().without('xor'),
-            xor: Joi.string().without('required'),
-            renamed: Joi.string().rename('required').valid('456'),
-            notEmpty: Joi.string().required()
-        };
-
-        var input = {
-            email: 'invalid-email',
-            date: 'invalid-date',
-            alphanum: '\b\n\f\r\t',
-            min: 'ab',
-            max: 'abcd',
-            required: 'hello',
-            xor: '123',
-            renamed: '456',
-            notEmpty: ''
-        };
-
-        var options = {
-            abortEarly: false,
-            language: {
-                any: {
-                    empty: 'Custome!'
-                }
-            },
-            languagePath: Path.join(__dirname, 'languages', 'en-us.json')
-        };
-        var err = Joi.validate(input, schema, options);
-
-        expect(err).to.exist;
-        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. Custome!. 13');
-        done();
-    });
-
-    it('returns key when language file missing item', function (done) {
-
-        var input = {
-            notEmpty: ''
-        };
-
-        var schema = {
-            notEmpty: Joi.string().required()
-        };
-
-        var err = Joi.validate(input, schema, { languagePath: Path.join(__dirname, 'languages', 'empty.json') });
-
-        expect(err).to.exist;
-        expect(err.message).to.equal('notEmpty');
         done();
     });
 

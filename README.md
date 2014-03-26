@@ -148,9 +148,7 @@ Validates a value using the given schema and options where:
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
-  - `language` - a localized langugage object using the format of the `languagePath` file. Error formats are looked up in the `language`
-    object first, and then in the `languagePath` file. Defaults to no override (`{}`).
-  - `languagePath` - the location of the language file used to localize error messages. Defaults to `'languages/en-us.json'`.
+  - `language` - overrides individual error messages. Defaults to no override (`{}`).
 
 ```javascript
 var schema = {
