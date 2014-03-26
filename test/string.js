@@ -107,6 +107,69 @@ describe('Joi.string', function () {
         });
     });
 
+    describe('#min', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.string().min('a');
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+
+        it('throws when limit is not an integer', function (done) {
+
+            expect(function () {
+
+                Joi.string().min(1.2);
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+    });
+
+    describe('#max', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.string().max('a');
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+
+        it('throws when limit is not an integer', function (done) {
+
+            expect(function () {
+
+                Joi.string().max(1.2);
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+    });
+
+    describe('#length', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.string().length('a');
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+
+        it('throws when limit is not an integer', function (done) {
+
+            expect(function () {
+
+                Joi.string().length(1.2);
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+    });
+
     describe('#validate', function () {
 
         it('should work', function (done) {

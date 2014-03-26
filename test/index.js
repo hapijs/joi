@@ -86,6 +86,8 @@ describe('Joi', function () {
 
         var err = Joi.validate(null, Joi.string());
         expect(err).to.exist;
+        err.annotated();
+        expect(err.message).to.equal('{\n  \u001b[41m\"<root>\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] the value of <root> is not allowed to be null\u001b[0m');
         done();
     });
 
@@ -1010,7 +1012,7 @@ describe('Joi', function () {
         var err = Joi.validate(input, schema, { abortEarly: false, languagePath: Path.join(__dirname, 'languages', 'en-us.json') });
 
         expect(err).to.exist;
-        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. 3');
+        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. 3. 13');
         done();
     });
 
@@ -1052,7 +1054,7 @@ describe('Joi', function () {
         var err = Joi.validate(input, schema, options);
 
         expect(err).to.exist;
-        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. Custome!');
+        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. Custome!. 13');
         done();
     });
 
@@ -1123,7 +1125,7 @@ describe('Joi', function () {
         var err = Joi.validate(object, schema, { abortEarly: false });
         expect(err).to.exist;
         err.annotated();
-        expect(err.message).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[5]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"b\"\u001b[0m\u001b[31m [4]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [3]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of u is not allowed to be undefined\n[3] the value of u must be one of e, f, g, h\n[4] the value of b must be one of i, j, false\n[5] the value of b must be a string\u001b[0m');
+        expect(err.message).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[6]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"b\"\u001b[0m\u001b[31m [5]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [4]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [3]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of u is not allowed to be undefined\n[3] the value of u must be one of e, f, g, h\n[4] the value of u must be a string\n[5] the value of b must be one of i, j, false\n[6] the value of b must be a string\u001b[0m');
         done();
     });
 
