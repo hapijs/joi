@@ -3,7 +3,7 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **2.8.x**
+Current version: **2.9.x**
 
 [![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 
@@ -363,17 +363,7 @@ Joi.validate(input, schema);
 
 Generates a schema object that matches an array data type.
 
-Supports the following subset of the [`any()`](#any) type:
-- `required()`
-- `optional()`
-- `with(peer)`
-- `without(peer)`
-- `xor(peer)`
-- `description(desc)`
-- `notes(notes)`
-- `tags(tags)`
-- `options(options)`
-- `rename(to, [options])`
+Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var array = Joi.array();
