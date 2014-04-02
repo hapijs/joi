@@ -289,7 +289,7 @@ var schema = {
 };
 ```
 
-#### `description(desc)`
+#### `any.description(desc)`
 
 Annotates the key where:
 - `desc` - the description string.
