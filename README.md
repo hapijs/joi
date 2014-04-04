@@ -58,6 +58,7 @@ Current version: **2.9.x**
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
+        - [`string.hostname()`](#stringhostname)
     - [`alternatives(types)`](#alternativestypes)
 - [Migration notes](#migration-notes)
 
