@@ -58,6 +58,7 @@ Current version: **2.9.x**
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
+        - [`string.hostname()`](#stringhostname)
     - [`alternatives(types)`](#alternativestypes)
 - [Migration notes](#migration-notes)
 
@@ -667,6 +668,16 @@ Requires the string value to be in valid ISO 8601 date format.
 ```javascript
 var schema = {
     a: Joi.string().isoDate()
+};
+```
+
+#### `string.hostname()`
+
+Requires the string value to be a valid hostname as per [RFC1123](http://tools.ietf.org/html/rfc1123).
+
+```javascript
+var schema = {
+    a: Joi.string().hostname()
 };
 ```
 
