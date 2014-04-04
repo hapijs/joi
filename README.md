@@ -105,6 +105,9 @@ var schema = {
 };
 ```
 
+Note that **joi** schema objects are immutable which means every additional rule added (e.g. `.min(5)`) will return a
+new schema object.
+
 Then the value is validated against the schema:
 
 ```javascript
@@ -712,6 +715,11 @@ Please test your existing validation rules to ensure they behave as expected wit
 * `allow()`, `valid()`, and `invalid()` values are now compared against the original and converted values (not just after conversion).
 * `string().min()` no longer implies `required()`.
 
+**joi** 3.0 focused on changing the schema object to be immutable with all the condition methods returning a new object with the aggragated
+rules. This allows for better reusing of basic types as well as defining new types without corruption when they are modified.
+
+* Removed deprecated: `Joi.types`, `Joi.Types`, `nullOk()`, `emptyOk()`, and `deny()`.
+* Removed deprecated uppercase type names.
 
 
 

@@ -62,6 +62,26 @@ describe('Joi', function () {
         });
     });
 
+    it('keeps schema immutable', function (done) {
+
+        var a = Joi.string();
+        var b = a.valid('b');
+
+        Validate(a, [
+            ['a', true],
+            ['b', true],
+            [5, false]
+        ]);
+
+        Validate(b, [
+            ['a', false],
+            ['b', true],
+            [5, false]
+        ]);
+
+        done();
+    });
+
     it('validates null', function (done) {
 
         var err = Joi.validate(null, Joi.string());
@@ -233,8 +253,8 @@ describe('Joi', function () {
         var schema = {
             auth: [
                 Joi.object({
-                    mode: Joi.string().valid('required', 'optional', 'try').nullOk()
-                }).nullOk(),
+                    mode: Joi.string().valid('required', 'optional', 'try').allow(null)
+                }).allow(null),
                 Joi.string(),
                 Joi.boolean()
             ]
@@ -262,7 +282,9 @@ describe('Joi', function () {
 
         var schema = {
             auth: Joi.alternatives(
-                Joi.object({ mode: Joi.string().valid('required', 'optional', 'try').nullOk() }).nullOk(),
+                Joi.object({
+                    mode: Joi.string().valid('required', 'optional', 'try').allow(null)
+                }).allow(null),
                 Joi.string(),
                 Joi.boolean()
             )
@@ -362,7 +384,7 @@ describe('Joi', function () {
 
     it('validates config where the root item is a joi type', function (done) {
 
-        expect(Joi.validate(true, Joi.boolean().nullOk())).to.be.null;
+        expect(Joi.validate(true, Joi.boolean().allow(null))).to.be.null;
         expect(Joi.validate({ auth: { mode: 'try' } }, Joi.object())).to.be.null;
 
         var err = Joi.validate(true, Joi.object());
@@ -456,8 +478,8 @@ describe('Joi', function () {
 
         var config = {
             auth: Joi.object({
-                mode: Joi.string().valid('required', 'optional', 'try').nullOk()
-            }).nullOk()
+                mode: Joi.string().valid('required', 'optional', 'try').allow(null)
+            }).allow(null)
         };
 
         var err = Joi.validate({ auth: { unknown: true } }, config);
@@ -1127,7 +1149,8 @@ describe('Joi', function () {
             type: 'object',
             flags: {
                 insensitive: false,
-                allowOnly: false
+                allowOnly: false,
+                default: undefined
             },
             valids: [undefined],
             invalids: [null],
@@ -1136,7 +1159,8 @@ describe('Joi', function () {
                     type: 'object',
                     flags: {
                         insensitive: false,
-                        allowOnly: false
+                        allowOnly: false,
+                        default: undefined
                     },
                     valids: [undefined],
                     invalids: [null],
@@ -1145,7 +1169,8 @@ describe('Joi', function () {
                             type: 'string',
                             flags: {
                                 insensitive: false,
-                                allowOnly: false
+                                allowOnly: false,
+                                default: undefined
                             },
                             valids: [undefined],
                             invalids: [null, ''],
@@ -1155,7 +1180,8 @@ describe('Joi', function () {
                             type: 'date',
                             flags: {
                                 insensitive: false,
-                                allowOnly: false
+                                allowOnly: false,
+                                default: undefined
                             },
                             valids: [undefined],
                             invalids: [null]
@@ -1164,7 +1190,8 @@ describe('Joi', function () {
                             type: 'object',
                             flags: {
                                 insensitive: false,
-                                allowOnly: false
+                                allowOnly: false,
+                                default: undefined
                             },
                             valids: [undefined],
                             invalids: [null],
@@ -1173,7 +1200,8 @@ describe('Joi', function () {
                                     type: 'string',
                                     flags: {
                                         insensitive: false,
-                                        allowOnly: false
+                                        allowOnly: false,
+                                        default: undefined
                                     },
                                     valids: [undefined],
                                     invalids: [null, ''],
@@ -1188,7 +1216,8 @@ describe('Joi', function () {
                         type: 'number',
                         flags: {
                             insensitive: false,
-                            allowOnly: false
+                            allowOnly: false,
+                            default: undefined
                         },
                         valids: [undefined],
                         invalids: [null]
@@ -1197,7 +1226,8 @@ describe('Joi', function () {
                         type: 'string',
                         flags: {
                             insensitive: false,
-                            allowOnly: false
+                            allowOnly: false,
+                            default: undefined
                         },
                         valids: [undefined],
                         invalids: [null, ''],
@@ -1208,7 +1238,8 @@ describe('Joi', function () {
                     type: 'string',
                     flags: {
                         insensitive: false,
-                        allowOnly: false
+                        allowOnly: false,
+                        default: undefined
                     },
                     valids: [undefined],
                     invalids: [null, ''],
@@ -1218,7 +1249,8 @@ describe('Joi', function () {
                     type: 'string',
                     flags: {
                         insensitive: false,
-                        allowOnly: false
+                        allowOnly: false,
+                        default: undefined
                     },
                     invalids: [null, '', undefined],
                     rules: [{ name: 'without', arg: ['xor'] }]
@@ -1227,7 +1259,8 @@ describe('Joi', function () {
                     type: 'string',
                     flags: {
                         insensitive: false,
-                        allowOnly: false
+                        allowOnly: false,
+                        default: undefined
                     },
                     valids: [undefined],
                     invalids: [null, ''],
@@ -1237,7 +1270,8 @@ describe('Joi', function () {
                     type: 'string',
                     flags: {
                         insensitive: false,
-                        allowOnly: true
+                        allowOnly: true,
+                        default: undefined
                     },
                     valids: [undefined, '456'],
                     invalids: [null, '']
@@ -1246,12 +1280,13 @@ describe('Joi', function () {
                     type: 'string',
                     flags: {
                         insensitive: false,
-                        allowOnly: false
+                        allowOnly: false,
+                        default: undefined
                     },
-                    invalids: [null, '', undefined],
                     description: 'a',
                     notes: ['b'],
-                    tags: ['c']
+                    tags: ['c'],
+                    invalids: [null, '', undefined]
                 }
             }
         };
