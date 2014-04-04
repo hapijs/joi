@@ -719,7 +719,7 @@ Please test your existing validation rules to ensure they behave as expected wit
 rules. This allows for better reusing of basic types as well as defining new types without corruption when they are modified.
 
 * Removed deprecated: `Joi.types`, `Joi.Types`, `nullOk()`, `emptyOk()`, and `deny()`.
-
+* Removed deprecated uppercase type names.
 
 
 
