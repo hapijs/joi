@@ -325,8 +325,7 @@ describe('Joi', function () {
 
             it('sets the description', function (done) {
 
-                var b = Joi.any();
-                b.description('my description');
+                var b = Joi.any().description('my description');
                 expect(b._description).to.equal('my description');
 
                 done();
@@ -337,8 +336,7 @@ describe('Joi', function () {
 
             it('sets the notes', function (done) {
 
-                var b = Joi.any();
-                b.notes('my notes');
+                var b = Joi.any().notes('my notes');
                 expect(b._notes).to.deep.equal(['my notes']);
 
                 done();
@@ -349,8 +347,7 @@ describe('Joi', function () {
 
             it('sets the tags', function (done) {
 
-                var b = Joi.any();
-                b.tags(['tag1', 'tag2']);
+                var b = Joi.any().tags(['tag1', 'tag2']);
                 expect(b._tags).to.include('tag1');
                 expect(b._tags).to.include('tag2');
 

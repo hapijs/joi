@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "2.9.0",
+  "version": "3.0.0",
   "repository": "git://github.com/spumko/joi",
   "main": "index",
   "keywords": [
@@ -15,7 +15,7 @@
     "hoek": "1.x.x"
   },
   "devDependencies": {
-    "lab": "1.x.x"
+    "lab": "3.x.x"
   },
   "scripts": {
     "test": "make test-cov"

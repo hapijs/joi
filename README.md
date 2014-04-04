@@ -56,7 +56,8 @@ Current version: **2.9.x**
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
-        - [`string.hostname()`](#stringhostname)
+        - [`string.guid()`](#stringguid)
+        - [`string.isoDate()`](#stringisodate)
     - [`alternatives(types)`](#alternativestypes)
 - [Migration notes](#migration-notes)
 
@@ -104,6 +105,9 @@ var schema = {
 };
 ```
 
+Note that **joi** schema objects are immutable which means every additional rule added (e.g. `.min(5)`) will return a
+new schema object.
+
 Then the value is validated against the schema:
 
 ```javascript
@@ -138,15 +142,15 @@ Validates a value using the given schema and options where:
 - `value` - the value being validated.
 - `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object.
 - `options` - an optional object with the following optional keys:
-- `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
-- `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
-- `modify` - when `true`, converted values are written back to the provided value (only when value is an object). Defaults to `false`.
-- `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
-- `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
-- `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
-- `language` - a localized langugage object using the format of the `languagePath` file. Error formats are looked up in the `language`
-  object first, and then in the `languagePath` file. Defaults to no override (`{}`).
-- `languagePath` - the location of the language file used to localize error messages. Defaults to `'languages/en-us.json'`.
+  - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
+  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
+  - `modify` - when `true`, converted values are written back to the provided value (only when value is an object). Defaults to `false`.
+  - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
+  - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
+  - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
+  - `language` - a localized langugage object using the format of the `languagePath` file. Error formats are looked up in the `language`
+    object first, and then in the `languagePath` file. Defaults to no override (`{}`).
+  - `languagePath` - the location of the language file used to localize error messages. Defaults to `'languages/en-us.json'`.
 
 ```javascript
 var schema = {
@@ -288,7 +292,7 @@ var schema = {
 };
 ```
 
-#### `description(desc)`
+#### `any.description(desc)`
 
 Annotates the key where:
 - `desc` - the description string.
@@ -721,6 +725,11 @@ Please test your existing validation rules to ensure they behave as expected wit
 * `allow()`, `valid()`, and `invalid()` values are now compared against the original and converted values (not just after conversion).
 * `string().min()` no longer implies `required()`.
 
+**joi** 3.0 focused on changing the schema object to be immutable with all the condition methods returning a new object with the aggragated
+rules. This allows for better reusing of basic types as well as defining new types without corruption when they are modified.
+
+* Removed deprecated: `Joi.types`, `Joi.Types`, `nullOk()`, `emptyOk()`, and `deny()`.
+* Removed deprecated uppercase type names.
 
 
 
