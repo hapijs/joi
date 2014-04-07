@@ -41,6 +41,9 @@
     "boolean": {
         "base": "the value of {{key}} must be a boolean"
     },
+    "buffer": {
+        "base": "the value of {{key}} must be a buffer"
+    },
     "date": {
         "base": "the value of {{key}} must be a number of milliseconds or valid date string",
         "min": "the value of {{key}} must be larger than or equal to {{value}}",
