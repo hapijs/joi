@@ -38,6 +38,7 @@ Current version: **2.9.x**
         - [`array.max(limit)`](#arraymaxlimit)
         - [`array.length(limit)`](#arraylengthlimit)
     - [`boolean()`](#boolean)
+    - [`buffer()`](#buffer)
     - [`date()`](#date)
         - [`date.min(date)`](#datemindate)
         - [`date.max(date)`](#datemaxdate)
@@ -444,6 +445,18 @@ boolean.allow(null);
 var err = boolean.validate(true);
 ```
 
+### `buffer()`
+
+Generates a schema object that matches a Buffer data type (as well as the strings which can be converted to Buffers).
+
+Supports the same methods of the [`any()`](#any) type.
+
+```javascript
+var schema = {
+    a: Joi.buffer()
+};
+```
+
 ### `date()`
 
 Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds).
@@ -720,6 +733,3 @@ rules. This allows for better reusing of basic types as well as defining new typ
 
 * Removed deprecated: `Joi.types`, `Joi.Types`, `nullOk()`, `emptyOk()`, and `deny()`.
 * Removed deprecated uppercase type names.
-
-
-
