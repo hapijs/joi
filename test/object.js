@@ -217,6 +217,70 @@ describe('Types', function () {
             ]);
             done();
         });
+
+        it('errors on unknown keys when functions allows', function (done) {
+
+            var schema = { a: Joi.number() };
+            var obj = { a: 5, b: 'value' };
+            expect(Joi.validate(obj, schema, { skipFunctions: true })).to.exist;
+            done();
+        });
+
+        describe('#describe', function () {
+
+            it('return empty description when no schema defined', function (done) {
+
+                var schema = Joi.object();
+                var desc = schema.describe();
+                expect(desc).to.deep.equal({
+                    type: 'object',
+                    flags: {
+                      insensitive: false,
+                      allowOnly: false,
+                      default: undefined
+                    },
+                    valids: [undefined],
+                    invalids: [null]
+                });
+                done();
+            });
+        });
+
+        describe('#length', function () {
+
+            it('throws when length is not a number', function (done) {
+
+                expect(function () {
+
+                    Joi.object().length('a');
+                }).to.throw('limit must be an integer');
+                done();
+            });
+        });
+
+        describe('#min', function () {
+
+            it('throws when limit is not a number', function (done) {
+
+                expect(function () {
+
+                    Joi.object().min('a');
+                }).to.throw('limit must be an integer');
+                done();
+            });
+        });
+
+        describe('#max', function () {
+
+            it('throws when limit is not a number', function (done) {
+
+                expect(function () {
+
+                    Joi.object().max('a');
+                }).to.throw('limit must be an integer');
+                done();
+            });
+        });
     });
 });
 

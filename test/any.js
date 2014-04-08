@@ -259,6 +259,30 @@ describe('Joi', function () {
             });
         });
 
+        describe('#options', function () {
+
+            it('adds to existing options', function (done) {
+
+                var a = { b: Joi.number().strict().options({ convert: true, modify: true }) };
+                var c = { b: '2' };
+                expect(Joi.validate(c, a)).to.not.exist;
+                expect(c.b).to.equal(2);
+                done();
+            });
+        });
+
+        describe('#strict', function () {
+
+            it('adds to existing options', function (done) {
+
+                var a = { b: Joi.number().options({ convert: true }).strict() };
+                var c = { b: '2' };
+                expect(Joi.validate(c, a)).to.exist;
+                expect(c.b).to.equal('2');
+                done();
+            });
+        });
+
         describe('#default', function () {
 
             it('sets the value', function (done) {
@@ -330,15 +354,42 @@ describe('Joi', function () {
 
                 done();
             });
+
+            it('throws when description is missing', function (done) {
+
+                expect(function () {
+
+                    Joi.any().description();
+                }).to.throw('Description must be a non-empty string');
+                done();
+            });
         });
 
         describe('#notes', function () {
 
             it('sets the notes', function (done) {
 
-                var b = Joi.any().notes('my notes');
-                expect(b._notes).to.deep.equal(['my notes']);
+                var b = Joi.any().notes(['a']).notes('my notes');
+                expect(b._notes).to.deep.equal(['a', 'my notes']);
 
+                done();
+            });
+
+            it('throws when notes are missing', function (done) {
+
+                expect(function () {
+
+                    Joi.any().notes();
+                }).to.throw('Notes must be a non-empty string or array');
+                done();
+            });
+
+            it('throws when notes are invalid', function (done) {
+
+                expect(function () {
+
+                    Joi.any().notes(5);
+                }).to.throw('Notes must be a non-empty string or array');
                 done();
             });
         });
@@ -347,10 +398,39 @@ describe('Joi', function () {
 
             it('sets the tags', function (done) {
 
-                var b = Joi.any().tags(['tag1', 'tag2']);
+                var b = Joi.any().tags(['tag1', 'tag2']).tags('tag3');
                 expect(b._tags).to.include('tag1');
                 expect(b._tags).to.include('tag2');
+                expect(b._tags).to.include('tag3');
 
+                done();
+            });
+
+            it('throws when tags are missing', function (done) {
+
+                expect(function () {
+
+                    Joi.any().tags();
+                }).to.throw('Tags must be a non-empty string or array');
+                done();
+            });
+
+            it('throws when tags are invalid', function (done) {
+
+                expect(function () {
+
+                    Joi.any().tags(5);
+                }).to.throw('Tags must be a non-empty string or array');
+                done();
+            });
+        });
+
+        describe('#_validate', function () {
+
+            it('checks value after conversion', function (done) {
+
+                var a = Joi.number().invalid(2);
+                expect(Joi.validate('2', a, { abortEarly: false })).to.exist;
                 done();
             });
         });

@@ -404,4 +404,28 @@ describe('Joi.number', function () {
             done();
         });
     });
+
+    describe('#min', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.number().min('a');
+            }).to.throw('limit must be an integer');
+            done();
+        });
+    });
+
+    describe('#max', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.number().max('a');
+            }).to.throw('limit must be an integer');
+            done();
+        });
+    });
 });

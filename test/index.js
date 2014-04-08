@@ -86,6 +86,8 @@ describe('Joi', function () {
 
         var err = Joi.validate(null, Joi.string());
         expect(err).to.exist;
+        err.annotated();
+        expect(err.message).to.equal('{\n  \u001b[41m\"<root>\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] the value of <root> is not allowed to be null\u001b[0m');
         done();
     });
 
@@ -1007,69 +1009,32 @@ describe('Joi', function () {
             notEmpty: ''
         };
 
-        var err = Joi.validate(input, schema, { abortEarly: false, languagePath: Path.join(__dirname, 'languages', 'en-us.json') });
-
-        expect(err).to.exist;
-        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. 3');
-        done();
-    });
-
-    it('supports custom errors and localized errors when validating types', function (done) {
-
-        var schema = {
-            email: Joi.string().email(),
-            date: Joi.date(),
-            alphanum: Joi.string().alphanum(),
-            min: Joi.string().min(3),
-            max: Joi.string().max(3),
-            required: Joi.string().required().without('xor'),
-            xor: Joi.string().without('required'),
-            renamed: Joi.string().rename('required').valid('456'),
-            notEmpty: Joi.string().required()
-        };
-
-        var input = {
-            email: 'invalid-email',
-            date: 'invalid-date',
-            alphanum: '\b\n\f\r\t',
-            min: 'ab',
-            max: 'abcd',
-            required: 'hello',
-            xor: '123',
-            renamed: '456',
-            notEmpty: ''
-        };
-
-        var options = {
-            abortEarly: false,
-            language: {
-                any: {
-                    empty: 'Custome!'
+        var lang = {
+            any: {
+                empty: '3',
+                without: {
+                    peer: '7'
+                },
+                rename: {
+                    override: '11'
                 }
             },
-            languagePath: Path.join(__dirname, 'languages', 'en-us.json')
+            date: {
+                base: '18'
+            },
+            string: {
+                base: '13',
+                min: '14',
+                max: '15',
+                alphanum: '16',
+                email: '19'
+            }
         };
-        var err = Joi.validate(input, schema, options);
+
+        var err = Joi.validate(input, schema, { abortEarly: false, language: lang });
 
         expect(err).to.exist;
-        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. Custome!');
-        done();
-    });
-
-    it('returns key when language file missing item', function (done) {
-
-        var input = {
-            notEmpty: ''
-        };
-
-        var schema = {
-            notEmpty: Joi.string().required()
-        };
-
-        var err = Joi.validate(input, schema, { languagePath: Path.join(__dirname, 'languages', 'empty.json') });
-
-        expect(err).to.exist;
-        expect(err.message).to.equal('notEmpty');
+        expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. 3. 13');
         done();
     });
 
@@ -1123,7 +1088,7 @@ describe('Joi', function () {
         var err = Joi.validate(object, schema, { abortEarly: false });
         expect(err).to.exist;
         err.annotated();
-        expect(err.message).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[5]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"b\"\u001b[0m\u001b[31m [4]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [3]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of u is not allowed to be undefined\n[3] the value of u must be one of e, f, g, h\n[4] the value of b must be one of i, j, false\n[5] the value of b must be a string\u001b[0m');
+        expect(err.message).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[6]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"b\"\u001b[0m\u001b[31m [5]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [4]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [3]: -- missing --\u001b[0m,\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of u is not allowed to be undefined\n[3] the value of u must be one of e, f, g, h\n[4] the value of u must be a string\n[5] the value of b must be one of i, j, false\n[6] the value of b must be a string\u001b[0m');
         done();
     });
 
@@ -1304,5 +1269,12 @@ describe('Joi', function () {
             expect(description).to.deep.equal(result);
             done();
         });
+
+        it('describes schema without invalids', function (done) {
+
+            var description = Joi.describe(Joi.any().allow(null));
+            expect(description.invalids).to.not.exist;
+            done();
+        })
     });
 });

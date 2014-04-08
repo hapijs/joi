@@ -3,7 +3,7 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **2.9.x**
+Current version: **3.0.x**
 
 [![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 
@@ -149,9 +149,7 @@ Validates a value using the given schema and options where:
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
-  - `language` - a localized langugage object using the format of the `languagePath` file. Error formats are looked up in the `language`
-    object first, and then in the `languagePath` file. Defaults to no override (`{}`).
-  - `languagePath` - the location of the language file used to localize error messages. Defaults to `'languages/en-us.json'`.
+  - `language` - overrides individual error messages. Defaults to no override (`{}`).
 
 ```javascript
 var schema = {
@@ -698,6 +696,7 @@ var err = alt.validate('a');
 Note that the `alternatives()` type does not behave the same way as passing multiple alternatives directly using an
 array of types (e.g. `{ a: [Joi.number(), Joi.string()] }`). When passing an array directly, the value must match one
 of the provided types while when using the `alternatives()` type, the key is optional by default.
+<<<<<<< HEAD
 
 # Migration notes
 
@@ -733,3 +732,5 @@ rules. This allows for better reusing of basic types as well as defining new typ
 
 * Removed deprecated: `Joi.types`, `Joi.Types`, `nullOk()`, `emptyOk()`, and `deny()`.
 * Removed deprecated uppercase type names.
+=======
+>>>>>>> bc9c19e4a5a8537cedb693487b020feeeb61fb05

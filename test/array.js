@@ -114,6 +114,24 @@ describe('Types', function () {
                 ]);
                 done();
             });
+
+            it('throws when limit is not a number', function (done) {
+
+                expect(function () {
+
+                    Joi.array().min('a');
+                }).to.throw('limit must be a positive integer');
+                done();
+            });
+
+            it('throws when limit is not an integer', function (done) {
+
+                expect(function () {
+
+                    Joi.array().min(1.2);
+                }).to.throw('limit must be a positive integer');
+                done();
+            });
         });
 
         describe('#max', function () {
@@ -127,6 +145,24 @@ describe('Types', function () {
                 ]);
                 done();
             });
+
+            it('throws when limit is not a number', function (done) {
+
+                expect(function () {
+
+                    Joi.array().max('a');
+                }).to.throw('limit must be a positive integer');
+                done();
+            });
+
+            it('throws when limit is not an integer', function (done) {
+
+                expect(function () {
+
+                    Joi.array().max(1.2);
+                }).to.throw('limit must be a positive integer');
+                done();
+            });
         });
 
         describe('#length', function () {
@@ -138,6 +174,24 @@ describe('Types', function () {
                     [[1, 2], true],
                     [[1], false]
                 ]);
+                done();
+            });
+
+            it('throws when limit is not a number', function (done) {
+
+                expect(function () {
+
+                    Joi.array().length('a');
+                }).to.throw('limit must be a positive integer');
+                done();
+            });
+
+            it('throws when limit is not an integer', function (done) {
+
+                expect(function () {
+
+                    Joi.array().length(1.2);
+                }).to.throw('limit must be a positive integer');
                 done();
             });
         });
