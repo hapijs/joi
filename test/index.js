@@ -1304,5 +1304,12 @@ describe('Joi', function () {
             expect(description).to.deep.equal(result);
             done();
         });
+
+        it('describes schema without invalids', function (done) {
+
+            var description = Joi.describe(Joi.any().allow(null));
+            expect(description.invalids).to.not.exist;
+            done();
+        })
     });
 });
