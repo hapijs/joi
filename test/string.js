@@ -1446,7 +1446,9 @@ describe('Joi.string', function () {
                 ["host:name", false],
                 ["-", false],
                 ["2387628", true],
-                [longInvalid, false]
+                [longInvalid, false],
+                ["::1", true],
+                ["0:0:0:0:0:0:0:1", true]
             ]);
             done();
         });
