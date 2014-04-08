@@ -425,6 +425,16 @@ describe('Joi', function () {
             });
         });
 
+        describe('#_validate', function () {
+
+            it('checks value after conversion', function (done) {
+
+                var a = Joi.number().invalid(2);
+                expect(Joi.validate('2', a, { abortEarly: false })).to.exist;
+                done();
+            });
+        });
+
         describe('Set', function () {
 
             describe('#toString', function () {
