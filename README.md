@@ -7,6 +7,7 @@ Current version: **3.0.x**
 
 [![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 
+[![Browser Support](https://ci.testling.com/spumko/joi.png)](https://ci.testling.com/spumko/joi)
 
 ## Table of Contents
 
