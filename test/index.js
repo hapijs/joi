@@ -91,6 +91,50 @@ describe('Joi', function () {
         done();
     });
 
+    it('validates null schema', function (done) {
+
+        expect(Joi.validate(null, null)).to.not.exist;
+        expect(Joi.validate('a', null)).to.exist;
+        done();
+    });
+
+    it('validates number literal', function (done) {
+
+        expect(Joi.validate(5, 5)).to.not.exist;
+        expect(Joi.validate(6, 5)).to.exist;
+        done();
+    });
+
+    it('validates string literal', function (done) {
+
+        expect(Joi.validate('5', '5')).to.not.exist;
+        expect(Joi.validate('6', '5')).to.exist;
+        done();
+    });
+
+    it('validates boolean literal', function (done) {
+
+        expect(Joi.validate(true, true)).to.not.exist;
+        expect(Joi.validate(false, true)).to.exist;
+        done();
+    });
+
+    it('validates date literal', function (done) {
+
+        var now = Date.now();
+        expect(Joi.validate(new Date(now), new Date(now))).to.not.exist;
+        expect(Joi.validate(now, new Date(now))).to.not.exist;
+        expect(Joi.validate(now * 2, new Date(now))).to.exist;
+        done();
+    });
+
+    it('validates regex directly', function (done) {
+
+        expect(Joi.validate('5', /^5$/)).to.not.exist;
+        expect(Joi.validate('6', /.{2}/)).to.exist;
+        done();
+    });
+
     it('validated with', function (done) {
 
         var schema = Joi.object({
