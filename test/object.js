@@ -48,6 +48,37 @@ describe('Types', function () {
             done();
         });
 
+        it('allows any key when schema is undefined', function (done) {
+
+            expect(Joi.validate({ a: 4 }, Joi.object())).to.not.exist;
+            expect(Joi.validate({ a: 4 }, Joi.object(undefined))).to.not.exist;
+            done();
+        });
+
+        it('allows any key when schema is null', function (done) {
+
+            expect(Joi.validate({ a: 4 }, Joi.object(null))).to.not.exist;
+            done();
+        });
+
+        it('throws on invalid object schema', function (done) {
+
+            expect(function () {
+
+                Joi.object(4);
+            }).to.throw('Object schema must be a valid object and cannot be a joi schema');
+            done();
+        });
+
+        it('throws on joi object schema', function (done) {
+
+            expect(function () {
+
+                Joi.object(Joi.object());
+            }).to.throw('Object schema must be a valid object and cannot be a joi schema');
+            done();
+        });
+
         it('errors on array', function (done) {
 
             expect(Joi.validate([1, 2, 3], Joi.object())).to.exist;
