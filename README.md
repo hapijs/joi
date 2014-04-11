@@ -28,6 +28,7 @@ Current version: **3.1.x**
         - [`description(desc)`](#descriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
+        - [`any.type(type)`](#anytypetype)
         - [`any.options(options)`](#anyoptionsoptions)
         - [`any.strict()`](#anystrict)
         - [`any.rename(to, [options])`](#anyrenameto-options)
@@ -340,6 +341,15 @@ Annotates the key where:
 
 ```javascript
 var schema = Joi.any().tags(['api', 'user']);
+```
+
+#### `any.type(type)`
+
+Annotates the key where:
+- `type` - used to check if value is an instance of desired type
+
+```javascript
+var schema = Joi.any().type(RegExp);
 ```
 
 #### `any.options(options)`

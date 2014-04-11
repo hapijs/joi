@@ -425,6 +425,51 @@ describe('Joi', function () {
             });
         });
 
+        describe('#type', function () {
+            it('should throw when an undefined type is set', function (done) {
+                expect(function () {
+                    var schema = { item: Joi.any().type(FooBar) };
+                }).to.throw('FooBar is not defined');
+                done();
+            });
+
+            it('should validate when type is defined and object matches type', function (done) {
+                var schema = {
+                    item: Joi.any().type(RegExp)
+                };
+
+                var input = { item: new RegExp(/test/) };
+                var err = Joi.validate(input, schema);
+
+                expect(err).to.not.exist;
+                done();
+            });
+
+            it('should not be valid when type is defined and object does not match type', function (done) {
+                var schema = {
+                    item: Joi.any().type(RegExp)
+                };
+
+                var input = { item: 23 };
+                var err = Joi.validate(input, schema, { abortEarly: false });
+
+                expect(err).to.exist;
+                done();
+            });
+
+            it('should not return valid when testing primitives against type', function (done) {
+                var schema = {
+                    item: Joi.any().type(String)
+                };
+
+                var input = { item: 'string' };
+                var err = Joi.validate(input, schema);
+
+                expect(err).to.exist;
+                done();
+            });
+        });
+
         describe('#_validate', function () {
 
             it('checks value after conversion', function (done) {
@@ -449,4 +494,3 @@ describe('Joi', function () {
         });
     });
 });
-
