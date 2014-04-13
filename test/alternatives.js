@@ -63,5 +63,21 @@ describe('Types', function () {
             expect(value.a).to.equal(5);
             done();
         });
+
+        it('does not apply modifier if laternative fails', function (done) {
+
+            var schema = {
+                a: [
+                    { b: Joi.any().rename('c', { move: true }), d: Joi.number() },
+                    { b: Joi.any(), d: Joi.string() }
+                ]
+            };
+
+            var value = { a: { b: 'any', d: 'string' } };
+            var err = Joi.validate(value, schema);
+            expect(err).to.not.exist;
+            expect(value.a.b).to.equal('any');
+            done();
+        });
     });
 });
