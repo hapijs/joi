@@ -437,6 +437,20 @@ describe('Joi', function () {
 
         describe('Set', function () {
 
+            describe('#values', function (){
+
+                it('returns array', function (done) {
+
+                    var a = Joi.any();
+                    var b = a.required();
+                    expect(a._valids.values().length).to.equal(1);
+                    expect(b._valids.values().length).to.equal(0);
+                    expect(a._invalids.values().length).to.equal(1);
+                    expect(b._invalids.values().length).to.equal(2);
+                    done();
+                });
+            });
+
             describe('#toString', function () {
 
                 it('includes undefined', function (done) {

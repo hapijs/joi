@@ -388,6 +388,29 @@ describe('Joi', function () {
         done();
     });
 
+    it('validates required alternatives', function (done) {
+
+        var schema = {
+            a: Joi.alternatives(
+                Joi.string().required(),
+                Joi.boolean().required()
+            )
+        };
+
+        Validate(schema, [
+            [{ a: null }, false],
+            [{ a: undefined }, true],
+            [{}, true],
+            [{ a: true }, true],
+            [{ a: 'true' }, true],
+            [{ a: 123 }, false],
+            [{ a: { c: 1 } }, false],
+            [{ b: undefined }, false]
+        ]);
+
+        done();
+    });
+
     it('validates an array of string with valid', function (done) {
 
         var schema = {
