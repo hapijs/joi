@@ -47,5 +47,21 @@ describe('Types', function () {
             expect(value.a).to.equal(5);
             done();
         });
+
+        it('applies modifiers when lower priority valid is a match', function (done) {
+
+            var schema = {
+                a: [
+                    Joi.number(),
+                    Joi.any().valid('5')
+                ]
+            };
+
+            var value = { a: '5' };
+            var err = Joi.validate(value, schema, { modify: true });
+            expect(err).to.not.exist;
+            expect(value.a).to.equal(5);
+            done();
+        });
     });
 });
