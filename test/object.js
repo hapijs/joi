@@ -50,15 +50,25 @@ describe('Types', function () {
 
         it('allows any key when schema is undefined', function (done) {
 
-            expect(Joi.validate({ a: 4 }, Joi.object())).to.not.exist;
-            expect(Joi.validate({ a: 4 }, Joi.object(undefined))).to.not.exist;
-            done();
+            Joi.validate({ a: 4 }, Joi.object(), function (err) {
+
+                expect(err).to.not.exist;
+
+                Joi.validate({ a: 4 }, Joi.object(undefined), function (err) {
+
+                    expect(err).to.not.exist;
+                    done();
+                });
+            });
         });
 
         it('allows any key when schema is null', function (done) {
 
-            expect(Joi.validate({ a: 4 }, Joi.object(null))).to.not.exist;
-            done();
+            Joi.validate({ a: 4 }, Joi.object(null), function (err) {
+
+                expect(err).to.not.exist;
+                done();
+            });
         });
 
         it('throws on invalid object schema', function (done) {
@@ -66,7 +76,7 @@ describe('Types', function () {
             expect(function () {
 
                 Joi.object(4);
-            }).to.throw('Object schema must be a valid object and cannot be a joi schema');
+            }).to.throw('Object schema must be a valid object');
             done();
         });
 
@@ -75,14 +85,17 @@ describe('Types', function () {
             expect(function () {
 
                 Joi.object(Joi.object());
-            }).to.throw('Object schema must be a valid object and cannot be a joi schema');
+            }).to.throw('Object schema cannot be a joi schema');
             done();
         });
 
         it('errors on array', function (done) {
 
-            expect(Joi.validate([1, 2, 3], Joi.object())).to.exist;
-            done();
+            Joi.validate([1, 2, 3], Joi.object(), function (err) {
+
+                expect(err).to.exist;
+                done();
+            });
         });
 
         it('should prevent extra keys from existing by default', function (done) {
@@ -253,8 +266,11 @@ describe('Types', function () {
 
             var schema = { a: Joi.number() };
             var obj = { a: 5, b: 'value' };
-            expect(Joi.validate(obj, schema, { skipFunctions: true })).to.exist;
-            done();
+            Joi.validate(obj, schema, { skipFunctions: true }, function (err) {
+
+                expect(err).to.exist;
+                done();
+            });
         });
 
         it('does not apply modifier if some rules fails', function (done) {
@@ -262,11 +278,13 @@ describe('Types', function () {
             var schema = { b: Joi.any().rename('c', { move: true }), d: Joi.number() };
             var value = { b: 'any', d: 'string' };
 
-            var err = Joi.validate(value, schema);
-            expect(err).to.exist;
-            expect(value.b).to.equal('any');
-            expect(value.c).to.not.exist;
-            done();
+            Joi.validate(value, schema, function (err) {
+
+                expect(err).to.exist;
+                expect(value.b).to.equal('any');
+                expect(value.c).to.not.exist;
+                done();
+            });
         });
 
         describe('#describe', function () {

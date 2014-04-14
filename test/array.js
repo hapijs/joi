@@ -68,10 +68,12 @@ describe('Types', function () {
 
                 var array = ['1', '2', '3'];
                 var schema = Joi.array().includes(Joi.number());
-                var err = Joi.validate(array, schema, { modify: true });
-                expect(err).to.not.exist;
-                expect(array).to.deep.equal([1, 2, 3]);
-                done();
+                Joi.validate(array, schema, { modify: true }, function (err) {
+
+                    expect(err).to.not.exist;
+                    expect(array).to.deep.equal([1, 2, 3]);
+                    done();
+                });
             });
 
             it('allows zero size', function (done) {
@@ -83,9 +85,11 @@ describe('Types', function () {
                     }))
                 };
 
-                var err = Joi.validate(data, schema);
-                expect(err).to.not.exist;
-                done();
+                Joi.validate(data, schema, function (err) {
+
+                    expect(err).to.not.exist;
+                    done();
+                });
             });
 
             it('returns the first error when only one inclusion', function (done) {
@@ -97,9 +101,11 @@ describe('Types', function () {
                     }))
                 };
 
-                var err = Joi.validate(data, schema);
-                expect(err.message).to.equal('the test array value in position 1 fails because the value of foo is not allowed to be undefined');
-                done();
+                Joi.validate(data, schema, function (err) {
+
+                    expect(err.message).to.equal('the test array value in position 1 fails because the value of foo is not allowed to be undefined');
+                    done();
+                });
             });
         });
 
@@ -239,15 +245,17 @@ describe('Types', function () {
                 var schema = Joi.array().excludes(Joi.number());
 
                 var n = [1, 2, 'hippo'];
-                var result = schema.validate(n);
+                schema.validate(n, function (err) {
 
-                expect(result).to.exist;
+                    expect(err).to.exist;
 
-                var m = ['x', 'y', 'z'];
-                var result2 = schema.validate(m);
+                    var m = ['x', 'y', 'z'];
+                    schema.validate(m, function (err2) {
 
-                expect(result2).to.not.exist;
-                done();
+                        expect(err2).to.not.exist;
+                        done();
+                    });
+                });
             });
 
             it('should validate array of Numbers', function (done) {
@@ -297,11 +305,12 @@ describe('Types', function () {
                 };
 
                 var input = { arr: [1, 2, 2.1] };
-                var err = Joi.validate(input, schema);
+                Joi.validate(input, schema, function (err) {
 
-                expect(err).to.exist;
-                expect(err.message).to.equal('the arr array value in position 2 fails because the value of 2 must be an integer');
-                done();
+                    expect(err).to.exist;
+                    expect(err.message).to.equal('the arr array value in position 2 fails because the value of 2 must be an integer');
+                    done();
+                });
             });
 
             it('validates an array within an object', function (done) {

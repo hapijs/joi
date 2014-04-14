@@ -13,7 +13,7 @@ Current version: **3.1.x**
 <img src="https://raw.github.com/spumko/joi/master/images/validation.png" align="right" />
 - [Example](#example)
 - [Usage](#usage)
-    - [`validate(value, schema, options)`](#validatevalue-schema-options)
+    - [`validate(value, schema, [options], callback)`](#validatevalue-schema-options-callback)
     - [`compile(schema)`](#compileschema)
     - [`any()`](#any)
         - [`any.allow(value)`](#anyallowvalue)
@@ -76,7 +76,7 @@ var schema = {
     email: Joi.string().email()
 };
 
-var err = Joi.validate({ username: 'abc', birthyear: 1994 }, schema);  // err === null -> valid
+Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err) { });  // err === null -> valid
 ```
 
 The above schema defines the following constraints:
@@ -112,7 +112,7 @@ new schema object.
 Then the value is validated against the schema:
 
 ```javascript
-var err = Joi.validate({ a: 'a string' }, schema);
+Joi.validate({ a: 'a string' }, schema, function (err) { });
 ```
 
 If the value is valid, `null` is returned, otherwise an `Error` object.
@@ -123,7 +123,7 @@ The schema can be a plain JavaScript object where every key is assigned a **joi*
 var schema = Joi.string().min(10);
 ```
 
-If the schema is a **joi** type, the `schema.validate(value)` can be called directly on the type. When passing a non-type schema object,
+If the schema is a **joi** type, the `schema.validate(value, callback)` can be called directly on the type. When passing a non-type schema object,
 the module converts it internally to an object() type equivalent to:
 
 ```javascript
@@ -137,7 +137,7 @@ When validating a schema:
 * Strings are utf-8 encoded by default.
 * Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
 
-### `validate(value, schema, options)`
+### `validate(value, schema, [options], callback)`
 
 Validates a value using the given schema and options where:
 - `value` - the value being validated.
@@ -150,6 +150,8 @@ Validates a value using the given schema and options where:
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
   - `language` - overrides individual error messages. Defaults to no override (`{}`).
+- `callback` - the callback method using the signature `function(err)` where:
+  - `err` - if validation failed, the error reason, otherwise `null`.
 
 ```javascript
 var schema = {
@@ -160,8 +162,7 @@ var value = {
     a: '123'
 };
 
-var err = Joi.validate(value, schema, { modify: true });
-
+Joi.validate(value, schema, { modify: true }, function (err) { });
 // err -> null
 // value.a -> 123 (number, not string)
 ```
@@ -198,7 +199,7 @@ Generates a schema object that matches any data type.
 var any = Joi.any();
 any.valid('a');
 
-var err = any.validate('a');
+any.validate('a', function (err) { });
 ```
 
 #### `any.allow(value)`
@@ -345,7 +346,7 @@ var schema = Joi.any().tags(['api', 'user']);
 #### `any.options(options)`
 
 Overrides the global `validate()` options for the current key and any sub-key where:
-- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options)`](#joivalidatevalue-schema-options).
+- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#joivalidatevalue-schema-options-callback).
 
 ```javascript
 var schema = {
@@ -382,7 +383,7 @@ var schema = {
     username: Joi.string().default('new_user')
 };
 var input = {};
-Joi.validate(input, schema);
+Joi.validate(input, schema, function (err) { });
 // input === { username: "new_user" }
 ```
 
@@ -396,7 +397,7 @@ Supports the same methods of the [`any()`](#any) type.
 var array = Joi.array();
 array.includes(Joi.string().valid('a', 'b'));
 
-var err = array.validate(['a', 'b', 'a']);
+array.validate(['a', 'b', 'a'], function (err) { });
 ```
 
 #### `array.includes(type)`
@@ -464,7 +465,7 @@ Supports the same methods of the [`any()`](#any) type.
 var boolean = Joi.boolean();
 boolean.allow(null);
 
-var err = boolean.validate(true);
+boolean.validate(true, function (err) { });
 ```
 
 ### `date()`
@@ -477,7 +478,7 @@ Supports the same methods of the [`any()`](#any) type.
 var date = Joi.date();
 date.min('12-20-2012');
 
-var err = date.validate('12-21-2012');
+date.validate('12-21-2012', function (err) { });
 ```
 
 #### `date.min(date)`
@@ -512,7 +513,7 @@ Supports the same methods of the [`any()`](#any) type.
 var func = Joi.func();
 func.allow(null);
 
-var err = func.validate(function () {});
+func.validate(function () {}, function (err) { });
 ```
 
 ### `number()`
@@ -525,7 +526,7 @@ Supports the same methods of the [`any()`](#any) type.
 var number = Joi.number();
 number.min(1).max(10).integer();
 
-var err = number.validate(5);
+number.validate(5, function (err) { });
 ```
 
 #### `number.min(limit)`
@@ -573,7 +574,7 @@ var object = Joi.object({
     a: Joi.number.min(1).max(10).integer()
 });
 
-var err = object.validate({ a: 5 });
+object.validate({ a: 5 }, function (err) { });
 ```
 
 ### `string()`
@@ -586,7 +587,7 @@ Supports the same methods of the [`any()`](#any) type.
 var string = Joi.string();
 string.min(1).max(10);
 
-var err = string.validate('12345');
+string.validate('12345', function (err) { });
 ```
 
 #### `string.insensitive()`
@@ -702,7 +703,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var alt = Joi.alternatives(Joi.number(), Joi.string());
-var err = alt.validate('a');
+alt.validate('a', function (err) { });
 ```
 
 Note that the `alternatives()` type does not behave the same way as passing multiple alternatives directly using an
