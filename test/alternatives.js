@@ -68,11 +68,11 @@ describe('Types', function () {
             });
         });
 
-        it('does not apply modifier if laternative fails', function (done) {
+        it('does not apply modifier if alternative fails', function (done) {
 
             var schema = {
                 a: [
-                    { b: Joi.any().rename('c', { move: true }), d: Joi.number() },
+                    Joi.object({ b: Joi.any(), d: Joi.number() }).rename('b', 'c'),
                     { b: Joi.any(), d: Joi.string() }
                 ]
             };

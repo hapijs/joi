@@ -586,23 +586,6 @@ describe('Joi', function () {
         });
     });
 
-    it('moves a key', function (done) {
-
-        var schema = {
-            a: Joi.number().rename('b', { move: true })
-        };
-
-        var obj = { a: 10 };
-
-        Joi.validate(obj, schema, function (err) {
-
-            expect(err).to.not.exist;
-            expect(obj.a).to.not.exist;
-            expect(obj.b).to.equal(10);
-            done();
-        });
-    });
-
     it('does not alter valid top level objects when modify setting is enabled', function (done) {
 
         var config = Joi.object({
@@ -1251,7 +1234,7 @@ describe('Joi', function () {
 
     it('supports custom errors when validating types', function (done) {
 
-        var schema = {
+        var schema = Joi.object({
             email: Joi.string().email(),
             date: Joi.date(),
             alphanum: Joi.string().alphanum(),
@@ -1259,9 +1242,9 @@ describe('Joi', function () {
             max: Joi.string().max(3),
             required: Joi.string().required().without('xor'),
             xor: Joi.string().without('required'),
-            renamed: Joi.string().rename('required').valid('456'),
+            renamed: Joi.string().valid('456'),
             notEmpty: Joi.string().required()
-        };
+        }).rename('renamed', 'required');
 
         var input = {
             email: 'invalid-email',
@@ -1280,9 +1263,6 @@ describe('Joi', function () {
                 empty: '3',
                 without: {
                     peer: '7'
-                },
-                rename: {
-                    override: '11'
                 }
             },
             date: {
@@ -1294,13 +1274,18 @@ describe('Joi', function () {
                 max: '15',
                 alphanum: '16',
                 email: '19'
+            },
+            object: {
+                rename: {
+                    override: '11'
+                }
             }
         };
 
         Joi.validate(input, schema, { abortEarly: false, language: lang }, function (err) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('19. 18. 16. 14. 15. 7. 7. 11. 3. 13');
+            expect(err.message).to.equal('11. 19. 18. 16. 14. 15. 7. 7. 3. 13');
             done();
         });
     });
@@ -1364,7 +1349,7 @@ describe('Joi', function () {
 
     describe('#describe', function () {
 
-        var schema = {
+        var schema = Joi.object({
             sub: {
                 email: Joi.string().email(),
                 date: Joi.date(),
@@ -1376,9 +1361,9 @@ describe('Joi', function () {
             max: Joi.string().max(3),
             required: Joi.string().required().without('xor'),
             xor: Joi.string().without('required'),
-            renamed: Joi.string().rename('required').valid('456'),
+            renamed: Joi.string().valid('456'),
             notEmpty: Joi.string().required().description('a').notes('b').tags('c')
-        };
+        }).rename('renamed', 'required');
 
         var result = {
             type: 'object',
@@ -1529,13 +1514,6 @@ describe('Joi', function () {
         it('describes schema', function (done) {
 
             var description = Joi.describe(schema);
-            expect(description).to.deep.equal(result);
-            done();
-        });
-
-        it('describes schema with object', function (done) {
-
-            var description = Joi.describe(Joi.object(schema));
             expect(description).to.deep.equal(result);
             done();
         });

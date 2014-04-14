@@ -30,7 +30,6 @@ Current version: **3.1.x**
         - [`any.tags(tags)`](#anytagstags)
         - [`any.options(options)`](#anyoptionsoptions)
         - [`any.strict()`](#anystrict)
-        - [`any.rename(to, [options])`](#anyrenameto-options)
         - [`any.default(value)`](#anydefault)
     - [`array()`](#array)
         - [`array.includes(type)`](#arrayincludestype)
@@ -47,7 +46,12 @@ Current version: **3.1.x**
         - [`number.min(limit)`](#numberminlimit)
         - [`number.max(limit)`](#numbermaxlimit)
         - [`number.integer()`](#numberinteger)
-    - [`object(schema)`](#objectschema)
+    - [`object([schema])`](#objectschema)
+        - [`object.keys([schema])`](#objectkeysschema)
+        - [`object.min(limit)`](#objectminlimit)
+        - [`object.max(limit)`](#objectmaxlimit)
+        - [`object.length(limit)`](#objectlengthlimit)
+        - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
     - [`string()`](#string)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit)`](#stringminlimit)
@@ -364,15 +368,6 @@ var schema = {
 };
 ```
 
-#### `any.rename(to, [options])`
-
-Renames a key to another name where:
-- `to` - the new key name.
-- `options` - an optional object with the following optional keys:
-    - `move` - if `true`, deletes the old key name, otherwise both old and new keys are kept. Defaults to `false`.
-    - `multiple` - if `true`, allows renaming multiple keys to the same destination where the last rename wins. Defaults to `false`.
-    - `override` - if `true`, allows renaming a key over an existing key. Defaults to `false`.
-
 #### `any.default(value)`
 
 Sets a default value if the original value is undefined where:
@@ -561,7 +556,7 @@ var schema = {
 };
 ```
 
-### `object(schema)`
+### `object([schema])`
 
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects) where:
 - `schema` - optional object where each key is assinged a **joi** type object. If the schema is `{}` no keys allowed.
@@ -571,10 +566,76 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var object = Joi.object({
-    a: Joi.number.min(1).max(10).integer()
+    a: Joi.number().min(1).max(10).integer()
 });
 
 object.validate({ a: 5 }, function (err) { });
+```
+
+#### `object.keys([schema])`
+
+Sets the allowed object keys where:
+- `schema` - optional object where each key is assinged a **joi** type object. If the schema is `{}` no keys allowed.
+  Defaults to 'undefined' which allows any child key. Overrides any keys previously set.
+
+```javascript
+var object = Joi.object().keys({
+    a: Joi.number()
+    b: Joi.string()
+});
+```
+
+#### `object.min(limit)`
+
+Specifies the minimum number of keys in the object where:
+- `limit` - the lowest number of keys allowed.
+
+```javascript
+var schema = {
+    a: Joi.object().min(2)
+};
+```
+
+#### `object.max(limit)`
+
+Specifies the maximum number of keys in the object where:
+- `limit` - the highest number of object keys allowed.
+
+```javascript
+var schema = {
+    a: Joi.object().max(10)
+};
+```
+
+#### `object.length(limit)`
+
+Specifies the exact number of keys in the object where:
+- `limit` - the number of object keys allowed.
+
+```javascript
+var schema = {
+    a: Joi.object().length(5)
+};
+```
+
+#### `object.rename(from, to, [options])`
+
+Renames a key to another name (deletes the renamed key) where:
+- `from` - the original key name.
+- `to` - the new key name.
+- `options` - an optional object with the following optional keys:
+    - `alias` - if `true`, does not delete the old key name, keeping both the new and old keys in place. Defaults to `false`.
+    - `multiple` - if `true`, allows renaming multiple keys to the same destination where the last rename wins. Defaults to `false`.
+    - `override` - if `true`, allows renaming a key over an existing key. Defaults to `false`.
+
+Keys are renamed before any other validation rules are applied.
+
+```javascript
+var object = Joi.object({
+    a: Joi.number()
+}).rename('b', 'a');
+
+object.validate({ b: 5 }, function (err) { });
 ```
 
 ### `string()`
