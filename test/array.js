@@ -68,7 +68,7 @@ describe('Types', function () {
 
                 var array = ['1', '2', '3'];
                 var schema = Joi.array().includes(Joi.number());
-                Joi.validate(array, schema, { modify: true }, function (err) {
+                Joi.validate(array, schema, function (err) {
 
                     expect(err).to.not.exist;
                     expect(array).to.deep.equal([1, 2, 3]);

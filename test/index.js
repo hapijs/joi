@@ -475,7 +475,7 @@ describe('Joi', function () {
             a: '5'
         };
 
-        Joi.validate(obj, schema, { modify: true }, function (err) {
+        Joi.validate(obj, schema, function (err) {
 
             expect(err).to.exist;
             expect(obj.a).to.equal('5');
@@ -491,7 +491,7 @@ describe('Joi', function () {
 
         var obj = {};
 
-        Joi.validate(obj, schema, { modify: true }, function (err) {
+        Joi.validate(obj, schema, function (err) {
 
             expect(err).to.not.exist;
             expect(obj.hasOwnProperty('a')).to.equal(false);
@@ -556,19 +556,6 @@ describe('Joi', function () {
         });
     });
 
-    it('validates config where the root item is a joi Object and modify setting is enabled', function (done) {
-
-        var config = Joi.object({
-            a: Joi.string()
-        });
-
-        Joi.validate({ a: 'okay' }, config, { modify: true }, function (err) {
-
-            expect(err).to.be.null;
-            done();
-        });
-    });
-
     it('converts string to number in a schema', function (done) {
 
         var config = {
@@ -578,24 +565,7 @@ describe('Joi', function () {
         var original = { a: '5' };
         var validated = { a: 5 };
 
-        Joi.validate(original, config, { modify: true }, function (err) {
-
-            expect(err).to.be.null;
-            expect(validated).to.deep.equal(original);
-            done();
-        });
-    });
-
-    it('does not alter valid top level objects when modify setting is enabled', function (done) {
-
-        var config = Joi.object({
-            a: Joi.string()
-        });
-
-        var original = { a: 'okay' };
-        var validated = { a: 'okay' };
-
-        Joi.validate(validated, config, { modify: true }, function (err) {
+        Joi.validate(original, config, function (err) {
 
             expect(err).to.be.null;
             expect(validated).to.deep.equal(original);
@@ -1167,32 +1137,6 @@ describe('Joi', function () {
 
             expect(err).to.exist;
             expect(err.message).to.contain('the key func is not allowed');
-            done();
-        });
-    });
-
-    it('should work when the modify setting is enabled', function (done) {
-
-        var schema = { item: Joi.number() };
-        var input = { item: '1' };
-
-        Joi.validate(input, schema, { modify: true }, function (err) {
-
-            expect(err).to.not.exist;
-            expect(input.item).to.equal(1);
-            done();
-        });
-    });
-
-    it('should work when the modify setting is disabled', function (done) {
-
-        var schema = { item: Joi.number() };
-        var input = { item: '1' };
-
-        Joi.validate(input, schema, { modify: false }, function (err) {
-
-            expect(err).to.not.exist;
-            expect(input.item).to.equal('1');
             done();
         });
     });

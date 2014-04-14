@@ -42,7 +42,7 @@ describe('Types', function () {
             };
 
             var value = { a: '5' };
-            var err = Joi.validate(value, schema, { modify: true }, function (err) {
+            var err = Joi.validate(value, schema, function (err) {
 
                 expect(err).to.not.exist;
                 expect(value.a).to.equal(5);
@@ -60,7 +60,7 @@ describe('Types', function () {
             };
 
             var value = { a: '5' };
-            var err = Joi.validate(value, schema, { modify: true }, function (err) {
+            var err = Joi.validate(value, schema, function (err) {
 
                 expect(err).to.not.exist;
                 expect(value.a).to.equal(5);

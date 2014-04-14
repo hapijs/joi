@@ -149,7 +149,6 @@ Validates a value using the given schema and options where:
 - `options` - an optional object with the following optional keys:
   - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
   - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
-  - `modify` - when `true`, converted values are written back to the provided value (only when value is an object). Defaults to `false`.
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
@@ -166,7 +165,7 @@ var value = {
     a: '123'
 };
 
-Joi.validate(value, schema, { modify: true }, function (err) { });
+Joi.validate(value, schema, function (err) { });
 // err -> null
 // value.a -> 123 (number, not string)
 ```
@@ -354,7 +353,7 @@ Overrides the global `validate()` options for the current key and any sub-key wh
 
 ```javascript
 var schema = {
-    a: Joi.any().options({ modify: true })
+    a: Joi.any().options({ convert: false })
 };
 ```
 

@@ -95,7 +95,7 @@ describe('Joi.number', function () {
             var config = { a: Joi.number() };
             var obj = { a: '123' };
 
-            Joi.validate(obj, config, { modify: true }, function (err) {
+            Joi.validate(obj, config, function (err) {
 
                 expect(err).to.not.exist;
                 expect(obj.a).to.equal(123);

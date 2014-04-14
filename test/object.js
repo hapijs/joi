@@ -386,7 +386,7 @@ describe('Types', function () {
 
                 var value1 = { b: '5' };
 
-                Joi.validate(value1, schema1, { modify: true }, function (err1) {
+                Joi.validate(value1, schema1, function (err1) {
 
                     expect(err1).to.not.exist;
                     expect(value1.b).to.not.exist;
@@ -395,7 +395,7 @@ describe('Types', function () {
                     var schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
                     var value2 = { b: '5' };
 
-                    Joi.validate(value2, schema2, { modify: true }, function (err2) {
+                    Joi.validate(value2, schema2, function (err2) {
 
                         expect(err2).to.not.exist;
                         expect(value2.b).to.not.exist;

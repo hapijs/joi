@@ -201,7 +201,7 @@ describe('Joi', function () {
 
             it('adds to existing options', function (done) {
 
-                var a = { b: Joi.number().strict().options({ convert: true, modify: true }) };
+                var a = { b: Joi.number().strict().options({ convert: true }) };
                 var c = { b: '2' };
                 Joi.validate(c, a, function (err) {
 
