@@ -257,6 +257,18 @@ describe('Types', function () {
             done();
         });
 
+        it('does not apply modifier if some rules fails', function (done) {
+
+            var schema = { b: Joi.any().rename('c', { move: true }), d: Joi.number() };
+            var value = { b: 'any', d: 'string' };
+
+            var err = Joi.validate(value, schema);
+            expect(err).to.exist;
+            expect(value.b).to.equal('any');
+            expect(value.c).to.not.exist;
+            done();
+        });
+
         describe('#describe', function () {
 
             it('return empty description when no schema defined', function (done) {

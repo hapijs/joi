@@ -257,6 +257,39 @@ describe('Joi', function () {
                 expect(data.arr[0].two).to.equal('2');
                 done();
             });
+
+            it('applies rename and validation in the correct order regardless of key order', function (done) {
+
+                var schema1 = { b: Joi.any().rename('a', { move: true }), a: Joi.number() };
+                var value1 = { b: '5' };
+
+                var err1 = Joi.validate(value1, schema1, { modify: true });
+                expect(err1).to.not.exist;
+                expect(value1.b).to.not.exist;
+                expect(value1.a).to.equal(5);
+
+                var schema2 = { a: Joi.number(), b: Joi.any().rename('a', { move: true }) };
+                var value2 = { b: '5' };
+
+                var err2 = Joi.validate(value2, schema2, { modify: true });
+                expect(err2).to.not.exist;
+                expect(value2.b).to.not.exist;
+                expect(value2.a).to.equal(5);
+
+                done();
+            });
+
+            it('does not modify when false', function (done) {
+
+                var schema = { b: Joi.any().rename('a', { move: true }) };
+                var value = { b: '5' };
+
+                var err = Joi.validate(value, schema, { modify: false });
+                expect(err).to.not.exist;
+                expect(value.a).to.not.exist;
+                expect(value.b).to.equal('5');
+                done();
+            });
         });
 
         describe('#options', function () {
@@ -436,6 +469,20 @@ describe('Joi', function () {
         });
 
         describe('Set', function () {
+
+            describe('#values', function (){
+
+                it('returns array', function (done) {
+
+                    var a = Joi.any();
+                    var b = a.required();
+                    expect(a._valids.values().length).to.equal(1);
+                    expect(b._valids.values().length).to.equal(0);
+                    expect(a._invalids.values().length).to.equal(1);
+                    expect(b._invalids.values().length).to.equal(2);
+                    done();
+                });
+            });
 
             describe('#toString', function () {
 

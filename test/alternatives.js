@@ -2,6 +2,7 @@
 
 var Lab = require('lab');
 var Alternatives = require('../lib/alternatives');
+var Joi = require('..');
 
 
 // Declare internals
@@ -28,6 +29,54 @@ describe('Types', function () {
 
                 new Alternatives();
             }).to.throw('Missing alternatives');
+            done();
+        });
+
+        it('applies modifiers when higher priority converts', function (done) {
+
+            var schema = {
+                a: [
+                    Joi.number(),
+                    Joi.string()
+                ]
+            };
+
+            var value = { a: '5' };
+            var err = Joi.validate(value, schema, { modify: true });
+            expect(err).to.not.exist;
+            expect(value.a).to.equal(5);
+            done();
+        });
+
+        it('applies modifiers when lower priority valid is a match', function (done) {
+
+            var schema = {
+                a: [
+                    Joi.number(),
+                    Joi.any().valid('5')
+                ]
+            };
+
+            var value = { a: '5' };
+            var err = Joi.validate(value, schema, { modify: true });
+            expect(err).to.not.exist;
+            expect(value.a).to.equal(5);
+            done();
+        });
+
+        it('does not apply modifier if laternative fails', function (done) {
+
+            var schema = {
+                a: [
+                    { b: Joi.any().rename('c', { move: true }), d: Joi.number() },
+                    { b: Joi.any(), d: Joi.string() }
+                ]
+            };
+
+            var value = { a: { b: 'any', d: 'string' } };
+            var err = Joi.validate(value, schema);
+            expect(err).to.not.exist;
+            expect(value.a.b).to.equal('any');
             done();
         });
     });
