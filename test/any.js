@@ -23,17 +23,6 @@ describe('Joi', function () {
 
     describe('any', function () {
 
-        it('validates both valid() and with()', function (done) {
-
-            var b = Joi.object({
-                first: Joi.any().valid('value').with('second'),
-                second: Joi.any()
-            });
-            Validate(b, [[{ first: 'value' }, false]]);
-
-            done();
-        });
-
         describe('#strict', function () {
 
             it('validates without converting', function (done) {
@@ -58,7 +47,7 @@ describe('Joi', function () {
                 var b = Joi.any();
                 var result = b.with('test');
 
-                result.validate('test', function (err) {
+                result.validate('test', function (err, value) {
 
                     expect(err).to.exist;
                     done();
@@ -99,7 +88,7 @@ describe('Joi', function () {
                 var b = Joi.any();
                 var result = b.without('test');
 
-                result.validate('test', function (err) {
+                result.validate('test', function (err, value) {
 
                     expect(err).to.exist;
                     done();
@@ -134,7 +123,7 @@ describe('Joi', function () {
                 var b = Joi.any();
                 var result = b.xor('test');
 
-                result.validate('test', function (err) {
+                result.validate('test', function (err, value) {
 
                     expect(err).to.exist;
                     done();
@@ -169,7 +158,7 @@ describe('Joi', function () {
                 var b = Joi.any();
                 var result = b.or('test');
 
-                result.validate('test', function (err) {
+                result.validate('test', function (err, value) {
 
                     expect(err).to.exist;
                     done();
@@ -203,10 +192,10 @@ describe('Joi', function () {
 
                 var a = { b: Joi.number().strict().options({ convert: true }) };
                 var c = { b: '2' };
-                Joi.validate(c, a, function (err) {
+                Joi.validate(c, a, function (err, value) {
 
                     expect(err).to.not.exist;
-                    expect(c.b).to.equal(2);
+                    expect(value.b).to.equal(2);
                     done();
                 });
             });
@@ -218,10 +207,10 @@ describe('Joi', function () {
 
                 var a = { b: Joi.number().options({ convert: true }).strict() };
                 var c = { b: '2' };
-                Joi.validate(c, a, function (err) {
+                Joi.validate(c, a, function (err, value) {
 
                     expect(err).to.exist;
-                    expect(c.b).to.equal('2');
+                    expect(value.b).to.equal('2');
                     done();
                 });
             });
@@ -234,10 +223,10 @@ describe('Joi', function () {
                 var schema = { foo: Joi.string().default('test') };
                 var input = {};
 
-                Joi.validate(input, schema, function (err) {
+                Joi.validate(input, schema, function (err, value) {
 
                     expect(err).to.not.exist;
-                    expect(input.foo).to.equal('test');
+                    expect(value.foo).to.equal('test');
 
                     done();
                 });
@@ -248,10 +237,10 @@ describe('Joi', function () {
                 var schema = { foo: Joi.string().default('bar') };
                 var input = { foo: 'test' };
 
-                Joi.validate(input, schema, function (err) {
+                Joi.validate(input, schema, function (err, value) {
 
                     expect(err).to.not.exist;
-                    expect(input.foo).to.equal('test');
+                    expect(value.foo).to.equal('test');
 
                     done();
                 });
@@ -342,8 +331,8 @@ describe('Joi', function () {
 
             it('checks value after conversion', function (done) {
 
-                var a = Joi.number().invalid(2);
-                Joi.validate('2', a, { abortEarly: false }, function (err) {
+                var schema = Joi.number().invalid(2);
+                schema.validate('2', { abortEarly: false }, function (err, value) {
 
                     expect(err).to.exist;
                     done();

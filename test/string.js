@@ -193,7 +193,7 @@ describe('Joi.string', function () {
         it('should, when .required(), print a friend error message for an empty string', function (done) {
 
             var schema = Joi.string().required();
-            Joi.validate('', schema, function (err) {
+            Joi.validate('', schema, function (err, value) {
 
                 expect(err.message).to.contain('be empty');
                 done();
@@ -361,7 +361,7 @@ describe('Joi.string', function () {
         it('should validate email with a friendly error message', function (done) {
 
             var schema = { item: Joi.string().email() };
-            Joi.validate({ item: 'something' }, schema, function (err) {
+            Joi.validate({ item: 'something' }, schema, function (err, value) {
 
                 expect(err.message).to.contain('must be a valid email');
                 done();
@@ -371,7 +371,7 @@ describe('Joi.string', function () {
         it('should return false for denied value', function (done) {
 
             var text = Joi.string().invalid('joi');
-            text.validate('joi', function (err) {
+            text.validate('joi', function (err, value) {
 
                 expect(err).to.exist;
                 done();
@@ -381,7 +381,7 @@ describe('Joi.string', function () {
         it('should return true for allowed value', function (done) {
 
             var text = Joi.string().allow('hapi');
-            text.validate('result', function (err) {
+            text.validate('result', function (err, value) {
 
                 expect(err).to.not.exist;
                 done();
@@ -391,7 +391,7 @@ describe('Joi.string', function () {
         it('should validate with one validator (min)', function (done) {
 
             var text = Joi.string().min(3);
-            text.validate('joi', function (err) {
+            text.validate('joi', function (err, value) {
 
                 expect(err).to.not.exist;
                 done();
@@ -401,11 +401,11 @@ describe('Joi.string', function () {
         it('should validate with two validators (min, required)', function (done) {
 
             var text = Joi.string().min(3).required();
-            text.validate('joi', function (err) {
+            text.validate('joi', function (err, value) {
 
                 expect(err).to.not.exist;
 
-                text.validate('', function (err) {
+                text.validate('', function (err, value) {
 
                     expect(err).to.exist;
                     done();
@@ -898,7 +898,7 @@ describe('Joi.string', function () {
         it('should validate isoDate with a friendly error message', function (done) {
 
             var schema = { item: Joi.string().isoDate() };
-            Joi.validate({ item: 'something' }, schema, function (err) {
+            Joi.validate({ item: 'something' }, schema, function (err, value) {
 
                 expect(err.message).to.contain('must be a valid ISO 8601 date');
                 done();
@@ -1220,7 +1220,7 @@ describe('Joi.string', function () {
         it('should validate guid with a friendly error message', function (done) {
 
             var schema = { item: Joi.string().guid() };
-            Joi.validate({ item: 'something' }, schema, function (err) {
+            Joi.validate({ item: 'something' }, schema, function (err, value) {
 
                 expect(err.message).to.contain('must be a valid GUID');
                 done();

@@ -27,7 +27,7 @@ describe('Types', function () {
 
             expect(function () {
 
-                new Alternatives();
+                Alternatives.create();
             }).to.throw('Missing alternatives');
             done();
         });
@@ -41,8 +41,7 @@ describe('Types', function () {
                 ]
             };
 
-            var value = { a: '5' };
-            var err = Joi.validate(value, schema, function (err) {
+            var err = Joi.validate({ a: '5' }, schema, function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value.a).to.equal(5);
@@ -59,8 +58,7 @@ describe('Types', function () {
                 ]
             };
 
-            var value = { a: '5' };
-            var err = Joi.validate(value, schema, function (err) {
+            var err = Joi.validate({ a: '5' }, schema, function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value.a).to.equal(5);
@@ -72,13 +70,13 @@ describe('Types', function () {
 
             var schema = {
                 a: [
-                    Joi.object({ b: Joi.any(), d: Joi.number() }).rename('b', 'c'),
+                    Joi.object({ c: Joi.any(), d: Joi.number() }).rename('b', 'c'),
                     { b: Joi.any(), d: Joi.string() }
                 ]
             };
 
-            var value = { a: { b: 'any', d: 'string' } };
-            var err = Joi.validate(value, schema, function (err) {
+            var input = { a: { b: 'any', d: 'string' } };
+            var err = Joi.validate(input, schema, function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value.a.b).to.equal('any');
