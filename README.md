@@ -21,10 +21,6 @@ Current version: **4.0.x**
         - [`any.invalid(value)`](#anyinvalidvalue)
         - [`any.required()`](#anyrequired)
         - [`any.optional()`](#anyoptional)
-        - [`any.with(peer)`](#anywithpeer)
-        - [`any.without(peer)`](#anywithoutpeer)
-        - [`any.xor(peer)`](#anyxorpeer)
-        - [`any.or(peer)`](#anyorpeer)
         - [`description(desc)`](#descriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
@@ -51,6 +47,10 @@ Current version: **4.0.x**
         - [`object.min(limit)`](#objectminlimit)
         - [`object.max(limit)`](#objectmaxlimit)
         - [`object.length(limit)`](#objectlengthlimit)
+        - [`object.with(key, peers)`](#objectwithkey-peers)
+        - [`object.without(key, peers)`](#objectwithoutkey-peers)
+        - [`object.xor(peers)`](#objectxorpeers)
+        - [`object.or(peers)`](#objectorpeers)
         - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
     - [`string()`](#string)
         - [`string.insensitive()`](#stringinsensitive)
@@ -72,13 +72,13 @@ Current version: **4.0.x**
 ```javascript
 var Joi = require('joi');
 
-var schema = {
-    username: Joi.string().alphanum().min(3).max(30).with('birthyear').required(),
-    password: Joi.string().regex(/[a-zA-Z0-9]{3,30}/).without('access_token'),
+var schema = Joi.object({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    password: Joi.string().regex(/[a-zA-Z0-9]{3,30}/),
     access_token: [Joi.string(), Joi.number()],
     birthyear: Joi.number().integer().min(1900).max(2013),
     email: Joi.string().email()
-};
+}).with('username', 'birthyear').without('password', 'access_token');
 
 Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err) { });  // err === null -> valid
 ```
@@ -266,58 +266,6 @@ Marks a key as optional which will allow `undefined` as values. Used to annotate
 ```javascript
 var schema = {
     a: Joi.any().optional()
-};
-```
-
-#### `any.with(peer)`
-
-Requires the presence of another key whenever this value is present where:
-- `peer` - the required key name that must appear together with the current value. `peer` can be an array of values, or multiple values can be
-  passed as individual arguments.
-
-```javascript
-var schema = {
-    a: Joi.any().with('b'),
-    b: Joi.any()
-};
-```
-
-#### `any.without(peer)`
-
-Forbids the presence of another key whenever this value is present where:
-- `peer` - the forbidden key name that must not appear together with the current value. `peer` can be an array of values, or multiple values can be
-  passed as individual arguments.
-
-```javascript
-var schema = {
-    a: Joi.any().without('b'),
-    b: Joi.any()
-};
-```
-
-#### `any.xor(peer)`
-
-Defines an exclusive relationship with another key where this or one of the peers is required but not at the same time where:
-- `peer` - the exclusive key name that must not appear together with the current value but where one of them is required. `peer` can be an array
-  of values, or multiple values can be passed as individual arguments.
-
-```javascript
-var schema = {
-    a: Joi.any().xor('b'),
-    b: Joi.any()
-};
-```
-
-#### `any.or(peer)`
-
-Defines a relationship with another key where this or one of the peers is required (and more than one is allowed) where:
-- `peer` - the key name that must appear if the current value is missing. `peer` can be an array of values, or multiple
-  values can be passed as individual arguments.
-
-```javascript
-var schema = {
-    a: Joi.any().or('b'),
-    b: Joi.any()
 };
 ```
 
@@ -617,6 +565,58 @@ Specifies the exact number of keys in the object where:
 var schema = {
     a: Joi.object().length(5)
 };
+```
+
+#### `object.with(key, peers)`
+
+Requires the presence of other keys whenever the specified key is present where:
+- `key` - the reference key.
+- `peers` - the required peer key names that must appear together with `key`. `peers` can be a single string value or an array of string values.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).with('a', 'b');
+```
+
+#### `object.without(key, peers)`
+
+Forbids the presence of other keys whenever the specified is present where:
+- `key` - the reference key.
+- `peers` - the forbidden peer key names that must not appear together with `key`. `peers` can be a single string value or an array of string values.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).without('a', ['b']);
+```
+
+#### `object.xor(peers)`
+
+Defines an exclusive relationship between a set of keys where one of them is required but not at the same time where:
+- `peers` - the exclusive key names that must not appear together but where one of them is required. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).xor('a', 'b');
+```
+
+#### `object.or(peers)`
+
+Defines a relationship between keys where one of the peers is required (and more than one is allowed) where:
+- `peers` - the key names of which at least one must appear. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).or('a', 'b');
 ```
 
 #### `object.rename(from, to, [options])`

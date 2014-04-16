@@ -282,9 +282,9 @@ describe('Types', function () {
         it('validates both valid() and with()', function (done) {
 
             var schema = Joi.object({
-                first: Joi.any().valid('value').with('second'),
+                first: Joi.any().valid('value'),
                 second: Joi.any()
-            });
+            }).with('first', 'second');
 
             Validate(schema, [[{ first: 'value' }, false]]);
             done();

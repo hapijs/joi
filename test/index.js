@@ -24,11 +24,11 @@ describe('Joi', function () {
 
     it('validates object', function (done) {
 
-        var schema = {
-            a: Joi.number().min(0).max(3).without('none'),
+        var schema = Joi.object({
+            a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c'),
             c: Joi.string().email().optional()
-        };
+        }).without('a', 'none');
 
         var obj = {
             a: 1,
@@ -171,51 +171,61 @@ describe('Joi', function () {
     it('validated with', function (done) {
 
         var schema = Joi.object({
-            txt: Joi.string().with('upc'),
+            txt: Joi.string(),
             upc: Joi.string()
+        }).with('txt', 'upc');
+
+        Joi.validate({ txt: 'a' }, schema, { abortEarly: false }, function (err, value) {
+
+            expect(err.message).to.equal('txt missing required peer upc');
+
+            Validate(schema, [
+                [{ upc: 'test' }, true],
+                [{ txt: 'test' }, false],
+                [{ txt: 'test', upc: null }, false],
+                [{ txt: 'test', upc: '' }, false],
+                [{ txt: 'test', upc: undefined }, false],
+                [{ txt: 'test', upc: 'test' }, true]
+            ]);
+
+            done();
         });
-
-        Validate(schema, [
-            [{ upc: 'test' }, true],
-            [{ txt: 'test' }, false],
-            [{ txt: 'test', upc: null }, false],
-            [{ txt: 'test', upc: '' }, false],
-            [{ txt: 'test', upc: undefined }, false],
-            [{ txt: 'test', upc: 'test' }, true]
-        ]);
-
-        done();
     });
 
     it('validated without', function (done) {
 
         var schema = Joi.object({
-            txt: Joi.string().without('upc'),
+            txt: Joi.string(),
             upc: Joi.string()
+        }).without('txt', 'upc');
+
+        Joi.validate({ txt: 'a', upc: 'b' }, schema, { abortEarly: false }, function (err, value) {
+
+            expect(err.message).to.equal('txt conflict with forbidden peer upc');
+
+            Validate(schema, [
+                [{ upc: 'test' }, true],
+                [{ txt: 'test' }, true],
+                [{ txt: 'test', upc: null }, false],
+                [{ txt: 'test', upc: '' }, false],
+                [{ txt: 'test', upc: undefined }, true],
+                [{ txt: 'test', upc: 'test' }, false]
+            ]);
+
+            done();
         });
-
-        Validate(schema, [
-            [{ upc: 'test' }, true],
-            [{ txt: 'test' }, true],
-            [{ txt: 'test', upc: null }, false],
-            [{ txt: 'test', upc: '' }, false],
-            [{ txt: 'test', upc: undefined }, true],
-            [{ txt: 'test', upc: 'test' }, false]
-        ]);
-
-        done();
     });
 
     it('validates xor', function (done) {
 
         var schema = Joi.object({
-            txt: Joi.string().xor('upc'),
-            upc: Joi.string().xor('txt')
-        });
+            txt: Joi.string(),
+            upc: Joi.string()
+        }).xor('txt', 'upc');
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('at least one of txt upc is required. at least one of upc txt is required');
+            expect(err.message).to.equal('at least one of txt, upc is required');
 
             Validate(schema, [
                 [{ upc: null }, false],
@@ -242,10 +252,10 @@ describe('Joi', function () {
     it('validates multiple peers xor', function (done) {
 
         var schema = Joi.object({
-            txt: Joi.string().xor('upc', 'code'),
+            txt: Joi.string(),
             upc: Joi.string(),
             code: Joi.string()
-        });
+        }).xor('txt', 'upc', 'code');
 
         Validate(schema, [
             [{ upc: 'test' }, true],
@@ -259,9 +269,9 @@ describe('Joi', function () {
     it('validates xor with number types', function (done) {
 
         var schema = Joi.object({
-            code: Joi.number().xor('upc'),
+            code: Joi.number(),
             upc: Joi.number()
-        });
+        }).xor('code', 'upc');
 
         Validate(schema, [
             [{ upc: 123 }, true],
@@ -276,9 +286,9 @@ describe('Joi', function () {
     it('validates xor when empty value of peer allowed', function (done) {
 
         var schema = Joi.object({
-            code: Joi.string().xor('upc'),
+            code: Joi.string(),
             upc: Joi.string().allow('')
-        });
+        }).xor('code', 'upc');
 
         Validate(schema, [
             [{ upc: '' }, true],
@@ -294,14 +304,14 @@ describe('Joi', function () {
     it('validates or', function (done) {
 
         var schema = Joi.object({
-            txt: Joi.string().or('upc', 'code'),
+            txt: Joi.string(),
             upc: Joi.string().allow(null, ''),
             code: Joi.number()
-        });
+        }).or('txt', 'upc', 'code');
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('missing alternative peers upc,code');
+            expect(err.message).to.equal('missing at least one of alternative peers txt, upc, code');
 
             Validate(schema, [
                 [{ upc: null }, true],
@@ -512,10 +522,10 @@ describe('Joi', function () {
 
     it('invalidates missing peers', function (done) {
 
-        var schema = {
-            username: Joi.string().with('password'),
-            password: Joi.string().without('access_token')
-        };
+        var schema = Joi.object({
+            username: Joi.string(),
+            password: Joi.string()
+        }).with('username', 'password').without('password', 'access_token');
 
         Joi.validate({ username: 'bob' }, schema, function (err, value) {
 
@@ -1191,11 +1201,11 @@ describe('Joi', function () {
             alphanum: Joi.string().alphanum(),
             min: Joi.string().min(3),
             max: Joi.string().max(3),
-            required: Joi.string().required().without('xor'),
-            xor: Joi.string().without('required'),
+            required: Joi.string().required(),
+            xor: Joi.string(),
             renamed: Joi.string().valid('456'),
             notEmpty: Joi.string().required()
-        }).rename('renamed', 'required');
+        }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
 
         var input = {
             email: 'invalid-email',
@@ -1211,10 +1221,7 @@ describe('Joi', function () {
 
         var lang = {
             any: {
-                empty: '3',
-                without: {
-                    peer: '7'
-                }
+                empty: '3'
             },
             date: {
                 base: '18'
@@ -1227,6 +1234,7 @@ describe('Joi', function () {
                 email: '19'
             },
             object: {
+                without: '7',
                 rename: {
                     override: '11'
                 }
@@ -1236,7 +1244,7 @@ describe('Joi', function () {
         Joi.validate(input, schema, { abortEarly: false, language: lang }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('11. 19. 18. 16. 14. 15. 7. 7. 3. 13');
+            expect(err.message).to.equal('11. 7. 7. 19. 18. 16. 14. 15. 3. 13');
             done();
         });
     });
@@ -1310,11 +1318,11 @@ describe('Joi', function () {
             },
             min: [Joi.number(), Joi.string().min(3)],
             max: Joi.string().max(3),
-            required: Joi.string().required().without('xor'),
-            xor: Joi.string().without('required'),
+            required: Joi.string().required(),
+            xor: Joi.string(),
             renamed: Joi.string().valid('456'),
             notEmpty: Joi.string().required().description('a').notes('b').tags('c')
-        }).rename('renamed', 'required');
+        }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
 
         var result = {
             type: 'object',
@@ -1423,8 +1431,7 @@ describe('Joi', function () {
                         allowOnly: false,
                         default: undefined
                     },
-                    invalids: [null, '', undefined],
-                    rules: [{ name: 'without', arg: ['xor'] }]
+                    invalids: [null, '', undefined]
                 },
                 xor: {
                     type: 'string',
@@ -1434,8 +1441,7 @@ describe('Joi', function () {
                         default: undefined
                     },
                     valids: [undefined],
-                    invalids: [null, ''],
-                    rules: [{ name: 'without', arg: ['required'] }]
+                    invalids: [null, '']
                 },
                 renamed: {
                     type: 'string',
@@ -1459,7 +1465,19 @@ describe('Joi', function () {
                     tags: ['c'],
                     invalids: [null, '', undefined]
                 }
-            }
+            },
+            dependencies: [
+                {
+                    type: 'without',
+                    key: 'required',
+                    peers: ['xor']
+                },
+                {
+                    type: 'without',
+                    key: 'xor',
+                    peers: ['required']
+                }
+            ]
         };
 
         it('describes schema', function (done) {

@@ -42,28 +42,10 @@ describe('Joi', function () {
 
         describe('#with', function () {
 
-            it('fails when with set on root', function (done) {
-
-                var b = Joi.any();
-                var result = b.with('test');
-
-                result.validate('test', function (err, value) {
-
-                    expect(err).to.exist;
-                    done();
-                });
-            });
-
-            it('returns error when related type not found', function (done) {
-
-                Validate(Joi.any().with('test'), [['test', false]])
-                done();
-            });
-
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    Joi.any().with({});
+                    Joi.object().with({});
                     var error = false;
                 } catch (e) {
                     error = true;
@@ -71,7 +53,7 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
 
                 try {
-                    Joi.any().with(123);
+                    Joi.object().with(123);
                     error = false;
                 } catch (e) {
                     error = true;
@@ -83,22 +65,10 @@ describe('Joi', function () {
 
         describe('#without', function () {
 
-            it('fails when without set on root', function (done) {
-
-                var b = Joi.any();
-                var result = b.without('test');
-
-                result.validate('test', function (err, value) {
-
-                    expect(err).to.exist;
-                    done();
-                });
-            });
-
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    b.without({});
+                    Joi.object().without({});
                     var error = false;
                 } catch (e) {
                     error = true;
@@ -106,7 +76,7 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
 
                 try {
-                    b.without(123);
+                    Joi.object().without(123);
                     error = false;
                 } catch (e) {
                     error = true;
@@ -118,22 +88,10 @@ describe('Joi', function () {
 
         describe('#xor', function () {
 
-            it('fails when without set on root', function (done) {
-
-                var b = Joi.any();
-                var result = b.xor('test');
-
-                result.validate('test', function (err, value) {
-
-                    expect(err).to.exist;
-                    done();
-                });
-            });
-
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    b.xor({});
+                    Joi.object().xor({});
                     var error = false;
                 } catch (e) {
                     error = true;
@@ -141,7 +99,7 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
 
                 try {
-                    b.xor(123);
+                    Joi.object().xor(123);
                     error = false;
                 } catch (e) {
                     error = true;
@@ -153,22 +111,10 @@ describe('Joi', function () {
 
         describe('#or', function () {
 
-            it('fails when without set on root', function (done) {
-
-                var b = Joi.any();
-                var result = b.or('test');
-
-                result.validate('test', function (err, value) {
-
-                    expect(err).to.exist;
-                    done();
-                });
-            });
-
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    b.or({});
+                    Joi.object().or({});
                     var error = false;
                 } catch (e) {
                     error = true;
@@ -176,7 +122,7 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
 
                 try {
-                    b.or(123);
+                    Joi.object().or(123);
                     error = false;
                 } catch (e) {
                     error = true;
