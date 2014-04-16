@@ -24,8 +24,11 @@ describe('date', function () {
     it('matches specific date', function (done) {
 
         var now = Date.now();
-        expect(Joi.validate(new Date(now), Joi.date().valid(new Date(now)))).to.not.exist;
-        done();
+        Joi.validate(new Date(now), Joi.date().valid(new Date(now)), function (err) {
+
+            expect(err).to.not.exist;
+            done();
+        });
     });
 
     describe('#validate', function () {

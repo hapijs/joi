@@ -50,15 +50,25 @@ describe('Types', function () {
 
         it('allows any key when schema is undefined', function (done) {
 
-            expect(Joi.validate({ a: 4 }, Joi.object())).to.not.exist;
-            expect(Joi.validate({ a: 4 }, Joi.object(undefined))).to.not.exist;
-            done();
+            Joi.validate({ a: 4 }, Joi.object(), function (err) {
+
+                expect(err).to.not.exist;
+
+                Joi.validate({ a: 4 }, Joi.object(undefined), function (err) {
+
+                    expect(err).to.not.exist;
+                    done();
+                });
+            });
         });
 
         it('allows any key when schema is null', function (done) {
 
-            expect(Joi.validate({ a: 4 }, Joi.object(null))).to.not.exist;
-            done();
+            Joi.validate({ a: 4 }, Joi.object(null), function (err) {
+
+                expect(err).to.not.exist;
+                done();
+            });
         });
 
         it('throws on invalid object schema', function (done) {
@@ -66,7 +76,7 @@ describe('Types', function () {
             expect(function () {
 
                 Joi.object(4);
-            }).to.throw('Object schema must be a valid object and cannot be a joi schema');
+            }).to.throw('Object schema must be a valid object');
             done();
         });
 
@@ -75,14 +85,17 @@ describe('Types', function () {
             expect(function () {
 
                 Joi.object(Joi.object());
-            }).to.throw('Object schema must be a valid object and cannot be a joi schema');
+            }).to.throw('Object schema cannot be a joi schema');
             done();
         });
 
         it('errors on array', function (done) {
 
-            expect(Joi.validate([1, 2, 3], Joi.object())).to.exist;
-            done();
+            Joi.validate([1, 2, 3], Joi.object(), function (err) {
+
+                expect(err).to.exist;
+                done();
+            });
         });
 
         it('should prevent extra keys from existing by default', function (done) {
@@ -253,20 +266,162 @@ describe('Types', function () {
 
             var schema = { a: Joi.number() };
             var obj = { a: 5, b: 'value' };
-            expect(Joi.validate(obj, schema, { skipFunctions: true })).to.exist;
-            done();
+            Joi.validate(obj, schema, { skipFunctions: true }, function (err) {
+
+                expect(err).to.exist;
+                done();
+            });
         });
 
         it('does not apply modifier if some rules fails', function (done) {
 
-            var schema = { b: Joi.any().rename('c', { move: true }), d: Joi.number() };
+            var schema = Joi.object({ b: Joi.any(), d: Joi.number() }).rename('b', 'c');
             var value = { b: 'any', d: 'string' };
 
-            var err = Joi.validate(value, schema);
-            expect(err).to.exist;
-            expect(value.b).to.equal('any');
-            expect(value.c).to.not.exist;
-            done();
+            Joi.validate(value, schema, function (err) {
+
+                expect(err).to.exist;
+                expect(value.b).to.equal('any');
+                expect(value.c).to.not.exist;
+                done();
+            });
+        });
+
+        describe('#rename', function () {
+
+            it('allows renaming multiple times with multiple enabled', function (done) {
+
+                var schema = Joi.object({
+                    test: Joi.string()
+                }).rename('test1', 'test').rename('test2', 'test', { multiple: true });
+
+                Joi.validate({ test1: 'a', test2: 'b' }, schema, function (err) {
+
+                    expect(err).to.not.exist;
+                    done();
+                });
+            });
+
+            it('errors renaming multiple times with multiple disabled', function (done) {
+
+                var schema = Joi.object({
+                    test: Joi.string()
+                }).rename('test1', 'test').rename('test2', 'test');
+
+                Joi.validate({ test1: 'a', test2: 'b' }, schema, function (err) {
+
+                    expect(err.message).to.equal('cannot rename test2 because multiple renames are disabled and another key was already renamed to test');
+                    done();
+                });
+            });
+
+            it('aliases a key', function (done) {
+
+                var schema = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.number()
+                }).rename('a', 'b', { alias: true });
+
+                var obj = { a: 10 };
+
+                Joi.validate(obj, schema, function (err) {
+
+                    expect(err).to.not.exist;
+                    expect(obj.a).to.equal(10);
+                    expect(obj.b).to.equal(10);
+                    done();
+                });
+            });
+
+            it('with override disabled should not allow overwriting existing value', function (done) {
+
+                var schema = Joi.object({
+                    test1: Joi.string()
+                }).rename('test', 'test1');
+
+                Joi.validate({ test: 'b', test1: 'a' }, schema, function (err) {
+
+                    expect(err.message).to.equal('cannot rename test because override is disabled and target test1 exists');
+                    done();
+                });
+            });
+
+            it('with override enabled should allow overwriting existing value', function (done) {
+
+                var schema = Joi.object({
+                    test1: Joi.string()
+                }).rename('test', 'test1', { override: true });
+
+                Joi.validate({ test: 'b', test1: 'a' }, schema, function (err) {
+
+                    expect(err).to.not.exist;
+                    done();
+                });
+            });
+
+            it('renames when data is nested in an array via includes', function (done) {
+
+                var schema = {
+                    arr: Joi.array().includes(Joi.object({
+                        one: Joi.string(),
+                        two: Joi.string()
+                    }).rename('uno', 'one').rename('dos', 'two'))
+                };
+
+                var data = { arr: [{ uno: '1', dos: '2' }] };
+                Joi.validate(data, schema, function (err) {
+
+                    expect(err).to.not.exist;
+                    expect(data.arr[0].one).to.equal('1');
+                    expect(data.arr[0].two).to.equal('2');
+                    done();
+                });
+            });
+
+            it('applies rename and validation in the correct order regardless of key order', function (done) {
+
+                var schema1 = Joi.object({
+                    a: Joi.number()
+                }).rename('b', 'a');
+
+                var value1 = { b: '5' };
+
+                Joi.validate(value1, schema1, { modify: true }, function (err1) {
+
+                    expect(err1).to.not.exist;
+                    expect(value1.b).to.not.exist;
+                    expect(value1.a).to.equal(5);
+
+                    var schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
+                    var value2 = { b: '5' };
+
+                    Joi.validate(value2, schema2, { modify: true }, function (err2) {
+
+                        expect(err2).to.not.exist;
+                        expect(value2.b).to.not.exist;
+                        expect(value2.a).to.equal(5);
+
+                        done();
+                    });
+                });
+            });
+
+            it('sets the default value after key is renamed', function (done) {
+
+                var schema = Joi.object({
+                    foo2: Joi.string().default('test')
+                }).rename('foo', 'foo2');
+
+                var input = {};
+
+                Joi.validate(input, schema, function (err) {
+
+                    expect(err).to.not.exist;
+                    expect(input.foo2).to.equal('test');
+
+                    done();
+                });
+            });
         });
 
         describe('#describe', function () {

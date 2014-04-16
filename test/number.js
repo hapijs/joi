@@ -42,9 +42,11 @@ describe('Joi.number', function () {
         it('should return false for denied value', function (done) {
 
             var text = Joi.number().invalid(50);
-            var result = text.validate(50);
-            expect(result).to.exist;
-            done();
+            text.validate(50, function (err) {
+
+                expect(err).to.exist;
+                done();
+            });
         });
 
         it('should validate integer', function (done) {
@@ -93,10 +95,12 @@ describe('Joi.number', function () {
             var config = { a: Joi.number() };
             var obj = { a: '123' };
 
-            var error = Joi.validate(obj, config, { modify: true });
-            expect(error).to.not.exist;
-            expect(obj.a).to.equal(123);
-            done();
+            Joi.validate(obj, config, { modify: true }, function (err) {
+
+                expect(err).to.not.exist;
+                expect(obj.a).to.equal(123);
+                done();
+            });
         });
 
         it('convert will convert a string to a number', function (done) {
@@ -399,9 +403,11 @@ describe('Joi.number', function () {
         it('should display correctly for int type', function (done) {
 
             var t = Joi.number().integer();
-            var result = Joi.validate('1.1', t);
-            expect(result.message).to.contain('integer');
-            done();
+            Joi.validate('1.1', t, function (err) {
+
+                expect(err.message).to.contain('integer');
+                done();
+            });
         });
     });
 

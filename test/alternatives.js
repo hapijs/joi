@@ -42,10 +42,12 @@ describe('Types', function () {
             };
 
             var value = { a: '5' };
-            var err = Joi.validate(value, schema, { modify: true });
-            expect(err).to.not.exist;
-            expect(value.a).to.equal(5);
-            done();
+            var err = Joi.validate(value, schema, { modify: true }, function (err) {
+
+                expect(err).to.not.exist;
+                expect(value.a).to.equal(5);
+                done();
+            });
         });
 
         it('applies modifiers when lower priority valid is a match', function (done) {
@@ -58,26 +60,30 @@ describe('Types', function () {
             };
 
             var value = { a: '5' };
-            var err = Joi.validate(value, schema, { modify: true });
-            expect(err).to.not.exist;
-            expect(value.a).to.equal(5);
-            done();
+            var err = Joi.validate(value, schema, { modify: true }, function (err) {
+
+                expect(err).to.not.exist;
+                expect(value.a).to.equal(5);
+                done();
+            });
         });
 
-        it('does not apply modifier if laternative fails', function (done) {
+        it('does not apply modifier if alternative fails', function (done) {
 
             var schema = {
                 a: [
-                    { b: Joi.any().rename('c', { move: true }), d: Joi.number() },
+                    Joi.object({ b: Joi.any(), d: Joi.number() }).rename('b', 'c'),
                     { b: Joi.any(), d: Joi.string() }
                 ]
             };
 
             var value = { a: { b: 'any', d: 'string' } };
-            var err = Joi.validate(value, schema);
-            expect(err).to.not.exist;
-            expect(value.a.b).to.equal('any');
-            done();
+            var err = Joi.validate(value, schema, function (err) {
+
+                expect(err).to.not.exist;
+                expect(value.a.b).to.equal('any');
+                done();
+            });
         });
     });
 });
