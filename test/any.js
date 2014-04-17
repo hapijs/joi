@@ -229,7 +229,7 @@ describe('any', function () {
             expect(function () {
 
                 var schema = Joi.valid(5, 6, 7).example(4);
-            }).to.throw('Bad example: the value of <root> must be one of 5, 6, 7');
+            }).to.throw('Bad example: value must be one of 5, 6, 7');
             done();
         });
     });

@@ -68,7 +68,7 @@ describe('Joi', function () {
         Joi.string().validate(null, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.annotate()).to.equal('{\n  \u001b[41m\"<root>\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] the value of <root> is not allowed to be null\u001b[0m');
+            expect(err.annotate()).to.equal('{\n  \u001b[41m\"value\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] value is not allowed to be null\u001b[0m');
             done();
         });
     });
@@ -394,7 +394,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('the value of mode must be one of required, optional, try, null. the value of auth must be a string. the value of auth must be a boolean');
+            expect(err.message).to.equal('mode must be one of required, optional, try, null. auth must be a string. auth must be a boolean');
 
             Validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
@@ -426,7 +426,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('the value of mode must be one of required, optional, try, null. the value of auth must be a string. the value of auth must be a boolean');
+            expect(err.message).to.equal('mode must be one of required, optional, try, null. auth must be a string. auth must be a boolean');
 
             Validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
@@ -583,11 +583,11 @@ describe('Joi', function () {
 
                 Joi.object().validate(true, function (err, value) {
 
-                    expect(err.message).to.contain('the value of <root> must be an object');
+                    expect(err.message).to.contain('value must be an object');
 
                     Joi.string().validate(true, function (err, value) {
 
-                        expect(err.message).to.contain('the value of <root> must be a string');
+                        expect(err.message).to.contain('value must be a string');
 
                         Joi.string().email().validate('test@test.com', function (err, value) {
 
@@ -634,17 +634,17 @@ describe('Joi', function () {
         Joi.object({}).validate({ foo: 'bar' }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('the key foo is not allowed');
+            expect(err.message).to.equal('foo is not allowed');
 
             Joi.compile({}).validate({ foo: 'bar' }, function (err, value) {
 
                 expect(err).to.exist;
-                expect(err.message).to.equal('the key foo is not allowed');
+                expect(err.message).to.equal('foo is not allowed');
 
                 Joi.compile({ other: Joi.number() }).validate({ foo: 'bar' }, function (err, value) {
 
                     expect(err).to.exist;
-                    expect(err.message).to.equal('the key foo is not allowed');
+                    expect(err.message).to.equal('foo is not allowed');
 
                     done();
                 });
@@ -663,12 +663,12 @@ describe('Joi', function () {
         Joi.compile(config).validate({ auth: { unknown: true } }, function (err, value) {
 
             expect(err).to.not.be.null;
-            expect(err.message).to.contain('the key unknown is not allowed');
+            expect(err.message).to.contain('unknown is not allowed');
 
             Joi.compile(config).validate({ something: false }, function (err, value) {
 
                 expect(err).to.not.be.null;
-                expect(err.message).to.contain('the key something is not allowed');
+                expect(err.message).to.contain('something is not allowed');
 
                 done();
             });
@@ -690,7 +690,7 @@ describe('Joi', function () {
         Joi.compile(config).validate({}, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.contain('the value of module is not allowed to be undefined');
+            expect(err.message).to.contain('module is not allowed to be undefined');
 
             Joi.compile(config).validate({ module: 'test' }, function (err, value) {
 
@@ -699,8 +699,8 @@ describe('Joi', function () {
                 Joi.compile(config).validate({ module: {} }, function (err, value) {
 
                     expect(err).to.not.be.null;
-                    expect(err.message).to.contain('the value of compile is not allowed to be undefined');
-                    expect(err.message).to.contain('the value of module must be a string');
+                    expect(err.message).to.contain('compile is not allowed to be undefined');
+                    expect(err.message).to.contain('module must be a string');
 
                     Joi.compile(config).validate({ module: { compile: function () { } } }, function (err, value) {
 
@@ -746,7 +746,7 @@ describe('Joi', function () {
         Joi.compile(config).validate({}, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.contain('the value of module is not allowed to be undefined');
+            expect(err.message).to.contain('module is not allowed to be undefined');
             done();
         });
     });
@@ -1191,7 +1191,7 @@ describe('Joi', function () {
         Joi.validate(input, schema, { skipFunctions: false }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.contain('the key func is not allowed');
+            expect(err.message).to.contain('func is not allowed');
             done();
         });
     });
@@ -1338,7 +1338,7 @@ describe('Joi', function () {
         Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[1]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[3]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of u is not allowed to be undefined\n[3] the value of b must be a string\u001b[0m');
+            expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[1]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[3]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] a must be one of a, b, c, d\n[2] u is not allowed to be undefined\n[3] b must be a string\u001b[0m');
             done();
         });
     });

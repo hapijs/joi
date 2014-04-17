@@ -26,7 +26,7 @@ describe('alternatives', function () {
         Joi.alternatives().validate('a', function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('no matching alternatives found');
+            expect(err.message).to.equal('value not matching any of the allowed alternatives');
             done();
         });
     });

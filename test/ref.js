@@ -31,7 +31,7 @@ describe('ref', function () {
         schema.validate({ a: 5, b: 6 }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('the value of a must be one of ref:b');
+            expect(err.message).to.equal('a must be one of ref:b');
 
             Validate(schema, [
                 [{ a: 5 }, false],
@@ -56,7 +56,7 @@ describe('ref', function () {
         schema.validate({ a: 5, b: { c: 6 } }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('the value of a must be one of ref:b.c');
+            expect(err.message).to.equal('a must be one of ref:b.c');
 
             Validate(schema, [
                 [{ a: 5 }, false],

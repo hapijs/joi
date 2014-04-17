@@ -70,6 +70,15 @@ describe('errors', function () {
         });
     });
 
+    it('overrides root key language', function (done) {
+
+        Joi.string().options({ language: { root: 'blah' } }).validate(4, function (err, value) {
+
+            expect(err.message).to.equal('blah must be a string');
+            done();
+        });
+    });
+
     describe('#annotate', function () {
 
         it('displays alternatives fail as a single line', function (done) {
@@ -85,7 +94,7 @@ describe('errors', function () {
             Joi.validate({ x: true }, schema, function (err, value) {
 
                 expect(err).to.exist;
-                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] the value of x must be a string\n[2] the value of x must be a number\n[3] the value of x must be a number of milliseconds or valid date string\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] x must be a string\n[2] x must be a number\n[3] x must be a number of milliseconds or valid date string\u001b[0m');
                 done();
             });
         });

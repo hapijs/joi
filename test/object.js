@@ -123,7 +123,7 @@ describe('object', function () {
         done();
     });
 
-    it('should validate the key count when min is set', function (done) {
+    it('should validate count when min is set', function (done) {
 
         var schema = Joi.object().min(3);
         Validate(schema, [
@@ -135,7 +135,7 @@ describe('object', function () {
         done();
     });
 
-    it('should validate the key count when max is set', function (done) {
+    it('should validate count when max is set', function (done) {
 
         var schema = Joi.object().max(2);
         Validate(schema, [
@@ -147,7 +147,7 @@ describe('object', function () {
         done();
     });
 
-    it('should validate the key count when min and max is set', function (done) {
+    it('should validate count when min and max is set', function (done) {
 
         var schema = Joi.object().max(3).min(2);
         Validate(schema, [
@@ -160,7 +160,7 @@ describe('object', function () {
         done();
     });
 
-    it('should validate the key count when length is set', function (done) {
+    it('should validate count when length is set', function (done) {
 
         var schema = Joi.object().length(2);
         Validate(schema, [
