@@ -34,11 +34,11 @@ Current version: **4.0.x**
         - [`array.min(limit)`](#arrayminlimit)
         - [`array.max(limit)`](#arraymaxlimit)
         - [`array.length(limit)`](#arraylengthlimit)
+    - [`binary()`](#binary)
+      - [`binary.min(limit)`](#binaryminlimit)
+      - [`binary.max(limit)`](#binarymaxlimit)
+      - [`binary.length(limit)`](#binarylengthlimit)
     - [`boolean()`](#boolean)
-    - [`buffer()`](#buffer)
-        - [`buffer.min(limit)`](#bufferminlimit)
-        - [`buffer.max(limit)`](#buffermaxlimit)
-        - [`buffer.length(limit)`](#bufferlengthlimit)
     - [`date()`](#date)
         - [`date.min(date)`](#datemindate)
         - [`date.max(date)`](#datemaxdate)
@@ -417,48 +417,48 @@ boolean.allow(null);
 boolean.validate(true, function (err) { });
 ```
 
-### `buffer()`
+### `binary()`
 
-Generates a schema object that matches a Buffer data type (as well as the strings which can be converted to Buffers).
+Generates a schema object that matches a Buffer data type (as well as the strings which will be converted to Buffers).
 
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var schema = {
-    a: Joi.buffer()
+    a: Joi.binary()
 };
 ```
 
-#### `buffer.min(limit)`
+#### `binary.min(limit)`
 
 Specifies the minimum length of the buffer where:
 - `limit` - the lowest size of the buffer.
 
 ```javascript
 var schema = {
-    a: Joi.buffer().min(2)
+    a: Joi.binary().min(2)
 };
 ```
 
-#### `buffer.max(limit)`
+#### `binary.max(limit)`
 
 Specifies the maximum length of the buffer where:
 - `limit` - the highest size of the buffer.
 
 ```javascript
 var schema = {
-    a: Joi.buffer().max(10)
+    a: Joi.binary().max(10)
 };
 ```
 
-#### `buffer.length(limit)`
+#### `binary.length(limit)`
 
 Specifies the exact length of the buffer:
 - `limit` - the size of buffer allowed.
 
 ```javascript
 var schema = {
-    a: Joi.buffer().length(5)
+    a: Joi.binary().length(5)
 };
 ```
 
