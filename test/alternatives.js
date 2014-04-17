@@ -22,7 +22,7 @@ describe('alternatives', function () {
 
     it('fails when no alternatives are provided', function (done) {
 
-        Joi.alternatives().validate('a', function (err, value) {
+        Joi.alternatives.validate('a', function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.equal('no matching alternatives found');
@@ -32,7 +32,7 @@ describe('alternatives', function () {
 
     it('allows undefined when no alternatives are provided', function (done) {
 
-        Joi.alternatives().validate(undefined, function (err, value) {
+        Joi.alternatives.validate(undefined, function (err, value) {
 
             expect(err).to.not.exist;
             done();
@@ -43,8 +43,8 @@ describe('alternatives', function () {
 
         var schema = {
             a: [
-                Joi.number(),
-                Joi.string()
+                Joi.number,
+                Joi.string
             ]
         };
 
@@ -60,8 +60,8 @@ describe('alternatives', function () {
 
         var schema = {
             a: [
-                Joi.number(),
-                Joi.any().valid('5')
+                Joi.number,
+                Joi.any.valid('5')
             ]
         };
 
@@ -77,8 +77,8 @@ describe('alternatives', function () {
 
         var schema = {
             a: [
-                Joi.object({ c: Joi.any(), d: Joi.number() }).rename('b', 'c'),
-                { b: Joi.any(), d: Joi.string() }
+                Joi.object.keys({ c: Joi.any, d: Joi.number }).rename('b', 'c'),
+                { b: Joi.any, d: Joi.string }
             ]
         };
 
@@ -97,7 +97,7 @@ describe('alternatives', function () {
 
             expect(function () {
 
-                Joi.alternatives().attempt();
+                Joi.alternatives.attempt();
             }).to.throw('Cannot add other alternatives without at least one schema');
             done();
         });

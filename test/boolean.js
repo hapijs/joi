@@ -25,7 +25,7 @@ describe('Types', function () {
 
         it('converts a string to a boolean', function (done) {
 
-            Joi.boolean().validate('true', function (err, value) {
+            Joi.boolean.validate('true', function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value).to.equal(true);
@@ -35,7 +35,7 @@ describe('Types', function () {
 
         it('errors on a number', function (done) {
 
-            Joi.boolean().validate(1, function (err, value) {
+            Joi.boolean.validate(1, function (err, value) {
 
                 expect(err).to.exist;
                 expect(value).to.equal(1);
@@ -47,7 +47,7 @@ describe('Types', function () {
 
             it('converts string values and validates', function (done) {
 
-                var rule = Joi.boolean();
+                var rule = Joi.boolean;
                 Validate(rule, [
                     ['1234', false],
                     [false, true],
@@ -64,7 +64,7 @@ describe('Types', function () {
 
             it('should handle work with required', function (done) {
 
-                var rule = Joi.boolean().required();
+                var rule = Joi.boolean.required();
                 Validate(rule, [
                     ['1234', false],
                     ['true', true],
@@ -76,7 +76,7 @@ describe('Types', function () {
 
             it('should handle work with allow', function (done) {
 
-                var rule = Joi.boolean().allow(false);
+                var rule = Joi.boolean.allow(false);
                 Validate(rule, [
                     ['1234', false],
                     [false, true],
@@ -86,7 +86,7 @@ describe('Types', function () {
 
             it('should handle work with invalid', function (done) {
 
-                var rule = Joi.boolean().invalid(false);
+                var rule = Joi.boolean.invalid(false);
                 Validate(rule, [
                     ['1234', false],
                     [false, false],
@@ -97,7 +97,7 @@ describe('Types', function () {
 
             it('should handle work with invalid and null allowed', function (done) {
 
-                var rule = Joi.boolean().invalid(false).allow(null);
+                var rule = Joi.boolean.invalid(false).allow(null);
                 Validate(rule, [
                     ['1234', false],
                     [false, false],
@@ -108,7 +108,7 @@ describe('Types', function () {
 
             it('should handle work with allow and invalid', function (done) {
 
-                var rule = Joi.boolean().invalid(true).allow(false);
+                var rule = Joi.boolean.invalid(true).allow(false);
                 Validate(rule, [
                     ['1234', false],
                     [false, true],
@@ -119,7 +119,7 @@ describe('Types', function () {
 
             it('should handle work with allow, invalid, and null allowed', function (done) {
 
-                var rule = Joi.boolean().invalid(true).allow(false).allow(null);
+                var rule = Joi.boolean.invalid(true).allow(false).allow(null);
                 Validate(rule, [
                     ['1234', false],
                     [false, true],

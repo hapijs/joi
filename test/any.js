@@ -27,8 +27,8 @@ describe('Joi', function () {
 
             it('validates without converting', function (done) {
 
-                var schema = Joi.object({
-                    array: Joi.array().includes(Joi.string().min(5), Joi.number().min(3))
+                var schema = Joi.object.keys({
+                    array: Joi.array.includes(Joi.string.min(5), Joi.number.min(3))
                 }).strict();
 
                 Validate(schema, [
@@ -45,7 +45,7 @@ describe('Joi', function () {
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    Joi.object().with({});
+                    Joi.object.with({});
                     var error = false;
                 }
                 catch (e) {
@@ -54,7 +54,7 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
 
                 try {
-                    Joi.object().with(123);
+                    Joi.object.with(123);
                     error = false;
                 }
                 catch (e) {
@@ -70,7 +70,7 @@ describe('Joi', function () {
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    Joi.object().without({});
+                    Joi.object.without({});
                     var error = false;
                 }
                 catch (e) {
@@ -79,7 +79,7 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
 
                 try {
-                    Joi.object().without(123);
+                    Joi.object.without(123);
                     error = false;
                 }
                 catch (e) {
@@ -95,7 +95,7 @@ describe('Joi', function () {
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    Joi.object().xor({});
+                    Joi.object.xor({});
                     var error = false;
                 }
                 catch (e) {
@@ -104,7 +104,7 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
 
                 try {
-                    Joi.object().xor(123);
+                    Joi.object.xor(123);
                     error = false;
                 }
                 catch (e) {
@@ -120,7 +120,7 @@ describe('Joi', function () {
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    Joi.object().or({});
+                    Joi.object.or({});
                     var error = false;
                 }
                 catch (e) {
@@ -129,7 +129,7 @@ describe('Joi', function () {
                 expect(error).to.equal(true);
 
                 try {
-                    Joi.object().or(123);
+                    Joi.object.or(123);
                     error = false;
                 }
                 catch (e) {
@@ -144,7 +144,7 @@ describe('Joi', function () {
 
             it('adds to existing options', function (done) {
 
-                var a = { b: Joi.number().strict().options({ convert: true }) };
+                var a = { b: Joi.number.strict().options({ convert: true }) };
                 var c = { b: '2' };
                 Joi.validate(c, a, function (err, value) {
 
@@ -159,7 +159,7 @@ describe('Joi', function () {
 
             it('adds to existing options', function (done) {
 
-                var a = { b: Joi.number().options({ convert: true }).strict() };
+                var a = { b: Joi.number.options({ convert: true }).strict() };
                 var c = { b: '2' };
                 Joi.validate(c, a, function (err, value) {
 
@@ -174,7 +174,7 @@ describe('Joi', function () {
 
             it('sets the value', function (done) {
 
-                var schema = { foo: Joi.string().default('test') };
+                var schema = { foo: Joi.string.default('test') };
                 var input = {};
 
                 Joi.validate(input, schema, function (err, value) {
@@ -188,7 +188,7 @@ describe('Joi', function () {
 
             it('should not overide a value when value is given', function (done) {
 
-                var schema = { foo: Joi.string().default('bar') };
+                var schema = { foo: Joi.string.default('bar') };
                 var input = { foo: 'test' };
 
                 Joi.validate(input, schema, function (err, value) {
@@ -205,7 +205,7 @@ describe('Joi', function () {
 
             it('sets the description', function (done) {
 
-                var b = Joi.any().description('my description');
+                var b = Joi.any.description('my description');
                 expect(b._description).to.equal('my description');
 
                 done();
@@ -215,7 +215,7 @@ describe('Joi', function () {
 
                 expect(function () {
 
-                    Joi.any().description();
+                    Joi.any.description();
                 }).to.throw('Description must be a non-empty string');
                 done();
             });
@@ -225,7 +225,7 @@ describe('Joi', function () {
 
             it('sets the notes', function (done) {
 
-                var b = Joi.any().notes(['a']).notes('my notes');
+                var b = Joi.any.notes(['a']).notes('my notes');
                 expect(b._notes).to.deep.equal(['a', 'my notes']);
 
                 done();
@@ -235,7 +235,7 @@ describe('Joi', function () {
 
                 expect(function () {
 
-                    Joi.any().notes();
+                    Joi.any.notes();
                 }).to.throw('Notes must be a non-empty string or array');
                 done();
             });
@@ -244,7 +244,7 @@ describe('Joi', function () {
 
                 expect(function () {
 
-                    Joi.any().notes(5);
+                    Joi.any.notes(5);
                 }).to.throw('Notes must be a non-empty string or array');
                 done();
             });
@@ -254,7 +254,7 @@ describe('Joi', function () {
 
             it('sets the tags', function (done) {
 
-                var b = Joi.any().tags(['tag1', 'tag2']).tags('tag3');
+                var b = Joi.any.tags(['tag1', 'tag2']).tags('tag3');
                 expect(b._tags).to.include('tag1');
                 expect(b._tags).to.include('tag2');
                 expect(b._tags).to.include('tag3');
@@ -266,7 +266,7 @@ describe('Joi', function () {
 
                 expect(function () {
 
-                    Joi.any().tags();
+                    Joi.any.tags();
                 }).to.throw('Tags must be a non-empty string or array');
                 done();
             });
@@ -275,7 +275,7 @@ describe('Joi', function () {
 
                 expect(function () {
 
-                    Joi.any().tags(5);
+                    Joi.any.tags(5);
                 }).to.throw('Tags must be a non-empty string or array');
                 done();
             });
@@ -285,7 +285,7 @@ describe('Joi', function () {
 
             it('sets an example', function (done) {
 
-                var schema = Joi.any().valid(5, 6, 7).example(5);
+                var schema = Joi.any.valid(5, 6, 7).example(5);
                 expect(schema._examples).to.include(5);
                 expect(schema.describe().examples).to.deep.equal([5]);
                 done();
@@ -295,7 +295,7 @@ describe('Joi', function () {
 
                 expect(function () {
 
-                    Joi.any().example();
+                    Joi.any.example();
                 }).to.throw('Missing example');
                 done();
             });
@@ -304,7 +304,7 @@ describe('Joi', function () {
 
                 expect(function () {
 
-                    var schema = Joi.any().valid(5, 6, 7).example(4);
+                    var schema = Joi.any.valid(5, 6, 7).example(4);
                 }).to.throw('Bad example: the value of <root> must be one of 5, 6, 7');
                 done();
             });
@@ -314,7 +314,7 @@ describe('Joi', function () {
 
             it('sets the unit', function (done) {
 
-                var b = Joi.any().unit('milliseconds');
+                var b = Joi.any.unit('milliseconds');
                 expect(b._unit).to.equal('milliseconds');
                 expect(b.describe().unit).to.equal('milliseconds');
                 done();
@@ -324,7 +324,7 @@ describe('Joi', function () {
 
                 expect(function () {
 
-                    Joi.any().unit();
+                    Joi.any.unit();
                 }).to.throw('Unit name must be a non-empty string');
                 done();
             });
@@ -334,7 +334,7 @@ describe('Joi', function () {
 
             it('checks value after conversion', function (done) {
 
-                var schema = Joi.number().invalid(2);
+                var schema = Joi.number.invalid(2);
                 schema.validate('2', { abortEarly: false }, function (err, value) {
 
                     expect(err).to.exist;
@@ -351,7 +351,7 @@ describe('Joi', function () {
 
                     expect(function () {
 
-                        Joi.any().valid(function () { });
+                        Joi.any.valid(function () { });
                     }).to.throw('Value cannot be an object or function');
                     done();
                 });
@@ -360,7 +360,7 @@ describe('Joi', function () {
 
                     expect(function () {
 
-                        Joi.any().valid({ });
+                        Joi.any.valid({ });
                     }).to.throw('Value cannot be an object or function');
                     done();
                 });
@@ -370,7 +370,7 @@ describe('Joi', function () {
 
                 it('returns array', function (done) {
 
-                    var a = Joi.any();
+                    var a = Joi.any;
                     var b = a.required();
                     expect(a._valids.values().length).to.equal(1);
                     expect(b._valids.values().length).to.equal(0);
@@ -384,7 +384,7 @@ describe('Joi', function () {
 
                 it('includes undefined', function (done) {
 
-                    var b = Joi.any();
+                    var b = Joi.any;
                     expect(b._valids.toString(true)).to.equal('undefined');
                     done();
                 });

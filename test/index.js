@@ -24,10 +24,10 @@ describe('Joi', function () {
 
     it('validates object', function (done) {
 
-        var schema = Joi.object({
-            a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c'),
-            c: Joi.string().email().optional()
+        var schema = Joi.object.keys({
+            a: Joi.number.min(0).max(3),
+            b: Joi.string.valid('a', 'b', 'c'),
+            c: Joi.string.email().optional()
         }).without('a', 'none');
 
         var obj = {
@@ -45,7 +45,7 @@ describe('Joi', function () {
 
     it('keeps schema immutable', function (done) {
 
-        var a = Joi.string();
+        var a = Joi.string;
         var b = a.valid('b');
 
         Validate(a, [
@@ -65,7 +65,7 @@ describe('Joi', function () {
 
     it('validates null', function (done) {
 
-        Joi.validate(null, Joi.string(), function (err, value) {
+        Joi.validate(null, Joi.string, function (err, value) {
 
             expect(err).to.exist;
             expect(err.annotated()).to.equal('{\n  \u001b[41m\"<root>\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] the value of <root> is not allowed to be null\u001b[0m');
@@ -169,9 +169,9 @@ describe('Joi', function () {
 
     it('validated with', function (done) {
 
-        var schema = Joi.object({
-            txt: Joi.string(),
-            upc: Joi.string()
+        var schema = Joi.object.keys({
+            txt: Joi.string,
+            upc: Joi.string
         }).with('txt', 'upc');
 
         Joi.validate({ txt: 'a' }, schema, { abortEarly: false }, function (err, value) {
@@ -193,9 +193,9 @@ describe('Joi', function () {
 
     it('validated without', function (done) {
 
-        var schema = Joi.object({
-            txt: Joi.string(),
-            upc: Joi.string()
+        var schema = Joi.object.keys({
+            txt: Joi.string,
+            upc: Joi.string
         }).without('txt', 'upc');
 
         Joi.validate({ txt: 'a', upc: 'b' }, schema, { abortEarly: false }, function (err, value) {
@@ -217,9 +217,9 @@ describe('Joi', function () {
 
     it('validates xor', function (done) {
 
-        var schema = Joi.object({
-            txt: Joi.string(),
-            upc: Joi.string()
+        var schema = Joi.object.keys({
+            txt: Joi.string,
+            upc: Joi.string
         }).xor('txt', 'upc');
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
@@ -250,10 +250,10 @@ describe('Joi', function () {
 
     it('validates multiple peers xor', function (done) {
 
-        var schema = Joi.object({
-            txt: Joi.string(),
-            upc: Joi.string(),
-            code: Joi.string()
+        var schema = Joi.object.keys({
+            txt: Joi.string,
+            upc: Joi.string,
+            code: Joi.string
         }).xor('txt', 'upc', 'code');
 
         Validate(schema, [
@@ -267,9 +267,9 @@ describe('Joi', function () {
 
     it('validates xor with number types', function (done) {
 
-        var schema = Joi.object({
-            code: Joi.number(),
-            upc: Joi.number()
+        var schema = Joi.object.keys({
+            code: Joi.number,
+            upc: Joi.number
         }).xor('code', 'upc');
 
         Validate(schema, [
@@ -284,9 +284,9 @@ describe('Joi', function () {
 
     it('validates xor when empty value of peer allowed', function (done) {
 
-        var schema = Joi.object({
-            code: Joi.string(),
-            upc: Joi.string().allow('')
+        var schema = Joi.object.keys({
+            code: Joi.string,
+            upc: Joi.string.allow('')
         }).xor('code', 'upc');
 
         Validate(schema, [
@@ -302,10 +302,10 @@ describe('Joi', function () {
 
     it('validates or', function (done) {
 
-        var schema = Joi.object({
-            txt: Joi.string(),
-            upc: Joi.string().allow(null, ''),
-            code: Joi.number()
+        var schema = Joi.object.keys({
+            txt: Joi.string,
+            upc: Joi.string.allow(null, ''),
+            code: Joi.number
         }).or('txt', 'upc', 'code');
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
@@ -341,10 +341,10 @@ describe('Joi', function () {
 
     it('validates and', function (done) {
 
-        var schema = Joi.object({
-            txt: Joi.string(),
-            upc: Joi.string().allow(null, ''),
-            code: Joi.number()
+        var schema = Joi.object.keys({
+            txt: Joi.string,
+            upc: Joi.string.allow(null, ''),
+            code: Joi.number
         }).and('txt', 'upc', 'code');
 
         Joi.validate({ txt: 'x' }, schema, { abortEarly: false }, function (err, value) {
@@ -383,11 +383,11 @@ describe('Joi', function () {
 
         var schema = {
             auth: [
-                Joi.object({
-                    mode: Joi.string().valid('required', 'optional', 'try').allow(null)
+                Joi.object.keys({
+                    mode: Joi.string.valid('required', 'optional', 'try').allow(null)
                 }).allow(null),
-                Joi.string(),
-                Joi.boolean()
+                Joi.string,
+                Joi.boolean
             ]
         };
 
@@ -414,12 +414,12 @@ describe('Joi', function () {
     it('validates alternatives', function (done) {
 
         var schema = {
-            auth: Joi.alternatives(
-                Joi.object({
-                    mode: Joi.string().valid('required', 'optional', 'try').allow(null)
+            auth: Joi.alternatives.attempt(
+                Joi.object.keys({
+                    mode: Joi.string.valid('required', 'optional', 'try').allow(null)
                 }).allow(null),
-                Joi.string(),
-                Joi.boolean()
+                Joi.string,
+                Joi.boolean
             )
         };
 
@@ -446,9 +446,9 @@ describe('Joi', function () {
     it('validates required alternatives', function (done) {
 
         var schema = {
-            a: Joi.alternatives(
-                Joi.string().required(),
-                Joi.boolean().required()
+            a: Joi.alternatives.attempt(
+                Joi.string.required(),
+                Joi.boolean.required()
             )
         };
 
@@ -470,8 +470,8 @@ describe('Joi', function () {
 
         var schema = {
             a: [
-                Joi.string().required(),
-                Joi.boolean().required()
+                Joi.string.required(),
+                Joi.boolean.required()
             ]
         };
 
@@ -492,7 +492,7 @@ describe('Joi', function () {
     it('validates an array of string with valid', function (done) {
 
         var schema = {
-            brand: Joi.array().includes(Joi.string().valid('amex', 'visa'))
+            brand: Joi.array.includes(Joi.string.valid('amex', 'visa'))
         };
 
         Validate(schema, [
@@ -504,7 +504,7 @@ describe('Joi', function () {
 
     it('validates pre and post convert value', function (done) {
 
-        var schema = Joi.number().valid(5);
+        var schema = Joi.number.valid(5);
 
         Validate(schema, [
             [5, true],
@@ -516,7 +516,7 @@ describe('Joi', function () {
     it('does not change object when validation fails', function (done) {
 
         var schema = {
-            a: Joi.number().valid(2)
+            a: Joi.number.valid(2)
         };
 
         var obj = {
@@ -534,7 +534,7 @@ describe('Joi', function () {
     it('does not set optional keys when missing', function (done) {
 
         var schema = {
-            a: Joi.number()
+            a: Joi.number
         };
 
         var obj = {};
@@ -549,7 +549,7 @@ describe('Joi', function () {
 
     it('invalidates pre and post convert value', function (done) {
 
-        var schema = Joi.number().invalid(5);
+        var schema = Joi.number.invalid(5);
 
         Validate(schema, [
             [5, false],
@@ -560,9 +560,9 @@ describe('Joi', function () {
 
     it('invalidates missing peers', function (done) {
 
-        var schema = Joi.object({
-            username: Joi.string(),
-            password: Joi.string()
+        var schema = Joi.object.keys({
+            username: Joi.string,
+            password: Joi.string
         }).with('username', 'password').without('password', 'access_token');
 
         Joi.validate({ username: 'bob' }, schema, function (err, value) {
@@ -574,25 +574,25 @@ describe('Joi', function () {
 
     it('validates config where the root item is a joi type', function (done) {
 
-        Joi.validate(true, Joi.boolean().allow(null), function (err, value) {
+        Joi.validate(true, Joi.boolean.allow(null), function (err, value) {
 
             expect(err).to.be.null;
-            Joi.validate({ auth: { mode: 'try' } }, Joi.object(), function (err, value) {
+            Joi.validate({ auth: { mode: 'try' } }, Joi.object, function (err, value) {
 
                 expect(err).to.be.null;
 
-                Joi.validate(true, Joi.object(), function (err, value) {
+                Joi.validate(true, Joi.object, function (err, value) {
 
                     expect(err.message).to.contain('the value of <root> must be an object');
 
-                    Joi.validate(true, Joi.string(), function (err, value) {
+                    Joi.validate(true, Joi.string, function (err, value) {
 
                         expect(err.message).to.contain('the value of <root> must be a string');
 
-                        Joi.validate('test@test.com', Joi.string().email(), function (err, value) {
+                        Joi.validate('test@test.com', Joi.string.email(), function (err, value) {
 
                             expect(err).to.be.null;
-                            Joi.validate({ param: 'item' }, Joi.object({ param: Joi.string().required() }), function (err, value) {
+                            Joi.validate({ param: 'item' }, Joi.object.keys({ param: Joi.string.required() }), function (err, value) {
 
                                 expect(err).to.be.null;
                                 done();
@@ -607,7 +607,7 @@ describe('Joi', function () {
     it('converts string to number', function (done) {
 
         var config = {
-            a: Joi.number()
+            a: Joi.number
         };
 
         var input = { a: '5' };
@@ -622,7 +622,7 @@ describe('Joi', function () {
 
     it('allows unknown keys in objects if no schema was given', function (done) {
 
-        Joi.validate({ foo: 'bar' }, Joi.object(), function (err, value) {
+        Joi.validate({ foo: 'bar' }, Joi.object, function (err, value) {
 
             expect(err).to.not.exist;
             done();
@@ -631,7 +631,7 @@ describe('Joi', function () {
 
     it('fails on unknown keys in objects if a schema was given', function (done) {
 
-        Joi.validate({ foo: 'bar' }, Joi.object({}), function (err, value) {
+        Joi.validate({ foo: 'bar' }, Joi.object.keys({}), function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.equal('the key foo is not allowed');
@@ -641,7 +641,7 @@ describe('Joi', function () {
                 expect(err).to.exist;
                 expect(err.message).to.equal('the key foo is not allowed');
 
-                Joi.validate({ foo: 'bar' }, { other: Joi.number() }, function (err, value) {
+                Joi.validate({ foo: 'bar' }, { other: Joi.number }, function (err, value) {
 
                     expect(err).to.exist;
                     expect(err.message).to.equal('the key foo is not allowed');
@@ -655,8 +655,8 @@ describe('Joi', function () {
     it('validates an unknown option', function (done) {
 
         var config = {
-            auth: Joi.object({
-                mode: Joi.string().valid('required', 'optional', 'try').allow(null)
+            auth: Joi.object.keys({
+                mode: Joi.string.valid('required', 'optional', 'try').allow(null)
             }).allow(null)
         };
 
@@ -678,12 +678,12 @@ describe('Joi', function () {
     it('validates required key with multiple options', function (done) {
 
         var config = {
-            module: Joi.alternatives([
-                Joi.object({
-                    compile: Joi.func().required(),
-                    execute: Joi.func()
+            module: Joi.alternatives.attempt([
+                Joi.object.keys({
+                    compile: Joi.func.required(),
+                    execute: Joi.func
                 }),
-                Joi.string()
+                Joi.string
             ]).required()
         };
 
@@ -715,12 +715,12 @@ describe('Joi', function () {
     it('validates key with required alternatives', function (done) {
 
         var config = {
-            module: Joi.alt(
-                Joi.object({
-                    compile: Joi.func().required(),
-                    execute: Joi.func()
+            module: Joi.alt.attempt(
+                Joi.object.keys({
+                    compile: Joi.func.required(),
+                    execute: Joi.func
                 }).required(),
-                Joi.string().required()
+                Joi.string.required()
             )
         };
 
@@ -734,12 +734,12 @@ describe('Joi', function () {
     it('validates required key with alternatives', function (done) {
 
         var config = {
-            module: Joi.alt(
-                Joi.object({
-                    compile: Joi.func().required(),
-                    execute: Joi.func()
+            module: Joi.alt.attempt(
+                Joi.object.keys({
+                    compile: Joi.func.required(),
+                    execute: Joi.func
                 }),
-                Joi.string()
+                Joi.string
             ).required()
         };
 
@@ -754,8 +754,8 @@ describe('Joi', function () {
     it('does not require optional numbers', function (done) {
 
         var config = {
-            position: Joi.number(),
-            suggestion: Joi.string()
+            position: Joi.number,
+            suggestion: Joi.string
         };
 
         Joi.validate({ suggestion: 'something' }, config, function (err, value) {
@@ -773,8 +773,8 @@ describe('Joi', function () {
     it('does not require optional objects', function (done) {
 
         var config = {
-            position: Joi.number(),
-            suggestion: Joi.object()
+            position: Joi.number,
+            suggestion: Joi.object
         };
 
         Joi.validate({ suggestion: {} }, config, function (err, value) {
@@ -792,8 +792,8 @@ describe('Joi', function () {
     it('validates object successfully when config has an array of types', function (done) {
 
         var schema = {
-            f: [Joi.number(), Joi.boolean()],
-            g: [Joi.string(), Joi.object()]
+            f: [Joi.number, Joi.boolean],
+            g: [Joi.string, Joi.object]
         };
 
         var obj = {
@@ -811,9 +811,9 @@ describe('Joi', function () {
     it('validates object successfully when config allows for optional key and key is missing', function (done) {
 
         var schema = {
-            h: Joi.number(),
-            i: Joi.string(),
-            j: Joi.object()
+            h: Joi.number,
+            i: Joi.string,
+            j: Joi.object
         };
 
         var obj = {
@@ -831,9 +831,9 @@ describe('Joi', function () {
     it('fails validation', function (done) {
 
         var schema = {
-            a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c'),
-            c: Joi.string().email().optional()
+            a: Joi.number.min(0).max(3),
+            b: Joi.string.valid('a', 'b', 'c'),
+            c: Joi.string.email().optional()
         };
 
         var obj = {
@@ -852,9 +852,9 @@ describe('Joi', function () {
     it('fails validation when the wrong types are supplied', function (done) {
 
         var schema = {
-            a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c'),
-            c: Joi.string().email().optional()
+            a: Joi.number.min(0).max(3),
+            b: Joi.string.valid('a', 'b', 'c'),
+            c: Joi.string.email().optional()
         };
 
         var obj = {
@@ -876,7 +876,7 @@ describe('Joi', function () {
             c: 10
         };
 
-        Joi.validate(obj, { a: Joi.string().required() }, function (err, value) {
+        Joi.validate(obj, { a: Joi.string.required() }, function (err, value) {
 
             expect(err).to.exist;
             done();
@@ -889,7 +889,7 @@ describe('Joi', function () {
             a: {}
         };
 
-        Joi.validate(obj, { a: Joi.object({ b: Joi.string().required() }) }, function (err, value) {
+        Joi.validate(obj, { a: Joi.object.keys({ b: Joi.string.required() }) }, function (err, value) {
 
             expect(err).to.exist;
             done();
@@ -902,7 +902,7 @@ describe('Joi', function () {
             a: 'a string'
         };
 
-        Joi.validate(obj, { a: Joi.object({ b: Joi.string().required() }) }, function (err, value) {
+        Joi.validate(obj, { a: Joi.object.keys({ b: Joi.string.required() }) }, function (err, value) {
 
             expect(err).to.exist;
             done();
@@ -912,8 +912,8 @@ describe('Joi', function () {
     it('validates when parameter is required to be an object and is given correctly as a json string', function (done) {
 
         var schema = {
-            a: Joi.object({
-                b: Joi.string().required()
+            a: Joi.object.keys({
+                b: Joi.string.required()
             })
         };
 
@@ -936,7 +936,7 @@ describe('Joi', function () {
             a: '{"b":2}'
         };
 
-        Joi.validate(obj, { a: Joi.object({ b: Joi.string().required() }) }, function (err, value) {
+        Joi.validate(obj, { a: Joi.object.keys({ b: Joi.string.required() }) }, function (err, value) {
 
             expect(err).to.exist;
             done();
@@ -949,7 +949,7 @@ describe('Joi', function () {
             a: "an array"
         };
 
-        Joi.validate(obj, { a: Joi.array() }, function (err, value) {
+        Joi.validate(obj, { a: Joi.array }, function (err, value) {
 
             expect(err).to.exist;
             done();
@@ -962,7 +962,7 @@ describe('Joi', function () {
             a: '[1,2]'
         };
 
-        Joi.validate(obj, { a: Joi.array() }, function (err, value) {
+        Joi.validate(obj, { a: Joi.array }, function (err, value) {
 
             expect(err).to.be.null;
             done();
@@ -975,7 +975,7 @@ describe('Joi', function () {
             a: '{"b":2}'
         };
 
-        Joi.validate(obj, { a: Joi.object({ b: Joi.string().required() }) }, function (err, value) {
+        Joi.validate(obj, { a: Joi.object.keys({ b: Joi.string.required() }) }, function (err, value) {
 
             expect(err).to.exist;
             done();
@@ -985,8 +985,8 @@ describe('Joi', function () {
     it('fails validation when config is an array and fails', function (done) {
 
         var schema = {
-            d: [Joi.string(), Joi.boolean()],
-            e: [Joi.number(), Joi.object()]
+            d: [Joi.string, Joi.boolean],
+            e: [Joi.number, Joi.object]
         };
 
         var obj = {
@@ -1004,8 +1004,8 @@ describe('Joi', function () {
     it('fails validation when config is an array and fails with extra keys', function (done) {
 
         var schema = {
-            d: [Joi.string(), Joi.boolean()],
-            e: [Joi.number(), Joi.object()]
+            d: [Joi.string, Joi.boolean],
+            e: [Joi.number, Joi.object]
         };
 
         var obj = {
@@ -1023,7 +1023,7 @@ describe('Joi', function () {
     it('fails validation with extra keys', function (done) {
 
         var schema = {
-            a: Joi.number(),
+            a: Joi.number,
         };
 
         var obj = {
@@ -1041,7 +1041,7 @@ describe('Joi', function () {
     it('validates missing optional key with string condition', function (done) {
 
         var schema = {
-            key: Joi.string().alphanum(false).min(8)
+            key: Joi.string.alphanum(false).min(8)
         };
 
         Joi.validate({}, schema, function (err, value) {
@@ -1054,9 +1054,9 @@ describe('Joi', function () {
     it('validates with extra keys and remove them when stripUnknown is set', function (done) {
 
         var schema = {
-            a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c'),
-            c: Joi.string().email().optional()
+            a: Joi.number.min(0).max(3),
+            b: Joi.string.valid('a', 'b', 'c'),
+            c: Joi.string.email().optional()
         };
 
         var obj = {
@@ -1076,9 +1076,9 @@ describe('Joi', function () {
     it('fails to validate with incorrect property when asked to strip unkown keys without aborting early', function (done) {
 
         var schema = {
-            a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c'),
-            c: Joi.string().email().optional()
+            a: Joi.number.min(0).max(3),
+            b: Joi.string.valid('a', 'b', 'c'),
+            c: Joi.string.email().optional()
         };
 
         var obj = {
@@ -1097,9 +1097,9 @@ describe('Joi', function () {
     it('should pass validation with extra keys when allowUnknown is set', function (done) {
 
         var schema = {
-            a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c'),
-            c: Joi.string().email().optional()
+            a: Joi.number.min(0).max(3),
+            b: Joi.string.valid('a', 'b', 'c'),
+            c: Joi.string.email().optional()
         };
 
         var obj = {
@@ -1119,8 +1119,8 @@ describe('Joi', function () {
     it('should pass validation with extra keys set', function (done) {
 
         var localConfig = {
-            a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c'),
+            a: Joi.number.min(0).max(3),
+            b: Joi.string.valid('a', 'b', 'c'),
         };
 
         var obj = {
@@ -1147,8 +1147,8 @@ describe('Joi', function () {
     it('should pass validation with extra keys and remove them when skipExtraKeys is set locally', function (done) {
 
         var localConfig = {
-            a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c')
+            a: Joi.number.min(0).max(3),
+            b: Joi.string.valid('a', 'b', 'c')
         };
 
         var obj = {
@@ -1174,7 +1174,7 @@ describe('Joi', function () {
 
     it('should work when the skipFunctions setting is enabled', function (done) {
 
-        var schema = Joi.object({ username: Joi.string() }).options({ skipFunctions: true });
+        var schema = Joi.object.keys({ username: Joi.string }).options({ skipFunctions: true });
         var input = { username: 'test', func: function () { } };
         Joi.validate(input, schema, function (err, value) {
 
@@ -1185,7 +1185,7 @@ describe('Joi', function () {
 
     it('should work when the skipFunctions setting is disabled', function (done) {
 
-        var schema = { username: Joi.string() };
+        var schema = { username: Joi.string };
         var input = { username: 'test', func: function () { } };
 
         Joi.validate(input, schema, { skipFunctions: false }, function (err, value) {
@@ -1199,7 +1199,7 @@ describe('Joi', function () {
     it('should not convert values when convert is false', function (done) {
 
         var schema = {
-            arr: Joi.array().includes(Joi.string())
+            arr: Joi.array.includes(Joi.string)
         };
 
         var input = { arr: 'foo' };
@@ -1213,8 +1213,8 @@ describe('Joi', function () {
     it('full errors when abortEarly is false', function (done) {
 
         var schema = {
-            a: Joi.string(),
-            b: Joi.string()
+            a: Joi.string,
+            b: Joi.string
         };
 
         var input = { a: 1, b: 2 };
@@ -1233,16 +1233,16 @@ describe('Joi', function () {
 
     it('supports custom errors when validating types', function (done) {
 
-        var schema = Joi.object({
-            email: Joi.string().email(),
-            date: Joi.date(),
-            alphanum: Joi.string().alphanum(),
-            min: Joi.string().min(3),
-            max: Joi.string().max(3),
-            required: Joi.string().required(),
-            xor: Joi.string(),
-            renamed: Joi.string().valid('456'),
-            notEmpty: Joi.string().required()
+        var schema = Joi.object.keys({
+            email: Joi.string.email(),
+            date: Joi.date,
+            alphanum: Joi.string.alphanum(),
+            min: Joi.string.min(3),
+            max: Joi.string.max(3),
+            required: Joi.string.required(),
+            xor: Joi.string,
+            renamed: Joi.string.valid('456'),
+            notEmpty: Joi.string.required()
         }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
 
         var input = {
@@ -1296,9 +1296,9 @@ describe('Joi', function () {
         };
 
         var schema = {
-            notNumber: Joi.number().required(),
-            notString: Joi.string().required(),
-            notBoolean: Joi.boolean().required()
+            notNumber: Joi.number.required(),
+            notString: Joi.string.required(),
+            notBoolean: Joi.boolean.required()
         }
 
         Joi.validate(input, schema, { abortEarly: false }, function (err, value) {
@@ -1324,13 +1324,13 @@ describe('Joi', function () {
         };
 
         var schema = {
-            a: Joi.string().valid('a', 'b', 'c', 'd'),
-            y: Joi.object({
-                u: Joi.string().valid(['e', 'f', 'g', 'h']).required(),
-                b: Joi.string().valid('i', 'j').allow(false),
-                d: Joi.object({
-                    x: Joi.string().valid('k', 'l').required(),
-                    c: Joi.number()
+            a: Joi.string.valid('a', 'b', 'c', 'd'),
+            y: Joi.object.keys({
+                u: Joi.string.valid(['e', 'f', 'g', 'h']).required(),
+                b: Joi.string.valid('i', 'j').allow(false),
+                d: Joi.object.keys({
+                    x: Joi.string.valid('k', 'l').required(),
+                    c: Joi.number
                 })
             })
         };
@@ -1345,20 +1345,20 @@ describe('Joi', function () {
 
     describe('#describe', function () {
 
-        var schema = Joi.object({
+        var schema = Joi.object.keys({
             sub: {
-                email: Joi.string().email(),
-                date: Joi.date(),
-                child: Joi.object({
-                    alphanum: Joi.string().alphanum()
+                email: Joi.string.email(),
+                date: Joi.date,
+                child: Joi.object.keys({
+                    alphanum: Joi.string.alphanum()
                 }),
             },
-            min: [Joi.number(), Joi.string().min(3)],
-            max: Joi.string().max(3),
-            required: Joi.string().required(),
-            xor: Joi.string(),
-            renamed: Joi.string().valid('456'),
-            notEmpty: Joi.string().required().description('a').notes('b').tags('c')
+            min: [Joi.number, Joi.string.min(3)],
+            max: Joi.string.max(3),
+            required: Joi.string.required(),
+            xor: Joi.string,
+            renamed: Joi.string.valid('456'),
+            notEmpty: Joi.string.required().description('a').notes('b').tags('c')
         }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
 
         var result = {
@@ -1526,7 +1526,7 @@ describe('Joi', function () {
 
         it('describes schema without invalids', function (done) {
 
-            var description = Joi.describe(Joi.any().allow(null));
+            var description = Joi.describe(Joi.any.allow(null));
             expect(description.invalids).to.not.exist;
             done();
         })

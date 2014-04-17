@@ -25,7 +25,7 @@ describe('Types', function () {
 
         it('should convert a string to a buffer', function (done) {
 
-            var result = Joi.binary().validate('test', function (err, value) {
+            var result = Joi.binary.validate('test', function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value instanceof Buffer).to.equal(true);
@@ -39,7 +39,7 @@ describe('Types', function () {
 
             it('should return an error when a non-buffer or non-string is used', function (done) {
 
-                Joi.binary().validate(5, function (err, value) {
+                Joi.binary.validate(5, function (err, value) {
 
                     expect(err).to.exist;
                     expect(err.message).to.equal('the value of <root> must be a buffer or a string');
@@ -50,10 +50,10 @@ describe('Types', function () {
             it('should accept a buffer object', function (done) {
 
                 var schema = {
-                    buffer: Joi.binary()
+                    buffer: Joi.binary
                 };
 
-                Joi.binary().validate(new Buffer('hello world'), function (err, value) {
+                Joi.binary.validate(new Buffer('hello world'), function (err, value) {
 
                     expect(err).to.not.exist;
                     expect(value.toString('utf8')).to.equal('hello world');
@@ -66,7 +66,7 @@ describe('Types', function () {
 
             it('validates buffer size', function (done) {
 
-                var schema = Joi.binary().min(5);
+                var schema = Joi.binary.min(5);
                 Validate(schema, [
                     [new Buffer('testing'), true],
                     [new Buffer('test'), false]
@@ -78,7 +78,7 @@ describe('Types', function () {
 
                 expect(function () {
 
-                    Joi.binary().min('a');
+                    Joi.binary.min('a');
                 }).to.throw('min must be a positive integer');
                 done();
             });
@@ -87,7 +87,7 @@ describe('Types', function () {
 
                 expect(function () {
 
-                    Joi.binary().min(1.2);
+                    Joi.binary.min(1.2);
                 }).to.throw('min must be a positive integer');
                 done();
             });
@@ -97,7 +97,7 @@ describe('Types', function () {
 
             it('validates buffer size', function (done) {
 
-                var schema = Joi.binary().max(5);
+                var schema = Joi.binary.max(5);
                 Validate(schema, [
                     [new Buffer('testing'), false],
                     [new Buffer('test'), true]
@@ -109,7 +109,7 @@ describe('Types', function () {
 
                 expect(function () {
 
-                    Joi.binary().max('a');
+                    Joi.binary.max('a');
                 }).to.throw('max must be a positive integer');
                 done();
             });
@@ -118,7 +118,7 @@ describe('Types', function () {
 
                 expect(function () {
 
-                    Joi.binary().max(1.2);
+                    Joi.binary.max(1.2);
                 }).to.throw('max must be a positive integer');
                 done();
             });
@@ -128,7 +128,7 @@ describe('Types', function () {
 
             it('validates buffer size', function (done) {
 
-                var schema = Joi.binary().length(4);
+                var schema = Joi.binary.length(4);
                 Validate(schema, [
                     [new Buffer('test'), true],
                     [new Buffer('testing'), false]
@@ -140,7 +140,7 @@ describe('Types', function () {
 
                 expect(function () {
 
-                    Joi.binary().length('a');
+                    Joi.binary.length('a');
                 }).to.throw('length must be a positive integer');
                 done();
             });
@@ -149,7 +149,7 @@ describe('Types', function () {
 
                 expect(function () {
 
-                    Joi.binary().length(1.2);
+                    Joi.binary.length(1.2);
                 }).to.throw('length must be a positive integer');
                 done();
             });
