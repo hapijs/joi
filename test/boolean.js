@@ -23,19 +23,22 @@ describe('Types', function () {
 
     describe('Boolean', function () {
 
-        describe('#convert', function () {
+        it('converts a string to a boolean', function (done) {
 
-            it('should convert a string to a boolean', function (done) {
+            Joi.boolean().validate('true', function (err, value) {
 
-                var result = Joi.boolean()._convert('true');
-                expect(result).to.equal(true);
+                expect(err).to.not.exist;
+                expect(value).to.equal(true);
                 done();
             });
+        });
 
-            it('should not convert a number to a boolean', function (done) {
+        it('errors on a number', function (done) {
 
-                var result = Joi.boolean()._convert(1);
-                expect(result).to.equal(1);
+            Joi.boolean().validate(1, function (err, value) {
+
+                expect(err).to.exist;
+                expect(value).to.equal(1);
                 done();
             });
         });

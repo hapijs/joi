@@ -107,17 +107,70 @@ describe('Joi.string', function () {
         });
     });
 
-    describe('#validate', function () {
+    describe('#min', function () {
 
-        it('should work', function (done) {
+        it('throws when limit is not a number', function (done) {
 
             expect(function () {
 
-                var text = Joi.string();
-                var result = text.validate('joi');
-            }).to.not.throw;
+                Joi.string().min('a');
+            }).to.throw('limit must be a positive integer');
             done();
         });
+
+        it('throws when limit is not an integer', function (done) {
+
+            expect(function () {
+
+                Joi.string().min(1.2);
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+    });
+
+    describe('#max', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.string().max('a');
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+
+        it('throws when limit is not an integer', function (done) {
+
+            expect(function () {
+
+                Joi.string().max(1.2);
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+    });
+
+    describe('#length', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.string().length('a');
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+
+        it('throws when limit is not an integer', function (done) {
+
+            expect(function () {
+
+                Joi.string().length(1.2);
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+    });
+
+    describe('#validate', function () {
 
         it('should, by default, allow undefined, deny empty string', function (done) {
 
@@ -140,10 +193,11 @@ describe('Joi.string', function () {
         it('should, when .required(), print a friend error message for an empty string', function (done) {
 
             var schema = Joi.string().required();
-            var result = Joi.validate('', schema);
+            Joi.validate('', schema, function (err, value) {
 
-            expect(result.message).to.contain('be empty');
-            done();
+                expect(err.message).to.contain('be empty');
+                done();
+            });
         });
 
         it('should, when .required(), validate non-empty strings', function (done) {
@@ -307,46 +361,56 @@ describe('Joi.string', function () {
         it('should validate email with a friendly error message', function (done) {
 
             var schema = { item: Joi.string().email() };
-            var err = Joi.validate({ item: 'something' }, schema);
+            Joi.validate({ item: 'something' }, schema, function (err, value) {
 
-            expect(err.message).to.contain('must be a valid email');
-            done();
+                expect(err.message).to.contain('must be a valid email');
+                done();
+            });
         });
 
         it('should return false for denied value', function (done) {
 
             var text = Joi.string().invalid('joi');
-            var result = text.validate('joi');
-            expect(result).to.exist;
-            done();
+            text.validate('joi', function (err, value) {
+
+                expect(err).to.exist;
+                done();
+            });
         });
 
         it('should return true for allowed value', function (done) {
 
             var text = Joi.string().allow('hapi');
-            var result = text.validate('result');
-            expect(result).to.not.exist;
-            done();
+            text.validate('result', function (err, value) {
+
+                expect(err).to.not.exist;
+                done();
+            });
         });
 
         it('should validate with one validator (min)', function (done) {
 
             var text = Joi.string().min(3);
-            var result = text.validate('joi');
-            expect(result).to.not.exist;
-            done();
+            text.validate('joi', function (err, value) {
+
+                expect(err).to.not.exist;
+                done();
+            });
         });
 
         it('should validate with two validators (min, required)', function (done) {
 
             var text = Joi.string().min(3).required();
-            var result = text.validate('joi');
-            expect(result).to.not.exist;
+            text.validate('joi', function (err, value) {
 
-            var result2 = text.validate();
-            expect(result2).to.exist;
+                expect(err).to.not.exist;
 
-            done();
+                text.validate('', function (err, value) {
+
+                    expect(err).to.exist;
+                    done();
+                });
+            });
         });
 
         it('should validate null with allow(null)', function (done) {
@@ -834,10 +898,11 @@ describe('Joi.string', function () {
         it('should validate isoDate with a friendly error message', function (done) {
 
             var schema = { item: Joi.string().isoDate() };
-            var err = Joi.validate({ item: 'something' }, schema);
+            Joi.validate({ item: 'something' }, schema, function (err, value) {
 
-            expect(err.message).to.contain('must be a valid ISO 8601 date');
-            done();
+                expect(err.message).to.contain('must be a valid ISO 8601 date');
+                done();
+            });
         });
 
         it('should handle combination of isoDate and min', function (done) {
@@ -1155,10 +1220,11 @@ describe('Joi.string', function () {
         it('should validate guid with a friendly error message', function (done) {
 
             var schema = { item: Joi.string().guid() };
-            var err = Joi.validate({ item: 'something' }, schema);
+            Joi.validate({ item: 'something' }, schema, function (err, value) {
 
-            expect(err.message).to.contain('must be a valid GUID');
-            done();
+                expect(err.message).to.contain('must be a valid GUID');
+                done();
+            });
         });
 
         it('should handle combination of guid and min', function (done) {

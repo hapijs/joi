@@ -42,9 +42,11 @@ describe('Joi.number', function () {
         it('should return false for denied value', function (done) {
 
             var text = Joi.number().invalid(50);
-            var result = text.validate(50);
-            expect(result).to.exist;
-            done();
+            text.validate(50, function (err, value) {
+
+                expect(err).to.exist;
+                done();
+            });
         });
 
         it('should validate integer', function (done) {
@@ -93,24 +95,32 @@ describe('Joi.number', function () {
             var config = { a: Joi.number() };
             var obj = { a: '123' };
 
-            var error = Joi.validate(obj, config, { modify: true });
-            expect(error).to.not.exist;
-            expect(obj.a).to.equal(123);
-            done();
+            Joi.validate(obj, config, function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value.a).to.equal(123);
+                done();
+            });
         });
 
-        it('convert will convert a string to a number', function (done) {
+        it('converts a string to a number', function (done) {
 
-            var t = Joi.number()._convert('1');
-            expect(t).to.equal(1);
-            done();
+            Joi.number().validate('1', function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value).to.equal(1);
+                done();
+            });
         });
 
-        it('convert will not convert a null', function (done) {
+        it('errors on null', function (done) {
 
-            var t = Joi.number()._convert(null);
-            expect(t).to.not.exist;
-            done();
+            Joi.number().validate(null, function (err, value) {
+
+                expect(err).to.exist;
+                expect(value).to.equal(null);
+                done();
+            });
         });
 
         it('should handle combination of min and max', function (done) {
@@ -399,8 +409,34 @@ describe('Joi.number', function () {
         it('should display correctly for int type', function (done) {
 
             var t = Joi.number().integer();
-            var result = Joi.validate('1.1', t);
-            expect(result.message).to.contain('integer');
+            Joi.validate('1.1', t, function (err, value) {
+
+                expect(err.message).to.contain('integer');
+                done();
+            });
+        });
+    });
+
+    describe('#min', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.number().min('a');
+            }).to.throw('limit must be an integer');
+            done();
+        });
+    });
+
+    describe('#max', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.number().max('a');
+            }).to.throw('limit must be an integer');
             done();
         });
     });

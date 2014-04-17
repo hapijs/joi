@@ -3,33 +3,30 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **2.9.x**
+Current version: **4.0.x**
 
 [![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 
+[![Browser Support](https://ci.testling.com/spumko/joi.png)](https://ci.testling.com/spumko/joi)
 
 ## Table of Contents
 
 <img src="https://raw.github.com/spumko/joi/master/images/validation.png" align="right" />
 - [Example](#example)
 - [Usage](#usage)
-    - [`validate(value, schema, options)`](#validatevalue-schema-options)
+    - [`validate(value, schema, [options], callback)`](#validatevalue-schema-options-callback)
+    - [`compile(schema)`](#compileschema)
     - [`any()`](#any)
         - [`any.allow(value)`](#anyallowvalue)
         - [`any.valid(value)`](#anyvalidvalue)
         - [`any.invalid(value)`](#anyinvalidvalue)
         - [`any.required()`](#anyrequired)
         - [`any.optional()`](#anyoptional)
-        - [`any.with(peer)`](#anywithpeer)
-        - [`any.without(peer)`](#anywithoutpeer)
-        - [`any.xor(peer)`](#anyxorpeer)
-        - [`any.or(peer)`](#anyorpeer)
         - [`description(desc)`](#descriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
         - [`any.options(options)`](#anyoptionsoptions)
         - [`any.strict()`](#anystrict)
-        - [`any.rename(to, [options])`](#anyrenameto-options)
         - [`any.default(value)`](#anydefault)
     - [`array()`](#array)
         - [`array.includes(type)`](#arrayincludestype)
@@ -46,7 +43,16 @@ Current version: **2.9.x**
         - [`number.min(limit)`](#numberminlimit)
         - [`number.max(limit)`](#numbermaxlimit)
         - [`number.integer()`](#numberinteger)
-    - [`object(schema)`](#objectschema)
+    - [`object([schema])`](#objectschema)
+        - [`object.keys([schema])`](#objectkeysschema)
+        - [`object.min(limit)`](#objectminlimit)
+        - [`object.max(limit)`](#objectmaxlimit)
+        - [`object.length(limit)`](#objectlengthlimit)
+        - [`object.with(key, peers)`](#objectwithkey-peers)
+        - [`object.without(key, peers)`](#objectwithoutkey-peers)
+        - [`object.xor(peers)`](#objectxorpeers)
+        - [`object.or(peers)`](#objectorpeers)
+        - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
     - [`string()`](#string)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit)`](#stringminlimit)
@@ -68,15 +74,15 @@ Current version: **2.9.x**
 ```javascript
 var Joi = require('joi');
 
-var schema = {
-    username: Joi.string().alphanum().min(3).max(30).with('birthyear').required(),
-    password: Joi.string().regex(/[a-zA-Z0-9]{3,30}/).without('access_token'),
+var schema = Joi.object({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    password: Joi.string().regex(/[a-zA-Z0-9]{3,30}/),
     access_token: [Joi.string(), Joi.number()],
     birthyear: Joi.number().integer().min(1900).max(2013),
     email: Joi.string().email()
-};
+}).with('username', 'birthyear').without('password', 'access_token');
 
-var err = Joi.validate({ username: 'abc', birthyear: 1994 }, schema);  // err === null -> valid
+Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err) { });  // err === null -> valid
 ```
 
 The above schema defines the following constraints:
@@ -112,7 +118,7 @@ new schema object.
 Then the value is validated against the schema:
 
 ```javascript
-var err = Joi.validate({ a: 'a string' }, schema);
+Joi.validate({ a: 'a string' }, schema, function (err) { });
 ```
 
 If the value is valid, `null` is returned, otherwise an `Error` object.
@@ -123,7 +129,7 @@ The schema can be a plain JavaScript object where every key is assigned a **joi*
 var schema = Joi.string().min(10);
 ```
 
-If the schema is a **joi** type, the `schema.validate(value)` can be called directly on the type. When passing a non-type schema object,
+If the schema is a **joi** type, the `schema.validate(value, callback)` can be called directly on the type. When passing a non-type schema object,
 the module converts it internally to an object() type equivalent to:
 
 ```javascript
@@ -137,7 +143,7 @@ When validating a schema:
 * Strings are utf-8 encoded by default.
 * Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
 
-### `validate(value, schema, options)`
+### `validate(value, schema, [options], callback)`
 
 Validates a value using the given schema and options where:
 - `value` - the value being validated.
@@ -145,13 +151,14 @@ Validates a value using the given schema and options where:
 - `options` - an optional object with the following optional keys:
   - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
   - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
-  - `modify` - when `true`, converted values are written back to the provided value (only when value is an object). Defaults to `false`.
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
-  - `language` - a localized langugage object using the format of the `languagePath` file. Error formats are looked up in the `language`
-    object first, and then in the `languagePath` file. Defaults to no override (`{}`).
-  - `languagePath` - the location of the language file used to localize error messages. Defaults to `'languages/en-us.json'`.
+  - `language` - overrides individual error messages. Defaults to no override (`{}`).
+- `callback` - the callback method using the signature `function(err, callback)` where:
+  - `err` - if validation failed, the error reason, otherwise `null`.
+  - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
+    incomplete if validation failed and `abortEarly` is `true`.
 
 ```javascript
 var schema = {
@@ -162,10 +169,33 @@ var value = {
     a: '123'
 };
 
-var err = Joi.validate(value, schema, { modify: true });
-
+Joi.validate(value, schema, function (err) { });
 // err -> null
 // value.a -> 123 (number, not string)
+```
+
+### `compile(schema)`
+
+Converts literal schema definition to **joi** schema object (or returns the same back if already a **joi** schema object) where:
+- `schema` - the schema definition to compile.
+
+```javascript
+var definition = ['key', 5, { a: true, b: [/^a/, 'boom'] }];
+var schema = Joi.compile(definition);
+
+// Same as:
+
+var schema = Joi.alternatives([
+    Joi.string().valid('key'),
+    Joi.number().valid(5),
+    Joi.object({
+        a: Joi.boolean().valid(true),
+        b: Joi.alternatives([
+            Joi.string().regex(/^a/),
+            Joi.string().valid('boom')
+        ])
+    })
+]);
 ```
 
 ### `any()`
@@ -176,7 +206,7 @@ Generates a schema object that matches any data type.
 var any = Joi.any();
 any.valid('a');
 
-var err = any.validate('a');
+any.validate('a', function (err) { });
 ```
 
 #### `any.allow(value)`
@@ -241,58 +271,6 @@ var schema = {
 };
 ```
 
-#### `any.with(peer)`
-
-Requires the presence of another key whenever this value is present where:
-- `peer` - the required key name that must appear together with the current value. `peer` can be an array of values, or multiple values can be
-  passed as individual arguments.
-
-```javascript
-var schema = {
-    a: Joi.any().with('b'),
-    b: Joi.any()
-};
-```
-
-#### `any.without(peer)`
-
-Forbids the presence of another key whenever this value is present where:
-- `peer` - the forbidden key name that must not appear together with the current value. `peer` can be an array of values, or multiple values can be
-  passed as individual arguments.
-
-```javascript
-var schema = {
-    a: Joi.any().without('b'),
-    b: Joi.any()
-};
-```
-
-#### `any.xor(peer)`
-
-Defines an exclusive relationship with another key where this or one of the peers is required but not at the same time where:
-- `peer` - the exclusive key name that must not appear together with the current value but where one of them is required. `peer` can be an array
-  of values, or multiple values can be passed as individual arguments.
-
-```javascript
-var schema = {
-    a: Joi.any().xor('b'),
-    b: Joi.any()
-};
-```
-
-#### `any.or(peer)`
-
-Defines a relationship with another key where this or one of the peers is required (and more than one is allowed) where:
-- `peer` - the key name that must appear if the current value is missing. `peer` can be an array of values, or multiple
-  values can be passed as individual arguments.
-
-```javascript
-var schema = {
-    a: Joi.any().or('b'),
-    b: Joi.any()
-};
-```
-
 #### `any.description(desc)`
 
 Annotates the key where:
@@ -323,11 +301,11 @@ var schema = Joi.any().tags(['api', 'user']);
 #### `any.options(options)`
 
 Overrides the global `validate()` options for the current key and any sub-key where:
-- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options)`](#joivalidatevalue-schema-options).
+- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#joivalidatevalue-schema-options-callback).
 
 ```javascript
 var schema = {
-    a: Joi.any().options({ modify: true })
+    a: Joi.any().options({ convert: false })
 };
 ```
 
@@ -341,15 +319,6 @@ var schema = {
 };
 ```
 
-#### `any.rename(to, [options])`
-
-Renames a key to another name where:
-- `to` - the new key name.
-- `options` - an optional object with the following optional keys:
-    - `move` - if `true`, deletes the old key name, otherwise both old and new keys are kept. Defaults to `false`.
-    - `multiple` - if `true`, allows renaming multiple keys to the same destination where the last rename wins. Defaults to `false`.
-    - `override` - if `true`, allows renaming a key over an existing key. Defaults to `false`.
-
 #### `any.default(value)`
 
 Sets a default value if the original value is undefined where:
@@ -360,7 +329,7 @@ var schema = {
     username: Joi.string().default('new_user')
 };
 var input = {};
-Joi.validate(input, schema);
+Joi.validate(input, schema, function (err) { });
 // input === { username: "new_user" }
 ```
 
@@ -374,7 +343,7 @@ Supports the same methods of the [`any()`](#any) type.
 var array = Joi.array();
 array.includes(Joi.string().valid('a', 'b'));
 
-var err = array.validate(['a', 'b', 'a']);
+array.validate(['a', 'b', 'a'], function (err) { });
 ```
 
 #### `array.includes(type)`
@@ -442,7 +411,7 @@ Supports the same methods of the [`any()`](#any) type.
 var boolean = Joi.boolean();
 boolean.allow(null);
 
-var err = boolean.validate(true);
+boolean.validate(true, function (err) { });
 ```
 
 ### `date()`
@@ -455,7 +424,7 @@ Supports the same methods of the [`any()`](#any) type.
 var date = Joi.date();
 date.min('12-20-2012');
 
-var err = date.validate('12-21-2012');
+date.validate('12-21-2012', function (err) { });
 ```
 
 #### `date.min(date)`
@@ -490,7 +459,7 @@ Supports the same methods of the [`any()`](#any) type.
 var func = Joi.func();
 func.allow(null);
 
-var err = func.validate(function () {});
+func.validate(function () {}, function (err) { });
 ```
 
 ### `number()`
@@ -503,7 +472,7 @@ Supports the same methods of the [`any()`](#any) type.
 var number = Joi.number();
 number.min(1).max(10).integer();
 
-var err = number.validate(5);
+number.validate(5, function (err) { });
 ```
 
 #### `number.min(limit)`
@@ -538,7 +507,7 @@ var schema = {
 };
 ```
 
-### `object(schema)`
+### `object([schema])`
 
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects) where:
 - `schema` - optional object where each key is assinged a **joi** type object. If the schema is `{}` no keys allowed.
@@ -548,10 +517,128 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var object = Joi.object({
-    a: Joi.number.min(1).max(10).integer()
+    a: Joi.number().min(1).max(10).integer()
 });
 
-var err = object.validate({ a: 5 });
+object.validate({ a: 5 }, function (err) { });
+```
+
+#### `object.keys([schema])`
+
+Sets the allowed object keys where:
+- `schema` - optional object where each key is assinged a **joi** type object. If the schema is `{}` no keys allowed.
+  Defaults to 'undefined' which allows any child key. Overrides any keys previously set.
+
+```javascript
+var object = Joi.object().keys({
+    a: Joi.number()
+    b: Joi.string()
+});
+```
+
+#### `object.min(limit)`
+
+Specifies the minimum number of keys in the object where:
+- `limit` - the lowest number of keys allowed.
+
+```javascript
+var schema = {
+    a: Joi.object().min(2)
+};
+```
+
+#### `object.max(limit)`
+
+Specifies the maximum number of keys in the object where:
+- `limit` - the highest number of object keys allowed.
+
+```javascript
+var schema = {
+    a: Joi.object().max(10)
+};
+```
+
+#### `object.length(limit)`
+
+Specifies the exact number of keys in the object where:
+- `limit` - the number of object keys allowed.
+
+```javascript
+var schema = {
+    a: Joi.object().length(5)
+};
+```
+
+#### `object.with(key, peers)`
+
+Requires the presence of other keys whenever the specified key is present where:
+- `key` - the reference key.
+- `peers` - the required peer key names that must appear together with `key`. `peers` can be a single string value or an array of string values.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).with('a', 'b');
+```
+
+#### `object.without(key, peers)`
+
+Forbids the presence of other keys whenever the specified is present where:
+- `key` - the reference key.
+- `peers` - the forbidden peer key names that must not appear together with `key`. `peers` can be a single string value or an array of string values.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).without('a', ['b']);
+```
+
+#### `object.xor(peers)`
+
+Defines an exclusive relationship between a set of keys where one of them is required but not at the same time where:
+- `peers` - the exclusive key names that must not appear together but where one of them is required. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).xor('a', 'b');
+```
+
+#### `object.or(peers)`
+
+Defines a relationship between keys where one of the peers is required (and more than one is allowed) where:
+- `peers` - the key names of which at least one must appear. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).or('a', 'b');
+```
+
+#### `object.rename(from, to, [options])`
+
+Renames a key to another name (deletes the renamed key) where:
+- `from` - the original key name.
+- `to` - the new key name.
+- `options` - an optional object with the following optional keys:
+    - `alias` - if `true`, does not delete the old key name, keeping both the new and old keys in place. Defaults to `false`.
+    - `multiple` - if `true`, allows renaming multiple keys to the same destination where the last rename wins. Defaults to `false`.
+    - `override` - if `true`, allows renaming a key over an existing key. Defaults to `false`.
+
+Keys are renamed before any other validation rules are applied.
+
+```javascript
+var object = Joi.object({
+    a: Joi.number()
+}).rename('b', 'a');
+
+object.validate({ b: 5 }, function (err) { });
 ```
 
 ### `string()`
@@ -564,7 +651,7 @@ Supports the same methods of the [`any()`](#any) type.
 var string = Joi.string();
 string.min(1).max(10);
 
-var err = string.validate('12345');
+string.validate('12345', function (err) { });
 ```
 
 #### `string.insensitive()`
@@ -690,47 +777,9 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var alt = Joi.alternatives(Joi.number(), Joi.string());
-var err = alt.validate('a');
+alt.validate('a', function (err) { });
 ```
 
 Note that the `alternatives()` type does not behave the same way as passing multiple alternatives directly using an
 array of types (e.g. `{ a: [Joi.number(), Joi.string()] }`). When passing an array directly, the value must match one
 of the provided types while when using the `alternatives()` type, the key is optional by default.
-
-# Migration notes
-
-**joi** 2.0 is a complete rewrite of the previous version. While largely backward compatible, it includes a few changes that are
-not as well as a large number of bug fixes that dramatically changes existing behavior. The following is an incomplete list of changes.
-Please test your existing validation rules to ensure they behave as expected with this new version.
-
-* `Joi.types` and `Joi.Types` deprecated - use `Joi.string()` etc. instead.
-* Uppercase type names deprecated - use lowercase function names instead.
-* Top level global config options no longer supported (e.g. `{ languagePath: './file.json' }`). Use the `.options()` method instead.
-* `noShortCircuit()` no longer supported - use the `abortEarly` option instead.
-* Options renamed:
-    * `saveConversions` changed to `modify`.
-    * `skipConversions` changed to `convert` (with reversed meaning).
-    * `stripExtraKeys` changed to `stripUnknown`.
-    * `allowExtraKeys` changed to `allowUnknown`.
-    * In `rename()` options:
-        * `deleteOrig` changed to `move`.
-        * `allowMult` changed to `multiple`.
-        * `allowOverwrite` changed to `override`.
-* `nullOk()` and `emptyOk()` are deprecated - use `allow(null)` and `allow('')` instead.
-* `number().float()` no longer supported.
-* Completely new internal representation of the data. If you were accessing _variables, your code is most likely broken now. Use `describe()` instead.
-* `string().alphanum()` no longer allows spaces and underscores and does not take an arguement.
-* `string().date()` no longer supported - use new `date()` type.
-* `deny()` deprecated - use `invalid()` instead.
-* `array().includes()` and `array.excludes()` now validates correctly (not just the base type).
-* `allow()`, `valid()`, and `invalid()` values are now compared against the original and converted values (not just after conversion).
-* `string().min()` no longer implies `required()`.
-
-**joi** 3.0 focused on changing the schema object to be immutable with all the condition methods returning a new object with the aggragated
-rules. This allows for better reusing of basic types as well as defining new types without corruption when they are modified.
-
-* Removed deprecated: `Joi.types`, `Joi.Types`, `nullOk()`, `emptyOk()`, and `deny()`.
-* Removed deprecated uppercase type names.
-
-
-
