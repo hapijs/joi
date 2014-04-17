@@ -47,7 +47,7 @@ describe('Types', function () {
 
             var schema = Joi.object().required();
             Validate(schema, [
-                [{ }, true],
+                [{}, true],
                 [{ hi: true }, true],
                 ['', false]
             ]);
@@ -93,6 +93,16 @@ describe('Types', function () {
                 Joi.object(Joi.object());
             }).to.throw('Object schema cannot be a joi schema');
             done();
+        });
+
+        it('skips conversion when value is undefined', function (done) {
+
+            Joi.object({ a: Joi.object() }).validate(undefined, function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value).to.not.exist;
+                done();
+            });
         });
 
         it('errors on array', function (done) {
@@ -172,7 +182,7 @@ describe('Types', function () {
 
             Validate(schema, [
                 [{ num: 1 }, true],
-                [{ num: [1,2,3] }, false]
+                [{ num: [1, 2, 3] }, false]
             ]);
             done();
         });
@@ -188,9 +198,9 @@ describe('Types', function () {
 
             Validate(schema, [
                 [{ num: 1 }, true],
-                [{ num: [1,2,3] }, false],
-                [{ num: 1, obj: { item: 'something' }}, true],
-                [{ num: 1, obj: { item: 123 }}, false]
+                [{ num: [1, 2, 3] }, false],
+                [{ num: 1, obj: { item: 'something' } }, true],
+                [{ num: 1, obj: { item: 123 } }, false]
             ]);
             done();
         });
@@ -210,10 +220,10 @@ describe('Types', function () {
             Validate(schema, [
                 [{ num: 1 }, false],
                 [{ obj: {} }, true],
-                [{ obj: { obj: { }}}, true],
-                [{ obj: { obj: { obj: { } }}}, true],
-                [{ obj: { obj: { obj: { item: true } }}}, true],
-                [{ obj: { obj: { obj: { item: 10 } }}}, false]
+                [{ obj: { obj: {} } }, true],
+                [{ obj: { obj: { obj: {} } } }, true],
+                [{ obj: { obj: { obj: { item: true } } } }, true],
+                [{ obj: { obj: { obj: { item: 10 } } } }, false]
             ]);
             done();
         });
@@ -314,6 +324,16 @@ describe('Types', function () {
                 Joi.validate({ test1: 'a', test2: 'b' }, schema, function (err, value) {
 
                     expect(err.message).to.equal('cannot rename test2 because multiple renames are disabled and another key was already renamed to test');
+                    done();
+                });
+            });
+
+            it('errors multiple times when abortEarly is false', function (done) {
+
+                Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').validate({ a: 1, c: 1, d: 1 }, { abortEarly: false }, function (err, value) {
+
+                    expect(err).to.exist;
+                    expect(err.message).to.equal('cannot rename c because multiple renames are disabled and another key was already renamed to b. cannot rename d because multiple renames are disabled and another key was already renamed to b');
                     done();
                 });
             });
@@ -436,9 +456,9 @@ describe('Types', function () {
                 expect(desc).to.deep.equal({
                     type: 'object',
                     flags: {
-                      insensitive: false,
-                      allowOnly: false,
-                      default: undefined
+                        insensitive: false,
+                        allowOnly: false,
+                        default: undefined
                     },
                     valids: [undefined],
                     invalids: [null]
@@ -480,6 +500,23 @@ describe('Types', function () {
                     Joi.object().max('a');
                 }).to.throw('limit must be an integer');
                 done();
+            });
+        });
+
+        describe('#or', function () {
+
+            it('errors multiple levels deep', function (done) {
+
+                Joi.object({
+                    a: {
+                        b: Joi.object().or('x', 'y')
+                    }
+                }).validate({ a: { b: { c: 1 } } }, function (err, value) {
+
+                    expect(err).to.exist;
+                    expect(err.message).to.equal('missing at least one of alternative peers x, y');
+                    done();
+                });
             });
         });
     });

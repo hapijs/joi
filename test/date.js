@@ -31,6 +31,16 @@ describe('date', function () {
         });
     });
 
+    it('errors on invalid input and convert disabled', function (done) {
+
+        Joi.date().options({ convert: false }).validate('1-1-2013', function (err, value) {
+
+            expect(err).to.exist;
+            expect(err.message).to.equal('the value of <root> must be a number of milliseconds or valid date string');
+            done();
+        });
+    });
+
     describe('#validate', function () {
 
         it('validates min', function (done) {
