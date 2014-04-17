@@ -48,7 +48,7 @@ describe('alternatives', function () {
             ]
         };
 
-        var err = Joi.compile(schema).validate({ a: '5' }, function (err, value) {
+         Joi.compile(schema).validate({ a: '5' }, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value.a).to.equal(5);
@@ -65,7 +65,7 @@ describe('alternatives', function () {
             ]
         };
 
-        var err = Joi.compile(schema).validate({ a: '5' }, function (err, value) {
+        Joi.compile(schema).validate({ a: '5' }, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value.a).to.equal(5);
@@ -83,7 +83,7 @@ describe('alternatives', function () {
         };
 
         var input = { a: { b: 'any', d: 'string' } };
-        var err = Joi.compile(schema).validate(input, function (err, value) {
+        Joi.compile(schema).validate(input, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value.a.b).to.equal('any');
@@ -97,7 +97,7 @@ describe('alternatives', function () {
 
             expect(function () {
 
-                Joi.alternatives();
+                Joi.alternatives().try();
             }).to.throw('Cannot add other alternatives without at least one schema');
             done();
         });

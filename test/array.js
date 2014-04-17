@@ -78,7 +78,7 @@ describe('Types', function () {
             it('converts members', function (done) {
 
                 var array = ['1', '2', '3'];
-                var schema = Joi.array().includes(Joi.number);
+                var schema = Joi.array().includes(Joi.number());
                 Joi.compile(schema).validate(array, function (err, value) {
 
                     expect(err).to.not.exist;
@@ -217,7 +217,7 @@ describe('Types', function () {
 
             it('should, by default, allow undefined, allow empty array', function (done) {
 
-                Validate(Joi.array, [
+                Validate(Joi.array(), [
                     [undefined, true],
                     [[], true]
                 ]);
@@ -234,7 +234,7 @@ describe('Types', function () {
 
             it('allows empty arrays', function (done) {
 
-                Validate(Joi.array, [
+                Validate(Joi.array(), [
                     [undefined, true],
                     [[], true]
                 ]);
@@ -243,7 +243,7 @@ describe('Types', function () {
 
             it('should exclude values when excludes is called', function (done) {
 
-                Validate(Joi.array().excludes(Joi.string), [
+                Validate(Joi.array().excludes(Joi.string()), [
                     [['2', '1'], false],
                     [['1'], false],
                     [[2], true]
@@ -253,7 +253,7 @@ describe('Types', function () {
 
             it('should allow types to be excluded', function (done) {
 
-                var schema = Joi.array().excludes(Joi.number);
+                var schema = Joi.array().excludes(Joi.number());
 
                 var n = [1, 2, 'hippo'];
                 schema.validate(n, function (err, value) {
@@ -271,7 +271,7 @@ describe('Types', function () {
 
             it('should validate array of Numbers', function (done) {
 
-                Validate(Joi.array().includes(Joi.number), [
+                Validate(Joi.array().includes(Joi.number()), [
                     [[1, 2, 3], true],
                     [[50, 100, 1000], true],
                     [['a', 1, 2], false]
@@ -281,7 +281,7 @@ describe('Types', function () {
 
             it('should validate array of mixed Numbers & Strings', function (done) {
 
-                Validate(Joi.array().includes(Joi.number, Joi.string), [
+                Validate(Joi.array().includes(Joi.number(), Joi.string()), [
                     [[1, 2, 3], true],
                     [[50, 100, 1000], true],
                     [[1, 'a', 5, 10], true],
@@ -302,7 +302,7 @@ describe('Types', function () {
 
             it('should not validate array of unallowed mixed types (Array)', function (done) {
 
-                Validate(Joi.array().includes(Joi.number), [
+                Validate(Joi.array().includes(Joi.number()), [
                     [[1, 2, 3], true],
                     [[1, 2, [1]], false]
                 ]);

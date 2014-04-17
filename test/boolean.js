@@ -47,7 +47,7 @@ describe('Types', function () {
 
             it('converts string values and validates', function (done) {
 
-                var rule = Joi.boolean;
+                var rule = Joi.boolean();
                 Validate(rule, [
                     ['1234', false],
                     [false, true],

@@ -25,7 +25,7 @@ describe('Joi.number', function () {
 
         it('should, by default, allow undefined', function (done) {
 
-            Validate(Joi.number, [
+            Validate(Joi.number(), [
                 [undefined, true]
             ]);
             done();
@@ -64,7 +64,7 @@ describe('Joi.number', function () {
 
         it('can accept string numbers', function (done) {
 
-            var t = Joi.number;
+            var t = Joi.number();
             Validate(t, [
                 ['1', true],
                 ['100', true],
@@ -92,7 +92,7 @@ describe('Joi.number', function () {
 
         it('converts an object string to a number', function (done) {
 
-            var config = { a: Joi.number };
+            var config = { a: Joi.number() };
             var obj = { a: '123' };
 
             Joi.compile(config).validate(obj, function (err, value) {

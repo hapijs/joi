@@ -25,7 +25,7 @@ describe('ref', function () {
 
         var schema = Joi.object({
             a: Joi.ref('b'),
-            b: Joi.any
+            b: Joi.any()
         });
 
         schema.validate({ a: 5, b: 6 }, function (err, value) {
@@ -49,7 +49,7 @@ describe('ref', function () {
         var schema = Joi.object({
             a: Joi.ref('b.c'),
             b: {
-                c: Joi.any
+                c: Joi.any()
             }
         });
 
@@ -77,7 +77,7 @@ describe('ref', function () {
         var schema = Joi.object({
             a: ref,
             b: {
-                c: Joi.any
+                c: Joi.any()
             }
         });
 
@@ -106,7 +106,7 @@ describe('ref', function () {
         var schema = Joi.object({
             a: ref,
             b: {
-                c: Joi.any
+                c: Joi.any()
             }
         });
 
@@ -121,7 +121,7 @@ describe('ref', function () {
 
         var ab = Joi.object({
             a: {
-                c: Joi.number
+                c: Joi.number()
             },
             b: Joi.ref('a.c')
         });
@@ -133,7 +133,7 @@ describe('ref', function () {
             var ba = Joi.object({
                 b: Joi.ref('a.c'),
                 a: {
-                    c: Joi.number
+                    c: Joi.number()
                 }
             });
 
@@ -149,7 +149,7 @@ describe('ref', function () {
 
         var schema = Joi.object({
             a: Joi.default(Joi.ref('b')),
-            b: Joi.any
+            b: Joi.any()
         });
 
         schema.validate({ b: 6 }, function (err, value) {
@@ -164,7 +164,7 @@ describe('ref', function () {
 
         var ab = Joi.object({
             a: Joi.default(Joi.ref('b')),
-            b: Joi.number
+            b: Joi.number()
         });
 
         ab.validate({ b: '6' }, function (err, value) {
@@ -173,7 +173,7 @@ describe('ref', function () {
             expect(value).to.deep.equal({ a: 6, b: 6 });
 
             var ba = Joi.object({
-                b: Joi.number,
+                b: Joi.number(),
                 a: Joi.default(Joi.ref('b'))
             });
 
@@ -188,9 +188,9 @@ describe('ref', function () {
 
     it('ignores the order in which keys are defined with alternatives', function (done) {
 
-        var a = { c: Joi.number };
+        var a = { c: Joi.number() };
         var b = [Joi.ref('a.c'), Joi.ref('c')];
-        var c = Joi.number;
+        var c = Joi.number();
 
         Validate({ a: a, b: b, c: c }, [
             [{ a: {} }, true],

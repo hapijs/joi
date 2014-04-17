@@ -373,7 +373,7 @@ describe('any', function () {
 
             expect(function () {
 
-                Joi.string().concat(Joi.number);
+                Joi.string().concat(Joi.number());
             }).to.throw('Cannot merge with another type: number');
             done();
         });
@@ -469,7 +469,7 @@ describe('any', function () {
 
         it('merges two objects (any key + specific key)', function (done) {
 
-            var a = Joi.object;
+            var a = Joi.object();
             var b = Joi.object({ b: 1 });
 
             Validate(a, [[{ b: 1 }, true], [{ b: 2 }, true]]);
@@ -482,7 +482,7 @@ describe('any', function () {
         it('merges two objects (no key + any key)', function (done) {
 
             var a = Joi.object({});
-            var b = Joi.object;
+            var b = Joi.object();
 
             Validate(a, [[{}, true], [{ b: 2 }, false]]);
             Validate(b, [[{}, true], [{ b: 2 }, true]]);
@@ -531,9 +531,9 @@ describe('any', function () {
         it('merges two alternatives with references', function (done) {
 
             var schema = {
-                a: { c: Joi.number },
+                a: { c: Joi.number() },
                 b: Joi.alternatives(Joi.ref('a.c')).concat(Joi.alternatives(Joi.ref('c'))),
-                c: Joi.number
+                c: Joi.number()
             };
 
             Validate(schema, [
@@ -574,7 +574,7 @@ describe('any', function () {
 
             it('returns array', function (done) {
 
-                var a = Joi.any;
+                var a = Joi.any();
                 var b = a.required();
                 expect(a._valids.values().length).to.equal(1);
                 expect(b._valids.values().length).to.equal(0);
@@ -588,7 +588,7 @@ describe('any', function () {
 
             it('includes undefined', function (done) {
 
-                var b = Joi.any;
+                var b = Joi.any();
                 expect(b._valids.toString(true)).to.equal('undefined');
                 done();
             });

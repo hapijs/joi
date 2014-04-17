@@ -25,8 +25,8 @@ describe('Types', function () {
 
         it('should validate a function', function (done) {
 
-            Validate(Joi.func.required(), [
-                [function(){ }, true],
+            Validate(Joi.func().required(), [
+                [function () { }, true],
                 ['', false]
             ]);
             done();
