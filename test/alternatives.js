@@ -28,7 +28,7 @@ describe('Types', function () {
             expect(function () {
 
                 Alternatives.create();
-            }).to.throw('Missing alternatives');
+            }).to.throw('Alternatives require more than one');
             done();
         });
 

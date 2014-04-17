@@ -33,14 +33,12 @@ describe('Types', function () {
             });
         });
 
-        it('converts a non-array string to an array', { skip: true }, function (done) {
-
-            // This is wrong behavior
+        it('errors on non-array string', function (done) {
 
             Joi.array().validate('{ "something": false }', function (err, value) {
 
-                expect(err).to.not.exist;
-                expect(value.length).to.equal(1);
+                expect(err).to.exist;
+                expect(err.message).to.equal('the value of <root> must be an array');
                 done();
             });
         });

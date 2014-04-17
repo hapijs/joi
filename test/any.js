@@ -47,7 +47,8 @@ describe('Joi', function () {
                 try {
                     Joi.object().with({});
                     var error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -55,7 +56,8 @@ describe('Joi', function () {
                 try {
                     Joi.object().with(123);
                     error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -70,7 +72,8 @@ describe('Joi', function () {
                 try {
                     Joi.object().without({});
                     var error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -78,7 +81,8 @@ describe('Joi', function () {
                 try {
                     Joi.object().without(123);
                     error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -93,7 +97,8 @@ describe('Joi', function () {
                 try {
                     Joi.object().xor({});
                     var error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -101,7 +106,8 @@ describe('Joi', function () {
                 try {
                     Joi.object().xor(123);
                     error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -116,7 +122,8 @@ describe('Joi', function () {
                 try {
                     Joi.object().or({});
                     var error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -124,7 +131,8 @@ describe('Joi', function () {
                 try {
                     Joi.object().or(123);
                     error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -288,7 +296,7 @@ describe('Joi', function () {
 
         describe('Set', function () {
 
-            describe('#values', function (){
+            describe('#values', function () {
 
                 it('returns array', function (done) {
 
