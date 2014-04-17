@@ -168,9 +168,9 @@ describe('any', function () {
 
         it('adds to existing options', function (done) {
 
-            var a = { b: Joi.number().strict().options({ convert: true }) };
-            var c = { b: '2' };
-            Joi.compile(a).validate(c, function (err, value) {
+            var schema = Joi.object({ b: Joi.number().strict().options({ convert: true }) });
+            var input = { b: '2' };
+            schema.validate(input, function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value.b).to.equal(2);
@@ -183,9 +183,9 @@ describe('any', function () {
 
         it('adds to existing options', function (done) {
 
-            var a = { b: Joi.number().options({ convert: true }).strict() };
-            var c = { b: '2' };
-            Joi.compile(a).validate(c, function (err, value) {
+            var schema = Joi.object({ b: Joi.number().options({ convert: true }).strict() });
+            var input = { b: '2' };
+            schema.validate(input, function (err, value) {
 
                 expect(err).to.exist;
                 expect(value.b).to.equal('2');
@@ -198,10 +198,10 @@ describe('any', function () {
 
         it('sets the value', function (done) {
 
-            var schema = { foo: Joi.string().default('test') };
+            var schema = Joi.object({ foo: Joi.string().default('test') });
             var input = {};
 
-            Joi.compile(schema).validate(input, function (err, value) {
+            schema.validate(input, function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value.foo).to.equal('test');
@@ -212,10 +212,10 @@ describe('any', function () {
 
         it('should not overide a value when value is given', function (done) {
 
-            var schema = { foo: Joi.string().default('bar') };
+            var schema = Joi.object({ foo: Joi.string().default('bar') });
             var input = { foo: 'test' };
 
-            Joi.compile(schema).validate(input, function (err, value) {
+            schema.validate(input, function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value.foo).to.equal('test');

@@ -41,14 +41,14 @@ describe('alternatives', function () {
 
     it('applies modifiers when higher priority converts', function (done) {
 
-        var schema = {
+        var schema = Joi.object({
             a: [
                 Joi.number(),
                 Joi.string()
             ]
-        };
+        });
 
-         Joi.compile(schema).validate({ a: '5' }, function (err, value) {
+         schema.validate({ a: '5' }, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value.a).to.equal(5);
@@ -58,14 +58,14 @@ describe('alternatives', function () {
 
     it('applies modifiers when lower priority valid is a match', function (done) {
 
-        var schema = {
+        var schema = Joi.object({
             a: [
                 Joi.number(),
                 Joi.valid('5')
             ]
-        };
+        });
 
-        Joi.compile(schema).validate({ a: '5' }, function (err, value) {
+        schema.validate({ a: '5' }, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value.a).to.equal(5);
@@ -75,15 +75,15 @@ describe('alternatives', function () {
 
     it('does not apply modifier if alternative fails', function (done) {
 
-        var schema = {
+        var schema = Joi.object({
             a: [
                 Joi.object({ c: Joi.any(), d: Joi.number() }).rename('b', 'c'),
                 { b: Joi.any(), d: Joi.string() }
             ]
-        };
+        });
 
         var input = { a: { b: 'any', d: 'string' } };
-        Joi.compile(schema).validate(input, function (err, value) {
+        schema.validate(input, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value.a.b).to.equal('any');

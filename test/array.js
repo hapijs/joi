@@ -77,9 +77,9 @@ describe('Types', function () {
 
             it('converts members', function (done) {
 
-                var array = ['1', '2', '3'];
                 var schema = Joi.array().includes(Joi.number());
-                Joi.compile(schema).validate(array, function (err, value) {
+                var input = ['1', '2', '3'];
+                schema.validate(input, function (err, value) {
 
                     expect(err).to.not.exist;
                     expect(value).to.deep.equal([1, 2, 3]);
@@ -89,14 +89,14 @@ describe('Types', function () {
 
             it('allows zero size', function (done) {
 
-                var data = { test: [] };
-                var schema = {
+                var schema = Joi.object({
                     test: Joi.array().includes(Joi.object({
                         foo: Joi.string().required()
                     }))
-                };
+                });
+                var input = { test: [] };
 
-                Joi.compile(schema).validate(data, function (err, value) {
+                schema.validate(input, function (err, value) {
 
                     expect(err).to.not.exist;
                     done();
@@ -105,14 +105,14 @@ describe('Types', function () {
 
             it('returns the first error when only one inclusion', function (done) {
 
-                var data = { test: [{ foo: 'a' }, { bar: 2 }] };
-                var schema = {
+                var schema = Joi.object({
                     test: Joi.array().includes(Joi.object({
                         foo: Joi.string().required()
                     }))
-                };
+                });
+                var input = { test: [{ foo: 'a' }, { bar: 2 }] };
 
-                Joi.compile(schema).validate(data, function (err, value) {
+                schema.validate(input, function (err, value) {
 
                     expect(err.message).to.equal('the test array value in position 1 fails because the value of foo is not allowed to be undefined');
                     done();
@@ -311,12 +311,12 @@ describe('Types', function () {
 
             it('errors on invalid number rule using includes', function (done) {
 
-                var schema = {
+                var schema = Joi.object({
                     arr: Joi.array().includes(Joi.number().integer())
-                };
+                });
 
                 var input = { arr: [1, 2, 2.1] };
-                Joi.compile(schema).validate(input, function (err, value) {
+                schema.validate(input, function (err, value) {
 
                     expect(err).to.exist;
                     expect(err.message).to.equal('the arr array value in position 2 fails because the value of 2 must be an integer');

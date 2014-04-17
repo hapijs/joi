@@ -278,9 +278,9 @@ describe('object', function () {
 
     it('errors on unknown keys when functions allows', function (done) {
 
-        var schema = { a: Joi.number() };
+        var schema = Joi.object({ a: Joi.number() }).options({ skipFunctions: true });
         var obj = { a: 5, b: 'value' };
-        Joi.compile(schema).validate(obj, { skipFunctions: true }, function (err, value) {
+        schema.validate(obj, function (err, value) {
 
             expect(err).to.exist;
             done();
@@ -376,7 +376,7 @@ describe('object', function () {
 
         it('errors multiple times when abortEarly is false', function (done) {
 
-            Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').validate({ a: 1, c: 1, d: 1 }, { abortEarly: false }, function (err, value) {
+            Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').options({ abortEarly: false }).validate({ a: 1, c: 1, d: 1 }, function (err, value) {
 
                 expect(err).to.exist;
                 expect(err.message).to.equal('cannot rename c because multiple renames are disabled and another key was already renamed to b. cannot rename d because multiple renames are disabled and another key was already renamed to b');
