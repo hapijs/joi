@@ -23,41 +23,52 @@ describe('Types', function () {
 
     describe('Array', function () {
 
-        describe('#_convert', function () {
+        it('converts a string to an array', function (done) {
 
-            it('should convert a string to an array', function (done) {
+            Joi.array().validate('[1,2,3]', function (err, value) {
 
-                var result = Joi.array()._convert('[1,2,3]');
-                expect(result.length).to.equal(3);
+                expect(err).to.not.exist;
+                expect(value.length).to.equal(3);
                 done();
             });
+        });
 
-            it('should convert a non-array string to an array', function (done) {
+        it('errors on non-array string', function (done) {
 
-                var result = Joi.array()._convert('{ "something": false }');
-                expect(result.length).to.equal(1);
+            Joi.array().validate('{ "something": false }', function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('the value of <root> must be an array');
                 done();
             });
+        });
 
-            it('should return a non array', function (done) {
+        it('errors on number', function (done) {
 
-                var result = Joi.array()._convert(3);
-                expect(result).to.equal(3);
+            Joi.array().validate(3, function (err, value) {
+
+                expect(err).to.exist;
+                expect(value).to.equal(3);
                 done();
             });
+        });
 
-            it('should convert a non-array string with number type', function (done) {
+        it('converts a non-array string with number type', function (done) {
 
-                var result = Joi.array()._convert('3');
-                expect(result.length).to.equal(1);
-                expect(result[0]).to.equal('3');
+            Joi.array().validate('3', function (err, value) {
+
+                expect(err).to.exist;
+                expect(value).to.equal('3');
                 done();
             });
+        });
 
-            it('should convert a non-array string', function (done) {
+        it('errors on a non-array string', function (done) {
 
-                var result = Joi.array()._convert('asdf');
-                expect(result).to.equal('asdf');
+            Joi.array().validate('asdf', function (err, value) {
+
+                expect(err).to.exist;
+                expect(value).to.equal('asdf');
                 done();
             });
         });
@@ -68,10 +79,12 @@ describe('Types', function () {
 
                 var array = ['1', '2', '3'];
                 var schema = Joi.array().includes(Joi.number());
-                var err = Joi.validate(array, schema, { modify: true });
-                expect(err).to.not.exist;
-                expect(array).to.deep.equal([1, 2, 3]);
-                done();
+                Joi.validate(array, schema, function (err, value) {
+
+                    expect(err).to.not.exist;
+                    expect(value).to.deep.equal([1, 2, 3]);
+                    done();
+                });
             });
 
             it('allows zero size', function (done) {
@@ -83,9 +96,11 @@ describe('Types', function () {
                     }))
                 };
 
-                var err = Joi.validate(data, schema);
-                expect(err).to.not.exist;
-                done();
+                Joi.validate(data, schema, function (err, value) {
+
+                    expect(err).to.not.exist;
+                    done();
+                });
             });
 
             it('returns the first error when only one inclusion', function (done) {
@@ -97,9 +112,11 @@ describe('Types', function () {
                     }))
                 };
 
-                var err = Joi.validate(data, schema);
-                expect(err.message).to.equal('the test array value in position 1 fails because the value of foo is not allowed to be undefined');
-                done();
+                Joi.validate(data, schema, function (err, value) {
+
+                    expect(err.message).to.equal('the test array value in position 1 fails because the value of foo is not allowed to be undefined');
+                    done();
+                });
             });
         });
 
@@ -239,15 +256,17 @@ describe('Types', function () {
                 var schema = Joi.array().excludes(Joi.number());
 
                 var n = [1, 2, 'hippo'];
-                var result = schema.validate(n);
+                schema.validate(n, function (err, value) {
 
-                expect(result).to.exist;
+                    expect(err).to.exist;
 
-                var m = ['x', 'y', 'z'];
-                var result2 = schema.validate(m);
+                    var m = ['x', 'y', 'z'];
+                    schema.validate(m, function (err2, value) {
 
-                expect(result2).to.not.exist;
-                done();
+                        expect(err2).to.not.exist;
+                        done();
+                    });
+                });
             });
 
             it('should validate array of Numbers', function (done) {
@@ -297,11 +316,12 @@ describe('Types', function () {
                 };
 
                 var input = { arr: [1, 2, 2.1] };
-                var err = Joi.validate(input, schema);
+                Joi.validate(input, schema, function (err, value) {
 
-                expect(err).to.exist;
-                expect(err.message).to.equal('the arr array value in position 2 fails because the value of 2 must be an integer');
-                done();
+                    expect(err).to.exist;
+                    expect(err.message).to.equal('the arr array value in position 2 fails because the value of 2 must be an integer');
+                    done();
+                });
             });
 
             it('validates an array within an object', function (done) {

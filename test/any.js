@@ -23,17 +23,6 @@ describe('Joi', function () {
 
     describe('any', function () {
 
-        it('validates both valid() and with()', function (done) {
-
-            var b = Joi.object({
-                first: Joi.any().valid('value').with('second'),
-                second: Joi.any()
-            });
-            Validate(b, [[{ first: 'value' }, false]]);
-
-            done();
-        });
-
         describe('#strict', function () {
 
             it('validates without converting', function (done) {
@@ -53,35 +42,22 @@ describe('Joi', function () {
 
         describe('#with', function () {
 
-            it('fails when with set on root', function (done) {
-
-                var b = Joi.any();
-                var result = b.with('test');
-
-                expect(result.validate('test')).to.exist;
-                done();
-            });
-
-            it('returns error when related type not found', function (done) {
-
-                Validate(Joi.any().with('test'), [['test', false]])
-                done();
-            });
-
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    Joi.any().with({});
+                    Joi.object().with({});
                     var error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
 
                 try {
-                    Joi.any().with(123);
+                    Joi.object().with(123);
                     error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -91,29 +67,22 @@ describe('Joi', function () {
 
         describe('#without', function () {
 
-            it('fails when without set on root', function (done) {
-
-                var b = Joi.any();
-                var result = b.without('test');
-
-                expect(result.validate('test')).to.exist;
-                done();
-            });
-
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    b.without({});
+                    Joi.object().without({});
                     var error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
 
                 try {
-                    b.without(123);
+                    Joi.object().without(123);
                     error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -123,29 +92,22 @@ describe('Joi', function () {
 
         describe('#xor', function () {
 
-            it('fails when without set on root', function (done) {
-
-                var b = Joi.any();
-                var result = b.xor('test');
-
-                expect(result.validate('test')).to.exist;
-                done();
-            });
-
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    b.xor({});
+                    Joi.object().xor({});
                     var error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
 
                 try {
-                    b.xor(123);
+                    Joi.object().xor(123);
                     error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
@@ -155,106 +117,25 @@ describe('Joi', function () {
 
         describe('#or', function () {
 
-            it('fails when without set on root', function (done) {
-
-                var b = Joi.any();
-                var result = b.or('test');
-
-                expect(result.validate('test')).to.exist;
-                done();
-            });
-
             it('should throw an error when a parameter is not a string', function (done) {
 
                 try {
-                    b.or({});
+                    Joi.object().or({});
                     var error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
 
                 try {
-                    b.or(123);
+                    Joi.object().or(123);
                     error = false;
-                } catch (e) {
+                }
+                catch (e) {
                     error = true;
                 }
                 expect(error).to.equal(true);
-                done();
-            });
-        });
-
-        describe('#rename', function () {
-
-            it('fails when no parent object is provided', function (done) {
-
-                var schema = Joi.any().rename('test');
-                expect(schema.validate('test')).to.exist;
-                done();
-            });
-
-            it('allows renaming multiple times with multiple enabled', function (done) {
-
-                var schema = {
-                    test1: Joi.string().rename('test'),
-                    test2: Joi.string().rename('test', { multiple: true })
-                };
-
-                var err = Joi.validate({ test1: 'a', test2: 'b' }, schema);
-                expect(err).to.not.exist;
-                done();
-            });
-
-            it('errors renaming multiple times with multiple disabled', function (done) {
-
-                var schema = {
-                    test1: Joi.string().rename('test'),
-                    test2: Joi.string().rename('test')
-                };
-
-                var err = Joi.validate({ test1: 'a', test2: 'b' }, schema);
-                expect(err).to.exist;
-                done();
-            });
-
-            it('with override disabled should not allow overwriting existing value', function (done) {
-
-                var schema = {
-                    test: Joi.string().rename('test1')
-                };
-
-                expect(Joi.validate({ test: 'b', test1: 'a' }, schema)).to.exist;
-                done();
-            });
-
-            it('with override enabled should allow overwriting existing value', function (done) {
-
-                var schema = {
-                    test: Joi.string().rename('test1', { override: true }),
-                    test1: Joi.any()
-                };
-
-                var err = Joi.validate({ test: 'b', test1: 'a' }, schema);
-                expect(err).to.not.exist;
-                done();
-            });
-
-            it('renames when data is nested in an array via includes', function (done) {
-
-                var schema = {
-                    arr: Joi.array().includes(Joi.object({
-                        uno: Joi.string().rename('one'),
-                        dos: Joi.string().rename('two')
-                    }))
-                };
-
-                var data = { arr: [{ uno: '1', dos: '2' }] };
-                var err = Joi.validate(data, schema);
-
-                expect(err).to.not.exist;
-                expect(data.arr[0].one).to.equal('1');
-                expect(data.arr[0].two).to.equal('2');
                 done();
             });
         });
@@ -263,11 +144,14 @@ describe('Joi', function () {
 
             it('adds to existing options', function (done) {
 
-                var a = { b: Joi.number().strict().options({ convert: true, modify: true }) };
+                var a = { b: Joi.number().strict().options({ convert: true }) };
                 var c = { b: '2' };
-                expect(Joi.validate(c, a)).to.not.exist;
-                expect(c.b).to.equal(2);
-                done();
+                Joi.validate(c, a, function (err, value) {
+
+                    expect(err).to.not.exist;
+                    expect(value.b).to.equal(2);
+                    done();
+                });
             });
         });
 
@@ -277,9 +161,12 @@ describe('Joi', function () {
 
                 var a = { b: Joi.number().options({ convert: true }).strict() };
                 var c = { b: '2' };
-                expect(Joi.validate(c, a)).to.exist;
-                expect(c.b).to.equal('2');
-                done();
+                Joi.validate(c, a, function (err, value) {
+
+                    expect(err).to.exist;
+                    expect(value.b).to.equal('2');
+                    done();
+                });
             });
         });
 
@@ -290,33 +177,13 @@ describe('Joi', function () {
                 var schema = { foo: Joi.string().default('test') };
                 var input = {};
 
-                expect(Joi.validate(input, schema)).to.not.exist;
-                expect(input.foo).to.equal('test');
+                Joi.validate(input, schema, function (err, value) {
 
-                done();
-            });
+                    expect(err).to.not.exist;
+                    expect(value.foo).to.equal('test');
 
-            it('sets the value after key is renamed', function (done) {
-
-                var schema = { foo: Joi.string().rename('foo2').default('test') };
-                var input = {};
-
-                expect(Joi.validate(input, schema)).to.not.exist;
-                expect(input.foo2).to.equal('test');
-
-                done();
-            });
-
-            it('sets the value after key is renamed. Old key should not exist', function (done) {
-
-                var schema = { foo: Joi.string().rename('foo2', { move: true }).default('test') };
-                var input = {};
-
-                expect(Joi.validate(input, schema)).to.not.exist;
-                expect(input.foo2).to.equal('test');
-                expect(input.foo).to.not.exist;
-
-                done();
+                    done();
+                });
             });
 
             it('should not overide a value when value is given', function (done) {
@@ -324,22 +191,11 @@ describe('Joi', function () {
                 var schema = { foo: Joi.string().default('bar') };
                 var input = { foo: 'test' };
 
-                expect(Joi.validate(input, schema)).to.not.exist;
-                expect(input.foo).to.equal('test');
-
-                done();
-            });
-
-        });
-
-        describe('#validateCallback', function () {
-
-            it('validates using callback interface', function (done) {
-
-                var schema = Joi.number();
-                schema.validateCallback(4, {}, function (err) {
+                Joi.validate(input, schema, function (err, value) {
 
                     expect(err).to.not.exist;
+                    expect(value.foo).to.equal('test');
+
                     done();
                 });
             });
@@ -429,13 +285,30 @@ describe('Joi', function () {
 
             it('checks value after conversion', function (done) {
 
-                var a = Joi.number().invalid(2);
-                expect(Joi.validate('2', a, { abortEarly: false })).to.exist;
-                done();
+                var schema = Joi.number().invalid(2);
+                schema.validate('2', { abortEarly: false }, function (err, value) {
+
+                    expect(err).to.exist;
+                    done();
+                });
             });
         });
 
         describe('Set', function () {
+
+            describe('#values', function () {
+
+                it('returns array', function (done) {
+
+                    var a = Joi.any();
+                    var b = a.required();
+                    expect(a._valids.values().length).to.equal(1);
+                    expect(b._valids.values().length).to.equal(0);
+                    expect(a._invalids.values().length).to.equal(1);
+                    expect(b._invalids.values().length).to.equal(2);
+                    done();
+                });
+            });
 
             describe('#toString', function () {
 
