@@ -18,23 +18,29 @@ var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
 
-describe('Types', function () {
-    describe('Binary', function () {
-        describe('#_convert', function () {
-            it('should convert a string to a buffer', function (done) {
-                var result = Joi.binary().validate('test', function (err, value) {
-                    expect(err).to.not.exist;
-                    expect(value.length).to.equal(4);
-                    expect(value.toString('utf8')).to.equal('test');
-                    done();
-                });
 
+describe('Types', function () {
+
+    describe('Binary', function () {
+
+        it('should convert a string to a buffer', function (done) {
+
+            var result = Joi.binary().validate('test', function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value instanceof Buffer).to.equal(true);
+                expect(value.length).to.equal(4);
+                expect(value.toString('utf8')).to.equal('test');
+                done();
             });
         });
 
         describe('#validate', function () {
+
             it('should return an error when a non-buffer or non-string is used', function (done) {
+
                 Joi.binary().validate(5, function (err, value) {
+
                     expect(err).to.exist;
                     expect(err.message).to.equal('the value of <root> must be a buffer or a string');
                     done();
@@ -42,10 +48,13 @@ describe('Types', function () {
             });
 
             it('should accept a buffer object', function (done) {
+
                 var schema = {
                     buffer: Joi.binary()
                 };
+
                 Joi.binary().validate(new Buffer('hello world'), function (err, value) {
+
                     expect(err).to.not.exist;
                     expect(value.toString('utf8')).to.equal('hello world');
                     done();
