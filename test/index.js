@@ -1242,6 +1242,33 @@ describe('Joi', function () {
         });
     });
 
+    it('accepts no options', function (done) {
+
+        Joi.validate('test', Joi.string(), function (err, value) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
+    it('accepts null options', function (done) {
+
+        Joi.validate('test', Joi.string(), null, function (err, value) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
+    it('accepts undefined options', function (done) {
+
+        Joi.validate('test', Joi.string(), undefined, function (err, value) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
     describe('#describe', function () {
 
         var schema = Joi.object({
