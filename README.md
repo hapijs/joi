@@ -26,6 +26,7 @@ Current version: **4.0.x**
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
         - [`any.example(value)`](#anyexamplevalue)
+        - [`any.unit(name)`](#anyunitname)
         - [`any.options(options)`](#anyoptionsoptions)
         - [`any.strict()`](#anystrict)
         - [`any.default(value)`](#anydefault)
@@ -311,6 +312,15 @@ If the example fails to pass validation, the function will throw.
 
 ```javascript
 var schema = Joi.string().min(4).example('abcd');
+```
+
+#### `any.unit(name)`
+
+Annotates the key where:
+- `name` - the unit name of the value.
+
+```javascript
+var schema = Joi.number().unit('milliseconds');
 ```
 
 #### `any.options(options)`

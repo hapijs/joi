@@ -310,6 +310,26 @@ describe('Joi', function () {
             });
         });
 
+        describe('#unit', function () {
+
+            it('sets the unit', function (done) {
+
+                var b = Joi.any().unit('milliseconds');
+                expect(b._unit).to.equal('milliseconds');
+                expect(b.describe().unit).to.equal('milliseconds');
+                done();
+            });
+
+            it('throws when unit is missing', function (done) {
+
+                expect(function () {
+
+                    Joi.any().unit();
+                }).to.throw('Unit name must be a non-empty string');
+                done();
+            });
+        });
+
         describe('#_validate', function () {
 
             it('checks value after conversion', function (done) {
