@@ -53,7 +53,7 @@ describe('ref', function () {
             }
         });
 
-        schema.validate({ a: 5, b: 5 }, function (err, value) {
+        schema.validate({ a: 5, b: { c: 6 } }, function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.equal('the value of a must be one of ref:b.c');
@@ -61,10 +61,125 @@ describe('ref', function () {
             Validate(schema, [
                 [{ a: 5 }, false],
                 [{ b: { c: 5 } }, true],
-                [{ a: 5, b: { c: 6 } }, false],
+                [{ a: 5, b: 5 }, false],
                 [{ a: '5', b: { c: '5' } }, true]
             ]);
 
+            done();
+        });
+    });
+
+    it('uses ref with composite nested keys in sub child', function (done) {
+
+        var ref = Joi.ref('b.c');
+        expect(ref.root).to.equal('b');
+
+        var schema = Joi.object({
+            a: ref,
+            b: {
+                c: Joi.any()
+            }
+        });
+
+        var input = { a: 5, b: { c: 5 } };
+        schema.validate(input, function (err, value) {
+
+            expect(err).to.not.exist;
+
+            var parent = Joi.object({
+                e: schema
+            });
+
+            parent.validate({ e: input }, function (err, value) {
+
+                expect(err).to.not.exist;
+                done();
+            });
+        });
+    });
+
+    it('uses ref reach options', function (done) {
+
+        var ref = Joi.ref('b/c', { separator: '/' });
+        expect(ref.root).to.equal('b');
+
+        var schema = Joi.object({
+            a: ref,
+            b: {
+                c: Joi.any()
+            }
+        });
+
+        schema.validate({ a: 5, b: { c: 5 } }, function (err, value) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
+    it('ignores the order in which keys are defined', function (done) {
+
+        var ab = Joi.object({
+            a: {
+                c: Joi.number()
+            },
+            b: Joi.ref('a.c')
+        });
+
+        ab.validate({ a: { c: '5' }, b: 5 }, function (err, value) {
+
+            expect(err).to.not.exist;
+
+            var ba = Joi.object({
+                b: Joi.ref('a.c'),
+                a: {
+                    c: Joi.number()
+                }
+            });
+
+            ba.validate({ a: { c: '5' }, b: 5 }, function (err, value) {
+
+                expect(err).to.not.exist;
+                done();
+            });
+        });
+    });
+
+    describe('#create', function () {
+
+        it('throws when key is missing', function (done) {
+
+            expect(function () {
+
+                Joi.ref();
+            }).to.throw('Missing reference key');
+            done();
+        });
+
+        it('throws when key is missing', function (done) {
+
+            expect(function () {
+
+                Joi.ref(5);
+            }).to.throw('Invalid reference key: 5');
+            done();
+        });
+
+        it('finds root with default separator', function (done) {
+
+            expect(Joi.ref('a.b.c').root).to.equal('a');
+            done();
+        });
+
+        it('finds root with default separator and options', function (done) {
+
+            expect(Joi.ref('a.b.c', {}).root).to.equal('a');
+            done();
+        });
+
+        it('finds root with custom separator', function (done) {
+
+            expect(Joi.ref('a+b+c', { separator: '+' }).root).to.equal('a');
             done();
         });
     });
