@@ -160,6 +160,32 @@ describe('ref', function () {
         });
     });
 
+    it('uses ref as default value regardless of order', function (done) {
+
+        var ab = Joi.object({
+            a: Joi.any().default(Joi.ref('b')),
+            b: Joi.number()
+        });
+
+        ab.validate({ b:'6' }, function (err, value) {
+
+            expect(err).to.not.exist;
+            expect(value).to.deep.equal({ a: 6, b: 6 });
+
+            var ba = Joi.object({
+                b: Joi.number(),
+                a: Joi.any().default(Joi.ref('b'))
+            });
+
+            ba.validate({ b: '6' }, function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value).to.deep.equal({ a: 6, b: 6 });
+                done();
+            });
+        });
+    });
+
     describe('#create', function () {
 
         it('throws when key is missing', function (done) {
