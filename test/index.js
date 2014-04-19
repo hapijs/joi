@@ -68,8 +68,7 @@ describe('Joi', function () {
         Joi.validate(null, Joi.string(), function (err, value) {
 
             expect(err).to.exist;
-            err.annotated();
-            expect(err.message).to.equal('{\n  \u001b[41m\"<root>\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] the value of <root> is not allowed to be null\u001b[0m');
+            expect(err.annotated()).to.equal('{\n  \u001b[41m\"<root>\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] the value of <root> is not allowed to be null\u001b[0m');
             done();
         });
     });
@@ -1300,8 +1299,7 @@ describe('Joi', function () {
         Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
 
             expect(err).to.exist;
-            err.annotated();
-            expect(err.message).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[3]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of u is not allowed to be undefined\n[3] the value of b must be a string\u001b[0m');
+            expect(err.annotated()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[3]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of u is not allowed to be undefined\n[3] the value of b must be a string\u001b[0m');
             done();
         });
     });
