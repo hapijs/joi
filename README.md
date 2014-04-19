@@ -349,7 +349,7 @@ var schema = {
 #### `any.default(value)`
 
 Sets a default value if the original value is undefined where:
-- `value` - the value.
+- `value` - the value. `value` supports [references](#refkey-options).
 
 ```javascript
 var schema = {
