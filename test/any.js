@@ -296,6 +296,27 @@ describe('Joi', function () {
 
         describe('Set', function () {
 
+            describe('#add', function () {
+
+                it('throws when adding a non ref function', function (done) {
+
+                    expect(function () {
+
+                        Joi.any().valid(function () { });
+                    }).to.throw('Value cannot be an object or function');
+                    done();
+                });
+
+                it('throws when adding an object function', function (done) {
+
+                    expect(function () {
+
+                        Joi.any().valid({ });
+                    }).to.throw('Value cannot be an object or function');
+                    done();
+                });
+            });
+
             describe('#values', function () {
 
                 it('returns array', function (done) {

@@ -58,7 +58,21 @@ describe('Joi.string', function () {
                 ['a', true],
                 ['b', true],
                 ['A', true],
-                ['B', true]
+                ['B', true],
+                [4, false]
+            ]);
+            done();
+        });
+
+        it('validates case insensitive values with non-strings', function (done) {
+
+            Validate(Joi.string().valid('a', 'b', 5).insensitive(), [
+                ['a', true],
+                ['b', true],
+                ['A', true],
+                ['B', true],
+                [4, false],
+                [5, true]
             ]);
             done();
         });
