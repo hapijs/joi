@@ -25,6 +25,7 @@ Current version: **4.0.x**
         - [`description(desc)`](#descriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
+        - [`any.example(value)`](#anyexamplevalue)
         - [`any.options(options)`](#anyoptionsoptions)
         - [`any.strict()`](#anystrict)
         - [`any.default(value)`](#anydefault)
@@ -259,7 +260,7 @@ var schema = {
 Marks a key as required which will not allow `undefined` as value. All keys are optional by default.
 
 ```javascript
-    var schema = {
+var schema = {
     a: Joi.any().required()
 };
 ```
@@ -299,6 +300,17 @@ Annotates the key where:
 
 ```javascript
 var schema = Joi.any().tags(['api', 'user']);
+```
+
+#### `any.example(value)`
+
+Annotates the key where:
+- `value` - an example value.
+
+If the example fails to pass validation, the function will throw.
+
+```javascript
+var schema = Joi.string().min(4).example('abcd');
 ```
 
 #### `any.options(options)`
