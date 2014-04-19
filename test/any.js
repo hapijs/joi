@@ -287,6 +287,7 @@ describe('Joi', function () {
 
                 var schema = Joi.any().valid(5, 6, 7).example(5);
                 expect(schema._examples).to.include(5);
+                expect(schema.describe().examples).to.deep.equal([5]);
                 done();
             });
 
