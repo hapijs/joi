@@ -281,6 +281,34 @@ describe('Joi', function () {
             });
         });
 
+        describe('#example', function () {
+
+            it('sets an example', function (done) {
+
+                var schema = Joi.any().valid(5, 6, 7).example(5);
+                expect(schema._examples).to.include(5);
+                done();
+            });
+
+            it('throws when tags are missing', function (done) {
+
+                expect(function () {
+
+                    Joi.any().example();
+                }).to.throw('Missing example');
+                done();
+            });
+
+            it('throws when example fails own rules', function (done) {
+
+                expect(function () {
+
+                    var schema = Joi.any().valid(5, 6, 7).example(4);
+                }).to.throw('Bad example: the value of <root> must be one of 5, 6, 7');
+                done();
+            });
+        });
+
         describe('#_validate', function () {
 
             it('checks value after conversion', function (done) {
