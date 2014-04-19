@@ -59,6 +59,7 @@ Current version: **4.0.x**
         - [`object.xor(peers)`](#objectxorpeers)
         - [`object.or(peers)`](#objectorpeers)
         - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
+        - [`object.assert(ref, schema, message)`](#objectassertref-schema-message)
     - [`string()`](#string)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit)`](#stringminlimit)
@@ -71,6 +72,7 @@ Current version: **4.0.x**
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
     - [`alternatives(types)`](#alternativestypes)
+    - [`ref(key, [options])`](#refkey-options)
 - [Migration notes](#migration-notes)
 
 
@@ -218,7 +220,7 @@ any.validate('a', function (err) { });
 
 Whitelists a value where:
 - `value` - the allowed value which can be of any type and will be matched against the validated value before applying any other rules.
-  `value` can be an array of values, or multiple values can be passed as individual arguments.
+  `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
 
 ```javascript
 var schema = {
@@ -232,7 +234,7 @@ var schema = {
 
 Adds the provided values into the allowed whitelist and marks them as the only valid values allowed where:
 - `value` - the allowed value which can be of any type and will be matched against the validated value before applying any other rules.
-  `value` can be an array of values, or multiple values can be passed as individual arguments.
+  `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
 
 ```javascript
 var schema = {
@@ -246,7 +248,7 @@ var schema = {
 
 Blacklists a value where:
 - `value` - the forbidden value which can be of any type and will be matched against the validated value before applying any other rules.
-  `value` can be an array of values, or multiple values can be passed as individual arguments.
+  `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
 
 ```javascript
 var schema = {
@@ -713,6 +715,26 @@ var object = Joi.object({
 object.validate({ b: 5 }, function (err) { });
 ```
 
+#### `object.assert(ref, schema, message)`
+
+Verifies an assertion where:
+- `ref` - the key name or [reference](#refkey-options).
+- `schema` - the validation rules required to satisfy the assertion. If the `schema` includes references, they are resolved against
+  the object value, not the value of the `ref` target.
+- `message` - human-readable message used when the assertion fails.
+
+```javascript
+var schema = Joi.object().keys({
+    a: {
+        b: Joi.string(),
+        c: Joi.number()
+    },
+    d: {
+        e: Joi.any()
+    }
+}).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
+```
+
 ### `string()`
 
 Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with `allow('')`.
@@ -845,3 +867,27 @@ alt.validate('a', function (err) { });
 Note that the `alternatives()` type does not behave the same way as passing multiple alternatives directly using an
 array of types (e.g. `{ a: [Joi.number(), Joi.string()] }`). When passing an array directly, the value must match one
 of the provided types while when using the `alternatives()` type, the key is optional by default.
+
+### `ref(key, [options])`
+
+Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency
+so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
+References support the following arguments:
+- `key` - the reference target. References cannot point up the object tree, only to siebling keys, but they can point to
+  children (e.g. 'a.b.c') using the `.` separator.
+- `options` - optional settings:
+    - `separator` - override the default `.` hierarchy separator.
+
+Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
+(parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
+
+```javascript
+var schema = Joi.object({
+    a: Joi.ref('b.c'),
+    b: {
+        c: Joi.any()
+    }
+});
+
+schema.validate({ a: 5, b: { c: 5 } }, function (err, value) {});
+```

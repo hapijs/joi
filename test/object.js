@@ -565,5 +565,75 @@ describe('object', function () {
             });
         });
     });
+
+    describe('#assert', function () {
+
+        it('validates upwards reference', function (done) {
+
+            var schema = Joi.object().keys({
+                a: {
+                    b: Joi.string(),
+                    c: Joi.number()
+                },
+                d: {
+                    e: Joi.any()
+                }
+            }).assert(Joi.ref('d/e', { separator: '/' }), Joi.ref('a.c'), 'equal to a.c');
+
+            schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('d.e failed assertion equal to a.c');
+
+                Validate(schema, [
+                    [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
+                ]);
+
+                done();
+            });
+        });
+
+        it('validates upwards reference with implicit context', function (done) {
+
+            var schema = Joi.object().keys({
+                a: {
+                    b: Joi.string(),
+                    c: Joi.number()
+                },
+                d: {
+                    e: Joi.any()
+                }
+            }).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
+
+            schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('d.e failed assertion equal to a.c');
+
+                Validate(schema, [
+                    [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
+                ]);
+
+                done();
+            });
+        });
+
+        it('throws when context is at root level', function (done) {
+
+            expect(function () {
+
+                var schema = Joi.object().keys({
+                    a: {
+                        b: Joi.string(),
+                        c: Joi.number()
+                    },
+                    d: {
+                        e: Joi.any()
+                    }
+                }).assert('a', Joi.ref('d.e'), 'equal to d.e');
+            }).to.throw('Cannot use assertions for root level references - use direct key rules instead');
+            done();
+        });
+    });
 });
 
