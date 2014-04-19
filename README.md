@@ -574,8 +574,10 @@ object.validate({ a: 5 }, function (err) { });
 #### `object.keys([schema])`
 
 Sets the allowed object keys where:
-- `schema` - optional object where each key is assinged a **joi** type object. If the schema is `{}` no keys allowed.
-  Defaults to 'undefined' which allows any child key. Overrides any keys previously set.
+- `schema` - optional object where each key is assinged a **joi** type object. If `schema` is `{}` no keys allowed.
+  If `schema` is `null` or `undefined`, any key allowed. If `schema` is an object with keys, the keys are added to any
+  previously defined keys (but narrows the selection if all keys previously allowed). Defaults to 'undefined' which
+  allows any child key.
 
 ```javascript
 var object = Joi.object().keys({
