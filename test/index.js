@@ -333,7 +333,46 @@ describe('Joi', function () {
                 [{ txt: '', upc: '' }, false],
                 [{ txt: 'test', upc: 'test' }, true],
                 [{ txt: 'test', upc: 'test', code: 322 }, true]
+            ]);
 
+            done();
+        });
+    });
+
+    it('validates and', function (done) {
+
+        var schema = Joi.object({
+            txt: Joi.string(),
+            upc: Joi.string().allow(null, ''),
+            code: Joi.number()
+        }).and('txt', 'upc', 'code');
+
+        Joi.validate({ txt: 'x' }, schema, { abortEarly: false }, function (err, value) {
+
+            expect(err.message).to.equal('txt missing required peers upc, code');
+
+            Validate(schema, [
+                [{ upc: null }, false],
+                [{ upc: 'test' }, false],
+                [{ txt: null }, false],
+                [{ txt: 'test' }, false],
+                [{ code: null }, false],
+                [{ code: 123 }, false],
+                [{ txt: 'test', upc: null }, false],
+                [{ txt: 'test', upc: '' }, false],
+                [{ txt: '', upc: 'test' }, false],
+                [{ txt: null, upc: 'test' }, false],
+                [{ txt: undefined, upc: 'test' }, false],
+                [{ txt: 'test', upc: undefined }, false],
+                [{ txt: 'test', upc: '' }, false],
+                [{ txt: 'test', upc: null }, false],
+                [{ txt: '', upc: undefined }, false],
+                [{ txt: '', upc: undefined, code: 999 }, false],
+                [{ txt: '', upc: undefined, code: undefined }, false],
+                [{ txt: '', upc: '' }, false],
+                [{ txt: 'test', upc: 'test' }, false],
+                [{ txt: 'test', upc: 'test', code: 322 }, true],
+                [{ txt: 'test', upc: null, code: 322 }, true]
             ]);
 
             done();

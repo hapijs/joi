@@ -54,10 +54,11 @@ Current version: **4.0.x**
         - [`object.min(limit)`](#objectminlimit)
         - [`object.max(limit)`](#objectmaxlimit)
         - [`object.length(limit)`](#objectlengthlimit)
+        - [`object.and(peers)`](#objectandpeers)
+        - [`object.or(peers)`](#objectorpeers)
+        - [`object.xor(peers)`](#objectxorpeers)
         - [`object.with(key, peers)`](#objectwithkey-peers)
         - [`object.without(key, peers)`](#objectwithoutkey-peers)
-        - [`object.xor(peers)`](#objectxorpeers)
-        - [`object.or(peers)`](#objectorpeers)
         - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
         - [`object.assert(ref, schema, message)`](#objectassertref-schema-message)
     - [`string()`](#string)
@@ -643,11 +644,54 @@ var schema = {
 };
 ```
 
+#### `object.and(peers)`
+
+Defines am all-or-nothing relationship between keys where if one of the peers is present, all of them are required as
+well where:
+- `peers` - the key names of which if one present, all are required. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).or('a', 'b');
+```
+
+#### `object.or(peers)`
+
+Defines a relationship between keys where one of the peers is required (and more than one is allowed) where:
+- `peers` - the key names of which at least one must appear. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).or('a', 'b');
+```
+
+#### `object.xor(peers)`
+
+Defines an exclusive relationship between a set of keys where one of them is required but not at the same time where:
+- `peers` - the exclusive key names that must not appear together but where one of them is required. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
+
+```javascript
+var schema = Joi.object({
+    a: Joi.any(),
+    b: Joi.any()
+}).xor('a', 'b');
+```
+
 #### `object.with(key, peers)`
 
 Requires the presence of other keys whenever the specified key is present where:
 - `key` - the reference key.
 - `peers` - the required peer key names that must appear together with `key`. `peers` can be a single string value or an array of string values.
+
+Note that unlike [`object.and()`](#objectandpeers), `with()` creates a dependency only between the `key` and each of the `peers`, not
+between the `peers` themselves.
 
 ```javascript
 var schema = Joi.object({
@@ -667,32 +711,6 @@ var schema = Joi.object({
     a: Joi.any(),
     b: Joi.any()
 }).without('a', ['b']);
-```
-
-#### `object.xor(peers)`
-
-Defines an exclusive relationship between a set of keys where one of them is required but not at the same time where:
-- `peers` - the exclusive key names that must not appear together but where one of them is required. `peers` can be a single string value, an
-  array of string values, or each peer provided as an argument.
-
-```javascript
-var schema = Joi.object({
-    a: Joi.any(),
-    b: Joi.any()
-}).xor('a', 'b');
-```
-
-#### `object.or(peers)`
-
-Defines a relationship between keys where one of the peers is required (and more than one is allowed) where:
-- `peers` - the key names of which at least one must appear. `peers` can be a single string value, an
-  array of string values, or each peer provided as an argument.
-
-```javascript
-var schema = Joi.object({
-    a: Joi.any(),
-    b: Joi.any()
-}).or('a', 'b');
 ```
 
 #### `object.rename(from, to, [options])`
