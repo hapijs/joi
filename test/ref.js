@@ -69,7 +69,7 @@ describe('ref', function () {
         });
     });
 
-    it('uses ref with composite nested keys in sub child', function (done) {
+    it('uses ref with combined nested keys in sub child', function (done) {
 
         var ref = Joi.ref('b.c');
         expect(ref.root).to.equal('b');
@@ -142,6 +142,21 @@ describe('ref', function () {
                 expect(err).to.not.exist;
                 done();
             });
+        });
+    });
+
+    it('uses ref as default value', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.any().default(Joi.ref('b')),
+            b: Joi.any()
+        });
+
+        schema.validate({ b: 6 }, function (err, value) {
+
+            expect(err).to.not.exist;
+            expect(value).to.deep.equal({ a: 6, b: 6 });
+            done();
         });
     });
 
