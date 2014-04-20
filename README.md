@@ -49,7 +49,7 @@ Current version: **4.0.x**
         - [`number.min(limit)`](#numberminlimit)
         - [`number.max(limit)`](#numbermaxlimit)
         - [`number.integer()`](#numberinteger)
-    - [`object([schema])`](#objectschema)
+    - [`object()`](#object)
         - [`object.keys([schema])`](#objectkeysschema)
         - [`object.min(limit)`](#objectminlimit)
         - [`object.max(limit)`](#objectmaxlimit)
@@ -72,7 +72,8 @@ Current version: **4.0.x**
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
-    - [`alternatives(types)`](#alternativestypes)
+    - [`alternatives()`](#alternatives)
+        - [`alternatives.attempt(schemas)`](#alternativesattemptschemas)
     - [`ref(key, [options])`](#refkey-options)
 - [Migration notes](#migration-notes)
 
@@ -193,12 +194,12 @@ var schema = Joi.compile(definition);
 
 // Same as:
 
-var schema = Joi.alternatives([
+var schema = Joi.alternatives().attempt([
     Joi.string().valid('key'),
     Joi.number().valid(5),
     Joi.object({
         a: Joi.boolean().valid(true),
-        b: Joi.alternatives([
+        b: Joi.alternatives().attempt([
             Joi.string().regex(/^a/),
             Joi.string().valid('boom')
         ])
@@ -580,17 +581,17 @@ var schema = {
 };
 ```
 
-### `object([schema])`
+### `object()`
 
-Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects) where:
-- `schema` - optional object where each key is assinged a **joi** type object. If the schema is `{}` no keys allowed.
-  Defaults to 'undefined' which allows any child key.
+Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
+to allowing any child key.
 
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
-var object = Joi.object({
-    a: Joi.number().min(1).max(10).integer()
+var object = Joi.object().keys({
+    a: Joi.number().min(1).max(10).integer(),
+    b: 'some string'
 });
 
 object.validate({ a: 5 }, function (err) { });
@@ -870,12 +871,24 @@ var schema = {
 };
 ```
 
-### `alternatives(types)`
+### `alternatives()`
 
-Generates a type that will match one of the provided alternative schemas where:
-- `types` - an array of alternaitve **joi** types. Also supports providing each type as a separate argument.
+Generates a type that will match one of the provided alternative schemas via the [`attempt()`](#alternativesattemptschemas)
+method. If no schemas are added, the type will not match any value except for `undefined`.
 
 Supports the same methods of the [`any()`](#any) type.
+
+Alternatives can be expressed using the shorter `[]` notation.
+
+```javascript
+var alt = Joi.alternatives().attempt(Joi.number(), Joi.string());
+// Same as [Joi.number(), Joi.string()]
+```
+
+#### `alternatives.attempt(schemas)
+
+Adds an alternative schema type for attempting to match against the validated value where:
+- `schema` - an array of alternaitve **joi** types. Also supports providing each type as a separate argument.
 
 ```javascript
 var alt = Joi.alternatives(Joi.number(), Joi.string());
