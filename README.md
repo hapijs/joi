@@ -882,10 +882,6 @@ var alt = Joi.alternatives(Joi.number(), Joi.string());
 alt.validate('a', function (err) { });
 ```
 
-Note that the `alternatives()` type does not behave the same way as passing multiple alternatives directly using an
-array of types (e.g. `{ a: [Joi.number(), Joi.string()] }`). When passing an array directly, the value must match one
-of the provided types while when using the `alternatives()` type, the key is optional by default.
-
 ### `ref(key, [options])`
 
 Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency

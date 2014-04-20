@@ -477,8 +477,8 @@ describe('Joi', function () {
 
         Validate(schema, [
             [{ a: null }, false],
-            [{ a: undefined }, false],
-            [{}, false],
+            [{ a: undefined }, true],
+            [{}, true],
             [{ a: true }, true],
             [{ a: 'true' }, true],
             [{ a: 123 }, false],
@@ -678,13 +678,13 @@ describe('Joi', function () {
     it('validates required key with multiple options', function (done) {
 
         var config = {
-            module: [
+            module: Joi.alternatives([
                 Joi.object({
                     compile: Joi.func().required(),
                     execute: Joi.func()
-                }).required(),
-                Joi.string().required()
-            ]
+                }),
+                Joi.string()
+            ]).required()
         };
 
         Joi.validate({}, config, function (err, value) {
