@@ -73,7 +73,7 @@ Current version: **4.0.x**
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
     - [`alternatives`](#alternatives)
-        - [`alternatives.attempt(schemas)`](#alternativesattemptschemas)
+        - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`ref(key, [options])`](#refkey-options)
 
 # Example
@@ -192,12 +192,12 @@ var schema = Joi.compile(definition);
 
 // Same as:
 
-var schema = Joi.alternatives.attempt([
+var schema = Joi.alternatives.try([
     Joi.string.valid('key'),
     Joi.number.valid(5),
     Joi.object.keys({
         a: Joi.boolean.valid(true),
-        b: Joi.alternatives.attempt([
+        b: Joi.alternatives.try([
             Joi.string.regex(/^a/),
             Joi.string.valid('boom')
         ])
@@ -870,7 +870,7 @@ var schema = {
 
 ### `alternatives`
 
-Generates a type that will match one of the provided alternative schemas via the [`attempt()`](#alternativesattemptschemas)
+Generates a type that will match one of the provided alternative schemas via the [`try()`](#alternativestryschemas)
 method. If no schemas are added, the type will not match any value except for `undefined`.
 
 Supports the same methods of the [`any()`](#any) type.
@@ -878,17 +878,17 @@ Supports the same methods of the [`any()`](#any) type.
 Alternatives can be expressed using the shorter `[]` notation.
 
 ```javascript
-var alt = Joi.alternatives.attempt(Joi.number, Joi.string);
+var alt = Joi.alternatives.try(Joi.number, Joi.string);
 // Same as [Joi.number, Joi.string]
 ```
 
-#### `alternatives.attempt(schemas)
+#### `alternatives.try(schemas)
 
 Adds an alternative schema type for attempting to match against the validated value where:
 - `schema` - an array of alternaitve **joi** types. Also supports providing each type as a separate argument.
 
 ```javascript
-var alt = Joi.alternatives.attempt(Joi.number, Joi.string);
+var alt = Joi.alternatives.try(Joi.number, Joi.string);
 alt.validate('a', function (err) { });
 ```
 

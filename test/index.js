@@ -414,7 +414,7 @@ describe('Joi', function () {
     it('validates alternatives', function (done) {
 
         var schema = {
-            auth: Joi.alternatives.attempt(
+            auth: Joi.alternatives.try(
                 Joi.object.keys({
                     mode: Joi.string.valid('required', 'optional', 'try').allow(null)
                 }).allow(null),
@@ -446,7 +446,7 @@ describe('Joi', function () {
     it('validates required alternatives', function (done) {
 
         var schema = {
-            a: Joi.alternatives.attempt(
+            a: Joi.alternatives.try(
                 Joi.string.required(),
                 Joi.boolean.required()
             )
@@ -678,7 +678,7 @@ describe('Joi', function () {
     it('validates required key with multiple options', function (done) {
 
         var config = {
-            module: Joi.alternatives.attempt([
+            module: Joi.alternatives.try([
                 Joi.object.keys({
                     compile: Joi.func.required(),
                     execute: Joi.func
@@ -715,7 +715,7 @@ describe('Joi', function () {
     it('validates key with required alternatives', function (done) {
 
         var config = {
-            module: Joi.alt.attempt(
+            module: Joi.alt.try(
                 Joi.object.keys({
                     compile: Joi.func.required(),
                     execute: Joi.func
@@ -734,7 +734,7 @@ describe('Joi', function () {
     it('validates required key with alternatives', function (done) {
 
         var config = {
-            module: Joi.alt.attempt(
+            module: Joi.alt.try(
                 Joi.object.keys({
                     compile: Joi.func.required(),
                     execute: Joi.func

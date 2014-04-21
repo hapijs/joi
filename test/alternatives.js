@@ -91,13 +91,13 @@ describe('alternatives', function () {
         });
     });
 
-    describe('#attempt', function () {
+    describe('#try', function () {
 
         it('throws when missing alternatives', function (done) {
 
             expect(function () {
 
-                Joi.alternatives.attempt();
+                Joi.alternatives.try();
             }).to.throw('Cannot add other alternatives without at least one schema');
             done();
         });
