@@ -167,7 +167,7 @@ describe('ref', function () {
             b: Joi.number
         });
 
-        ab.validate({ b:'6' }, function (err, value) {
+        ab.validate({ b: '6' }, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value).to.deep.equal({ a: 6, b: 6 });
@@ -184,6 +184,57 @@ describe('ref', function () {
                 done();
             });
         });
+    });
+
+    it('ignores the order in which keys are defined with alternatives', function (done) {
+
+        var a = { c: Joi.number };
+        var b = [Joi.ref('a.c'), Joi.ref('c')];
+        var c = Joi.number;
+
+        Validate({ a: a, b: b, c: c }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
+
+        Validate({ b: b, a: a, c: c }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
+
+        Validate({ b: b, c: c, a: a }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
+
+        Validate({ a: a, c: c, b: b }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
+
+        Validate({ c: c, a: a, b: b }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
+
+        Validate({ c: c, b: b, a: a }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
+
+        done();
     });
 
     describe('#create', function () {
