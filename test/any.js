@@ -343,6 +343,186 @@ describe('Joi', function () {
             });
         });
 
+        describe('#concat', function () {
+
+            it('throws when schema is not any', function (done) {
+
+                expect(function () {
+
+                    Joi.string.concat(Joi.number);
+                }).to.throw('Cannot merge with another type: number');
+                done();
+            });
+
+            it('throws when schema is missing', function (done) {
+
+                expect(function () {
+
+                    Joi.string.concat();
+                }).to.throw('Invalid schema object');
+                done();
+            });
+
+            it('throws when schema is invalid', function (done) {
+
+                expect(function () {
+
+                    Joi.string.concat(1);
+                }).to.throw('Invalid schema object');
+                done();
+            });
+
+            it('merges two schemas (settings)', function (done) {
+
+                var a = Joi.number.options({ convert: true });
+                var b = Joi.any.options({ convert: false });
+
+                Validate(a, [[1, true], ['1', true]]);
+                Validate(a.concat(b), [[1, true], ['1', false]]);
+                done();
+            });
+
+            it('merges two schemas (invalid)', function (done) {
+
+                var a = Joi.string.valid('a');
+                var b = Joi.string.valid('b');
+
+                Validate(a, [['a', true], ['b', false]]);
+                Validate(b, [['b', true], ['a', false]]);
+                Validate(a.concat(b), [['a', true], ['b', true]]);
+                done();
+            });
+
+            it('merges two schemas (invalid)', function (done) {
+
+                var a = Joi.string.invalid('a');
+                var b = Joi.any.invalid('b');
+
+                Validate(a, [['b', true], ['a', false]]);
+                Validate(b, [['a', true], ['b', false]]);
+                Validate(a.concat(b), [['a', false], ['b', false]]);
+                done();
+            });
+
+            it('merges two schemas (tests)', function (done) {
+
+                var a = Joi.number.min(5);
+                var b = Joi.number.max(10);
+
+                Validate(a, [[4, false], [11, true]]);
+                Validate(b, [[6, true], [11, false]]);
+                Validate(a.concat(b), [[4, false], [6, true], [11, false]]);
+                done();
+            });
+
+            it('merges two schemas (flags)', function (done) {
+
+                var a = Joi.string.valid('a');
+                var b = Joi.string.insensitive();
+
+                Validate(a, [['a', true], ['A', false], ['b', false]]);
+                Validate(a.concat(b), [['a', true], ['A', true], ['b', false]]);
+                done();
+            });
+
+            it('overrides and append information', function (done) {
+
+                var a = Joi.any.description('a').unit('a').tags('a').example('a');
+                var b = Joi.any.description('b').unit('b').tags('b').example('b');
+
+                var desc = a.concat(b).describe();
+                expect(desc).to.deep.equal({
+                    type: 'any',
+                    description: 'b',
+                    tags: ['a', 'b'],
+                    examples: ['a', 'b'],
+                    unit: 'b',
+                    valids: [undefined],
+                    invalids: [null]
+                });
+                done();
+            });
+
+            it('merges two objects (any key + specific key)', function (done) {
+
+                var a = Joi.object;
+                var b = Joi.object.keys({ b: 1 });
+
+                Validate(a, [[{ b: 1 }, true], [{ b: 2 }, true]]);
+                Validate(b, [[{ b: 1 }, true], [{ b: 2 }, false]]);
+                Validate(a.concat(b), [[{ b: 1 }, true], [{ b: 2 }, false]]);
+                Validate(b.concat(a), [[{ b: 1 }, true], [{ b: 2 }, false]]);
+                done();
+            });
+
+            it('merges two objects (no key + any key)', function (done) {
+
+                var a = Joi.object.keys({});
+                var b = Joi.object;
+
+                Validate(a, [[{}, true], [{ b: 2 }, false]]);
+                Validate(b, [[{}, true], [{ b: 2 }, true]]);
+                Validate(a.concat(b), [[{}, true], [{ b: 2 }, false]]);
+                Validate(b.concat(a), [[{}, true], [{ b: 2 }, false]]);
+                done();
+            });
+
+            it('merges two objects (key + key)', function (done) {
+
+                var a = Joi.object.keys({ a: 1 });
+                var b = Joi.object.keys({ b: 2 });
+
+                Validate(a, [[{ a: 1 }, true], [{ b: 2 }, false]]);
+                Validate(b, [[{ a: 1 }, false], [{ b: 2 }, true]]);
+                Validate(a.concat(b), [[{ a: 1 }, true], [{ b: 2 }, true]]);
+                Validate(b.concat(a), [[{ a: 1 }, true], [{ b: 2 }, true]]);
+                done();
+            });
+
+            it('merges two objects (renames)', function (done) {
+
+                var a = Joi.object.keys({ a: 1 }).rename('c', 'a');
+                var b = Joi.object.keys({ b: 2 }).rename('d', 'b');
+
+                a.concat(b).validate({ c: 1, d: 2 }, function (err, value) {
+
+                    expect(err).to.not.exist;
+                    expect(value).to.deep.equal({ a: 1, b: 2 });
+                });
+                done();
+            });
+
+            it('merges two objects (deps)', function (done) {
+
+                var a = Joi.object.keys({ a: 1 });
+                var b = Joi.object.keys({ b: 2 }).and('b', 'a');
+
+                a.concat(b).validate({ a: 1, b: 2 }, function (err, value) {
+
+                    expect(err).to.not.exist;
+                });
+                done();
+            });
+
+            it('merges two alternatives with references', function (done) {
+
+                var schema = {
+                    a: { c: Joi.number },
+                    b: Joi.alternatives.try(Joi.ref('a.c')).concat(Joi.alternatives.try(Joi.ref('c'))),
+                    c: Joi.number
+                };
+
+                Validate(schema, [
+                    [{ a: {} }, true],
+                    [{ a: { c: '5' }, b: 5 }, true],
+                    [{ a: { c: '5' }, b: 6, c: '6' }, true],
+                    [{ a: { c: '5' }, b: 7, c: '6' }, false]
+                ]);
+
+                done();
+            });
+        });
+
         describe('Set', function () {
 
             describe('#add', function () {
@@ -360,7 +540,7 @@ describe('Joi', function () {
 
                     expect(function () {
 
-                        Joi.any.valid({ });
+                        Joi.any.valid({});
                     }).to.throw('Value cannot be an object or function');
                     done();
                 });

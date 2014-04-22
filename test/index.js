@@ -1363,62 +1363,32 @@ describe('Joi', function () {
 
         var result = {
             type: 'object',
-            flags: {
-                insensitive: false,
-                allowOnly: false,
-                default: undefined
-            },
             valids: [undefined],
             invalids: [null],
             children: {
                 sub: {
                     type: 'object',
-                    flags: {
-                        insensitive: false,
-                        allowOnly: false,
-                        default: undefined
-                    },
                     valids: [undefined],
                     invalids: [null],
                     children: {
                         email: {
                             type: 'string',
-                            flags: {
-                                insensitive: false,
-                                allowOnly: false,
-                                default: undefined
-                            },
                             valids: [undefined],
                             invalids: [null, ''],
                             rules: [{ name: 'email' }]
                         },
                         date: {
                             type: 'date',
-                            flags: {
-                                insensitive: false,
-                                allowOnly: false,
-                                default: undefined
-                            },
                             valids: [undefined],
                             invalids: [null]
                         },
                         child: {
                             type: 'object',
-                            flags: {
-                                insensitive: false,
-                                allowOnly: false,
-                                default: undefined
-                            },
                             valids: [undefined],
                             invalids: [null],
                             children: {
                                 alphanum: {
                                     type: 'string',
-                                    flags: {
-                                        insensitive: false,
-                                        allowOnly: false,
-                                        default: undefined
-                                    },
                                     valids: [undefined],
                                     invalids: [null, ''],
                                     rules: [{ name: 'alphanum' }]
@@ -1430,21 +1400,11 @@ describe('Joi', function () {
                 min: [
                     {
                         type: 'number',
-                        flags: {
-                            insensitive: false,
-                            allowOnly: false,
-                            default: undefined
-                        },
                         valids: [undefined],
                         invalids: [null]
                     },
                     {
                         type: 'string',
-                        flags: {
-                            insensitive: false,
-                            allowOnly: false,
-                            default: undefined
-                        },
                         valids: [undefined],
                         invalids: [null, ''],
                         rules: [{ name: 'min', arg: 3 }]
@@ -1452,51 +1412,29 @@ describe('Joi', function () {
                 ],
                 max: {
                     type: 'string',
-                    flags: {
-                        insensitive: false,
-                        allowOnly: false,
-                        default: undefined
-                    },
                     valids: [undefined],
                     invalids: [null, ''],
                     rules: [{ name: 'max', arg: 3 }]
                 },
                 required: {
                     type: 'string',
-                    flags: {
-                        insensitive: false,
-                        allowOnly: false,
-                        default: undefined
-                    },
                     invalids: [null, '', undefined]
                 },
                 xor: {
                     type: 'string',
-                    flags: {
-                        insensitive: false,
-                        allowOnly: false,
-                        default: undefined
-                    },
                     valids: [undefined],
                     invalids: [null, '']
                 },
                 renamed: {
                     type: 'string',
                     flags: {
-                        insensitive: false,
-                        allowOnly: true,
-                        default: undefined
+                        allowOnly: true
                     },
                     valids: [undefined, '456'],
                     invalids: [null, '']
                 },
                 notEmpty: {
                     type: 'string',
-                    flags: {
-                        insensitive: false,
-                        allowOnly: false,
-                        default: undefined
-                    },
                     description: 'a',
                     notes: ['b'],
                     tags: ['c'],

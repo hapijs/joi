@@ -501,11 +501,6 @@ describe('object', function () {
             var desc = schema.describe();
             expect(desc).to.deep.equal({
                 type: 'object',
-                flags: {
-                    insensitive: false,
-                    allowOnly: false,
-                    default: undefined
-                },
                 valids: [undefined],
                 invalids: [null]
             });

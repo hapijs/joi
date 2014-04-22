@@ -30,6 +30,7 @@ Current version: **4.0.x**
         - [`any.options(options)`](#anyoptionsoptions)
         - [`any.strict()`](#anystrict)
         - [`any.default(value)`](#anydefault)
+        - [`any.concat(schema)`](#anyconcatschema)
     - [`array`](#array)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
@@ -358,6 +359,17 @@ var schema = {
 var input = {};
 Joi.validate(input, schema, function (err) { });
 // input === { username: "new_user" }
+```
+
+#### `any.concat(schema)`
+
+Returns a new type that is the result of adding the rules of one type to another where:
+- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the context type or `any`.
+
+```javascript
+var a = Joi.string.valid('a');
+var b = Joi.string.valid('b');
+var ab = a.concat(b);
 ```
 
 ### `array`
