@@ -75,6 +75,7 @@ Current version: **4.0.x**
         - [`string.isoDate()`](#stringisodate)
     - [`alternatives`](#alternatives)
         - [`alternatives.try(schemas)`](#alternativestryschemas)
+        - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
     - [`ref(key, [options])`](#refkey-options)
 
 # Example
@@ -902,6 +903,22 @@ Adds an alternative schema type for attempting to match against the validated va
 ```javascript
 var alt = Joi.alternatives.try(Joi.number, Joi.string);
 alt.validate('a', function (err) { });
+```
+
+#### `alternatives.when(ref, options)`
+
+Adds a conditional alternative schema type based on another key value where:
+- `ref` - the key name or [reference](#refkey-options).
+- `options` - an object with:
+    - `is` - the required condition **joi** type.
+    - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
+    - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
+
+```javascript
+var schema = {
+    a: Joi.alternatives().when('b', { is: 5, then: Joi.string(), otherwise: Joi.number() }),
+    b: Joi.any()
+};
 ```
 
 ### `ref(key, [options])`
