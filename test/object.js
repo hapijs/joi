@@ -515,7 +515,7 @@ describe('object', function () {
             expect(function () {
 
                 Joi.object().length('a');
-            }).to.throw('limit must be an integer');
+            }).to.throw('limit must be a positive integer');
             done();
         });
     });
@@ -527,7 +527,7 @@ describe('object', function () {
             expect(function () {
 
                 Joi.object().min('a');
-            }).to.throw('limit must be an integer');
+            }).to.throw('limit must be a positive integer');
             done();
         });
     });
@@ -539,7 +539,7 @@ describe('object', function () {
             expect(function () {
 
                 Joi.object().max('a');
-            }).to.throw('limit must be an integer');
+            }).to.throw('limit must be a positive integer');
             done();
         });
     });

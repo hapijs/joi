@@ -95,7 +95,7 @@ describe('Types', function () {
                 expect(function () {
 
                     Joi.binary().min('a');
-                }).to.throw('min must be a positive integer');
+                }).to.throw('limit must be a positive integer');
                 done();
             });
 
@@ -104,7 +104,7 @@ describe('Types', function () {
                 expect(function () {
 
                     Joi.binary().min(1.2);
-                }).to.throw('min must be a positive integer');
+                }).to.throw('limit must be a positive integer');
                 done();
             });
         });
@@ -126,7 +126,7 @@ describe('Types', function () {
                 expect(function () {
 
                     Joi.binary().max('a');
-                }).to.throw('max must be a positive integer');
+                }).to.throw('limit must be a positive integer');
                 done();
             });
 
@@ -135,7 +135,7 @@ describe('Types', function () {
                 expect(function () {
 
                     Joi.binary().max(1.2);
-                }).to.throw('max must be a positive integer');
+                }).to.throw('limit must be a positive integer');
                 done();
             });
         });
@@ -157,7 +157,7 @@ describe('Types', function () {
                 expect(function () {
 
                     Joi.binary().length('a');
-                }).to.throw('length must be a positive integer');
+                }).to.throw('limit must be a positive integer');
                 done();
             });
 
@@ -166,7 +166,7 @@ describe('Types', function () {
                 expect(function () {
 
                     Joi.binary().length(1.2);
-                }).to.throw('length must be a positive integer');
+                }).to.throw('limit must be a positive integer');
                 done();
             });
         });

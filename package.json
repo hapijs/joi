@@ -12,7 +12,7 @@
     "node": ">=0.10.22"
   },
   "dependencies": {
-    "hoek": "2.x.x",
+    "hoek": "^2.1.x",
     "topo": "1.x.x"
   },
   "devDependencies": {

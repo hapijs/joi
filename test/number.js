@@ -427,6 +427,19 @@ describe('Joi.number', function () {
             }).to.throw('limit must be an integer');
             done();
         });
+
+        it('supports 64bit numbers', function (done) {
+
+            var schema = Joi.number().min(1394035612500);
+            var input = 1394035612552
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value).to.equal(input);
+                done();
+            });
+        });
     });
 
     describe('#max', function () {
