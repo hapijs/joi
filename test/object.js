@@ -544,7 +544,104 @@ describe('object', function () {
         });
     });
 
+    describe('#with', function () {
+
+        it('should throw an error when a parameter is not a string', function (done) {
+
+            try {
+                Joi.object().with({});
+                var error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().with(123);
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+            done();
+        });
+    });
+
+    describe('#without', function () {
+
+        it('should throw an error when a parameter is not a string', function (done) {
+
+            try {
+                Joi.object().without({});
+                var error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().without(123);
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+            done();
+        });
+    });
+
+    describe('#xor', function () {
+
+        it('should throw an error when a parameter is not a string', function (done) {
+
+            try {
+                Joi.object().xor({});
+                var error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().xor(123);
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+            done();
+        });
+    });
+
     describe('#or', function () {
+
+        it('should throw an error when a parameter is not a string', function (done) {
+
+            try {
+                Joi.object().or({});
+                var error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().or(123);
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+            done();
+        });
 
         it('errors multiple levels deep', function (done) {
 
