@@ -140,6 +140,17 @@ describe('Joi.string', function () {
             }).to.throw('limit must be a positive integer');
             done();
         });
+
+        it('enforces a limit using byte count', function (done) {
+
+            var schema = Joi.string().min(2, 'utf8');
+            Validate(schema, [
+                ['\u00bd', true],
+                ['a', false]
+            ]);
+
+            done();
+        });
     });
 
     describe('#max', function () {
@@ -161,6 +172,17 @@ describe('Joi.string', function () {
             }).to.throw('limit must be a positive integer');
             done();
         });
+
+        it('enforces a limit using byte count', function (done) {
+
+            var schema = Joi.string().max(1, 'utf8');
+            Validate(schema, [
+                ['\u00bd', false],
+                ['a', true]
+            ]);
+
+            done();
+        });
     });
 
     describe('#length', function () {
@@ -180,6 +202,17 @@ describe('Joi.string', function () {
 
                 Joi.string().length(1.2);
             }).to.throw('limit must be a positive integer');
+            done();
+        });
+
+        it('enforces a limit using byte count', function (done) {
+
+            var schema = Joi.string().length(2, 'utf8');
+            Validate(schema, [
+                ['\u00bd', true],
+                ['a', false]
+            ]);
+
             done();
         });
     });

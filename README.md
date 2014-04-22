@@ -66,9 +66,9 @@ Current version: **4.0.x**
         - [`object.assert(ref, schema, message)`](#objectassertref-schema-message)
     - [`string`](#string)
         - [`string.insensitive()`](#stringinsensitive)
-        - [`string.min(limit)`](#stringminlimit)
-        - [`string.max(limit)`](#stringmaxlimit)
-        - [`string.length(limit)`](#stringlengthlimit)
+        - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
+        - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
+        - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
         - [`string.regex(pattern)`](#stringregexpattern)
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
@@ -814,10 +814,11 @@ var schema = {
 };
 ```
 
-#### `string.min(limit)`
+#### `string.min(limit, [encoding])`
 
 Specifies the minimum number string characters where:
 - `limit` - the minimum number of string characters required.
+- `encoding` - is specified, the string length is calculated in bytes using the provided encoding.
 
 ```javascript
 var schema = {
@@ -825,10 +826,11 @@ var schema = {
 };
 ```
 
-#### `string.max(limit)`
+#### `string.max(limit, [encoding])`
 
 Specifies the maximum number of string characters where:
 - `limit` - the maximum number of string characters allowed.
+- `encoding` - is specified, the string length is calculated in bytes using the provided encoding.
 
 ```javascript
 var schema = {
@@ -836,10 +838,11 @@ var schema = {
 };
 ```
 
-#### `string.length(limit)`
+#### `string.length(limit, [encoding])`
 
 Specifies the exact string length required where:
 - `limit` - the required string length.
+- `encoding` - is specified, the string length is calculated in bytes using the provided encoding.
 
 ```javascript
 var schema = {
