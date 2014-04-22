@@ -75,6 +75,7 @@ Current version: **4.0.x**
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
+        - [`string.hostname()`](#stringhostname)
     - [`alternatives`](#alternatives)
         - [`alternatives.try(schemas)`](#alternativestryschemas)
         - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
@@ -809,9 +810,7 @@ string.validate('12345', function (err) { });
 Allows the value to match any whitelist of blacklist item in a case insensitive comparison.
 
 ```javascript
-var schema = {
-    a: Joi.string.valid('a').insensitive()
-};
+var schema = Joi.string.valid('a').insensitive();
 ```
 
 #### `string.min(limit, [encoding])`
@@ -821,9 +820,7 @@ Specifies the minimum number string characters where:
 - `encoding` - is specified, the string length is calculated in bytes using the provided encoding.
 
 ```javascript
-var schema = {
-    a: Joi.string.min(2)
-};
+var schema = Joi.string.min(2);
 ```
 
 #### `string.max(limit, [encoding])`
@@ -833,9 +830,7 @@ Specifies the maximum number of string characters where:
 - `encoding` - is specified, the string length is calculated in bytes using the provided encoding.
 
 ```javascript
-var schema = {
-    a: Joi.string.max(10)
-};
+var schema = Joi.string.max(10);
 ```
 
 #### `string.length(limit, [encoding])`
@@ -845,9 +840,7 @@ Specifies the exact string length required where:
 - `encoding` - is specified, the string length is calculated in bytes using the provided encoding.
 
 ```javascript
-var schema = {
-    a: Joi.string.length(5)
-};
+var schema = Joi.string.length(5);
 ```
 
 #### `string.regex(pattern)`
@@ -856,9 +849,7 @@ Defines a regular expression rule where:
 - `pattern` - a regular expression object the string value must match against.
 
 ```javascript
-var schema = {
-    a: Joi.string.regex(/^[abc]+$/)
-};
+var schema = Joi.string.regex(/^[abc]+$/);
 ```
 
 #### `string.alphanum()`
@@ -866,9 +857,7 @@ var schema = {
 Requires the string value to only contain a-z, A-Z, and 0-9.
 
 ```javascript
-var schema = {
-    a: Joi.string.alphanum()
-};
+var schema = Joi.string.alphanum();
 ```
 
 #### `string.token()`
@@ -876,9 +865,7 @@ var schema = {
 Requires the string value to only contain a-z, A-Z, 0-9, and underscore _.
 
 ```javascript
-var schema = {
-    a: Joi.string.token()
-};
+var schema = Joi.string.token();
 ```
 
 #### `string.email()`
@@ -886,9 +873,7 @@ var schema = {
 Requires the string value to be a valid email address.
 
 ```javascript
-var schema = {
-    a: Joi.string.email()
-};
+var schema = Joi.string.email();
 ```
 
 #### `string.guid()`
@@ -896,9 +881,7 @@ var schema = {
 Requires the string value to be a valid GUID.
 
 ```javascript
-var schema = {
-    a: Joi.string.guid()
-};
+var schema = Joi.string.guid();
 ```
 
 #### `string.isoDate()`
@@ -906,9 +889,15 @@ var schema = {
 Requires the string value to be in valid ISO 8601 date format.
 
 ```javascript
-var schema = {
-    a: Joi.string.isoDate()
-};
+var schema = Joi.string.isoDate();
+```
+
+#### `string.hostname()`
+
+Requires the string value to be a valid hostname as per [RFC1123](http://tools.ietf.org/html/rfc1123).
+
+```javascript
+var schema = Joi.string().hostname();
 ```
 
 ### `alternatives`

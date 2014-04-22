@@ -217,6 +217,29 @@ describe('string', function () {
         });
     });
 
+    describe('#hostname', function () {
+
+        it('validates hostnames', function (done) {
+
+            var schema = Joi.string().hostname();
+            Validate(schema, [
+                ['www.example.com', true],
+                ['domain.local', true],
+                ['3domain.local', true],
+                ['hostname', true],
+                ['host:name', false],
+                ['-', false],
+                ['2387628', true],
+                ['01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', false],
+                ['::1', true],
+                ['0:0:0:0:0:0:0:1', true],
+                ['0:?:0:0:0:0:0:1', false]
+            ]);
+
+            done();
+        });
+    });
+
     describe('#validate', function () {
 
         it('should, by default, allow undefined, deny empty string', function (done) {
