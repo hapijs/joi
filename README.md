@@ -31,6 +31,7 @@ Current version: **4.0.x**
         - [`any.strict()`](#anystrict)
         - [`any.default(value)`](#anydefault)
         - [`any.concat(schema)`](#anyconcatschema)
+        - [`any.when(ref, options)`](#anywhenref-options)
     - [`array`](#array)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
@@ -371,6 +372,22 @@ Returns a new type that is the result of adding the rules of one type to another
 var a = Joi.string.valid('a');
 var b = Joi.string.valid('b');
 var ab = a.concat(b);
+```
+
+#### `any.when(ref, options)`
+
+Converts the type into an [`alternatives`](#alternatives) type where the conditions are merged into the type definition where:
+- `ref` - the key name or [reference](#refkey-options).
+- `options` - an object with:
+    - `is` - the required condition **joi** type.
+    - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
+    - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
+
+```javascript
+var schema = {
+    a: Joi.any().valid('x').when('b', { is: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') }),
+    b: Joi.any()
+};
 ```
 
 ### `array`

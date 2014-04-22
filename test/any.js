@@ -447,6 +447,82 @@ describe('any', function () {
         });
     });
 
+    describe('#when', function () {
+
+        it('throws when options are invalid', function (done) {
+
+            expect(function () {
+
+                Joi.when('a');
+            }).to.throw('Invalid options');
+
+            done();
+        });
+
+        it('forks type into alternatives', function (done) {
+
+            var schema = {
+                a: Joi.any(),
+                b: Joi.string().valid('x').when('a', { is: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') })
+            };
+
+            Validate(schema, [
+                [{ a: 5, b: 'x' }, true],
+                [{ a: 5, b: 'y' }, true],
+                [{ a: 5, b: 'z' }, false],
+                [{ a: 1, b: 'x' }, true],
+                [{ a: 1, b: 'y' }, false],
+                [{ a: 1, b: 'z' }, true],
+                [{ a: 5, b: 'a' }, false],
+                [{ b: 'a' }, false]
+            ]);
+
+            done();
+        });
+
+        it('forks type into alternatives (only then)', function (done) {
+
+            var schema = {
+                a: Joi.any(),
+                b: Joi.string().valid('x').when('a', { is: 5, then: Joi.valid('y') })
+            };
+
+            Validate(schema, [
+                [{ a: 5, b: 'x' }, true],
+                [{ a: 5, b: 'y' }, true],
+                [{ a: 5, b: 'z' }, false],
+                [{ a: 1, b: 'x' }, true],
+                [{ a: 1, b: 'y' }, false],
+                [{ a: 1, b: 'z' }, false],
+                [{ a: 5, b: 'a' }, false],
+                [{ b: 'a' }, false]
+            ]);
+
+            done();
+        });
+
+        it('forks type into alternatives (only otherwise)', function (done) {
+
+            var schema = {
+                a: Joi.any(),
+                b: Joi.string().valid('x').when('a', { is: 5, otherwise: Joi.valid('z') })
+            };
+
+            Validate(schema, [
+                [{ a: 5, b: 'x' }, true],
+                [{ a: 5, b: 'y' }, false],
+                [{ a: 5, b: 'z' }, false],
+                [{ a: 1, b: 'x' }, true],
+                [{ a: 1, b: 'y' }, false],
+                [{ a: 1, b: 'z' }, true],
+                [{ a: 5, b: 'a' }, false],
+                [{ b: 'a' }, false]
+            ]);
+
+            done();
+        });
+    });
+
     describe('Set', function () {
 
         describe('#add', function () {
