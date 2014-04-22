@@ -359,7 +359,7 @@ describe('any', function () {
         it('checks value after conversion', function (done) {
 
             var schema = Joi.number().invalid(2);
-            schema.validate('2', { abortEarly: false }, function (err, value) {
+            Joi.validate('2', schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist;
                 done();

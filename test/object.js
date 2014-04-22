@@ -483,7 +483,7 @@ describe('object', function () {
 
             var input = {};
 
-            Joi.compile(schema).validate(input, function (err, value) {
+            Joi.validate(input, schema, function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value.foo2).to.equal('test');

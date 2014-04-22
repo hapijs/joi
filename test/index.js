@@ -174,7 +174,7 @@ describe('Joi', function () {
             upc: Joi.string()
         }).with('txt', 'upc');
 
-        schema.validate({ txt: 'a' }, { abortEarly: false }, function (err, value) {
+        Joi.validate({ txt: 'a' }, schema, { abortEarly: false }, function (err, value) {
 
             expect(err.message).to.equal('txt missing required peer upc');
 
@@ -198,7 +198,7 @@ describe('Joi', function () {
             upc: Joi.string()
         }).without('txt', 'upc');
 
-        schema.validate({ txt: 'a', upc: 'b' }, { abortEarly: false }, function (err, value) {
+        Joi.validate({ txt: 'a', upc: 'b' }, schema, { abortEarly: false }, function (err, value) {
 
             expect(err.message).to.equal('txt conflict with forbidden peer upc');
 
@@ -222,7 +222,7 @@ describe('Joi', function () {
             upc: Joi.string()
         }).xor('txt', 'upc');
 
-        schema.validate({}, { abortEarly: false }, function (err, value) {
+        Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
             expect(err.message).to.equal('at least one of txt, upc is required');
 
@@ -308,7 +308,7 @@ describe('Joi', function () {
             code: Joi.number()
         }).or('txt', 'upc', 'code');
 
-        schema.validate({}, { abortEarly: false }, function (err, value) {
+        Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
             expect(err.message).to.equal('missing at least one of alternative peers txt, upc, code');
 
@@ -347,7 +347,7 @@ describe('Joi', function () {
             code: Joi.number()
         }).and('txt', 'upc', 'code');
 
-        schema.validate({ txt: 'x' }, { abortEarly: false }, function (err, value) {
+        Joi.validate({ txt: 'x' }, schema, { abortEarly: false }, function (err, value) {
 
             expect(err.message).to.equal('txt missing required peers upc, code');
 
@@ -631,7 +631,7 @@ describe('Joi', function () {
 
     it('fails on unknown keys in objects if a schema was given', function (done) {
 
-        Joi.object({}).validate({ foo: 'bar' } , function (err, value) {
+        Joi.object({}).validate({ foo: 'bar' }, function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.equal('the key foo is not allowed');
@@ -921,7 +921,7 @@ describe('Joi', function () {
             a: '{"b":"string"}'
         };
 
-        Joi.compile(schema).validate(input, function (err, value) {
+        Joi.validate(input, schema, function (err, value) {
 
             expect(err).to.not.exist;
             expect(input.a).to.equal('{"b":"string"}');
@@ -1065,7 +1065,7 @@ describe('Joi', function () {
             d: 'c'
         };
 
-        Joi.compile(schema).validate(obj, { stripUnknown: true, allowUnknown: true }, function (err, value) {
+        Joi.validate(obj, schema, { stripUnknown: true, allowUnknown: true }, function (err, value) {
 
             expect(err).to.be.null;
             expect(value).to.deep.equal({ a: 1, b: 'a' });
@@ -1087,7 +1087,7 @@ describe('Joi', function () {
             d: 'c'
         };
 
-        Joi.compile(schema).validate(obj, { stripUnknown: true, abortEarly: false }, function (err, value) {
+        Joi.validate(obj, schema, { stripUnknown: true, abortEarly: false }, function (err, value) {
 
             expect(err).to.exist;
             done();
@@ -1108,7 +1108,7 @@ describe('Joi', function () {
             d: 'c'
         };
 
-        Joi.compile(schema).validate(obj, { allowUnknown: true }, function (err, value) {
+        Joi.validate(obj, schema, { allowUnknown: true }, function (err, value) {
 
             expect(err).to.be.null;
             expect(value).to.deep.equal({ a: 1, b: 'a', d: 'c' });
@@ -1118,10 +1118,10 @@ describe('Joi', function () {
 
     it('should pass validation with extra keys set', function (done) {
 
-        var localConfig = {
+        var localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c'),
-        };
+        }).options({ allowUnknown: true });
 
         var obj = {
             a: 1,
@@ -1129,12 +1129,12 @@ describe('Joi', function () {
             d: 'c'
         };
 
-        Joi.object(localConfig).validate(obj, { allowUnknown: true }, function (err, value) {
+        localConfig.validate(obj, function (err, value) {
 
             expect(err).to.be.null;
             expect(value).to.deep.equal({ a: 1, b: 'a', d: 'c' });
 
-            Joi.object(localConfig).validate(value, { allowUnknown: true }, function (err, value) {
+            localConfig.validate(value, function (err, value) {
 
                 expect(err).to.be.null;
                 expect(value).to.deep.equal({ a: 1, b: 'a', d: 'c' });
@@ -1146,10 +1146,10 @@ describe('Joi', function () {
 
     it('should pass validation with extra keys and remove them when skipExtraKeys is set locally', function (done) {
 
-        var localConfig = {
+        var localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c')
-        };
+        }).options({ stripUnknown: true, allowUnknown: true });
 
         var obj = {
             a: 1,
@@ -1157,12 +1157,12 @@ describe('Joi', function () {
             d: 'c'
         };
 
-        Joi.object(localConfig).validate(obj, { stripUnknown: true, allowUnknown: true }, function (err, value) {
+        localConfig.validate(obj, function (err, value) {
 
             expect(err).to.be.null;
             expect(value).to.deep.equal({ a: 1, b: 'a' });
 
-            Joi.object(localConfig).validate(value, { stripUnknown: true, allowUnknown: true }, function (err, value) {
+            localConfig.validate(value, function (err, value) {
 
                 expect(err).to.be.null;
                 expect(value).to.deep.equal({ a: 1, b: 'a' });
@@ -1176,7 +1176,7 @@ describe('Joi', function () {
 
         var schema = Joi.object({ username: Joi.string() }).options({ skipFunctions: true });
         var input = { username: 'test', func: function () { } };
-        Joi.compile(schema).validate(input, function (err, value) {
+        Joi.validate(input, schema, function (err, value) {
 
             expect(err).to.not.exist;
             done();
@@ -1188,7 +1188,7 @@ describe('Joi', function () {
         var schema = { username: Joi.string() };
         var input = { username: 'test', func: function () { } };
 
-        Joi.compile(schema).validate(input, { skipFunctions: false }, function (err, value) {
+        Joi.validate(input, schema, { skipFunctions: false }, function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.contain('the key func is not allowed');
@@ -1203,7 +1203,7 @@ describe('Joi', function () {
         };
 
         var input = { arr: 'foo' };
-        Joi.compile(schema).validate(input, { convert: false }, function (err, value) {
+        Joi.validate(input, schema, { convert: false }, function (err, value) {
 
             expect(err).to.exist;
             done();
@@ -1219,9 +1219,9 @@ describe('Joi', function () {
 
         var input = { a: 1, b: 2 };
 
-        Joi.compile(schema).validate(input, function (errOne, value) {
+        Joi.validate(input, schema, function (errOne, value) {
 
-            Joi.compile(schema).validate(input, { abortEarly: false }, function (errFull, value) {
+            Joi.validate(input, schema, { abortEarly: false }, function (errFull, value) {
 
                 expect(errOne).to.exist
                 expect(errFull).to.exist
@@ -1279,7 +1279,7 @@ describe('Joi', function () {
             }
         };
 
-        Joi.compile(schema).validate(input, { abortEarly: false, language: lang }, function (err, value) {
+        Joi.validate(input, schema, { abortEarly: false, language: lang }, function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.equal('11. 7. 7. 19. 18. 16. 14. 15. 3. 13');
@@ -1301,7 +1301,7 @@ describe('Joi', function () {
             notBoolean: Joi.boolean().required()
         }
 
-        Joi.compile(schema).validate(input, { abortEarly: false }, function (err, value) {
+        Joi.validate(input, schema, { abortEarly: false }, function (err, value) {
 
             expect(err).to.exist;
             expect(err.details).to.have.length(3);
@@ -1335,10 +1335,20 @@ describe('Joi', function () {
             })
         };
 
-        Joi.object(schema).validate(object, { abortEarly: false }, function (err, value) {
+        Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
 
             expect(err).to.exist;
             expect(err.annotated()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[3]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] the value of a must be one of a, b, c, d\n[2] the value of u is not allowed to be undefined\n[3] the value of b must be a string\u001b[0m');
+            done();
+        });
+    });
+
+    it('validates using the root any object', function (done) {
+
+        var any = Joi;
+        any.validate('abc', function (err, value) {
+
+            expect(err).to.not.exist;
             done();
         });
     });
@@ -1455,10 +1465,29 @@ describe('Joi', function () {
             ]
         };
 
-        it('describes schema', function (done) {
+        it('describes schema (direct)', function (done) {
 
             var description = schema.describe();
             expect(description).to.deep.equal(result);
+            done();
+        });
+
+        it('describes schema (root)', function (done) {
+
+            var description = Joi.describe(schema);
+            expect(description).to.deep.equal(result);
+            done();
+        });
+
+        it('describes schema (any)', function (done) {
+
+            var any = Joi;
+            var description = any.describe();
+            expect(description).to.deep.equal({
+                type: 'any',
+                valids: [undefined],
+                invalids: [null]
+            });
             done();
         });
 
