@@ -19,7 +19,7 @@ var describe = Lab.experiment;
 var it = Lab.test;
 
 
-describe('Joi.number', function () {
+describe('number', function () {
 
     describe('#validate', function () {
 

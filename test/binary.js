@@ -19,156 +19,153 @@ var describe = Lab.experiment;
 var it = Lab.test;
 
 
-describe('Types', function () {
+describe('binary', function () {
 
-    describe('Binary', function () {
+    it('should convert a string to a buffer', function (done) {
 
-        it('should convert a string to a buffer', function (done) {
+        var result = Joi.binary().validate('test', function (err, value) {
 
-            var result = Joi.binary().validate('test', function (err, value) {
+            expect(err).to.not.exist;
+            expect(value instanceof Buffer).to.equal(true);
+            expect(value.length).to.equal(4);
+            expect(value.toString('utf8')).to.equal('test');
+            done();
+        });
+    });
+
+    describe('#validate', function () {
+
+        it('should return an error when a non-buffer or non-string is used', function (done) {
+
+            Joi.binary().validate(5, function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('the value of <root> must be a buffer or a string');
+                done();
+            });
+        });
+
+        it('should accept a buffer object', function (done) {
+
+            var schema = {
+                buffer: Joi.binary
+            };
+
+            Joi.binary().validate(new Buffer('hello world'), function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value.toString('utf8')).to.equal('hello world');
+                done();
+            });
+        });
+    });
+
+    describe('#encoding', function () {
+
+        it('applies encoding', function (done) {
+
+            var schema = Joi.binary().encoding('base64');
+            var input = new Buffer('abcdef');
+            schema.validate(input.toString('base64'), function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value instanceof Buffer).to.equal(true);
-                expect(value.length).to.equal(4);
-                expect(value.toString('utf8')).to.equal('test');
+                expect(value.toString()).to.equal('abcdef');
                 done();
             });
         });
+    });
 
-        describe('#validate', function () {
+    describe('#min', function () {
 
-            it('should return an error when a non-buffer or non-string is used', function (done) {
+        it('validates buffer size', function (done) {
 
-                Joi.binary().validate(5, function (err, value) {
-
-                    expect(err).to.exist;
-                    expect(err.message).to.equal('the value of <root> must be a buffer or a string');
-                    done();
-                });
-            });
-
-            it('should accept a buffer object', function (done) {
-
-                var schema = {
-                    buffer: Joi.binary
-                };
-
-                Joi.binary().validate(new Buffer('hello world'), function (err, value) {
-
-                    expect(err).to.not.exist;
-                    expect(value.toString('utf8')).to.equal('hello world');
-                    done();
-                });
-            });
+            var schema = Joi.binary().min(5);
+            Validate(schema, [
+                [new Buffer('testing'), true],
+                [new Buffer('test'), false]
+            ]);
+            done();
         });
 
-        describe('#encoding', function () {
+        it('throws when min is not a number', function (done) {
 
-            it('applies encoding', function (done) {
+            expect(function () {
 
-                var schema = Joi.binary().encoding('base64');
-                var input = new Buffer('abcdef');
-                schema.validate(input.toString('base64'), function (err, value) {
-
-                    expect(err).to.not.exist;
-                    expect(value instanceof Buffer).to.equal(true);
-                    expect(value.toString()).to.equal('abcdef');
-                    done();
-                });
-            });
+                Joi.binary().min('a');
+            }).to.throw('limit must be a positive integer');
+            done();
         });
 
-        describe('#min', function () {
+        it('throws when min is not an integer', function (done) {
 
-            it('validates buffer size', function (done) {
+            expect(function () {
 
-                var schema = Joi.binary().min(5);
-                Validate(schema, [
-                    [new Buffer('testing'), true],
-                    [new Buffer('test'), false]
-                ]);
-                done();
-            });
+                Joi.binary().min(1.2);
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+    });
 
-            it('throws when min is not a number', function (done) {
+    describe('#max', function () {
 
-                expect(function () {
+        it('validates buffer size', function (done) {
 
-                    Joi.binary().min('a');
-                }).to.throw('limit must be a positive integer');
-                done();
-            });
-
-            it('throws when min is not an integer', function (done) {
-
-                expect(function () {
-
-                    Joi.binary().min(1.2);
-                }).to.throw('limit must be a positive integer');
-                done();
-            });
+            var schema = Joi.binary().max(5);
+            Validate(schema, [
+                [new Buffer('testing'), false],
+                [new Buffer('test'), true]
+            ]);
+            done();
         });
 
-        describe('#max', function () {
+        it('throws when max is not a number', function (done) {
 
-            it('validates buffer size', function (done) {
+            expect(function () {
 
-                var schema = Joi.binary().max(5);
-                Validate(schema, [
-                    [new Buffer('testing'), false],
-                    [new Buffer('test'), true]
-                ]);
-                done();
-            });
-
-            it('throws when max is not a number', function (done) {
-
-                expect(function () {
-
-                    Joi.binary().max('a');
-                }).to.throw('limit must be a positive integer');
-                done();
-            });
-
-            it('throws when max is not an integer', function (done) {
-
-                expect(function () {
-
-                    Joi.binary().max(1.2);
-                }).to.throw('limit must be a positive integer');
-                done();
-            });
+                Joi.binary().max('a');
+            }).to.throw('limit must be a positive integer');
+            done();
         });
 
-        describe('#length', function () {
+        it('throws when max is not an integer', function (done) {
 
-            it('validates buffer size', function (done) {
+            expect(function () {
 
-                var schema = Joi.binary().length(4);
-                Validate(schema, [
-                    [new Buffer('test'), true],
-                    [new Buffer('testing'), false]
-                ]);
-                done();
-            });
+                Joi.binary().max(1.2);
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+    });
 
-            it('throws when length is not a number', function (done) {
+    describe('#length', function () {
 
-                expect(function () {
+        it('validates buffer size', function (done) {
 
-                    Joi.binary().length('a');
-                }).to.throw('limit must be a positive integer');
-                done();
-            });
+            var schema = Joi.binary().length(4);
+            Validate(schema, [
+                [new Buffer('test'), true],
+                [new Buffer('testing'), false]
+            ]);
+            done();
+        });
 
-            it('throws when length is not an integer', function (done) {
+        it('throws when length is not a number', function (done) {
 
-                expect(function () {
+            expect(function () {
 
-                    Joi.binary().length(1.2);
-                }).to.throw('limit must be a positive integer');
-                done();
-            });
+                Joi.binary().length('a');
+            }).to.throw('limit must be a positive integer');
+            done();
+        });
+
+        it('throws when length is not an integer', function (done) {
+
+            expect(function () {
+
+                Joi.binary().length(1.2);
+            }).to.throw('limit must be a positive integer');
+            done();
         });
     });
 });

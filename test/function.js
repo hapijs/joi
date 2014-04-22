@@ -19,18 +19,15 @@ var describe = Lab.experiment;
 var it = Lab.test;
 
 
-describe('Types', function () {
+describe('func', function () {
 
-    describe('Function', function () {
+    it('should validate a function', function (done) {
 
-        it('should validate a function', function (done) {
-
-            Validate(Joi.func().required(), [
-                [function () { }, true],
-                ['', false]
-            ]);
-            done();
-        });
+        Validate(Joi.func().required(), [
+            [function () { }, true],
+            ['', false]
+        ]);
+        done();
     });
 });
 
