@@ -338,6 +338,20 @@ describe('Types', function () {
                 ]);
                 done();
             });
+
+            it('should return a full path to an error value on an array', function (done) {
+                var err = Joi.validate([[{hi: 1}], [{hi: 1}, {hi: 'a'}]], Joi.array().includes(Joi.array().includes(Joi.object({hi: Joi.number()}))));
+                expect(err).to.exist;
+                expect(err.details[0].path).to.equal('1.1.hi');
+                done();
+            });
+
+            it('should return a full path to an error value on an object', function (done) {
+                var err = Joi.validate({hi: [{hi: 1}, {hi: 'a'}]}, Joi.object({hi: Joi.array().includes(Joi.object({hi: Joi.number()}))}));
+                expect(err).to.exist;
+                expect(err.details[0].path).to.equal('hi.1.hi');
+                done();
+            });
         });
     });
 });
