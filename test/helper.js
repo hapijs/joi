@@ -20,8 +20,9 @@ var it = Lab.test;
 
 module.exports = function (schema, config) {
 
+    var compiled = Joi.compile(schema);
     for (var i in config) {
-        Joi.validate(config[i][0], schema, function (err, value) {
+        compiled.validate(config[i][0], function (err, value) {
 
             if (err !== null && config[i][1]) {
                 console.log(err);

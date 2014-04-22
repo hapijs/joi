@@ -22,7 +22,7 @@ describe('alternatives', function () {
 
     it('fails when no alternatives are provided', function (done) {
 
-        Joi.alternatives.validate('a', function (err, value) {
+        Joi.alternatives().validate('a', function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.equal('no matching alternatives found');
@@ -32,7 +32,7 @@ describe('alternatives', function () {
 
     it('allows undefined when no alternatives are provided', function (done) {
 
-        Joi.alternatives.validate(undefined, function (err, value) {
+        Joi.alternatives().validate(undefined, function (err, value) {
 
             expect(err).to.not.exist;
             done();
@@ -43,12 +43,12 @@ describe('alternatives', function () {
 
         var schema = {
             a: [
-                Joi.number,
-                Joi.string
+                Joi.number(),
+                Joi.string()
             ]
         };
 
-        var err = Joi.validate({ a: '5' }, schema, function (err, value) {
+        var err = Joi.compile(schema).validate({ a: '5' }, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value.a).to.equal(5);
@@ -60,12 +60,12 @@ describe('alternatives', function () {
 
         var schema = {
             a: [
-                Joi.number,
-                Joi.any.valid('5')
+                Joi.number(),
+                Joi.valid('5')
             ]
         };
 
-        var err = Joi.validate({ a: '5' }, schema, function (err, value) {
+        var err = Joi.compile(schema).validate({ a: '5' }, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value.a).to.equal(5);
@@ -77,13 +77,13 @@ describe('alternatives', function () {
 
         var schema = {
             a: [
-                Joi.object.keys({ c: Joi.any, d: Joi.number }).rename('b', 'c'),
-                { b: Joi.any, d: Joi.string }
+                Joi.object({ c: Joi.any(), d: Joi.number() }).rename('b', 'c'),
+                { b: Joi.any(), d: Joi.string() }
             ]
         };
 
         var input = { a: { b: 'any', d: 'string' } };
-        var err = Joi.validate(input, schema, function (err, value) {
+        var err = Joi.compile(schema).validate(input, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value.a.b).to.equal('any');
@@ -97,7 +97,7 @@ describe('alternatives', function () {
 
             expect(function () {
 
-                Joi.alternatives.try();
+                Joi.alternatives();
             }).to.throw('Cannot add other alternatives without at least one schema');
             done();
         });

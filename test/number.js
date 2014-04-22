@@ -33,7 +33,7 @@ describe('Joi.number', function () {
 
         it('should, when .required(), deny undefined', function (done) {
 
-            Validate(Joi.number.required(), [
+            Validate(Joi.number().required(), [
                 [undefined, false]
             ]);
             done();
@@ -41,7 +41,7 @@ describe('Joi.number', function () {
 
         it('should return false for denied value', function (done) {
 
-            var text = Joi.number.invalid(50);
+            var text = Joi.number().invalid(50);
             text.validate(50, function (err, value) {
 
                 expect(err).to.exist;
@@ -51,7 +51,7 @@ describe('Joi.number', function () {
 
         it('should validate integer', function (done) {
 
-            var t = Joi.number.integer();
+            var t = Joi.number().integer();
             Validate(t, [
                 [100, true],
                 [0, true],
@@ -82,7 +82,7 @@ describe('Joi.number', function () {
 
         it('required validates correctly', function (done) {
 
-            var t = Joi.number.required();
+            var t = Joi.number().required();
             Validate(t, [
                 [NaN, false],
                 ['100', true]
@@ -95,7 +95,7 @@ describe('Joi.number', function () {
             var config = { a: Joi.number };
             var obj = { a: '123' };
 
-            Joi.validate(obj, config, function (err, value) {
+            Joi.compile(config).validate(obj, function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value.a).to.equal(123);
@@ -105,7 +105,7 @@ describe('Joi.number', function () {
 
         it('converts a string to a number', function (done) {
 
-            Joi.number.validate('1', function (err, value) {
+            Joi.number().validate('1', function (err, value) {
 
                 expect(err).to.not.exist;
                 expect(value).to.equal(1);
@@ -115,7 +115,7 @@ describe('Joi.number', function () {
 
         it('errors on null', function (done) {
 
-            Joi.number.validate(null, function (err, value) {
+            Joi.number().validate(null, function (err, value) {
 
                 expect(err).to.exist;
                 expect(value).to.equal(null);
@@ -125,7 +125,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min and max', function (done) {
 
-            var rule = Joi.number.min(8).max(10);
+            var rule = Joi.number().min(8).max(10);
             Validate(rule, [
                 [1, false],
                 [11, false],
@@ -138,7 +138,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min, max, and null allowed', function (done) {
 
-            var rule = Joi.number.min(8).max(10).allow(null);
+            var rule = Joi.number().min(8).max(10).allow(null);
             Validate(rule, [
                 [1, false],
                 [11, false],
@@ -151,7 +151,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min and positive', function (done) {
 
-            var rule = Joi.number.min(-3).positive();
+            var rule = Joi.number().min(-3).positive();
             Validate(rule, [
                 [1, true],
                 [-2, false],
@@ -163,7 +163,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of max and positive', function (done) {
 
-            var rule = Joi.number.max(5).positive();
+            var rule = Joi.number().max(5).positive();
             Validate(rule, [
                 [4, true],
                 [-2, false],
@@ -175,7 +175,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min and negative', function (done) {
 
-            var rule = Joi.number.min(-3).negative();
+            var rule = Joi.number().min(-3).negative();
             Validate(rule, [
                 [4, false],
                 [-2, true],
@@ -187,7 +187,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of negative and positive', function (done) {
 
-            var rule = Joi.number.negative().positive();
+            var rule = Joi.number().negative().positive();
             Validate(rule, [
                 [4, false],
                 [-2, false],
@@ -199,7 +199,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of negative and allow', function (done) {
 
-            var rule = Joi.number.negative().allow(1);
+            var rule = Joi.number().negative().allow(1);
             Validate(rule, [
                 [1, true],
                 [-10, true],
@@ -212,7 +212,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of positive and allow', function (done) {
 
-            var rule = Joi.number.positive().allow(-1);
+            var rule = Joi.number().positive().allow(-1);
             Validate(rule, [
                 [1, true],
                 [-1, true],
@@ -225,7 +225,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of positive, allow, and null allowed', function (done) {
 
-            var rule = Joi.number.positive().allow(-1).allow(null);
+            var rule = Joi.number().positive().allow(-1).allow(null);
             Validate(rule, [
                 [1, true],
                 [-1, true],
@@ -238,7 +238,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of negative, allow, and null allowed', function (done) {
 
-            var rule = Joi.number.negative().allow(1).allow(null);
+            var rule = Joi.number().negative().allow(1).allow(null);
             Validate(rule, [
                 [1, true],
                 [-10, true],
@@ -251,7 +251,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of positive, allow, null allowed, and invalid', function (done) {
 
-            var rule = Joi.number.positive().allow(-1).allow(null).invalid(1);
+            var rule = Joi.number().positive().allow(-1).allow(null).invalid(1);
             Validate(rule, [
                 [1, false],
                 [-1, true],
@@ -264,7 +264,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of negative, allow, null allowed, and invalid', function (done) {
 
-            var rule = Joi.number.negative().allow(1).allow(null).invalid(-5);
+            var rule = Joi.number().negative().allow(1).allow(null).invalid(-5);
             Validate(rule, [
                 [1, true],
                 [-10, true],
@@ -278,7 +278,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min, max, and allow', function (done) {
 
-            var rule = Joi.number.min(8).max(10).allow(1);
+            var rule = Joi.number().min(8).max(10).allow(1);
             Validate(rule, [
                 [1, true],
                 [11, false],
@@ -291,7 +291,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min, max, allow, and null allowed', function (done) {
 
-            var rule = Joi.number.min(8).max(10).allow(1).allow(null);
+            var rule = Joi.number().min(8).max(10).allow(1).allow(null);
             Validate(rule, [
                 [1, true],
                 [11, false],
@@ -304,7 +304,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min, max, allow, and invalid', function (done) {
 
-            var rule = Joi.number.min(8).max(10).allow(1).invalid(9);
+            var rule = Joi.number().min(8).max(10).allow(1).invalid(9);
             Validate(rule, [
                 [1, true],
                 [11, false],
@@ -317,7 +317,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min, max, allow, invalid, and null allowed', function (done) {
 
-            var rule = Joi.number.min(8).max(10).allow(1).invalid(9).allow(null);
+            var rule = Joi.number().min(8).max(10).allow(1).invalid(9).allow(null);
             Validate(rule, [
                 [1, true],
                 [11, false],
@@ -330,7 +330,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min, max, and integer', function (done) {
 
-            var rule = Joi.number.min(8).max(10).integer();
+            var rule = Joi.number().min(8).max(10).integer();
             Validate(rule, [
                 [1, false],
                 [11, false],
@@ -344,7 +344,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min, max, integer, and allow', function (done) {
 
-            var rule = Joi.number.min(8).max(10).integer().allow(9.1);
+            var rule = Joi.number().min(8).max(10).integer().allow(9.1);
             Validate(rule, [
                 [1, false],
                 [11, false],
@@ -359,7 +359,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min, max, integer, allow, and invalid', function (done) {
 
-            var rule = Joi.number.min(8).max(10).integer().allow(9.1).invalid(8);
+            var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8);
             Validate(rule, [
                 [1, false],
                 [11, false],
@@ -374,7 +374,7 @@ describe('Joi.number', function () {
 
         it('should handle combination of min, max, integer, allow, invalid, and null allowed', function (done) {
 
-            var rule = Joi.number.min(8).max(10).integer().allow(9.1).invalid(8).allow(null);
+            var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null);
             Validate(rule, [
                 [1, false],
                 [11, false],
@@ -390,8 +390,8 @@ describe('Joi.number', function () {
 
     it('should instantiate separate copies on invocation', function (done) {
 
-        var result1 = Joi.number.min(5);
-        var result2 = Joi.number.max(5);
+        var result1 = Joi.number().min(5);
+        var result2 = Joi.number().max(5);
 
         expect(Object.keys(result1)).to.not.equal(Object.keys(result2));
         done();
@@ -399,7 +399,7 @@ describe('Joi.number', function () {
 
     it('should show resulting object with #valueOf', function (done) {
 
-        var result = Joi.number.min(5);
+        var result = Joi.number().min(5);
         expect(result.valueOf()).to.exist;
         done();
     });
@@ -408,8 +408,8 @@ describe('Joi.number', function () {
 
         it('should display correctly for int type', function (done) {
 
-            var t = Joi.number.integer();
-            Joi.validate('1.1', t, function (err, value) {
+            var t = Joi.number().integer();
+            Joi.compile(t).validate('1.1', function (err, value) {
 
                 expect(err.message).to.contain('integer');
                 done();
@@ -423,7 +423,7 @@ describe('Joi.number', function () {
 
             expect(function () {
 
-                Joi.number.min('a');
+                Joi.number().min('a');
             }).to.throw('limit must be an integer');
             done();
         });
@@ -435,7 +435,7 @@ describe('Joi.number', function () {
 
             expect(function () {
 
-                Joi.number.max('a');
+                Joi.number().max('a');
             }).to.throw('limit must be an integer');
             done();
         });

@@ -24,7 +24,7 @@ describe('date', function () {
     it('matches specific date', function (done) {
 
         var now = Date.now();
-        Joi.validate(new Date(now), Joi.date.valid(new Date(now)), function (err, value) {
+        Joi.date().valid(new Date(now)).validate(new Date(now), function (err, value) {
 
             expect(err).to.not.exist;
             done();
@@ -33,7 +33,7 @@ describe('date', function () {
 
     it('errors on invalid input and convert disabled', function (done) {
 
-        Joi.date.options({ convert: false }).validate('1-1-2013', function (err, value) {
+        Joi.date().options({ convert: false }).validate('1-1-2013', function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.equal('the value of <root> must be a number of milliseconds or valid date string');
@@ -45,7 +45,7 @@ describe('date', function () {
 
         it('validates min', function (done) {
 
-            Validate(Joi.date.min('1-1-2012'), [
+            Validate(Joi.date().min('1-1-2012'), [
                 ['1-1-2013', true],
                 ['1-1-2012', true],
                 [0, false],
@@ -56,7 +56,7 @@ describe('date', function () {
 
         it('validates max', function (done) {
 
-            Validate(Joi.date.max('1-1-2013'), [
+            Validate(Joi.date().max('1-1-2013'), [
                 ['1-1-2013', true],
                 ['1-1-2012', true],
                 [0, true],

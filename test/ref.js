@@ -23,7 +23,7 @@ describe('ref', function () {
 
     it('uses ref as a valid value', function (done) {
 
-        var schema = Joi.object.keys({
+        var schema = Joi.object({
             a: Joi.ref('b'),
             b: Joi.any
         });
@@ -46,7 +46,7 @@ describe('ref', function () {
 
     it('uses ref with nested keys as a valid value', function (done) {
 
-        var schema = Joi.object.keys({
+        var schema = Joi.object({
             a: Joi.ref('b.c'),
             b: {
                 c: Joi.any
@@ -74,7 +74,7 @@ describe('ref', function () {
         var ref = Joi.ref('b.c');
         expect(ref.root).to.equal('b');
 
-        var schema = Joi.object.keys({
+        var schema = Joi.object({
             a: ref,
             b: {
                 c: Joi.any
@@ -86,7 +86,7 @@ describe('ref', function () {
 
             expect(err).to.not.exist;
 
-            var parent = Joi.object.keys({
+            var parent = Joi.object({
                 e: schema
             });
 
@@ -103,7 +103,7 @@ describe('ref', function () {
         var ref = Joi.ref('b/c', { separator: '/' });
         expect(ref.root).to.equal('b');
 
-        var schema = Joi.object.keys({
+        var schema = Joi.object({
             a: ref,
             b: {
                 c: Joi.any
@@ -119,7 +119,7 @@ describe('ref', function () {
 
     it('ignores the order in which keys are defined', function (done) {
 
-        var ab = Joi.object.keys({
+        var ab = Joi.object({
             a: {
                 c: Joi.number
             },
@@ -130,7 +130,7 @@ describe('ref', function () {
 
             expect(err).to.not.exist;
 
-            var ba = Joi.object.keys({
+            var ba = Joi.object({
                 b: Joi.ref('a.c'),
                 a: {
                     c: Joi.number
@@ -147,8 +147,8 @@ describe('ref', function () {
 
     it('uses ref as default value', function (done) {
 
-        var schema = Joi.object.keys({
-            a: Joi.any.default(Joi.ref('b')),
+        var schema = Joi.object({
+            a: Joi.default(Joi.ref('b')),
             b: Joi.any
         });
 
@@ -162,8 +162,8 @@ describe('ref', function () {
 
     it('uses ref as default value regardless of order', function (done) {
 
-        var ab = Joi.object.keys({
-            a: Joi.any.default(Joi.ref('b')),
+        var ab = Joi.object({
+            a: Joi.default(Joi.ref('b')),
             b: Joi.number
         });
 
@@ -172,9 +172,9 @@ describe('ref', function () {
             expect(err).to.not.exist;
             expect(value).to.deep.equal({ a: 6, b: 6 });
 
-            var ba = Joi.object.keys({
+            var ba = Joi.object({
                 b: Joi.number,
-                a: Joi.any.default(Joi.ref('b'))
+                a: Joi.default(Joi.ref('b'))
             });
 
             ba.validate({ b: '6' }, function (err, value) {
