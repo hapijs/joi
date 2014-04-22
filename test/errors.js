@@ -20,9 +20,25 @@ var it = Lab.test;
 
 describe('errors', function () {
 
-    it('returns a full path to an error value on an array', function (done) {
+    it('returns a full path to an error value on an array (includes)', function (done) {
 
         var schema = Joi.array().includes(Joi.array().includes({ x: Joi.number() }));
+        var input = [
+            [{ x: 1 }],
+            [{ x: 1 }, { x: 'a' }]
+        ];
+
+        schema.validate(input, function (err, value) {
+
+            expect(err).to.exist;
+            expect(err.details[0].path).to.equal('1');
+            done();
+        });
+    });
+
+    it('returns a full path to an error value on an array (excludes)', function (done) {
+
+        var schema = Joi.array().includes(Joi.array().excludes({ x: Joi.string() }));
         var input = [
             [{ x: 1 }],
             [{ x: 1 }, { x: 'a' }]
