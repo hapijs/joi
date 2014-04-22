@@ -39,6 +39,7 @@ Current version: **4.0.x**
         - [`array.max(limit)`](#arraymaxlimit)
         - [`array.length(limit)`](#arraylengthlimit)
     - [`binary`](#binary)
+      - [`binary.encoding(encoding)`](#binaryencodingencoding)
       - [`binary.min(limit)`](#binaryminlimit)
       - [`binary.max(limit)`](#binarymaxlimit)
       - [`binary.length(limit)`](#binarylengthlimit)
@@ -481,6 +482,15 @@ Supports the same methods of the [`any()`](#any) type.
 var schema = {
     a: Joi.binary
 };
+```
+
+#### `binary.encoding(encoding)`
+
+Sets the string encoding format if a string input is converted to a buffer where:
+- `encoding` - the encoding scheme.
+
+```javascript
+var schema = Joi.binary.encoding('base64');
 ```
 
 #### `binary.min(limit)`

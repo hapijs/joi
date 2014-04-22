@@ -62,6 +62,22 @@ describe('Types', function () {
             });
         });
 
+        describe('#encoding', function () {
+
+            it('applies encoding', function (done) {
+
+                var schema = Joi.binary().encoding('base64');
+                var input = new Buffer('abcdef');
+                schema.validate(input.toString('base64'), function (err, value) {
+
+                    expect(err).to.not.exist;
+                    expect(value instanceof Buffer).to.equal(true);
+                    expect(value.toString()).to.equal('abcdef');
+                    done();
+                });
+            });
+        });
+
         describe('#min', function () {
 
             it('validates buffer size', function (done) {
