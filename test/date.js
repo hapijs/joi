@@ -21,6 +21,17 @@ var it = Lab.test;
 
 describe('date', function () {
 
+    it('fails on boolean', function (done) {
+
+        var schema = Joi.date();
+        Validate(schema, [
+            [true, false],
+            [false, false]
+        ]);
+
+        done();
+    });
+
     it('matches specific date', function (done) {
 
         var now = Date.now();
@@ -37,6 +48,15 @@ describe('date', function () {
 
             expect(err).to.exist;
             expect(err.message).to.equal('the value of <root> must be a number of milliseconds or valid date string');
+            done();
+        });
+    });
+
+    it('validates date', function (done) {
+
+        Joi.date().validate(new Date(), function (err, value) {
+
+            expect(err).to.not.exist;
             done();
         });
     });

@@ -21,6 +21,17 @@ var it = Lab.test;
 
 describe('number', function () {
 
+    it('fails on boolean', function (done) {
+
+        var schema = Joi.number();
+        Validate(schema, [
+            [true, false],
+            [false, false]
+        ]);
+
+        done();
+    });
+
     describe('#validate', function () {
 
         it('should, by default, allow undefined', function (done) {

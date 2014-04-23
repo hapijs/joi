@@ -69,4 +69,25 @@ describe('errors', function () {
             done();
         });
     });
+
+    describe('#annotate', function () {
+
+        it('displays alternatives fail as a single line', function (done) {
+
+            var schema = {
+                x: [
+                    Joi.string(),
+                    Joi.number(),
+                    Joi.date()
+                ]
+            };
+            
+            Joi.validate({ x: true }, schema, function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] the value of x must be a string\n[2] the value of x must be a number\n[3] the value of x must be a number of milliseconds or valid date string\u001b[0m');
+                done();
+            });
+        });
+    });
 });

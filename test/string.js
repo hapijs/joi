@@ -21,6 +21,17 @@ var it = Lab.test;
 
 describe('string', function () {
 
+    it('fails on boolean', function (done) {
+
+        var schema = Joi.string();
+        Validate(schema, [
+            [true, false],
+            [false, false]
+        ]);
+
+        done();
+    });
+
     describe('#valid', function () {
 
         it('should throw error on input not matching type', function (done) {
