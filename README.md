@@ -3,7 +3,7 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **4.0.x**
+Current version: **4.1.x**
 
 [![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 
@@ -64,6 +64,7 @@ Current version: **4.0.x**
         - [`object.without(key, peers)`](#objectwithoutkey-peers)
         - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
         - [`object.assert(ref, schema, message)`](#objectassertref-schema-message)
+        - [`object.unknown([allow])`](#objectunknownallow)
     - [`string`](#string)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
@@ -791,6 +792,15 @@ var schema = Joi.object.keys({
         e: Joi.any
     }
 }).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
+```
+
+#### `object.unknown([allow])`
+
+Overrides the handling of unknown keys for the scope of the current object only (does not apply to children) where:
+- `allow` - if `false`, unknown keys are not allowed, otherwise unknown keys are ignored.
+
+```javascript
+var schema = Joi.Object({ a: Joi.any() }).unknown();
 ```
 
 ### `string`

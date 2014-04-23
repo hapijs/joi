@@ -346,6 +346,45 @@ describe('object', function () {
         });
     });
 
+    describe('#unknown', function () {
+
+        it('allows local unknown without applying to children', function (done) {
+
+            var schema = Joi.object({
+                a: {
+                    b: Joi.number()
+                }
+            }).unknown();
+
+            Validate(schema, [
+                [{ a: { b: 5 } }, true],
+                [{ a: { b: 'x' } }, false],
+                [{ a: { b: 5 }, c: 'ignore' }, true],
+                [{ a: { b: 5, c: 'ignore' } }, false]
+            ]);
+
+            done();
+        });
+
+        it('forbids local unknown without applying to children', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.object({
+                    b: Joi.number()
+                }).unknown()
+            }).options({ allowUnknown: false });
+
+            Validate(schema, [
+                [{ a: { b: 5 } }, true],
+                [{ a: { b: 'x' } }, false],
+                [{ a: { b: 5 }, c: 'ignore' }, false],
+                [{ a: { b: 5, c: 'ignore' } }, true]
+            ]);
+
+            done();
+        });
+    });
+
     describe('#rename', function () {
 
         it('allows renaming multiple times with multiple enabled', function (done) {
