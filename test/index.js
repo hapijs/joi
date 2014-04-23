@@ -352,6 +352,7 @@ describe('Joi', function () {
             expect(err.message).to.equal('value contains txt without its required peers upc, code');
 
             Validate(schema, [
+                [{}, true],
                 [{ upc: null }, false],
                 [{ upc: 'test' }, false],
                 [{ txt: null }, false],
