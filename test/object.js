@@ -369,7 +369,7 @@ describe('object', function () {
 
             Joi.compile(schema).validate({ test1: 'a', test2: 'b' }, function (err, value) {
 
-                expect(err.message).to.equal('cannot rename test2 because multiple renames are disabled and another key was already renamed to test');
+                expect(err.message).to.equal('value cannot rename child test2 because multiple renames are disabled and another key was already renamed to test');
                 done();
             });
         });
@@ -379,7 +379,7 @@ describe('object', function () {
             Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').options({ abortEarly: false }).validate({ a: 1, c: 1, d: 1 }, function (err, value) {
 
                 expect(err).to.exist;
-                expect(err.message).to.equal('cannot rename c because multiple renames are disabled and another key was already renamed to b. cannot rename d because multiple renames are disabled and another key was already renamed to b');
+                expect(err.message).to.equal('value cannot rename child c because multiple renames are disabled and another key was already renamed to b. value cannot rename child d because multiple renames are disabled and another key was already renamed to b');
                 done();
             });
         });
@@ -410,7 +410,7 @@ describe('object', function () {
 
             schema.validate({ test: 'b', test1: 'a' }, function (err, value) {
 
-                expect(err.message).to.equal('cannot rename test because override is disabled and target test1 exists');
+                expect(err.message).to.equal('value cannot rename child test because override is disabled and target test1 exists');
                 done();
             });
         });
@@ -652,7 +652,7 @@ describe('object', function () {
             }).validate({ a: { b: { c: 1 } } }, function (err, value) {
 
                 expect(err).to.exist;
-                expect(err.message).to.equal('missing at least one of alternative peers x, y');
+                expect(err.message).to.equal('value must contain at least one of x, y');
                 done();
             });
         });
@@ -675,7 +675,7 @@ describe('object', function () {
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
                 expect(err).to.exist;
-                expect(err.message).to.equal('d.e failed assertion equal to a.c');
+                expect(err.message).to.equal('value validation failed because d.e failed to equal to a.c');
 
                 Validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
@@ -700,7 +700,7 @@ describe('object', function () {
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
                 expect(err).to.exist;
-                expect(err.message).to.equal('d.e failed assertion equal to a.c');
+                expect(err.message).to.equal('value validation failed because d.e failed to equal to a.c');
 
                 Validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]

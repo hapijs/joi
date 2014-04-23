@@ -112,7 +112,7 @@ describe('array', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err.message).to.equal('test[1] fails because foo is not allowed to be undefined');
+                expect(err.message).to.equal('test position 1 fails because foo is required');
                 done();
             });
         });
@@ -317,7 +317,7 @@ describe('array', function () {
             schema.validate(input, function (err, value) {
 
                 expect(err).to.exist;
-                expect(err.message).to.equal('arr[2] fails because 2 must be an integer');
+                expect(err.message).to.equal('arr position 2 fails because 2 must be an integer');
                 done();
             });
         });

@@ -68,7 +68,7 @@ describe('Joi', function () {
         Joi.string().validate(null, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.annotate()).to.equal('{\n  \u001b[41m\"value\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] value is not allowed to be null\u001b[0m');
+            expect(err.annotate()).to.equal('{\n  \u001b[41m\"value\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] value contains an invalid value\u001b[0m');
             done();
         });
     });
@@ -224,7 +224,7 @@ describe('Joi', function () {
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('at least one of txt, upc is required');
+            expect(err.message).to.equal('value must contain at least one of txt, upc');
 
             Validate(schema, [
                 [{ upc: null }, false],
@@ -310,7 +310,7 @@ describe('Joi', function () {
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('missing at least one of alternative peers txt, upc, code');
+            expect(err.message).to.equal('value must contain at least one of txt, upc, code');
 
             Validate(schema, [
                 [{ upc: null }, true],
@@ -349,7 +349,7 @@ describe('Joi', function () {
 
         Joi.validate({ txt: 'x' }, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('txt missing required peers upc, code');
+            expect(err.message).to.equal('value contains txt without its required peers upc, code');
 
             Validate(schema, [
                 [{ upc: null }, false],
@@ -690,7 +690,7 @@ describe('Joi', function () {
         Joi.compile(config).validate({}, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.contain('module is not allowed to be undefined');
+            expect(err.message).to.contain('module is required');
 
             Joi.compile(config).validate({ module: 'test' }, function (err, value) {
 
@@ -699,7 +699,7 @@ describe('Joi', function () {
                 Joi.compile(config).validate({ module: {} }, function (err, value) {
 
                     expect(err).to.not.be.null;
-                    expect(err.message).to.contain('compile is not allowed to be undefined');
+                    expect(err.message).to.contain('compile is required');
                     expect(err.message).to.contain('module must be a string');
 
                     Joi.compile(config).validate({ module: { compile: function () { } } }, function (err, value) {
@@ -746,7 +746,7 @@ describe('Joi', function () {
         Joi.compile(config).validate({}, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.contain('module is not allowed to be undefined');
+            expect(err.message).to.contain('module is required');
             done();
         });
     });
@@ -1228,118 +1228,6 @@ describe('Joi', function () {
                 expect(errFull.details.length).to.be.greaterThan(errOne.details.length);
                 done();
             });
-        });
-    });
-
-    it('supports custom errors when validating types', function (done) {
-
-        var schema = Joi.object({
-            email: Joi.string().email(),
-            date: Joi.date(),
-            alphanum: Joi.string().alphanum(),
-            min: Joi.string().min(3),
-            max: Joi.string().max(3),
-            required: Joi.string().required(),
-            xor: Joi.string(),
-            renamed: Joi.string().valid('456'),
-            notEmpty: Joi.string().required()
-        }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
-
-        var input = {
-            email: 'invalid-email',
-            date: 'invalid-date',
-            alphanum: '\b\n\f\r\t',
-            min: 'ab',
-            max: 'abcd',
-            required: 'hello',
-            xor: '123',
-            renamed: '456',
-            notEmpty: ''
-        };
-
-        var lang = {
-            any: {
-                empty: '3'
-            },
-            date: {
-                base: '18'
-            },
-            string: {
-                base: '13',
-                min: '14',
-                max: '15',
-                alphanum: '16',
-                email: '19'
-            },
-            object: {
-                without: '7',
-                rename: {
-                    override: '11'
-                }
-            }
-        };
-
-        Joi.validate(input, schema, { abortEarly: false, language: lang }, function (err, value) {
-
-            expect(err).to.exist;
-            expect(err.message).to.equal('11. 7. 7. 19. 18. 16. 14. 15. 3. 13');
-            done();
-        });
-    });
-
-    it('returns error type in validation error', function (done) {
-
-        var input = {
-            notNumber: '',
-            notString: true,
-            notBoolean: 9
-        };
-
-        var schema = {
-            notNumber: Joi.number().required(),
-            notString: Joi.string().required(),
-            notBoolean: Joi.boolean().required()
-        }
-
-        Joi.validate(input, schema, { abortEarly: false }, function (err, value) {
-
-            expect(err).to.exist;
-            expect(err.details).to.have.length(3);
-            expect(err.details[0].type).to.equal('number.base');
-            expect(err.details[1].type).to.equal('string.base');
-            expect(err.details[2].type).to.equal('boolean.base');
-            done();
-        });
-    });
-
-    it('annotates error', function (done) {
-
-        var object = {
-            a: 'm',
-            y: {
-                b: {
-                    c: 10
-                }
-            }
-        };
-
-        var schema = {
-            a: Joi.string().valid('a', 'b', 'c', 'd'),
-            y: Joi.object({
-                u: Joi.string().valid(['e', 'f', 'g', 'h']).required(),
-                b: Joi.string().valid('i', 'j').allow(false),
-                d: Joi.object({
-                    x: Joi.string().valid('k', 'l').required(),
-                    c: Joi.number()
-                })
-            })
-        };
-
-        Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
-
-            expect(err).to.exist;
-            expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[1]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[3]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] a must be one of a, b, c, d\n[2] u is not allowed to be undefined\n[3] b must be a string\u001b[0m');
-            done();
         });
     });
 
