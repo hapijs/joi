@@ -917,7 +917,7 @@ var alt = Joi.alternatives.try(Joi.number, Joi.string);
 #### `alternatives.try(schemas)
 
 Adds an alternative schema type for attempting to match against the validated value where:
-- `schema` - an array of alternaitve **joi** types. Also supports providing each type as a separate argument.
+- `schema` - an array of alternative **joi** types. Also supports providing each type as a separate argument.
 
 ```javascript
 var alt = Joi.alternatives.try(Joi.number, Joi.string);
