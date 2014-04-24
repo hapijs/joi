@@ -74,6 +74,15 @@ describe('binary', function () {
                 done();
             });
         });
+
+        it('throws when encoding is not a string', function (done) {
+
+            expect(function () {
+
+                Joi.binary().encoding(1.2);
+            }).to.throw('encoding must be a string');
+            done();
+        });
     });
 
     describe('#min', function () {
