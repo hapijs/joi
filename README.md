@@ -389,7 +389,7 @@ Generates a schema object that matches an array data type.
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
-var array = Joi.array.includes(Joi.string().valid('a', 'b'));
+var array = Joi.array().includes(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], function (err, value) { });
 ```
 
@@ -399,7 +399,7 @@ List the types allowed for the array values where:
 - `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
 ```javascript
-var schema = Joi.array().includes(Joi.string, Joi.number);
+var schema = Joi.array().includes(Joi.string(), Joi.number());
 ```
 
 #### `array.excludes(type)`
@@ -408,7 +408,7 @@ List the types forbidden for the array values where:
 - `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
 ```javascript
-var schema = Joi.array().excludes(Joi.object);
+var schema = Joi.array().excludes(Joi.object());
 ```
 
 #### `array.min(limit)`
@@ -632,7 +632,7 @@ var schema = Joi.object().length(5);
 
 #### `object.and(peers)`
 
-Defines am all-or-nothing relationship between keys where if one of the peers is present, all of them are required as
+Defines an all-or-nothing relationship between keys where if one of the peers is present, all of them are required as
 well where:
 - `peers` - the key names of which if one present, all are required. `peers` can be a single string value, an
   array of string values, or each peer provided as an argument.
@@ -641,7 +641,7 @@ well where:
 var schema = Joi.object().keys({
     a: Joi.any(),
     b: Joi.any()
-}).or('a', 'b');
+}).and('a', 'b');
 ```
 
 #### `object.or(peers)`
@@ -734,7 +734,7 @@ var schema = Joi.object().keys({
         c: Joi.number()
     },
     d: {
-        e: Joi.any
+        e: Joi.any()
     }
 }).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
 ```
@@ -755,9 +755,8 @@ Generates a schema object that matches a string data type. Note that empty strin
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
-Joi.string().min(1).max(10);
-
-string.validate('12345', function (err, value) { });
+var schema = Joi.string().min(1).max(10);
+schema.validate('12345', function (err, value) { });
 ```
 
 #### `string.insensitive()`
@@ -865,7 +864,7 @@ Supports the same methods of the [`any()`](#any) type.
 Alternatives can be expressed using the shorter `[]` notation.
 
 ```javascript
-var alt = Joi.alternatives.try(Joi.number, Joi.string);
+var alt = Joi.alternatives().try(Joi.number(), Joi.string());
 // Same as [Joi.number(), Joi.string()]
 ```
 
@@ -875,7 +874,7 @@ Adds an alternative schema type for attempting to match against the validated va
 - `schema` - an array of alternative **joi** types. Also supports providing each type as a separate argument.
 
 ```javascript
-var alt = Joi.alternatives.try(Joi.number(), Joi.string());
+var alt = Joi.alternatives().try(Joi.number(), Joi.string());
 alt.validate('a', function (err, value) { });
 ```
 
