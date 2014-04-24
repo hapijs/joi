@@ -33,6 +33,23 @@ describe('binary', function () {
         });
     });
 
+    describe('functions from any', function () {
+       it('applies valid', function (done) {
+
+            //non encoded valid value also fails
+            //var schema = Joi.binary().encoding('base64').valid('abcdef');
+            var schema = Joi.binary().encoding('base64').valid('YWJjZGVm');
+            var input = new Buffer('abcdef');
+            schema.validate(input.toString('base64'), function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value instanceof Buffer).to.equal(true);
+                expect(value.toString()).to.equal('abcdef');
+                done();
+            });
+        });
+    });
+
     describe('#validate', function () {
 
         it('should return an error when a non-buffer or non-string is used', function (done) {
