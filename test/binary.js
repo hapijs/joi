@@ -33,6 +33,21 @@ describe('binary', function () {
         });
     });
 
+    describe('functions from any', function () {
+       it('applies valid with a buffer object', function (done) {
+
+            var input = new Buffer('abcdef');
+            var schema = Joi.binary().encoding('utf8').valid(input);
+            schema.validate(input.toString('utf8'), function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value instanceof Buffer).to.equal(true);
+                expect(value.toString('utf8')).to.equal('abcdef');
+                done();
+            });
+        });
+    });
+
     describe('#validate', function () {
 
         it('should return an error when a non-buffer or non-string is used', function (done) {
