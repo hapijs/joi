@@ -74,6 +74,15 @@ describe('binary', function () {
                 done();
             });
         });
+        
+        it('throws when encoding is invalid', function (done) {
+
+            expect(function () {
+                
+                Joi.binary().encoding('base6');
+            }).to.throw('encoding must be valid encoding');
+            done();
+        });
     });
 
     describe('#min', function () {
