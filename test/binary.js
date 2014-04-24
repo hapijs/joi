@@ -43,7 +43,8 @@ describe('binary', function () {
             [hello, true],
             [new Buffer('hello'), true],
             ['goodbye', false],
-            [new Buffer('goodbye'), false]
+            [new Buffer('goodbye'), false],
+            [new Buffer('HELLO'), false]
         ]);
 
         done();
