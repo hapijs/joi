@@ -95,7 +95,7 @@ var schema = Joi.object().keys({
     email: Joi.string().email()
 }).with('username', 'birthyear').without('password', 'access_token');
 
-Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err) { });  // err === null -> valid
+Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err, value) { });  // err === null -> valid
 ```
 
 The above schema defines the following constraints:
@@ -131,7 +131,7 @@ new schema object.
 Then the value is validated against the schema:
 
 ```javascript
-Joi.validate({ a: 'a string' }, schema, function (err) { });
+Joi.validate({ a: 'a string' }, schema, function (err, value) { });
 ```
 
 If the value is valid, `null` is returned, otherwise an `Error` object.
@@ -182,7 +182,7 @@ var value = {
     a: '123'
 };
 
-Joi.validate(value, schema, function (err) { });
+Joi.validate(value, schema, function (err, value) { });
 // err -> null
 // value.a -> 123 (number, not string)
 ```
@@ -217,9 +217,7 @@ Generates a schema object that matches any data type.
 
 ```javascript
 var any = Joi.any();
-any.valid('a');
-
-any.validate('a', function (err) { });
+any.validate('a', function (err, value) { });
 ```
 
 #### `any.allow(value)`
@@ -269,9 +267,7 @@ var schema = {
 Marks a key as required which will not allow `undefined` as value. All keys are optional by default.
 
 ```javascript
-var schema = {
-    a: Joi.any().required()
-};
+var schema = Joi.any().required();
 ```
 
 #### `any.optional()`
@@ -279,9 +275,7 @@ var schema = {
 Marks a key as optional which will allow `undefined` as values. Used to annotate the schema for readability as all keys are optional by default.
 
 ```javascript
-var schema = {
-    a: Joi.any().optional()
-};
+var schema = Joi.any().optional();
 ```
 
 #### `any.description(desc)`
@@ -337,9 +331,7 @@ Overrides the global `validate()` options for the current key and any sub-key wh
 - `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#joivalidatevalue-schema-options-callback).
 
 ```javascript
-var schema = {
-    a: Joi.any().options({ convert: false })
-};
+var schema = Joi.any().options({ convert: false });
 ```
 
 #### `any.strict()`
@@ -347,9 +339,7 @@ var schema = {
 Sets the `options.convert` options to `false` which prevent type casting for the current key and any child keys.
 
 ```javascript
-var schema = {
-    a: Joi.any().strict()
-};
+var schema = Joi.any().strict();
 ```
 
 #### `any.default(value)`
@@ -361,9 +351,8 @@ Sets a default value if the original value is undefined where:
 var schema = {
     username: Joi.string().default('new_user')
 };
-var input = {};
-Joi.validate(input, schema, function (err) { });
-// input === { username: "new_user" }
+Joi.validate({}, schema, function (err, value) { });
+// value === { username: "new_user" }
 ```
 
 #### `any.concat(schema)`
@@ -400,10 +389,8 @@ Generates a schema object that matches an array data type.
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
-var array = Joi.array;
-array.includes(Joi.string().valid('a', 'b'));
-
-array.validate(['a', 'b', 'a'], function (err) { });
+var array = Joi.array.includes(Joi.string().valid('a', 'b'));
+array.validate(['a', 'b', 'a'], function (err, value) { });
 ```
 
 #### `array.includes(type)`
@@ -412,9 +399,7 @@ List the types allowed for the array values where:
 - `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
 ```javascript
-var schema = {
-    a: Joi.array().includes(Joi.string, Joi.number)
-};
+var schema = Joi.array().includes(Joi.string, Joi.number);
 ```
 
 #### `array.excludes(type)`
@@ -423,9 +408,7 @@ List the types forbidden for the array values where:
 - `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
 ```javascript
-var schema = {
-    a: Joi.array().excludes(Joi.object)
-};
+var schema = Joi.array().excludes(Joi.object);
 ```
 
 #### `array.min(limit)`
@@ -434,9 +417,7 @@ Specifies the minimum number of items in the array where:
 - `limit` - the lowest number of array items allowed.
 
 ```javascript
-var schema = {
-    a: Joi.array().min(2)
-};
+var schema = Joi.array().min(2);
 ```
 
 #### `array.max(limit)`
@@ -445,9 +426,7 @@ Specifies the maximum number of items in the array where:
 - `limit` - the highest number of array items allowed.
 
 ```javascript
-var schema = {
-    a: Joi.array().max(10)
-};
+var schema = Joi.array().max(10);
 ```
 
 #### `array.length(limit)`
@@ -456,9 +435,7 @@ Specifies the exact number of items in the array where:
 - `limit` - the number of array items allowed.
 
 ```javascript
-var schema = {
-    a: Joi.array().length(5)
-};
+var schema = Joi.array().length(5);
 ```
 
 ### `boolean`
@@ -469,9 +446,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var boolean = Joi.boolean();
-boolean.allow(null);
-
-boolean.validate(true, function (err) { });
+boolean.validate(true, function (err, value) { });
 ```
 
 ### `binary`
@@ -481,9 +456,7 @@ Generates a schema object that matches a Buffer data type (as well as the string
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
-var schema = {
-    a: Joi.binary()
-};
+var schema = Joi.binary();
 ```
 
 #### `binary.encoding(encoding)`
@@ -501,9 +474,7 @@ Specifies the minimum length of the buffer where:
 - `limit` - the lowest size of the buffer.
 
 ```javascript
-var schema = {
-    a: Joi.binary().min(2)
-};
+var schema = Joi.binary().min(2);
 ```
 
 #### `binary.max(limit)`
@@ -512,9 +483,7 @@ Specifies the maximum length of the buffer where:
 - `limit` - the highest size of the buffer.
 
 ```javascript
-var schema = {
-    a: Joi.binary().max(10)
-};
+var schema = Joi.binary().max(10);
 ```
 
 #### `binary.length(limit)`
@@ -523,9 +492,7 @@ Specifies the exact length of the buffer:
 - `limit` - the size of buffer allowed.
 
 ```javascript
-var schema = {
-    a: Joi.binary().length(5)
-};
+var schema = Joi.binary().length(5);
 ```
 
 ### `date`
@@ -536,9 +503,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var date = Joi.date();
-date.min('12-20-2012');
-
-date.validate('12-21-2012', function (err) { });
+date.validate('12-21-2012', function (err, value) { });
 ```
 
 #### `date.min(date)`
@@ -547,9 +512,7 @@ Specifies the oldest date allowed where:
 - `date` - the oldest date allowed.
 
 ```javascript
-var schema = {
-    a: Joi.date().min('1-1-1974')
-};
+var schema = Joi.date().min('1-1-1974');
 ```
 
 #### `date.max(date)`
@@ -558,9 +521,7 @@ Specifies the latest date allowed where:
 - `date` - the latest date allowed.
 
 ```javascript
-var schema = {
-    a: Joi.date().max('12-31-2020')
-};
+var schema = Joi.date().max('12-31-2020');
 ```
 
 ### `func`
@@ -571,9 +532,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var func = Joi.func();
-func.allow(null);
-
-func.validate(function () {}, function (err) { });
+func.validate(function () {}, function (err, value) { });
 ```
 
 ### `number`
@@ -584,9 +543,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var number = Joi.number();
-number.min(1).max(10).integer();
-
-number.validate(5, function (err) { });
+number.validate(5, function (err, value) { });
 ```
 
 #### `number.min(limit)`
@@ -595,9 +552,7 @@ Specifies the minimum value where:
 - `limit` - the minimum value allowed.
 
 ```javascript
-var schema = {
-    a: Joi.number().min(2)
-};
+var schema = Joi.number().min(2);
 ```
 
 #### `number.max(limit)`
@@ -606,9 +561,7 @@ Specifies the maximum value where:
 - `limit` - the maximum value allowed.
 
 ```javascript
-var schema = {
-    a: Joi.number().max(10)
-};
+var schema = Joi.number().max(10);
 ```
 
 #### `number.integer()`
@@ -616,9 +569,7 @@ var schema = {
 Requires the number to be an integer (no floating point).
 
 ```javascript
-var schema = {
-    a: Joi.number().integer()
-};
+var schema = Joi.number().integer();
 ```
 
 ### `object`
@@ -634,7 +585,7 @@ var object = Joi.object().keys({
     b: 'some string'
 });
 
-object.validate({ a: 5 }, function (err) { });
+object.validate({ a: 5 }, function (err, value) { });
 ```
 
 #### `object.keys([schema])`
@@ -658,9 +609,7 @@ Specifies the minimum number of keys in the object where:
 - `limit` - the lowest number of keys allowed.
 
 ```javascript
-var schema = {
-    a: Joi.object().min(2)
-};
+var schema = Joi.object().min(2);
 ```
 
 #### `object.max(limit)`
@@ -669,9 +618,7 @@ Specifies the maximum number of keys in the object where:
 - `limit` - the highest number of object keys allowed.
 
 ```javascript
-var schema = {
-    a: Joi.object().max(10)
-};
+var schema = Joi.object().max(10);
 ```
 
 #### `object.length(limit)`
@@ -680,9 +627,7 @@ Specifies the exact number of keys in the object where:
 - `limit` - the number of object keys allowed.
 
 ```javascript
-var schema = {
-    a: Joi.object().length(5)
-};
+var schema = Joi.object().length(5);
 ```
 
 #### `object.and(peers)`
@@ -771,7 +716,7 @@ var object = Joi.object().keys({
     a: Joi.number()
 }).rename('b', 'a');
 
-object.validate({ b: 5 }, function (err) { });
+object.validate({ b: 5 }, function (err, value) { });
 ```
 
 #### `object.assert(ref, schema, message)`
@@ -812,7 +757,7 @@ Supports the same methods of the [`any()`](#any) type.
 ```javascript
 Joi.string().min(1).max(10);
 
-string.validate('12345', function (err) { });
+string.validate('12345', function (err, value) { });
 ```
 
 #### `string.insensitive()`
@@ -931,7 +876,7 @@ Adds an alternative schema type for attempting to match against the validated va
 
 ```javascript
 var alt = Joi.alternatives.try(Joi.number(), Joi.string());
-alt.validate('a', function (err) { });
+alt.validate('a', function (err, value) { });
 ```
 
 #### `alternatives.when(ref, options)`
