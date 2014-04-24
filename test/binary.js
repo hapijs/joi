@@ -21,9 +21,9 @@ var it = Lab.test;
 
 describe('binary', function () {
 
-    it('should convert a string to a buffer', function (done) {
+    it('converts a string to a buffer', function (done) {
 
-        var result = Joi.binary().validate('test', function (err, value) {
+        Joi.binary().validate('test', function (err, value) {
 
             expect(err).to.not.exist;
             expect(value instanceof Buffer).to.equal(true);
@@ -33,9 +33,25 @@ describe('binary', function () {
         });
     });
 
+    it('validates allowed buffer content', function (done) {
+
+        var hello = new Buffer('hello');
+        var schema = Joi.binary().valid(hello);
+
+        Validate(schema, [
+            ['hello', true],
+            [hello, true],
+            [new Buffer('hello'), true],
+            ['goodbye', false],
+            [new Buffer('goodbye'), false]
+        ]);
+
+        done();
+    });
+
     describe('#validate', function () {
 
-        it('should return an error when a non-buffer or non-string is used', function (done) {
+        it('returns an error when a non-buffer or non-string is used', function (done) {
 
             Joi.binary().validate(5, function (err, value) {
 
@@ -45,7 +61,7 @@ describe('binary', function () {
             });
         });
 
-        it('should accept a buffer object', function (done) {
+        it('accepts a buffer object', function (done) {
 
             var schema = {
                 buffer: Joi.binary
