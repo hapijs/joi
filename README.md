@@ -400,7 +400,7 @@ Generates a schema object that matches an array data type.
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
-var array = Joi.array;
+var array = Joi.array();
 array.includes(Joi.string().valid('a', 'b'));
 
 array.validate(['a', 'b', 'a'], function (err) { });
@@ -687,7 +687,7 @@ var schema = {
 
 #### `object.and(peers)`
 
-Defines am all-or-nothing relationship between keys where if one of the peers is present, all of them are required as
+Defines an all-or-nothing relationship between keys where if one of the peers is present, all of them are required as
 well where:
 - `peers` - the key names of which if one present, all are required. `peers` can be a single string value, an
   array of string values, or each peer provided as an argument.
@@ -696,7 +696,7 @@ well where:
 var schema = Joi.object().keys({
     a: Joi.any(),
     b: Joi.any()
-}).or('a', 'b');
+}).and('a', 'b');
 ```
 
 #### `object.or(peers)`
