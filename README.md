@@ -168,7 +168,7 @@ Validates a value using the given schema and options where:
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
   - `language` - overrides individual error messages. Defaults to no override (`{}`).
-- `callback` - the callback method using the signature `function(err, callback)` where:
+- `callback` - the callback method using the signature `function(err, val)` where:
   - `err` - if validation failed, the error reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
     incomplete if validation failed and `abortEarly` is `true`.
