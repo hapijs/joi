@@ -38,8 +38,8 @@ describe('string', function () {
 
             expect(function () {
 
-                Joi.string().valid(1);
-            }).to.throw;
+                Joi.string().valid({});
+            }).to.throw();
             done();
         });
 
@@ -48,7 +48,7 @@ describe('string', function () {
             expect(function () {
 
                 Joi.string().valid('joi');
-            }).to.not.throw;
+            }).to.not.throw();
             done();
         });
 
@@ -95,8 +95,8 @@ describe('string', function () {
 
             expect(function () {
 
-                Joi.string().invalid(1);
-            }).to.throw;
+                Joi.string().invalid({});
+            }).to.throw();
             done();
         });
 
@@ -105,7 +105,7 @@ describe('string', function () {
             expect(function () {
 
                 Joi.string().invalid('joi');
-            }).to.not.throw;
+            }).to.not.throw();
             done();
         });
 
