@@ -25,6 +25,7 @@ Current version: **4.1.x**
         - [`description(desc)`](#descriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
+        - [`any.meta(meta)`](#anymetameta)
         - [`any.example(value)`](#anyexamplevalue)
         - [`any.unit(name)`](#anyunitname)
         - [`any.options(options)`](#anyoptionsoptions)
@@ -303,6 +304,15 @@ Annotates the key where:
 
 ```javascript
 var schema = Joi.any().tags(['api', 'user']);
+```
+
+#### `any.meta(meta)`
+
+Attaches metadata to the key where:
+- `meta` - the meta object to attach.
+
+```javascript
+var schema = Joi.any().meta({index: true});
 ```
 
 #### `any.example(value)`
