@@ -434,7 +434,8 @@ describe('string', function () {
             var schema = Joi.string().email();
             Validate(schema, [
                 ['van@walmartlabs.com', true],
-                ['@iaminvalid.com', false]
+                ['@iaminvalid.com', false],
+                ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false]
             ]);
             done();
         });
