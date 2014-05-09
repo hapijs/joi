@@ -545,6 +545,22 @@ describe('object', function () {
             });
             done();
         });
+
+        it('respects the shallow parameter', function (done) {
+
+            var schema = Joi.object({
+                name: Joi.string(),
+                child: Joi.object({
+                    name: Joi.string()
+                })
+            });
+
+            expect(schema.describe(true)).to.not.contain.key('children');
+
+            expect(schema.describe()).to.contain.key('children');
+
+            done();
+        });
     });
 
     describe('#length', function () {
