@@ -213,6 +213,13 @@ describe('any', function () {
             var b = Joi.meta(meta);
             expect(b.describe().meta).to.deep.equal(meta);
 
+            b = b.meta({other: true});
+            expect(b.describe().meta).to.deep.equal({
+                prop: 'val',
+                prop2: 3,
+                other: true
+            });
+
             done();
         });
 
