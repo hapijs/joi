@@ -556,7 +556,6 @@ describe('object', function () {
             });
 
             expect(schema.describe(true)).to.not.contain.key('children');
-
             expect(schema.describe()).to.contain.key('children');
 
             done();
