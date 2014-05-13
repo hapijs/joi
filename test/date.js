@@ -84,5 +84,13 @@ describe('date', function () {
             ]);
             done();
         });
+
+        it('validates only valid dates', function (done) {
+            Validate(Joi.date(), [
+                ['1-1-2013', true],
+                ['not a valid date', false],
+                [new Date('not a valid date'), false]
+            ]);
+        });
     });
 });
