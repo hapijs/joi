@@ -77,6 +77,9 @@ Current version: **4.2.x**
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
         - [`string.hostname()`](#stringhostname)
+        - [`string.lowercase([options])`](#stringlowercase)
+        - [`string.uppercase([options])`](#stringuppercase)
+        - [`string.trim([options])`](#stringtrim)
     - [`alternatives`](#alternatives)
         - [`alternatives.try(schemas)`](#alternativestryschemas)
         - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
@@ -853,6 +856,39 @@ Requires the string value to be a valid hostname as per [RFC1123](http://tools.i
 
 ```javascript
 var schema = Joi.string().hostname();
+```
+
+#### `string.lowercase([options])`
+
+Requires the string value to be all lowercase.
+
+- `options` - optional object with settings:
+    - `force` - `true` changes the string to uppercase before validation. Default is `false`.
+
+```javascript
+var schema = Joi.string().lowercase();
+```
+
+#### `string.uppercase([options])`
+
+Requires the string value to be all uppercase.
+
+- `options` - optional object with settings:
+    - `force` - `true` changes the string to uppercase before validation. Default is `false`.
+
+```javascript
+var schema = Joi.string().uppercase();
+```
+
+#### `string.trim([options])`
+
+Requires the string value to not have leading or trailing whitespace.
+
+- `options` - optional object with settings:
+    - `force` - `true` removes leading and trailing whitespace before validation. Default is `false`.
+
+```javascript
+var schema = Joi.string().trim();
 ```
 
 ### `alternatives`
