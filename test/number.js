@@ -27,9 +27,7 @@ describe('number', function () {
         Validate(schema, [
             [true, false],
             [false, false]
-        ]);
-
-        done();
+        ], done);
     });
 
     describe('#validate', function () {
@@ -38,16 +36,14 @@ describe('number', function () {
 
             Validate(Joi.number(), [
                 [undefined, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should, when .required(), deny undefined', function (done) {
 
             Validate(Joi.number().required(), [
                 [undefined, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should return false for denied value', function (done) {
@@ -69,8 +65,7 @@ describe('number', function () {
                 [null, false],
                 [1.02, false],
                 [0.01, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('can accept string numbers', function (done) {
@@ -87,8 +82,7 @@ describe('number', function () {
                 ['\t\r43', true],
                 ['43 ', true],
                 ['', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('required validates correctly', function (done) {
@@ -97,8 +91,7 @@ describe('number', function () {
             Validate(t, [
                 [NaN, false],
                 ['100', true]
-            ]);
-            done();
+            ], done);
         });
 
         it('converts an object string to a number', function (done) {
@@ -143,8 +136,7 @@ describe('number', function () {
                 [8, true],
                 [9, true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, and null allowed', function (done) {
@@ -156,8 +148,7 @@ describe('number', function () {
                 [8, true],
                 [9, true],
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min and positive', function (done) {
@@ -168,8 +159,7 @@ describe('number', function () {
                 [-2, false],
                 [8, true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of max and positive', function (done) {
@@ -180,8 +170,7 @@ describe('number', function () {
                 [-2, false],
                 [8, false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min and negative', function (done) {
@@ -192,8 +181,7 @@ describe('number', function () {
                 [-2, true],
                 [-4, false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of negative and positive', function (done) {
@@ -204,8 +192,7 @@ describe('number', function () {
                 [-2, false],
                 [0, false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of negative and allow', function (done) {
@@ -217,8 +204,7 @@ describe('number', function () {
                 [8, false],
                 [0, false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of positive and allow', function (done) {
@@ -230,8 +216,7 @@ describe('number', function () {
                 [8, true],
                 [-10, false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of positive, allow, and null allowed', function (done) {
@@ -243,8 +228,7 @@ describe('number', function () {
                 [8, true],
                 [-10, false],
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of negative, allow, and null allowed', function (done) {
@@ -256,8 +240,7 @@ describe('number', function () {
                 [8, false],
                 [0, false],
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of positive, allow, null allowed, and invalid', function (done) {
@@ -269,8 +252,7 @@ describe('number', function () {
                 [8, true],
                 [-10, false],
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of negative, allow, null allowed, and invalid', function (done) {
@@ -283,8 +265,7 @@ describe('number', function () {
                 [8, false],
                 [0, false],
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, and allow', function (done) {
@@ -296,8 +277,7 @@ describe('number', function () {
                 [8, true],
                 [9, true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, allow, and null allowed', function (done) {
@@ -309,8 +289,7 @@ describe('number', function () {
                 [8, true],
                 [9, true],
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, allow, and invalid', function (done) {
@@ -322,8 +301,7 @@ describe('number', function () {
                 [8, true],
                 [9, false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, allow, invalid, and null allowed', function (done) {
@@ -335,8 +313,7 @@ describe('number', function () {
                 [8, true],
                 [9, false],
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, and integer', function (done) {
@@ -349,8 +326,7 @@ describe('number', function () {
                 [9, true],
                 [9.1, false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, integer, and allow', function (done) {
@@ -364,8 +340,7 @@ describe('number', function () {
                 [9.1, true],
                 [9.2, false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, integer, allow, and invalid', function (done) {
@@ -379,8 +354,7 @@ describe('number', function () {
                 [9.1, true],
                 [9.2, false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, integer, allow, invalid, and null allowed', function (done) {
@@ -394,8 +368,7 @@ describe('number', function () {
                 [9.1, true],
                 [9.2, false],
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
     });
 

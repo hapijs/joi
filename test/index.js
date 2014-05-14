@@ -52,15 +52,15 @@ describe('Joi', function () {
             ['a', true],
             ['b', true],
             [5, false]
-        ]);
+        ], function () {
 
-        Validate(b, [
-            ['a', false],
-            ['b', true],
-            [5, false]
-        ]);
+            Validate(b, [
+                ['a', false],
+                ['b', true],
+                [5, false]
+            ], done);
+        });
 
-        done();
     });
 
     it('validates null', function (done) {
@@ -78,8 +78,7 @@ describe('Joi', function () {
         Validate(null, [
             ['a', false],
             [null, true]
-        ]);
-        done();
+        ], done);
     });
 
     it('validates number literal', function (done) {
@@ -87,8 +86,7 @@ describe('Joi', function () {
         Validate(5, [
             [6, false],
             [5, true]
-        ]);
-        done();
+        ], done);
     });
 
     it('validates string literal', function (done) {
@@ -96,8 +94,7 @@ describe('Joi', function () {
         Validate('5', [
             ['6', false],
             ['5', true]
-        ]);
-        done();
+        ], done);
     });
 
     it('validates boolean literal', function (done) {
@@ -105,8 +102,7 @@ describe('Joi', function () {
         Validate(true, [
             [false, false],
             [true, true]
-        ]);
-        done();
+        ], done);
     });
 
     it('validates date literal', function (done) {
@@ -116,8 +112,7 @@ describe('Joi', function () {
             [new Date(now), true],
             [now, true],
             [now * 2, false]
-        ]);
-        done();
+        ], done);
     });
 
     it('validates complex literal', function (done) {
@@ -133,8 +128,7 @@ describe('Joi', function () {
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
             [{ a: 5, b: 'a' }, false]
-        ]);
-        done();
+        ], done);
     });
 
     it('validates a compiled complex literal', function (done) {
@@ -150,8 +144,7 @@ describe('Joi', function () {
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
             [{ a: 5, b: 'a' }, false]
-        ]);
-        done();
+        ], done);
     });
 
     it('validates regex directly', function (done) {
@@ -185,9 +178,7 @@ describe('Joi', function () {
                 [{ txt: 'test', upc: '' }, false],
                 [{ txt: 'test', upc: undefined }, false],
                 [{ txt: 'test', upc: 'test' }, true]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -209,9 +200,7 @@ describe('Joi', function () {
                 [{ txt: 'test', upc: '' }, false],
                 [{ txt: 'test', upc: undefined }, true],
                 [{ txt: 'test', upc: 'test' }, false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -242,9 +231,7 @@ describe('Joi', function () {
                 [{ txt: '', upc: undefined }, false],
                 [{ txt: '', upc: '' }, false],
                 [{ txt: 'test', upc: 'test' }, false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -260,9 +247,7 @@ describe('Joi', function () {
             [{ upc: 'test' }, true],
             [{ txt: 'test' }, true],
             [{}, false]
-        ]);
-
-        done();
+        ], done);
     });
 
     it('validates xor with number types', function (done) {
@@ -277,9 +262,7 @@ describe('Joi', function () {
             [{ code: 456 }, true],
             [{ code: 456, upc: 123 }, false],
             [{}, false]
-        ]);
-
-        done();
+        ], done);
     });
 
     it('validates xor when empty value of peer allowed', function (done) {
@@ -295,9 +278,7 @@ describe('Joi', function () {
             [{ code: '456' }, true],
             [{ code: '456', upc: '' }, false],
             [{}, false]
-        ]);
-
-        done();
+        ], done);
     });
 
     it('validates or', function (done) {
@@ -333,9 +314,7 @@ describe('Joi', function () {
                 [{ txt: '', upc: '' }, false],
                 [{ txt: 'test', upc: 'test' }, true],
                 [{ txt: 'test', upc: 'test', code: 322 }, true]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -374,9 +353,7 @@ describe('Joi', function () {
                 [{ txt: 'test', upc: 'test' }, false],
                 [{ txt: 'test', upc: 'test', code: 322 }, true],
                 [{ txt: 'test', upc: null, code: 322 }, true]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -406,9 +383,7 @@ describe('Joi', function () {
                 [{}, true],
                 [{ auth: true }, true],
                 [{ auth: 123 }, false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -438,9 +413,7 @@ describe('Joi', function () {
                 [{}, true],
                 [{ auth: true }, true],
                 [{ auth: 123 }, false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -462,9 +435,7 @@ describe('Joi', function () {
             [{ a: 123 }, false],
             [{ a: { c: 1 } }, false],
             [{ b: undefined }, false]
-        ]);
-
-        done();
+        ], done);
     });
 
     it('validates required [] alternatives', function (done) {
@@ -485,9 +456,7 @@ describe('Joi', function () {
             [{ a: 123 }, false],
             [{ a: { c: 1 } }, false],
             [{ b: undefined }, false]
-        ]);
-
-        done();
+        ], done);
     });
 
     it('validates an array of string with valid', function (done) {
@@ -499,8 +468,7 @@ describe('Joi', function () {
         Validate(schema, [
             [{ brand: ['amex'] }, true],
             [{ brand: ['visa', 'mc'] }, false]
-        ]);
-        done();
+        ], done);
     });
 
     it('validates pre and post convert value', function (done) {
@@ -510,8 +478,7 @@ describe('Joi', function () {
         Validate(schema, [
             [5, true],
             ['5', true]
-        ]);
-        done();
+        ], done);
     });
 
     it('does not change object when validation fails', function (done) {
@@ -555,8 +522,7 @@ describe('Joi', function () {
         Validate(schema, [
             [5, false],
             ['5', false]
-        ]);
-        done();
+        ], done);
     });
 
     it('invalidates missing peers', function (done) {
@@ -1167,7 +1133,6 @@ describe('Joi', function () {
 
                 expect(err).to.be.null;
                 expect(value).to.deep.equal({ a: 1, b: 'a' });
-
                 done();
             });
         });

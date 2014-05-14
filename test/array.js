@@ -126,8 +126,7 @@ describe('array', function () {
             Validate(schema, [
                 [[1, 2], true],
                 [[1], false]
-            ]);
-            done();
+            ], done);
         });
 
         it('throws when limit is not a number', function (done) {
@@ -157,8 +156,7 @@ describe('array', function () {
             Validate(schema, [
                 [[1, 2], false],
                 [[1], true]
-            ]);
-            done();
+            ], done);
         });
 
         it('throws when limit is not a number', function (done) {
@@ -188,8 +186,7 @@ describe('array', function () {
             Validate(schema, [
                 [[1, 2], true],
                 [[1], false]
-            ]);
-            done();
+            ], done);
         });
 
         it('throws when limit is not a number', function (done) {
@@ -218,16 +215,14 @@ describe('array', function () {
             Validate(Joi.array(), [
                 [undefined, true],
                 [[], true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should, when .required(), deny undefined', function (done) {
 
             Validate(Joi.array().required(), [
                 [undefined, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('allows empty arrays', function (done) {
@@ -235,8 +230,7 @@ describe('array', function () {
             Validate(Joi.array(), [
                 [undefined, true],
                 [[], true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should exclude values when excludes is called', function (done) {
@@ -245,8 +239,7 @@ describe('array', function () {
                 [['2', '1'], false],
                 [['1'], false],
                 [[2], true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should allow types to be excluded', function (done) {
@@ -273,8 +266,7 @@ describe('array', function () {
                 [[1, 2, 3], true],
                 [[50, 100, 1000], true],
                 [['a', 1, 2], false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate array of mixed Numbers & Strings', function (done) {
@@ -284,8 +276,7 @@ describe('array', function () {
                 [[50, 100, 1000], true],
                 [[1, 'a', 5, 10], true],
                 [['joi', 'everydaylowprices', 5000], true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate array of objects with schema', function (done) {
@@ -294,8 +285,7 @@ describe('array', function () {
                 [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
                 [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false],
                 [[1, 2, [1]], false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should not validate array of unallowed mixed types (Array)', function (done) {
@@ -303,8 +293,7 @@ describe('array', function () {
             Validate(Joi.array().includes(Joi.number()), [
                 [[1, 2, 3], true],
                 [[1, 2, [1]], false]
-            ]);
-            done();
+            ], done);
         });
 
         it('errors on invalid number rule using includes', function (done) {
@@ -333,8 +322,7 @@ describe('array', function () {
                 [{ array: ['1'] }, false],
                 [{ array: [3] }, true],
                 [{ array: ['12345', 3] }, true]
-            ]);
-            done();
+            ], done);
         });
     });
 });

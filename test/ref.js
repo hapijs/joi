@@ -38,9 +38,7 @@ describe('ref', function () {
                 [{ b: 5 }, true],
                 [{ a: 5, b: 5 }, true],
                 [{ a: '5', b: '5' }, true]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -63,9 +61,7 @@ describe('ref', function () {
                 [{ b: { c: 5 } }, true],
                 [{ a: 5, b: 5 }, false],
                 [{ a: '5', b: { c: '5' } }, true]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -197,44 +193,47 @@ describe('ref', function () {
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
-        ]);
+        ], function () {
 
-        Validate({ b: b, a: a, c: c }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false]
-        ]);
+            Validate({ b: b, a: a, c: c }, [
+                [{ a: {} }, true],
+                [{ a: { c: '5' }, b: 5 }, true],
+                [{ a: { c: '5' }, b: 6, c: '6' }, true],
+                [{ a: { c: '5' }, b: 7, c: '6' }, false]
+            ], function () {
 
-        Validate({ b: b, c: c, a: a }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false]
-        ]);
+                Validate({ b: b, c: c, a: a }, [
+                    [{ a: {} }, true],
+                    [{ a: { c: '5' }, b: 5 }, true],
+                    [{ a: { c: '5' }, b: 6, c: '6' }, true],
+                    [{ a: { c: '5' }, b: 7, c: '6' }, false]
+                ], function () {
+                });
 
-        Validate({ a: a, c: c, b: b }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false]
-        ]);
+                Validate({ a: a, c: c, b: b }, [
+                    [{ a: {} }, true],
+                    [{ a: { c: '5' }, b: 5 }, true],
+                    [{ a: { c: '5' }, b: 6, c: '6' }, true],
+                    [{ a: { c: '5' }, b: 7, c: '6' }, false]
+                ], function () {
 
-        Validate({ c: c, a: a, b: b }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false]
-        ]);
+                    Validate({ c: c, a: a, b: b }, [
+                        [{ a: {} }, true],
+                        [{ a: { c: '5' }, b: 5 }, true],
+                        [{ a: { c: '5' }, b: 6, c: '6' }, true],
+                        [{ a: { c: '5' }, b: 7, c: '6' }, false]
+                    ], function () {
 
-        Validate({ c: c, b: b, a: a }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false]
-        ]);
-
-        done();
+                        Validate({ c: c, b: b, a: a }, [
+                            [{ a: {} }, true],
+                            [{ a: { c: '5' }, b: 5 }, true],
+                            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+                            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+                        ], done);
+                    });
+                });
+            });
+        });
     });
 
     describe('#create', function () {

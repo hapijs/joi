@@ -28,9 +28,7 @@ describe('any', function () {
             Validate(Joi.equal(4), [
                 [4, true],
                 [5, false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -41,9 +39,7 @@ describe('any', function () {
             Validate(Joi.not(5), [
                 [4, true],
                 [5, false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -60,7 +56,7 @@ describe('any', function () {
                 [{ array: ['1'] }, false],
                 [{ array: [3] }, true],
                 [{ array: ['12345', 3] }, true]
-            ]); done();
+            ], done);
         });
     });
 
@@ -105,7 +101,6 @@ describe('any', function () {
 
                 expect(err).to.not.exist;
                 expect(value.foo).to.equal('test');
-
                 done();
             });
         });
@@ -119,7 +114,6 @@ describe('any', function () {
 
                 expect(err).to.not.exist;
                 expect(value.foo).to.equal('test');
-
                 done();
             });
         });
@@ -131,7 +125,6 @@ describe('any', function () {
 
             var b = Joi.description('my description');
             expect(b._description).to.equal('my description');
-
             done();
         });
 
@@ -151,7 +144,6 @@ describe('any', function () {
 
             var b = Joi.notes(['a']).notes('my notes');
             expect(b._notes).to.deep.equal(['a', 'my notes']);
-
             done();
         });
 
@@ -182,7 +174,6 @@ describe('any', function () {
             expect(b._tags).to.include('tag1');
             expect(b._tags).to.include('tag2');
             expect(b._tags).to.include('tag3');
-
             done();
         });
 
@@ -301,9 +292,14 @@ describe('any', function () {
             var a = Joi.number().options({ convert: true });
             var b = Joi.options({ convert: false });
 
-            Validate(a, [[1, true], ['1', true]]);
-            Validate(a.concat(b), [[1, true], ['1', false]]);
-            done();
+            Validate(a, [
+                [1, true], ['1', true]
+            ], function () {
+
+                Validate(a.concat(b), [
+                    [1, true], ['1', false]
+                ], done);
+            });
         });
 
         it('merges two schemas (invalid)', function (done) {
@@ -311,10 +307,19 @@ describe('any', function () {
             var a = Joi.string().valid('a');
             var b = Joi.string().valid('b');
 
-            Validate(a, [['a', true], ['b', false]]);
-            Validate(b, [['b', true], ['a', false]]);
-            Validate(a.concat(b), [['a', true], ['b', true]]);
-            done();
+            Validate(a, [
+                ['a', true], ['b', false]
+            ], function () {
+
+                Validate(b, [
+                    ['b', true], ['a', false]
+                ], function () {
+
+                    Validate(a.concat(b), [
+                        ['a', true], ['b', true]
+                    ], done);
+                });
+            });
         });
 
         it('merges two schemas (invalid)', function (done) {
@@ -322,10 +327,19 @@ describe('any', function () {
             var a = Joi.string().invalid('a');
             var b = Joi.invalid('b');
 
-            Validate(a, [['b', true], ['a', false]]);
-            Validate(b, [['a', true], ['b', false]]);
-            Validate(a.concat(b), [['a', false], ['b', false]]);
-            done();
+            Validate(a, [
+                ['b', true], ['a', false]
+            ], function () {
+
+                Validate(b, [
+                    ['a', true], ['b', false]
+                ], function () {
+
+                    Validate(a.concat(b), [
+                        ['a', false], ['b', false]
+                    ], done);
+                });
+            });
         });
 
         it('merges two schemas (tests)', function (done) {
@@ -333,10 +347,19 @@ describe('any', function () {
             var a = Joi.number().min(5);
             var b = Joi.number().max(10);
 
-            Validate(a, [[4, false], [11, true]]);
-            Validate(b, [[6, true], [11, false]]);
-            Validate(a.concat(b), [[4, false], [6, true], [11, false]]);
-            done();
+            Validate(a, [
+                [4, false], [11, true]
+            ], function () {
+
+                Validate(b, [
+                    [6, true], [11, false]
+                ], function () {
+
+                    Validate(a.concat(b), [
+                        [4, false], [6, true], [11, false]
+                    ], done);
+                });
+            });
         });
 
         it('merges two schemas (flags)', function (done) {
@@ -344,9 +367,14 @@ describe('any', function () {
             var a = Joi.string().valid('a');
             var b = Joi.string().insensitive();
 
-            Validate(a, [['a', true], ['A', false], ['b', false]]);
-            Validate(a.concat(b), [['a', true], ['A', true], ['b', false]]);
-            done();
+            Validate(a, [
+                ['a', true], ['A', false], ['b', false]
+            ], function () {
+
+                Validate(a.concat(b), [
+                    ['a', true], ['A', true], ['b', false]
+                ], done);
+            });
         });
 
         it('overrides and append information', function (done) {
@@ -372,11 +400,24 @@ describe('any', function () {
             var a = Joi.object();
             var b = Joi.object({ b: 1 });
 
-            Validate(a, [[{ b: 1 }, true], [{ b: 2 }, true]]);
-            Validate(b, [[{ b: 1 }, true], [{ b: 2 }, false]]);
-            Validate(a.concat(b), [[{ b: 1 }, true], [{ b: 2 }, false]]);
-            Validate(b.concat(a), [[{ b: 1 }, true], [{ b: 2 }, false]]);
-            done();
+            Validate(a, [
+                [{ b: 1 }, true], [{ b: 2 }, true]
+            ], function () {
+
+                Validate(b, [
+                    [{ b: 1 }, true], [{ b: 2 }, false]
+                ], function () {
+
+                    Validate(a.concat(b), [
+                        [{ b: 1 }, true], [{ b: 2 }, false]
+                    ], function () {
+
+                        Validate(b.concat(a), [
+                            [{ b: 1 }, true], [{ b: 2 }, false]
+                        ], done);
+                    });
+                });
+            });
         });
 
         it('merges two objects (no key + any key)', function (done) {
@@ -384,11 +425,24 @@ describe('any', function () {
             var a = Joi.object({});
             var b = Joi.object();
 
-            Validate(a, [[{}, true], [{ b: 2 }, false]]);
-            Validate(b, [[{}, true], [{ b: 2 }, true]]);
-            Validate(a.concat(b), [[{}, true], [{ b: 2 }, false]]);
-            Validate(b.concat(a), [[{}, true], [{ b: 2 }, false]]);
-            done();
+            Validate(a, [
+                [{}, true], [{ b: 2 }, false]
+            ], function () {
+
+                Validate(b, [
+                    [{}, true], [{ b: 2 }, true]
+                ], function () {
+
+                    Validate(a.concat(b), [
+                        [{}, true], [{ b: 2 }, false]
+                    ], function () {
+
+                        Validate(b.concat(a), [
+                            [{}, true], [{ b: 2 }, false]
+                        ], done);
+                    });
+                });
+            });
         });
 
         it('merges two objects (key + key)', function (done) {
@@ -396,11 +450,24 @@ describe('any', function () {
             var a = Joi.object({ a: 1 });
             var b = Joi.object({ b: 2 });
 
-            Validate(a, [[{ a: 1 }, true], [{ b: 2 }, false]]);
-            Validate(b, [[{ a: 1 }, false], [{ b: 2 }, true]]);
-            Validate(a.concat(b), [[{ a: 1 }, true], [{ b: 2 }, true]]);
-            Validate(b.concat(a), [[{ a: 1 }, true], [{ b: 2 }, true]]);
-            done();
+            Validate(a, [
+                [{ a: 1 }, true], [{ b: 2 }, false]
+            ], function () {
+
+                Validate(b, [
+                    [{ a: 1 }, false], [{ b: 2 }, true]
+                ], function () {
+
+                    Validate(a.concat(b), [
+                        [{ a: 1 }, true], [{ b: 2 }, true]
+                    ], function () {
+
+                        Validate(b.concat(a), [
+                            [{ a: 1 }, true], [{ b: 2 }, true]
+                        ], done);
+                    });
+                });
+            });
         });
 
         it('merges two objects (renames)', function (done) {
@@ -412,8 +479,8 @@ describe('any', function () {
 
                 expect(err).to.not.exist;
                 expect(value).to.deep.equal({ a: 1, b: 2 });
+                done();
             });
-            done();
         });
 
         it('merges two objects (deps)', function (done) {
@@ -424,8 +491,8 @@ describe('any', function () {
             a.concat(b).validate({ a: 1, b: 2 }, function (err, value) {
 
                 expect(err).to.not.exist;
+                done();
             });
-            done();
         });
 
         it('merges two alternatives with references', function (done) {
@@ -441,9 +508,7 @@ describe('any', function () {
                 [{ a: { c: '5' }, b: 5 }, true],
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
                 [{ a: { c: '5' }, b: 7, c: '6' }, false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -455,7 +520,6 @@ describe('any', function () {
 
                 Joi.when('a');
             }).to.throw('Invalid options');
-
             done();
         });
 
@@ -475,9 +539,7 @@ describe('any', function () {
                 [{ a: 1, b: 'z' }, true],
                 [{ a: 5, b: 'a' }, false],
                 [{ b: 'a' }, false]
-            ]);
-
-            done();
+            ], done);
         });
 
         it('forks type into alternatives (only then)', function (done) {
@@ -496,9 +558,7 @@ describe('any', function () {
                 [{ a: 1, b: 'z' }, false],
                 [{ a: 5, b: 'a' }, false],
                 [{ b: 'a' }, false]
-            ]);
-
-            done();
+            ], done);
         });
 
         it('forks type into alternatives (only otherwise)', function (done) {
@@ -517,9 +577,7 @@ describe('any', function () {
                 [{ a: 1, b: 'z' }, true],
                 [{ a: 5, b: 'a' }, false],
                 [{ b: 'a' }, false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 

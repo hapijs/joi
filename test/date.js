@@ -27,9 +27,7 @@ describe('date', function () {
         Validate(schema, [
             [true, false],
             [false, false]
-        ]);
-
-        done();
+        ], done);
     });
 
     it('matches specific date', function (done) {
@@ -70,8 +68,7 @@ describe('date', function () {
                 ['1-1-2012', true],
                 [0, false],
                 ['1-1-2000', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('validates max', function (done) {
@@ -81,8 +78,7 @@ describe('date', function () {
                 ['1-1-2012', true],
                 [0, true],
                 ['1-1-2014', false]
-            ]);
-            done();
+            ], done);
         });
     });
 });

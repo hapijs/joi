@@ -26,8 +26,7 @@ describe('func', function () {
         Validate(Joi.func().required(), [
             [function () { }, true],
             ['', false]
-        ]);
-        done();
+        ], done);
     });
 });
 

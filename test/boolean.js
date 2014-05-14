@@ -57,7 +57,7 @@ describe('boolean', function () {
                 ['false', true],
                 ['yes', true],
                 ['no', true]
-            ]); done();
+            ], done);
         });
 
         it('should handle work with required', function (done) {
@@ -69,7 +69,7 @@ describe('boolean', function () {
                 [false, true],
                 [true, true],
                 [null, false]
-            ]); done();
+            ], done);
         });
 
         it('should handle work with allow', function (done) {
@@ -79,7 +79,7 @@ describe('boolean', function () {
                 ['1234', false],
                 [false, true],
                 [null, false]
-            ]); done();
+            ], done);
         });
 
         it('should handle work with invalid', function (done) {
@@ -90,7 +90,7 @@ describe('boolean', function () {
                 [false, false],
                 [true, true],
                 [null, false]
-            ]); done();
+            ], done);
         });
 
         it('should handle work with invalid and null allowed', function (done) {
@@ -101,7 +101,7 @@ describe('boolean', function () {
                 [false, false],
                 [true, true],
                 [null, true]
-            ]); done();
+            ], done);
         });
 
         it('should handle work with allow and invalid', function (done) {
@@ -112,7 +112,7 @@ describe('boolean', function () {
                 [false, true],
                 [true, false],
                 [null, false]
-            ]); done();
+            ], done);
         });
 
         it('should handle work with allow, invalid, and null allowed', function (done) {
@@ -123,7 +123,7 @@ describe('boolean', function () {
                 [false, true],
                 [true, false],
                 [null, true]
-            ]); done();
+            ], done);
         });
     });
 });

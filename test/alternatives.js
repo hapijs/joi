@@ -121,9 +121,7 @@ describe('alternatives', function () {
                 [{ a: 'y', b: 6 }, true],
                 [{ a: 'z', b: 5 }, true],
                 [{ a: 'z', b: 6 }, true]
-            ]);
-
-            done();
+            ], done);
         });
 
         it('validates only then', function (done) {
@@ -141,9 +139,7 @@ describe('alternatives', function () {
                 [{ a: 'y', b: 6 }, false],
                 [{ a: 'z', b: 5 }, true],
                 [{ a: 'z', b: 6 }, true]
-            ]);
-
-            done();
+            ], done);
         });
 
         it('validates only otherwise', function (done) {
@@ -161,9 +157,7 @@ describe('alternatives', function () {
                 [{ a: 'y', b: 6 }, true],
                 [{ a: 'z', b: 5 }, true],
                 [{ a: 'z', b: 6 }, true]
-            ]);
-
-            done();
+            ], done);
         });
 
         it('validates when is has ref', function (done) {
@@ -180,9 +174,7 @@ describe('alternatives', function () {
                 [{ a: 'x', b: '5', c: '5' }, false],
                 [{ a: 'y', b: 5, c: 5 }, false],
                 [{ a: 'y' }, false]
-            ]);
-
-            done();
+            ], done);
         });
 
         it('validates when then has ref', function (done) {
@@ -197,9 +189,7 @@ describe('alternatives', function () {
                 [{ a: 'x', b: 5, c: '1' }, false],
                 [{ a: 1, b: 5, c: '1' }, true],
                 [{ a: '1', b: 5, c: '1' }, false]
-            ]);
-
-            done();
+            ], done);
         });
 
         it('validates when otherwise has ref', function (done) {
@@ -214,9 +204,7 @@ describe('alternatives', function () {
                 [{ a: 'x', b: 5, c: '1' }, false],
                 [{ a: 1, b: 5, c: '1' }, true],
                 [{ a: '1', b: 5, c: '1' }, false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 

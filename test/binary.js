@@ -45,9 +45,7 @@ describe('binary', function () {
             ['goodbye', false],
             [new Buffer('goodbye'), false],
             [new Buffer('HELLO'), false]
-        ]);
-
-        done();
+        ], done);
     });
 
     describe('#validate', function () {
@@ -101,8 +99,7 @@ describe('binary', function () {
             Validate(schema, [
                 [new Buffer('testing'), true],
                 [new Buffer('test'), false]
-            ]);
-            done();
+            ], done);
         });
 
         it('throws when min is not a number', function (done) {
@@ -132,8 +129,7 @@ describe('binary', function () {
             Validate(schema, [
                 [new Buffer('testing'), false],
                 [new Buffer('test'), true]
-            ]);
-            done();
+            ], done);
         });
 
         it('throws when max is not a number', function (done) {
@@ -163,8 +159,7 @@ describe('binary', function () {
             Validate(schema, [
                 [new Buffer('test'), true],
                 [new Buffer('testing'), false]
-            ]);
-            done();
+            ], done);
         });
 
         it('throws when length is not a number', function (done) {

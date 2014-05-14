@@ -27,9 +27,7 @@ describe('string', function () {
         Validate(schema, [
             [true, false],
             [false, false]
-        ]);
-
-        done();
+        ], done);
     });
 
     describe('#valid', function () {
@@ -59,8 +57,7 @@ describe('string', function () {
                 ['b', true],
                 ['A', false],
                 ['B', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('validates case insensitive values', function (done) {
@@ -71,8 +68,7 @@ describe('string', function () {
                 ['A', true],
                 ['B', true],
                 [4, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('validates case insensitive values with non-strings', function (done) {
@@ -84,8 +80,7 @@ describe('string', function () {
                 ['B', true],
                 [4, false],
                 [5, true]
-            ]);
-            done();
+            ], done);
         });
     });
 
@@ -116,8 +111,7 @@ describe('string', function () {
                 ['b', false],
                 ['A', true],
                 ['B', true]
-            ]);
-            done();
+            ], done);
         });
 
         it('invalidates case insensitive values', function (done) {
@@ -127,8 +121,7 @@ describe('string', function () {
                 ['b', false],
                 ['A', false],
                 ['B', false]
-            ]);
-            done();
+            ], done);
         });
     });
 
@@ -158,9 +151,7 @@ describe('string', function () {
             Validate(schema, [
                 ['\u00bd', true],
                 ['a', false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -190,9 +181,7 @@ describe('string', function () {
             Validate(schema, [
                 ['\u00bd', false],
                 ['a', true]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -222,9 +211,7 @@ describe('string', function () {
             Validate(schema, [
                 ['\u00bd', true],
                 ['a', false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -245,9 +232,7 @@ describe('string', function () {
                 ['::1', true],
                 ['0:0:0:0:0:0:0:1', true],
                 ['0:?:0:0:0:0:0:1', false]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -258,8 +243,7 @@ describe('string', function () {
             Validate(Joi.string(), [
                 [undefined, true],
                 ['', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should, when .required(), deny undefined, deny empty string', function (done) {
@@ -267,8 +251,7 @@ describe('string', function () {
             Validate(Joi.string().required(), [
                 [undefined, false],
                 ['', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should, when .required(), print a friend error message for an empty string', function (done) {
@@ -288,8 +271,7 @@ describe('string', function () {
                 ['test', true],
                 ['0', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate invalid values', function (done) {
@@ -299,8 +281,7 @@ describe('string', function () {
                 ['x', true],
                 ['a', false],
                 ['c', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should invalidate invalid values', function (done) {
@@ -310,8 +291,7 @@ describe('string', function () {
                 ['x', false],
                 ['a', true],
                 ['c', true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle array arguments correctly', function (done) {
@@ -321,8 +301,7 @@ describe('string', function () {
                 ['x', false],
                 ['a', true],
                 ['c', true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate minimum length when min is used', function (done) {
@@ -332,8 +311,7 @@ describe('string', function () {
                 ['test', true],
                 ['0', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate minimum length when min is 0', function (done) {
@@ -343,8 +321,7 @@ describe('string', function () {
                 ['0', true],
                 [null, false],
                 [undefined, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should return false with minimum length and a null value passed in', function (done) {
@@ -352,8 +329,7 @@ describe('string', function () {
             var schema = Joi.string().min(3);
             Validate(schema, [
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('null allowed overrides min length requirement', function (done) {
@@ -361,8 +337,7 @@ describe('string', function () {
             var schema = Joi.string().min(3).allow(null);
             Validate(schema, [
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate maximum length when max is used', function (done) {
@@ -372,8 +347,7 @@ describe('string', function () {
                 ['test', false],
                 ['0', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should return true with max and not required when value is undefined', function (done) {
@@ -381,8 +355,7 @@ describe('string', function () {
             var schema = Joi.string().max(3);
             Validate(schema, [
                 [undefined, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('validates length requirements', function (done) {
@@ -393,8 +366,7 @@ describe('string', function () {
                 ['0', false],
                 [null, false],
                 ['abc', true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate regex', function (done) {
@@ -403,8 +375,7 @@ describe('string', function () {
             Validate(schema, [
                 ['van', false],
                 ['0-www', true]
-            ]);
-            done();
+            ], done);
         });
 
         it('validates token', function (done) {
@@ -414,8 +385,7 @@ describe('string', function () {
                 ['w0rld_of_w4lm4rtl4bs', true],
                 ['w0rld of_w4lm4rtl4bs', false],
                 ['abcd#f?h1j orly?', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('validates alphanum', function (done) {
@@ -425,8 +395,7 @@ describe('string', function () {
                 ['w0rld of w4lm4rtl4bs', false],
                 ['w0rldofw4lm4rtl4bs', true],
                 ['abcd#f?h1j orly?', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate email', function (done) {
@@ -435,8 +404,7 @@ describe('string', function () {
             Validate(schema, [
                 ['van@walmartlabs.com', true],
                 ['@iaminvalid.com', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate email with a friendly error message', function (done) {
@@ -498,8 +466,7 @@ describe('string', function () {
 
             Validate(Joi.string().allow(null), [
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate "" (empty string) with allow(\'\')', function (done) {
@@ -507,8 +474,7 @@ describe('string', function () {
             Validate(Joi.string().allow(''), [
                 ['', true],
                 ['', true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of required and min', function (done) {
@@ -519,8 +485,7 @@ describe('string', function () {
                 ['123', true],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of required and max', function (done) {
@@ -532,8 +497,7 @@ describe('string', function () {
                 ['1234', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of allow(\'\') and min', function (done) {
@@ -545,8 +509,7 @@ describe('string', function () {
                 ['1234', true],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of allow(\'\') and max', function (done) {
@@ -558,8 +521,7 @@ describe('string', function () {
                 ['1234', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of null allowed and max', function (done) {
@@ -570,8 +532,7 @@ describe('string', function () {
                 ['1234', false],
                 ['', false],
                 [null, true]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min and max', function (done) {
@@ -584,8 +545,7 @@ describe('string', function () {
                 ['12', true],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, and allow(\'\')', function (done) {
@@ -598,8 +558,7 @@ describe('string', function () {
                 ['12', true],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, and required', function (done) {
@@ -612,8 +571,7 @@ describe('string', function () {
                 ['12', true],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, and regex', function (done) {
@@ -629,8 +587,7 @@ describe('string', function () {
                 ['abcd', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, regex, and allow(\'\')', function (done) {
@@ -646,8 +603,7 @@ describe('string', function () {
                 ['abcd', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, regex, and required', function (done) {
@@ -663,8 +619,7 @@ describe('string', function () {
                 ['abcd', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, and alphanum', function (done) {
@@ -681,8 +636,7 @@ describe('string', function () {
                 ['*ab', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, alphanum, and allow(\'\')', function (done) {
@@ -699,8 +653,7 @@ describe('string', function () {
                 ['*ab', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, alphanum, and required', function (done) {
@@ -717,8 +670,7 @@ describe('string', function () {
                 ['*ab', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, alphanum, and regex', function (done) {
@@ -736,8 +688,7 @@ describe('string', function () {
                 ['*ab', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, alphanum, required, and regex', function (done) {
@@ -755,8 +706,7 @@ describe('string', function () {
                 ['*ab', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of min, max, alphanum, allow(\'\'), and regex', function (done) {
@@ -774,8 +724,7 @@ describe('string', function () {
                 ['*ab', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email and min', function (done) {
@@ -786,8 +735,7 @@ describe('string', function () {
                 ['123@x.com', true],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, and max', function (done) {
@@ -800,8 +748,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, and invalid', function (done) {
@@ -814,8 +761,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, and allow', function (done) {
@@ -828,8 +774,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, allow, and invalid', function (done) {
@@ -842,8 +787,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, allow, invalid, and allow(\'\')', function (done) {
@@ -856,8 +800,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, allow, and allow(\'\')', function (done) {
@@ -870,8 +813,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, allow, invalid, and regex', function (done) {
@@ -884,8 +826,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, allow, invalid, regex, and allow(\'\')', function (done) {
@@ -898,8 +839,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, and allow(\'\')', function (done) {
@@ -912,8 +852,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, and regex', function (done) {
@@ -926,8 +865,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, regex, and allow(\'\')', function (done) {
@@ -940,8 +878,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of email, min, max, regex, and required', function (done) {
@@ -954,8 +891,7 @@ describe('string', function () {
                 ['12345@x.com', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate isoDate', function (done) {
@@ -972,8 +908,7 @@ describe('string', function () {
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
                 ['1-1-2013', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate isoDate with a friendly error message', function (done) {
@@ -1003,8 +938,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min and max', function (done) {
@@ -1024,8 +958,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min and max', function (done) {
@@ -1045,8 +978,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max and invalid', function (done) {
@@ -1066,8 +998,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max and allow', function (done) {
@@ -1087,8 +1018,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max, allow and invalid', function (done) {
@@ -1108,8 +1038,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max, allow, invalid and allow(\'\')', function (done) {
@@ -1129,8 +1058,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max, allow, invalid and allow(\'\')', function (done) {
@@ -1150,8 +1078,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max, allow, invalid and regex', function (done) {
@@ -1171,8 +1098,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max, allow, invalid, regex and allow(\'\')', function (done) {
@@ -1192,8 +1118,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max and allow(\'\')', function (done) {
@@ -1213,8 +1138,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max and regex', function (done) {
@@ -1234,8 +1158,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max, regex and allow(\'\')', function (done) {
@@ -1255,8 +1178,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of isoDate, min, max, regex and required', function (done) {
@@ -1276,8 +1198,7 @@ describe('string', function () {
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate guid', function (done) {
@@ -1294,8 +1215,7 @@ describe('string', function () {
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false],
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should validate guid with a friendly error message', function (done) {
@@ -1325,8 +1245,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min and max', function (done) {
@@ -1346,8 +1265,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max and invalid', function (done) {
@@ -1367,8 +1285,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max and allow', function (done) {
@@ -1388,8 +1305,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max, allow and invalid', function (done) {
@@ -1409,8 +1325,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max, allow, invalid and allow(\'\')', function (done) {
@@ -1430,8 +1345,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max, allow and allow(\'\')', function (done) {
@@ -1451,8 +1365,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max, allow, invalid and regex', function (done) {
@@ -1472,8 +1385,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max, allow, invalid, regex and allow(\'\')', function (done) {
@@ -1493,8 +1405,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max and allow(\'\')', function (done) {
@@ -1514,8 +1425,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max and regex', function (done) {
@@ -1535,8 +1445,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max, regex and allow(\'\')', function (done) {
@@ -1556,8 +1465,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', true],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
 
         it('should handle combination of guid, min, max, regex and required', function (done) {
@@ -1577,8 +1485,7 @@ describe('string', function () {
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false],
                 ['', false],
                 [null, false]
-            ]);
-            done();
+            ], done);
         });
     });
 });

@@ -48,8 +48,7 @@ describe('object', function () {
             [{}, true],
             [{ hi: true }, true],
             ['', false]
-        ]);
-        done();
+        ], done);
     });
 
     it('allows any key when schema is undefined', function (done) {
@@ -119,8 +118,7 @@ describe('object', function () {
             [{ item: 'something' }, true],
             [{ item: 'something', item2: 'something else' }, false],
             ['', false]
-        ]);
-        done();
+        ], done);
     });
 
     it('should validate count when min is set', function (done) {
@@ -131,8 +129,7 @@ describe('object', function () {
             [{ item: 'something', item2: 'something else' }, false],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
             ['', false]
-        ]);
-        done();
+        ], done);
     });
 
     it('should validate count when max is set', function (done) {
@@ -143,8 +140,7 @@ describe('object', function () {
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, false],
             ['', false]
-        ]);
-        done();
+        ], done);
     });
 
     it('should validate count when min and max is set', function (done) {
@@ -156,8 +152,7 @@ describe('object', function () {
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else', item4: 'item4' }, false],
             ['', false]
-        ]);
-        done();
+        ], done);
     });
 
     it('should validate count when length is set', function (done) {
@@ -168,8 +163,7 @@ describe('object', function () {
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, false],
             ['', false]
-        ]);
-        done();
+        ], done);
     });
 
     it('should traverse an object and validate all properties in the top level', function (done) {
@@ -181,8 +175,7 @@ describe('object', function () {
         Validate(schema, [
             [{ num: 1 }, true],
             [{ num: [1, 2, 3] }, false]
-        ]);
-        done();
+        ], done);
     });
 
     it('should traverse an object and child objects and validate all properties', function (done) {
@@ -199,8 +192,7 @@ describe('object', function () {
             [{ num: [1, 2, 3] }, false],
             [{ num: 1, obj: { item: 'something' } }, true],
             [{ num: 1, obj: { item: 123 } }, false]
-        ]);
-        done();
+        ], done);
     });
 
     it('should traverse an object several levels', function (done) {
@@ -222,8 +214,7 @@ describe('object', function () {
             [{ obj: { obj: { obj: {} } } }, true],
             [{ obj: { obj: { obj: { item: true } } } }, true],
             [{ obj: { obj: { obj: { item: 10 } } } }, false]
-        ]);
-        done();
+        ], done);
     });
 
     it('should traverse an object several levels with required levels', function (done) {
@@ -247,8 +238,7 @@ describe('object', function () {
             [{ obj: { obj: { obj: {} } } }, true],
             [{ obj: { obj: { obj: { item: true } } } }, true],
             [{ obj: { obj: { obj: { item: 10 } } } }, false]
-        ]);
-        done();
+        ], done);
     });
 
     it('should traverse an object several levels with required levels (without Joi.obj())', function (done) {
@@ -272,8 +262,7 @@ describe('object', function () {
             [{ obj: { obj: { obj: {} } } }, false],
             [{ obj: { obj: { obj: { item: true } } } }, true],
             [{ obj: { obj: { obj: { item: 10 } } } }, false]
-        ]);
-        done();
+        ], done);
     });
 
     it('errors on unknown keys when functions allows', function (done) {
@@ -294,8 +283,9 @@ describe('object', function () {
             second: Joi.any()
         }).with('first', 'second');
 
-        Validate(schema, [[{ first: 'value' }, false]]);
-        done();
+        Validate(schema, [
+            [{ first: 'value' }, false]
+        ], done);
     });
 
     describe('#keys', function () {
@@ -361,9 +351,7 @@ describe('object', function () {
                 [{ a: { b: 'x' } }, false],
                 [{ a: { b: 5 }, c: 'ignore' }, true],
                 [{ a: { b: 5, c: 'ignore' } }, false]
-            ]);
-
-            done();
+            ], done);
         });
 
         it('forbids local unknown without applying to children', function (done) {
@@ -379,9 +367,7 @@ describe('object', function () {
                 [{ a: { b: 'x' } }, false],
                 [{ a: { b: 5 }, c: 'ignore' }, false],
                 [{ a: { b: 5, c: 'ignore' } }, true]
-            ]);
-
-            done();
+            ], done);
         });
     });
 
@@ -718,9 +704,7 @@ describe('object', function () {
 
                 Validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
-                ]);
-
-                done();
+                ], done);
             });
         });
 
@@ -743,9 +727,7 @@ describe('object', function () {
 
                 Validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
-                ]);
-
-                done();
+                ], done);
             });
         });
 
