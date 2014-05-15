@@ -1207,6 +1207,15 @@ describe('Joi', function () {
         });
     });
 
+    it('validates using the root any object (no callback)', function (done) {
+
+        var any = Joi;
+        var result = any.validate('abc');
+        expect(result.error).to.not.exist;
+        expect(result.value).to.equal('abc');
+        done();
+    });
+
     it('accepts no options', function (done) {
 
         Joi.validate('test', Joi.string(), function (err, value) {
@@ -1214,6 +1223,30 @@ describe('Joi', function () {
             expect(err).to.not.exist;
             done();
         });
+    });
+
+    it('accepts no options (no callback)', function (done) {
+
+        var result = Joi.validate('test', Joi.string());
+        expect(result.error).to.not.exist;
+        expect(result.value).to.equal('test');
+        done();
+    });
+
+    it('accepts options', function (done) {
+
+        Joi.validate('5', Joi.number(), { convert: false }, function (err, value) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
+    it('accepts options (no callback)', function (done) {
+
+        var result = Joi.validate('5', Joi.number(), { convert: false });
+        expect(result.error).to.exist;
+        done();
     });
 
     it('accepts null options', function (done) {

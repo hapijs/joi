@@ -1,6 +1,5 @@
 // Load modules
 
-var Async = require('async');
 var Lab = require('lab');
 var Joi = require('../');
 
@@ -22,25 +21,27 @@ var it = Lab.test;
 module.exports = function (schema, config, callback) {
 
     var compiled = Joi.compile(schema);
-    Async.forEachSeries(config, function (item, next) {
+    for (var i = 0, il = config.length; i < il; ++i) {
 
-        compiled.validate(item[0], function (err, value) {
+        var item = config[i];
+        var result = compiled.validate(item[0]);
 
-            if (err !== null && item[1]) {
-                console.log(err);
-            }
+        var err = result.error;
+        var value = result.value;
 
-            if (err === null && !item[1]) {
-                console.log(item[0]);
-            }
+        if (err !== null && item[1]) {
+            console.log(err);
+        }
 
-            expect(err === null).to.equal(item[1]);
-            next();
-        });
-    },
-    function (err) {
+        if (err === null && !item[1]) {
+            console.log(item[0]);
+        }
 
+        expect(err === null).to.equal(item[1]);
+    }
+
+    if (callback) {
         callback();
-    });
+    }
 };
 
