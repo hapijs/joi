@@ -51,6 +51,27 @@ describe('object', function () {
         ], done);
     });
 
+    it('retains ignored values', function (done) {
+
+        var schema = Joi.object();
+        schema.validate({ a: 5 }, function (err, value) {
+
+            expect(value.a).to.equal(5);
+            done();
+        });
+    });
+
+    it('retains skipped values', function (done) {
+
+        var schema = Joi.object({ b: 5 }).unknown(true);
+        schema.validate({ b: '5', a: 5 }, function (err, value) {
+
+            expect(value.a).to.equal(5);
+            expect(value.b).to.equal(5);
+            done();
+        });
+    });
+
     it('allows any key when schema is undefined', function (done) {
 
         Joi.object().validate({ a: 4 }, function (err, value) {
