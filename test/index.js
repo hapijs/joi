@@ -160,6 +160,23 @@ describe('Joi', function () {
         });
     });
 
+    it('validates forbidden', function (done) {
+
+        var schema = {
+            a: Joi.number(),
+            b: Joi.forbidden()
+        };
+
+        Validate(schema, [
+            [{ a: 5 }, true],
+            [{ a: 5, b: 6 }, false],
+            [{ a: 'a' }, false],
+            [{}, true],
+            [{ b: undefined }, true],
+            [{ b: null }, false]
+        ], done);
+    });
+
     it('validated with', function (done) {
 
         var schema = Joi.object({

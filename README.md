@@ -80,6 +80,7 @@ Current version: **4.2.x**
     - [`alternatives`](#alternatives)
         - [`alternatives.try(schemas)`](#alternativestryschemas)
         - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
+    - [`forbidden`](#forbidden)
     - [`ref(key, [options])`](#refkey-options)
 
 # Example
@@ -868,7 +869,7 @@ var alt = Joi.alternatives().try(Joi.number(), Joi.string());
 // Same as [Joi.number(), Joi.string()]
 ```
 
-#### `alternatives.try(schemas)
+#### `alternatives.try(schemas)``
 
 Adds an alternative schema type for attempting to match against the validated value where:
 - `schema` - an array of alternative **joi** types. Also supports providing each type as a separate argument.
@@ -891,6 +892,17 @@ Adds a conditional alternative schema type based on another key value where:
 var schema = {
     a: Joi.alternatives().when('b', { is: 5, then: Joi.string(), otherwise: Joi.number() }),
     b: Joi.any()
+};
+```
+
+### `forbidden()`
+
+Generates a type that will not match any value except `undefined`. Used to explicitly forbid keys, or in combination with
+`object.unknown(true)`.
+
+```javascript
+var schema = {
+    a: Joi.forbidden()
 };
 ```
 
