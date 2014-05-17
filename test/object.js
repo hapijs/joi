@@ -537,6 +537,17 @@ describe('object', function () {
                 done();
             });
         });
+
+        it('should be able to rename keys that are empty strings', function (done) {
+
+            var schema = Joi.object().rename('', 'notEmpty');
+            var input = {
+                '': 'something'
+            };
+
+            Validate(schema, [input, true]);
+            done();
+        });
     });
 
     describe('#describe', function () {
