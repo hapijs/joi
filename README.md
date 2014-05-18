@@ -169,6 +169,7 @@ Validates a value using the given schema and options where:
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
   - `language` - overrides individual error messages. Defaults to no override (`{}`).
+  - `context` - provides an external data set to be used in [references](#refkey-options).
 - `callback` - the callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the error reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
@@ -912,9 +913,11 @@ Generates a reference to the value of the named key. References are resolved at 
 so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
 References support the following arguments:
 - `key` - the reference target. References cannot point up the object tree, only to siebling keys, but they can point to
-  children (e.g. 'a.b.c') using the `.` separator.
+  their siebling's children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
+  which is looked up in the `context` option object.
 - `options` - optional settings:
-    - `separator` - override the default `.` hierarchy separator.
+    - `separator` - overrides the default `.` hierarchy separator.
+    - `contextPrefix` - overrides the default `$` context prefix signifier.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
 (parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
@@ -924,8 +927,9 @@ var schema = Joi.object().keys({
     a: Joi.ref('b.c'),
     b: {
         c: Joi.any()
-    }
+    },
+    c: Joi.ref('$x')
 });
 
-schema.validate({ a: 5, b: { c: 5 } }, function (err, value) {});
+Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, function (err, value) {});
 ```

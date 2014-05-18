@@ -768,6 +768,23 @@ describe('object', function () {
             }).to.throw('Cannot use assertions for root level references - use direct key rules instead');
             done();
         });
+
+        it('allows root level context ref', function (done) {
+
+            expect(function () {
+
+                var schema = Joi.object({
+                    a: {
+                        b: Joi.string(),
+                        c: Joi.number()
+                    },
+                    d: {
+                        e: Joi.any()
+                    }
+                }).assert('$a', Joi.ref('d.e'), 'equal to d.e');
+            }).to.not.throw();
+            done();
+        });
     });
 });
 

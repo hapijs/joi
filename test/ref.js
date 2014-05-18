@@ -193,46 +193,93 @@ describe('ref', function () {
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
-        ], function () {
+        ]);
 
-            Validate({ b: b, a: a, c: c }, [
-                [{ a: {} }, true],
-                [{ a: { c: '5' }, b: 5 }, true],
-                [{ a: { c: '5' }, b: 6, c: '6' }, true],
-                [{ a: { c: '5' }, b: 7, c: '6' }, false]
-            ], function () {
+        Validate({ b: b, a: a, c: c }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
 
-                Validate({ b: b, c: c, a: a }, [
-                    [{ a: {} }, true],
-                    [{ a: { c: '5' }, b: 5 }, true],
-                    [{ a: { c: '5' }, b: 6, c: '6' }, true],
-                    [{ a: { c: '5' }, b: 7, c: '6' }, false]
-                ], function () {
-                });
+        Validate({ b: b, c: c, a: a }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
 
-                Validate({ a: a, c: c, b: b }, [
-                    [{ a: {} }, true],
-                    [{ a: { c: '5' }, b: 5 }, true],
-                    [{ a: { c: '5' }, b: 6, c: '6' }, true],
-                    [{ a: { c: '5' }, b: 7, c: '6' }, false]
-                ], function () {
+        Validate({ a: a, c: c, b: b }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
 
-                    Validate({ c: c, a: a, b: b }, [
-                        [{ a: {} }, true],
-                        [{ a: { c: '5' }, b: 5 }, true],
-                        [{ a: { c: '5' }, b: 6, c: '6' }, true],
-                        [{ a: { c: '5' }, b: 7, c: '6' }, false]
-                    ], function () {
+        Validate({ c: c, a: a, b: b }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ]);
 
-                        Validate({ c: c, b: b, a: a }, [
-                            [{ a: {} }, true],
-                            [{ a: { c: '5' }, b: 5 }, true],
-                            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-                            [{ a: { c: '5' }, b: 7, c: '6' }, false]
-                        ], done);
-                    });
-                });
-            });
+        Validate({ c: c, b: b, a: a }, [
+            [{ a: {} }, true],
+            [{ a: { c: '5' }, b: 5 }, true],
+            [{ a: { c: '5' }, b: 6, c: '6' }, true],
+            [{ a: { c: '5' }, b: 7, c: '6' }, false]
+        ], done);
+    });
+
+    it('uses context as default value', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.default(Joi.ref('$x')),
+            b: Joi.any()
+        }).options({ context: { x: 22 } });
+
+        schema.validate({ b: 6 }, function (err, value) {
+
+            expect(err).to.not.exist;
+            expect(value).to.deep.equal({ a: 22, b: 6 });
+            done();
+        });
+    });
+
+    it('uses context as default value with custom prefix', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.default(Joi.ref('%x', { contextPrefix: '%' })),
+            b: Joi.any()
+        }).options({ context: { x: 22 } });
+
+        schema.validate({ b: 6 }, function (err, value) {
+
+            expect(err).to.not.exist;
+            expect(value).to.deep.equal({ a: 22, b: 6 });
+            done();
+        });
+    });
+
+    it('uses context as a valid value', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.ref('$x'),
+            b: Joi.any()
+        }).options({ context: { x: 22 } });
+
+        schema.validate({ a: 5, b: 6 }, function (err, value) {
+
+            expect(err).to.exist;
+            expect(err.message).to.equal('a must be one of context:x');
+
+            Validate(schema, [
+                [{ a: 5 }, false],
+                [{ a: 22 }, true],
+                [{ b: 5 }, true],
+                [{ a: 22, b: 5 }, true],
+                [{ a: '22', b: '5' }, false]
+            ], done);
         });
     });
 
