@@ -603,6 +603,48 @@ describe('object', function () {
         });
     });
 
+    describe('#pattern', function () {
+
+        it('validates unknown keys using a pattern', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.number()
+            }).pattern(/\d+/, Joi.boolean()).pattern(/\w\w+/, 'x');
+
+            Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false }, function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('5 must be a boolean. bb must be one of x');
+
+                Helper.validate(schema, [
+                    [{ a: 5 }, true],
+                    [{ a: 'x' }, false],
+                    [{ b: 'x' }, false],
+                    [{ bb: 'x' }, true],
+                    [{ 5: 'x' }, false],
+                    [{ 5: false }, true],
+                    [{ 5: undefined }, true]
+                ], done)
+            });
+        });
+
+        it('validates unknown keys using a pattern (nested)', function (done) {
+
+            var schema = {
+                x: Joi.object({
+                    a: Joi.number()
+                }).pattern(/\d+/, Joi.boolean()).pattern(/\w\w+/, 'x')
+            };
+
+            Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false }, function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('5 must be a boolean. bb must be one of x');
+                done();
+            });
+        });
+    });
+
     describe('#with', function () {
 
         it('should throw an error when a parameter is not a string', function (done) {

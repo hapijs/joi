@@ -59,6 +59,7 @@ Current version: **4.3.x**
         - [`object.min(limit)`](#objectminlimit)
         - [`object.max(limit)`](#objectmaxlimit)
         - [`object.length(limit)`](#objectlengthlimit)
+        - [`object.pattern(regex, schema)`](#objectpatternregex-schema)
         - [`object.and(peers)`](#objectandpeers)
         - [`object.or(peers)`](#objectorpeers)
         - [`object.xor(peers)`](#objectxorpeers)
@@ -654,6 +655,18 @@ Specifies the exact number of keys in the object where:
 
 ```javascript
 var schema = Joi.object().length(5);
+```
+
+#### `object.parrern(regex, schema)`
+
+Specify validation rules for unknown keys matching a pattern where:
+- `regex` - a regular expression tested against the unknown key names.
+- `schema` - the schema object matching keys much validate against.
+
+```javascrip
+var schema = Joi.object({
+    a: Joi.string()
+}).pattern(/\w\d/, Joi.boolean());
 ```
 
 #### `object.and(peers)`
