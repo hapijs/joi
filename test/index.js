@@ -17,7 +17,7 @@ var before = Lab.before;
 var after = Lab.after;
 var describe = Lab.experiment;
 var it = Lab.test;
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 describe('Joi', function () {
@@ -48,13 +48,13 @@ describe('Joi', function () {
         var a = Joi.string();
         var b = a.valid('b');
 
-        Validate(a, [
+        Helper.validate(a, [
             ['a', true],
             ['b', true],
             [5, false]
         ], function () {
 
-            Validate(b, [
+            Helper.validate(b, [
                 ['a', false],
                 ['b', true],
                 [5, false]
@@ -75,7 +75,7 @@ describe('Joi', function () {
 
     it('validates null schema', function (done) {
 
-        Validate(null, [
+        Helper.validate(null, [
             ['a', false],
             [null, true]
         ], done);
@@ -83,7 +83,7 @@ describe('Joi', function () {
 
     it('validates number literal', function (done) {
 
-        Validate(5, [
+        Helper.validate(5, [
             [6, false],
             [5, true]
         ], done);
@@ -91,7 +91,7 @@ describe('Joi', function () {
 
     it('validates string literal', function (done) {
 
-        Validate('5', [
+        Helper.validate('5', [
             ['6', false],
             ['5', true]
         ], done);
@@ -99,7 +99,7 @@ describe('Joi', function () {
 
     it('validates boolean literal', function (done) {
 
-        Validate(true, [
+        Helper.validate(true, [
             [false, false],
             [true, true]
         ], done);
@@ -108,7 +108,7 @@ describe('Joi', function () {
     it('validates date literal', function (done) {
 
         var now = Date.now();
-        Validate(new Date(now), [
+        Helper.validate(new Date(now), [
             [new Date(now), true],
             [now, true],
             [now * 2, false]
@@ -118,7 +118,7 @@ describe('Joi', function () {
     it('validates complex literal', function (done) {
 
         var schema = ['key', 5, { a: true, b: [/^a/, 'boom'] }];
-        Validate(schema, [
+        Helper.validate(schema, [
             ['key', true],
             [5, true],
             ['other', false],
@@ -134,7 +134,7 @@ describe('Joi', function () {
     it('validates a compiled complex literal', function (done) {
 
         var schema = Joi.compile(['key', 5, { a: true, b: [/^a/, 'boom'] }]);
-        Validate(schema, [
+        Helper.validate(schema, [
             ['key', true],
             [5, true],
             ['other', false],
@@ -160,23 +160,6 @@ describe('Joi', function () {
         });
     });
 
-    it('validates forbidden', function (done) {
-
-        var schema = {
-            a: Joi.number(),
-            b: Joi.forbidden()
-        };
-
-        Validate(schema, [
-            [{ a: 5 }, true],
-            [{ a: 5, b: 6 }, false],
-            [{ a: 'a' }, false],
-            [{}, true],
-            [{ b: undefined }, true],
-            [{ b: null }, false]
-        ], done);
-    });
-
     it('validated with', function (done) {
 
         var schema = Joi.object({
@@ -188,7 +171,7 @@ describe('Joi', function () {
 
             expect(err.message).to.equal('txt missing required peer upc');
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ upc: 'test' }, true],
                 [{ txt: 'test' }, false],
                 [{ txt: 'test', upc: null }, false],
@@ -210,7 +193,7 @@ describe('Joi', function () {
 
             expect(err.message).to.equal('txt conflict with forbidden peer upc');
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ upc: 'test' }, true],
                 [{ txt: 'test' }, true],
                 [{ txt: 'test', upc: null }, false],
@@ -232,7 +215,7 @@ describe('Joi', function () {
 
             expect(err.message).to.equal('value must contain at least one of txt, upc');
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ upc: null }, false],
                 [{ upc: 'test' }, true],
                 [{ txt: null }, false],
@@ -260,7 +243,7 @@ describe('Joi', function () {
             code: Joi.string()
         }).xor('txt', 'upc', 'code');
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ upc: 'test' }, true],
             [{ txt: 'test' }, true],
             [{}, false]
@@ -274,7 +257,7 @@ describe('Joi', function () {
             upc: Joi.number()
         }).xor('code', 'upc');
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ upc: 123 }, true],
             [{ code: 456 }, true],
             [{ code: 456, upc: 123 }, false],
@@ -289,7 +272,7 @@ describe('Joi', function () {
             upc: Joi.string().allow('')
         }).xor('code', 'upc');
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ upc: '' }, true],
             [{ upc: '123' }, true],
             [{ code: '456' }, true],
@@ -310,7 +293,7 @@ describe('Joi', function () {
 
             expect(err.message).to.equal('value must contain at least one of txt, upc, code');
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ upc: null }, true],
                 [{ upc: 'test' }, true],
                 [{ txt: null }, false],
@@ -347,7 +330,7 @@ describe('Joi', function () {
 
             expect(err.message).to.equal('value contains txt without its required peers upc, code');
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{}, true],
                 [{ upc: null }, false],
                 [{ upc: 'test' }, false],
@@ -391,7 +374,7 @@ describe('Joi', function () {
             expect(err).to.exist;
             expect(err.message).to.equal('mode must be one of required, optional, try, null. auth must be a string. auth must be a boolean');
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
                 [{ something: undefined }, false],
                 [{ auth: { something: undefined } }, false],
@@ -421,7 +404,7 @@ describe('Joi', function () {
             expect(err).to.exist;
             expect(err.message).to.equal('mode must be one of required, optional, try, null. auth must be a string. auth must be a boolean');
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
                 [{ something: undefined }, false],
                 [{ auth: { something: undefined } }, false],
@@ -443,7 +426,7 @@ describe('Joi', function () {
             )
         };
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ a: null }, false],
             [{ a: undefined }, true],
             [{}, true],
@@ -464,7 +447,7 @@ describe('Joi', function () {
             ]
         };
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ a: null }, false],
             [{ a: undefined }, true],
             [{}, true],
@@ -482,7 +465,7 @@ describe('Joi', function () {
             brand: Joi.array().includes(Joi.string().valid('amex', 'visa'))
         };
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ brand: ['amex'] }, true],
             [{ brand: ['visa', 'mc'] }, false]
         ], done);
@@ -492,7 +475,7 @@ describe('Joi', function () {
 
         var schema = Joi.number().valid(5);
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [5, true],
             ['5', true]
         ], done);
@@ -536,7 +519,7 @@ describe('Joi', function () {
 
         var schema = Joi.number().invalid(5);
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [5, false],
             ['5', false]
         ], done);

@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -24,7 +24,7 @@ describe('date', function () {
     it('fails on boolean', function (done) {
 
         var schema = Joi.date();
-        Validate(schema, [
+        Helper.validate(schema, [
             [true, false],
             [false, false]
         ], done);
@@ -63,7 +63,7 @@ describe('date', function () {
 
         it('validates min', function (done) {
 
-            Validate(Joi.date().min('1-1-2012'), [
+            Helper.validate(Joi.date().min('1-1-2012'), [
                 ['1-1-2013', true],
                 ['1-1-2012', true],
                 [0, false],
@@ -73,7 +73,7 @@ describe('date', function () {
 
         it('validates max', function (done) {
 
-            Validate(Joi.date().max('1-1-2013'), [
+            Helper.validate(Joi.date().max('1-1-2013'), [
                 ['1-1-2013', true],
                 ['1-1-2012', true],
                 [0, true],

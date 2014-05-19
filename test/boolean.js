@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -46,7 +46,7 @@ describe('boolean', function () {
         it('converts string values and validates', function (done) {
 
             var rule = Joi.boolean();
-            Validate(rule, [
+            Helper.validate(rule, [
                 ['1234', false],
                 [false, true],
                 [true, true],
@@ -63,7 +63,7 @@ describe('boolean', function () {
         it('should handle work with required', function (done) {
 
             var rule = Joi.boolean().required();
-            Validate(rule, [
+            Helper.validate(rule, [
                 ['1234', false],
                 ['true', true],
                 [false, true],
@@ -75,7 +75,7 @@ describe('boolean', function () {
         it('should handle work with allow', function (done) {
 
             var rule = Joi.boolean().allow(false);
-            Validate(rule, [
+            Helper.validate(rule, [
                 ['1234', false],
                 [false, true],
                 [null, false]
@@ -85,7 +85,7 @@ describe('boolean', function () {
         it('should handle work with invalid', function (done) {
 
             var rule = Joi.boolean().invalid(false);
-            Validate(rule, [
+            Helper.validate(rule, [
                 ['1234', false],
                 [false, false],
                 [true, true],
@@ -96,7 +96,7 @@ describe('boolean', function () {
         it('should handle work with invalid and null allowed', function (done) {
 
             var rule = Joi.boolean().invalid(false).allow(null);
-            Validate(rule, [
+            Helper.validate(rule, [
                 ['1234', false],
                 [false, false],
                 [true, true],
@@ -107,7 +107,7 @@ describe('boolean', function () {
         it('should handle work with allow and invalid', function (done) {
 
             var rule = Joi.boolean().invalid(true).allow(false);
-            Validate(rule, [
+            Helper.validate(rule, [
                 ['1234', false],
                 [false, true],
                 [true, false],
@@ -118,7 +118,7 @@ describe('boolean', function () {
         it('should handle work with allow, invalid, and null allowed', function (done) {
 
             var rule = Joi.boolean().invalid(true).allow(false).allow(null);
-            Validate(rule, [
+            Helper.validate(rule, [
                 ['1234', false],
                 [false, true],
                 [true, false],

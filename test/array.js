@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -123,7 +123,7 @@ describe('array', function () {
         it('validates array size', function (done) {
 
             var schema = Joi.array().min(2);
-            Validate(schema, [
+            Helper.validate(schema, [
                 [[1, 2], true],
                 [[1], false]
             ], done);
@@ -153,7 +153,7 @@ describe('array', function () {
         it('validates array size', function (done) {
 
             var schema = Joi.array().max(1);
-            Validate(schema, [
+            Helper.validate(schema, [
                 [[1, 2], false],
                 [[1], true]
             ], done);
@@ -183,7 +183,7 @@ describe('array', function () {
         it('validates array size', function (done) {
 
             var schema = Joi.array().length(2);
-            Validate(schema, [
+            Helper.validate(schema, [
                 [[1, 2], true],
                 [[1], false]
             ], done);
@@ -212,7 +212,7 @@ describe('array', function () {
 
         it('should, by default, allow undefined, allow empty array', function (done) {
 
-            Validate(Joi.array(), [
+            Helper.validate(Joi.array(), [
                 [undefined, true],
                 [[], true]
             ], done);
@@ -220,14 +220,14 @@ describe('array', function () {
 
         it('should, when .required(), deny undefined', function (done) {
 
-            Validate(Joi.array().required(), [
+            Helper.validate(Joi.array().required(), [
                 [undefined, false]
             ], done);
         });
 
         it('allows empty arrays', function (done) {
 
-            Validate(Joi.array(), [
+            Helper.validate(Joi.array(), [
                 [undefined, true],
                 [[], true]
             ], done);
@@ -235,7 +235,7 @@ describe('array', function () {
 
         it('should exclude values when excludes is called', function (done) {
 
-            Validate(Joi.array().excludes(Joi.string()), [
+            Helper.validate(Joi.array().excludes(Joi.string()), [
                 [['2', '1'], false],
                 [['1'], false],
                 [[2], true]
@@ -262,7 +262,7 @@ describe('array', function () {
 
         it('should validate array of Numbers', function (done) {
 
-            Validate(Joi.array().includes(Joi.number()), [
+            Helper.validate(Joi.array().includes(Joi.number()), [
                 [[1, 2, 3], true],
                 [[50, 100, 1000], true],
                 [['a', 1, 2], false]
@@ -271,7 +271,7 @@ describe('array', function () {
 
         it('should validate array of mixed Numbers & Strings', function (done) {
 
-            Validate(Joi.array().includes(Joi.number(), Joi.string()), [
+            Helper.validate(Joi.array().includes(Joi.number(), Joi.string()), [
                 [[1, 2, 3], true],
                 [[50, 100, 1000], true],
                 [[1, 'a', 5, 10], true],
@@ -281,7 +281,7 @@ describe('array', function () {
 
         it('should validate array of objects with schema', function (done) {
 
-            Validate(Joi.array().includes(Joi.object({ h1: Joi.number().required() })), [
+            Helper.validate(Joi.array().includes(Joi.object({ h1: Joi.number().required() })), [
                 [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
                 [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false],
                 [[1, 2, [1]], false]
@@ -290,7 +290,7 @@ describe('array', function () {
 
         it('should not validate array of unallowed mixed types (Array)', function (done) {
 
-            Validate(Joi.array().includes(Joi.number()), [
+            Helper.validate(Joi.array().includes(Joi.number()), [
                 [[1, 2, 3], true],
                 [[1, 2, [1]], false]
             ], done);
@@ -317,7 +317,7 @@ describe('array', function () {
                 array: Joi.array().includes(Joi.string().min(5), Joi.number().min(3))
             }).options({ convert: false });
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
                 [{ array: ['1'] }, false],
                 [{ array: [3] }, true],

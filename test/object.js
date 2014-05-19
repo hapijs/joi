@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -44,7 +44,7 @@ describe('object', function () {
     it('should validate an object', function (done) {
 
         var schema = Joi.object().required();
-        Validate(schema, [
+        Helper.validate(schema, [
             [{}, true],
             [{ hi: true }, true],
             ['', false]
@@ -135,7 +135,7 @@ describe('object', function () {
     it('should prevent extra keys from existing by default', function (done) {
 
         var schema = Joi.object({ item: Joi.string().required() }).required();
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ item: 'something' }, true],
             [{ item: 'something', item2: 'something else' }, false],
             ['', false]
@@ -145,7 +145,7 @@ describe('object', function () {
     it('should validate count when min is set', function (done) {
 
         var schema = Joi.object().min(3);
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ item: 'something' }, false],
             [{ item: 'something', item2: 'something else' }, false],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
@@ -156,7 +156,7 @@ describe('object', function () {
     it('should validate count when max is set', function (done) {
 
         var schema = Joi.object().max(2);
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ item: 'something' }, true],
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, false],
@@ -167,7 +167,7 @@ describe('object', function () {
     it('should validate count when min and max is set', function (done) {
 
         var schema = Joi.object().max(3).min(2);
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ item: 'something' }, false],
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
@@ -179,7 +179,7 @@ describe('object', function () {
     it('should validate count when length is set', function (done) {
 
         var schema = Joi.object().length(2);
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ item: 'something' }, false],
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, false],
@@ -193,7 +193,7 @@ describe('object', function () {
             num: Joi.number()
         });
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ num: 1 }, true],
             [{ num: [1, 2, 3] }, false]
         ], done);
@@ -208,7 +208,7 @@ describe('object', function () {
             })
         });
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ num: 1 }, true],
             [{ num: [1, 2, 3] }, false],
             [{ num: 1, obj: { item: 'something' } }, true],
@@ -228,7 +228,7 @@ describe('object', function () {
             })
         });
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ num: 1 }, false],
             [{ obj: {} }, true],
             [{ obj: { obj: {} } }, true],
@@ -250,7 +250,7 @@ describe('object', function () {
             })
         });
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [null, false],
             [undefined, true],
             [{}, true],
@@ -274,7 +274,7 @@ describe('object', function () {
             }
         };
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [null, false],
             [undefined, true],
             [{}, true],
@@ -304,7 +304,7 @@ describe('object', function () {
             second: Joi.any()
         }).with('first', 'second');
 
-        Validate(schema, [
+        Helper.validate(schema, [
             [{ first: 'value' }, false]
         ], done);
     });
@@ -367,7 +367,7 @@ describe('object', function () {
                 }
             }).unknown();
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: { b: 5 } }, true],
                 [{ a: { b: 'x' } }, false],
                 [{ a: { b: 5 }, c: 'ignore' }, true],
@@ -383,7 +383,7 @@ describe('object', function () {
                 }).unknown()
             }).options({ allowUnknown: false });
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: { b: 5 } }, true],
                 [{ a: { b: 'x' } }, false],
                 [{ a: { b: 5 }, c: 'ignore' }, false],
@@ -723,7 +723,7 @@ describe('object', function () {
                 expect(err).to.exist;
                 expect(err.message).to.equal('value validation failed because d.e failed to equal to a.c');
 
-                Validate(schema, [
+                Helper.validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
                 ], done);
             });
@@ -746,7 +746,7 @@ describe('object', function () {
                 expect(err).to.exist;
                 expect(err.message).to.equal('value validation failed because d.e failed to equal to a.c');
 
-                Validate(schema, [
+                Helper.validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
                 ], done);
             });

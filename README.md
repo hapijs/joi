@@ -22,7 +22,8 @@ Current version: **4.2.x**
         - [`any.invalid(value)`](#anyinvalidvalue)
         - [`any.required()`](#anyrequired)
         - [`any.optional()`](#anyoptional)
-        - [`description(desc)`](#descriptiondesc)
+        - [`any.forbidden()`](#anyforbidden)
+        - [`any.description(desc)`](#anydescriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
         - [`any.example(value)`](#anyexamplevalue)
@@ -80,7 +81,6 @@ Current version: **4.2.x**
     - [`alternatives`](#alternatives)
         - [`alternatives.try(schemas)`](#alternativestryschemas)
         - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
-    - [`forbidden`](#forbidden)
     - [`ref(key, [options])`](#refkey-options)
 
 # Example
@@ -169,7 +169,8 @@ Validates a value using the given schema and options where:
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
   - `language` - overrides individual error messages. Defaults to no override (`{}`).
-  - `context` - provides an external data set to be used in [references](#refkey-options).
+  - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
+    `validate()` and not using `any.options()`.
 - `callback` - the callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the error reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
@@ -278,6 +279,16 @@ Marks a key as optional which will allow `undefined` as values. Used to annotate
 
 ```javascript
 var schema = Joi.any().optional();
+```
+
+### `any.forbidden()`
+
+Marks a key as forbidden which will not allow any value except `undefined`. Used to explicitly forbid keys.
+
+```javascript
+var schema = {
+    a: Joi.any.forbidden()
+};
 ```
 
 #### `any.description(desc)`
@@ -893,17 +904,6 @@ Adds a conditional alternative schema type based on another key value where:
 var schema = {
     a: Joi.alternatives().when('b', { is: 5, then: Joi.string(), otherwise: Joi.number() }),
     b: Joi.any()
-};
-```
-
-### `forbidden()`
-
-Generates a type that will not match any value except `undefined`. Used to explicitly forbid keys, or in combination with
-`object.unknown(true)`.
-
-```javascript
-var schema = {
-    a: Joi.forbidden()
 };
 ```
 

@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('..');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -114,7 +114,7 @@ describe('alternatives', function () {
                 b: Joi.any()
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 'x', b: 5 }, true],
                 [{ a: 'x', b: 6 }, false],
                 [{ a: 'y', b: 5 }, false],
@@ -132,7 +132,7 @@ describe('alternatives', function () {
                 b: Joi.any()
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 'x', b: 5 }, true],
                 [{ a: 'x', b: 6 }, false],
                 [{ a: 'y', b: 5 }, false],
@@ -150,7 +150,7 @@ describe('alternatives', function () {
                 b: Joi.any()
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 'x', b: 5 }, false],
                 [{ a: 'x', b: 6 }, false],
                 [{ a: 'y', b: 5 }, false],
@@ -168,7 +168,7 @@ describe('alternatives', function () {
                 c: Joi.number()
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 'x', b: 5, c: '5' }, true],
                 [{ a: 'x', b: 5, c: '1' }, false],
                 [{ a: 'x', b: '5', c: '5' }, false],
@@ -185,7 +185,7 @@ describe('alternatives', function () {
                 c: Joi.number()
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 'x', b: 5, c: '1' }, false],
                 [{ a: 1, b: 5, c: '1' }, true],
                 [{ a: '1', b: 5, c: '1' }, false]
@@ -200,7 +200,7 @@ describe('alternatives', function () {
                 c: Joi.number()
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 'x', b: 5, c: '1' }, false],
                 [{ a: 1, b: 5, c: '1' }, true],
                 [{ a: '1', b: 5, c: '1' }, false]
@@ -230,7 +230,7 @@ describe('alternatives', function () {
                     },
                     a: [
                       {
-                          ref: 'b',
+                          ref: 'ref:b',
                           is: {
                               type: 'number',
                               flags: {
@@ -293,7 +293,7 @@ describe('alternatives', function () {
                     },
                     a: [
                       {
-                          ref: 'b',
+                          ref: 'ref:b',
                           is: {
                               type: 'number',
                               flags: {
@@ -348,7 +348,7 @@ describe('alternatives', function () {
                     },
                     a: [
                       {
-                          ref: 'b',
+                          ref: 'ref:b',
                           is: {
                               type: 'number',
                               flags: {

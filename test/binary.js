@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -38,7 +38,7 @@ describe('binary', function () {
         var hello = new Buffer('hello');
         var schema = Joi.binary().valid(hello);
 
-        Validate(schema, [
+        Helper.validate(schema, [
             ['hello', true],
             [hello, true],
             [new Buffer('hello'), true],
@@ -96,7 +96,7 @@ describe('binary', function () {
         it('validates buffer size', function (done) {
 
             var schema = Joi.binary().min(5);
-            Validate(schema, [
+            Helper.validate(schema, [
                 [new Buffer('testing'), true],
                 [new Buffer('test'), false]
             ], done);
@@ -126,7 +126,7 @@ describe('binary', function () {
         it('validates buffer size', function (done) {
 
             var schema = Joi.binary().max(5);
-            Validate(schema, [
+            Helper.validate(schema, [
                 [new Buffer('testing'), false],
                 [new Buffer('test'), true]
             ], done);
@@ -156,7 +156,7 @@ describe('binary', function () {
         it('validates buffer size', function (done) {
 
             var schema = Joi.binary().length(4);
-            Validate(schema, [
+            Helper.validate(schema, [
                 [new Buffer('test'), true],
                 [new Buffer('testing'), false]
             ], done);

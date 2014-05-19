@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -25,7 +25,7 @@ describe('any', function () {
 
         it('validates valid values', function (done) {
 
-            Validate(Joi.equal(4), [
+            Helper.validate(Joi.equal(4), [
                 [4, true],
                 [5, false]
             ], done);
@@ -36,9 +36,20 @@ describe('any', function () {
 
         it('validates invalid values', function (done) {
 
-            Validate(Joi.not(5), [
+            Helper.validate(Joi.not(5), [
                 [4, true],
                 [5, false]
+            ], done);
+        });
+    });
+
+    describe('#exist', function () {
+
+        it('validates required values', function (done) {
+
+            Helper.validate(Joi.exist(), [
+                [4, true],
+                [undefined, false]
             ], done);
         });
     });
@@ -51,7 +62,7 @@ describe('any', function () {
                 array: Joi.array().includes(Joi.string().min(5), Joi.number().min(3))
             }).strict();
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
                 [{ array: ['1'] }, false],
                 [{ array: [3] }, true],
@@ -116,6 +127,26 @@ describe('any', function () {
                 expect(value.foo).to.equal('test');
                 done();
             });
+        });
+    });
+
+    describe('#forbidden', function () {
+
+        it('validates forbidden', function (done) {
+
+            var schema = {
+                a: Joi.number(),
+                b: Joi.forbidden()
+            };
+
+            Helper.validate(schema, [
+                [{ a: 5 }, true],
+                [{ a: 5, b: 6 }, false],
+                [{ a: 'a' }, false],
+                [{}, true],
+                [{ b: undefined }, true],
+                [{ b: null }, false]
+            ], done);
         });
     });
 
@@ -292,11 +323,11 @@ describe('any', function () {
             var a = Joi.number().options({ convert: true });
             var b = Joi.options({ convert: false });
 
-            Validate(a, [
+            Helper.validate(a, [
                 [1, true], ['1', true]
             ], function () {
 
-                Validate(a.concat(b), [
+                Helper.validate(a.concat(b), [
                     [1, true], ['1', false]
                 ], done);
             });
@@ -307,15 +338,15 @@ describe('any', function () {
             var a = Joi.string().valid('a');
             var b = Joi.string().valid('b');
 
-            Validate(a, [
+            Helper.validate(a, [
                 ['a', true], ['b', false]
             ], function () {
 
-                Validate(b, [
+                Helper.validate(b, [
                     ['b', true], ['a', false]
                 ], function () {
 
-                    Validate(a.concat(b), [
+                    Helper.validate(a.concat(b), [
                         ['a', true], ['b', true]
                     ], done);
                 });
@@ -327,15 +358,15 @@ describe('any', function () {
             var a = Joi.string().invalid('a');
             var b = Joi.invalid('b');
 
-            Validate(a, [
+            Helper.validate(a, [
                 ['b', true], ['a', false]
             ], function () {
 
-                Validate(b, [
+                Helper.validate(b, [
                     ['a', true], ['b', false]
                 ], function () {
 
-                    Validate(a.concat(b), [
+                    Helper.validate(a.concat(b), [
                         ['a', false], ['b', false]
                     ], done);
                 });
@@ -347,15 +378,15 @@ describe('any', function () {
             var a = Joi.number().min(5);
             var b = Joi.number().max(10);
 
-            Validate(a, [
+            Helper.validate(a, [
                 [4, false], [11, true]
             ], function () {
 
-                Validate(b, [
+                Helper.validate(b, [
                     [6, true], [11, false]
                 ], function () {
 
-                    Validate(a.concat(b), [
+                    Helper.validate(a.concat(b), [
                         [4, false], [6, true], [11, false]
                     ], done);
                 });
@@ -367,11 +398,11 @@ describe('any', function () {
             var a = Joi.string().valid('a');
             var b = Joi.string().insensitive();
 
-            Validate(a, [
+            Helper.validate(a, [
                 ['a', true], ['A', false], ['b', false]
             ], function () {
 
-                Validate(a.concat(b), [
+                Helper.validate(a.concat(b), [
                     ['a', true], ['A', true], ['b', false]
                 ], done);
             });
@@ -400,19 +431,19 @@ describe('any', function () {
             var a = Joi.object();
             var b = Joi.object({ b: 1 });
 
-            Validate(a, [
+            Helper.validate(a, [
                 [{ b: 1 }, true], [{ b: 2 }, true]
             ], function () {
 
-                Validate(b, [
+                Helper.validate(b, [
                     [{ b: 1 }, true], [{ b: 2 }, false]
                 ], function () {
 
-                    Validate(a.concat(b), [
+                    Helper.validate(a.concat(b), [
                         [{ b: 1 }, true], [{ b: 2 }, false]
                     ], function () {
 
-                        Validate(b.concat(a), [
+                        Helper.validate(b.concat(a), [
                             [{ b: 1 }, true], [{ b: 2 }, false]
                         ], done);
                     });
@@ -425,19 +456,19 @@ describe('any', function () {
             var a = Joi.object({});
             var b = Joi.object();
 
-            Validate(a, [
+            Helper.validate(a, [
                 [{}, true], [{ b: 2 }, false]
             ], function () {
 
-                Validate(b, [
+                Helper.validate(b, [
                     [{}, true], [{ b: 2 }, true]
                 ], function () {
 
-                    Validate(a.concat(b), [
+                    Helper.validate(a.concat(b), [
                         [{}, true], [{ b: 2 }, false]
                     ], function () {
 
-                        Validate(b.concat(a), [
+                        Helper.validate(b.concat(a), [
                             [{}, true], [{ b: 2 }, false]
                         ], done);
                     });
@@ -450,19 +481,19 @@ describe('any', function () {
             var a = Joi.object({ a: 1 });
             var b = Joi.object({ b: 2 });
 
-            Validate(a, [
+            Helper.validate(a, [
                 [{ a: 1 }, true], [{ b: 2 }, false]
             ], function () {
 
-                Validate(b, [
+                Helper.validate(b, [
                     [{ a: 1 }, false], [{ b: 2 }, true]
                 ], function () {
 
-                    Validate(a.concat(b), [
+                    Helper.validate(a.concat(b), [
                         [{ a: 1 }, true], [{ b: 2 }, true]
                     ], function () {
 
-                        Validate(b.concat(a), [
+                        Helper.validate(b.concat(a), [
                             [{ a: 1 }, true], [{ b: 2 }, true]
                         ], done);
                     });
@@ -503,7 +534,7 @@ describe('any', function () {
                 c: Joi.number()
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: {} }, true],
                 [{ a: { c: '5' }, b: 5 }, true],
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
@@ -530,7 +561,7 @@ describe('any', function () {
                 b: Joi.string().valid('x').when('a', { is: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') })
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, true],
                 [{ a: 5, b: 'z' }, false],
@@ -549,7 +580,7 @@ describe('any', function () {
                 b: Joi.string().valid('x').when('a', { is: 5, then: Joi.valid('y') })
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, true],
                 [{ a: 5, b: 'z' }, false],
@@ -568,7 +599,7 @@ describe('any', function () {
                 b: Joi.string().valid('x').when('a', { is: 5, otherwise: Joi.valid('z') })
             };
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, false],
                 [{ a: 5, b: 'z' }, false],

@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -23,7 +23,7 @@ describe('func', function () {
 
     it('should validate a function', function (done) {
 
-        Validate(Joi.func().required(), [
+        Helper.validate(Joi.func().required(), [
             [function () { }, true],
             ['', false]
         ], done);

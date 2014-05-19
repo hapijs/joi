@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -33,7 +33,7 @@ describe('ref', function () {
             expect(err).to.exist;
             expect(err.message).to.equal('a must be one of ref:b');
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 5 }, false],
                 [{ b: 5 }, true],
                 [{ a: 5, b: 5 }, true],
@@ -56,7 +56,7 @@ describe('ref', function () {
             expect(err).to.exist;
             expect(err.message).to.equal('a must be one of ref:b.c');
 
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 5 }, false],
                 [{ b: { c: 5 } }, true],
                 [{ a: 5, b: 5 }, false],
@@ -188,42 +188,42 @@ describe('ref', function () {
         var b = [Joi.ref('a.c'), Joi.ref('c')];
         var c = Joi.number();
 
-        Validate({ a: a, b: b, c: c }, [
+        Helper.validate({ a: a, b: b, c: c }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Validate({ b: b, a: a, c: c }, [
+        Helper.validate({ b: b, a: a, c: c }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Validate({ b: b, c: c, a: a }, [
+        Helper.validate({ b: b, c: c, a: a }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Validate({ a: a, c: c, b: b }, [
+        Helper.validate({ a: a, c: c, b: b }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Validate({ c: c, a: a, b: b }, [
+        Helper.validate({ c: c, a: a, b: b }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Validate({ c: c, b: b, a: a }, [
+        Helper.validate({ c: c, b: b, a: a }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
@@ -236,9 +236,9 @@ describe('ref', function () {
         var schema = Joi.object({
             a: Joi.default(Joi.ref('$x')),
             b: Joi.any()
-        }).options({ context: { x: 22 } });
+        });
 
-        schema.validate({ b: 6 }, function (err, value) {
+        Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value).to.deep.equal({ a: 22, b: 6 });
@@ -251,9 +251,9 @@ describe('ref', function () {
         var schema = Joi.object({
             a: Joi.default(Joi.ref('%x', { contextPrefix: '%' })),
             b: Joi.any()
-        }).options({ context: { x: 22 } });
+        });
 
-        schema.validate({ b: 6 }, function (err, value) {
+        Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
 
             expect(err).to.not.exist;
             expect(value).to.deep.equal({ a: 22, b: 6 });
@@ -266,21 +266,65 @@ describe('ref', function () {
         var schema = Joi.object({
             a: Joi.ref('$x'),
             b: Joi.any()
-        }).options({ context: { x: 22 } });
+        });
 
-        schema.validate({ a: 5, b: 6 }, function (err, value) {
+        Joi.validate({ a: 5, b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.equal('a must be one of context:x');
 
-            Validate(schema, [
+            Helper.validateOptions(schema, [
                 [{ a: 5 }, false],
                 [{ a: 22 }, true],
                 [{ b: 5 }, true],
                 [{ a: 22, b: 5 }, true],
                 [{ a: '22', b: '5' }, false]
-            ], done);
+            ], { context: { x: 22 } }, done);
         });
+    });
+
+    it('uses context in when condition', function (done) {
+
+        var schema = {
+            a: Joi.boolean().when('$x', { is: Joi.exist(), otherwise: Joi.forbidden() })
+        };
+
+        Helper.validate(schema, [
+            [{}, true],
+            [{ a: 'x' }, false],
+            [{ a: true }, false],
+            [{}, true, { context: {} }],
+            [{ a: 'x' }, false, { context: {} }],
+            [{ a: true }, false, { context: {} }],
+            [{}, true, { context: { x: 1 } }],
+            [{ a: 'x' }, false, { context: { x: 1 } }],
+            [{ a: true }, true, { context: { x: 1 } }]
+        ], done);
+    });
+
+    it('uses nested context in when condition', function (done) {
+
+        var schema = {
+            a: Joi.boolean().when('$x.y', { is: Joi.exist(), otherwise: Joi.forbidden() })
+        };
+
+        Helper.validate(schema, [
+            [{}, true],
+            [{ a: 'x' }, false],
+            [{ a: true }, false],
+            [{}, true, { context: {} }],
+            [{ a: 'x' }, false, { context: {} }],
+            [{ a: true }, false, { context: {} }],
+            [{}, true, { context: { x: 1 } }],
+            [{ a: 'x' }, false, { context: { x: 1 } }],
+            [{ a: true }, false, { context: { x: 1 } }],
+            [{}, true, { context: { x: {} } }],
+            [{ a: 'x' }, false, { context: { x: {} } }],
+            [{ a: true }, false, { context: { x: {} } }],
+            [{}, true, { context: { x: { y: 1 } } }],
+            [{ a: 'x' }, false, { context: { x: { y: 1 } } }],
+            [{ a: true }, true, { context: { x: { y: 1 } } }]
+        ], done);
     });
 
     describe('#create', function () {

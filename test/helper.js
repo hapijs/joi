@@ -18,13 +18,19 @@ var describe = Lab.experiment;
 var it = Lab.test;
 
 
-module.exports = function (schema, config, callback) {
+exports.validate = function (schema, config, callback) {
+
+    return exports.validateOptions(schema, config, null, callback);
+}
+
+
+exports.validateOptions = function (schema, config, options, callback) {
 
     var compiled = Joi.compile(schema);
     for (var i = 0, il = config.length; i < il; ++i) {
 
         var item = config[i];
-        var result = compiled.validate(item[0]);
+        var result = Joi.validate(item[0], compiled, item[2] || options);
 
         var err = result.error;
         var value = result.value;

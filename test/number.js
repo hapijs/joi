@@ -2,7 +2,7 @@
 
 var Lab = require('lab');
 var Joi = require('../lib');
-var Validate = require('./helper');
+var Helper = require('./helper');
 
 
 // Declare internals
@@ -24,7 +24,7 @@ describe('number', function () {
     it('fails on boolean', function (done) {
 
         var schema = Joi.number();
-        Validate(schema, [
+        Helper.validate(schema, [
             [true, false],
             [false, false]
         ], done);
@@ -34,14 +34,14 @@ describe('number', function () {
 
         it('should, by default, allow undefined', function (done) {
 
-            Validate(Joi.number(), [
+            Helper.validate(Joi.number(), [
                 [undefined, true]
             ], done);
         });
 
         it('should, when .required(), deny undefined', function (done) {
 
-            Validate(Joi.number().required(), [
+            Helper.validate(Joi.number().required(), [
                 [undefined, false]
             ], done);
         });
@@ -59,7 +59,7 @@ describe('number', function () {
         it('should validate integer', function (done) {
 
             var t = Joi.number().integer();
-            Validate(t, [
+            Helper.validate(t, [
                 [100, true],
                 [0, true],
                 [null, false],
@@ -71,7 +71,7 @@ describe('number', function () {
         it('can accept string numbers', function (done) {
 
             var t = Joi.number();
-            Validate(t, [
+            Helper.validate(t, [
                 ['1', true],
                 ['100', true],
                 ['1e3', true],
@@ -88,7 +88,7 @@ describe('number', function () {
         it('required validates correctly', function (done) {
 
             var t = Joi.number().required();
-            Validate(t, [
+            Helper.validate(t, [
                 [NaN, false],
                 ['100', true]
             ], done);
@@ -130,7 +130,7 @@ describe('number', function () {
         it('should handle combination of min and max', function (done) {
 
             var rule = Joi.number().min(8).max(10);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, false],
                 [11, false],
                 [8, true],
@@ -142,7 +142,7 @@ describe('number', function () {
         it('should handle combination of min, max, and null allowed', function (done) {
 
             var rule = Joi.number().min(8).max(10).allow(null);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, false],
                 [11, false],
                 [8, true],
@@ -154,7 +154,7 @@ describe('number', function () {
         it('should handle combination of min and positive', function (done) {
 
             var rule = Joi.number().min(-3).positive();
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [-2, false],
                 [8, true],
@@ -165,7 +165,7 @@ describe('number', function () {
         it('should handle combination of max and positive', function (done) {
 
             var rule = Joi.number().max(5).positive();
-            Validate(rule, [
+            Helper.validate(rule, [
                 [4, true],
                 [-2, false],
                 [8, false],
@@ -176,7 +176,7 @@ describe('number', function () {
         it('should handle combination of min and negative', function (done) {
 
             var rule = Joi.number().min(-3).negative();
-            Validate(rule, [
+            Helper.validate(rule, [
                 [4, false],
                 [-2, true],
                 [-4, false],
@@ -187,7 +187,7 @@ describe('number', function () {
         it('should handle combination of negative and positive', function (done) {
 
             var rule = Joi.number().negative().positive();
-            Validate(rule, [
+            Helper.validate(rule, [
                 [4, false],
                 [-2, false],
                 [0, false],
@@ -198,7 +198,7 @@ describe('number', function () {
         it('should handle combination of negative and allow', function (done) {
 
             var rule = Joi.number().negative().allow(1);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [-10, true],
                 [8, false],
@@ -210,7 +210,7 @@ describe('number', function () {
         it('should handle combination of positive and allow', function (done) {
 
             var rule = Joi.number().positive().allow(-1);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [-1, true],
                 [8, true],
@@ -222,7 +222,7 @@ describe('number', function () {
         it('should handle combination of positive, allow, and null allowed', function (done) {
 
             var rule = Joi.number().positive().allow(-1).allow(null);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [-1, true],
                 [8, true],
@@ -234,7 +234,7 @@ describe('number', function () {
         it('should handle combination of negative, allow, and null allowed', function (done) {
 
             var rule = Joi.number().negative().allow(1).allow(null);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [-10, true],
                 [8, false],
@@ -246,7 +246,7 @@ describe('number', function () {
         it('should handle combination of positive, allow, null allowed, and invalid', function (done) {
 
             var rule = Joi.number().positive().allow(-1).allow(null).invalid(1);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, false],
                 [-1, true],
                 [8, true],
@@ -258,7 +258,7 @@ describe('number', function () {
         it('should handle combination of negative, allow, null allowed, and invalid', function (done) {
 
             var rule = Joi.number().negative().allow(1).allow(null).invalid(-5);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [-10, true],
                 [-5, false],
@@ -271,7 +271,7 @@ describe('number', function () {
         it('should handle combination of min, max, and allow', function (done) {
 
             var rule = Joi.number().min(8).max(10).allow(1);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [11, false],
                 [8, true],
@@ -283,7 +283,7 @@ describe('number', function () {
         it('should handle combination of min, max, allow, and null allowed', function (done) {
 
             var rule = Joi.number().min(8).max(10).allow(1).allow(null);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [11, false],
                 [8, true],
@@ -295,7 +295,7 @@ describe('number', function () {
         it('should handle combination of min, max, allow, and invalid', function (done) {
 
             var rule = Joi.number().min(8).max(10).allow(1).invalid(9);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [11, false],
                 [8, true],
@@ -307,7 +307,7 @@ describe('number', function () {
         it('should handle combination of min, max, allow, invalid, and null allowed', function (done) {
 
             var rule = Joi.number().min(8).max(10).allow(1).invalid(9).allow(null);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, true],
                 [11, false],
                 [8, true],
@@ -319,7 +319,7 @@ describe('number', function () {
         it('should handle combination of min, max, and integer', function (done) {
 
             var rule = Joi.number().min(8).max(10).integer();
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, false],
                 [11, false],
                 [8, true],
@@ -332,7 +332,7 @@ describe('number', function () {
         it('should handle combination of min, max, integer, and allow', function (done) {
 
             var rule = Joi.number().min(8).max(10).integer().allow(9.1);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, false],
                 [11, false],
                 [8, true],
@@ -346,7 +346,7 @@ describe('number', function () {
         it('should handle combination of min, max, integer, allow, and invalid', function (done) {
 
             var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, false],
                 [11, false],
                 [8, false],
@@ -360,7 +360,7 @@ describe('number', function () {
         it('should handle combination of min, max, integer, allow, invalid, and null allowed', function (done) {
 
             var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null);
-            Validate(rule, [
+            Helper.validate(rule, [
                 [1, false],
                 [11, false],
                 [8, false],
