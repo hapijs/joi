@@ -238,42 +238,22 @@ describe('string', function () {
 
     describe('#lowercase', function () {
 
-        it('should throw when there is a force case conflict', function (done) {
-
-            expect(function () {
-
-                Joi.string().uppercase({ force: true }).lowercase({ force: true });
-            }).to.throw('cannot force both lowercase and uppercase');
-            done();
-        });
-
-        it('should only allow strings that are entirely lowercase', function (done) {
+        it('only allows strings that are entirely lowercase', function (done) {
 
             var schema = Joi.string().lowercase();
-            Validate(schema, [
+            Helper.validateOptions(schema, [
                 ['this is all lowercase', true],
                 ['5', true],
                 ['lower\tcase', true],
                 ['Uppercase', false],
                 ['MixEd cAsE', false],
                 [1, false]
-            ], done);
+            ], { convert: false }, done);
         });
 
-        it('should not change the result value by default', function (done) {
+        it('coerce string to lowercase before validation', function (done) {
 
             var schema = Joi.string().lowercase();
-            schema.validate('stay lowercase', function (err, value) {
-
-                expect(err).to.not.exist;
-                expect(value).to.equal('stay lowercase');
-                done();
-            });
-        });
-
-        it('should, when set to force, attempt to coerce string to lowercase before validation', function (done) {
-
-            var schema = Joi.string().lowercase({ force: true });
             schema.validate('UPPER TO LOWER', function (err, value) {
 
                 expect(err).to.not.exist;
@@ -282,10 +262,10 @@ describe('string', function () {
             });
         });
 
-        it('should work in combination with a forced trim', function (done) {
+        it('should work in combination with a trim', function (done) {
 
-            var schema = Joi.string().lowercase({ force: true }).trim({ force: true });
-            Validate(schema, [
+            var schema = Joi.string().lowercase().trim();
+            Helper.validate(schema, [
                 [' abc', true],
                 [' ABC', true],
                 ['ABC', true],
@@ -296,42 +276,22 @@ describe('string', function () {
 
     describe('#uppercase', function () {
 
-        it('should throw when there is a force case conflict', function (done) {
-
-            expect(function () {
-
-                Joi.string().lowercase({ force: true }).uppercase({ force: true });
-            }).to.throw('cannot force both lowercase and uppercase');
-            done();
-        });
-
-        it('should only allow strings that are entirely uppercase', function (done) {
+        it('only allow strings that are entirely uppercase', function (done) {
 
             var schema = Joi.string().uppercase();
-            Validate(schema, [
+            Helper.validateOptions(schema, [
                 ['THIS IS ALL UPPERCASE', true],
                 ['5', true],
                 ['UPPER\nCASE', true],
                 ['lOWERCASE', false],
                 ['MixEd cAsE', false],
                 [1, false]
-            ], done);
+            ], { convert: false }, done);
         });
 
-        it('should not change the result value by default', function (done) {
+        it('coerce string to uppercase before validation', function (done) {
 
             var schema = Joi.string().uppercase();
-            schema.validate('STAY UPPERCASE', function (err, value) {
-
-                expect(err).to.not.exist;
-                expect(value).to.equal('STAY UPPERCASE');
-                done();
-            });
-        });
-
-        it('should, when set to force, attempt to coerce string to uppercase before validation', function (done) {
-
-            var schema = Joi.string().uppercase({ force: true });
             schema.validate('lower to upper', function (err, value) {
 
                 expect(err).to.not.exist;
@@ -340,10 +300,10 @@ describe('string', function () {
             });
         });
 
-        it('should work in combination with a forced trim', function (done) {
+        it('works in combination with a forced trim', function (done) {
 
-            var schema = Joi.string().uppercase({ force: true }).trim({ force: true });
-            Validate(schema, [
+            var schema = Joi.string().uppercase().trim();
+            Helper.validate(schema, [
                 [' abc', true],
                 [' ABC', true],
                 ['ABC', true],
@@ -354,32 +314,21 @@ describe('string', function () {
 
     describe('#trim', function () {
 
-        it('should only allow strings that have no leading or trailing whitespace', function (done) {
+        it('only allow strings that have no leading or trailing whitespace', function (done) {
 
             var schema = Joi.string().trim();
-            Validate(schema, [
+            Helper.validateOptions(schema, [
                 [' something', false],
                 ['something ', false],
                 ['something\n', false],
                 ['some thing', true],
                 ['something', true]
-            ], done);
+            ], { convert: false }, done);
         });
 
-        it('should not change the result value by default', function (done) {
+        it('removes leading and trailing whitespace before validation', function (done) {
 
             var schema = Joi.string().trim();
-            schema.validate('something', function (err, value) {
-
-                expect(err).to.not.exist;
-                expect(value).to.equal('something');
-                done();
-            });
-        });
-
-        it('should, when set to force, remove leading and trailing whitespace before validation', function (done) {
-
-            var schema = Joi.string().trim({ force: true });
             schema.validate(' trim this ', function (err, value) {
 
                 expect(err).to.not.exist;
@@ -390,8 +339,8 @@ describe('string', function () {
 
         it('should work in combination with min', function (done) {
 
-            var schema = Joi.string().min(4).trim({ force: true });
-            Validate(schema, [
+            var schema = Joi.string().min(4).trim();
+            Helper.validate(schema, [
                 [' a ', false],
                 ['abc ', false],
                 ['abcd ', true]
@@ -400,8 +349,8 @@ describe('string', function () {
 
         it('should work in combination with max', function (done) {
 
-            var schema = Joi.string().max(4).trim({ force: true });
-            Validate(schema, [
+            var schema = Joi.string().max(4).trim();
+            Helper.validate(schema, [
                 [' abcde ', false],
                 ['abc ', true],
                 ['abcd ', true]
@@ -410,18 +359,18 @@ describe('string', function () {
 
         it('should work in combination with length', function (done) {
 
-            var schema = Joi.string().length(4).trim({ force: true });
-            Validate(schema, [
+            var schema = Joi.string().length(4).trim();
+            Helper.validate(schema, [
                 [' ab ', false],
                 ['abc ', false],
                 ['abcd ', true]
             ], done);
         });
 
-        it('should work in combination with a forced case change', function (done) {
+        it('should work in combination with a case change', function (done) {
 
-            var schema = Joi.string().trim({ force: true }).lowercase({ force: true });
-            Validate(schema, [
+            var schema = Joi.string().trim().lowercase();
+            Helper.validate(schema, [
                 [' abc', true],
                 [' ABC', true],
                 ['ABC', true]

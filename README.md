@@ -78,9 +78,9 @@ Current version: **4.2.x**
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
         - [`string.hostname()`](#stringhostname)
-        - [`string.lowercase([options])`](#stringlowercase)
-        - [`string.uppercase([options])`](#stringuppercase)
-        - [`string.trim([options])`](#stringtrim)
+        - [`string.lowercase()`](#stringlowercase)
+        - [`string.uppercase()`](#stringuppercase)
+        - [`string.trim()`](#stringtrim)
     - [`alternatives`](#alternatives)
         - [`alternatives.try(schemas)`](#alternativestryschemas)
         - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
@@ -870,34 +870,28 @@ Requires the string value to be a valid hostname as per [RFC1123](http://tools.i
 var schema = Joi.string().hostname();
 ```
 
-#### `string.lowercase([options])`
+#### `string.lowercase()`
 
-Requires the string value to be all lowercase.
-
-- `options` - optional object with settings:
-    - `force` - `true` changes the string to uppercase before validation. Default is `false`.
+Requires the string value to be all lowercase. If the validation `convert` option is on (enabled by default), the string
+will be forced to lowercase.
 
 ```javascript
 var schema = Joi.string().lowercase();
 ```
 
-#### `string.uppercase([options])`
+#### `string.uppercase()`
 
-Requires the string value to be all uppercase.
-
-- `options` - optional object with settings:
-    - `force` - `true` changes the string to uppercase before validation. Default is `false`.
+Requires the string value to be all uppercase. If the validation `convert` option is on (enabled by default), the string
+will be forced to uppercase.
 
 ```javascript
 var schema = Joi.string().uppercase();
 ```
 
-#### `string.trim([options])`
+#### `string.trim()`
 
-Requires the string value to not have leading or trailing whitespace.
-
-- `options` - optional object with settings:
-    - `force` - `true` removes leading and trailing whitespace before validation. Default is `false`.
+Requires the string value to contain no whitespace before or after. If the validation `convert` option is on (enabled by
+default), the string will be trimmed.
 
 ```javascript
 var schema = Joi.string().trim();
