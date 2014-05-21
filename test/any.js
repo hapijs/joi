@@ -325,32 +325,32 @@ describe('any', function () {
 
             Helper.validate(a, [
                 [1, true], ['1', true]
-            ], function () {
+            ]);
 
-                Helper.validate(a.concat(b), [
-                    [1, true], ['1', false]
-                ], done);
-            });
+            Helper.validate(a.concat(b), [
+                [1, true], ['1', false]
+            ], done);
         });
 
-        it('merges two schemas (invalid)', function (done) {
+        it('merges two schemas (valid)', function (done) {
 
             var a = Joi.string().valid('a');
             var b = Joi.string().valid('b');
 
             Helper.validate(a, [
-                ['a', true], ['b', false]
-            ], function () {
+                ['a', true],
+                ['b', false]
+            ]);
 
-                Helper.validate(b, [
-                    ['b', true], ['a', false]
-                ], function () {
+            Helper.validate(b, [
+                ['b', true],
+                ['a', false]
+            ]);
 
-                    Helper.validate(a.concat(b), [
-                        ['a', true], ['b', true]
-                    ], done);
-                });
-            });
+            Helper.validate(a.concat(b), [
+                ['a', true],
+                ['b', true]
+            ], done);
         });
 
         it('merges two schemas (invalid)', function (done) {
@@ -360,17 +360,36 @@ describe('any', function () {
 
             Helper.validate(a, [
                 ['b', true], ['a', false]
-            ], function () {
+            ]);
 
-                Helper.validate(b, [
-                    ['a', true], ['b', false]
-                ], function () {
+            Helper.validate(b, [
+                ['a', true], ['b', false]
+            ]);
 
-                    Helper.validate(a.concat(b), [
-                        ['a', false], ['b', false]
-                    ], done);
-                });
-            });
+            Helper.validate(a.concat(b), [
+                ['a', false], ['b', false]
+            ], done);
+        });
+
+        it('merges two schemas (valid/invalid)', function (done) {
+
+            var a = Joi.string().valid('a').invalid('b');
+            var b = Joi.string().valid('b').invalid('a');
+
+            Helper.validate(a, [
+                ['a', true],
+                ['b', false]
+            ]);
+
+            Helper.validate(b, [
+                ['b', true],
+                ['a', false]
+            ]);
+
+            Helper.validate(a.concat(b), [
+                ['a', false],
+                ['b', true]
+            ], done);
         });
 
         it('merges two schemas (tests)', function (done) {
@@ -380,17 +399,15 @@ describe('any', function () {
 
             Helper.validate(a, [
                 [4, false], [11, true]
-            ], function () {
+            ]);
 
-                Helper.validate(b, [
-                    [6, true], [11, false]
-                ], function () {
+            Helper.validate(b, [
+                [6, true], [11, false]
+            ]);
 
-                    Helper.validate(a.concat(b), [
-                        [4, false], [6, true], [11, false]
-                    ], done);
-                });
-            });
+            Helper.validate(a.concat(b), [
+                [4, false], [6, true], [11, false]
+            ], done);
         });
 
         it('merges two schemas (flags)', function (done) {
@@ -400,12 +417,11 @@ describe('any', function () {
 
             Helper.validate(a, [
                 ['a', true], ['A', false], ['b', false]
-            ], function () {
+            ]);
 
-                Helper.validate(a.concat(b), [
-                    ['a', true], ['A', true], ['b', false]
-                ], done);
-            });
+            Helper.validate(a.concat(b), [
+                ['a', true], ['A', true], ['b', false]
+            ], done);
         });
 
         it('overrides and append information', function (done) {
@@ -433,22 +449,19 @@ describe('any', function () {
 
             Helper.validate(a, [
                 [{ b: 1 }, true], [{ b: 2 }, true]
-            ], function () {
+            ]);
 
-                Helper.validate(b, [
-                    [{ b: 1 }, true], [{ b: 2 }, false]
-                ], function () {
+            Helper.validate(b, [
+                [{ b: 1 }, true], [{ b: 2 }, false]
+            ]);
 
-                    Helper.validate(a.concat(b), [
-                        [{ b: 1 }, true], [{ b: 2 }, false]
-                    ], function () {
+            Helper.validate(a.concat(b), [
+                [{ b: 1 }, true], [{ b: 2 }, false]
+            ]);
 
-                        Helper.validate(b.concat(a), [
-                            [{ b: 1 }, true], [{ b: 2 }, false]
-                        ], done);
-                    });
-                });
-            });
+            Helper.validate(b.concat(a), [
+                [{ b: 1 }, true], [{ b: 2 }, false]
+            ], done);
         });
 
         it('merges two objects (no key + any key)', function (done) {
@@ -458,22 +471,19 @@ describe('any', function () {
 
             Helper.validate(a, [
                 [{}, true], [{ b: 2 }, false]
-            ], function () {
+            ]);
 
-                Helper.validate(b, [
-                    [{}, true], [{ b: 2 }, true]
-                ], function () {
+            Helper.validate(b, [
+                [{}, true], [{ b: 2 }, true]
+            ]);
 
-                    Helper.validate(a.concat(b), [
-                        [{}, true], [{ b: 2 }, false]
-                    ], function () {
+            Helper.validate(a.concat(b), [
+                [{}, true], [{ b: 2 }, false]
+            ]);
 
-                        Helper.validate(b.concat(a), [
-                            [{}, true], [{ b: 2 }, false]
-                        ], done);
-                    });
-                });
-            });
+            Helper.validate(b.concat(a), [
+                [{}, true], [{ b: 2 }, false]
+            ], done);
         });
 
         it('merges two objects (key + key)', function (done) {
@@ -483,22 +493,19 @@ describe('any', function () {
 
             Helper.validate(a, [
                 [{ a: 1 }, true], [{ b: 2 }, false]
-            ], function () {
+            ]);
 
-                Helper.validate(b, [
-                    [{ a: 1 }, false], [{ b: 2 }, true]
-                ], function () {
+            Helper.validate(b, [
+                [{ a: 1 }, false], [{ b: 2 }, true]
+            ]);
 
-                    Helper.validate(a.concat(b), [
-                        [{ a: 1 }, true], [{ b: 2 }, true]
-                    ], function () {
+            Helper.validate(a.concat(b), [
+                [{ a: 1 }, true], [{ b: 2 }, true]
+            ]);
 
-                        Helper.validate(b.concat(a), [
-                            [{ a: 1 }, true], [{ b: 2 }, true]
-                        ], done);
-                    });
-                });
-            });
+            Helper.validate(b.concat(a), [
+                [{ a: 1 }, true], [{ b: 2 }, true]
+            ], done);
         });
 
         it('merges two objects (renames)', function (done) {
@@ -609,6 +616,21 @@ describe('any', function () {
                 [{ a: 5, b: 'a' }, false],
                 [{ b: 'a' }, false]
             ], done);
+        });
+
+        it('makes peer required', function (done) {
+
+            var schema = {
+                a: Joi.when('b', { is: 5, then: Joi.required() }),
+                b: Joi.any()
+            };
+
+            Helper.validate(schema, [
+                [{ b: 5 }, false],
+                [{ b: 6 }, true],
+                [{ a: 'b' }, true],
+                [{ b: 5, a: 'x' }, true]
+            ], done)
         });
     });
 
