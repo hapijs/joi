@@ -233,13 +233,9 @@ describe('alternatives', function () {
 
             var outcome = {
                 type: 'object',
-                valids: [undefined],
-                invalids: [null],
                 children: {
                     b: {
-                        type: 'any',
-                        valids: [undefined],
-                        invalids: [null]
+                        type: 'any'
                     },
                     a: [
                       {
@@ -249,25 +245,23 @@ describe('alternatives', function () {
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [undefined, 5
-                              ],
-                              invalids: [null]
+                              valids: [5]
                           },
                           then: {
                               type: 'string',
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [undefined, 'x'],
-                              invalids: [null, '']
+                              valids: ['x'],
+                              invalids: ['']
                           },
                           otherwise: {
                               type: 'string',
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [undefined, 'y'],
-                              invalids: [null, '']
+                              valids: ['y'],
+                              invalids: ['']
                           }
                       },
                       {
@@ -275,8 +269,8 @@ describe('alternatives', function () {
                           flags: {
                               allowOnly: true
                           },
-                          valids: [undefined, 'z'],
-                          invalids: [null, '']
+                          valids: ['z'],
+                          invalids: ['']
                       }
                     ]
                 }
@@ -296,13 +290,9 @@ describe('alternatives', function () {
 
             var outcome = {
                 type: 'object',
-                valids: [undefined],
-                invalids: [null],
                 children: {
                     b: {
-                        type: 'any',
-                        valids: [undefined],
-                        invalids: [null]
+                        type: 'any'
                     },
                     a: [
                       {
@@ -312,17 +302,15 @@ describe('alternatives', function () {
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [undefined, 5
-                              ],
-                              invalids: [null]
+                              valids: [5]
                           },
                           then: {
                               type: 'string',
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [undefined, 'x'],
-                              invalids: [null, '']
+                              valids: ['x'],
+                              invalids: ['']
                           }
                       },
                       {
@@ -330,8 +318,8 @@ describe('alternatives', function () {
                           flags: {
                               allowOnly: true
                           },
-                          valids: [undefined, 'z'],
-                          invalids: [null, '']
+                          valids: ['z'],
+                          invalids: ['']
                       }
                     ]
                 }
@@ -351,13 +339,9 @@ describe('alternatives', function () {
 
             var outcome = {
                 type: 'object',
-                valids: [undefined],
-                invalids: [null],
                 children: {
                     b: {
-                        type: 'any',
-                        valids: [undefined],
-                        invalids: [null]
+                        type: 'any'
                     },
                     a: [
                       {
@@ -367,17 +351,15 @@ describe('alternatives', function () {
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [undefined, 5
-                              ],
-                              invalids: [null]
+                              valids: [5]
                           },
                           otherwise: {
                               type: 'string',
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [undefined, 'y'],
-                              invalids: [null, '']
+                              valids: ['y'],
+                              invalids: ['']
                           }
                       },
                       {
@@ -385,8 +367,8 @@ describe('alternatives', function () {
                           flags: {
                               allowOnly: true
                           },
-                          valids: [undefined, 'z'],
-                          invalids: [null, '']
+                          valids: ['z'],
+                          invalids: ['']
                       }
                     ]
                 }

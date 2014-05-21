@@ -435,9 +435,7 @@ describe('any', function () {
                 description: 'b',
                 tags: ['a', 'b'],
                 examples: ['a', 'b'],
-                unit: 'b',
-                valids: [undefined],
-                invalids: [null]
+                unit: 'b'
             });
             done();
         });
@@ -657,12 +655,31 @@ describe('any', function () {
             });
         });
 
+        describe('#has', function () {
+
+            it('compares date to null', function (done) {
+
+                var any = Joi.any().clone();
+                any._valids.add(null);
+                expect(any._valids.has(new Date())).to.equal(false);
+                done();
+            });
+
+            it('compares buffer to null', function (done) {
+
+                var any = Joi.any().clone();
+                any._valids.add(null);
+                expect(any._valids.has(new Buffer(''))).to.equal(false);
+                done();
+            });
+        });
+
         describe('#values', function () {
 
             it('returns array', function (done) {
 
-                var a = Joi.any();
-                var b = a.required();
+                var a = Joi.any().valid('x').invalid('y');
+                var b = a.invalid('x');
                 expect(a._valids.values().length).to.equal(1);
                 expect(b._valids.values().length).to.equal(0);
                 expect(a._invalids.values().length).to.equal(1);
@@ -675,7 +692,7 @@ describe('any', function () {
 
             it('includes undefined', function (done) {
 
-                var b = Joi.any();
+                var b = Joi.any().allow(undefined);
                 expect(b._valids.toString(true)).to.equal('undefined');
                 done();
             });

@@ -546,9 +546,7 @@ describe('object', function () {
             var schema = Joi.object();
             var desc = schema.describe();
             expect(desc).to.deep.equal({
-                type: 'object',
-                valids: [undefined],
-                invalids: [null]
+                type: 'object'
             });
             done();
         });

@@ -68,7 +68,7 @@ describe('Joi', function () {
         Joi.string().validate(null, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.annotate()).to.equal('{\n  \u001b[41m\"value\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] value contains an invalid value\u001b[0m');
+            expect(err.annotate()).to.equal('{\n  \u001b[41m\"value\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] value must be a string\u001b[0m');
             done();
         });
     });
@@ -1287,34 +1287,24 @@ describe('Joi', function () {
 
         var result = {
             type: 'object',
-            valids: [undefined],
-            invalids: [null],
             children: {
                 sub: {
                     type: 'object',
-                    valids: [undefined],
-                    invalids: [null],
                     children: {
                         email: {
                             type: 'string',
-                            valids: [undefined],
-                            invalids: [null, ''],
+                            invalids: [''],
                             rules: [{ name: 'email' }]
                         },
                         date: {
-                            type: 'date',
-                            valids: [undefined],
-                            invalids: [null]
+                            type: 'date'
                         },
                         child: {
                             type: 'object',
-                            valids: [undefined],
-                            invalids: [null],
                             children: {
                                 alphanum: {
                                     type: 'string',
-                                    valids: [undefined],
-                                    invalids: [null, ''],
+                                    invalids: [''],
                                     rules: [{ name: 'alphanum' }]
                                 }
                             }
@@ -1323,46 +1313,47 @@ describe('Joi', function () {
                 },
                 min: [
                     {
-                        type: 'number',
-                        valids: [undefined],
-                        invalids: [null]
+                        type: 'number'
                     },
                     {
                         type: 'string',
-                        valids: [undefined],
-                        invalids: [null, ''],
+                        invalids: [''],
                         rules: [{ name: 'min', arg: 3 }]
                     }
                 ],
                 max: {
                     type: 'string',
-                    valids: [undefined],
-                    invalids: [null, ''],
+                    invalids: [''],
                     rules: [{ name: 'max', arg: 3 }]
                 },
                 required: {
                     type: 'string',
-                    invalids: [null, '', undefined]
+                    flags: {
+                        presence: 'required'
+                    },
+                    invalids: [ '']
                 },
                 xor: {
                     type: 'string',
-                    valids: [undefined],
-                    invalids: [null, '']
+                    invalids: ['']
                 },
                 renamed: {
                     type: 'string',
                     flags: {
                         allowOnly: true
                     },
-                    valids: [undefined, '456'],
-                    invalids: [null, '']
+                    valids: ['456'],
+                    invalids: ['']
                 },
                 notEmpty: {
                     type: 'string',
+                    flags: {
+                        presence: 'required'
+                    },
                     description: 'a',
                     notes: ['b'],
                     tags: ['c'],
-                    invalids: [null, '', undefined]
+                    invalids: ['']
                 }
             },
             dependencies: [
@@ -1398,9 +1389,7 @@ describe('Joi', function () {
             var any = Joi;
             var description = any.describe();
             expect(description).to.deep.equal({
-                type: 'any',
-                valids: [undefined],
-                invalids: [null]
+                type: 'any'
             });
             done();
         });
