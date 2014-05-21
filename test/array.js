@@ -332,9 +332,7 @@ describe('array', function () {
                 var schema = Joi.array();
                 var desc = schema.describe();
                 expect(desc).to.deep.equal({
-                    type: 'array',
-                    valids: [undefined],
-                    invalids: [null]
+                    type: 'array'
                 });
                 done();
             });
