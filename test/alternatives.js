@@ -206,6 +206,19 @@ describe('alternatives', function () {
                 [{ a: '1', b: 5, c: '1' }, false]
             ], done);
         });
+
+        it('validates when empty value', function (done) {
+
+          var schema = {
+            a: Joi.alternatives().when('b', { is: true, then: Joi.required() }),
+            b: Joi.boolean().default(false)
+          };
+
+          Helper.validate(schema, [
+            [{ b: false}, true],
+            [{ b: true}, false]
+          ], done);
+        });
     });
 
     describe('#describe', function () {
