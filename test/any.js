@@ -227,6 +227,43 @@ describe('any', function () {
         });
     });
 
+    describe('#meta', function () {
+
+        it('sets the meta', function (done) {
+
+            var meta = {prop: 'val', prop2: 3};
+            var b = Joi.meta(meta);
+            expect(b.describe().meta).to.deep.equal(meta);
+
+            b = b.meta({other: true});
+            expect(b.describe().meta).to.deep.equal({
+                prop: 'val',
+                prop2: 3,
+                other: true
+            });
+
+            done();
+        });
+
+        it('throws when meta is missing', function (done) {
+
+            expect(function () {
+
+                Joi.meta();
+            }).to.throw('Meta must be an object');
+            done();
+        });
+
+        it('throws when meta is invalid', function (done) {
+
+            expect(function () {
+
+                Joi.meta(5);
+            }).to.throw('Meta must be an object');
+            done();
+        });
+    });
+
     describe('#example', function () {
 
         it('sets an example', function (done) {
@@ -546,6 +583,23 @@ describe('any', function () {
                 [{ a: { c: '5' }, b: 7, c: '6' }, false]
             ], done);
         });
+
+      it('merges meta properly', function (done) {
+
+          var metaA = {a: 1};
+          var metaB = {b: 1};
+          var a = Joi.any().meta(metaA);
+          var b = Joi.any().meta(metaB);
+          var c = Joi.any();
+          var d = Joi.any();
+
+          expect(a.concat(b)._meta).to.deep.equal({a: 1, b: 1});
+          expect(a.concat(c)._meta).to.deep.equal(metaA);
+          expect(b.concat(c)._meta).to.deep.equal(metaB);
+          expect(c.concat(d)._meta).to.be.null;
+
+          done();
+      });
     });
 
     describe('#when', function () {
