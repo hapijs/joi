@@ -209,15 +209,15 @@ describe('alternatives', function () {
 
         it('validates when empty value', function (done) {
 
-          var schema = {
-            a: Joi.alternatives().when('b', { is: true, then: Joi.required() }),
-            b: Joi.boolean().default(false)
-          };
+            var schema = {
+                a: Joi.alternatives().when('b', { is: true, then: Joi.required() }),
+                b: Joi.boolean().default(false)
+            };
 
-          Helper.validate(schema, [
-            [{ b: false}, true],
-            [{ b: true}, false]
-          ], done);
+            Helper.validate(schema, [
+              [{ b: false }, true],
+              [{ b: true }, true]           // true because required() only applies to the one alternative
+            ], done);
         });
     });
 

@@ -923,17 +923,42 @@ alt.validate('a', function (err, value) { });
 
 #### `alternatives.when(ref, options)`
 
-Adds a conditional alternative schema type based on another key value where:
+Adds a conditional alternative schema type based on another key (not the same as `any.when()`) value where:
 - `ref` - the key name or [reference](#refkey-options).
 - `options` - an object with:
     - `is` - the required condition **joi** type.
-    - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
-    - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
+    - `then` - the alternative schema type to **try** if the condition is true. Required if `otherwise` is missing.
+    - `otherwise` - the alternative schema type to **try** if the condition is false. Required if `then` is missing.
 
 ```javascript
 var schema = {
     a: Joi.alternatives().when('b', { is: 5, then: Joi.string(), otherwise: Joi.number() }),
     b: Joi.any()
+};
+```
+
+Note that `when()` only adds additional alternatives to try and does not impact the overall type. Setting
+a `required()` rule on a single alternative will not apply to the overall key. For example,
+this definition of `a`:
+
+```javascript
+var schema = {
+    a: Joi.alternatives().when('b', { is: true, then: Joi.required() }),
+    b: Joi.boolean()
+};
+```
+
+Does not turn `a` into a required key when `b` is `true`. Instead, it tells the validator to try and match the
+value to anything that's not `undefined`. However, since `Joi.alternatives()` by itself allows `undefined`, the rule
+does not accomplish turning `a` to a required value. This rule is the same as `Joi.alternatives([Joi.required()])`
+when `b` is `true` which will allow any value including `undefined`.
+
+To accomplish the desired result above use:
+
+```javascript
+var schema = {
+    a: Joi.when('b', { is: true, then: Joi.required() }),
+    b: Joi.boolean()
 };
 ```
 
