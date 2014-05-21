@@ -324,5 +324,36 @@ describe('array', function () {
                 [{ array: ['12345', 3] }, true]
             ], done);
         });
+
+        describe('#describe', function () {
+
+            it('returns an empty description when no rules are applied', function (done) {
+
+                var schema = Joi.array();
+                var desc = schema.describe();
+                expect(desc).to.deep.equal({
+                    type: 'array',
+                    valids: [undefined],
+                    invalids: [null]
+                });
+                done();
+            });
+
+            it('returns an includes array only if includes are specified', function (done) {
+
+                var schema = Joi.array().includes().max(5);
+                var desc = schema.describe();
+                expect(desc.includes).to.not.exist;
+                done();
+            });
+
+            it('returns a recursively defined array of includes when specified', function (done) {
+
+                var schema = Joi.array().includes(Joi.number(), Joi.string());
+                var desc = schema.describe();
+                expect(desc.includes).to.have.length(2);
+                done();
+            });
+        });
     });
 });
