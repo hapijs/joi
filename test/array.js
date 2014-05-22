@@ -116,6 +116,20 @@ describe('array', function () {
                 done();
             });
         });
+
+        it('validates multiple types added in two calls', function (done) {
+
+            var schema = Joi.array()
+                .includes(Joi.number())
+                .includes(Joi.string());
+
+            Helper.validate(schema, [
+                [[1, 2, 3], true],
+                [[50, 100, 1000], true],
+                [[1, 'a', 5, 10], true],
+                [['joi', 'everydaylowprices', 5000], true]
+            ], done);
+        });
     });
 
     describe('#min', function () {
@@ -233,7 +247,7 @@ describe('array', function () {
             ], done);
         });
 
-        it('should exclude values when excludes is called', function (done) {
+        it('excludes values when excludes is called', function (done) {
 
             Helper.validate(Joi.array().excludes(Joi.string()), [
                 [['2', '1'], false],
@@ -242,7 +256,7 @@ describe('array', function () {
             ], done);
         });
 
-        it('should allow types to be excluded', function (done) {
+        it('allows types to be excluded', function (done) {
 
             var schema = Joi.array().excludes(Joi.number());
 
@@ -260,16 +274,17 @@ describe('array', function () {
             });
         });
 
-        it('should validate array of Numbers', function (done) {
+        it('validates array of Numbers', function (done) {
 
             Helper.validate(Joi.array().includes(Joi.number()), [
                 [[1, 2, 3], true],
                 [[50, 100, 1000], true],
-                [['a', 1, 2], false]
+                [['a', 1, 2], false],
+                [['1', '2', 4], true]
             ], done);
         });
 
-        it('should validate array of mixed Numbers & Strings', function (done) {
+        it('validates array of mixed Numbers & Strings', function (done) {
 
             Helper.validate(Joi.array().includes(Joi.number(), Joi.string()), [
                 [[1, 2, 3], true],
@@ -279,7 +294,7 @@ describe('array', function () {
             ], done);
         });
 
-        it('should validate array of objects with schema', function (done) {
+        it('validates array of objects with schema', function (done) {
 
             Helper.validate(Joi.array().includes(Joi.object({ h1: Joi.number().required() })), [
                 [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
@@ -288,7 +303,7 @@ describe('array', function () {
             ], done);
         });
 
-        it('should not validate array of unallowed mixed types (Array)', function (done) {
+        it('errors on array of unallowed mixed types (Array)', function (done) {
 
             Helper.validate(Joi.array().includes(Joi.number()), [
                 [[1, 2, 3], true],
@@ -347,9 +362,16 @@ describe('array', function () {
 
             it('returns a recursively defined array of includes when specified', function (done) {
 
-                var schema = Joi.array().includes(Joi.number(), Joi.string());
+                var schema = Joi.array().includes(Joi.number(), Joi.string()).excludes(Joi.boolean());
                 var desc = schema.describe();
                 expect(desc.includes).to.have.length(2);
+                expect(desc.excludes).to.have.length(1);
+                expect(desc).to.deep.equal({
+                    type: 'array',
+                    includes: [{ type: 'number' }, { type: 'string', invalids: [''] }],
+                    excludes: [{ type: 'boolean' }]
+                });
+
                 done();
             });
         });
