@@ -3,7 +3,7 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **4.2.x**
+Current version: **4.3.x**
 
 [![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 
@@ -26,6 +26,7 @@ Current version: **4.2.x**
         - [`any.description(desc)`](#anydescriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
+        - [`any.meta(meta)`](#anymetameta)
         - [`any.example(value)`](#anyexamplevalue)
         - [`any.unit(name)`](#anyunitname)
         - [`any.options(options)`](#anyoptionsoptions)
@@ -319,6 +320,15 @@ Annotates the key where:
 
 ```javascript
 var schema = Joi.any().tags(['api', 'user']);
+```
+
+#### `any.meta(meta)`
+
+Attaches metadata to the key where:
+- `meta` - the meta object to attach.
+
+```javascript
+var schema = Joi.any().meta({ index: true });
 ```
 
 #### `any.example(value)`
