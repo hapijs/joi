@@ -106,6 +106,15 @@ describe('alternatives', function () {
 
     describe('#when', function () {
 
+        it('throws on invalid ref (not string)', function (done) {
+
+            expect(function () {
+
+                Joi.alternatives().when(5, { is: 6, then: Joi.number() });
+            }).to.throw('Invalid reference: 5');
+            done();
+        });
+
         it('validates conditional alternatives', function (done) {
 
             var schema = {
@@ -124,10 +133,28 @@ describe('alternatives', function () {
             ], done);
         });
 
+        it('validates conditional alternatives (empty key)', function (done) {
+
+            var schema = {
+                a: Joi.alternatives().when('', { is: 5, then: 'x', otherwise: 'y' })
+                                     .try('z'),
+                '': Joi.any()
+            };
+
+            Helper.validate(schema, [
+                [{ a: 'x', '': 5 }, true],
+                [{ a: 'x', '': 6 }, false],
+                [{ a: 'y', '': 5 }, false],
+                [{ a: 'y', '': 6 }, true],
+                [{ a: 'z', '': 5 }, true],
+                [{ a: 'z', '': 6 }, true]
+            ], done);
+        });
+
         it('validates only then', function (done) {
 
             var schema = {
-                a: Joi.alternatives().when('b', { is: 5, then: 'x' })
+                a: Joi.alternatives().when(Joi.ref('b'), { is: 5, then: 'x' })
                                      .try('z'),
                 b: Joi.any()
             };

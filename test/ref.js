@@ -42,6 +42,27 @@ describe('ref', function () {
         });
     });
 
+    it('uses ref as a valid value (empty key)', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.ref(''),
+            '': Joi.any()
+        });
+
+        schema.validate({ a: 5, '': 6 }, function (err, value) {
+
+            expect(err).to.exist;
+            expect(err.message).to.equal('a must be one of ref:');
+
+            Helper.validate(schema, [
+                [{ a: 5 }, false],
+                [{ '': 5 }, true],
+                [{ a: 5, '': 5 }, true],
+                [{ a: '5', '': '5' }, true]
+            ], done);
+        });
+    });
+
     it('uses ref with nested keys as a valid value', function (done) {
 
         var schema = Joi.object({
@@ -328,15 +349,6 @@ describe('ref', function () {
     });
 
     describe('#create', function () {
-
-        it('throws when key is missing', function (done) {
-
-            expect(function () {
-
-                Joi.ref();
-            }).to.throw('Missing reference key');
-            done();
-        });
 
         it('throws when key is missing', function (done) {
 
