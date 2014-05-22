@@ -219,6 +219,23 @@ describe('alternatives', function () {
               [{ b: true }, true]           // true because required() only applies to the one alternative
             ], done);
         });
+
+        it('validates when is an empty string', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.alternatives().when('', { is: 5, then: Joi.valid('y') }),
+                '': Joi.any()
+            });
+
+            var input = {
+                a: 'y',
+                '': 5
+            };
+
+            Helper.validate(schema, [
+                [input, true]
+            ], done);
+        });
     });
 
     describe('#describe', function () {

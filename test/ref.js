@@ -42,6 +42,32 @@ describe('ref', function () {
         });
     });
 
+    it('handles keys that are empty strings', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.ref(''),
+            '': Joi.any()
+        });
+
+        Helper.validate(schema, [
+            [{ a: 5, '': 5 }, true]
+        ], done);
+    });
+
+    it('handles nested keys that are empty strings', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.ref('b.'),
+            b: {
+                '': Joi.any()
+            }
+        });
+
+        Helper.validate(schema, [
+            [{ a: 5, b: { '': 5 } }, true]
+        ], done);
+    });
+
     it('uses ref with nested keys as a valid value', function (done) {
 
         var schema = Joi.object({
