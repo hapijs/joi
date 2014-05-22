@@ -668,6 +668,15 @@ describe('object', function () {
             expect(error).to.equal(true);
             done();
         });
+
+        it('should validate correctly when key is an empty string', function (done) {
+
+            var schema = Joi.object().with('', 'b');
+            Validate(schema, [
+                [{ c: 'hi', d: 'there' }, true],
+            ]);
+            done();
+        });
     });
 
     describe('#without', function () {
@@ -691,6 +700,17 @@ describe('object', function () {
                 error = true;
             }
             expect(error).to.equal(true);
+
+
+            done();
+        });
+
+        it('should validate correctly when key is an empty string', function (done) {
+
+            var schema = Joi.object().without('', 'b');
+            Validate(schema, [
+                [{ a: 'hi', b: 'there' }, true]
+            ]);
             done();
         });
     });
