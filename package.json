@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "hoek": "^2.1.x",
-    "topo": "1.x.x"
+    "topo": "1.x.x",
+    "isemail": "0.1.x"
   },
   "devDependencies": {
     "lab": "3.x.x"
