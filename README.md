@@ -374,6 +374,9 @@ var schema = Joi.any().strict();
 Sets a default value if the original value is undefined where:
 - `value` - the value. `value` supports [references](#refkey-options).
 
+Note that if `value` is an object, any changes to the object after `default()` is called will change the reference
+and any future assignment.
+
 ```javascript
 var schema = {
     username: Joi.string().default('new_user')
