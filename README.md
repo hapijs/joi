@@ -176,7 +176,7 @@ Validates a value using the given schema and options where:
   - `language` - overrides individual error messages. Defaults to no override (`{}`).
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
     `validate()` and not using `any.options()`.
-- `callback` - the callback method using the signature `function(err, value)` where:
+- `callback` - the synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the error reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
     incomplete if validation failed and `abortEarly` is `true`.
