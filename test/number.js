@@ -117,6 +117,16 @@ describe('number', function () {
             });
         });
 
+        it('converts an "Infinity" string to an Infinity number', function (done) {
+
+            Joi.number().validate('Infinity', function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value).to.equal(Infinity);
+                done();
+            });
+        });
+
         it('errors on null', function (done) {
 
             Joi.number().validate(null, function (err, value) {
