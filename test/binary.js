@@ -95,7 +95,7 @@ describe('binary', function () {
             expect(function () {
                 
                 Joi.binary().encoding('base6');
-            }).to.throw('encoding must be valid encoding');
+            }).to.throw('Invalid encoding: base6');
             done();
         });
     });
