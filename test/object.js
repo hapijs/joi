@@ -545,8 +545,13 @@ describe('object', function () {
                 '': 'something'
             };
 
-            Validate(schema, [input, true]);
-            done();
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value['']).to.not.exist;
+                expect(value.notEmpty).to.equal('something');
+                done();
+            });
         });
     });
 
