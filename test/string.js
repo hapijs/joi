@@ -544,9 +544,10 @@ describe('string', function () {
 
             var schema = Joi.string().email();
             Helper.validate(schema, [
-                ['van@walmartlabs.com', true],
-                ['"van"@walmartlabs.com', true],
-                ['@iaminvalid.com', false]
+                ['joe@example.com', true],
+                ['"joe"@example.com', true],
+                ['@iaminvalid.com', false],
+                ['joe@[IPv6:2a00:1450:4001:c02::1b]', true]
             ], done);
         });
 
