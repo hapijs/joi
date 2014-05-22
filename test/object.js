@@ -672,7 +672,7 @@ describe('object', function () {
         it('should validate correctly when key is an empty string', function (done) {
 
             var schema = Joi.object().with('', 'b');
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ c: 'hi', d: 'there' }, true],
             ]);
             done();
@@ -708,7 +708,7 @@ describe('object', function () {
         it('should validate correctly when key is an empty string', function (done) {
 
             var schema = Joi.object().without('', 'b');
-            Validate(schema, [
+            Helper.validate(schema, [
                 [{ a: 'hi', b: 'there' }, true]
             ]);
             done();
