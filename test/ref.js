@@ -348,6 +348,13 @@ describe('ref', function () {
         ], done);
     });
 
+    it('describes schema with ref', function (done) {
+
+        var desc = Joi.compile(Joi.ref('a.b')).describe();
+        expect(Joi.isRef(desc.valids[0])).to.be.true;
+        done();
+    });
+
     describe('#create', function () {
 
         it('throws when key is missing', function (done) {
