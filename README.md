@@ -660,7 +660,7 @@ Specifies the exact number of keys in the object where:
 var schema = Joi.object().length(5);
 ```
 
-#### `object.parrern(regex, schema)`
+#### `object.pattern(regex, schema)`
 
 Specify validation rules for unknown keys matching a pattern where:
 - `regex` - a regular expression tested against the unknown key names.
