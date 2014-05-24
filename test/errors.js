@@ -71,6 +71,7 @@ describe('errors', function () {
         Joi.validate(input, schema, { abortEarly: false, language: lang }, function (err, value) {
 
             expect(err).to.exist;
+            expect(err.name).to.equal('ValidationError');
             expect(err.message).to.equal('value 11. required 7. xor 7. email 19. date 18. alphanum 16. min 14. max 15. notEmpty 3. notEmpty 13');
             done();
         });
