@@ -85,6 +85,24 @@ describe('errors', function () {
         });
     });
 
+    it('escapes unsafe keys', function (done) {
+
+        var schema = {
+            'a()': Joi.number()
+        };
+
+        Joi.validate({ 'a()': 'x' }, schema, function (err, value) {
+
+            expect(err.message).to.equal('a&#x28;&#x29; must be a number');
+
+            Joi.validate({ 'b()': 'x' }, schema, function (err, value) {
+
+                expect(err.message).to.equal('b&#x28;&#x29; is not allowed');
+                done();
+            });
+        });
+    });
+
     it('returns error type in validation error', function (done) {
 
         var input = {
