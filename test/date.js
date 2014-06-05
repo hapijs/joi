@@ -59,6 +59,18 @@ describe('date', function () {
         });
     });
 
+    it('validates millisecond date as a string', function (done) {
+        var now = new Date();
+        var mili = now.getTime();
+
+        Joi.date().validate(mili.toString(), function (err, value) {
+
+            expect(err).to.not.exist;
+            expect(value).to.be.eql(now);
+            done();
+        });
+    });
+
     describe('#validate', function () {
 
         it('validates min', function (done) {
