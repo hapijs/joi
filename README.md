@@ -3,7 +3,7 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **4.3.x**
+Current version: **4.6.x**
 
 [![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
 
@@ -16,6 +16,7 @@ Current version: **4.3.x**
 - [Usage](#usage)
     - [`validate(value, schema, [options], callback)`](#validatevalue-schema-options-callback)
     - [`compile(schema)`](#compileschema)
+    - [`assert(value, schema)`](#assertvalue-schema)
     - [`any`](#any)
         - [`any.allow(value)`](#anyallowvalue)
         - [`any.valid(value)`](#anyvalidvalue)
@@ -217,6 +218,16 @@ var schema = Joi.alternatives().try([
         ])
     })
 ]);
+```
+
+### `assert(value, schema)`
+
+Validates a value against a schema and throws if validation fails where:
+- `value` - the value to validate.
+- `schema` - the schema object.
+
+```javascript
+Joi.assert('x', Joi.number());
 ```
 
 ### `any`
