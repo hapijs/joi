@@ -32,7 +32,7 @@ Current version: **4.6.x**
         - [`any.unit(name)`](#anyunitname)
         - [`any.options(options)`](#anyoptionsoptions)
         - [`any.strict()`](#anystrict)
-        - [`any.default(value)`](#anydefault)
+        - [`any.default(value)`](#anydefaultvalue)
         - [`any.concat(schema)`](#anyconcatschema)
         - [`any.when(ref, options)`](#anywhenref-options)
     - [`array`](#array)
