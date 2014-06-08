@@ -1401,4 +1401,25 @@ describe('Joi', function () {
             done();
         })
     });
+
+    describe('#assert', function () {
+
+        it('throws on invalid value', function (done) {
+
+            expect(function () {
+
+                Joi.assert('x', Joi.number());
+            }).to.throw('"x"\n\u001b[31m\n[1] value must be a number\u001b[0m');
+            done();
+        });
+
+        it('does not throw on valid value', function (done) {
+
+            expect(function () {
+
+                Joi.assert('4', Joi.number());
+            }).to.not.throw();
+            done();
+        });
+    });
 });
