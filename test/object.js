@@ -660,7 +660,7 @@ describe('object', function () {
             });
         });
 
-        it('should throw an error when using a pattern on empty schema with unknown(false) and pattern doesn\'t match', function (done) {
+        it('errors when using a pattern on empty schema with unknown(false) and pattern mismatch', function (done) {
 
             var schema = Joi.object().pattern(/\d/, Joi.number()).unknown(false);
 
