@@ -60,6 +60,7 @@ describe('date', function () {
     });
 
     it('validates millisecond date as a string', function (done) {
+
         var now = new Date();
         var mili = now.getTime();
 
