@@ -297,7 +297,7 @@ Marks a key as optional which will allow `undefined` as values. Used to annotate
 var schema = Joi.any().optional();
 ```
 
-### `any.forbidden()`
+#### `any.forbidden()`
 
 Marks a key as forbidden which will not allow any value except `undefined`. Used to explicitly forbid keys.
 
