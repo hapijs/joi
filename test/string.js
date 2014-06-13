@@ -337,6 +337,17 @@ describe('string', function () {
             });
         });
 
+        it('removes leading and trailing whitespace before validation', function (done) {
+
+            var schema = Joi.string().trim().allow('');
+            schema.validate('     ', function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value).to.equal('');
+                done();
+            });
+        });
+
         it('should work in combination with min', function (done) {
 
             var schema = Joi.string().min(4).trim();
