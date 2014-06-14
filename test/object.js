@@ -659,6 +659,18 @@ describe('object', function () {
                 done();
             });
         });
+
+        it('should throw an error when using a pattern on empty schema with unknown(false) and pattern doesn\'t match', function (done) {
+
+            var schema = Joi.object().pattern(/\d/, Joi.number()).unknown(false);
+
+            Joi.validate({ a: 5 }, schema, { abortEarly: false }, function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('a is not allowed');
+                done();
+            });
+        });
     });
 
     describe('#with', function () {
