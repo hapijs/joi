@@ -553,6 +553,23 @@ describe('object', function () {
                 done();
             });
         });
+
+        it('should not create new keys when they key in question does not exist', function (done) {
+
+            var schema = Joi.object().rename('b', '_b');
+
+            var input = {
+                a: 'something'
+            };
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value).to.have.keys(['a']);
+                expect(value.a).to.equal('something');
+                done();
+            });
+        });
     });
 
     describe('#describe', function () {
@@ -890,4 +907,3 @@ describe('object', function () {
         });
     });
 });
-
