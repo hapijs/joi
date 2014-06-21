@@ -128,6 +128,36 @@ describe('any', function () {
                 done();
             });
         });
+
+        it('sets value based on condition (outter)', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.boolean().default(false).when('a', { is: true, then: Joi.required(), otherwise: Joi.forbidden() })
+            });
+
+            schema.validate({ a: false }, function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value.b).to.equal(false);
+                done();
+            });
+        });
+
+        it('sets value based on condition (inner)', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.boolean().when('a', { is: true, then: Joi.default(false), otherwise: Joi.forbidden() })
+            });
+
+            schema.validate({ a: true }, function (err, value) {
+
+                expect(err).to.not.exist;
+                expect(value.b).to.equal(false);
+                done();
+            });
+        });
     });
 
     describe('#forbidden', function () {
