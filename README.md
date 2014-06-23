@@ -798,7 +798,7 @@ Overrides the handling of unknown keys for the scope of the current object only 
 - `allow` - if `false`, unknown keys are not allowed, otherwise unknown keys are ignored.
 
 ```javascript
-var schema = Joi.Object({ a: Joi.any() }).unknown();
+var schema = Joi.object({ a: Joi.any() }).unknown();
 ```
 
 ### `string`
