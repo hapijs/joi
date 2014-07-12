@@ -198,7 +198,6 @@ Joi.validate(value, schema, function (err, value) { });
 
 // or
 var result = Joi.validate(value, schema);
-// assert.strictEqual(result.error, null);
 // assert.deepEqual(result, {"error":null,"value":{"a":123}});
 ```
 
