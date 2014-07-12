@@ -180,7 +180,8 @@ Validates a value using the given schema and options where:
 - `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the error reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
-    incomplete if validation failed and `abortEarly` is `true`.
+    incomplete if validation failed and `abortEarly` is `true`. If callback is not provided, then returns an object with error
+    and value properties.
 
 ```javascript
 var schema = {
