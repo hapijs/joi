@@ -129,7 +129,7 @@ describe('any', function () {
             });
         });
 
-        it('sets value based on condition (outter)', function (done) {
+        it('sets value based on condition (outer)', function (done) {
 
             var schema = Joi.object({
                 a: Joi.boolean(),
