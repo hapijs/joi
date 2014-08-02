@@ -9,7 +9,7 @@ Current version: **4.6.x**
 
 [![Browser Support](https://ci.testling.com/spumko/joi.png)](https://ci.testling.com/spumko/joi)
 
-Lead Maintainer: [Van Nguyen](https://github.com/thegoleffect)
+Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
 
 ## Table of Contents
 
