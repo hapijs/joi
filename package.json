@@ -1,15 +1,15 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "4.6.1",
-  "repository": "git://github.com/spumko/joi",
+  "version": "4.6.2",
+  "repository": "git://github.com/hapijs/joi",
   "main": "index",
   "keywords": [
     "schema",
     "validation"
   ],
   "engines": {
-    "node": ">=0.10.22"
+    "node": ">=0.10.30"
   },
   "dependencies": {
     "hoek": "^2.2.x",
@@ -22,23 +22,10 @@
   "scripts": {
     "test": "make test-cov"
   },
-  "testling": {
-    "files": "test/*.js",
-    "browsers": [
-      "ie/6..latest",
-      "chrome/22..latest",
-      "firefox/16..latest",
-      "safari/latest",
-      "opera/11.0..latest",
-      "iphone/6",
-      "ipad/6",
-      "android-browser/latest"
-    ]
-  },
   "licenses": [
     {
       "type": "BSD",
-      "url": "http://github.com/spumko/joi/raw/master/LICENSE"
+      "url": "http://github.com/hapijs/joi/raw/master/LICENSE"
     }
   ]
 }

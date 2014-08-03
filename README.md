@@ -1,19 +1,16 @@
-<a href="https://github.com/spumko"><img src="https://raw.github.com/spumko/spumko/master/images/from.png" align="right" /></a>
-![joi Logo](https://raw.github.com/spumko/joi/master/images/joi.png)
+![joi Logo](https://raw.github.com/hapijs/joi/master/images/joi.png)
 
 Object schema description language and validator for JavaScript objects.
 
 Current version: **4.6.x**
 
-[![Build Status](https://secure.travis-ci.org/spumko/joi.png)](http://travis-ci.org/spumko/joi)
-
-[![Browser Support](https://ci.testling.com/spumko/joi.png)](https://ci.testling.com/spumko/joi)
+[![Build Status](https://secure.travis-ci.org/hapijs/joi.png)](http://travis-ci.org/hapijs/joi)
 
 Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
 
 ## Table of Contents
 
-<img src="https://raw.github.com/spumko/joi/master/images/validation.png" align="right" />
+<img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
 - [Example](#example)
 - [Usage](#usage)
     - [`validate(value, schema, [options], callback)`](#validatevalue-schema-options-callback)
