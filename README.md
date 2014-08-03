@@ -302,7 +302,7 @@ Marks a key as forbidden which will not allow any value except `undefined`. Used
 
 ```javascript
 var schema = {
-    a: Joi.any.forbidden()
+    a: Joi.any().forbidden()
 };
 ```
 
