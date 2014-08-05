@@ -631,7 +631,7 @@ object.validate({ a: 5 }, function (err, value) { });
 #### `object.keys([schema])`
 
 Sets the allowed object keys where:
-- `schema` - optional object where each key is assinged a **joi** type object. If `schema` is `{}` no keys allowed.
+- `schema` - optional object where each key is assigned a **joi** type object. If `schema` is `{}` no keys allowed.
   If `schema` is `null` or `undefined`, any key allowed. If `schema` is an object with keys, the keys are added to any
   previously defined keys (but narrows the selection if all keys previously allowed). Defaults to 'undefined' which
   allows any child key.
@@ -947,7 +947,7 @@ var alt = Joi.alternatives().try(Joi.number(), Joi.string());
 // Same as [Joi.number(), Joi.string()]
 ```
 
-#### `alternatives.try(schemas)``
+#### `alternatives.try(schemas)`
 
 Adds an alternative schema type for attempting to match against the validated value where:
 - `schema` - an array of alternative **joi** types. Also supports providing each type as a separate argument.
@@ -1003,8 +1003,8 @@ var schema = {
 Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency
 so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
 References support the following arguments:
-- `key` - the reference target. References cannot point up the object tree, only to siebling keys, but they can point to
-  their siebling's children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
+- `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
+  their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
   which is looked up in the `context` option object.
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator.
