@@ -13,7 +13,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
 - [Example](#example)
 - [Usage](#usage)
-    - [`validate(value, schema, [options], callback)`](#validatevalue-schema-options-callback)
+    - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
     - [`compile(schema)`](#compileschema)
     - [`assert(value, schema)`](#assertvalue-schema)
     - [`any`](#any)
@@ -162,7 +162,7 @@ When validating a schema:
 * Strings are utf-8 encoded by default.
 * Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
 
-### `validate(value, schema, [options], callback)`
+### `validate(value, schema, [options], [callback])`
 
 Validates a value using the given schema and options where:
 - `value` - the value being validated.
@@ -176,10 +176,11 @@ Validates a value using the given schema and options where:
   - `language` - overrides individual error messages. Defaults to no override (`{}`).
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
     `validate()` and not using `any.options()`.
-- `callback` - the synchronous callback method using the signature `function(err, value)` where:
+- `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the error reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
-    incomplete if validation failed and `abortEarly` is `true`.
+    incomplete if validation failed and `abortEarly` is `true`. If callback is not provided, then returns an object with error
+    and value properties.
 
 ```javascript
 var schema = {
@@ -193,6 +194,11 @@ var value = {
 Joi.validate(value, schema, function (err, value) { });
 // err -> null
 // value.a -> 123 (number, not string)
+
+// or
+var result = Joi.validate(value, schema);
+// result.error -> null
+// result.value -> { "a" : 123 }
 ```
 
 ### `compile(schema)`
