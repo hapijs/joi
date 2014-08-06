@@ -198,7 +198,8 @@ Joi.validate(value, schema, function (err, value) { });
 
 // or
 var result = Joi.validate(value, schema);
-// assert.deepEqual(result, {"error":null,"value":{"a":123}});
+// result.error -> null
+// result.value -> { "a" : 123 }
 ```
 
 ### `compile(schema)`
