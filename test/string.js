@@ -574,6 +574,29 @@ describe('string', function () {
             });
         });
 
+        it('should validate url', function (done) {
+
+            var schema = Joi.string().url();
+            Helper.validate(schema, [
+                ['http://foo.com/blah_blah', true],
+                ['http://foo.com/blah_blah_(wikipedia)_(again)', true],
+                ['http://foo.com/unicode_(✪)_in_parens', true],
+                ['http://123.123.123', false],
+                ['http://foo.bar?q=Spaces should be encodedm', false],
+                ['http://.www.foo.bar./', false]
+            ], done);
+        });
+
+        it('should validate url with a friendly error message', function (done) {
+
+            var schema = { item: Joi.string().url() };
+            Joi.compile(schema).validate({ item: 'http://-error-.invalid/' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid url');
+                done();
+            });
+        });
+
         it('should return false for denied value', function (done) {
 
             var text = Joi.string().invalid('joi');
@@ -1046,6 +1069,173 @@ describe('string', function () {
                 ['123@x.com', false],
                 ['1234@x.com', true],
                 ['12345@x.com', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url and min', function (done) {
+
+            var rule = Joi.string().url().min(20);
+            Helper.validate(rule, [
+                ['http://example.com', false],
+                ['http://my.example.com', true],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, and max', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30);
+            Helper.validate(rule, [
+                ['http://example.com', false],
+                ['http://my.example.com', true],
+                ['http://example.com/fooo/bar', true],
+                ['http://my.example.com/foo/bar.txt', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, and invalid', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).invalid('http://my.example.com');
+            Helper.validate(rule, [
+                ['http://example.com', false],
+                ['http://my.example.com', false],
+                ['http://example.com/fooo/bar', true],
+                ['http://my.example.com/foo/bar.txt', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, and allow', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).allow('http://example.com');
+            Helper.validate(rule, [
+                ['http://example.com', true],
+                ['http://my.example.com', true],
+                ['http://example.com/fooo/bar', true],
+                ['http://my.example.com/foo/bar.txt', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, allow, and invalid', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).allow('http://my.example.com/foo/bar.txt').invalid('http://my.example.com');
+            Helper.validate(rule, [
+                ['http://example.com', false],
+                ['http://my.example.com', false],
+                ['http://example.com/fooo/bar', true],
+                ['http://my.example.com/foo/bar.txt', true],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, allow, invalid, and allow(\'\')', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).allow('http://my.example.com/foo/bar.txt').invalid('http://my.example.com').allow('');
+            Helper.validate(rule, [
+                ['http://example.com', false],
+                ['http://my.example.com', false],
+                ['http://example.com/fooo/bar', true],
+                ['http://my.example.com/foo/bar.txt', true],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, allow, and allow(\'\')', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).allow('http://example.com').allow('');
+            Helper.validate(rule, [
+                ['http://example.com', true],
+                ['http://my.example.com', true],
+                ['http://example.com/fooo/bar', true],
+                ['http://my.example.com/foo/bar.txt', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, allow, invalid, and regex', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).allow('http://example.com').invalid('http://example.com/foo/bar').regex(/foo\//);
+            Helper.validate(rule, [
+                ['http://example.com', true],
+                ['http://my.example.com/foo/', true],
+                ['http://example.com/foo/bar', false],
+                ['http://my.example.com/foo/bar.txt', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, allow, invalid, regex, and allow(\'\')', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).allow('http://example.com').invalid('http://foo.example.com').regex(/foo\//).allow('');
+            Helper.validate(rule, [
+                ['http://example.com', true],
+                ['http://foo.example.com', false],
+                ['http://example.com/foo/bar', true],
+                ['http://my.example.com/foo/bar.txt', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, and allow(\'\')', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).allow('');
+            Helper.validate(rule, [
+                ['http://example.com', false],
+                ['http://foo.example.com', true],
+                ['http://example.com/foo/bar', true],
+                ['http://my.example.com/foo/bar.txt', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, and regex', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).regex(/foo\//);
+            Helper.validate(rule, [
+                ['http://ex.com/foo/', false],
+                ['http://example.com/foo/', true],
+                ['http://example.com/foo/bar', true],
+                ['http://my.example.com/foo/bar.txt', false],
+                ['', false],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, regex, and allow(\'\')', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).regex(/foo\//).allow('');
+            Helper.validate(rule, [
+                ['http://ex.com/foo/', false],
+                ['http://example.com/foo/', true],
+                ['http://example.com/foo/bar', true],
+                ['http://my.example.com/foo/bar.txt', false],
+                ['', true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of url, min, max, regex, and required', function (done) {
+
+            var rule = Joi.string().url().min(20).max(30).regex(/foo\//).required();
+            Helper.validate(rule, [
+                ['http://ex.com/foo/', false],
+                ['http://example.com/foo/', true],
+                ['http://example.com/foo/bar', true],
+                ['http://my.example.com/foo/bar.txt', false],
                 ['', false],
                 [null, false]
             ], done);
