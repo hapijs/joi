@@ -44,7 +44,7 @@ describe('date', function () {
 
     it('errors on invalid input and convert disabled', function (done) {
 
-        Joi.date().options({ convert: false }).validate('1-1-2013', function (err, value) {
+        Joi.date().options({ convert: false }).validate('1-1-2013 UTC', function (err, value) {
 
             expect(err).to.exist;
             expect(err.message).to.equal('value must be a number of milliseconds or valid date string');
@@ -124,28 +124,33 @@ describe('date', function () {
 
         it('validates min', function (done) {
 
-            Helper.validate(Joi.date().min('1-1-2012'), [
-                ['1-1-2013', true],
-                ['1-1-2012', true],
+            Helper.validate(Joi.date().min('1-1-2000 UTC'), [
+                ['1-1-2001 UTC', true],
+                ['1-1-2000 UTC', true],
                 [0, false],
-                ['1-1-2000', false]
+                ["0", false],
+                ["-1", false],
+                ['1-1-1999 UTC', false]
             ], done);
         });
 
         it('validates max', function (done) {
 
-            Helper.validate(Joi.date().max('1-1-2013'), [
-                ['1-1-2013', true],
-                ['1-1-2012', true],
+            Helper.validate(Joi.date().max('1-1-1970 UTC'), [
+                ['1-1-1971 UTC', false],
+                ['1-1-1970 UTC', true],
                 [0, true],
-                ['1-1-2014', false]
+                [1, false],
+                ["0", true],
+                ["-1", true],
+                ['1-1-2014 UTC', false]
             ], done);
         });
 
         it('validates only valid dates', function (done) {
 
             Helper.validate(Joi.date(), [
-                ['1-1-2013', true],
+                ['1-1-2013 UTC', true],
                 ['not a valid date', false],
                 [new Date('not a valid date'), false]
             ], done);
