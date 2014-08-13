@@ -688,6 +688,17 @@ describe('object', function () {
                 done();
             });
         });
+
+        it('throws an error when trying to use the global flag', function (done) {
+
+            expect(function() {
+
+                var schema = Joi.object({
+                    a: Joi.number()
+                }).pattern(/\d+/gi, Joi.boolean());
+            }).to.throw('Global flag cannot be used');
+            done();
+        });
     });
 
     describe('#with', function () {
