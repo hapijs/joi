@@ -567,6 +567,7 @@ describe('string', function () {
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['"joe"@example.com', true],
+                ['shouldbe@invalid', false],
                 ['@iaminvalid.com', false],
                 ['joe@[IPv6:2a00:1450:4001:c02::1b]', true],
                 ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false],
