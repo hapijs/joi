@@ -944,5 +944,29 @@ describe('object', function () {
             }).to.not.throw();
             done();
         });
+
+        it('provides a default message for failed assertions', function (done) {
+
+            var schema = Joi.object({
+                a: {
+                    b: Joi.string(),
+                    c: Joi.number()
+                },
+                d: {
+                    e: Joi.any()
+                }
+            }).assert('d.e', Joi.boolean());
+
+            schema.validate({
+                d: {
+                    e:[]
+                }
+            }, function (err) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('value validation failed because d.e failed to pass the assertion test');
+                done();
+            });
+        });
     });
 });

@@ -66,7 +66,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`object.with(key, peers)`](#objectwithkey-peers)
         - [`object.without(key, peers)`](#objectwithoutkey-peers)
         - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
-        - [`object.assert(ref, schema, message)`](#objectassertref-schema-message)
+        - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
         - [`object.unknown([allow])`](#objectunknownallow)
     - [`string`](#string)
         - [`string.insensitive()`](#stringinsensitive)
@@ -777,13 +777,13 @@ var object = Joi.object().keys({
 object.validate({ b: 5 }, function (err, value) { });
 ```
 
-#### `object.assert(ref, schema, message)`
+#### `object.assert(ref, schema, [message])`
 
 Verifies an assertion where:
 - `ref` - the key name or [reference](#refkey-options).
 - `schema` - the validation rules required to satisfy the assertion. If the `schema` includes references, they are resolved against
   the object value, not the value of the `ref` target.
-- `message` - human-readable message used when the assertion fails.
+- `message` - optional human-readable message used when the assertion fails. Defaults to 'failed to pass the assertion test'.
 
 ```javascript
 var schema = Joi.object().keys({
