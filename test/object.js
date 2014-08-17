@@ -599,6 +599,33 @@ describe('object', function () {
 
             done();
         });
+
+        it('describes patterns', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string()
+            }).pattern(/\w\d/i, Joi.boolean());
+
+            expect(schema.describe()).to.deep.equal({
+                type: 'object',
+                children: {
+                    a: {
+                        type: 'string',
+                        invalids: ['']
+                    }
+                },
+                patterns: [
+                    {
+                        regex: '/\\w\\d/i',
+                        rule: {
+                            type: 'boolean'
+                        }
+                    }
+                ]
+            });
+
+            done();
+        });
     });
 
     describe('#length', function () {
