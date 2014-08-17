@@ -690,15 +690,15 @@ describe('object', function () {
             });
         });
 
-        it('throws an error when trying to use the global flag', function (done) {
+        it('removes global flag from patterns', function (done) {
 
-            expect(function() {
+            var schema = Joi.object().pattern(/a/g, Joi.number());
 
-                var schema = Joi.object({
-                    a: Joi.number()
-                }).pattern(/\d+/gi, Joi.boolean());
-            }).to.throw('Global flag cannot be used');
-            done();
+            Joi.validate({ a1: 5, a2: 6 }, schema, function (err, value) {
+
+                expect(err).to.not.exist;
+                done();
+            });
         });
     });
 
