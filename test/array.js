@@ -377,4 +377,40 @@ describe('array', function () {
             });
         });
     });
+
+    describe('#noDuplicates', function() {
+
+        it('errors if duplicate booleans, dates, numbers or string', function(done) {
+            var now = new Date();
+            var schema = Joi.array().noDuplicates();
+
+            Helper.validate(schema, [
+                [[true, true], false],
+                [[now, now], false],
+                [[2, 2], false],
+                [['duplicate', 'duplicate'], false]
+            ], done);
+        });
+
+        it('ignores duplicates if they are of different types', function(done) {
+            var schema = Joi.array().noDuplicates();
+
+            Helper.validate(schema, [
+                [[true, 'true'], true],
+                [[2, '2'], true]
+            ], done);
+        });
+
+        it('ignores duplicates objects, binaries and functions', function(done) {
+            var buffer = new Buffer('hello world');
+            var func = function() {};
+            var schema = Joi.array().noDuplicates();
+
+            Helper.validate(schema, [
+                [[{ a: 'b' }, { a: 'b' }], true],
+                [[buffer, buffer], true],
+                [[func, func], true]
+            ], done);
+        });
+    });
 });
