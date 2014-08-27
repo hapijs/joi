@@ -141,7 +141,7 @@ describe('errors', function () {
         schema.validate(input, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.details[0].path).to.equal('1');
+            expect(err.details[0].path).to.equal('1.1.x');
             done();
         });
     });
@@ -157,7 +157,7 @@ describe('errors', function () {
         schema.validate(input, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.details[0].path).to.equal('1');
+            expect(err.details[0].path).to.equal('1.1');
             done();
         });
     });
@@ -175,7 +175,7 @@ describe('errors', function () {
         Joi.validate(input, schema, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.details[0].path).to.equal('x.1');
+            expect(err.details[0].path).to.equal('x.1.x');
             done();
         });
     });
