@@ -85,6 +85,16 @@ describe('date', function () {
             ], done);
         });
 
+        it('validates min function', function (done) {
+
+            Helper.validate(Joi.date().min(function() { return '1-1-2012' }), [
+                ['1-1-2013', true],
+                ['1-1-2012', true],
+                [0, false],
+                ['1-1-2000', false]
+            ], done);
+        });
+
         it('validates max', function (done) {
 
             Helper.validate(Joi.date().max('1-1-2013'), [
