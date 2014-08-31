@@ -561,6 +561,10 @@ Specifies the oldest date allowed where:
 var schema = Joi.date().min('1-1-1974');
 ```
 
+```javascript
+var schema = Joi.date().min(function() { return new Date(); });
+```
+
 #### `date.max(date)`
 
 Specifies the latest date allowed where:
