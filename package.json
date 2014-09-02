@@ -13,8 +13,9 @@
   },
   "dependencies": {
     "hoek": "^2.2.x",
-    "topo": "1.x.x",
-    "isemail": "1.x.x"
+    "isemail": "1.x.x",
+    "isodate": "^0.1.x",
+    "topo": "1.x.x"
   },
   "devDependencies": {
     "lab": "4.x.x"
