@@ -189,6 +189,29 @@ describe('errors', function () {
         });
     });
 
+    it('overrides root key name for different types', function (done) {
+
+        var bookSchema = Joi.object().keys({
+            title: Joi.string().required().options({ language: { root: 'Book title'} }),
+            copies: Joi.number().optional().options({ language: { root: 'Number of copies'} }),
+            summary: Joi.string().optional().options({ language: { root: 'Brief summary'} })
+        });
+
+        Joi.validate({
+            copies: 'blah',
+            summary: 'It was the best of times, it was the worst of times'
+        }, bookSchema, {
+            abortEarly: false
+        }, function (err, value) {
+
+            expect(err).to.exist;
+            expect(err.details.length).to.equal(2);
+            expect(err.message).to.equal('Book title is required. Number of copies must be a number');
+            done();
+        });
+
+    });
+
     describe('#annotate', function () {
 
         it('annotates error', function (done) {
