@@ -1268,6 +1268,42 @@ describe('Joi', function () {
         });
     });
 
+    it('fails validation when missing a required parameter, set as required with options', function (done) {
+
+        var obj = {};
+
+        Joi.validate(obj, Joi.object().keys({ a: Joi.object() }), { requiredAsDefault: true }, function (err, value) {
+
+            expect(err).to.exist;
+            done();
+        });
+    });
+
+    it('passes validation when containing a required parameter, set as required with options', function (done) {
+
+        var obj = {
+            a: {}
+        };
+
+        Joi.validate(obj, Joi.object().keys({ a: Joi.object() }), { requiredAsDefault: true }, function (err, value) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
+    it('passes validation when missing an explicitly optional parameter, when requiredAsDefault is set', function (done) {
+
+        var obj = {};
+
+        Joi.validate(obj, Joi.object().keys({ a: Joi.string().optional() }), { requiredAsDefault: true }, function (err, value) {
+
+            expect(err).to.not.exist;
+            done();
+        });
+    });
+
+
     describe('#describe', function () {
 
         var schema = Joi.object({

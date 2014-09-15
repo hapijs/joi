@@ -173,6 +173,7 @@ Validates a value using the given schema and options where:
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
+  - `requiredAsDefault` - when `true`, all keys are required by default. `any.optional()` can be used to explicitly override this setting on an individual key.  Defaults to `false`.
   - `language` - overrides individual error messages. Defaults to no override (`{}`).
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
     `validate()` and not using `any.options()`.
