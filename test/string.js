@@ -1149,26 +1149,6 @@ describe('string', function () {
             ], done);
         });
 
-        it('validates combination of isoDate, min and max', function (done) {
-
-            var rule = Joi.string().isoDate().min(17).max(23);
-            Helper.validate(rule, [
-                ['2013-06-07T14:21:46.295Z', false],
-                ['2013-06-07T14:21:46.295+07:00', false],
-                ['2013-06-07T14:21:46.295-07:00', false],
-                ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46+07:00', false],
-                ['2013-06-07T14:21:46-07:00', false],
-                ['2013-06-07T14:21Z', true],
-                ['2013-06-07T14:21+07:00', true],
-                ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false],
-                ['1-1-2013', false],
-                ['', false],
-                [null, false]
-            ], done);
-        });
-
         it('validates combination of isoDate, min, max and invalid', function (done) {
 
             var rule = Joi.string().isoDate().min(17).max(23).invalid('2013-06-07T14:21+07:00');
