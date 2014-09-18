@@ -12,9 +12,10 @@
     "node": ">=0.10.30"
   },
   "dependencies": {
+    "creditcard": "^0.1.1",
     "hoek": "^2.2.x",
-    "topo": "1.x.x",
-    "isemail": "1.x.x"
+    "isemail": "1.x.x",
+    "topo": "1.x.x"
   },
   "devDependencies": {
     "lab": "4.x.x"
