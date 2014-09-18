@@ -78,6 +78,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
         - [`string.regex(pattern)`](#stringregexpattern)
         - [`string.alphanum()`](#stringalphanum)
+        - [`string.creditcard()`](#stringcreditcard)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -904,6 +905,14 @@ Requires the string value to only contain a-z, A-Z, and 0-9.
 
 ```javascript
 var schema = Joi.string().alphanum();
+```
+
+#### `string.creditcard()`
+
+Requires the string value to be a valid credit card number as validated by the Luhn10 algorithm.
+
+```javascript
+var schema = Joi.string().creditcard();
 ```
 
 #### `string.token()`
