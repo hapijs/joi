@@ -371,6 +371,37 @@ describe('number', function () {
                 [null, true]
             ], done);
         });
+
+        it('should handle limiting the number of decimal places', function (done) {
+
+            var rule = Joi.number().precision(1);
+            Helper.validate(rule, [
+                [1, true],
+                [9.1, true],
+                [9.21, false],
+                [9.9999, false],
+                [9.999e99, true],
+                [9.9e-99, false],
+                [9.9e3, true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of min, max, integer, allow, invalid, null allowed and precision', function (done) {
+
+            var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1);
+            Helper.validate(rule, [
+                [1, false],
+                [11, false],
+                [8, false],
+                [9, true],
+                [9.1, true],
+                [9.11, false],
+                [9.2, false],
+                [9.22, false],
+                [null, true]
+            ], done);
+        });
     });
 
     it('should instantiate separate copies on invocation', function (done) {

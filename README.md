@@ -54,6 +54,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`number.min(limit)`](#numberminlimit)
         - [`number.max(limit)`](#numbermaxlimit)
         - [`number.integer()`](#numberinteger)
+        - [`number.precision(limit)`](#numberprecisionlimit)
     - [`object`](#object)
         - [`object.keys([schema])`](#objectkeysschema)
         - [`object.min(limit)`](#objectminlimit)
@@ -618,6 +619,15 @@ Requires the number to be an integer (no floating point).
 
 ```javascript
 var schema = Joi.number().integer();
+```
+
+#### `number.precision(limit)`
+
+Specifies the maximum number of decimal places where:
+- `limit` - the maximum number of decimal places allowed.
+
+```javascript
+var schema = Joi.number().precision(2);
 ```
 
 ### `object`
