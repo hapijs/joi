@@ -31,6 +31,22 @@ describe('string', function () {
         ], done);
     });
 
+    describe('#equal', function() {
+        it('should throw error on input a not equal string', function(done){
+            Helper.validate(Joi.string().equal('test'), [
+              ['ntest', false],
+              ['mkmkmk', false]
+            ], done);
+        });
+
+        it('validate case on string match', function(done){
+            Helper.validate(Joi.string().equal('test'), [
+              ['test', true],
+              ['TEST', false]
+            ], done);
+        });
+    });
+
     describe('#valid', function () {
 
         it('should throw error on input not matching type', function (done) {
