@@ -411,18 +411,20 @@ describe('alternatives', function () {
             done();
         });
 
-        it("describe meta information", function (done) {
-            var schema = Joi.alternatives(Joi.string()).meta("foo").description("bar").example("baz");
+        it('describe meta information', function (done) {
+            var schema = Joi.alternatives(Joi.string()).meta('foo').description('bar').example('baz');
             
-            var outcome = [{
-                type: "string",
+            var outcome = [
+              {
+                type: 'string',
                 invalids: ['']
-            }];
+              }
+            ];
 
-            outcome.type = "alternatives";
-            outcome.meta = [ "foo" ];
-            outcome.description = "bar";
-            outcome.examples = [ "baz" ];
+            outcome.type = 'alternatives';
+            outcome.meta = ['foo'];
+            outcome.description = 'bar';
+            outcome.examples = ['baz'];
 
             expect(Joi.describe(schema)).to.deep.equal(outcome);    
             done();
