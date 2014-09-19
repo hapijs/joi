@@ -14,7 +14,8 @@
   "dependencies": {
     "hoek": "^2.2.x",
     "topo": "1.x.x",
-    "isemail": "1.x.x"
+    "isemail": "1.x.x",
+    "moment": "2.x.x"
   },
   "devDependencies": {
     "lab": "4.x.x"
