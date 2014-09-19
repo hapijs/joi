@@ -1074,7 +1074,15 @@ describe('string', function () {
                 ['2013-06-07T14:21+07:00', true],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
-                ['1-1-2013', false]
+                ['2013-01-01', true],
+                ['2013', true],
+                ['1-1-2013', false],
+                ['2013-1-1', false],
+                ['01-01', false],
+                ['20', false],
+                ['asdf', false],
+                ['', false],
+                [null, false]
             ], done);
         });
 
