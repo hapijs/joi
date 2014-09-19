@@ -161,6 +161,29 @@ describe('any', function () {
         });
     });
 
+    describe('#optional', function () {
+
+        it('validates optional with default required', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.any(),
+                b: Joi.any(),
+                c: {
+                    d: Joi.any()
+                }
+            }).options({ presence: 'required' });
+
+            Helper.validate(schema, [
+                [{ a: 5 }, false],
+                [{ a: 5, b: 6 }, false],
+                [{ a: 5, b: 6, c: {} }, false],
+                [{ a: 5, b: 6, c: { d: 7 } }, true],
+                [{}, false],
+                [{ b: 5 }, false]
+            ], done);
+        });
+    });
+
     describe('#forbidden', function () {
 
         it('validates forbidden', function (done) {
