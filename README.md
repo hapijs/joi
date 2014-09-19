@@ -665,7 +665,7 @@ Sets the allowed object keys where:
 
 ```javascript
 var object = Joi.object().keys({
-    a: Joi.number()
+    a: Joi.number(),
     b: Joi.string()
 });
 ```
