@@ -40,6 +40,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`array.min(limit)`](#arrayminlimit)
         - [`array.max(limit)`](#arraymaxlimit)
         - [`array.length(limit)`](#arraylengthlimit)
+        - [`array.unique()`](#arrayunique)
     - [`binary`](#binary)
       - [`binary.encoding(encoding)`](#binaryencodingencoding)
       - [`binary.min(limit)`](#binaryminlimit)
@@ -485,6 +486,14 @@ Specifies the exact number of items in the array where:
 
 ```javascript
 var schema = Joi.array().length(5);
+```
+
+#### `array.unique()`
+
+Requires the array values to be unique. Only works for literals (numbers and strings), all other types are ignored.
+
+```javascript
+var schema = Joi.array().unique();
 ```
 
 ### `boolean`
