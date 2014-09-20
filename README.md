@@ -50,6 +50,8 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
     - [`date`](#date)
         - [`date.min(date)`](#datemindate)
         - [`date.max(date)`](#datemaxdate)
+        - [`date.format(format)`](#dateformatformat)
+        - [`date.iso()`](#dateiso)
     - [`func`](#func)
     - [`number`](#number)
         - [`number.min(limit)`](#numberminlimit)
@@ -81,7 +83,6 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
-        - [`string.isoDate()`](#stringisodate)
         - [`string.hostname()`](#stringhostname)
         - [`string.lowercase()`](#stringlowercase)
         - [`string.uppercase()`](#stringuppercase)
@@ -584,6 +585,23 @@ Specifies the latest date allowed where:
 var schema = Joi.date().max('12-31-2020');
 ```
 
+#### `date.format(format)`
+
+Specifies the allowed date format:
+- `format` - string or array of strings that follow the `moment.js` [format](http://momentjs.com/docs/#/parsing/string-format/).
+
+```javascript
+var schema = Joi.date().format('YYYY/MM/DD');
+```
+
+#### `date.iso()`
+
+Requires the string value to be in valid ISO 8601 date format.
+
+```javascript
+var schema = Joi.date().iso();
+```
+
 ### `func`
 
 Generates a schema object that matches a function type.
@@ -926,14 +944,6 @@ Requires the string value to be a valid GUID.
 
 ```javascript
 var schema = Joi.string().guid();
-```
-
-#### `string.isoDate()`
-
-Requires the string value to be in valid ISO 8601 date format.
-
-```javascript
-var schema = Joi.string().isoDate();
 ```
 
 #### `string.hostname()`
