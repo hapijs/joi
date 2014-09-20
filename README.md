@@ -2,7 +2,7 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **4.6.x**
+Current version: **4.7.x**
 
 [![Build Status](https://secure.travis-ci.org/hapijs/joi.png)](http://travis-ci.org/hapijs/joi)
 
@@ -15,7 +15,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
 - [Usage](#usage)
     - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
     - [`compile(schema)`](#compileschema)
-    - [`assert(value, schema)`](#assertvalue-schema)
+    - [`assert(value, schema, [message])`](#assertvalue-schema-message)
     - [`any`](#any)
         - [`any.allow(value)`](#anyallowvalue)
         - [`any.valid(value)`](#anyvalidvalue)
@@ -229,11 +229,12 @@ var schema = Joi.alternatives().try([
 ]);
 ```
 
-### `assert(value, schema)`
+### `assert(value, schema, [message])`
 
 Validates a value against a schema and throws if validation fails where:
 - `value` - the value to validate.
 - `schema` - the schema object.
+- `message` - optional message sting prefix added in front of the error message.
 
 ```javascript
 Joi.assert('x', Joi.number());

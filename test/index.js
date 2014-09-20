@@ -1422,5 +1422,14 @@ describe('Joi', function () {
             }).to.not.throw();
             done();
         });
+
+        it('throws on invalid value with message', function (done) {
+
+            expect(function () {
+
+                Joi.assert('x', Joi.number(), 'the reason is');
+            }).to.throw('the reason is "x"\n\u001b[31m\n[1] value must be a number\u001b[0m');
+            done();
+        });
     });
 });
