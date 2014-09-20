@@ -124,8 +124,8 @@ describe('date', function () {
                     ['2013-06-07T14:21-07:00', true],
                     ['2013-06-07T14:21Z+7:00', false],
                     ['2013-06-07', true],
-                    // ['2013-06-07T', false], // These 2 lines should be rejected but moment accepts it, see joi#428
-                    // ['2013-06-07T14:21', false],
+                    ['2013-06-07T', false],
+                    ['2013-06-07T14:21', false],
                     ['1-1-2013', false]
                 ], done);
             });
