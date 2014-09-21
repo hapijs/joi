@@ -34,6 +34,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`any.default(value)`](#anydefaultvalue)
         - [`any.concat(schema)`](#anyconcatschema)
         - [`any.when(ref, options)`](#anywhenref-options)
+        - [`any.label(name)`](#anylabelname)
     - [`array`](#array)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
@@ -431,6 +432,15 @@ var schema = {
     a: Joi.any().valid('x').when('b', { is: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') }),
     b: Joi.any()
 };
+```
+
+#### `any.label(name)`
+
+Overrides the key name in error messages.
+- `name` - the name of the key.
+
+```javascript
+var schema = Joi.firstName().label('First Name');
 ```
 
 ### `array`
