@@ -34,6 +34,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`any.default(value)`](#anydefaultvalue)
         - [`any.concat(schema)`](#anyconcatschema)
         - [`any.when(ref, options)`](#anywhenref-options)
+        - [`any.label(name)`](#anylabelname)
     - [`array`](#array)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
@@ -448,6 +449,16 @@ var schema = {
 };
 ```
 
+#### `any.label(name)`
+
+Overrides the key name in error messages.
+- `name` - the name of the key.
+
+```javascript
+var schema = {
+    first_name: Joi.string().label('First Name')
+};
+```
 
 ### `array`
 
