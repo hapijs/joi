@@ -583,6 +583,12 @@ Specifies the latest date allowed where:
 var schema = Joi.date().max('12-31-2020');
 ```
 
+Note: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+
+```javascript
+var schema = Joi.date().min('now');
+```
+
 ### `func`
 
 Generates a schema object that matches a function type.
