@@ -601,6 +601,12 @@ Specifies the oldest date allowed where:
 var schema = Joi.date().min('1-1-1974');
 ```
 
+Note: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+
+```javascript
+var schema = Joi.date().min('now');
+```
+
 #### `date.max(date)`
 
 Specifies the latest date allowed where:
@@ -608,6 +614,12 @@ Specifies the latest date allowed where:
 
 ```javascript
 var schema = Joi.date().max('12-31-2020');
+```
+
+Note: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+
+```javascript
+var schema = Joi.date().max('now');
 ```
 
 #### `date.format(format)`
