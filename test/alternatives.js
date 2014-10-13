@@ -247,6 +247,22 @@ describe('alternatives', function () {
               [{ b: true }, true]           // true because required() only applies to the one alternative
             ], done);
         });
+
+        it('validates when ref is an array of values', function (done) {
+
+          var schema = Joi.object({
+              a: Joi.alternatives().when(['b', 'c'], { is: [true, false], then: Joi.required() }),
+              b: Joi.boolean(),
+              c: Joi.boolean()
+          });
+
+          schema.validate({ a: 'required', b: true, c: false }, function (err, value) {
+
+              expect(err).to.not.exist;
+              expect(value.a).to.equal('required');
+              done();
+          });
+        });
     });
 
     describe('#describe', function () {
