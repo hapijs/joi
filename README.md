@@ -438,6 +438,17 @@ var schema = {
 };
 ```
 
+Alternatively, if you want to specify a specific type such as `string`, `array`, etc, you can do so like this:
+
+```javascript
+var schema = {
+    a: Joi.valid('a', 'b', 'other'),
+    other: Joi.string()
+        .when('a', { is: 'other', then: Joi.required() }),
+};
+```
+
+
 ### `array`
 
 Generates a schema object that matches an array data type.
