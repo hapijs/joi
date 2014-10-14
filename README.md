@@ -34,6 +34,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`any.default(value)`](#anydefaultvalue)
         - [`any.concat(schema)`](#anyconcatschema)
         - [`any.when(ref, options)`](#anywhenref-options)
+        - [`any.recursive()`](#anyrecursive)
     - [`array`](#array)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
@@ -89,6 +90,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`alternatives.try(schemas)`](#alternativestryschemas)
         - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
     - [`ref(key, [options])`](#refkey-options)
+    - [`recurse()`](#recurse)
 
 # Example
 
@@ -432,6 +434,29 @@ var schema = {
     b: Joi.any()
 };
 ```
+
+#### `any.recursive()`
+
+Marks the type as recursive.
+
+Used in conjuction with [recurse()](#recurse) to create a recursive type.
+
+```javascript
+var tree = Joi.object({
+    name: Joi.string(),
+    children: Joi.array().includes(Joi.recurse())
+}).recursive();
+
+var test = {
+    name:"test",
+    children: [
+        {name: "test2"}             
+    ]
+};
+
+tree.validate(test, function (err, value) {});
+```
+
 
 ### `array`
 
@@ -1051,4 +1076,25 @@ var schema = Joi.object().keys({
 });
 
 Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, function (err, value) {});
+```
+### `recurse()`
+
+Creates a recursive type reference.
+
+Used in conjunction with [`any.recursive()`](#anyrecursive) to create a recursive type.
+
+```javascript
+var tree = Joi.object({
+    name: Joi.string(),
+    children: Joi.array().includes(Joi.recurse())
+}).recursive();
+
+var test = {
+    name:"test",
+    children: [
+        {name: "test2"}             
+    ]
+};
+
+tree.validate(test, function (err, value) {});
 ```

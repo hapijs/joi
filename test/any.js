@@ -251,6 +251,47 @@ describe('any', function () {
         });
     });
 
+    describe('#recursive', function () {
+
+        it('sets the recursive flag', function (done) {
+
+            var b = Joi.object().recursive();
+            expect(b._flags.recursive).to.equal(true);
+            done();
+        });
+
+        it('allows recursive schemas', function (done) {
+
+            var schema = Joi.object({
+                name: Joi.string(),
+                children: Joi.array().includes(Joi.recurse())
+            }).unknown(false).recursive();
+
+            Helper.validate(schema, [
+                [{
+                "name": "test1",
+                "children": [
+                    {"name": "name1"},
+                    {
+                        "name": "name2",
+                        "children": [
+                        {"name": "name3"}
+                    ]}
+                ]}, true],
+                [{
+                "name": "test2",
+                "children": [
+                    {"name": "name1"},
+                    {
+                        "name": "name2",
+                        "children": [
+                        {"badKey": "name3"}
+                    ]}
+                ]}, false]
+            ], done);
+        });
+    });
+
     describe('#tags', function () {
 
         it('sets the tags', function (done) {

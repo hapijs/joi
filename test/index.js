@@ -1432,4 +1432,13 @@ describe('Joi', function () {
             done();
         });
     });
+
+    describe('#recurse', function () {
+
+        it('creates a recursive marker', function (done) {
+            var b = Joi.recurse();
+            expect(b._type).to.equal('recurse');
+            done();
+        });
+    })
 });
