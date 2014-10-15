@@ -561,9 +561,9 @@ describe('string', function () {
             ], done);
         });
 
-        it('validates creditcard', function (done) {
+        it('validates creditCard', function (done) {
 
-            var schema = Joi.string().creditcard();
+            var schema = Joi.string().creditCard();
             Helper.validate(schema, [
                 ['4539240899451201', true],
                 ['5446966954545862', true],
