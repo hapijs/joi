@@ -79,6 +79,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
+        - [`string.uri()`](#stringuri)
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
         - [`string.hostname()`](#stringhostname)
@@ -908,6 +909,13 @@ Requires the string value to be a valid email address.
 
 ```javascript
 var schema = Joi.string().email();
+
+#### `string.uri()`
+
+Requires the string value to be a valid [RFC 3986](http://tools.ietf.org/html/rfc3986) URI.
+
+```javascript
+var schema = Joi.string().uri();
 ```
 
 #### `string.guid()`
