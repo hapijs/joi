@@ -1061,6 +1061,63 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates uri', function (done) {
+            // Handful of tests taken from Node: https://github.com/joyent/node/blob/cfcb1de130867197cbc9c6012b7e84e08e53d032/test/simple/test-url.js
+            // Also includes examples from RFC 8936: http://tools.ietf.org/html/rfc3986#page-7
+            var schema = Joi.string().uri();
+            Helper.validate(schema, [
+                ['ftp://ftp.is.co.za/rfc/rfc1808.txt', true],
+                ['http://www.ietf.org/rfc/rfc2396.txt', true],
+                ['ldap://[2001:db8::7]/c=GB?objectClass?one', true],
+                ['mailto:John.Doe@example.com', true],
+                ['news:comp.infosystems.www.servers.unix', true],
+                ['tel:+1-816-555-1212', true],
+                ['telnet://192.0.2.16:80/', true],
+                ['urn:oasis:names:specification:docbook:dtd:xml:4.1.2', true],
+                ['file:///example.txt', true],
+                ['http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon', true],
+                ['http://asdf@localhost:8000', true],
+                ['http://[v1.09azAZ-._~!$&\'()*+,;=:]', true],
+                ['http://[a:b:c:d:e::1.2.3.4]', true],
+                ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', true],
+                ['http://[1080:0:0:0:8:800:200C:417A]', true],
+                ['http://127.0.0.1:8000/foo?bar', true],
+                ['http://asdf:qwer@localhost:8000', true],
+                ['http://user:pass%3A@localhost:80', true],
+                ['http://localhost:123', true],
+                ['https://localhost:123', true],
+                ['file:///whatever', true],
+                ['mailto:asdf@asdf.com', true],
+                ['ftp://www.example.com', true],
+                ['javascript:alert(\'hello\');', true],
+                ['xmpp:isaacschlueter@jabber.org', true],
+                ['f://some.host/path', true],
+                ['http://localhost:18/asdf', true],
+                ['http://localhost:42/asdf?qwer=zxcv', true],
+                ['HTTP://www.example.com/', true],
+                ['HTTP://www.example.com', true],
+                ['http://www.ExAmPlE.com/', true],
+                ['http://user:pw@www.ExAmPlE.com/', true],
+                ['http://USER:PW@www.ExAmPlE.com/', true],
+                ['http://user@www.example.com/', true],
+                ['http://user%3Apw@www.example.com/', true],
+                ['http://x.com/path?that%27s#all,%20folks', true],
+                ['HTTP://X.COM/Y', true],
+                ['http://www.narwhaljs.org/blog/categories?id=news', true],
+                ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true]
+            ], done);
+        });
+
+        it('validates uri with a friendly error message', function (done) {
+            var schema = { item: Joi.string().uri() };
+            Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid uri');
+                done();
+            });
+        });
+
         it('validates isoDate', function (done) {
 
             Helper.validate(Joi.string().isoDate(), [
