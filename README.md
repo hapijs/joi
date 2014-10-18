@@ -909,6 +909,7 @@ Requires the string value to be a valid email address.
 
 ```javascript
 var schema = Joi.string().email();
+```
 
 #### `string.uri()`
 
