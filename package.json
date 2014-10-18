@@ -14,6 +14,7 @@
   "dependencies": {
     "hoek": "^2.2.x",
     "topo": "1.x.x",
+    "isipaddress": "^0.0.x",
     "isemail": "1.x.x"
   },
   "devDependencies": {
