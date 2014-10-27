@@ -56,6 +56,8 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
     - [`number`](#number)
         - [`number.min(limit)`](#numberminlimit)
         - [`number.max(limit)`](#numbermaxlimit)
+        - [`number.greater(limit)`](#numbergreaterlimit)
+        - [`number.less(limit)`](#numberlesslimit)
         - [`number.integer()`](#numberinteger)
         - [`number.precision(limit)`](#numberprecisionlimit)
     - [`object`](#object)
@@ -640,6 +642,22 @@ Specifies the maximum value where:
 
 ```javascript
 var schema = Joi.number().max(10);
+```
+
+#### `number.greater(limit)`
+
+Specifies that the value must be greater than `limit`.
+
+```javascript
+var schema = Joi.number().greater(5);
+```
+
+#### `number.less(limit)`
+
+Specifies that the value must be less than `limit`.
+
+```javascript
+var schema = Joi.number().less(10);
 ```
 
 #### `number.integer()`
