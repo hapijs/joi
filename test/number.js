@@ -402,6 +402,68 @@ describe('number', function () {
                 [null, true]
             ], done);
         });
+
+        it('should handle combination of greater and less', function (done) {
+
+            var rule = Joi.number().greater(5).less(10);
+            Helper.validate(rule, [
+                [0, false],
+                [11, false],
+                [5, false],
+                [10, false],
+                [8, true],
+                [5.01, true],
+                [9.99, true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of greater, less, and integer', function (done) {
+
+            var rule = Joi.number().integer().greater(5).less(10);
+            Helper.validate(rule, [
+                [0, false],
+                [11, false],
+                [5, false],
+                [10, false],
+                [6, true],
+                [9, true],
+                [5.01, false],
+                [9.99, false]
+            ], done);
+        });
+
+        it('should handle combination of greater, less, and null allowed', function (done) {
+
+            var rule = Joi.number().greater(5).less(10).allow(null);
+            Helper.validate(rule, [
+                [0, false],
+                [11, false],
+                [5, false],
+                [10, false],
+                [8, true],
+                [5.01, true],
+                [9.99, true],
+                [null, true]
+            ], done);
+        });
+
+        it('should handle combination of greater, less, invalid, and allow', function (done) {
+
+            var rule = Joi.number().greater(5).less(10).invalid(6).allow(-3);
+            Helper.validate(rule, [
+                [0, false],
+                [11, false],
+                [5, false],
+                [10, false],
+                [6, false],
+                [8, true],
+                [5.01, true],
+                [9.99, true],
+                [-3, true],
+                [null, false]
+            ], done);
+        });
     });
 
     it('should instantiate separate copies on invocation', function (done) {
