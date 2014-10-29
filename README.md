@@ -81,6 +81,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.creditcard()`](#stringcreditcard)
         - [`string.routingNumber()`](#stringroutingNumber)
         - [`string.countryCode()`](#stringcountryCode)
+        - [`string.accountNumber()`](#stringaccountNumber)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -931,6 +932,14 @@ Requires the string value to be a valid iso 3166-1 alpha-2 or alpha-3 code.
 
 ```javascript
 var schema = Joi.string().countryCode();
+```
+
+#### `string.accountNumber()`
+
+Requires the string value to be a valid American Bankers Association [Account Number](https://www.usbank.com/checking/aba-routing-number.html).
+
+```javascript
+var schema = Joi.string().accountNumber();
 ```
 
 #### `string.token()`

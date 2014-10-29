@@ -603,6 +603,23 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates accountNumber', function (done) {
+
+            var schema = Joi.string().accountNumber();
+            Helper.validate(schema, [
+                ['0001234567', true],
+                ['00012345678', true],
+                ['000123456789', true],
+                ['000111111116', true],
+                ['000111111113', true],
+                ['000222222227', true],
+                ['000333333335', true],
+                ['000444444440', true],
+                ['012345678', false],
+                ['0000123456789', false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();
