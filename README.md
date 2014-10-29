@@ -80,7 +80,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
         - [`string.creditCard()`](#stringcreditCard)
         - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
-        - [`string.regex(pattern)`](#stringregexpattern)
+        - [`string.regex(pattern, [name])`](#stringregexpattern)
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
@@ -923,10 +923,11 @@ Specifies the exact string length required where:
 var schema = Joi.string().length(5);
 ```
 
-#### `string.regex(pattern)`
+#### `string.regex(pattern, [name])`
 
 Defines a regular expression rule where:
 - `pattern` - a regular expression object the string value must match against.
+- `name` - optional name for patterns (useful with multiple patterns). Defaults to 'required'.
 
 ```javascript
 var schema = Joi.string().regex(/^[abc]+$/);

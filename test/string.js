@@ -427,6 +427,29 @@ describe('string', function () {
         });
     });
 
+    describe('#regex', function () {
+
+        it('should not include a pattern name by default', function (done) {
+
+            var schema = Joi.string().regex(/[a-z]+/).regex(/[0-9]+/);
+            schema.validate('abcd', function (err, value) {
+
+                expect(err.message).to.contain('required pattern');
+                done();
+            });
+        });
+
+        it('should include a pattern name if specified', function (done) {
+
+            var schema = Joi.string().regex(/[a-z]+/, 'letters').regex(/[0-9]+/, 'numbers');
+            schema.validate('abcd', function (err, value) {
+
+                expect(err.message).to.contain('numbers pattern');
+                done();
+            });
+        });
+    });
+
     describe('#validate', function () {
 
         it('should, by default, allow undefined, deny empty string', function (done) {
