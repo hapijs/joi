@@ -620,6 +620,37 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates expiryMonth', function (done) {
+
+            var schema = Joi.string().expiryMonth();
+            Helper.validate(schema, [
+                ['1', true],
+                ['2', true],
+                ['3', true],
+                ['4', true],
+                ['5', true],
+                ['6', true],
+                ['7', true],
+                ['8', true],
+                ['9', true],
+                ['01', true],
+                ['02', true],
+                ['03', true],
+                ['04', true],
+                ['05', true],
+                ['06', true],
+                ['07', true],
+                ['08', true],
+                ['09', true],
+                ['10', true],
+                ['11', true],
+                ['12', true],
+                ['0', false],
+                ['13', false],
+                ['123', false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();

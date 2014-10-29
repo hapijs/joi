@@ -82,6 +82,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.routingNumber()`](#stringroutingNumber)
         - [`string.countryCode()`](#stringcountryCode)
         - [`string.accountNumber()`](#stringaccountNumber)
+        - [`string.expiryMonth()`](#stringexpiryMonth)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -940,6 +941,14 @@ Requires the string value to be a valid American Bankers Association [Account Nu
 
 ```javascript
 var schema = Joi.string().accountNumber();
+```
+
+#### `string.expiryMonth()`
+
+Requires the string value to be a valid expiry month.
+
+```javascript
+var schema = Joi.string().expiryMonth();
 ```
 
 #### `string.token()`
