@@ -16,6 +16,7 @@
     "creditcard": "^0.1.1",
     "hoek": "^2.2.x",
     "isemail": "1.x.x",
+    "iso-countries": "0.0.5",
     "topo": "1.x.x"
   },
   "devDependencies": {

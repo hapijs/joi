@@ -591,6 +591,18 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates countryCode', function (done) {
+
+            var schema = Joi.string().countryCode();
+            Helper.validate(schema, [
+                ['CN', true],
+                ['US', true],
+                ['CHN', true],
+                ['USA', true],
+                ['ABCDE', false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();
