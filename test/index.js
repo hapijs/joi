@@ -358,6 +358,38 @@ describe('Joi', function () {
         });
     });
 
+    it('validates nand()', function (done) {
+
+        var schema = Joi.object({
+            txt: Joi.string(),
+            upc: Joi.string().allow(null, ''),
+            code: Joi.number()
+        }).nand('txt', 'upc', 'code');
+
+        Joi.validate({ txt: 'x', upc: 'y', code: 123 }, schema, { abortEarly: false }, function (err, value) {
+
+            expect(err.message).to.equal('value txt must not exist simultaneously with upc, code');
+
+            Helper.validate(schema, [
+                [{}, true],
+                [{ upc: null }, true],
+                [{ upc: 'test' }, true],
+                [{ txt: 'test' }, true],
+                [{ code: 123 }, true],
+                [{ txt: 'test', upc: null }, true],
+                [{ txt: 'test', upc: '' }, true],
+                [{ txt: undefined, upc: 'test' }, true],
+                [{ txt: 'test', upc: undefined }, true],
+                [{ txt: 'test', upc: '' }, true],
+                [{ txt: 'test', upc: null }, true],
+                [{ txt: 'test', upc: undefined, code: 999 }, true],
+                [{ txt: 'test', upc: 'test' }, true],
+                [{ txt: 'test', upc: 'test', code: 322 }, false],
+                [{ txt: 'test', upc: null, code: 322 }, false]
+            ], done);
+        });
+    });
+
     it('validates an array of valid types', function (done) {
 
         var schema = Joi.object({

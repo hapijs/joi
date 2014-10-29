@@ -63,6 +63,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`object.length(limit)`](#objectlengthlimit)
         - [`object.pattern(regex, schema)`](#objectpatternregex-schema)
         - [`object.and(peers)`](#objectandpeers)
+        - [`object.nand(peers)`](#objectnandpeers)
         - [`object.or(peers)`](#objectorpeers)
         - [`object.xor(peers)`](#objectxorpeers)
         - [`object.with(key, peers)`](#objectwithkey-peers)
@@ -722,6 +723,21 @@ var schema = Joi.object().keys({
     a: Joi.any(),
     b: Joi.any()
 }).and('a', 'b');
+```
+
+#### `object.nand(peers)`
+
+Defines an relationship between keys where not all peers can be present at the
+same time.
+well where:
+- `peers` - the key names of which if one present, the others may not all be present. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
+
+```javascript
+var schema = Joi.object().keys({
+    a: Joi.any(),
+    b: Joi.any()
+}).nand('a', 'b');
 ```
 
 #### `object.or(peers)`
