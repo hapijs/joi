@@ -562,7 +562,7 @@ describe('string', function () {
         });
 
         it('validates creditcard', function (done) {
-            
+
             var schema = Joi.string().creditcard();
             Helper.validate(schema, [
                 ['4539240899451201', true],
