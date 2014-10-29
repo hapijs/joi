@@ -581,6 +581,16 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates routingNumber', function (done) {
+
+            var schema = Joi.string().routingNumber();
+            Helper.validate(schema, [
+                ['123123123', true],
+                ['110000000', true],
+                ['123123124', false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();

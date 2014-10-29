@@ -79,6 +79,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.regex(pattern)`](#stringregexpattern)
         - [`string.alphanum()`](#stringalphanum)
         - [`string.creditcard()`](#stringcreditcard)
+        - [`string.routingNumber()`](#stringroutingNumber)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -913,6 +914,14 @@ Requires the string value to be a valid credit card number as validated by the L
 
 ```javascript
 var schema = Joi.string().creditcard();
+```
+
+#### `string.routingNumber()`
+
+Requires the string value to be a valid American Bankers Association [Routing Number](http://en.wikipedia.org/wiki/Routing_transit_number).
+
+```javascript
+var schema = Joi.string().routingNumber();
 ```
 
 #### `string.token()`

@@ -12,6 +12,7 @@
     "node": ">=0.10.30"
   },
   "dependencies": {
+    "ABAValidator": "^1.0.5",
     "creditcard": "^0.1.1",
     "hoek": "^2.2.x",
     "isemail": "1.x.x",
