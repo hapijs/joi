@@ -670,6 +670,21 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates cvc', function (done) {
+
+            var schema = Joi.string().cvc();
+            Helper.validate(schema, [
+                ['123', true],
+                ['1234', true],
+                ['12', false],
+                ['12345', false],
+                ['0', false],
+                ['a', false],
+                ['3a', false],
+                ['abcdef', false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();

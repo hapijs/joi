@@ -84,6 +84,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.accountNumber()`](#stringaccountNumber)
         - [`string.expiryMonth()`](#stringexpiryMonth)
         - [`string.expiryYear()`](#stringexpiryYear)
+        - [`string.cvc()`](#stringcvc)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -958,6 +959,14 @@ Requires the string value to be a valid expiry year.
 
 ```javascript
 var schema = Joi.string().expiryYear();
+```
+
+#### `string.cvc()`
+
+Requires the string value to be a valid cvc.
+
+```javascript
+var schema = Joi.string().cvc();
 ```
 
 #### `string.token()`
