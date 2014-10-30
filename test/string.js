@@ -685,6 +685,24 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates isoCurrencyCode', function (done) {
+
+            var schema = Joi.string().isoCurrencyCode();
+            Helper.validate(schema, [
+                ['USD', true],
+                ['CNY', true],
+                ['usd', true],
+                ['cny', true],
+                ['uSd', true],
+                ['cNy', true],
+                ['x', false],
+                ['y', false],
+                ['z', false],
+                ['xy', false],
+                ['xyz', false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();

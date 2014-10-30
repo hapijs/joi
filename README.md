@@ -85,6 +85,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.expiryMonth()`](#stringexpiryMonth)
         - [`string.expiryYear()`](#stringexpiryYear)
         - [`string.cvc()`](#stringcvc)
+        - [`string.isoCurrencyCode()`](#stringisoCurrencyCode)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -967,6 +968,14 @@ Requires the string value to be a valid cvc.
 
 ```javascript
 var schema = Joi.string().cvc();
+```
+
+#### `string.isoCurrencyCode()`
+
+Requires the string value to be a valid isoCurrencyCode.
+
+```javascript
+var schema = Joi.string().isoCurrencyCode();
 ```
 
 #### `string.token()`
