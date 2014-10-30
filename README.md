@@ -86,6 +86,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.expiryYear()`](#stringexpiryYear)
         - [`string.cvc()`](#stringcvc)
         - [`string.isoCurrencyCode()`](#stringisoCurrencyCode)
+        - [`string.SSN()`](#stringSSN)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -976,6 +977,14 @@ Requires the string value to be a valid isoCurrencyCode.
 
 ```javascript
 var schema = Joi.string().isoCurrencyCode();
+```
+
+#### `string.SSN()`
+
+Requires the string value to be a valid [SSN](http://en.wikipedia.org/wiki/Social_Security_number).
+
+```javascript
+var schema = Joi.string().SSN();
 ```
 
 #### `string.token()`

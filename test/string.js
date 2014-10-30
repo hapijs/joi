@@ -703,6 +703,25 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates SSN', function (done) {
+
+            var schema = Joi.string().SSN();
+            Helper.validate(schema, [
+                ['000000000', true],
+                ['00-0000000', true],
+                ['1', false],
+                ['12', false],
+                ['123', false],
+                ['1234', false],
+                ['12345', false],
+                ['123456', false],
+                ['1234567', false],
+                ['12345678', false],
+                ['0123456789', false],
+                ['abcdefghe', false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();
