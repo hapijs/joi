@@ -83,6 +83,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.countryCode()`](#stringcountryCode)
         - [`string.accountNumber()`](#stringaccountNumber)
         - [`string.expiryMonth()`](#stringexpiryMonth)
+        - [`string.expiryYear()`](#stringexpiryYear)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -949,6 +950,14 @@ Requires the string value to be a valid expiry month.
 
 ```javascript
 var schema = Joi.string().expiryMonth();
+```
+
+#### `string.expiryYear()`
+
+Requires the string value to be a valid expiry year.
+
+```javascript
+var schema = Joi.string().expiryYear();
 ```
 
 #### `string.token()`

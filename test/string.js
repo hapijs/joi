@@ -651,6 +651,25 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates expiryYear', function (done) {
+
+            var schema = Joi.string().expiryYear();
+            var thisYear = new Date().getFullYear().toString();
+            var last2 = thisYear.slice(-2);
+            Helper.validate(schema, [
+                [last2, true],
+                [thisYear, true],
+                [(parseInt(last2, 10) - 1).toString(), false],
+                [(parseInt(last2, 10) + 51).toString(), false],
+                [(parseInt(thisYear, 10) - 1).toString(), false],
+                [(parseInt(thisYear, 10) + 51).toString(), false],
+                ['0', false],
+                ['x', false],
+                ['1x', false],
+                ['xyz', false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();
