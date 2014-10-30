@@ -932,12 +932,12 @@ Requires the string value to be a valid American Bankers Association [Routing Nu
 var schema = Joi.string().routingNumber();
 ```
 
-#### `string.countryCode()`
+#### `string.isoCountryCode()`
 
-Requires the string value to be a valid iso 3166-1 alpha-2 or alpha-3 code.
+Requires the string value to be a valid iso 3166-1 alpha-2 or alpha-3 country code.
 
 ```javascript
-var schema = Joi.string().countryCode();
+var schema = Joi.string().isoCountryCode();
 ```
 
 #### `string.accountNumber()`

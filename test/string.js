@@ -591,9 +591,9 @@ describe('string', function () {
             ], done);
         });
 
-        it('validates countryCode', function (done) {
+        it('validates isoCountryCode', function (done) {
 
-            var schema = Joi.string().countryCode();
+            var schema = Joi.string().isoCountryCode();
             Helper.validate(schema, [
                 ['CN', true],
                 ['US', true],
