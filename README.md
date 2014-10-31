@@ -78,6 +78,16 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
         - [`string.regex(pattern)`](#stringregexpattern)
         - [`string.alphanum()`](#stringalphanum)
+        - [`string.creditcard()`](#stringcreditcard)
+        - [`string.routingNumber()`](#stringroutingNumber)
+        - [`string.countryCode()`](#stringcountryCode)
+        - [`string.accountNumber()`](#stringaccountNumber)
+        - [`string.expiryMonth()`](#stringexpiryMonth)
+        - [`string.expiryYear()`](#stringexpiryYear)
+        - [`string.cvc()`](#stringcvc)
+        - [`string.isoCurrencyCode()`](#stringisoCurrencyCode)
+        - [`string.SSN()`](#stringSSN)
+        - [`string.EIN()`](#stringEIN)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -904,6 +914,86 @@ Requires the string value to only contain a-z, A-Z, and 0-9.
 
 ```javascript
 var schema = Joi.string().alphanum();
+```
+
+#### `string.creditcard()`
+
+Requires the string value to be a valid credit card number as validated by the Luhn10 algorithm.
+
+```javascript
+var schema = Joi.string().creditcard();
+```
+
+#### `string.routingNumber()`
+
+Requires the string value to be a valid American Bankers Association [Routing Number](http://en.wikipedia.org/wiki/Routing_transit_number).
+
+```javascript
+var schema = Joi.string().routingNumber();
+```
+
+#### `string.isoCountryCode()`
+
+Requires the string value to be a valid iso 3166-1 alpha-2 or alpha-3 country code.
+
+```javascript
+var schema = Joi.string().isoCountryCode();
+```
+
+#### `string.accountNumber()`
+
+Requires the string value to be a valid American Bankers Association [Account Number](https://www.usbank.com/checking/aba-routing-number.html).
+
+```javascript
+var schema = Joi.string().accountNumber();
+```
+
+#### `string.expiryMonth()`
+
+Requires the string value to be a valid expiry month.
+
+```javascript
+var schema = Joi.string().expiryMonth();
+```
+
+#### `string.expiryYear()`
+
+Requires the string value to be a valid expiry year.
+
+```javascript
+var schema = Joi.string().expiryYear();
+```
+
+#### `string.cvc()`
+
+Requires the string value to be a valid cvc.
+
+```javascript
+var schema = Joi.string().cvc();
+```
+
+#### `string.isoCurrencyCode()`
+
+Requires the string value to be a valid isoCurrencyCode.
+
+```javascript
+var schema = Joi.string().isoCurrencyCode();
+```
+
+#### `string.SSN()`
+
+Requires the string value to be a valid [SSN](http://en.wikipedia.org/wiki/Social_Security_number).
+
+```javascript
+var schema = Joi.string().SSN();
+```
+
+#### `string.EIN()`
+
+Requires the string value to be a valid [EIN](http://en.wikipedia.org/wiki/Employer_Identification_Number).
+
+```javascript
+var schema = Joi.string().EIN();
 ```
 
 #### `string.token()`
