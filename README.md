@@ -80,6 +80,10 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
+        - [`string.ip()`](#stringip)
+        - [`string.ipv4()`](#stringipv4)
+        - [`string.ipv6()`](#stringipv6)
+        - [`string.ipvFuture()`](#stringipvfuture)
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
         - [`string.hostname()`](#stringhostname)
@@ -919,6 +923,38 @@ Requires the string value to be a valid email address.
 
 ```javascript
 var schema = Joi.string().email();
+```
+
+#### `string.ip()`
+
+Requires the string value to be a valid ip address.
+
+```javascript
+var schema = Joi.string().ip();
+```
+
+#### `string.ipv4()`
+
+Requires the string value to be a valid ipv4 address.
+
+```javascript
+var schema = Joi.string().ipv4();
+```
+
+#### `string.ipv6()`
+
+Requires the string value to be a valid ipv6 address.
+
+```javascript
+var schema = Joi.string().ipv6();
+```
+
+#### `string.ipvFuture()`
+
+Requires the string value to be a valid ipvFuture address.
+
+```javascript
+var schema = Joi.string().ipvFuture();
 ```
 
 #### `string.guid()`

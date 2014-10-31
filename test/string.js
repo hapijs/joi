@@ -1061,6 +1061,186 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates ip', function (done) {
+            var schema = Joi.string().ip();
+            Helper.validate(schema, [
+                ['0.0.0.0/32', true],
+                ['0.0.0.15/28', true],
+                ['0.0.0.31/27', true],
+                ['0.7.255.255/13', true],
+                ['0.15.255.255/12', true],
+                ['255.192.000.000/11', true],
+                ['0.0.0.0/0', true],
+                ['0.0.0.7/3', true],
+                ['0.0.0.63/6', true],
+                ['0.0.7.255/11', true],
+                ['0.31.255.255/21', true],
+                ['0.63.255.255/22', true],
+                ['128.000.000.000/30', true],
+                ['1.255.255.255', true],
+                ['63.255.255.255', true],
+                ['000.000.000.000', true],
+                ['2001:db8::7', true],
+                ['a:b:c:d:e::1.2.3.4', true],
+                ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', true],
+                ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/32', true],
+                ['1080:0:0:0:8:800:200C:417A', true],
+                ['1080:0:0:0:8:800:200C:417A/13', true],
+                ['v1.09azAZ-._~!$&\'()*+,;=:', true],
+                ['192.0.2.16:80/30', false],
+                ['192.0.2.16a', false],
+                ['qwerty', false],
+                ['127.0.0.1:8000', false],
+                ['ftp://www.example.com', false],
+                ['javascript:alert(\'hello\');', false],
+                ['Bananas in pajamas are coming down the stairs', false]
+            ], done);
+        });
+
+        it('validates ip with a friendly error message', function (done) {
+            var schema = { item: Joi.string().ip() };
+            Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid ip address');
+                done();
+            });
+        });
+
+        it('validates ipv4', function (done) {
+            var schema = Joi.string().ipv4();
+            Helper.validate(schema, [
+                ['0.0.0.0/32', true],
+                ['0.0.0.15/28', true],
+                ['0.0.0.31/27', true],
+                ['0.7.255.255/13', true],
+                ['0.15.255.255/12', true],
+                ['255.192.000.000/11', true],
+                ['0.0.0.0/0', true],
+                ['0.0.0.7/3', true],
+                ['0.0.0.63/6', true],
+                ['0.0.7.255/11', true],
+                ['0.31.255.255/21', true],
+                ['0.63.255.255/22', true],
+                ['128.000.000.000/30', true],
+                ['1.255.255.255', true],
+                ['63.255.255.255', true],
+                ['000.000.000.000', true],
+                ['2001:db8::7', false],
+                ['a:b:c:d:e::1.2.3.4', false],
+                ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', false],
+                ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/32', false],
+                ['1080:0:0:0:8:800:200C:417A', false],
+                ['1080:0:0:0:8:800:200C:417A/13', false],
+                ['v1.09azAZ-._~!$&\'()*+,;=:', false],
+                ['192.0.2.16:80/30', false],
+                ['192.0.2.16a', false],
+                ['qwerty', false],
+                ['127.0.0.1:8000', false],
+                ['ftp://www.example.com', false],
+                ['javascript:alert(\'hello\');', false],
+                ['Bananas in pajamas are coming down the stairs', false]
+            ], done);
+        });
+
+        it('validates ipv4 with a friendly error message', function (done) {
+            var schema = { item: Joi.string().ipv4() };
+            Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid ipv4 address');
+                done();
+            });
+        });
+
+        it('validates ipv6', function (done) {
+            var schema = Joi.string().ipv6();
+            Helper.validate(schema, [
+                ['0.0.0.0/32', false],
+                ['0.0.0.15/28', false],
+                ['0.0.0.31/27', false],
+                ['0.7.255.255/13', false],
+                ['0.15.255.255/12', false],
+                ['255.192.000.000/11', false],
+                ['0.0.0.0/0', false],
+                ['0.0.0.7/3', false],
+                ['0.0.0.63/6', false],
+                ['0.0.7.255/11', false],
+                ['0.31.255.255/21', false],
+                ['0.63.255.255/22', false],
+                ['128.000.000.000/30', false],
+                ['1.255.255.255', false],
+                ['63.255.255.255', false],
+                ['000.000.000.000', false],
+                ['2001:db8::7', true],
+                ['a:b:c:d:e::1.2.3.4', true],
+                ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', true],
+                ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/32', true],
+                ['1080:0:0:0:8:800:200C:417A', true],
+                ['1080:0:0:0:8:800:200C:417A/13', true],
+                ['v1.09azAZ-._~!$&\'()*+,;=:', false],
+                ['192.0.2.16:80/30', false],
+                ['192.0.2.16a', false],
+                ['qwerty', false],
+                ['127.0.0.1:8000', false],
+                ['ftp://www.example.com', false],
+                ['javascript:alert(\'hello\');', false],
+                ['Bananas in pajamas are coming down the stairs', false]
+            ], done);
+        });
+
+        it('validates ipv6 with a friendly error message', function (done) {
+            var schema = { item: Joi.string().ipv6() };
+            Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid ipv6 address');
+                done();
+            });
+        });
+
+        it('validates ipvFuture', function (done) {
+            var schema = Joi.string().ipvFuture();
+            Helper.validate(schema, [
+                ['0.0.0.0/32', false],
+                ['0.0.0.15/28', false],
+                ['0.0.0.31/27', false],
+                ['0.7.255.255/13', false],
+                ['0.15.255.255/12', false],
+                ['255.192.000.000/11', false],
+                ['0.0.0.0/0', false],
+                ['0.0.0.7/3', false],
+                ['0.0.0.63/6', false],
+                ['0.0.7.255/11', false],
+                ['0.31.255.255/21', false],
+                ['0.63.255.255/22', false],
+                ['128.000.000.000/30', false],
+                ['1.255.255.255', false],
+                ['63.255.255.255', false],
+                ['000.000.000.000', false],
+                ['2001:db8::7', false],
+                ['a:b:c:d:e::1.2.3.4', false],
+                ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', false],
+                ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/32', false],
+                ['1080:0:0:0:8:800:200C:417A', false],
+                ['1080:0:0:0:8:800:200C:417A/13', false],
+                ['v1.09azAZ-._~!$&\'()*+,;=:', true],
+                ['192.0.2.16:80/30', false],
+                ['192.0.2.16a', false],
+                ['qwerty', false],
+                ['127.0.0.1:8000', false],
+                ['ftp://www.example.com', false],
+                ['javascript:alert(\'hello\');', false],
+                ['Bananas in pajamas are coming down the stairs', false]
+            ], done);
+        });
+
+        it('validates ipvFuture with a friendly error message', function (done) {
+            var schema = { item: Joi.string().ipvFuture() };
+            Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid ipvFuture address');
+                done();
+            });
+        });
+
         it('validates isoDate', function (done) {
 
             Helper.validate(Joi.string().isoDate(), [
