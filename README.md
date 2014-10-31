@@ -56,7 +56,6 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`number.max(limit)`](#numbermaxlimit)
         - [`number.integer()`](#numberinteger)
         - [`number.precision(limit)`](#numberprecisionlimit)
-        - [`number.creditCard()`](#numbercreditCard)
     - [`object`](#object)
         - [`object.keys([schema])`](#objectkeysschema)
         - [`object.min(limit)`](#objectminlimit)
@@ -75,6 +74,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
         - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
+        - [`number.creditCard()`](#numbercreditCard)
         - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
         - [`string.regex(pattern)`](#stringregexpattern)
         - [`string.alphanum()`](#stringalphanum)
@@ -641,16 +641,6 @@ Specifies the maximum number of decimal places where:
 var schema = Joi.number().precision(2);
 ```
 
-#### `number.creditCard()`
-
-Requires the number to be a credit card number (Using [Lunh
-Algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)).
-
-```javascript
-var schema = Joi.number().creditCard();
-```
-
-
 ### `object`
 
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
@@ -876,6 +866,15 @@ Specifies the maximum number of string characters where:
 
 ```javascript
 var schema = Joi.string().max(10);
+```
+
+#### `string.creditCard()`
+
+Requires the number to be a credit card number (Using [Lunh
+Algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)).
+
+```javascript
+var schema = Joi.string().creditCard();
 ```
 
 #### `string.length(limit, [encoding])`
