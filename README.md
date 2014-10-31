@@ -56,7 +56,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`number.max(limit)`](#numbermaxlimit)
         - [`number.integer()`](#numberinteger)
         - [`number.precision(limit)`](#numberprecisionlimit)
-        - [`number.creditCard(limit)`](#numbercreditCard)
+        - [`number.creditCard()`](#numbercreditCard)
     - [`object`](#object)
         - [`object.keys([schema])`](#objectkeysschema)
         - [`object.min(limit)`](#objectminlimit)
@@ -641,14 +641,13 @@ Specifies the maximum number of decimal places where:
 var schema = Joi.number().precision(2);
 ```
 
-#### `number.creditCard(creditCardNumber)`
+#### `number.creditCard()`
 
 Requires the number to be a credit card number (Using [Lunh
 Algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)).
-- `creditCardNumber` - the credit card number to be checked.
 
 ```javascript
-var schema = Joi.number().creditCard(4111111111111111);
+var schema = Joi.number().creditCard();
 ```
 
 
