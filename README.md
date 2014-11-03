@@ -6,7 +6,7 @@ Current version: **4.7.x**
 
 [![Build Status](https://secure.travis-ci.org/hapijs/joi.png)](http://travis-ci.org/hapijs/joi)
 
-Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
+Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
 ## Table of Contents
 
