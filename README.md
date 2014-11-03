@@ -764,9 +764,8 @@ var schema = Joi.object().keys({
 
 #### `object.nand(peers)`
 
-Defines an relationship between keys where not all peers can be present at the
-same time.
-well where:
+Defines a relationship between keys where not all peers can be present at the
+same time where:
 - `peers` - the key names of which if one present, the others may not all be present. `peers` can be a single string value, an
   array of string values, or each peer provided as an argument.
 
