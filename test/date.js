@@ -103,5 +103,75 @@ describe('date', function () {
                 [new Date('not a valid date'), false]
             ], done);
         });
+
+        describe('#iso', function() {
+
+            it('validates isoDate', function (done) {
+
+                Helper.validate(Joi.date().iso(), [
+                    ['2013-06-07T14:21:46.295Z', true],
+                    ['2013-06-07T14:21:46.295Z0', false],
+                    ['2013-06-07T14:21:46.295+07:00', true],
+                    ['2013-06-07T14:21:46.295+07:000', false],
+                    ['2013-06-07T14:21:46.295-07:00', true],
+                    ['2013-06-07T14:21:46Z', true],
+                    ['2013-06-07T14:21:46Z0', false],
+                    ['2013-06-07T14:21:46+07:00', true],
+                    ['2013-06-07T14:21:46-07:00', true],
+                    ['2013-06-07T14:21Z', true],
+                    ['2013-06-07T14:21+07:00', true],
+                    ['2013-06-07T14:21+07:000', false],
+                    ['2013-06-07T14:21-07:00', true],
+                    ['2013-06-07T14:21Z+7:00', false],
+                    ['2013-06-07', true],
+                    ['2013-06-07T', false],
+                    ['2013-06-07T14:21', false],
+                    ['1-1-2013', false]
+                ], done);
+            });
+
+            it('validates isoDate with a friendly error message', function (done) {
+
+                var schema = { item: Joi.date().iso() };
+                Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+
+                    expect(err.message).to.contain('must be a valid ISO 8601 date');
+                    done();
+                });
+            });
+        });
+
+        describe('#format', function () {
+
+            it('validates custom format', function (done) {
+
+                Helper.validate(Joi.date().format('DD#YYYY$MM'), [
+                    ['07#2013$06', true],
+                    ['2013-06-07', false]
+                ], done);
+            });
+
+            it('validates several custom formats', function (done) {
+
+                Helper.validate(Joi.date().format(['DD#YYYY$MM', 'YY|DD|MM']), [
+                    ['13|07|06', true],
+                    ['2013-06-07', false]
+                ], done);
+            });
+
+            it('fails with bad formats', function (done) {
+
+                expect(function () {
+
+                    Joi.date().format(true);
+                }).to.throw('Invalid format');
+
+                expect(function () {
+
+                    Joi.date().format(['YYYYMMDD', true]);
+                }).to.throw('Invalid format');
+                done();
+            });
+        });
     });
 });

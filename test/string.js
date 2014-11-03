@@ -186,6 +186,43 @@ describe('string', function () {
         });
     });
 
+    describe('#creditCard', function () {
+
+        it('should validate credit card', function (done) {
+
+            var t = Joi.string().creditCard();
+            t.validate('4111111111111112', function (err, value) {
+
+                expect(err.message).to.equal('value must be a credit card');
+
+                Helper.validate(t, [
+                    ['378734493671000', true],  // american express
+                    ['371449635398431', true],  // american express
+                    ['378282246310005', true],  // american express
+                    ['341111111111111', true],  // american express
+                    ['5610591081018250', true], // australian bank
+                    ['5019717010103742', true], // dankort pbs
+                    ['38520000023237', true],   // diners club
+                    ['30569309025904', true],   // diners club
+                    ['6011000990139424', true], // discover
+                    ['6011111111111117', true], // discover
+                    ['6011601160116611', true], // discover
+                    ['3566002020360505', true], // jbc
+                    ['3530111333300000', true], // jbc
+                    ['5105105105105100', true], // mastercard
+                    ['5555555555554444', true], // mastercard
+                    ['5431111111111111', true], // mastercard
+                    ['6331101999990016', true], // switch/solo paymentech
+                    ['4222222222222', true],    // visa
+                    ['4012888888881881', true], // visa
+                    ['4111111111111111', true], // visa
+                    ['4111111111111112', false],
+                    [null, false],
+                ], done);
+            });
+        });
+    });
+
     describe('#length', function () {
 
         it('throws when limit is not a number', function (done) {
@@ -387,6 +424,29 @@ describe('string', function () {
                 [' ABC', true],
                 ['ABC', true]
             ], done);
+        });
+    });
+
+    describe('#regex', function () {
+
+        it('should not include a pattern name by default', function (done) {
+
+            var schema = Joi.string().regex(/[a-z]+/).regex(/[0-9]+/);
+            schema.validate('abcd', function (err, value) {
+
+                expect(err.message).to.contain('required pattern');
+                done();
+            });
+        });
+
+        it('should include a pattern name if specified', function (done) {
+
+            var schema = Joi.string().regex(/[a-z]+/, 'letters').regex(/[0-9]+/, 'numbers');
+            schema.validate('abcd', function (err, value) {
+
+                expect(err.message).to.contain('numbers pattern');
+                done();
+            });
         });
     });
 
@@ -1065,15 +1125,22 @@ describe('string', function () {
 
             Helper.validate(Joi.string().isoDate(), [
                 ['2013-06-07T14:21:46.295Z', true],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', true],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', true],
                 ['2013-06-07T14:21:46-07:00', true],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', true],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false]
             ], done);
         });
@@ -1093,15 +1160,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(23);
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', true],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', true],
                 ['2013-06-07T14:21:46Z', false],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', true],
                 ['2013-06-07T14:21:46-07:00', true],
                 ['2013-06-07T14:21Z', false],
                 ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', false],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
@@ -1113,35 +1187,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23);
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
-                ['1-1-2013', false],
-                ['', false],
-                [null, false]
-            ], done);
-        });
-
-        it('validates combination of isoDate, min and max', function (done) {
-
-            var rule = Joi.string().isoDate().min(17).max(23);
-            Helper.validate(rule, [
-                ['2013-06-07T14:21:46.295Z', false],
-                ['2013-06-07T14:21:46.295+07:00', false],
-                ['2013-06-07T14:21:46.295-07:00', false],
-                ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46+07:00', false],
-                ['2013-06-07T14:21:46-07:00', false],
-                ['2013-06-07T14:21Z', true],
-                ['2013-06-07T14:21+07:00', true],
-                ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
@@ -1153,15 +1214,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).invalid('2013-06-07T14:21+07:00');
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
@@ -1173,15 +1241,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00');
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
@@ -1193,15 +1268,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21+07:00');
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
@@ -1213,15 +1295,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21+07:00').allow('');
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
@@ -1233,15 +1322,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').allow('');
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
@@ -1253,15 +1349,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21Z').regex(/Z$/);
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', false],
                 ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', false],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
@@ -1273,15 +1376,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21Z').regex(/Z$/).allow('');
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', false],
                 ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', false],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
@@ -1293,15 +1403,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).allow('');
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
@@ -1313,15 +1430,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/);
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', false],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]
@@ -1333,15 +1457,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).allow('');
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', false],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', true],
                 [null, false]
@@ -1353,15 +1484,22 @@ describe('string', function () {
             var rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).required();
             Helper.validate(rule, [
                 ['2013-06-07T14:21:46.295Z', false],
+                ['2013-06-07T14:21:46.295Z0', false],
                 ['2013-06-07T14:21:46.295+07:00', false],
+                ['2013-06-07T14:21:46.295+07:000', false],
                 ['2013-06-07T14:21:46.295-07:00', false],
                 ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false],
                 ['2013-06-07T14:21:46+07:00', false],
                 ['2013-06-07T14:21:46-07:00', false],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', false],
+                ['2013-06-07T14:21+07:000', false],
                 ['2013-06-07T14:21-07:00', false],
                 ['2013-06-07T14:21Z+7:00', false],
+                ['2013-06-07', false],
+                ['2013-06-07T', false],
+                ['2013-06-07T14:21', false],
                 ['1-1-2013', false],
                 ['', false],
                 [null, false]

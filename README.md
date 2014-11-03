@@ -6,7 +6,7 @@ Current version: **4.7.x**
 
 [![Build Status](https://secure.travis-ci.org/hapijs/joi.png)](http://travis-ci.org/hapijs/joi)
 
-Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
+Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
 ## Table of Contents
 
@@ -50,10 +50,14 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
     - [`date`](#date)
         - [`date.min(date)`](#datemindate)
         - [`date.max(date)`](#datemaxdate)
+        - [`date.format(format)`](#dateformatformat)
+        - [`date.iso()`](#dateiso)
     - [`func`](#func)
     - [`number`](#number)
         - [`number.min(limit)`](#numberminlimit)
         - [`number.max(limit)`](#numbermaxlimit)
+        - [`number.greater(limit)`](#numbergreaterlimit)
+        - [`number.less(limit)`](#numberlesslimit)
         - [`number.integer()`](#numberinteger)
         - [`number.precision(limit)`](#numberprecisionlimit)
     - [`object`](#object)
@@ -75,13 +79,13 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
         - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
+        - [`string.creditCard()`](#stringcreditCard)
         - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
-        - [`string.regex(pattern)`](#stringregexpattern)
+        - [`string.regex(pattern, [name])`](#stringregexpattern)
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
-        - [`string.isoDate()`](#stringisodate)
         - [`string.hostname()`](#stringhostname)
         - [`string.lowercase()`](#stringlowercase)
         - [`string.uppercase()`](#stringuppercase)
@@ -584,6 +588,23 @@ Specifies the latest date allowed where:
 var schema = Joi.date().max('12-31-2020');
 ```
 
+#### `date.format(format)`
+
+Specifies the allowed date format:
+- `format` - string or array of strings that follow the `moment.js` [format](http://momentjs.com/docs/#/parsing/string-format/).
+
+```javascript
+var schema = Joi.date().format('YYYY/MM/DD');
+```
+
+#### `date.iso()`
+
+Requires the string value to be in valid ISO 8601 date format.
+
+```javascript
+var schema = Joi.date().iso();
+```
+
 ### `func`
 
 Generates a schema object that matches a function type.
@@ -622,6 +643,22 @@ Specifies the maximum value where:
 
 ```javascript
 var schema = Joi.number().max(10);
+```
+
+#### `number.greater(limit)`
+
+Specifies that the value must be greater than `limit`.
+
+```javascript
+var schema = Joi.number().greater(5);
+```
+
+#### `number.less(limit)`
+
+Specifies that the value must be less than `limit`.
+
+```javascript
+var schema = Joi.number().less(10);
 ```
 
 #### `number.integer()`
@@ -882,6 +919,15 @@ Specifies the maximum number of string characters where:
 var schema = Joi.string().max(10);
 ```
 
+#### `string.creditCard()`
+
+Requires the number to be a credit card number (Using [Lunh
+Algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)).
+
+```javascript
+var schema = Joi.string().creditCard();
+```
+
 #### `string.length(limit, [encoding])`
 
 Specifies the exact string length required where:
@@ -892,10 +938,11 @@ Specifies the exact string length required where:
 var schema = Joi.string().length(5);
 ```
 
-#### `string.regex(pattern)`
+#### `string.regex(pattern, [name])`
 
 Defines a regular expression rule where:
 - `pattern` - a regular expression object the string value must match against.
+- `name` - optional name for patterns (useful with multiple patterns). Defaults to 'required'.
 
 ```javascript
 var schema = Joi.string().regex(/^[abc]+$/);
@@ -931,14 +978,6 @@ Requires the string value to be a valid GUID.
 
 ```javascript
 var schema = Joi.string().guid();
-```
-
-#### `string.isoDate()`
-
-Requires the string value to be in valid ISO 8601 date format.
-
-```javascript
-var schema = Joi.string().isoDate();
 ```
 
 #### `string.hostname()`
