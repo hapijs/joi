@@ -598,6 +598,36 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates creditCard', function (done) {
+
+            var schema = Joi.string().creditCard();
+            Helper.validate(schema, [
+                ['4539240899451201', true],
+                ['5446966954545862', true],
+                ['378914469617829', true],
+                ['6011055872254469', true],
+                ['3112191184843783', true],
+                ['5414759153325162', true],
+                ['30433625595266', true],
+                ['36892077695862', true],
+                ['6304630448073183', true],
+                ['6771943909422466', true],
+                ['4508318323424841', true],
+                ['6376815704002744', true],
+                ['4111111111111111', true],
+                ['4242424242424242', true],
+                ['4012888888881881', true],
+                ['4000056655665556', true],
+                ['5555555555554444', true],
+                ['3530111333300000', true],
+                ['----------------', false],
+                ['1234567890123456', false],
+                ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', false],
+                ['F539240899451201', false],
+                ['', false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();

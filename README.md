@@ -78,6 +78,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
         - [`string.regex(pattern)`](#stringregexpattern)
         - [`string.alphanum()`](#stringalphanum)
+        - [`string.creditCard()`](#stringcreditCard)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -902,6 +903,14 @@ Requires the string value to only contain a-z, A-Z, and 0-9.
 
 ```javascript
 var schema = Joi.string().alphanum();
+```
+
+#### `string.creditCard()`
+
+Requires the string value to be a valid credit card number as validated by the Luhn10 algorithm.
+
+```javascript
+var schema = Joi.string().creditCard();
 ```
 
 #### `string.token()`
