@@ -73,6 +73,52 @@ describe('date', function () {
         });
     });
 
+    it('accepts "now" as the min date', function(done) {
+
+      var future = new Date(Date.now() + 1000000);
+
+      Joi.date().min('now').validate(future, function (err, value) {
+
+        expect(err).to.not.exist;
+        expect(value).to.be.eql(future);
+        done();
+      });
+    });
+
+    it('errors if .min("now") is used with a past date', function(done) {
+
+      var past = new Date(Date.now() - 1000000);
+
+      Joi.date().min('now').validate(past, function (err, value) {
+
+        expect(err).to.exist;
+        done();
+      });
+    });
+
+    it('accepts "now" as the max date', function(done) {
+
+      var past = new Date(Date.now() - 1000000);
+
+      Joi.date().max('now').validate(past, function (err, value) {
+
+        expect(err).to.not.exist;
+        expect(value).to.be.eql(past);
+        done();
+      });
+    });
+
+    it('errors if .max("now") is used with a future date', function(done) {
+
+      var future = new Date(Date.now() + 1000000);
+
+      Joi.date().max('now').validate(future, function (err, value) {
+
+        expect(err).to.exist;
+        done();
+      });
+    });
+
     describe('#validate', function () {
 
         it('validates min', function (done) {
