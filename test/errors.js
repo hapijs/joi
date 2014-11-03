@@ -189,6 +189,15 @@ describe('errors', function () {
         });
     });
 
+    it('overrides label key language', function (done) {
+
+        Joi.string().options({ language: { root: 'blah', label: 'bleh' } }).validate(4, function (err, value) {
+
+            expect(err.message).to.equal('bleh must be a string');
+            done();
+        });
+    });
+
     describe('#annotate', function () {
 
         it('annotates error', function (done) {

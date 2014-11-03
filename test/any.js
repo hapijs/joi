@@ -87,6 +87,30 @@ describe('any', function () {
         });
     });
 
+    describe('#label', function () {
+
+        it('adds to existing options', function (done) {
+
+            var schema = Joi.object({ b: Joi.string().email().label('Custom label') });
+            var input = { b: 'not_a_valid_email' };
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.details[0].message).to.equal('Custom label must be a valid email');
+                done();
+            });
+        });
+
+        it('throws when label is missing', function (done) {
+
+            expect(function () {
+
+                Joi.label();
+            }).to.throw('Label name must be a non-empty string');
+            done();
+        });
+    });
+
     describe('#strict', function () {
 
         it('adds to existing options', function (done) {

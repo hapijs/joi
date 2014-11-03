@@ -34,6 +34,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`any.default(value)`](#anydefaultvalue)
         - [`any.concat(schema)`](#anyconcatschema)
         - [`any.when(ref, options)`](#anywhenref-options)
+        - [`any.label(name)`](#anylabelname)
     - [`array`](#array)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
@@ -177,7 +178,7 @@ Validates a value using the given schema and options where:
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
-  - `language` - overrides individual error messages. Defaults to no override (`{}`).
+  - `language` - overrides individual error messages, when `'label'` is set, it overrides the key name in the error message. Defaults to no override (`{}`).
   - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
     Defaults to `'optional'`.
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
@@ -433,6 +434,15 @@ var schema = {
     a: Joi.any().valid('x').when('b', { is: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') }),
     b: Joi.any()
 };
+```
+
+#### `any.label(name)`
+
+Overrides the key name in error messages.
+- `name` - the name of the key.
+
+```javascript
+var schema = Joi.firstName().label('First Name');
 ```
 
 ### `array`
