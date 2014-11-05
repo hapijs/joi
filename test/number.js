@@ -531,4 +531,22 @@ describe('number', function () {
             done();
         });
     });
+
+    describe('#describe', function () {
+
+        it('should describe a minimum of 0', function (done) {
+
+            var schema = Joi.number().min(0);
+            expect(schema.describe()).to.deep.equal({
+                "type": "number",
+                "rules": [
+                    {
+                        "name": "min",
+                        "arg": 0
+                    }
+                ]
+            });
+            done();
+        });
+    });
 });
