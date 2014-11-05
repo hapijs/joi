@@ -1403,6 +1403,8 @@ describe('Joi', function () {
             ]
         };
 
+        result.children.min.type = "alternatives";
+
         it('describes schema (direct)', function (done) {
 
             var description = schema.describe();

@@ -304,6 +304,8 @@ describe('alternatives', function () {
                 }
             };
 
+            outcome.children.a.type = "alternatives";
+
             expect(Joi.describe(schema)).to.deep.equal(outcome);
             done();
         });
@@ -352,6 +354,8 @@ describe('alternatives', function () {
                     ]
                 }
             };
+            
+            outcome.children.a.type = "alternatives";
 
             expect(Joi.describe(schema)).to.deep.equal(outcome);
             done();
@@ -401,8 +405,28 @@ describe('alternatives', function () {
                     ]
                 }
             };
+            outcome.children.a.type = "alternatives";
 
             expect(Joi.describe(schema)).to.deep.equal(outcome);
+            done();
+        });
+
+        it('describe meta information', function (done) {
+            var schema = Joi.alternatives(Joi.string()).meta('foo').description('bar').example('baz');
+            
+            var outcome = [
+              {
+                type: 'string',
+                invalids: ['']
+              }
+            ];
+
+            outcome.type = 'alternatives';
+            outcome.meta = ['foo'];
+            outcome.description = 'bar';
+            outcome.examples = ['baz'];
+
+            expect(Joi.describe(schema)).to.deep.equal(outcome);    
             done();
         });
     });
