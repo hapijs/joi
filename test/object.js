@@ -43,7 +43,7 @@ describe('object', function () {
         });
     });
 
-    it('should validate an object', function (done) {
+    it('validates an object', function (done) {
 
         var schema = Joi.object().required();
         Helper.validate(schema, [
@@ -51,6 +51,20 @@ describe('object', function () {
             [{ hi: true }, true],
             ['', false]
         ], done);
+    });
+
+    it('return object reference when no rules specified', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.object()
+        });
+
+        var item = { x: 5 };
+        schema.validate({ a: item }, function (err, value) {
+
+            expect(value.a).to.equal(item);
+            done();
+        });
     });
 
     it('retains ignored values', function (done) {
