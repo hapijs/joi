@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Joi = require('../lib');
 var Helper = require('./helper');
 
@@ -17,7 +18,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('object', function () {
@@ -566,7 +567,7 @@ describe('object', function () {
             schema.validate(input, function (err, value) {
 
                 expect(err).to.not.exist;
-                expect(value).to.have.keys(['a']);
+                expect(Object.keys(value)).to.include('a');
                 expect(value.a).to.equal('something');
                 done();
             });
@@ -594,8 +595,8 @@ describe('object', function () {
                 })
             });
 
-            expect(schema.describe(true)).to.not.contain.key('children');
-            expect(schema.describe()).to.contain.key('children');
+            expect(Object.keys(schema.describe(true))).to.not.include('children');
+            expect(Object.keys(schema.describe())).to.include('children');
 
             done();
         });

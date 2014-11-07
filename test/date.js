@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Joi = require('../lib');
 var Helper = require('./helper');
 
@@ -17,7 +18,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('date', function () {
@@ -68,7 +69,7 @@ describe('date', function () {
         Joi.date().validate(mili.toString(), function (err, value) {
 
             expect(err).to.not.exist;
-            expect(value).to.be.eql(now);
+            expect(value).to.deep.equal(now);
             done();
         });
     });
@@ -80,7 +81,7 @@ describe('date', function () {
       Joi.date().min('now').validate(future, function (err, value) {
 
         expect(err).to.not.exist;
-        expect(value).to.be.eql(future);
+        expect(value).to.deep.equal(future);
         done();
       });
     });
@@ -103,7 +104,7 @@ describe('date', function () {
       Joi.date().max('now').validate(past, function (err, value) {
 
         expect(err).to.not.exist;
-        expect(value).to.be.eql(past);
+        expect(value).to.deep.equal(past);
         done();
       });
     });
@@ -210,12 +211,12 @@ describe('date', function () {
                 expect(function () {
 
                     Joi.date().format(true);
-                }).to.throw('Invalid format');
+                }).to.throw('Invalid format.');
 
                 expect(function () {
 
                     Joi.date().format(['YYYYMMDD', true]);
-                }).to.throw('Invalid format');
+                }).to.throw('Invalid format.');
                 done();
             });
         });

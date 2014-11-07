@@ -18,7 +18,8 @@
     "moment": "2.x.x"
   },
   "devDependencies": {
-    "lab": "4.x.x"
+    "code": "1.x.x",
+    "lab": "5.x.x"
   },
   "scripts": {
     "test": "make test-cov"

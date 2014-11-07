@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Joi = require('../lib');
 var Helper = require('./helper');
 
@@ -17,7 +18,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('binary', function () {
@@ -90,11 +91,11 @@ describe('binary', function () {
                 done();
             });
         });
-        
+
         it('throws when encoding is invalid', function (done) {
 
             expect(function () {
-                
+
                 Joi.binary().encoding('base6');
             }).to.throw('Invalid encoding: base6');
             done();
