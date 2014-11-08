@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Joi = require('../lib');
 var Helper = require('./helper');
 
@@ -17,7 +18,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('number', function () {
@@ -67,40 +68,6 @@ describe('number', function () {
                 [1.02, false],
                 [0.01, false]
             ], done);
-        });
-
-        it('should validate credit card', function (done) {
-
-            var t = Joi.number().creditCard();
-            t.validate(4111111111111112, function (err, value) {
-
-                expect(err.message).to.equal('value must be a credit card');
-
-                Helper.validate(t, [
-                    [378734493671000, true],  // american express
-                    [371449635398431, true],  // american express
-                    [378282246310005, true],  // american express
-                    [341111111111111, true],  // american express
-                    [5610591081018250, true], // australian bank
-                    [5019717010103742, true], // dankort pbs
-                    [38520000023237, true],   // diners club
-                    [30569309025904, true],   // diners club
-                    [6011000990139424, true], // discover
-                    [6011111111111117, true], // discover
-                    [6011601160116611, true], // discover
-                    [3566002020360505, true], // jbc
-                    [3530111333300000, true], // jbc
-                    [5105105105105100, true], // mastercard
-                    [5555555555554444, true], // mastercard
-                    [5431111111111111, true], // mastercard
-                    [6331101999990016, true], // switch/solo paymentech
-                    [4222222222222, true],    // visa
-                    [4012888888881881, true], // visa
-                    [4111111111111111, true], // visa
-                    [4111111111111112, false],
-                    [null, false],
-                ], done);
-            });
         });
 
         it('can accept string numbers', function (done) {
@@ -436,6 +403,68 @@ describe('number', function () {
                 [null, true]
             ], done);
         });
+
+        it('should handle combination of greater and less', function (done) {
+
+            var rule = Joi.number().greater(5).less(10);
+            Helper.validate(rule, [
+                [0, false],
+                [11, false],
+                [5, false],
+                [10, false],
+                [8, true],
+                [5.01, true],
+                [9.99, true],
+                [null, false]
+            ], done);
+        });
+
+        it('should handle combination of greater, less, and integer', function (done) {
+
+            var rule = Joi.number().integer().greater(5).less(10);
+            Helper.validate(rule, [
+                [0, false],
+                [11, false],
+                [5, false],
+                [10, false],
+                [6, true],
+                [9, true],
+                [5.01, false],
+                [9.99, false]
+            ], done);
+        });
+
+        it('should handle combination of greater, less, and null allowed', function (done) {
+
+            var rule = Joi.number().greater(5).less(10).allow(null);
+            Helper.validate(rule, [
+                [0, false],
+                [11, false],
+                [5, false],
+                [10, false],
+                [8, true],
+                [5.01, true],
+                [9.99, true],
+                [null, true]
+            ], done);
+        });
+
+        it('should handle combination of greater, less, invalid, and allow', function (done) {
+
+            var rule = Joi.number().greater(5).less(10).invalid(6).allow(-3);
+            Helper.validate(rule, [
+                [0, false],
+                [11, false],
+                [5, false],
+                [10, false],
+                [6, false],
+                [8, true],
+                [5.01, true],
+                [9.99, true],
+                [-3, true],
+                [null, false]
+            ], done);
+        });
     });
 
     it('should instantiate separate copies on invocation', function (done) {
@@ -500,6 +529,24 @@ describe('number', function () {
 
                 Joi.number().max('a');
             }).to.throw('limit must be an integer');
+            done();
+        });
+    });
+
+    describe('#describe', function () {
+
+        it('should describe a minimum of 0', function (done) {
+
+            var schema = Joi.number().min(0);
+            expect(schema.describe()).to.deep.equal({
+                "type": "number",
+                "rules": [
+                    {
+                        "name": "min",
+                        "arg": 0
+                    }
+                ]
+            });
             done();
         });
     });

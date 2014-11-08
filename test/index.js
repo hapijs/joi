@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Path = require('path');
 var Joi = require('../lib');
 var Helper = require('./helper');
@@ -18,7 +19,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('Joi', function () {
@@ -354,6 +355,38 @@ describe('Joi', function () {
                 [{ txt: 'test', upc: 'test' }, false],
                 [{ txt: 'test', upc: 'test', code: 322 }, true],
                 [{ txt: 'test', upc: null, code: 322 }, true]
+            ], done);
+        });
+    });
+
+    it('validates nand()', function (done) {
+
+        var schema = Joi.object({
+            txt: Joi.string(),
+            upc: Joi.string().allow(null, ''),
+            code: Joi.number()
+        }).nand('txt', 'upc', 'code');
+
+        Joi.validate({ txt: 'x', upc: 'y', code: 123 }, schema, { abortEarly: false }, function (err, value) {
+
+            expect(err.message).to.equal('value txt must not exist simultaneously with upc, code');
+
+            Helper.validate(schema, [
+                [{}, true],
+                [{ upc: null }, true],
+                [{ upc: 'test' }, true],
+                [{ txt: 'test' }, true],
+                [{ code: 123 }, true],
+                [{ txt: 'test', upc: null }, true],
+                [{ txt: 'test', upc: '' }, true],
+                [{ txt: undefined, upc: 'test' }, true],
+                [{ txt: 'test', upc: undefined }, true],
+                [{ txt: 'test', upc: '' }, true],
+                [{ txt: 'test', upc: null }, true],
+                [{ txt: 'test', upc: undefined, code: 999 }, true],
+                [{ txt: 'test', upc: 'test' }, true],
+                [{ txt: 'test', upc: 'test', code: 322 }, false],
+                [{ txt: 'test', upc: null, code: 322 }, false]
             ], done);
         });
     });

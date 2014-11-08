@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "4.7.0",
+  "version": "4.8.0",
   "repository": "git://github.com/hapijs/joi",
   "main": "index",
   "keywords": [
@@ -14,12 +14,14 @@
   "dependencies": {
     "ABAValidator": "^1.0.5",
     "hoek": "^2.2.x",
+    "topo": "1.x.x",
     "isemail": "1.x.x",
     "iso-countries": "0.0.5",
-    "topo": "1.x.x"
+    "moment": "2.x.x"
   },
   "devDependencies": {
-    "lab": "4.x.x"
+    "code": "1.x.x",
+    "lab": "5.x.x"
   },
   "scripts": {
     "test": "make test-cov"

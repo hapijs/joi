@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Joi = require('../lib');
 
 
@@ -16,7 +17,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('errors', function () {
@@ -185,6 +186,15 @@ describe('errors', function () {
         Joi.string().options({ language: { root: 'blah' } }).validate(4, function (err, value) {
 
             expect(err.message).to.equal('blah must be a string');
+            done();
+        });
+    });
+
+    it('overrides label key language', function (done) {
+
+        Joi.string().options({ language: { root: 'blah', label: 'bleh' } }).validate(4, function (err, value) {
+
+            expect(err.message).to.equal('bleh must be a string');
             done();
         });
     });
