@@ -773,6 +773,27 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates objectid', function (done) {
+
+            var schema = Joi.string().objectid();
+            var randomId = function(length) {
+                var seed = '0123456789abcdefABCDEF';
+                var i = 0,
+                    id = '';
+                while (i < length) {
+                    i++;
+                    id += seed[Math.floor(Math.random() * seed.length)];
+                }
+                return id;
+            };
+            Helper.validate(schema, [
+                [randomId(24), true],
+                [randomId(23), false],
+                [randomId(23) + 'Z', false],
+                [randomId(25), false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();

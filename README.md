@@ -88,6 +88,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.isoCurrencyCode()`](#stringisoCurrencyCode)
         - [`string.SSN()`](#stringSSN)
         - [`string.EIN()`](#stringEIN)
+        - [`string.objectid()`](#stringobjectid)
         - [`string.token()`](#stringtoken)
         - [`string.email()`](#stringemail)
         - [`string.guid()`](#stringguid)
@@ -994,6 +995,14 @@ Requires the string value to be a valid [EIN](http://en.wikipedia.org/wiki/Emplo
 
 ```javascript
 var schema = Joi.string().EIN();
+```
+
+#### `string.objectid()`
+
+Requires the string value to be a valid [objectid](https://github.com/mongodb/js-bson/blob/master/lib/bson/objectid.js).
+
+```javascript
+var schema = Joi.string().objectid();
 ```
 
 #### `string.token()`
