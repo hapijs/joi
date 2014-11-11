@@ -203,6 +203,18 @@ describe('object', function () {
         ], done);
     });
 
+    it('should validate constructor when type is set', function (done) {
+
+        var schema = Joi.object().type(RegExp);
+        Helper.validate(schema, [
+            [{ item: 'something' }, false],
+            ['', false],
+            [new Date(), false],
+            [/abcd/, true],
+            [new RegExp(), true]
+        ], done);
+    });
+
     it('should traverse an object and validate all properties in the top level', function (done) {
 
         var schema = Joi.object({
@@ -982,6 +994,65 @@ describe('object', function () {
                 expect(err.message).to.equal('value validation failed because d.e failed to pass the assertion test');
                 done();
             });
+        });
+    });
+
+    describe('#type', function () {
+
+        it('uses constructor name for default type name', function (done) {
+
+            function Foo () {}
+
+            var schema = Joi.object().type(Foo);
+            schema.validate({}, function (err) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('value must be an instance of Foo');
+                done();
+            });
+        });
+
+        it('uses custom type name if supplied', function (done) {
+
+            var Foo = function () {};
+
+            var schema = Joi.object().type(Foo, 'Bar');
+            schema.validate({}, function (err) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('value must be an instance of Bar');
+                done();
+            });
+        });
+
+        it('overrides constructor name with custom name', function (done) {
+
+            function Foo () {}
+
+            var schema = Joi.object().type(Foo, 'Bar');
+            schema.validate({}, function (err) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('value must be an instance of Bar');
+                done();
+            });
+        });
+
+        it('throws when constructor is not a function', function (done) {
+
+            expect(function () {
+
+                var schema = Joi.object().type('');
+            }).to.throw('type must be a constructor function');
+            done();
+        });
+
+        it('uses the constructor name in the schema description', function (done) {
+
+            var description = Joi.object().type(RegExp).describe();
+
+            expect(description.rules).to.deep.include({ name: 'type', arg: 'RegExp' });
+            done();
         });
     });
 });

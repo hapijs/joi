@@ -76,6 +76,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
         - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
         - [`object.unknown([allow])`](#objectunknownallow)
+        - [`object.type(constructor, [name])`](#objecttypeconstructorname)
     - [`string`](#string)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
@@ -916,6 +917,16 @@ Overrides the handling of unknown keys for the scope of the current object only 
 
 ```javascript
 var schema = Joi.object({ a: Joi.any() }).unknown();
+```
+
+#### `object.type(constructor, [name])`
+
+Requires the object to be an instance of a given constructor where:
+- `constructor` - the constructor function that the object must be an instance of.
+- `name` - an alternate name to use in validation errors. This is useful when the constructor function does not have a name.
+
+```javascript
+var schema = Joi.object().type(RegExp);
 ```
 
 ### `string`
