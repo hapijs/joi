@@ -124,7 +124,7 @@ describe('any', function () {
             schema.validate(input, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.details[0].message).to.equal('Custom label must be a valid email');
+                expect(err.details[0].message).to.equal('"Custom label" must be a valid email');
                 done();
             });
         });
@@ -428,7 +428,7 @@ describe('any', function () {
             expect(function () {
 
                 var schema = Joi.valid(5, 6, 7).example(4);
-            }).to.throw('Bad example: value must be one of 5, 6, 7');
+            }).to.throw('Bad example: "value" must be one of "5, 6, 7"');
             done();
         });
     });

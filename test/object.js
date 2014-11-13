@@ -443,7 +443,7 @@ describe('object', function () {
 
             Joi.compile(schema).validate({ test1: 'a', test2: 'b' }, function (err, value) {
 
-                expect(err.message).to.equal('value cannot rename child test2 because multiple renames are disabled and another key was already renamed to test');
+                expect(err.message).to.equal('"value" cannot rename child "test2" because multiple renames are disabled and another key was already renamed to "test"');
                 done();
             });
         });
@@ -453,7 +453,7 @@ describe('object', function () {
             Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').options({ abortEarly: false }).validate({ a: 1, c: 1, d: 1 }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('value cannot rename child c because multiple renames are disabled and another key was already renamed to b. value cannot rename child d because multiple renames are disabled and another key was already renamed to b');
+                expect(err.message).to.equal('"value" cannot rename child "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename child "d" because multiple renames are disabled and another key was already renamed to "b"');
                 done();
             });
         });
@@ -484,7 +484,7 @@ describe('object', function () {
 
             schema.validate({ test: 'b', test1: 'a' }, function (err, value) {
 
-                expect(err.message).to.equal('value cannot rename child test because override is disabled and target test1 exists');
+                expect(err.message).to.equal('"value" cannot rename child "test" because override is disabled and target "test1" exists');
                 done();
             });
         });
@@ -702,7 +702,7 @@ describe('object', function () {
             Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('5 must be a boolean. bb must be one of x');
+                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of "x"');
 
                 Helper.validate(schema, [
                     [{ a: 5 }, true],
@@ -727,7 +727,7 @@ describe('object', function () {
             Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('5 must be a boolean. bb must be one of x');
+                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of "x"');
                 done();
             });
         });
@@ -739,7 +739,7 @@ describe('object', function () {
             Joi.validate({ a: 5 }, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('a is not allowed');
+                expect(err.message).to.equal('"a" is not allowed');
                 done();
             });
         });
@@ -884,7 +884,7 @@ describe('object', function () {
             }).validate({ a: { b: { c: 1 } } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('value must contain at least one of x, y');
+                expect(err.message).to.equal('"value" must contain at least one of ["x", "y"]');
                 done();
             });
         });
@@ -907,7 +907,7 @@ describe('object', function () {
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('value validation failed because d.e failed to equal to a.c');
+                expect(err.message).to.equal('"value" validation failed because "d.e" failed to "equal to a.c"');
 
                 Helper.validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
@@ -930,7 +930,7 @@ describe('object', function () {
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('value validation failed because d.e failed to equal to a.c');
+                expect(err.message).to.equal('"value" validation failed because "d.e" failed to "equal to a.c"');
 
                 Helper.validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
@@ -991,7 +991,7 @@ describe('object', function () {
             }, function (err) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('value validation failed because d.e failed to pass the assertion test');
+                expect(err.message).to.equal('"value" validation failed because "d.e" failed to "pass the assertion test"');
                 done();
             });
         });
@@ -1007,7 +1007,7 @@ describe('object', function () {
             schema.validate({}, function (err) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('value must be an instance of Foo');
+                expect(err.message).to.equal('"value" must be an instance of "Foo"');
                 done();
             });
         });
@@ -1020,7 +1020,7 @@ describe('object', function () {
             schema.validate({}, function (err) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('value must be an instance of Bar');
+                expect(err.message).to.equal('"value" must be an instance of "Bar"');
                 done();
             });
         });
@@ -1033,7 +1033,7 @@ describe('object', function () {
             schema.validate({}, function (err) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('value must be an instance of Bar');
+                expect(err.message).to.equal('"value" must be an instance of "Bar"');
                 done();
             });
         });

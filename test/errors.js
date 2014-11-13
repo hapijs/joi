@@ -74,7 +74,7 @@ describe('errors', function () {
 
             expect(err).to.exist();
             expect(err.name).to.equal('ValidationError');
-            expect(err.message).to.equal('value 11. required 7. xor 7. email 19. date 18. alphanum 16. min 14. max 15. notEmpty 3');
+            expect(err.message).to.equal('"value" 11. "required" 7. "xor" 7. "email" 19. "date" 18. "alphanum" 16. "min" 14. "max" 15. "notEmpty" 3');
             done();
         });
     });
@@ -83,7 +83,7 @@ describe('errors', function () {
 
         Joi.valid('sad').options({ language: { any: { allowOnly: 'my hero {{key}} is not {{valids}}' } } }).validate(5, function (err, value) {
 
-            expect(err.message).to.equal('my hero value is not sad');
+            expect(err.message).to.equal('my hero "value" is not "sad"');
             done();
         });
     });
@@ -96,11 +96,11 @@ describe('errors', function () {
 
         Joi.validate({ 'a()': 'x' }, schema, function (err, value) {
 
-            expect(err.message).to.equal('a&#x28;&#x29; must be a number');
+            expect(err.message).to.equal('"a()" must be a number');
 
             Joi.validate({ 'b()': 'x' }, schema, function (err, value) {
 
-                expect(err.message).to.equal('b&#x28;&#x29; is not allowed');
+                expect(err.message).to.equal('"b()" is not allowed');
                 done();
             });
         });
@@ -185,16 +185,25 @@ describe('errors', function () {
 
         Joi.string().options({ language: { root: 'blah' } }).validate(4, function (err, value) {
 
-            expect(err.message).to.equal('blah must be a string');
+            expect(err.message).to.equal('"blah" must be a string');
             done();
         });
     });
 
     it('overrides label key language', function (done) {
 
+        Joi.string().options({ language: { key: '{{!key}} ' } }).validate(4, function (err, value) {
+
+            expect(err.message).to.equal("&quot;value&quot; must be a string");
+            done();
+        });
+    });
+
+    it('allows html escaping', function (done) {
+
         Joi.string().options({ language: { root: 'blah', label: 'bleh' } }).validate(4, function (err, value) {
 
-            expect(err.message).to.equal('bleh must be a string');
+            expect(err.message).to.equal('"bleh" must be a string');
             done();
         });
     });
@@ -244,7 +253,7 @@ describe('errors', function () {
             Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[1]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  \"a\" \u001b[31m[3]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] a must be one of a, b, c, d\n[2] u is required\n[3] b must be a string\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[1]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  "a" \u001b[31m[3]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] "a" must be one of "a, b, c, d"\n[2] "u" is required\n[3] "b" must be a string\u001b[0m');
                 done();
             });
         });
@@ -262,7 +271,7 @@ describe('errors', function () {
             Joi.validate({ x: true }, schema, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] x must be a string\n[2] x must be a number\n[3] x must be a number of milliseconds or valid date string\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be a string\n[2] "x" must be a number\n[3] "x" must be a number of milliseconds or valid date string\u001b[0m');
                 done();
             });
         });

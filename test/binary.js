@@ -57,7 +57,7 @@ describe('binary', function () {
             Joi.binary().validate(5, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('value must be a buffer or a string');
+                expect(err.message).to.equal('"value" must be a buffer or a string');
                 done();
             });
         });
