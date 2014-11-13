@@ -47,7 +47,7 @@ describe('date', function () {
         Joi.date().options({ convert: false }).validate('1-1-2013 UTC', function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('value must be a number of milliseconds or valid date string');
+            expect(err.message).to.equal('"value" must be a number of milliseconds or valid date string');
             done();
         });
     });

@@ -194,7 +194,7 @@ describe('string', function () {
             var t = Joi.string().creditCard();
             t.validate('4111111111111112', function (err, value) {
 
-                expect(err.message).to.equal('value must be a credit card');
+                expect(err.message).to.equal('"value" must be a credit card');
 
                 Helper.validate(t, [
                     ['378734493671000', true],  // american express
@@ -445,7 +445,7 @@ describe('string', function () {
             var schema = Joi.string().regex(/[a-z]+/, 'letters').regex(/[0-9]+/, 'numbers');
             schema.validate('abcd', function (err, value) {
 
-                expect(err.message).to.contain('numbers pattern');
+                expect(err.message).to.contain('"numbers" pattern');
                 done();
             });
         });

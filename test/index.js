@@ -70,7 +70,7 @@ describe('Joi', function () {
         Joi.string().validate(null, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.annotate()).to.equal('{\n  \u001b[41m\"value\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] value must be a string\u001b[0m');
+            expect(err.annotate()).to.equal('{\n  \u001b[41m\"value\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] "value" must be a string\u001b[0m');
             done();
         });
     });
@@ -171,7 +171,7 @@ describe('Joi', function () {
 
         Joi.validate({ txt: 'a' }, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('txt missing required peer upc');
+            expect(err.message).to.equal('"txt" missing required peer "upc"');
 
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
@@ -193,7 +193,7 @@ describe('Joi', function () {
 
         Joi.validate({ txt: 'a', upc: 'b' }, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('txt conflict with forbidden peer upc');
+            expect(err.message).to.equal('"txt" conflict with forbidden peer "upc"');
 
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
@@ -215,7 +215,7 @@ describe('Joi', function () {
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('value must contain at least one of txt, upc');
+            expect(err.message).to.equal('"value" must contain at least one of ["txt", "upc"]');
 
             Helper.validate(schema, [
                 [{ upc: null }, false],
@@ -293,7 +293,7 @@ describe('Joi', function () {
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('value must contain at least one of txt, upc, code');
+            expect(err.message).to.equal('"value" must contain at least one of ["txt", "upc", "code"]');
 
             Helper.validate(schema, [
                 [{ upc: null }, true],
@@ -330,7 +330,7 @@ describe('Joi', function () {
 
         Joi.validate({ txt: 'x' }, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('value contains txt without its required peers upc, code');
+            expect(err.message).to.equal('"value" contains ["txt"] without its required peers ["upc", "code"]');
 
             Helper.validate(schema, [
                 [{}, true],
@@ -369,7 +369,7 @@ describe('Joi', function () {
 
         Joi.validate({ txt: 'x', upc: 'y', code: 123 }, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('value txt must not exist simultaneously with upc, code');
+            expect(err.message).to.equal('"value" ["txt"] must not exist simultaneously with ["upc", "code"]');
 
             Helper.validate(schema, [
                 [{}, true],
@@ -406,7 +406,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('mode must be one of required, optional, try, null. auth must be a string. auth must be a boolean');
+            expect(err.message).to.equal('"mode" must be one of "required, optional, try, null". "auth" must be a string. "auth" must be a boolean');
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
@@ -436,7 +436,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('mode must be one of required, optional, try, null. auth must be a string. auth must be a boolean');
+            expect(err.message).to.equal('"mode" must be one of "required, optional, try, null". "auth" must be a string. "auth" must be a boolean');
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
@@ -584,11 +584,11 @@ describe('Joi', function () {
 
                 Joi.object().validate(true, function (err, value) {
 
-                    expect(err.message).to.contain('value must be an object');
+                    expect(err.message).to.contain('"value" must be an object');
 
                     Joi.string().validate(true, function (err, value) {
 
-                        expect(err.message).to.contain('value must be a string');
+                        expect(err.message).to.contain('"value" must be a string');
 
                         Joi.string().email().validate('test@test.com', function (err, value) {
 
@@ -635,17 +635,17 @@ describe('Joi', function () {
         Joi.object({}).validate({ foo: 'bar' }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.equal('foo is not allowed');
+            expect(err.message).to.equal('"foo" is not allowed');
 
             Joi.compile({}).validate({ foo: 'bar' }, function (err, value) {
 
                 expect(err).to.exist;
-                expect(err.message).to.equal('foo is not allowed');
+                expect(err.message).to.equal('"foo" is not allowed');
 
                 Joi.compile({ other: Joi.number() }).validate({ foo: 'bar' }, function (err, value) {
 
                     expect(err).to.exist;
-                    expect(err.message).to.equal('foo is not allowed');
+                    expect(err.message).to.equal('"foo" is not allowed');
 
                     done();
                 });
@@ -664,12 +664,12 @@ describe('Joi', function () {
         Joi.compile(config).validate({ auth: { unknown: true } }, function (err, value) {
 
             expect(err).to.not.be.null;
-            expect(err.message).to.contain('unknown is not allowed');
+            expect(err.message).to.contain('"unknown" is not allowed');
 
             Joi.compile(config).validate({ something: false }, function (err, value) {
 
                 expect(err).to.not.be.null;
-                expect(err.message).to.contain('something is not allowed');
+                expect(err.message).to.contain('"something" is not allowed');
 
                 done();
             });
@@ -691,7 +691,7 @@ describe('Joi', function () {
         Joi.compile(config).validate({}, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.contain('module is required');
+            expect(err.message).to.contain('"module" is required');
 
             Joi.compile(config).validate({ module: 'test' }, function (err, value) {
 
@@ -700,8 +700,8 @@ describe('Joi', function () {
                 Joi.compile(config).validate({ module: {} }, function (err, value) {
 
                     expect(err).to.not.be.null;
-                    expect(err.message).to.contain('compile is required');
-                    expect(err.message).to.contain('module must be a string');
+                    expect(err.message).to.contain('"compile" is required');
+                    expect(err.message).to.contain('"module" must be a string');
 
                     Joi.compile(config).validate({ module: { compile: function () { } } }, function (err, value) {
 
@@ -747,7 +747,7 @@ describe('Joi', function () {
         Joi.compile(config).validate({}, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.contain('module is required');
+            expect(err.message).to.contain('"module" is required');
             done();
         });
     });
@@ -1191,7 +1191,7 @@ describe('Joi', function () {
         Joi.validate(input, schema, { skipFunctions: false }, function (err, value) {
 
             expect(err).to.exist;
-            expect(err.message).to.contain('func is not allowed');
+            expect(err.message).to.contain('"func" is not allowed');
             done();
         });
     });
@@ -1443,7 +1443,7 @@ describe('Joi', function () {
             expect(function () {
 
                 Joi.assert('x', Joi.number());
-            }).to.throw('"x"\n\u001b[31m\n[1] value must be a number\u001b[0m');
+            }).to.throw('"x"\n\u001b[31m\n[1] "value" must be a number\u001b[0m');
             done();
         });
 
@@ -1461,7 +1461,7 @@ describe('Joi', function () {
             expect(function () {
 
                 Joi.assert('x', Joi.number(), 'the reason is');
-            }).to.throw('the reason is "x"\n\u001b[31m\n[1] value must be a number\u001b[0m');
+            }).to.throw('the reason is "x"\n\u001b[31m\n[1] "value" must be a number\u001b[0m');
             done();
         });
     });
