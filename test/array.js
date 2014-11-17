@@ -349,7 +349,19 @@ describe('array', function () {
                 var schema = Joi.array();
                 var desc = schema.describe();
                 expect(desc).to.deep.equal({
-                    type: 'array'
+                    type: 'array',
+                    flags: { sparse: false }
+                });
+                done();
+            });
+
+            it('returns an updated description when sparse rule is applied', function (done) {
+
+                var schema = Joi.array().sparse();
+                var desc = schema.describe();
+                expect(desc).to.deep.equal({
+                    type: 'array',
+                    flags: { sparse: true }
                 });
                 done();
             });
@@ -370,6 +382,7 @@ describe('array', function () {
                 expect(desc.excludes).to.have.length(1);
                 expect(desc).to.deep.equal({
                     type: 'array',
+                    flags: { sparse: false },
                     includes: [{ type: 'number' }, { type: 'string', invalids: [''] }],
                     excludes: [{ type: 'boolean' }]
                 });
@@ -413,6 +426,62 @@ describe('array', function () {
                 [[now, now], true],
                 [[true, true], true]
             ], done);
+        });
+    });
+
+    describe('#sparse', function () {
+
+        it('errors on undefined value', function (done) {
+
+            var schema = Joi.array().includes(Joi.number());
+
+            Helper.validate(schema, [
+                [[undefined], false],
+                [[2, undefined], false]
+            ], done);
+        });
+
+        it('validates on undefined value with sparse', function (done) {
+
+            var schema = Joi.array().includes(Joi.number()).sparse();
+
+            Helper.validate(schema, [
+                [[undefined], true],
+                [[2, undefined], true]
+            ], done);
+        });
+
+        it('switches the sparse flag', function (done) {
+
+            var schema = Joi.array().sparse();
+            var desc = schema.describe();
+            expect(desc).to.deep.equal({
+                type: 'array',
+                flags: { sparse: true }
+            });
+            done();
+        });
+
+        it('switches the sparse flag with explicit value', function (done) {
+
+            var schema = Joi.array().sparse(true);
+            var desc = schema.describe();
+            expect(desc).to.deep.equal({
+                type: 'array',
+                flags: { sparse: true }
+            });
+            done();
+        });
+
+        it('switches the sparse flag back', function (done) {
+
+            var schema = Joi.array().sparse().sparse(false);
+            var desc = schema.describe();
+            expect(desc).to.deep.equal({
+                type: 'array',
+                flags: { sparse: false }
+            });
+            done();
         });
     });
 });

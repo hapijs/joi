@@ -37,6 +37,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`any.when(ref, options)`](#anywhenref-options)
         - [`any.label(name)`](#anylabelname)
     - [`array`](#array)
+        - [`array.sparse(enabled)`](#arraysparseenabled)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
         - [`array.min(limit)`](#arrayminlimit)
@@ -464,13 +465,22 @@ var schema = {
 
 ### `array`
 
-Generates a schema object that matches an array data type.
+Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by default but can be by using `sparse()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var array = Joi.array().includes(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], function (err, value) { });
+```
+
+#### `array.sparse(enabled)`
+
+Allow this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
+
+```javascript
+var schema = Joi.array().sparse(); // undefined values are now allowed
+schema = schema.sparse(false); // undefined values are now denied
 ```
 
 #### `array.includes(type)`
