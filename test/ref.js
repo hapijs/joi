@@ -353,7 +353,7 @@ describe('ref', function () {
     it('describes schema with ref', function (done) {
 
         var desc = Joi.compile(Joi.ref('a.b')).describe();
-        expect(Joi.isRef(desc.valids[0])).to.be.true;
+        expect(Joi.isRef(desc.valids[0])).to.be.true();
         done();
     });
 
