@@ -27,7 +27,7 @@ describe('alternatives', function () {
 
         Joi.alternatives().validate('a', function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(err.message).to.equal('value not matching any of the allowed alternatives');
             done();
         });
@@ -37,7 +37,7 @@ describe('alternatives', function () {
 
         Joi.alternatives().validate(undefined, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             done();
         });
     });
@@ -53,7 +53,7 @@ describe('alternatives', function () {
 
         schema.validate({ a: '5' }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value.a).to.equal(5);
             done();
         });
@@ -70,7 +70,7 @@ describe('alternatives', function () {
 
         schema.validate({ a: '5' }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value.a).to.equal(5);
             done();
         });
@@ -88,7 +88,7 @@ describe('alternatives', function () {
         var input = { a: { b: 'any', d: 'string' } };
         schema.validate(input, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value.a.b).to.equal('any');
             done();
         });

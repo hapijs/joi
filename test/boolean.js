@@ -27,7 +27,7 @@ describe('boolean', function () {
 
         Joi.boolean().validate('true', function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value).to.equal(true);
             done();
         });
@@ -37,7 +37,7 @@ describe('boolean', function () {
 
         Joi.boolean().validate(1, function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(value).to.equal(1);
             done();
         });

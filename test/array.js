@@ -27,7 +27,7 @@ describe('array', function () {
 
         Joi.array().validate('[1,2,3]', function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value.length).to.equal(3);
             done();
         });
@@ -37,7 +37,7 @@ describe('array', function () {
 
         Joi.array().validate('{ "something": false }', function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(err.message).to.equal('value must be an array');
             done();
         });
@@ -47,7 +47,7 @@ describe('array', function () {
 
         Joi.array().validate(3, function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(value).to.equal(3);
             done();
         });
@@ -57,7 +57,7 @@ describe('array', function () {
 
         Joi.array().validate('3', function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(value).to.equal('3');
             done();
         });
@@ -67,7 +67,7 @@ describe('array', function () {
 
         Joi.array().validate('asdf', function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(value).to.equal('asdf');
             done();
         });
@@ -81,7 +81,7 @@ describe('array', function () {
             var input = ['1', '2', '3'];
             schema.validate(input, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.deep.equal([1, 2, 3]);
                 done();
             });
@@ -98,7 +98,7 @@ describe('array', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -265,12 +265,12 @@ describe('array', function () {
             var n = [1, 2, 'hippo'];
             schema.validate(n, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
 
                 var m = ['x', 'y', 'z'];
                 schema.validate(m, function (err2, value) {
 
-                    expect(err2).to.not.exist;
+                    expect(err2).to.not.exist();
                     done();
                 });
             });
@@ -322,7 +322,7 @@ describe('array', function () {
             var input = { arr: [1, 2, 2.1] };
             schema.validate(input, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('arr position 2 fails because 2 must be an integer');
                 done();
             });
@@ -358,7 +358,7 @@ describe('array', function () {
 
                 var schema = Joi.array().includes().max(5);
                 var desc = schema.describe();
-                expect(desc.includes).to.not.exist;
+                expect(desc.includes).to.not.exist();
                 done();
             });
 

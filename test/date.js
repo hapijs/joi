@@ -37,7 +37,7 @@ describe('date', function () {
         var now = Date.now();
         Joi.date().valid(new Date(now)).validate(new Date(now), function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             done();
         });
     });
@@ -46,7 +46,7 @@ describe('date', function () {
 
         Joi.date().options({ convert: false }).validate('1-1-2013 UTC', function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(err.message).to.equal('value must be a number of milliseconds or valid date string');
             done();
         });
@@ -56,7 +56,7 @@ describe('date', function () {
 
         Joi.date().validate(new Date(), function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             done();
         });
     });
@@ -68,7 +68,7 @@ describe('date', function () {
 
         Joi.date().validate(mili.toString(), function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value).to.deep.equal(now);
             done();
         });
@@ -80,7 +80,7 @@ describe('date', function () {
 
       Joi.date().min('now').validate(future, function (err, value) {
 
-        expect(err).to.not.exist;
+        expect(err).to.not.exist();
         expect(value).to.deep.equal(future);
         done();
       });
@@ -92,7 +92,7 @@ describe('date', function () {
 
       Joi.date().min('now').validate(past, function (err, value) {
 
-        expect(err).to.exist;
+        expect(err).to.exist();
         done();
       });
     });
@@ -103,7 +103,7 @@ describe('date', function () {
 
       Joi.date().max('now').validate(past, function (err, value) {
 
-        expect(err).to.not.exist;
+        expect(err).to.not.exist();
         expect(value).to.deep.equal(past);
         done();
       });
@@ -115,7 +115,7 @@ describe('date', function () {
 
       Joi.date().max('now').validate(future, function (err, value) {
 
-        expect(err).to.exist;
+        expect(err).to.exist();
         done();
       });
     });

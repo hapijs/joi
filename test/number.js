@@ -53,7 +53,7 @@ describe('number', function () {
             var text = Joi.number().invalid(50);
             text.validate(50, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 done();
             });
         });
@@ -103,7 +103,7 @@ describe('number', function () {
 
             Joi.compile(config).validate(obj, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.a).to.equal(123);
                 done();
             });
@@ -113,7 +113,7 @@ describe('number', function () {
 
             Joi.number().validate('1', function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.equal(1);
                 done();
             });
@@ -123,7 +123,7 @@ describe('number', function () {
 
             Joi.number().validate(null, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(value).to.equal(null);
                 done();
             });
@@ -479,7 +479,7 @@ describe('number', function () {
     it('should show resulting object with #valueOf', function (done) {
 
         var result = Joi.number().min(5);
-        expect(result.valueOf()).to.exist;
+        expect(result.valueOf()).to.exist();
         done();
     });
 
@@ -514,7 +514,7 @@ describe('number', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.equal(input);
                 done();
             });
