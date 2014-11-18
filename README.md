@@ -2,9 +2,10 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **4.7.x**
-
-[![Build Status](https://secure.travis-ci.org/hapijs/joi.png)](http://travis-ci.org/hapijs/joi)
+[![npm version](https://badge.fury.io/js/joi.svg)](http://badge.fury.io/js/joi)
+[![Build Status](https://secure.travis-ci.org/hapijs/joi.svg)](http://travis-ci.org/hapijs/joi)
+[![Dependencies Status](https://david-dm.org/hapijs/joi.svg)](https://david-dm.org/hapijs/joi)
+[![DevDependencies Status](https://david-dm.org/hapijs/joi/dev-status.svg)](https://david-dm.org/hapijs/joi#info=devDependencies)
 
 Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
