@@ -584,6 +584,16 @@ describe('string', function () {
             });
         });
 
+        it('validates email with options', function(done) {
+
+            var emailOptions = { errorLevel: 10 };
+            var schema = Joi.string().email(emailOptions);
+            schema.validate('joe@example', function(err, value) {
+                expect(err).to.not.be.null;
+                done();
+            });
+        });
+
         it('should return false for denied value', function (done) {
 
             var text = Joi.string().invalid('joi');

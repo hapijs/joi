@@ -79,7 +79,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`string.regex(pattern)`](#stringregexpattern)
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
-        - [`string.email()`](#stringemail)
+        - [`string.email([options])`](#stringemail)
         - [`string.guid()`](#stringguid)
         - [`string.isoDate()`](#stringisodate)
         - [`string.hostname()`](#stringhostname)
@@ -917,6 +917,12 @@ var schema = Joi.string().token();
 #### `string.email()`
 
 Requires the string value to be a valid email address.
+
+- `options` - optional settings:
+    - `errorLevel` - Numerical threshold at which an email address is considered invalid.
+    - `tldWhitelist` - Specifies a list of acceptable TLDs.
+    - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
+    - `checkDNS` - Whether or not to check DNS records.
 
 ```javascript
 var schema = Joi.string().email();
