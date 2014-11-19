@@ -584,12 +584,13 @@ describe('string', function () {
             });
         });
 
-        it('validates email with options', function(done) {
+        it('validates email with options with a friendly error message', function(done) {
 
             var emailOptions = { errorLevel: 10 };
             var schema = Joi.string().email(emailOptions);
             schema.validate('joe@example', function(err, value) {
-                expect(err).to.not.be.null;
+
+                expect(err.message).to.contain('must be a valid email');
                 done();
             });
         });
