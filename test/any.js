@@ -110,6 +110,13 @@ describe('any', function () {
             }).to.throw('Label name must be a non-empty string');
             done();
         });
+
+        it('can describe a label', function (done) {
+
+            var schema = Joi.object().label('lbl').describe();
+            expect(schema).to.deep.equal({ type: 'object', label: 'lbl' });
+            done();
+        });
     });
 
     describe('#strict', function () {
