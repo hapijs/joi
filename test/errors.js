@@ -199,6 +199,23 @@ describe('errors', function () {
         });
     });
 
+    it('provides context with the error', function (done) {
+
+        Joi.object({ length: Joi.number().min(3).required() }).validate({ length: 1 }, function (err) {
+
+            expect(err.details).to.deep.equal([{
+                message: 'length must be larger than or equal to 3',
+                path: 'length',
+                type: 'number.min',
+                context: {
+                    limit: 3,
+                    key: 'length'
+                }
+            }]);
+            done();
+        });
+    });
+
     describe('#annotate', function () {
 
         it('annotates error', function (done) {
