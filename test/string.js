@@ -622,6 +622,239 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates creditcard', function (done) {
+
+            var schema = Joi.string().creditcard();
+            Helper.validate(schema, [
+                ['4539240899451201', true],
+                ['5446966954545862', true],
+                ['378914469617829', true],
+                ['6011055872254469', true],
+                ['5414759153325162', true],
+                ['30433625595266', true],
+                ['36892077695862', true],
+                ['6771943909422466', true],
+                ['4508318323424841', true],
+                ['378282246310005', true],
+                ['371449635398431', true],
+                ['378734493671000', true],
+                ['5610591081018250', true],
+                ['30569309025904', true],
+                ['38520000023237', true],
+                ['6011111111111117', true],
+                ['6011000990139424', true],
+                ['3530111333300000', true],
+                ['3566002020360505', true],
+                ['5555555555554444', true],
+                ['5105105105105100', true],
+                ['4111111111111111', true],
+                ['4012888888881881', true],
+                ['4222222222222', true],
+                ['5019717010103742', true],
+                ['6240008631401148', true],
+                ['6269992058134322', true],
+                ['6282001509099283', true],
+                ['6288997715452584', true],
+                ['6288 9977 1545 2584', true],
+                ['6288-9977-1545-2584', true],
+                ['5309900599078555', true],
+                ['1234567890123456', false],
+                ['5309900599078559', false],
+                ['4026 1234 1234 1236', false],
+                ['3530111333300001', false],
+                ['6288 9977 1545 2584 5', true],
+                ['6288 9977 1545 2584 56', true],
+                ['6288 9977 1545 2584 567', true],
+                ['6288 9977 1545 2584 5678', false],
+                ['5018 1234 123', false],
+                ['5018 1234 1234 1234', false],
+                ['4026 1234 1234 123', false],
+                ['xyz', false],
+                ['510510510510', false]
+            ], done);
+        });
+
+        it('validates routingNumber', function (done) {
+
+            var schema = Joi.string().routingNumber();
+            Helper.validate(schema, [
+                ['123123123', true],
+                ['110000000', true],
+                ['123123124', false]
+            ], done);
+        });
+
+        it('validates isoCountryCode', function (done) {
+
+            var schema = Joi.string().isoCountryCode();
+            Helper.validate(schema, [
+                ['CN', true],
+                ['US', true],
+                ['CHN', true],
+                ['USA', true],
+                ['ABCDE', false]
+            ], done);
+        });
+
+        it('validates accountNumber', function (done) {
+
+            var schema = Joi.string().accountNumber();
+            Helper.validate(schema, [
+                ['0001234567', true],
+                ['00012345678', true],
+                ['000123456789', true],
+                ['000111111116', true],
+                ['000111111113', true],
+                ['000222222227', true],
+                ['000333333335', true],
+                ['000444444440', true],
+                ['012345678', false],
+                ['0000123456789', false]
+            ], done);
+        });
+
+        it('validates expiryMonth', function (done) {
+
+            var schema = Joi.string().expiryMonth();
+            Helper.validate(schema, [
+                ['1', true],
+                ['2', true],
+                ['3', true],
+                ['4', true],
+                ['5', true],
+                ['6', true],
+                ['7', true],
+                ['8', true],
+                ['9', true],
+                ['01', true],
+                ['02', true],
+                ['03', true],
+                ['04', true],
+                ['05', true],
+                ['06', true],
+                ['07', true],
+                ['08', true],
+                ['09', true],
+                ['10', true],
+                ['11', true],
+                ['12', true],
+                ['0', false],
+                ['13', false],
+                ['123', false]
+            ], done);
+        });
+
+        it('validates expiryYear', function (done) {
+
+            var schema = Joi.string().expiryYear();
+            var thisYear = new Date().getFullYear().toString();
+            var last2 = thisYear.slice(-2);
+            Helper.validate(schema, [
+                [last2, true],
+                [thisYear, true],
+                [(parseInt(last2, 10) - 1).toString(), false],
+                [(parseInt(last2, 10) + 51).toString(), false],
+                [(parseInt(thisYear, 10) - 1).toString(), false],
+                [(parseInt(thisYear, 10) + 51).toString(), false],
+                ['0', false],
+                ['x', false],
+                ['1x', false],
+                ['xyz', false]
+            ], done);
+        });
+
+        it('validates cvc', function (done) {
+
+            var schema = Joi.string().cvc();
+            Helper.validate(schema, [
+                ['123', true],
+                ['1234', true],
+                ['12', false],
+                ['12345', false],
+                ['0', false],
+                ['a', false],
+                ['3a', false],
+                ['abcdef', false]
+            ], done);
+        });
+
+        it('validates isoCurrencyCode', function (done) {
+
+            var schema = Joi.string().isoCurrencyCode();
+            Helper.validate(schema, [
+                ['USD', true],
+                ['CNY', true],
+                ['usd', true],
+                ['cny', true],
+                ['uSd', true],
+                ['cNy', true],
+                ['x', false],
+                ['y', false],
+                ['z', false],
+                ['xy', false],
+                ['xyz', false]
+            ], done);
+        });
+
+        it('validates SSN', function (done) {
+
+            var schema = Joi.string().SSN();
+            Helper.validate(schema, [
+                ['000000000', true],
+                ['00-0000000', true],
+                ['1', false],
+                ['12', false],
+                ['123', false],
+                ['1234', false],
+                ['12345', false],
+                ['123456', false],
+                ['1234567', false],
+                ['12345678', false],
+                ['0123456789', false],
+                ['abcdefghe', false]
+            ], done);
+        });
+
+        it('validates EIN', function (done) {
+
+            var schema = Joi.string().EIN();
+            Helper.validate(schema, [
+                ['000000000', true],
+                ['00-0000000', true],
+                ['1', false],
+                ['12', false],
+                ['123', false],
+                ['1234', false],
+                ['12345', false],
+                ['123456', false],
+                ['1234567', false],
+                ['12345678', false],
+                ['0123456789', false],
+                ['abcdefghe', false]
+            ], done);
+        });
+
+        it('validates objectid', function (done) {
+
+            var schema = Joi.string().objectid();
+            var randomId = function(length) {
+                var seed = '0123456789abcdefABCDEF';
+                var i = 0,
+                    id = '';
+                while (i < length) {
+                    i++;
+                    id += seed[Math.floor(Math.random() * seed.length)];
+                }
+                return id;
+            };
+            Helper.validate(schema, [
+                [randomId(24), true],
+                [randomId(23), false],
+                [randomId(23) + 'Z', false],
+                [randomId(25), false]
+            ], done);
+        });
+
         it('validates email', function (done) {
 
             var schema = Joi.string().email();
