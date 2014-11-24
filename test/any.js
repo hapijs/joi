@@ -81,7 +81,7 @@ describe('any', function () {
             var input = { b: '2' };
             schema.validate(input, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.b).to.equal(2);
                 done();
             });
@@ -96,7 +96,7 @@ describe('any', function () {
             var input = { b: 'not_a_valid_email' };
             schema.validate(input, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.details[0].message).to.equal('Custom label must be a valid email');
                 done();
             });
@@ -110,6 +110,13 @@ describe('any', function () {
             }).to.throw('Label name must be a non-empty string');
             done();
         });
+
+        it('can describe a label', function (done) {
+
+            var schema = Joi.object().label('lbl').describe();
+            expect(schema).to.deep.equal({ type: 'object', label: 'lbl' });
+            done();
+        });
     });
 
     describe('#strict', function () {
@@ -120,7 +127,7 @@ describe('any', function () {
             var input = { b: '2' };
             schema.validate(input, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(value.b).to.equal('2');
                 done();
             });
@@ -136,7 +143,7 @@ describe('any', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.foo).to.equal('test');
                 done();
             });
@@ -149,7 +156,7 @@ describe('any', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.foo).to.equal('test');
                 done();
             });
@@ -164,7 +171,7 @@ describe('any', function () {
 
             schema.validate({ a: false }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.b).to.equal(false);
                 done();
             });
@@ -179,7 +186,7 @@ describe('any', function () {
 
             schema.validate({ a: true }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.b).to.equal(false);
                 done();
             });
@@ -388,7 +395,7 @@ describe('any', function () {
             var schema = Joi.number().invalid(2);
             Joi.validate('2', schema, { abortEarly: false }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 done();
             });
         });
@@ -618,7 +625,7 @@ describe('any', function () {
 
             a.concat(b).validate({ c: 1, d: 2 }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.deep.equal({ a: 1, b: 2 });
                 done();
             });
@@ -631,7 +638,7 @@ describe('any', function () {
 
             a.concat(b).validate({ a: 1, b: 2 }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });

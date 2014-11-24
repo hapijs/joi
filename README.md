@@ -2,9 +2,10 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **4.7.x**
-
-[![Build Status](https://secure.travis-ci.org/hapijs/joi.png)](http://travis-ci.org/hapijs/joi)
+[![npm version](https://badge.fury.io/js/joi.svg)](http://badge.fury.io/js/joi)
+[![Build Status](https://secure.travis-ci.org/hapijs/joi.svg)](http://travis-ci.org/hapijs/joi)
+[![Dependencies Status](https://david-dm.org/hapijs/joi.svg)](https://david-dm.org/hapijs/joi)
+[![DevDependencies Status](https://david-dm.org/hapijs/joi/dev-status.svg)](https://david-dm.org/hapijs/joi#info=devDependencies)
 
 Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
@@ -36,6 +37,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`any.when(ref, options)`](#anywhenref-options)
         - [`any.label(name)`](#anylabelname)
     - [`array`](#array)
+        - [`array.sparse(enabled)`](#arraysparseenabled)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
         - [`array.min(limit)`](#arrayminlimit)
@@ -76,13 +78,14 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
         - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
         - [`object.unknown([allow])`](#objectunknownallow)
+        - [`object.type(constructor, [name])`](#objecttypeconstructorname)
     - [`string`](#string)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
         - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
         - [`string.creditCard()`](#stringcreditCard)
         - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
-        - [`string.regex(pattern, [name])`](#stringregexpattern)
+        - [`string.regex(pattern, [name])`](#stringregexpattern-name)
         - [`string.alphanum()`](#stringalphanum)
         - [`string.creditcard()`](#stringcreditcard)
         - [`string.routingNumber()`](#stringroutingNumber)
@@ -473,13 +476,22 @@ var schema = {
 
 ### `array`
 
-Generates a schema object that matches an array data type.
+Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by default but can be by using `sparse()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var array = Joi.array().includes(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], function (err, value) { });
+```
+
+#### `array.sparse(enabled)`
+
+Allow this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
+
+```javascript
+var schema = Joi.array().sparse(); // undefined values are now allowed
+schema = schema.sparse(false); // undefined values are now denied
 ```
 
 #### `array.includes(type)`
@@ -927,6 +939,16 @@ Overrides the handling of unknown keys for the scope of the current object only 
 
 ```javascript
 var schema = Joi.object({ a: Joi.any() }).unknown();
+```
+
+#### `object.type(constructor, [name])`
+
+Requires the object to be an instance of a given constructor where:
+- `constructor` - the constructor function that the object must be an instance of.
+- `name` - an alternate name to use in validation errors. This is useful when the constructor function does not have a name.
+
+```javascript
+var schema = Joi.object().type(RegExp);
 ```
 
 ### `string`

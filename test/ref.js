@@ -32,7 +32,7 @@ describe('ref', function () {
 
         schema.validate({ a: 5, b: 6 }, function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(err.message).to.equal('a must be one of ref:b');
 
             Helper.validate(schema, [
@@ -53,7 +53,7 @@ describe('ref', function () {
 
         schema.validate({ a: 5, '': 6 }, function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(err.message).to.equal('a must be one of ref:');
 
             Helper.validate(schema, [
@@ -76,7 +76,7 @@ describe('ref', function () {
 
         schema.validate({ a: 5, b: { c: 6 } }, function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(err.message).to.equal('a must be one of ref:b.c');
 
             Helper.validate(schema, [
@@ -103,7 +103,7 @@ describe('ref', function () {
         var input = { a: 5, b: { c: 5 } };
         schema.validate(input, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
 
             var parent = Joi.object({
                 e: schema
@@ -111,7 +111,7 @@ describe('ref', function () {
 
             parent.validate({ e: input }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -131,7 +131,7 @@ describe('ref', function () {
 
         schema.validate({ a: 5, b: { c: 5 } }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             done();
         });
     });
@@ -147,7 +147,7 @@ describe('ref', function () {
 
         ab.validate({ a: { c: '5' }, b: 5 }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
 
             var ba = Joi.object({
                 b: Joi.ref('a.c'),
@@ -158,7 +158,7 @@ describe('ref', function () {
 
             ba.validate({ a: { c: '5' }, b: 5 }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -173,7 +173,7 @@ describe('ref', function () {
 
         schema.validate({ b: 6 }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value).to.deep.equal({ a: 6, b: 6 });
             done();
         });
@@ -188,7 +188,7 @@ describe('ref', function () {
 
         ab.validate({ b: '6' }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value).to.deep.equal({ a: 6, b: 6 });
 
             var ba = Joi.object({
@@ -198,7 +198,7 @@ describe('ref', function () {
 
             ba.validate({ b: '6' }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.deep.equal({ a: 6, b: 6 });
                 done();
             });
@@ -263,7 +263,7 @@ describe('ref', function () {
 
         Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value).to.deep.equal({ a: 22, b: 6 });
             done();
         });
@@ -278,7 +278,7 @@ describe('ref', function () {
 
         Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value).to.deep.equal({ a: 22, b: 6 });
             done();
         });
@@ -293,7 +293,7 @@ describe('ref', function () {
 
         Joi.validate({ a: 5, b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(err.message).to.equal('a must be one of context:x');
 
             Helper.validateOptions(schema, [
@@ -353,7 +353,7 @@ describe('ref', function () {
     it('describes schema with ref', function (done) {
 
         var desc = Joi.compile(Joi.ref('a.b')).describe();
-        expect(Joi.isRef(desc.valids[0])).to.be.true;
+        expect(Joi.isRef(desc.valids[0])).to.be.true();
         done();
     });
 

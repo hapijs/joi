@@ -295,7 +295,7 @@ describe('string', function () {
             var schema = Joi.string().lowercase();
             schema.validate('UPPER TO LOWER', function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.equal('upper to lower');
                 done();
             });
@@ -333,7 +333,7 @@ describe('string', function () {
             var schema = Joi.string().uppercase();
             schema.validate('lower to upper', function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.equal('LOWER TO UPPER');
                 done();
             });
@@ -370,7 +370,7 @@ describe('string', function () {
             var schema = Joi.string().trim();
             schema.validate(' trim this ', function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.equal('trim this');
                 done();
             });
@@ -381,7 +381,7 @@ describe('string', function () {
             var schema = Joi.string().trim().allow('');
             schema.validate('     ', function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.equal('');
                 done();
             });
@@ -883,7 +883,7 @@ describe('string', function () {
             var text = Joi.string().invalid('joi');
             text.validate('joi', function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 done();
             });
         });
@@ -893,7 +893,7 @@ describe('string', function () {
             var text = Joi.string().allow('hapi');
             text.validate('result', function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -903,7 +903,7 @@ describe('string', function () {
             var text = Joi.string().min(3);
             text.validate('joi', function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -913,11 +913,11 @@ describe('string', function () {
             var text = Joi.string().min(3).required();
             text.validate('joi', function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
 
                 text.validate('', function (err, value) {
 
-                    expect(err).to.exist;
+                    expect(err).to.exist();
                     done();
                 });
             });

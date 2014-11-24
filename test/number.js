@@ -53,7 +53,7 @@ describe('number', function () {
             var text = Joi.number().invalid(50);
             text.validate(50, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 done();
             });
         });
@@ -103,7 +103,7 @@ describe('number', function () {
 
             Joi.compile(config).validate(obj, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.a).to.equal(123);
                 done();
             });
@@ -113,7 +113,7 @@ describe('number', function () {
 
             Joi.number().validate('1', function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.equal(1);
                 done();
             });
@@ -123,7 +123,7 @@ describe('number', function () {
 
             Joi.number().validate(null, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(value).to.equal(null);
                 done();
             });
@@ -375,7 +375,7 @@ describe('number', function () {
 
         it('should handle limiting the number of decimal places', function (done) {
 
-            var rule = Joi.number().precision(1);
+            var rule = Joi.number().precision(1).options({ convert: false });
             Helper.validate(rule, [
                 [1, true],
                 [9.1, true],
@@ -390,7 +390,7 @@ describe('number', function () {
 
         it('should handle combination of min, max, integer, allow, invalid, null allowed and precision', function (done) {
 
-            var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1);
+            var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1).options({ convert: false });
             Helper.validate(rule, [
                 [1, false],
                 [11, false],
@@ -479,7 +479,7 @@ describe('number', function () {
     it('should show resulting object with #valueOf', function (done) {
 
         var result = Joi.number().min(5);
-        expect(result.valueOf()).to.exist;
+        expect(result.valueOf()).to.exist();
         done();
     });
 
@@ -514,7 +514,7 @@ describe('number', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value).to.equal(input);
                 done();
             });
@@ -530,6 +530,23 @@ describe('number', function () {
                 Joi.number().max('a');
             }).to.throw('limit must be an integer');
             done();
+        });
+    });
+
+    describe('#precision', function (done) {
+
+        it('converts numbers', function (done) {
+
+            var rule = Joi.number().precision(4);
+            Helper.validate(rule, [
+                [1.5, true, null, 1.5],
+                [0.12345, true, null, 0.1235],
+                [123456, true, null, 123456],
+                [123456.123456, true, null, 123456.1235],
+                ["123456.123456", true, null, 123456.1235],
+                ["abc", false],
+                [NaN, false]
+            ], done);
         });
     });
 

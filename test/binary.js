@@ -27,7 +27,7 @@ describe('binary', function () {
 
         Joi.binary().validate('test', function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value instanceof Buffer).to.equal(true);
             expect(value.length).to.equal(4);
             expect(value.toString('utf8')).to.equal('test');
@@ -56,7 +56,7 @@ describe('binary', function () {
 
             Joi.binary().validate(5, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('value must be a buffer or a string');
                 done();
             });
@@ -70,7 +70,7 @@ describe('binary', function () {
 
             Joi.binary().validate(new Buffer('hello world'), function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.toString('utf8')).to.equal('hello world');
                 done();
             });
@@ -85,7 +85,7 @@ describe('binary', function () {
             var input = new Buffer('abcdef');
             schema.validate(input.toString('base64'), function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value instanceof Buffer).to.equal(true);
                 expect(value.toString()).to.equal('abcdef');
                 done();
