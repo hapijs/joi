@@ -274,7 +274,8 @@ describe('alternatives', function () {
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [5]
+                              valids: [5],
+                              invalids: [Infinity, -Infinity]
                           },
                           then: {
                               type: 'string',
@@ -331,7 +332,8 @@ describe('alternatives', function () {
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [5]
+                              valids: [5],
+                              invalids: [Infinity, -Infinity]
                           },
                           then: {
                               type: 'string',
@@ -380,7 +382,8 @@ describe('alternatives', function () {
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [5]
+                              valids: [5],
+                              invalids: [Infinity, -Infinity]
                           },
                           otherwise: {
                               type: 'string',

@@ -70,6 +70,24 @@ describe('number', function () {
             ], done);
         });
 
+        it('should return false for Infinity', function(done) {
+
+            var t = Joi.number();
+            Helper.validate(t, [
+                [Infinity, false],
+                [-Infinity, false]
+            ], done);
+        });
+
+        it('should return true for allowed Infinity', function(done) {
+
+            var t = Joi.number().allow(Infinity, -Infinity);
+            Helper.validate(t, [
+                [Infinity, true],
+                [-Infinity, true]
+            ], done);
+        });
+
         it('can accept string numbers', function (done) {
 
             var t = Joi.number();
@@ -557,6 +575,7 @@ describe('number', function () {
             var schema = Joi.number().min(0);
             expect(schema.describe()).to.deep.equal({
                 "type": "number",
+                "invalids": [Infinity, -Infinity],
                 "rules": [
                     {
                         "name": "min",

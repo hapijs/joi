@@ -1347,7 +1347,8 @@ describe('Joi', function () {
                 },
                 min: [
                     {
-                        type: 'number'
+                        type: 'number',
+                        invalids: [Infinity, -Infinity]
                     },
                     {
                         type: 'string',

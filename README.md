@@ -666,6 +666,8 @@ func.validate(function () {}, function (err, value) { });
 
 Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
 
+`Infinity` and `-Infinity` are invalid by default, you can change that behavior by calling `allow(Infinity, -Infinity)`.
+
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript

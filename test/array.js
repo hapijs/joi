@@ -383,7 +383,7 @@ describe('array', function () {
                 expect(desc).to.deep.equal({
                     type: 'array',
                     flags: { sparse: false },
-                    includes: [{ type: 'number' }, { type: 'string', invalids: [''] }],
+                    includes: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }],
                     excludes: [{ type: 'boolean' }]
                 });
 
