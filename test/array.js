@@ -498,4 +498,39 @@ describe('array', function () {
             done();
         });
     });
+
+    describe('#allowSingle', function() {
+
+        it('should allow a single element', function(done) {
+
+            var schema = Joi.array().includes(Joi.number()).allowSingle();
+
+            Helper.validate(schema, [
+                [[1], true],
+                [1, true]
+            ], done);
+        });
+
+        it('switches the allowSingle flag with explicit value', function (done) {
+
+            var schema = Joi.array().allowSingle(true);
+            var desc = schema.describe();
+            expect(desc).to.deep.equal({
+                type: 'array',
+                flags: { sparse: false, allowSingle: true }
+            });
+            done();
+        });
+
+        it('switches the allowSingle flag back', function (done) {
+
+            var schema = Joi.array().allowSingle().allowSingle(false);
+            var desc = schema.describe();
+            expect(desc).to.deep.equal({
+                type: 'array',
+                flags: { sparse: false, allowSingle: false }
+            });
+            done();
+        });
+    });
 });
