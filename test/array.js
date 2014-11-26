@@ -394,14 +394,23 @@ describe('array', function () {
 
     describe('#unique', function() {
 
-        it('errors if duplicate numbers or string', function(done) {
-            var schema = Joi.array().unique();
+        it('errors if duplicate numbers, strings, objects, binaries, functions, dates and booleans', function(done) {
+            var buffer = new Buffer('hello world');
+            var func = function() {};
+            var now = new Date();
+            var schema = Joi.array().sparse().unique();
 
             Helper.validate(schema, [
                 [[2, 2], false],
                 [[02, 2], false],
                 [[0x2, 2], false],
-                [['duplicate', 'duplicate'], false]
+                [['duplicate', 'duplicate'], false],
+                [[{ a: 'b' }, { a: 'b' }], false],
+                [[buffer, buffer], false],
+                [[func, func], false],
+                [[now, now], false],
+                [[true, true], false],
+                [[undefined, undefined], false]
             ], done);
         });
 
@@ -413,18 +422,23 @@ describe('array', function () {
             ], done);
         });
 
-        it('ignores duplicates objects, binaries, functions, dates and booleans', function(done) {
+        it('validates without duplicates', function(done) {
             var buffer = new Buffer('hello world');
+            var buffer2 = new Buffer('Hello world');
             var func = function() {};
+            var func2 = function() {};
             var now = new Date();
+            var now2 = new Date(+now + 100);
             var schema = Joi.array().unique();
 
             Helper.validate(schema, [
-                [[{ a: 'b' }, { a: 'b' }], true],
-                [[buffer, buffer], true],
-                [[func, func], true],
-                [[now, now], true],
-                [[true, true], true]
+                [[1, 2], true],
+                [['s1', 's2'], true],
+                [[{ a: 'b' }, { a: 'c' }], true],
+                [[buffer, buffer2], true],
+                [[func, func2], true],
+                [[now, now2], true],
+                [[true, false], true]
             ], done);
         });
     });

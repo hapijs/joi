@@ -530,7 +530,9 @@ var schema = Joi.array().length(5);
 
 #### `array.unique()`
 
-Requires the array values to be unique. Only works for literals (numbers and strings), all other types are ignored.
+Requires the array values to be unique.
+
+Be aware that a deep equality is performed on elements of the array having a type of `object`, a performance penalty is to be expected for this kind of operation.
 
 ```javascript
 var schema = Joi.array().unique();
