@@ -483,14 +483,14 @@ var schema = Joi.array().sparse(); // undefined values are now allowed
 schema = schema.sparse(false); // undefined values are now denied
 ```
 
-#### `array.allowSingle(enabled)`
+#### `array.single(enabled)`
 
 Allow single values to be checked against rules as if it were provided as an array.
 
 `enabled` can be used with a falsy value to go back to the default behavior.
 
 ```javascript
-var schema = Joi.array().includes(Joi.number()).allowSingle();
+var schema = Joi.array().includes(Joi.number()).single();
 schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
 schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 ```

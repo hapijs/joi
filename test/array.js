@@ -499,36 +499,52 @@ describe('array', function () {
         });
     });
 
-    describe('#allowSingle', function() {
+    describe('#single', function() {
 
         it('should allow a single element', function(done) {
 
-            var schema = Joi.array().includes(Joi.number()).allowSingle();
+            var schema = Joi.array().includes(Joi.number()).single();
 
             Helper.validate(schema, [
-                [[1], true],
-                [1, true]
+                [[1, 2, 3], true],
+                [1, true],
+                [['a'], false],
+                ['a', false]
             ], done);
         });
 
-        it('switches the allowSingle flag with explicit value', function (done) {
+        it('should allow nested arrays', function(done) {
 
-            var schema = Joi.array().allowSingle(true);
+            var schema = Joi.array().includes(Joi.array().includes(Joi.number())).single();
+
+            Helper.validate(schema, [
+                [[[1],[2],[3]], true],
+                [[1, 2, 3], true],
+                [[['a']], false],
+                [['a'], false],
+                ['a', false],
+                [1, false]
+            ], done);
+        });
+
+        it('switches the single flag with explicit value', function (done) {
+
+            var schema = Joi.array().single(true);
             var desc = schema.describe();
             expect(desc).to.deep.equal({
                 type: 'array',
-                flags: { sparse: false, allowSingle: true }
+                flags: { sparse: false, single: true }
             });
             done();
         });
 
-        it('switches the allowSingle flag back', function (done) {
+        it('switches the single flag back', function (done) {
 
-            var schema = Joi.array().allowSingle().allowSingle(false);
+            var schema = Joi.array().single().single(false);
             var desc = schema.describe();
             expect(desc).to.deep.equal({
                 type: 'array',
-                flags: { sparse: false, allowSingle: false }
+                flags: { sparse: false, single: false }
             });
             done();
         });
