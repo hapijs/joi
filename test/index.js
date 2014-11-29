@@ -1231,6 +1231,88 @@ describe('Joi', function () {
         });
     });
 
+    it('errors multiple times when abortEarly is false in a complex object', function(done) {
+
+        var schema = Joi.object({
+          test: Joi.array().includes(Joi.object().keys({
+            foo: Joi.string().required().max(3),
+            bar: Joi.string().max(5)
+          })),
+          test2: Joi.object({
+              test3: Joi.array().includes(Joi.object().keys({
+                foo: Joi.string().required().max(3),
+                bar: Joi.string().max(5),
+                baz: Joi.object({
+                    test4: Joi.array().includes(Joi.object().keys({
+                        foo: Joi.string().required().max(3),
+                        bar: Joi.string().max(5)
+                    }))
+                })
+              }))
+          })
+        });
+
+        var value = {
+            test: [{
+                foo: 'test1',
+                bar: 'testfailed'
+            }],
+            test2: {
+                test3: [{
+                    foo: '123'
+                }, {
+                    foo: 'test1',
+                    bar: 'testfailed'
+                }, {
+                    foo: '123',
+                    baz: {
+                        test4: [{
+                            foo: 'test1',
+                            baz: '123'
+                        }]
+                    }
+                }]
+            }
+        };
+
+        Joi.validate(value, schema, { abortEarly: false }, function (err, value) {
+            expect(err).to.exist();
+            expect(err.details).to.have.length(6);
+            expect(err.details).to.deep.equal([{
+                message: 'foo length must be less than or equal to 3 characters long',
+                path: 'test.0.foo',
+                type: 'string.max',
+                context: { limit: 3, key: 'foo' }
+            }, {
+                message: 'bar length must be less than or equal to 5 characters long',
+                path: 'test.0.bar',
+                type: 'string.max',
+                context: { limit: 5, key: 'bar' }
+            }, {
+                message: 'foo length must be less than or equal to 3 characters long',
+                path: 'test2.test3.1.foo',
+                type: 'string.max',
+                context: { limit: 3, key: 'foo' }
+            }, {
+                message: 'bar length must be less than or equal to 5 characters long',
+                path: 'test2.test3.1.bar',
+                type: 'string.max',
+                context: { limit: 5, key: 'bar' }
+            }, {
+                message: 'foo length must be less than or equal to 3 characters long',
+                path: 'test2.test3.2.baz.test4.0.foo',
+                type: 'string.max',
+                context: { limit: 3, key: 'foo' }
+            }, {
+                message: 'baz is not allowed',
+                path: 'test2.test3.2.baz.test4.0',
+                type: 'object.allowUnknown',
+                context: { key: 'baz' }
+            }]);
+            done();
+        });
+    });
+
     it('validates using the root any object', function (done) {
 
         var any = Joi;

@@ -356,53 +356,90 @@ describe('array', function () {
             });
         });
 
-        describe('#describe', function () {
+        it('should have multiple errors if abort early is false', function (done) {
 
-            it('returns an empty description when no rules are applied', function (done) {
+            var schema = Joi.array().includes(Joi.number(), Joi.object()).excludes(Joi.boolean());
+            var input = [1, undefined, true, 'a'];
 
-                var schema = Joi.array();
-                var desc = schema.describe();
-                expect(desc).to.deep.equal({
-                    type: 'array',
-                    flags: { sparse: false }
-                });
+            Joi.validate(input, schema, { abortEarly: false }, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err).to.have.length(4);
+                expect(err.details).to.deep.equal([{
+                  message: 'value must not be a sparse array',
+                  path: '1',
+                  type: 'array.sparse',
+                  context: {
+                    key: 'value'
+                  }
+                }, {
+                  message: 'value at position 2 contains an excluded value',
+                  path: '2',
+                  type: 'array.excludes',
+                  context: {
+                    pos: 2,
+                    key: 'value'
+                  }
+                }, {
+                  message: 'value at position 3 does not match any of the allowed types',
+                  path: '3',
+                  type: 'array.includes',
+                  context: {
+                    pos: 3,
+                    key: 'value'
+                  }
+                }]);
                 done();
             });
+        });
+    });
 
-            it('returns an updated description when sparse rule is applied', function (done) {
+    describe('#describe', function () {
 
-                var schema = Joi.array().sparse();
-                var desc = schema.describe();
-                expect(desc).to.deep.equal({
-                    type: 'array',
-                    flags: { sparse: true }
-                });
-                done();
+        it('returns an empty description when no rules are applied', function (done) {
+
+            var schema = Joi.array();
+            var desc = schema.describe();
+            expect(desc).to.deep.equal({
+                type: 'array',
+                flags: { sparse: false }
+            });
+            done();
+        });
+
+        it('returns an updated description when sparse rule is applied', function (done) {
+
+            var schema = Joi.array().sparse();
+            var desc = schema.describe();
+            expect(desc).to.deep.equal({
+                type: 'array',
+                flags: { sparse: true }
+            });
+            done();
+        });
+
+        it('returns an includes array only if includes are specified', function (done) {
+
+            var schema = Joi.array().includes().max(5);
+            var desc = schema.describe();
+            expect(desc.includes).to.not.exist();
+            done();
+        });
+
+        it('returns a recursively defined array of includes when specified', function (done) {
+
+            var schema = Joi.array().includes(Joi.number(), Joi.string()).excludes(Joi.boolean());
+            var desc = schema.describe();
+            expect(desc.includes).to.have.length(2);
+            expect(desc.excludes).to.have.length(1);
+            expect(desc).to.deep.equal({
+                type: 'array',
+                flags: { sparse: false },
+                includes: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }],
+                excludes: [{ type: 'boolean' }]
             });
 
-            it('returns an includes array only if includes are specified', function (done) {
-
-                var schema = Joi.array().includes().max(5);
-                var desc = schema.describe();
-                expect(desc.includes).to.not.exist();
-                done();
-            });
-
-            it('returns a recursively defined array of includes when specified', function (done) {
-
-                var schema = Joi.array().includes(Joi.number(), Joi.string()).excludes(Joi.boolean());
-                var desc = schema.describe();
-                expect(desc.includes).to.have.length(2);
-                expect(desc.excludes).to.have.length(1);
-                expect(desc).to.deep.equal({
-                    type: 'array',
-                    flags: { sparse: false },
-                    includes: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }],
-                    excludes: [{ type: 'boolean' }]
-                });
-
-                done();
-            });
+            done();
         });
     });
 
