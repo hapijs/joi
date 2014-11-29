@@ -114,7 +114,7 @@ describe('array', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err.message).to.equal('test position 1 fails because foo is required');
+                expect(err.message).to.equal('test at position 1 fails because foo is required');
                 done();
             });
         });
@@ -323,7 +323,7 @@ describe('array', function () {
             schema.validate(input, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('arr position 2 fails because 2 must be an integer');
+                expect(err.message).to.equal('arr at position 2 fails because 2 must be an integer');
                 done();
             });
         });
@@ -503,13 +503,27 @@ describe('array', function () {
 
         it('should allow a single element', function(done) {
 
-            var schema = Joi.array().includes(Joi.number()).single();
+            var schema = Joi.array().includes(Joi.number()).excludes(Joi.boolean()).single();
 
             Helper.validate(schema, [
                 [[1, 2, 3], true],
                 [1, true],
-                [['a'], false],
-                ['a', false]
+                [['a'], false, null, 'value at position 0 fails because value must be a number'],
+                ['a', false, null, 'single value of value fails because value must be a number'],
+                [true, false, null, 'single value of value contains an excluded value']
+            ], done);
+        });
+
+        it('should allow a single element with multiple types', function(done) {
+
+            var schema = Joi.array().includes(Joi.number(), Joi.string()).single();
+
+            Helper.validate(schema, [
+                [[1, 2, 3], true],
+                [1, true],
+                [[1, 'a'], true],
+                ['a', true],
+                [true, false, null, 'single value of value does not match any of the allowed types']
             ], done);
         });
 
@@ -520,10 +534,23 @@ describe('array', function () {
             Helper.validate(schema, [
                 [[[1],[2],[3]], true],
                 [[1, 2, 3], true],
-                [[['a']], false],
-                [['a'], false],
-                ['a', false],
-                [1, false]
+                [[['a']], false, null, 'value at position 0 fails because value at position 0 fails because value must be a number'],
+                [['a'], false, null, 'value at position 0 fails because value must be an array'],
+                ['a', false, null, 'single value of value fails because value must be an array'],
+                [1, false, null, 'single value of value fails because value must be an array'],
+                [true, false, null, 'single value of value fails because value must be an array']
+            ], done);
+        });
+
+        it('should allow nested arrays with multiple types', function (done) {
+
+            var schema = Joi.array().includes(Joi.array().includes(Joi.number(), Joi.boolean())).single();
+
+            Helper.validate(schema, [
+                [[[1, true]], true],
+                [[1, true], true],
+                [[[1, 'a']], false, null, 'value at position 0 fails because value at position 1 does not match any of the allowed types'],
+                [[1, 'a'], false, null, 'value at position 0 fails because value must be an array']
             ], done);
         });
 

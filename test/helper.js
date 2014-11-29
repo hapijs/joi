@@ -48,7 +48,12 @@ exports.validateOptions = function (schema, config, options, callback) {
         expect(err === null).to.equal(item[1]);
 
         if (item.length >= 4) {
-            expect(value).to.deep.equal(item[3]);
+            if (item[1]) {
+                expect(value).to.deep.equal(item[3]);
+            }
+            else {
+                expect(err.message).to.deep.equal(item[3]);
+            }
         }
     }
 
