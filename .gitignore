@@ -1,3 +1,4 @@
+.c9
 .idea
 *.iml
 npm-debug.log
@@ -16,3 +17,4 @@ config.json
 coverage.*
 lib-cov
 complexity.md
+sandbox.js
