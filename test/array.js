@@ -342,6 +342,20 @@ describe('array', function () {
             ], done);
         });
 
+        it('should not change original value', function (done) {
+
+            var schema = Joi.array().includes(Joi.number()).unique();
+            var input = ['1', '2'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal([1, 2]);
+                expect(input).to.deep.equal(['1', '2']);
+                done();
+            });
+        });
+
         describe('#describe', function () {
 
             it('returns an empty description when no rules are applied', function (done) {
