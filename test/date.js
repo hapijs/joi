@@ -194,7 +194,7 @@ describe('date', function () {
 
             it('validates isoDate after clone', function (done) {
 
-                var schema = { item: Joi.date().iso().required() };
+                var schema = { item: Joi.date().iso().clone() };
                 Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' }, function (err, value) {
 
                     expect(err).to.not.exist();
