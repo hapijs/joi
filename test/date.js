@@ -192,7 +192,7 @@ describe('date', function () {
                 });
             });
 
-            it('validates isoDate with presence required', function (done) {
+            it('validates isoDate after clone', function (done) {
 
                 var schema = { item: Joi.date().iso().required() };
                 Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' }, function (err, value) {
@@ -200,7 +200,7 @@ describe('date', function () {
                     expect(err).to.not.exist();
                     done();
                 });
-            })
+            });
         });
 
         describe('#format', function () {
