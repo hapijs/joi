@@ -134,6 +134,44 @@ describe('any', function () {
         });
     });
 
+    describe('#raw', function () {
+
+        it('gives the raw input', function (done) {
+
+            var tests = [
+                [Joi.array(), '[1,2,3]'],
+                [Joi.binary(), 'abc'],
+                [Joi.boolean(), 'false'],
+                [Joi.date().format('YYYYMMDD'), '19700101'],
+                [Joi.number(), '12'],
+                [Joi.object(), '{ "a": 1 }'],
+                [Joi.any().strict(), 'abc']
+            ];
+
+            tests.forEach(function (test) {
+
+                var baseSchema = test[0];
+                var input = test[1];
+                var schemas = [
+                    baseSchema.raw(),
+                    baseSchema.raw(true),
+                    baseSchema.options({ raw: true })
+                ];
+
+                schemas.forEach(function (schema) {
+
+                    schema.raw().validate(input, function (err, value) {
+
+                        expect(err).to.not.exist();
+                        expect(value).to.equal(input);
+                    });
+                });
+            });
+
+            done();
+        });
+    });
+
     describe('#default', function () {
 
         it('sets the value', function (done) {

@@ -36,6 +36,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`any.concat(schema)`](#anyconcatschema)
         - [`any.when(ref, options)`](#anywhenref-options)
         - [`any.label(name)`](#anylabelname)
+        - [`any.raw(isRaw)`](#anyrawisraw)
     - [`array`](#array)
         - [`array.sparse(enabled)`](#arraysparseenabled)
         - [`array.includes(type)`](#arrayincludestype)
@@ -460,6 +461,17 @@ Overrides the key name in error messages.
 ```javascript
 var schema = {
     first_name: Joi.string().label('First Name')
+};
+```
+
+#### `any.raw(isRaw)`
+
+Outputs the original untouched value instead of the casted value.
+- `isRaw` - whether to enable raw mode or not. Defaults to true.
+
+```javascript
+var schema = {
+    timestamp: Joi.date().format('YYYYMMDD').raw()
 };
 ```
 
