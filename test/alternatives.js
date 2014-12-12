@@ -418,5 +418,37 @@ describe('alternatives', function () {
             expect(Joi.describe(schema)).to.deep.equal(outcome);
             done();
         });
+
+        it('describes inherited fields (from any)', function (done) {
+
+            var schema = Joi.alternatives()
+                .try('a')
+                .description('d')
+                .example('a')
+                .meta('b')
+                .meta('c')
+                .notes('f')
+                .tags('g');
+
+            var outcome = {
+                type: 'alternatives',
+                description: 'd',
+                notes: ['f'],
+                tags: ['g'],
+                meta: ['b', 'c'],
+                examples: ['a'],
+                alternatives: [{
+                    type: 'string',
+                    flags: {
+                        allowOnly: true
+                    },
+                    valids: ['a'],
+                    invalids: ['']
+                }]
+            };
+
+            expect(Joi.describe(schema)).to.deep.equal(outcome);
+            done();
+        });
     });
 });
