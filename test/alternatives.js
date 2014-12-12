@@ -266,7 +266,9 @@ describe('alternatives', function () {
                     b: {
                         type: 'any'
                     },
-                    a: [
+                    a: {
+                      type: 'alternatives',
+                      alternatives: [
                       {
                           ref: 'ref:b',
                           is: {
@@ -303,6 +305,7 @@ describe('alternatives', function () {
                           invalids: ['']
                       }
                     ]
+                  }
                 }
             };
 
@@ -324,35 +327,38 @@ describe('alternatives', function () {
                     b: {
                         type: 'any'
                     },
-                    a: [
-                      {
-                          ref: 'ref:b',
-                          is: {
-                              type: 'number',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: [5],
-                              invalids: [Infinity, -Infinity]
-                          },
-                          then: {
-                              type: 'string',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: ['x'],
-                              invalids: ['']
-                          }
-                      },
-                      {
-                          type: 'string',
-                          flags: {
-                              allowOnly: true
-                          },
-                          valids: ['z'],
-                          invalids: ['']
-                      }
-                    ]
+                    a: {
+                        type: 'alternatives',
+                        alternatives: [
+                            {
+                                ref: 'ref:b',
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: [5],
+                                    invalids: [Infinity, -Infinity]
+                                },
+                                then: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['x'],
+                                    invalids: ['']
+                                }
+                            },
+                            {
+                                type: 'string',
+                                flags: {
+                                    allowOnly: true
+                                },
+                                valids: ['z'],
+                                invalids: ['']
+                            }
+                        ]
+                    }
                 }
             };
 
@@ -374,36 +380,71 @@ describe('alternatives', function () {
                     b: {
                         type: 'any'
                     },
-                    a: [
-                      {
-                          ref: 'ref:b',
-                          is: {
-                              type: 'number',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: [5],
-                              invalids: [Infinity, -Infinity]
-                          },
-                          otherwise: {
-                              type: 'string',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: ['y'],
-                              invalids: ['']
-                          }
-                      },
-                      {
-                          type: 'string',
-                          flags: {
-                              allowOnly: true
-                          },
-                          valids: ['z'],
-                          invalids: ['']
-                      }
-                    ]
+                    a: {
+                        type: 'alternatives',
+                        alternatives: [
+                            {
+                                ref: 'ref:b',
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: [5],
+                                    invalids: [Infinity, -Infinity]
+                                },
+                                otherwise: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['y'],
+                                    invalids: ['']
+                                }
+                            },
+                            {
+                                type: 'string',
+                                flags: {
+                                    allowOnly: true
+                                },
+                                valids: ['z'],
+                                invalids: ['']
+                            }
+                        ]
+                    }
                 }
+            };
+
+            expect(Joi.describe(schema)).to.deep.equal(outcome);
+            done();
+        });
+
+        it('describes inherited fields (from any)', function (done) {
+
+            var schema = Joi.alternatives()
+                .try('a')
+                .description('d')
+                .example('a')
+                .meta('b')
+                .meta('c')
+                .notes('f')
+                .tags('g');
+
+            var outcome = {
+                type: 'alternatives',
+                description: 'd',
+                notes: ['f'],
+                tags: ['g'],
+                meta: ['b', 'c'],
+                examples: ['a'],
+                alternatives: [{
+                    type: 'string',
+                    flags: {
+                        allowOnly: true
+                    },
+                    valids: ['a'],
+                    invalids: ['']
+                }]
             };
 
             expect(Joi.describe(schema)).to.deep.equal(outcome);

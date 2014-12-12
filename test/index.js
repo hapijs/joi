@@ -1345,17 +1345,20 @@ describe('Joi', function () {
                         }
                     }
                 },
-                min: [
-                    {
-                        type: 'number',
-                        invalids: [Infinity, -Infinity]
+                min: {
+                        type: 'alternatives',
+                        alternatives: [
+                            {
+                                type: 'number',
+                                invalids: [Infinity, -Infinity]
+                            },
+                            {
+                                type: 'string',
+                                invalids: [''],
+                                rules: [{ name: 'min', arg: 3 }]
+                            }
+                        ]
                     },
-                    {
-                        type: 'string',
-                        invalids: [''],
-                        rules: [{ name: 'min', arg: 3 }]
-                    }
-                ],
                 max: {
                     type: 'string',
                     invalids: [''],
