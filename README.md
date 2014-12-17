@@ -80,6 +80,8 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
         - [`object.unknown([allow])`](#objectunknownallow)
         - [`object.type(constructor, [name])`](#objecttypeconstructorname)
+        - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
+        - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
     - [`string`](#string)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
@@ -967,6 +969,30 @@ Requires the object to be an instance of a given constructor where:
 ```javascript
 var schema = Joi.object().type(RegExp);
 ```
+
+#### `object.requiredKeys(children)`
+
+Sets the specified children to required.
+- `children` - can be a single string value, an array of string values, or each child provided as an argument.
+
+```javascript
+var schema = Joi.object().keys({ a: { b: Joi.number() }, c: { d: Joi.string() } });
+var requiredSchema = schema.requiredKeys('', 'a.b', 'c', 'c.d');
+```
+
+Note that in this example `''` means the current object, `a` is not required but `b` is, as well as `c` and `d`.
+
+#### `object.optionalKeys(children)`
+
+Sets the specified children to optional.
+- `children` - can be a single string value, an array of string values, or each child provided as an argument.
+
+```javascript
+var schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
+var requiredSchema = schema.optionalKeys('a.b', 'c.d');
+```
+
+The behavior is exactly the same as `requiredKeys`.
 
 ### `string`
 

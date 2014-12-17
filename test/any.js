@@ -799,6 +799,92 @@ describe('any', function () {
         });
     });
 
+    describe('#requiredKeys', function () {
+
+        it('should set keys as required', function (done) {
+
+            var schema = Joi.object({ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: { h: 0 } })
+                .requiredKeys('a', 'b', 'c.d', 'c.e.f', 'g');
+            Helper.validate(schema, [
+                [{}, false],
+                [{ a: 0 }, false],
+                [{ a: 0, b: 0 }, false],
+                [{ a: 0, b: 0, g: {} }, true],
+                [{ a: 0, b: 0, c: {}, g: {} }, false],
+                [{ a: 0, b: 0, c: { d: 0 }, g: {} }, true],
+                [{ a: 0, b: 0, c: { d: 0, e: {} }, g: {} }, false],
+                [{ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: {} }, true]
+            ], done);
+        });
+
+        it('should work on types other than objects', function (done) {
+
+            var schemas = [Joi.array(), Joi.binary(), Joi.boolean(), Joi.date(), Joi.func(), Joi.number(), Joi.string()];
+            schemas.forEach(function (schema) {
+
+                expect(function () {
+
+                    schema.applyFunctionToChildren([''], 'required');
+                }).to.not.throw();
+
+                expect(function () {
+
+                    schema.applyFunctionToChildren(['', 'a'], 'required');
+                }).to.throw();
+            });
+
+            done();
+        });
+
+        it('should throw on unknown key', function (done) {
+
+            expect(function() {
+                Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'c', 'b', 'd', 'd.e.f');
+            }).to.throw(Error, 'unknown key(s) c, d');
+            expect(function() {
+                Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'b', 'a.c.d');
+            }).to.throw(Error, 'unknown key(s) a.c.d');
+            done();
+        });
+
+        it('should throw on empty object', function (done) {
+
+            expect(function() {
+                Joi.object().requiredKeys('a', 'c', 'b', 'd');
+            }).to.throw(Error, 'unknown key(s) a, b, c, d');
+            done();
+        });
+
+        it('should not modify original object', function (done) {
+
+            var schema = Joi.object({ a: 0 });
+            var requiredSchema = schema.requiredKeys('a');
+            schema.validate({}, function (err) {
+
+                expect(err).to.not.exist();
+
+                requiredSchema.validate({}, function (err) {
+
+                    expect(err).to.exist();
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('#optionalKeys', function () {
+
+        it('should set keys as optional', function (done) {
+
+            var schema = Joi.object({ a: Joi.number().required(), b: Joi.number().required() }).optionalKeys('a', 'b');
+            Helper.validate(schema, [
+                [{}, true],
+                [{ a: 0 }, true],
+                [{ a: 0, b: 0 }, true]
+            ], done);
+        });
+    });
+
     describe('Set', function () {
 
         describe('#add', function () {
