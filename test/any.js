@@ -831,6 +831,11 @@ describe('any', function () {
 
                     schema.applyFunctionToChildren(['', 'a'], 'required');
                 }).to.throw();
+
+                expect(function () {
+
+                    schema.applyFunctionToChildren(['a'], 'required');
+                }).to.throw();
             });
 
             done();
