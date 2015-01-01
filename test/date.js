@@ -74,77 +74,129 @@ describe('date', function () {
         });
     });
 
-    it('accepts "now" as the min date', function(done) {
-
-      var future = new Date(Date.now() + 1000000);
-
-      Joi.date().min('now').validate(future, function (err, value) {
-
-        expect(err).to.not.exist();
-        expect(value).to.deep.equal(future);
-        done();
-      });
-    });
-
-    it('errors if .min("now") is used with a past date', function(done) {
-
-      var past = new Date(Date.now() - 1000000);
-
-      Joi.date().min('now').validate(past, function (err, value) {
-
-        expect(err).to.exist();
-        done();
-      });
-    });
-
-    it('accepts "now" as the max date', function(done) {
-
-      var past = new Date(Date.now() - 1000000);
-
-      Joi.date().max('now').validate(past, function (err, value) {
-
-        expect(err).to.not.exist();
-        expect(value).to.deep.equal(past);
-        done();
-      });
-    });
-
-    it('errors if .max("now") is used with a future date', function(done) {
-
-      var future = new Date(Date.now() + 1000000);
-
-      Joi.date().max('now').validate(future, function (err, value) {
-
-        expect(err).to.exist();
-        done();
-      });
-    });
-
     describe('#validate', function () {
 
-        it('validates min', function (done) {
+        describe('min', function () {
 
-            Helper.validate(Joi.date().min('1-1-2000 UTC'), [
-                ['1-1-2001 UTC', true],
-                ['1-1-2000 UTC', true],
-                [0, false],
-                ["0", false],
-                ["-1", false],
-                ['1-1-1999 UTC', false]
-            ], done);
+            it('validates min', function (done) {
+
+                Helper.validate(Joi.date().min('1-1-2000 UTC'), [
+                    ['1-1-2001 UTC', true],
+                    ['1-1-2000 UTC', true],
+                    [0, false],
+                    ["0", false],
+                    ["-1", false],
+                    ['1-1-1999 UTC', false]
+                ], done);
+            });
+
+            it('accepts "now" as the min date', function(done) {
+
+                var future = new Date(Date.now() + 1000000);
+
+                Joi.date().min('now').validate(future, function (err, value) {
+
+                    expect(err).to.not.exist();
+                    expect(value).to.deep.equal(future);
+                    done();
+                });
+            });
+
+            it('errors if .min("now") is used with a past date', function(done) {
+
+                var past = new Date(Date.now() - 1000000);
+
+                Joi.date().min('now').validate(past, function (err, value) {
+
+                    expect(err).to.exist();
+                    done();
+                });
+            });
+
+            it('accepts references as min date', function(done) {
+
+                var schema = Joi.object({ a: Joi.date(), b: Joi.date().min(Joi.ref('a')) });
+                var now = Date.now();
+
+                Helper.validate(schema, [
+                    [{ a: now, b: now }, true],
+                    [{ a: now, b: now + 1e3 }, true],
+                    [{ a: now, b: now - 1e3 }, false]
+                ], done);
+            });
+
+            it('errors if reference is not a date', function(done) {
+
+                var schema = Joi.object({ a: Joi.string(), b: Joi.date().min(Joi.ref('a')) });
+
+                Helper.validate(schema, [
+                    [{ a: 'abc', b: new Date() }, false, null, 'b references a which is not a date'],
+                    [{ a: '123', b: new Date() }, true],
+                    [{ a: (Date.now() + 1e3).toString(), b: new Date() }, false, null, /^b must be larger than or equal to/]
+                ], done);
+            });
         });
 
-        it('validates max', function (done) {
+        describe('max', function () {
 
-            Helper.validate(Joi.date().max('1-1-1970 UTC'), [
-                ['1-1-1971 UTC', false],
-                ['1-1-1970 UTC', true],
-                [0, true],
-                [1, false],
-                ["0", true],
-                ["-1", true],
-                ['1-1-2014 UTC', false]
-            ], done);
+            it('validates max', function (done) {
+
+                Helper.validate(Joi.date().max('1-1-1970 UTC'), [
+                    ['1-1-1971 UTC', false],
+                    ['1-1-1970 UTC', true],
+                    [0, true],
+                    [1, false],
+                    ["0", true],
+                    ["-1", true],
+                    ['1-1-2014 UTC', false]
+                ], done);
+            });
+
+            it('accepts "now" as the max date', function(done) {
+
+              var past = new Date(Date.now() - 1000000);
+
+              Joi.date().max('now').validate(past, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(past);
+                done();
+              });
+            });
+
+            it('errors if .max("now") is used with a future date', function(done) {
+
+              var future = new Date(Date.now() + 1000000);
+
+              Joi.date().max('now').validate(future, function (err, value) {
+
+                expect(err).to.exist();
+                done();
+              });
+            });
+
+            it('accepts references as max date', function(done) {
+
+                var schema = Joi.object({ a: Joi.date(), b: Joi.date().max(Joi.ref('a')) });
+                var now = Date.now();
+
+                Helper.validate(schema, [
+                    [{ a: now, b: now }, true],
+                    [{ a: now, b: now + 1e3 }, false],
+                    [{ a: now, b: now - 1e3 }, true]
+                ], done);
+            });
+
+            it('errors if reference is not a date', function(done) {
+
+                var schema = Joi.object({ a: Joi.string(), b: Joi.date().max(Joi.ref('a')) });
+
+                Helper.validate(schema, [
+                    [{ a: 'abc', b: new Date() }, false, null, 'b references a which is not a date'],
+                    [{ a: '100000000000000', b: new Date() }, true],
+                    [{ a: (Date.now() - 1e3).toString(), b: new Date() }, false, null, /^b must be less than or equal to/]
+                ], done);
+            });
         });
 
         it('validates only valid dates', function (done) {

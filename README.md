@@ -641,10 +641,19 @@ Specifies the oldest date allowed where:
 var schema = Joi.date().min('1-1-1974');
 ```
 
-Note: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
 
 ```javascript
 var schema = Joi.date().min('now');
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  from: Joi.date().required(),
+  to: Joi.date().min(Joi.ref('from')).required()
+});
 ```
 
 #### `date.max(date)`
@@ -656,10 +665,19 @@ Specifies the latest date allowed where:
 var schema = Joi.date().max('12-31-2020');
 ```
 
-Note: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
 
 ```javascript
 var schema = Joi.date().max('now');
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  from: Joi.date().max(Joi.ref('to')).required(),
+  to: Joi.date().required()
+});
 ```
 
 #### `date.format(format)`
