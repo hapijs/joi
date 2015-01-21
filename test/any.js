@@ -681,6 +681,43 @@ describe('any', function () {
             });
         });
 
+        it('merges two objects (same key)', function (done) {
+
+            var a = Joi.object({ a: 1, b: 2, c: 3 });
+            var b = Joi.object({ b: 1, c: 2, a: 3 });
+
+            var ab = a.concat(b);
+
+            Helper.validate(a, [
+                [{ a: 1, b: 2, c: 3 }, true],
+                [{ a: 3, b: 1, c: 2 }, false]
+            ]);
+
+            Helper.validate(b, [
+                [{ a: 1, b: 2, c: 3 }, false],
+                [{ a: 3, b: 1, c: 2 }, true]
+            ]);
+
+            Helper.validate(ab, [
+                [{ a: 1, b: 2, c: 3 }, true],
+                [{ a: 3, b: 1, c: 2 }, true],
+                [{ a: 1, b: 2, c: 2 }, true],
+                [{ a: 1, b: 2, c: 4 }, false]
+            ], done);
+        });
+
+        it('throws when schema key types do not match', function (done) {
+
+            var a = Joi.object({ a: Joi.number() });
+            var b = Joi.object({ a: Joi.string() });
+
+            expect(function () {
+
+                a.concat(b);
+            }).to.throw('Cannot merge with another type: string');
+            done();
+        });
+
         it('merges two alternatives with references', function (done) {
 
             var schema = {
