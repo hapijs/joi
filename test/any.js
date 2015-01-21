@@ -86,6 +86,33 @@ describe('any', function () {
                 done();
             });
         });
+
+        it('throws with an invalid option', function (done) {
+
+            expect(function () {
+
+                Joi.any().options({ foo: 'bar' });
+            }).to.throw('unknown key foo');
+            done();
+        });
+
+        it('throws with an invalid option type', function (done) {
+
+            expect(function () {
+
+                Joi.any().options({ convert: 'yes' });
+            }).to.throw('convert should be of type boolean');
+            done();
+        });
+
+        it('throws with an invalid option value', function (done) {
+
+            expect(function () {
+
+                Joi.any().options({ presence: 'yes' });
+            }).to.throw('presence should be one of required, optional, forbidden, ignore');
+            done();
+        });
     });
 
     describe('#label', function () {
