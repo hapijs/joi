@@ -248,6 +248,23 @@ describe('alternatives', function () {
               [{ b: true }, true]           // true because required() only applies to the one alternative
             ], done);
         });
+
+        it('validates when missing value', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.alternatives().when('b', { is: 5, then: Joi.optional(), otherwise: Joi.required() }).required(),
+                b: Joi.number()
+            });
+
+            Helper.validate(schema, [
+                [{ a: 1 }, true],
+                [{}, false],
+                [{ b: 1 }, false],
+                [{ a: 1, b: 1 }, true],
+                [{ a: 1, b: 5 }, true],
+                [{ b: 5 }, false]
+            ], done);
+        });
     });
 
     describe('#describe', function () {
