@@ -3,6 +3,7 @@ sudo: false
 cache:
   directories:
     - node_modules
+install: npm update
 
 language: node_js
 
