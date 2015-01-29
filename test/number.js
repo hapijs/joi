@@ -586,4 +586,39 @@ describe('number', function () {
             done();
         });
     });
+
+    describe('#multiple', function() {
+
+        it('throws when multiple is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.number().multiple('a');
+            }).to.throw('multiple must be an integer');
+            done();
+        });
+
+        it('throws when multiple is 0', function (done) {
+
+            expect(function () {
+
+                Joi.number().multiple(0);
+            }).to.throw('multiple must be greater than 0');
+            done();
+        });
+
+        it('should handle multiples correctly', function (done) {
+
+            var rule = Joi.number().multiple(3);
+            Helper.validate(rule, [
+                [0, true], // 0 is a multiple of every integer
+                [3, true],
+                [4, false],
+                [9, true],
+                ['a', false],
+                [9.1, false],
+                [8.9, false]
+            ], done);
+        });
+    });
 });

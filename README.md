@@ -64,6 +64,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`number.less(limit)`](#numberlesslimit)
         - [`number.integer()`](#numberinteger)
         - [`number.precision(limit)`](#numberprecisionlimit)
+        - [`number.multiple(base)`](#numbermultiplebase)
     - [`object`](#object)
         - [`object.keys([schema])`](#objectkeysschema)
         - [`object.min(limit)`](#objectminlimit)
@@ -770,6 +771,14 @@ Specifies the maximum number of decimal places where:
 
 ```javascript
 var schema = Joi.number().precision(2);
+```
+
+#### `number.multiple(base)`
+
+Specifies that the value must be a multiple of `base`:
+
+```javascript
+var schema = Joi.number().multiple(3);
 ```
 
 ### `object`
