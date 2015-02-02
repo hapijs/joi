@@ -216,6 +216,17 @@ describe('string', function () {
         });
     });
 
+    describe('#email', function() {
+        it('throws when checkDNS option is enabled', function (done) {
+            expect(function () {
+
+                var emailOptions = {checkDNS: true};
+                Joi.string().email(emailOptions);
+            }).to.throw('checkDNS option is not supported');
+            done();
+        });
+    });
+
     describe('#hostname', function () {
 
         it('validates hostnames', function (done) {

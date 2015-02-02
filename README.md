@@ -914,7 +914,7 @@ Requires the string value to only contain a-z, A-Z, 0-9, and underscore _.
 var schema = Joi.string().token();
 ```
 
-#### `string.email()`
+#### `string.email([options])`
 
 Requires the string value to be a valid email address.
 
@@ -922,7 +922,6 @@ Requires the string value to be a valid email address.
     - `errorLevel` - Numerical threshold at which an email address is considered invalid.
     - `tldWhitelist` - Specifies a list of acceptable TLDs.
     - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
-    - `checkDNS` - Whether or not to check DNS records.
 
 ```javascript
 var schema = Joi.string().email();
