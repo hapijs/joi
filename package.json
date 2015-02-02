@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "4.7.0",
+  "version": "5.1.0",
   "repository": "git://github.com/hapijs/joi",
   "main": "index",
   "keywords": [
@@ -14,13 +14,16 @@
   "dependencies": {
     "hoek": "^2.2.x",
     "topo": "1.x.x",
-    "isemail": "1.x.x"
+    "isemail": "1.x.x",
+    "moment": "2.x.x"
   },
   "devDependencies": {
-    "lab": "4.x.x"
+    "code": "1.x.x",
+    "lab": "5.x.x"
   },
   "scripts": {
-    "test": "make test-cov"
+    "test": "lab -t 100 -a code",
+    "test-cov-html": "lab -r html -o coverage.html -a code"
   },
   "licenses": [
     {

@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Joi = require('../lib');
 var Helper = require('./helper');
 
@@ -17,7 +18,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('binary', function () {
@@ -26,7 +27,7 @@ describe('binary', function () {
 
         Joi.binary().validate('test', function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value instanceof Buffer).to.equal(true);
             expect(value.length).to.equal(4);
             expect(value.toString('utf8')).to.equal('test');
@@ -55,7 +56,7 @@ describe('binary', function () {
 
             Joi.binary().validate(5, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('value must be a buffer or a string');
                 done();
             });
@@ -69,7 +70,7 @@ describe('binary', function () {
 
             Joi.binary().validate(new Buffer('hello world'), function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.toString('utf8')).to.equal('hello world');
                 done();
             });
@@ -84,17 +85,17 @@ describe('binary', function () {
             var input = new Buffer('abcdef');
             schema.validate(input.toString('base64'), function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value instanceof Buffer).to.equal(true);
                 expect(value.toString()).to.equal('abcdef');
                 done();
             });
         });
-        
+
         it('throws when encoding is invalid', function (done) {
 
             expect(function () {
-                
+
                 Joi.binary().encoding('base6');
             }).to.throw('Invalid encoding: base6');
             done();

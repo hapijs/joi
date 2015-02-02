@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Joi = require('../lib');
 var Helper = require('./helper');
 
@@ -17,7 +18,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('boolean', function () {
@@ -26,7 +27,7 @@ describe('boolean', function () {
 
         Joi.boolean().validate('true', function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value).to.equal(true);
             done();
         });
@@ -36,7 +37,7 @@ describe('boolean', function () {
 
         Joi.boolean().validate(1, function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(value).to.equal(1);
             done();
         });

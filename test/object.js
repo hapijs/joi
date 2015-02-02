@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Joi = require('../lib');
 var Helper = require('./helper');
 
@@ -17,7 +18,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('object', function () {
@@ -26,7 +27,7 @@ describe('object', function () {
 
         Joi.object().validate('{"hi":true}', function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value.hi).to.equal(true);
             done();
         });
@@ -36,13 +37,13 @@ describe('object', function () {
 
         Joi.object().validate('a string', function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             expect(value).to.equal('a string');
             done();
         });
     });
 
-    it('should validate an object', function (done) {
+    it('validates an object', function (done) {
 
         var schema = Joi.object().required();
         Helper.validate(schema, [
@@ -50,6 +51,20 @@ describe('object', function () {
             [{ hi: true }, true],
             ['', false]
         ], done);
+    });
+
+    it('return object reference when no rules specified', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.object()
+        });
+
+        var item = { x: 5 };
+        schema.validate({ a: item }, function (err, value) {
+
+            expect(value.a).to.equal(item);
+            done();
+        });
     });
 
     it('retains ignored values', function (done) {
@@ -77,11 +92,11 @@ describe('object', function () {
 
         Joi.object().validate({ a: 4 }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
 
             Joi.object(undefined).validate({ a: 4 }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -91,7 +106,7 @@ describe('object', function () {
 
         Joi.object(null).validate({ a: 4 }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             done();
         });
     });
@@ -118,8 +133,8 @@ describe('object', function () {
 
         Joi.object({ a: Joi.object() }).validate(undefined, function (err, value) {
 
-            expect(err).to.not.exist;
-            expect(value).to.not.exist;
+            expect(err).to.not.exist();
+            expect(value).to.not.exist();
             done();
         });
     });
@@ -128,7 +143,7 @@ describe('object', function () {
 
         Joi.object().validate([1, 2, 3], function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             done();
         });
     });
@@ -185,6 +200,18 @@ describe('object', function () {
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, false],
             ['', false]
+        ], done);
+    });
+
+    it('should validate constructor when type is set', function (done) {
+
+        var schema = Joi.object().type(RegExp);
+        Helper.validate(schema, [
+            [{ item: 'something' }, false],
+            ['', false],
+            [new Date(), false],
+            [/abcd/, true],
+            [new RegExp(), true]
         ], done);
     });
 
@@ -293,7 +320,7 @@ describe('object', function () {
         var obj = { a: 5, b: 'value' };
         schema.validate(obj, function (err, value) {
 
-            expect(err).to.exist;
+            expect(err).to.exist();
             done();
         });
     });
@@ -318,10 +345,10 @@ describe('object', function () {
             var b = a.keys();
             a.validate({ b: 3 }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 b.validate({ b: 3 }, function (err, value) {
 
-                    expect(err).to.not.exist;
+                    expect(err).to.not.exist();
                     done();
                 });
             });
@@ -333,10 +360,10 @@ describe('object', function () {
             var b = a.keys({});
             a.validate({ b: 3 }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 b.validate({ b: 3 }, function (err, value) {
 
-                    expect(err).to.exist;
+                    expect(err).to.exist();
                     done();
                 });
             });
@@ -348,10 +375,10 @@ describe('object', function () {
             var b = a.keys({ b: 2 });
             a.validate({ a: 1, b: 2 }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 b.validate({ a: 1, b: 2 }, function (err, value) {
 
-                    expect(err).to.not.exist;
+                    expect(err).to.not.exist();
                     done();
                 });
             });
@@ -403,7 +430,7 @@ describe('object', function () {
 
             Joi.compile(schema).validate({ test1: 'a', test2: 'b' }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -425,7 +452,7 @@ describe('object', function () {
 
             Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').options({ abortEarly: false }).validate({ a: 1, c: 1, d: 1 }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('value cannot rename child c because multiple renames are disabled and another key was already renamed to b. value cannot rename child d because multiple renames are disabled and another key was already renamed to b');
                 done();
             });
@@ -442,7 +469,7 @@ describe('object', function () {
 
             Joi.compile(schema).validate(obj, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.a).to.equal(10);
                 expect(value.b).to.equal(10);
                 done();
@@ -470,7 +497,7 @@ describe('object', function () {
 
             schema.validate({ test: 'b', test1: 'a' }, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -487,7 +514,7 @@ describe('object', function () {
             var data = { arr: [{ uno: '1', dos: '2' }] };
             Joi.object(schema).validate(data, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.arr[0].one).to.equal('1');
                 expect(value.arr[0].two).to.equal('2');
                 done();
@@ -504,8 +531,8 @@ describe('object', function () {
 
             schema1.validate(input1, function (err1, value1) {
 
-                expect(err1).to.not.exist;
-                expect(value1.b).to.not.exist;
+                expect(err1).to.not.exist();
+                expect(value1.b).to.not.exist();
                 expect(value1.a).to.equal(5);
 
                 var schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
@@ -513,8 +540,8 @@ describe('object', function () {
 
                 schema2.validate(input2, function (err2, value2) {
 
-                    expect(err2).to.not.exist;
-                    expect(value2.b).to.not.exist;
+                    expect(err2).to.not.exist();
+                    expect(value2.b).to.not.exist();
                     expect(value2.a).to.equal(5);
 
                     done();
@@ -532,7 +559,7 @@ describe('object', function () {
 
             Joi.validate(input, schema, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 expect(value.foo2).to.equal('test');
 
                 done();
@@ -548,8 +575,8 @@ describe('object', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err).to.not.exist;
-                expect(value['']).to.not.exist;
+                expect(err).to.not.exist();
+                expect(value['']).to.not.exist();
                 expect(value.notEmpty).to.equal('something');
                 done();
             });
@@ -565,8 +592,8 @@ describe('object', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err).to.not.exist;
-                expect(value).to.have.keys(['a']);
+                expect(err).to.not.exist();
+                expect(Object.keys(value)).to.include('a');
                 expect(value.a).to.equal('something');
                 done();
             });
@@ -594,8 +621,8 @@ describe('object', function () {
                 })
             });
 
-            expect(schema.describe(true)).to.not.contain.key('children');
-            expect(schema.describe()).to.contain.key('children');
+            expect(Object.keys(schema.describe(true))).to.not.include('children');
+            expect(Object.keys(schema.describe())).to.include('children');
 
             done();
         });
@@ -674,7 +701,7 @@ describe('object', function () {
 
             Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('5 must be a boolean. bb must be one of x');
 
                 Helper.validate(schema, [
@@ -699,7 +726,7 @@ describe('object', function () {
 
             Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('5 must be a boolean. bb must be one of x');
                 done();
             });
@@ -711,7 +738,7 @@ describe('object', function () {
 
             Joi.validate({ a: 5 }, schema, { abortEarly: false }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('a is not allowed');
                 done();
             });
@@ -723,7 +750,7 @@ describe('object', function () {
 
             Joi.validate({ a1: 5, a2: 6 }, schema, function (err, value) {
 
-                expect(err).to.not.exist;
+                expect(err).to.not.exist();
                 done();
             });
         });
@@ -856,7 +883,7 @@ describe('object', function () {
                 }
             }).validate({ a: { b: { c: 1 } } }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('value must contain at least one of x, y');
                 done();
             });
@@ -879,7 +906,7 @@ describe('object', function () {
 
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('value validation failed because d.e failed to equal to a.c');
 
                 Helper.validate(schema, [
@@ -902,7 +929,7 @@ describe('object', function () {
 
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('value validation failed because d.e failed to equal to a.c');
 
                 Helper.validate(schema, [
@@ -963,10 +990,69 @@ describe('object', function () {
                 }
             }, function (err) {
 
-                expect(err).to.exist;
+                expect(err).to.exist();
                 expect(err.message).to.equal('value validation failed because d.e failed to pass the assertion test');
                 done();
             });
+        });
+    });
+
+    describe('#type', function () {
+
+        it('uses constructor name for default type name', function (done) {
+
+            function Foo () {}
+
+            var schema = Joi.object().type(Foo);
+            schema.validate({}, function (err) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('value must be an instance of Foo');
+                done();
+            });
+        });
+
+        it('uses custom type name if supplied', function (done) {
+
+            var Foo = function () {};
+
+            var schema = Joi.object().type(Foo, 'Bar');
+            schema.validate({}, function (err) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('value must be an instance of Bar');
+                done();
+            });
+        });
+
+        it('overrides constructor name with custom name', function (done) {
+
+            function Foo () {}
+
+            var schema = Joi.object().type(Foo, 'Bar');
+            schema.validate({}, function (err) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('value must be an instance of Bar');
+                done();
+            });
+        });
+
+        it('throws when constructor is not a function', function (done) {
+
+            expect(function () {
+
+                var schema = Joi.object().type('');
+            }).to.throw('type must be a constructor function');
+            done();
+        });
+
+        it('uses the constructor name in the schema description', function (done) {
+
+            var description = Joi.object().type(RegExp).describe();
+
+            expect(description.rules).to.deep.include({ name: 'type', arg: 'RegExp' });
+            done();
         });
     });
 });
