@@ -260,7 +260,79 @@ describe('string', function () {
 
                 var emailOptions = {checkDNS: true};
                 Joi.string().email(emailOptions);
-            }).to.throw('checkDNS is not allowed');
+            }).to.throw('checkDNS option is not supported');
+            done();
+        });
+
+        it('throws when tldWhitelist is not an array or object', function (done) {
+            expect(function () {
+
+                var emailOptions = {tldWhitelist: 'domain.tld'};
+                Joi.string().email(emailOptions);
+            }).to.throw('tldWhitelist must be an array or object');
+            done();
+        });
+
+        it('throws when minDomainAtoms is not a number', function (done) {
+            expect(function () {
+
+                var emailOptions = {minDomainAtoms: '1'};
+                Joi.string().email(emailOptions);
+            }).to.throw('minDomainAtoms must be a positive integer');
+            done();
+        });
+
+        it('throws when minDomainAtoms is not an integer', function (done) {
+            expect(function () {
+
+                var emailOptions = {minDomainAtoms: 1.2};
+                Joi.string().email(emailOptions);
+            }).to.throw('minDomainAtoms must be a positive integer');
+            done();
+        });
+
+        it('throws when minDomainAtoms is not positive', function (done) {
+            expect(function () {
+
+                var emailOptions = {minDomainAtoms: 0};
+                Joi.string().email(emailOptions);
+            }).to.throw('minDomainAtoms must be a positive integer');
+            done();
+        });
+
+        it('does not throw when minDomainAtoms is a positive integer', function (done) {
+            expect(function () {
+
+                var emailOptions = {minDomainAtoms: 1};
+                Joi.string().email(emailOptions);
+            }).to.not.throw();
+            done();
+        });
+
+        it('throws when errorLevel is not an integer or boolean', function (done) {
+            expect(function () {
+
+                var emailOptions = {errorLevel: 1.2};
+                Joi.string().email(emailOptions);
+            }).to.throw('errorLevel must be a non-negative integer or boolean');
+            done();
+        });
+
+        it('throws when errorLevel is negative', function (done) {
+            expect(function () {
+
+                var emailOptions = {errorLevel: -1};
+                Joi.string().email(emailOptions);
+            }).to.throw('errorLevel must be a non-negative integer or boolean');
+            done();
+        });
+
+        it('does not throw when errorLevel is 0', function (done) {
+            expect(function () {
+
+                var emailOptions = {errorLevel: 0};
+                Joi.string().email(emailOptions);
+            }).to.not.throw();
             done();
         });
     });
