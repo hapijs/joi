@@ -260,7 +260,7 @@ describe('string', function () {
 
                 var emailOptions = {checkDNS: true};
                 Joi.string().email(emailOptions);
-            }).to.throw('checkDNS option is not supported');
+            }).to.throw('checkDNS is not allowed');
             done();
         });
     });
