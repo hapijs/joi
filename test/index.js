@@ -1385,6 +1385,17 @@ describe('Joi', function () {
 
     describe('#describe', function () {
 
+        var defaultFn = function () {
+
+            return 'test';
+        };
+        defaultFn.description = 'testing';
+
+        var defaultDescribedFn = function () {
+
+            return 'test';
+        };
+
         var schema = Joi.object({
             sub: {
                 email: Joi.string().email(),
@@ -1398,7 +1409,9 @@ describe('Joi', function () {
             required: Joi.string().required(),
             xor: Joi.string(),
             renamed: Joi.string().valid('456'),
-            notEmpty: Joi.string().required().description('a').notes('b').tags('c')
+            notEmpty: Joi.string().required().description('a').notes('b').tags('c'),
+            defaultFn: Joi.string().default(defaultFn, 'not here'),
+            defaultDescribedFn: Joi.string().default(defaultDescribedFn, 'described test')
         }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
 
         var result = {
@@ -1474,6 +1487,20 @@ describe('Joi', function () {
                     notes: ['b'],
                     tags: ['c'],
                     invalids: ['']
+                },
+                defaultFn: {
+                    type: 'string',
+                    flags: {
+                        default: defaultFn
+                    },
+                    invalids: ['']
+                },
+                defaultDescribedFn: {
+                    type: 'string',
+                    flags: {
+                        default: defaultDescribedFn
+                    },
+                    invalids: ['']
                 }
             },
             dependencies: [
@@ -1494,6 +1521,8 @@ describe('Joi', function () {
 
             var description = schema.describe();
             expect(description).to.deep.equal(result);
+            expect(description.children.defaultFn.flags.default.description).to.equal('testing');
+            expect(description.children.defaultDescribedFn.flags.default.description).to.equal('described test');
             done();
         });
 

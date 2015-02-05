@@ -32,7 +32,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`any.unit(name)`](#anyunitname)
         - [`any.options(options)`](#anyoptionsoptions)
         - [`any.strict()`](#anystrict)
-        - [`any.default(value)`](#anydefaultvalue)
+        - [`any.default(value, [description])`](#anydefaultvaluedescription)
         - [`any.concat(schema)`](#anyconcatschema)
         - [`any.when(ref, options)`](#anywhenref-options)
         - [`any.label(name)`](#anylabelname)
@@ -406,20 +406,40 @@ Sets the `options.convert` options to `false` which prevent type casting for the
 var schema = Joi.any().strict();
 ```
 
-#### `any.default(value)`
+#### `any.default(value, [description])`
 
 Sets a default value if the original value is undefined where:
-- `value` - the value. `value` supports [references](#refkey-options).
+- `value` - the value. `value` supports [references](#refkey-options). `value` may also be a function which returns the default value. If `value` is specified as a function that accepts a single parameter, that parameter will be a context object that can be used to derive the resulting value. **This clones the object however, which incurs some overhead so if you don't need access to the context define your method so that it does not accept any parameters**.
 
 Note that if `value` is an object, any changes to the object after `default()` is called will change the reference
 and any future assignment.
 
+Additionally, when specifying a method you must either have a `description` property on your method or the second parameter is required.
+
 ```javascript
-var schema = {
-    username: Joi.string().default('new_user')
+var generateUsername = function (context) {
+
+  return context.firstname.toLowerCase() + '-' + context.lastname.toLowerCase();
 };
-Joi.validate({}, schema, function (err, value) { });
-// value === { username: "new_user" }
+generateUsername.description = 'generated username';
+
+var schema = {
+    username: Joi.string().default(generateUsername),
+    firstname: Joi.string(),
+    lastname: Joi.string(),
+    created: Joi.date().default(Date.now, 'time of creation'),
+    status: Joi.string().default('registered')
+};
+
+Joi.validate({
+    firstname: 'Jane',
+    lastname: 'Doe'
+}, function (err, value) {
+
+    // value.status === 'registered'
+    // value.username === 'jane-doe'
+    // value.created will be the time of validation
+});
 ```
 
 #### `any.concat(schema)`
