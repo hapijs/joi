@@ -255,6 +255,15 @@ describe('string', function () {
     });
 
     describe('#email', function() {
+        it('throws when options are not an object', function (done) {
+            expect(function () {
+
+                var emailOptions = true;
+                Joi.string().email(emailOptions);
+            }).to.throw('email options must be an object');
+            done();
+        });
+
         it('throws when checkDNS option is enabled', function (done) {
             expect(function () {
 
@@ -718,21 +727,70 @@ describe('string', function () {
             ], done);
         });
 
+        it('validates email with tldWhitelist as array', function (done) {
+
+            var schema = Joi.string().email({ tldWhitelist: ['com', 'org'] });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@example.org', true],
+                ['joe@example.edu', false]
+            ], done);
+        });
+
+        it('validates email with tldWhitelist as object', function (done) {
+
+            var schema = Joi.string().email({ tldWhitelist: { com: true, org: true }});
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@example.org', true],
+                ['joe@example.edu', false]
+            ], done);
+        });
+
+        it('validates email with minDomainAtoms', function (done) {
+
+            var schema = Joi.string().email({ minDomainAtoms: 4 });
+            Helper.validate(schema, [
+                ['joe@example.com', false],
+                ['joe@www.example.com', false],
+                ['joe@sub.www.example.com', true],
+            ], done);
+        });
+
+        it('validates email with errorLevel as boolean', function (done) {
+
+            var schema = Joi.string().email({ errorLevel: false });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@www.example.com', true],
+                ['joe@localhost', true],
+                ['joe', false]
+            ]);
+
+            schema = Joi.string().email({ errorLevel: true });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@www.example.com', true],
+                ['joe@localhost', false],
+                ['joe', false]
+            ], done);
+        });
+
+        it('validates email with errorLevel as integer', function (done) {
+
+            var schema = Joi.string().email({ errorLevel: 10 });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@www.example.com', true],
+                ['joe@localhost', true],
+                ['joe', false]
+            ], done);
+        });
+
         it('validates email with a friendly error message', function (done) {
 
             var schema = { item: Joi.string().email() };
             Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
-
-                expect(err.message).to.contain('must be a valid email');
-                done();
-            });
-        });
-
-        it('validates email with options with a friendly error message', function(done) {
-
-            var emailOptions = { errorLevel: 10 };
-            var schema = Joi.string().email(emailOptions);
-            schema.validate('joe@example', function(err, value) {
 
                 expect(err.message).to.contain('must be a valid email');
                 done();
