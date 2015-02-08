@@ -215,7 +215,7 @@ describe('Joi', function () {
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('"value" must contain at least one of ["txt", "upc"]');
+            expect(err.message).to.equal('"value" must contain at least one of [txt, upc]');
 
             Helper.validate(schema, [
                 [{ upc: null }, false],
@@ -293,7 +293,7 @@ describe('Joi', function () {
 
         Joi.validate({}, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('"value" must contain at least one of ["txt", "upc", "code"]');
+            expect(err.message).to.equal('"value" must contain at least one of [txt, upc, code]');
 
             Helper.validate(schema, [
                 [{ upc: null }, true],
@@ -330,7 +330,7 @@ describe('Joi', function () {
 
         Joi.validate({ txt: 'x' }, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('"value" contains ["txt"] without its required peers ["upc", "code"]');
+            expect(err.message).to.equal('"value" contains [txt] without its required peers [upc, code]');
 
             Helper.validate(schema, [
                 [{}, true],
@@ -369,7 +369,7 @@ describe('Joi', function () {
 
         Joi.validate({ txt: 'x', upc: 'y', code: 123 }, schema, { abortEarly: false }, function (err, value) {
 
-            expect(err.message).to.equal('"value" ["txt"] must not exist simultaneously with ["upc", "code"]');
+            expect(err.message).to.equal('"txt" must not exist simultaneously with [upc, code]');
 
             Helper.validate(schema, [
                 [{}, true],
@@ -406,7 +406,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"mode" must be one of "required, optional, try, null". "auth" must be a string. "auth" must be a boolean');
+            expect(err.message).to.equal('"mode" must be one of [required, optional, try, null]. "auth" must be a string. "auth" must be a boolean');
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
@@ -436,7 +436,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"mode" must be one of "required, optional, try, null". "auth" must be a string. "auth" must be a boolean');
+            expect(err.message).to.equal('"mode" must be one of [required, optional, try, null]. "auth" must be a string. "auth" must be a boolean');
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
@@ -1279,32 +1279,32 @@ describe('Joi', function () {
             expect(err).to.exist();
             expect(err.details).to.have.length(6);
             expect(err.details).to.deep.equal([{
-                message: 'foo length must be less than or equal to 3 characters long',
+                message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test.0.foo',
                 type: 'string.max',
-                context: { limit: 3, key: 'foo' }
+                context: { limit: 3, key: 'foo', value: 'test1' }
             }, {
-                message: 'bar length must be less than or equal to 5 characters long',
+                message: '"bar" length must be less than or equal to 5 characters long',
                 path: 'test.0.bar',
                 type: 'string.max',
-                context: { limit: 5, key: 'bar' }
+                context: { limit: 5, key: 'bar', value: 'testfailed' }
             }, {
-                message: 'foo length must be less than or equal to 3 characters long',
+                message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test2.test3.1.foo',
                 type: 'string.max',
-                context: { limit: 3, key: 'foo' }
+                context: { limit: 3, key: 'foo', value: 'test1' }
             }, {
-                message: 'bar length must be less than or equal to 5 characters long',
+                message: '"bar" length must be less than or equal to 5 characters long',
                 path: 'test2.test3.1.bar',
                 type: 'string.max',
-                context: { limit: 5, key: 'bar' }
+                context: { limit: 5, key: 'bar', value: 'testfailed' }
             }, {
-                message: 'foo length must be less than or equal to 3 characters long',
+                message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test2.test3.2.baz.test4.0.foo',
                 type: 'string.max',
-                context: { limit: 3, key: 'foo' }
+                context: { limit: 3, key: 'foo', value: 'test1' }
             }, {
-                message: 'baz is not allowed',
+                message: '"baz" is not allowed',
                 path: 'test2.test3.2.baz.test4.0',
                 type: 'object.allowUnknown',
                 context: { key: 'baz' }

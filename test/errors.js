@@ -81,7 +81,7 @@ describe('errors', function () {
 
     it('does not prefix with key when language uses context.key', function (done) {
 
-        Joi.valid('sad').options({ language: { any: { allowOnly: 'my hero {{key}} is not {{valids}}' } } }).validate(5, function (err, value) {
+        Joi.valid('sad').options({ language: { any: { allowOnly: 'my hero "{{key}}" is not "{{valids}}"' } } }).validate(5, function (err, value) {
 
             expect(err.message).to.equal('my hero "value" is not "sad"');
             done();
@@ -192,9 +192,9 @@ describe('errors', function () {
 
     it('overrides label key language', function (done) {
 
-        Joi.string().options({ language: { key: '{{!key}} ' } }).validate(4, function (err, value) {
+        Joi.string().options({ language: { key: 'my own {{!key}} ' } }).validate(4, function (err, value) {
 
-            expect(err.message).to.equal("&quot;value&quot; must be a string");
+            expect(err.message).to.equal('my own value must be a string');
             done();
         });
     });
@@ -213,12 +213,13 @@ describe('errors', function () {
         Joi.object({ length: Joi.number().min(3).required() }).validate({ length: 1 }, function (err) {
 
             expect(err.details).to.deep.equal([{
-                message: 'length must be larger than or equal to 3',
+                message: '"length" must be larger than or equal to 3',
                 path: 'length',
                 type: 'number.min',
                 context: {
                     limit: 3,
-                    key: 'length'
+                    key: 'length',
+                    value: 1
                 }
             }]);
             done();
@@ -253,7 +254,7 @@ describe('errors', function () {
             Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[1]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  "a" \u001b[31m[3]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] "a" must be one of "a, b, c, d"\n[2] "u" is required\n[3] "b" must be a string\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[1]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  "a" \u001b[31m[3]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] "a" must be one of [a, b, c, d]\n[2] "u" is required\n[3] "b" must be a string\u001b[0m');
                 done();
             });
         });

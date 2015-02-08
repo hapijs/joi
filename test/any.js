@@ -428,7 +428,7 @@ describe('any', function () {
             expect(function () {
 
                 var schema = Joi.valid(5, 6, 7).example(4);
-            }).to.throw('Bad example: "value" must be one of "5, 6, 7"');
+            }).to.throw('Bad example: "value" must be one of [5, 6, 7]');
             done();
         });
     });
@@ -1008,14 +1008,11 @@ describe('any', function () {
                 expect(b._invalids.values().length).to.equal(2);
                 done();
             });
-        });
 
-        describe('#toString', function () {
-
-            it('includes undefined', function (done) {
+            it('strips undefined', function (done) {
 
                 var b = Joi.any().allow(undefined);
-                expect(b._valids.toString(true)).to.equal('undefined');
+                expect(b._valids.values({ stripUndefined: true })).to.not.include(undefined);
                 done();
             });
         });

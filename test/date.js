@@ -130,9 +130,9 @@ describe('date', function () {
                 var schema = Joi.object({ a: Joi.string(), b: Joi.date().min(Joi.ref('a')) });
 
                 Helper.validate(schema, [
-                    [{ a: 'abc', b: new Date() }, false, null, 'b references a which is not a date'],
+                    [{ a: 'abc', b: new Date() }, false, null, '"b" references "a" which is not a date'],
                     [{ a: '123', b: new Date() }, true],
-                    [{ a: (Date.now() + 1e3).toString(), b: new Date() }, false, null, /^b must be larger than or equal to/]
+                    [{ a: (Date.now() + 1e3).toString(), b: new Date() }, false, null, /^"b" must be larger than or equal to/]
                 ], done);
             });
         });
@@ -192,9 +192,9 @@ describe('date', function () {
                 var schema = Joi.object({ a: Joi.string(), b: Joi.date().max(Joi.ref('a')) });
 
                 Helper.validate(schema, [
-                    [{ a: 'abc', b: new Date() }, false, null, 'b references a which is not a date'],
+                    [{ a: 'abc', b: new Date() }, false, null, '"b" references "a" which is not a date'],
                     [{ a: '100000000000000', b: new Date() }, true],
-                    [{ a: (Date.now() - 1e3).toString(), b: new Date() }, false, null, /^b must be less than or equal to/]
+                    [{ a: (Date.now() - 1e3).toString(), b: new Date() }, false, null, /^"b" must be less than or equal to/]
                 ], done);
             });
         });

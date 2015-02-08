@@ -114,7 +114,7 @@ describe('array', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err.message).to.equal('"test" position 1 fails because ["\\\"foo\\\" is required"]');
+                expect(err.message).to.equal('"test" at position 1 fails because "foo" is required');
                 done();
             });
         });
@@ -323,7 +323,7 @@ describe('array', function () {
             schema.validate(input, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"arr" position 2 fails because ["2 must be an integer"]');
+                expect(err.message).to.equal('"arr" at position 2 fails because "2" must be an integer');
                 done();
             });
         });
@@ -366,27 +366,29 @@ describe('array', function () {
                 expect(err).to.exist();
                 expect(err).to.have.length(4);
                 expect(err.details).to.deep.equal([{
-                  message: 'value must not be a sparse array',
+                  message: '"value" must not be a sparse array',
                   path: '1',
                   type: 'array.sparse',
                   context: {
                     key: 'value'
                   }
                 }, {
-                  message: 'value at position 2 contains an excluded value',
+                  message: '"value" at position 2 contains an excluded value',
                   path: '2',
                   type: 'array.excludes',
                   context: {
                     pos: 2,
-                    key: 'value'
+                    key: 'value',
+                    value: true
                   }
                 }, {
-                  message: 'value at position 3 does not match any of the allowed types',
+                  message: '"value" at position 3 does not match any of the allowed types',
                   path: '3',
                   type: 'array.includes',
                   context: {
                     pos: 3,
-                    key: 'value'
+                    key: 'value',
+                    value: 'a'
                   }
                 }]);
                 done();
@@ -559,9 +561,9 @@ describe('array', function () {
             Helper.validate(schema, [
                 [[1, 2, 3], true],
                 [1, true],
-                [['a'], false, null, 'value at position 0 fails because value must be a number'],
-                ['a', false, null, 'single value of value fails because value must be a number'],
-                [true, false, null, 'single value of value contains an excluded value']
+                [['a'], false, null, '"value" at position 0 fails because "value" must be a number'],
+                ['a', false, null, 'single value of "value" fails because "value" must be a number'],
+                [true, false, null, 'single value of "value" contains an excluded value']
             ], done);
         });
 
@@ -574,7 +576,7 @@ describe('array', function () {
                 [1, true],
                 [[1, 'a'], true],
                 ['a', true],
-                [true, false, null, 'single value of value does not match any of the allowed types']
+                [true, false, null, 'single value of "value" does not match any of the allowed types']
             ], done);
         });
 
@@ -585,11 +587,11 @@ describe('array', function () {
             Helper.validate(schema, [
                 [[[1],[2],[3]], true],
                 [[1, 2, 3], true],
-                [[['a']], false, null, 'value at position 0 fails because value at position 0 fails because value must be a number'],
-                [['a'], false, null, 'value at position 0 fails because value must be an array'],
-                ['a', false, null, 'single value of value fails because value must be an array'],
-                [1, false, null, 'single value of value fails because value must be an array'],
-                [true, false, null, 'single value of value fails because value must be an array']
+                [[['a']], false, null, '"value" at position 0 fails because "value" at position 0 fails because "value" must be a number'],
+                [['a'], false, null, '"value" at position 0 fails because "value" must be an array'],
+                ['a', false, null, 'single value of "value" fails because "value" must be an array'],
+                [1, false, null, 'single value of "value" fails because "value" must be an array'],
+                [true, false, null, 'single value of "value" fails because "value" must be an array']
             ], done);
         });
 
@@ -600,8 +602,8 @@ describe('array', function () {
             Helper.validate(schema, [
                 [[[1, true]], true],
                 [[1, true], true],
-                [[[1, 'a']], false, null, 'value at position 0 fails because value at position 1 does not match any of the allowed types'],
-                [[1, 'a'], false, null, 'value at position 0 fails because value must be an array']
+                [[[1, 'a']], false, null, '"value" at position 0 fails because "value" at position 1 does not match any of the allowed types'],
+                [[1, 'a'], false, null, '"value" at position 0 fails because "value" must be an array']
             ], done);
         });
 

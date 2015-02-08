@@ -537,7 +537,7 @@ describe('string', function () {
             var schema = Joi.string().regex(/[a-z]+/, 'letters').regex(/[0-9]+/, 'numbers');
             schema.validate('abcd', function (err, value) {
 
-                expect(err.message).to.contain('"numbers" pattern');
+                expect(err.message).to.contain('numbers pattern');
                 done();
             });
         });

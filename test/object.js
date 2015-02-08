@@ -702,7 +702,7 @@ describe('object', function () {
             Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of "x"');
+                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of [x]');
 
                 Helper.validate(schema, [
                     [{ a: 5 }, true],
@@ -727,7 +727,7 @@ describe('object', function () {
             Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of "x"');
+                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of [x]');
                 done();
             });
         });
@@ -884,7 +884,7 @@ describe('object', function () {
             }).validate({ a: { b: { c: 1 } } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"value" must contain at least one of ["x", "y"]');
+                expect(err.message).to.equal('"value" must contain at least one of [x, y]');
                 done();
             });
         });
@@ -907,7 +907,7 @@ describe('object', function () {
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"value" validation failed because "d.e" failed to "equal to a.c"');
+                expect(err.message).to.equal('"value" validation failed because "d.e" failed to equal to a.c');
 
                 Helper.validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
@@ -930,7 +930,7 @@ describe('object', function () {
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"value" validation failed because "d.e" failed to "equal to a.c"');
+                expect(err.message).to.equal('"value" validation failed because "d.e" failed to equal to a.c');
 
                 Helper.validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
@@ -991,7 +991,7 @@ describe('object', function () {
             }, function (err) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"value" validation failed because "d.e" failed to "pass the assertion test"');
+                expect(err.message).to.equal('"value" validation failed because "d.e" failed to pass the assertion test');
                 done();
             });
         });

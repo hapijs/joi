@@ -33,7 +33,7 @@ describe('ref', function () {
         schema.validate({ a: 5, b: 6 }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"a" must be one of "ref:b"');
+            expect(err.message).to.equal('"a" must be one of [ref:b]');
 
             Helper.validate(schema, [
                 [{ a: 5 }, false],
@@ -54,7 +54,7 @@ describe('ref', function () {
         schema.validate({ a: 5, '': 6 }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"a" must be one of "ref:"');
+            expect(err.message).to.equal('"a" must be one of [ref:]');
 
             Helper.validate(schema, [
                 [{ a: 5 }, false],
@@ -77,7 +77,7 @@ describe('ref', function () {
         schema.validate({ a: 5, b: { c: 6 } }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"a" must be one of "ref:b.c"');
+            expect(err.message).to.equal('"a" must be one of [ref:b.c]');
 
             Helper.validate(schema, [
                 [{ a: 5 }, false],
@@ -294,7 +294,7 @@ describe('ref', function () {
         Joi.validate({ a: 5, b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"a" must be one of "context:x"');
+            expect(err.message).to.equal('"a" must be one of [context:x]');
 
             Helper.validateOptions(schema, [
                 [{ a: 5 }, false],
