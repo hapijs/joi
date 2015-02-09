@@ -81,9 +81,9 @@ describe('errors', function () {
 
     it('does not prefix with key when language uses context.key', function (done) {
 
-        Joi.valid('sad').options({ language: { any: { allowOnly: 'my hero "{{key}}" is not "{{valids}}"' } } }).validate(5, function (err, value) {
+        Joi.valid('sad').options({ language: { any: { allowOnly: 'my hero "{{key}}" is not {{valids}}' } } }).validate(5, function (err, value) {
 
-            expect(err.message).to.equal('my hero "value" is not "sad"');
+            expect(err.message).to.equal('my hero "value" is not [sad]');
             done();
         });
     });
@@ -118,7 +118,7 @@ describe('errors', function () {
             notNumber: Joi.number().required(),
             notString: Joi.string().required(),
             notBoolean: Joi.boolean().required()
-        }
+        };
 
         Joi.validate(input, schema, { abortEarly: false }, function (err, value) {
 
@@ -195,6 +195,15 @@ describe('errors', function () {
         Joi.string().options({ language: { key: 'my own {{!key}} ' } }).validate(4, function (err, value) {
 
             expect(err.message).to.equal('my own value must be a string');
+            done();
+        });
+    });
+
+    it('overrides wrapArrays', function (done) {
+
+        Joi.array().includes(Joi.boolean()).options({ language: { messages: { wrapArrays: false }}}).validate([4], function (err, value) {
+
+            expect(err.message).to.equal('"value" at position 0 fails because "0" must be a boolean');
             done();
         });
     });
