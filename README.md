@@ -389,7 +389,7 @@ var schema = Joi.number().unit('milliseconds');
 #### `any.options(options)`
 
 Overrides the global `validate()` options for the current key and any sub-key where:
-- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#joivalidatevalue-schema-options-callback).
+- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
 
 ```javascript
 var schema = Joi.any().options({ convert: false });
