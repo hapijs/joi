@@ -2,11 +2,12 @@
 
 Object schema description language and validator for JavaScript objects.
 
-Current version: **4.7.x**
+[![npm version](https://badge.fury.io/js/joi.svg)](http://badge.fury.io/js/joi)
+[![Build Status](https://secure.travis-ci.org/hapijs/joi.svg)](http://travis-ci.org/hapijs/joi)
+[![Dependencies Status](https://david-dm.org/hapijs/joi.svg)](https://david-dm.org/hapijs/joi)
+[![DevDependencies Status](https://david-dm.org/hapijs/joi/dev-status.svg)](https://david-dm.org/hapijs/joi#info=devDependencies)
 
-[![Build Status](https://secure.travis-ci.org/hapijs/joi.png)](http://travis-ci.org/hapijs/joi)
-
-Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
+Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
 ## Table of Contents
 
@@ -34,7 +35,10 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`any.default(value)`](#anydefaultvalue)
         - [`any.concat(schema)`](#anyconcatschema)
         - [`any.when(ref, options)`](#anywhenref-options)
+        - [`any.label(name)`](#anylabelname)
+        - [`any.raw(isRaw)`](#anyrawisraw)
     - [`array`](#array)
+        - [`array.sparse(enabled)`](#arraysparseenabled)
         - [`array.includes(type)`](#arrayincludestype)
         - [`array.excludes(type)`](#arrayexcludestype)
         - [`array.min(limit)`](#arrayminlimit)
@@ -50,12 +54,17 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
     - [`date`](#date)
         - [`date.min(date)`](#datemindate)
         - [`date.max(date)`](#datemaxdate)
+        - [`date.format(format)`](#dateformatformat)
+        - [`date.iso()`](#dateiso)
     - [`func`](#func)
     - [`number`](#number)
         - [`number.min(limit)`](#numberminlimit)
         - [`number.max(limit)`](#numbermaxlimit)
+        - [`number.greater(limit)`](#numbergreaterlimit)
+        - [`number.less(limit)`](#numberlesslimit)
         - [`number.integer()`](#numberinteger)
         - [`number.precision(limit)`](#numberprecisionlimit)
+        - [`number.multiple(base)`](#numbermultiplebase)
     - [`object`](#object)
         - [`object.keys([schema])`](#objectkeysschema)
         - [`object.min(limit)`](#objectminlimit)
@@ -63,6 +72,7 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`object.length(limit)`](#objectlengthlimit)
         - [`object.pattern(regex, schema)`](#objectpatternregex-schema)
         - [`object.and(peers)`](#objectandpeers)
+        - [`object.nand(peers)`](#objectnandpeers)
         - [`object.or(peers)`](#objectorpeers)
         - [`object.xor(peers)`](#objectxorpeers)
         - [`object.with(key, peers)`](#objectwithkey-peers)
@@ -70,18 +80,21 @@ Lead Maintainer: [Eran Hammer](https://github.com/hueniverse)
         - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
         - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
         - [`object.unknown([allow])`](#objectunknownallow)
+        - [`object.type(constructor, [name])`](#objecttypeconstructor-name)
+        - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
+        - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
     - [`string`](#string)
         - [`string.insensitive()`](#stringinsensitive)
         - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
         - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
+        - [`string.creditCard()`](#stringcreditCard)
         - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
-        - [`string.regex(pattern)`](#stringregexpattern)
+        - [`string.regex(pattern, [name])`](#stringregexpattern-name)
         - [`string.alphanum()`](#stringalphanum)
         - [`string.token()`](#stringtoken)
-        - [`string.email()`](#stringemail)
+        - [`string.email([options])`](#stringemailoptions)
         - [`string.uri()`](#stringuri)
         - [`string.guid()`](#stringguid)
-        - [`string.isoDate()`](#stringisodate)
         - [`string.hostname()`](#stringhostname)
         - [`string.lowercase()`](#stringlowercase)
         - [`string.uppercase()`](#stringuppercase)
@@ -176,7 +189,7 @@ Validates a value using the given schema and options where:
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
-  - `language` - overrides individual error messages. Defaults to no override (`{}`).
+  - `language` - overrides individual error messages, when `'label'` is set, it overrides the key name in the error message. Defaults to no override (`{}`).
   - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
     Defaults to `'optional'`.
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
@@ -377,7 +390,7 @@ var schema = Joi.number().unit('milliseconds');
 #### `any.options(options)`
 
 Overrides the global `validate()` options for the current key and any sub-key where:
-- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#joivalidatevalue-schema-options-callback).
+- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
 
 ```javascript
 var schema = Joi.any().options({ convert: false });
@@ -434,15 +447,68 @@ var schema = {
 };
 ```
 
+Alternatively, if you want to specify a specific type such as `string`, `array`, etc, you can do so like this:
+
+```javascript
+var schema = {
+    a: Joi.valid('a', 'b', 'other'),
+    other: Joi.string()
+        .when('a', { is: 'other', then: Joi.required() }),
+};
+```
+
+#### `any.label(name)`
+
+Overrides the key name in error messages.
+- `name` - the name of the key.
+
+```javascript
+var schema = {
+    first_name: Joi.string().label('First Name')
+};
+```
+
+#### `any.raw(isRaw)`
+
+Outputs the original untouched value instead of the casted value.
+- `isRaw` - whether to enable raw mode or not. Defaults to true.
+
+```javascript
+var schema = {
+    timestamp: Joi.date().format('YYYYMMDD').raw()
+};
+```
+
 ### `array`
 
-Generates a schema object that matches an array data type.
+Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by default but can be by using `sparse()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 var array = Joi.array().includes(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], function (err, value) { });
+```
+
+#### `array.sparse(enabled)`
+
+Allow this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
+
+```javascript
+var schema = Joi.array().sparse(); // undefined values are now allowed
+schema = schema.sparse(false); // undefined values are now denied
+```
+
+#### `array.single(enabled)`
+
+Allow single values to be checked against rules as if it were provided as an array.
+
+`enabled` can be used with a falsy value to go back to the default behavior.
+
+```javascript
+var schema = Joi.array().includes(Joi.number()).single();
+schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
+schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 ```
 
 #### `array.includes(type)`
@@ -492,7 +558,9 @@ var schema = Joi.array().length(5);
 
 #### `array.unique()`
 
-Requires the array values to be unique. Only works for literals (numbers and strings), all other types are ignored.
+Requires the array values to be unique.
+
+Be aware that a deep equality is performed on elements of the array having a type of `object`, a performance penalty is to be expected for this kind of operation.
 
 ```javascript
 var schema = Joi.array().unique();
@@ -575,6 +643,21 @@ Specifies the oldest date allowed where:
 var schema = Joi.date().min('1-1-1974');
 ```
 
+Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+
+```javascript
+var schema = Joi.date().min('now');
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  from: Joi.date().required(),
+  to: Joi.date().min(Joi.ref('from')).required()
+});
+```
+
 #### `date.max(date)`
 
 Specifies the latest date allowed where:
@@ -582,6 +665,38 @@ Specifies the latest date allowed where:
 
 ```javascript
 var schema = Joi.date().max('12-31-2020');
+```
+
+Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+
+```javascript
+var schema = Joi.date().max('now');
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  from: Joi.date().max(Joi.ref('to')).required(),
+  to: Joi.date().required()
+});
+```
+
+#### `date.format(format)`
+
+Specifies the allowed date format:
+- `format` - string or array of strings that follow the `moment.js` [format](http://momentjs.com/docs/#/parsing/string-format/).
+
+```javascript
+var schema = Joi.date().format('YYYY/MM/DD');
+```
+
+#### `date.iso()`
+
+Requires the string value to be in valid ISO 8601 date format.
+
+```javascript
+var schema = Joi.date().iso();
 ```
 
 ### `func`
@@ -598,6 +713,8 @@ func.validate(function () {}, function (err, value) { });
 ### `number`
 
 Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
+
+`Infinity` and `-Infinity` are invalid by default, you can change that behavior by calling `allow(Infinity, -Infinity)`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -624,6 +741,22 @@ Specifies the maximum value where:
 var schema = Joi.number().max(10);
 ```
 
+#### `number.greater(limit)`
+
+Specifies that the value must be greater than `limit`.
+
+```javascript
+var schema = Joi.number().greater(5);
+```
+
+#### `number.less(limit)`
+
+Specifies that the value must be less than `limit`.
+
+```javascript
+var schema = Joi.number().less(10);
+```
+
 #### `number.integer()`
 
 Requires the number to be an integer (no floating point).
@@ -639,6 +772,14 @@ Specifies the maximum number of decimal places where:
 
 ```javascript
 var schema = Joi.number().precision(2);
+```
+
+#### `number.multiple(base)`
+
+Specifies that the value must be a multiple of `base`:
+
+```javascript
+var schema = Joi.number().multiple(3);
 ```
 
 ### `object`
@@ -659,16 +800,20 @@ object.validate({ a: 5 }, function (err, value) { });
 
 #### `object.keys([schema])`
 
-Sets the allowed object keys where:
+Sets or extends the allowed object keys where:
 - `schema` - optional object where each key is assigned a **joi** type object. If `schema` is `{}` no keys allowed.
   If `schema` is `null` or `undefined`, any key allowed. If `schema` is an object with keys, the keys are added to any
   previously defined keys (but narrows the selection if all keys previously allowed). Defaults to 'undefined' which
   allows any child key.
 
 ```javascript
-var object = Joi.object().keys({
+var base = Joi.object().keys({
     a: Joi.number(),
     b: Joi.string()
+});
+// Validate keys a, b and c.
+var extended = base.keys({
+    c: Joi.boolean()
 });
 ```
 
@@ -723,6 +868,20 @@ var schema = Joi.object().keys({
     a: Joi.any(),
     b: Joi.any()
 }).and('a', 'b');
+```
+
+#### `object.nand(peers)`
+
+Defines a relationship between keys where not all peers can be present at the
+same time where:
+- `peers` - the key names of which if one present, the others may not all be present. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
+
+```javascript
+var schema = Joi.object().keys({
+    a: Joi.any(),
+    b: Joi.any()
+}).nand('a', 'b');
 ```
 
 #### `object.or(peers)`
@@ -829,6 +988,40 @@ Overrides the handling of unknown keys for the scope of the current object only 
 var schema = Joi.object({ a: Joi.any() }).unknown();
 ```
 
+#### `object.type(constructor, [name])`
+
+Requires the object to be an instance of a given constructor where:
+- `constructor` - the constructor function that the object must be an instance of.
+- `name` - an alternate name to use in validation errors. This is useful when the constructor function does not have a name.
+
+```javascript
+var schema = Joi.object().type(RegExp);
+```
+
+#### `object.requiredKeys(children)`
+
+Sets the specified children to required.
+- `children` - can be a single string value, an array of string values, or each child provided as an argument.
+
+```javascript
+var schema = Joi.object().keys({ a: { b: Joi.number() }, c: { d: Joi.string() } });
+var requiredSchema = schema.requiredKeys('', 'a.b', 'c', 'c.d');
+```
+
+Note that in this example `''` means the current object, `a` is not required but `b` is, as well as `c` and `d`.
+
+#### `object.optionalKeys(children)`
+
+Sets the specified children to optional.
+- `children` - can be a single string value, an array of string values, or each child provided as an argument.
+
+```javascript
+var schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
+var requiredSchema = schema.optionalKeys('a.b', 'c.d');
+```
+
+The behavior is exactly the same as `requiredKeys`.
+
 ### `string`
 
 Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with `allow('')`.
@@ -868,6 +1061,15 @@ Specifies the maximum number of string characters where:
 var schema = Joi.string().max(10);
 ```
 
+#### `string.creditCard()`
+
+Requires the number to be a credit card number (Using [Lunh
+Algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)).
+
+```javascript
+var schema = Joi.string().creditCard();
+```
+
 #### `string.length(limit, [encoding])`
 
 Specifies the exact string length required where:
@@ -878,10 +1080,11 @@ Specifies the exact string length required where:
 var schema = Joi.string().length(5);
 ```
 
-#### `string.regex(pattern)`
+#### `string.regex(pattern, [name])`
 
 Defines a regular expression rule where:
 - `pattern` - a regular expression object the string value must match against.
+- `name` - optional name for patterns (useful with multiple patterns). Defaults to 'required'.
 
 ```javascript
 var schema = Joi.string().regex(/^[abc]+$/);
@@ -903,9 +1106,14 @@ Requires the string value to only contain a-z, A-Z, 0-9, and underscore _.
 var schema = Joi.string().token();
 ```
 
-#### `string.email()`
+#### `string.email([options])`
 
 Requires the string value to be a valid email address.
+
+- `options` - optional settings:
+    - `errorLevel` - Numerical threshold at which an email address is considered invalid.
+    - `tldWhitelist` - Specifies a list of acceptable TLDs.
+    - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
 
 ```javascript
 var schema = Joi.string().email();
@@ -925,14 +1133,6 @@ Requires the string value to be a valid GUID.
 
 ```javascript
 var schema = Joi.string().guid();
-```
-
-#### `string.isoDate()`
-
-Requires the string value to be in valid ISO 8601 date format.
-
-```javascript
-var schema = Joi.string().isoDate();
 ```
 
 #### `string.hostname()`

@@ -1,6 +1,7 @@
 // Load modules
 
 var Lab = require('lab');
+var Code = require('code');
 var Joi = require('..');
 var Helper = require('./helper');
 
@@ -17,7 +18,7 @@ var before = lab.before;
 var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
-var expect = Lab.expect;
+var expect = Code.expect;
 
 
 describe('alternatives', function () {
@@ -26,8 +27,8 @@ describe('alternatives', function () {
 
         Joi.alternatives().validate('a', function (err, value) {
 
-            expect(err).to.exist;
-            expect(err.message).to.equal('value not matching any of the allowed alternatives');
+            expect(err).to.exist();
+            expect(err.message).to.equal('"value" not matching any of the allowed alternatives');
             done();
         });
     });
@@ -36,7 +37,7 @@ describe('alternatives', function () {
 
         Joi.alternatives().validate(undefined, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             done();
         });
     });
@@ -52,7 +53,7 @@ describe('alternatives', function () {
 
         schema.validate({ a: '5' }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value.a).to.equal(5);
             done();
         });
@@ -69,7 +70,7 @@ describe('alternatives', function () {
 
         schema.validate({ a: '5' }, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value.a).to.equal(5);
             done();
         });
@@ -87,7 +88,7 @@ describe('alternatives', function () {
         var input = { a: { b: 'any', d: 'string' } };
         schema.validate(input, function (err, value) {
 
-            expect(err).to.not.exist;
+            expect(err).to.not.exist();
             expect(value.a.b).to.equal('any');
             done();
         });
@@ -247,6 +248,23 @@ describe('alternatives', function () {
               [{ b: true }, true]           // true because required() only applies to the one alternative
             ], done);
         });
+
+        it('validates when missing value', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.alternatives().when('b', { is: 5, then: Joi.optional(), otherwise: Joi.required() }).required(),
+                b: Joi.number()
+            });
+
+            Helper.validate(schema, [
+                [{ a: 1 }, true],
+                [{}, false],
+                [{ b: 1 }, false],
+                [{ a: 1, b: 1 }, true],
+                [{ a: 1, b: 5 }, true],
+                [{ b: 5 }, false]
+            ], done);
+        });
     });
 
     describe('#describe', function () {
@@ -265,7 +283,9 @@ describe('alternatives', function () {
                     b: {
                         type: 'any'
                     },
-                    a: [
+                    a: {
+                      type: 'alternatives',
+                      alternatives: [
                       {
                           ref: 'ref:b',
                           is: {
@@ -273,7 +293,8 @@ describe('alternatives', function () {
                               flags: {
                                   allowOnly: true
                               },
-                              valids: [5]
+                              valids: [5],
+                              invalids: [Infinity, -Infinity]
                           },
                           then: {
                               type: 'string',
@@ -301,6 +322,7 @@ describe('alternatives', function () {
                           invalids: ['']
                       }
                     ]
+                  }
                 }
             };
 
@@ -322,34 +344,38 @@ describe('alternatives', function () {
                     b: {
                         type: 'any'
                     },
-                    a: [
-                      {
-                          ref: 'ref:b',
-                          is: {
-                              type: 'number',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: [5]
-                          },
-                          then: {
-                              type: 'string',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: ['x'],
-                              invalids: ['']
-                          }
-                      },
-                      {
-                          type: 'string',
-                          flags: {
-                              allowOnly: true
-                          },
-                          valids: ['z'],
-                          invalids: ['']
-                      }
-                    ]
+                    a: {
+                        type: 'alternatives',
+                        alternatives: [
+                            {
+                                ref: 'ref:b',
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: [5],
+                                    invalids: [Infinity, -Infinity]
+                                },
+                                then: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['x'],
+                                    invalids: ['']
+                                }
+                            },
+                            {
+                                type: 'string',
+                                flags: {
+                                    allowOnly: true
+                                },
+                                valids: ['z'],
+                                invalids: ['']
+                            }
+                        ]
+                    }
                 }
             };
 
@@ -371,35 +397,71 @@ describe('alternatives', function () {
                     b: {
                         type: 'any'
                     },
-                    a: [
-                      {
-                          ref: 'ref:b',
-                          is: {
-                              type: 'number',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: [5]
-                          },
-                          otherwise: {
-                              type: 'string',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: ['y'],
-                              invalids: ['']
-                          }
-                      },
-                      {
-                          type: 'string',
-                          flags: {
-                              allowOnly: true
-                          },
-                          valids: ['z'],
-                          invalids: ['']
-                      }
-                    ]
+                    a: {
+                        type: 'alternatives',
+                        alternatives: [
+                            {
+                                ref: 'ref:b',
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: [5],
+                                    invalids: [Infinity, -Infinity]
+                                },
+                                otherwise: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['y'],
+                                    invalids: ['']
+                                }
+                            },
+                            {
+                                type: 'string',
+                                flags: {
+                                    allowOnly: true
+                                },
+                                valids: ['z'],
+                                invalids: ['']
+                            }
+                        ]
+                    }
                 }
+            };
+
+            expect(Joi.describe(schema)).to.deep.equal(outcome);
+            done();
+        });
+
+        it('describes inherited fields (from any)', function (done) {
+
+            var schema = Joi.alternatives()
+                .try('a')
+                .description('d')
+                .example('a')
+                .meta('b')
+                .meta('c')
+                .notes('f')
+                .tags('g');
+
+            var outcome = {
+                type: 'alternatives',
+                description: 'd',
+                notes: ['f'],
+                tags: ['g'],
+                meta: ['b', 'c'],
+                examples: ['a'],
+                alternatives: [{
+                    type: 'string',
+                    flags: {
+                        allowOnly: true
+                    },
+                    valids: ['a'],
+                    invalids: ['']
+                }]
             };
 
             expect(Joi.describe(schema)).to.deep.equal(outcome);
