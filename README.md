@@ -1126,6 +1126,14 @@ Requires the string value to be a valid GUID.
 var schema = Joi.string().guid();
 ```
 
+#### `string.hex()`
+
+Requires the string value to be a valid hexadecimal string.
+
+```javascript
+var schema = Joi.string().hex();
+```
+
 #### `string.hostname()`
 
 Requires the string value to be a valid hostname as per [RFC1123](http://tools.ietf.org/html/rfc1123).

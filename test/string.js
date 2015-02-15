@@ -1945,5 +1945,15 @@ describe('string', function () {
                 [null, false]
             ], done);
         });
+
+        it('validates an hexadecimal string', function (done) {
+
+            var rule = Joi.string().hex();
+            Helper.validate(rule, [
+                ['123456789abcdef', true],
+                ['123456789AbCdEf', true],
+                ['123afg', false, null, '"value" must only contain hexadecimal characters']
+            ], done);
+        });
     });
 });
