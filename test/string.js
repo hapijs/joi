@@ -1105,7 +1105,9 @@ describe('string', function () {
                 ['HTTP://X.COM/Y', true],
                 ['http://www.narwhaljs.org/blog/categories?id=news', true],
                 ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', true],
-                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true]
+                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['file:/asda', false],
+                ['qwerty', false]
             ], done);
         });
 
