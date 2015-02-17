@@ -268,6 +268,8 @@ Whitelists a value where:
 - `value` - the allowed value which can be of any type and will be matched against the validated value before applying any other rules.
   `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
 
+Note that this whitelist of allowed values is in *addition* to any other permitted values.  To create an exclusive whitelist of values, see [`any.valid(value)`](#anyvalidvalue).
+
 ```javascript
 var schema = {
     a: Joi.any().allow('a'),
