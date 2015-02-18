@@ -335,6 +335,86 @@ describe('any', function () {
             });
         });
 
+        it('allows passing a method with no description to default when the object being validated is a function', function (done) {
+
+            var defaultFn = function () {
+
+                return 'just a function';
+            };
+
+            var schema;
+            expect(function () {
+
+                schema = Joi.func().default(defaultFn);
+            }).to.not.throw();
+
+            schema.validate(undefined, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(defaultFn);
+                done();
+            });
+        });
+
+        it('allows passing a method that generates a default method when validating a function', function (done) {
+
+            var defaultFn = function () {
+
+                return 'just a function';
+            };
+
+            var defaultGeneratorFn = function () {
+
+                return defaultFn;
+            };
+            defaultGeneratorFn.description = 'generate a default fn';
+
+            var schema;
+            expect(function () {
+
+                schema = Joi.func().default(defaultGeneratorFn);
+            }).to.not.throw();
+
+            schema.validate(undefined, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(defaultFn);
+                done();
+            });
+        });
+
+        it('allows passing a ref as a default without a description', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.string().default(Joi.ref('a'))
+            });
+
+            schema.validate({ a: 'test' }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.equal('test');
+                expect(value.b).to.equal('test');
+                done();
+            });
+        });
+
+        it('ignores description when passing a ref as a default', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.string().default(Joi.ref('a'), 'this is a ref')
+            });
+
+            schema.validate({ a: 'test' }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.equal('test');
+                expect(value.b).to.equal('test');
+                done();
+            });
+        });
+
         it('catches errors in default methods', function (done) {
 
             var defaultFn = function () {

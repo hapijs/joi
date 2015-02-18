@@ -1396,6 +1396,8 @@ describe('Joi', function () {
             return 'test';
         };
 
+        var defaultRef = Joi.ref('xor');
+
         var schema = Joi.object({
             sub: {
                 email: Joi.string().email(),
@@ -1410,6 +1412,7 @@ describe('Joi', function () {
             xor: Joi.string(),
             renamed: Joi.string().valid('456'),
             notEmpty: Joi.string().required().description('a').notes('b').tags('c'),
+            defaultRef: Joi.string().default(defaultRef, 'not here'),
             defaultFn: Joi.string().default(defaultFn, 'not here'),
             defaultDescribedFn: Joi.string().default(defaultDescribedFn, 'described test')
         }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
@@ -1488,6 +1491,13 @@ describe('Joi', function () {
                     tags: ['c'],
                     invalids: ['']
                 },
+                defaultRef: {
+                    type: 'string',
+                    flags: {
+                        default: defaultRef
+                    },
+                    invalids: ['']
+                },
                 defaultFn: {
                     type: 'string',
                     flags: {
@@ -1521,6 +1531,7 @@ describe('Joi', function () {
 
             var description = schema.describe();
             expect(description).to.deep.equal(result);
+            expect(description.children.defaultRef.flags.default.description).to.not.exist();
             expect(description.children.defaultFn.flags.default.description).to.equal('testing');
             expect(description.children.defaultDescribedFn.flags.default.description).to.equal('described test');
             done();
