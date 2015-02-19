@@ -114,7 +114,7 @@ describe('array', function () {
 
             schema.validate(input, function (err, value) {
 
-                expect(err.message).to.equal('"test" at position 1 fails because ["foo" is required]');
+                expect(err.message).to.equal('child "test" fails because ["test" at position 1 fails because [child "foo" fails because ["foo" is required]]]');
                 done();
             });
         });
@@ -323,7 +323,7 @@ describe('array', function () {
             schema.validate(input, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"arr" at position 2 fails because ["2" must be an integer]');
+                expect(err.message).to.equal('child "arr" fails because ["arr" at position 2 fails because ["2" must be an integer]]');
                 done();
             });
         });

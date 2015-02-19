@@ -74,7 +74,7 @@ describe('errors', function () {
 
             expect(err).to.exist();
             expect(err.name).to.equal('ValidationError');
-            expect(err.message).to.equal('"value" 11. "required" 7. "xor" 7. "email" 19. "date" 18. "alphanum" 16. "min" 14. "max" 15. "notEmpty" 3');
+            expect(err.message).to.equal('"value" 11. "required" 7. "xor" 7. child "email" fails because ["email" 19]. child "date" fails because ["date" 18]. child "alphanum" fails because ["alphanum" 16]. child "min" fails because ["min" 14]. child "max" fails because ["max" 15]. child "notEmpty" fails because ["notEmpty" 3]');
             done();
         });
     });
@@ -96,7 +96,7 @@ describe('errors', function () {
 
         Joi.validate({ 'a()': 'x' }, schema, function (err, value) {
 
-            expect(err.message).to.equal('"a()" must be a number');
+            expect(err.message).to.equal('child "a()" fails because ["a()" must be a number]');
 
             Joi.validate({ 'b()': 'x' }, schema, function (err, value) {
 

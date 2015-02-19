@@ -702,7 +702,7 @@ describe('object', function () {
             Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of [x]');
+                expect(err.message).to.equal('child "5" fails because ["5" must be a boolean]. child "bb" fails because ["bb" must be one of [x]]');
 
                 Helper.validate(schema, [
                     [{ a: 5 }, true],
@@ -727,7 +727,7 @@ describe('object', function () {
             Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of [x]');
+                expect(err.message).to.equal('child "x" fails because [child "5" fails because ["5" must be a boolean], child "bb" fails because ["bb" must be one of [x]]]');
                 done();
             });
         });
@@ -884,7 +884,7 @@ describe('object', function () {
             }).validate({ a: { b: { c: 1 } } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"value" must contain at least one of [x, y]');
+                expect(err.message).to.equal('child "a" fails because [child "b" fails because ["value" must contain at least one of [x, y]]]');
                 done();
             });
         });

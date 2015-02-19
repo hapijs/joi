@@ -406,7 +406,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"mode" must be one of [required, optional, try, null]. "auth" must be a string. "auth" must be a boolean');
+            expect(err.message).to.equal('child "auth" fails because [child "mode" fails because ["mode" must be one of [required, optional, try, null]], "auth" must be a string, "auth" must be a boolean]');
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
@@ -436,7 +436,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"mode" must be one of [required, optional, try, null]. "auth" must be a string. "auth" must be a boolean');
+            expect(err.message).to.equal('child "auth" fails because [child "mode" fails because ["mode" must be one of [required, optional, try, null]], "auth" must be a string, "auth" must be a boolean]');
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
