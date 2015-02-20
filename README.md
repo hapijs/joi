@@ -24,6 +24,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
         - [`any.required()`](#anyrequired)
         - [`any.optional()`](#anyoptional)
         - [`any.forbidden()`](#anyforbidden)
+        - [`any.custom(fn)`](#anycustom)
         - [`any.description(desc)`](#anydescriptiondesc)
         - [`any.notes(notes)`](#anynotesnotes)
         - [`any.tags(tags)`](#anytagstags)
@@ -330,6 +331,22 @@ Marks a key as forbidden which will not allow any value except `undefined`. Used
 ```javascript
 var schema = {
     a: Joi.any().forbidden()
+};
+```
+
+#### `any.custom(fn)`
+
+Allows a custom validation function.
+- `fn` - function which takes parameter `value` and returns either string error message or null.
+
+```javascript
+var schema = {
+    primeNumber: Joi.number().custom(function (n) {
+        if (!isPrime(n)) {
+            return 'must be prime';
+        }
+        return null;
+    })
 };
 ```
 

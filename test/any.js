@@ -1240,5 +1240,124 @@ describe('any', function () {
             });
         });
     });
+
+    describe('#custom', function () {
+        var fooer = function () {
+            return 'foo';
+        };
+
+        var barrer = function () {
+            return 'bar';
+        };
+
+        var bazzer = function () {
+            return 'baz';
+        };
+
+        var isPrime = function (n) {
+            if (n == 2 || n == 3) return true;
+            var m = Math.sqrt(n);
+            for (var i = 5; i <= m; i += 6) {
+                if (n%i == 0)     return false;
+                if (n%(i+2) == 0) return false;
+            }
+            return true;
+        };
+
+        it('custom validation valid scalar input', function (done) {
+            var schema = Joi.number().less(100).custom(function (n) {
+                if (!isPrime(n)) {
+                    return 'must be prime!';
+                }
+                return null;
+            });
+
+            var okInput = 53;
+            var okOutput = schema.validate(okInput);
+            expect(okOutput.error).to.not.exist();
+
+            var badInput = 63;
+            var badOutput = schema.validate(badInput);
+            expect(badOutput.error).to.exist();
+            expect(badOutput.error.details[0].message).to.equal('value must be prime!');
+
+            done();
+        });
+
+        it('custom validation valid function input', function (done) {
+            var schema = Joi.object({
+                fooer: Joi.func().custom(function (fooer) {
+                    if (fooer() !== 'foo') {
+                        return 'must foo!';
+                    }
+                    return null;
+                })
+            });
+
+            var okInput = {
+                fooer: fooer
+            };
+            var okOutput = schema.validate(okInput);
+            expect(okOutput.error).to.not.exist();
+
+            var badInput = {
+                fooer: bazzer
+            };
+            var badOutput = schema.validate(badInput);
+            expect(badOutput.error).to.exist();
+            expect(badOutput.error.details[0].message).to.equal('fooer must foo!');
+
+            done();
+        });
+
+        it('cusom validation multiple instances', function (done) {
+            var schema = Joi.object({
+                fooer: Joi.func().custom(function (fooer) {
+                    if (fooer() !== 'foo') {
+                        return 'must foo!';
+                    }
+                    return null;
+                }),
+                barrer: Joi.func().custom(function (barrer) {
+                    if (barrer() !== 'bar') {
+                        return 'must bar!';
+                    }
+                    return null;
+                }),
+            });
+
+            var okInput = {
+                fooer: fooer,
+                barrer: barrer
+            };
+            var okOutput = schema.validate(okInput);
+            expect(okOutput.error).to.not.exist();
+
+            var badInput = {
+                fooer: fooer,
+                barrer: bazzer
+            };
+            var badOutput = schema.validate(badInput);
+            expect(badOutput.error).to.exist();
+            expect(badOutput.error.details[0].message).to.equal('barrer must bar!');
+
+            badInput = {
+                fooer: bazzer,
+                barrer: barrer
+            };
+            badOutput = schema.validate(badInput);
+            expect(badOutput.error).to.exist();
+            expect(badOutput.error.details[0].message).to.equal('fooer must foo!');
+
+            done();
+        });
+
+        it('cusom validation invalid input', function (done) {
+            expect(function () {
+                var schema = Joi.any().custom('custom must have a function');
+            }).to.throw('Custom must have a function');
+            done();
+        });
+    });
 });
 
