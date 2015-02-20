@@ -502,10 +502,10 @@ describe('object', function () {
             });
         });
 
-        it('renames when data is nested in an array via includes', function (done) {
+        it('renames when data is nested in an array via items', function (done) {
 
             var schema = {
-                arr: Joi.array().includes(Joi.object({
+                arr: Joi.array().items(Joi.object({
                     one: Joi.string(),
                     two: Joi.string()
                 }).rename('uno', 'one').rename('dos', 'two'))

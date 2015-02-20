@@ -61,7 +61,7 @@ describe('any', function () {
         it('validates without converting', function (done) {
 
             var schema = Joi.object({
-                array: Joi.array().includes(Joi.string().min(5), Joi.number().min(3))
+                array: Joi.array().items(Joi.string().min(5), Joi.number().min(3))
             }).strict();
 
             Helper.validate(schema, [
