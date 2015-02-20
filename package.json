@@ -19,11 +19,13 @@
   },
   "devDependencies": {
     "code": "1.x.x",
-    "lab": "5.x.x"
+    "lab": "5.x.x",
+    "markdown-toc": "^0.7.2"
   },
   "scripts": {
     "test": "lab -t 100 -a code",
-    "test-cov-html": "lab -r html -o coverage.html -a code"
+    "test-cov-html": "lab -r html -o coverage.html -a code",
+    "toc": "node generate-readme-toc.js"
   },
   "licenses": [
     {
