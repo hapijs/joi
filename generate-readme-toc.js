@@ -9,8 +9,8 @@ var tocOptions = {
     slugify: function (text) {
 
         return text.toLowerCase()
-            .replace(/[.()[\]\s`]/g, '')
-            .replace(/,/g, '-');
+            .replace(/\s/g, '-')
+            .replace(/[^\w-]/g, '');
     }
 };
 

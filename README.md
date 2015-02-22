@@ -22,8 +22,8 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
     - [`assert(value, schema, [message])`](#assertvalue-schema-message)
     - [`any`](#any)
       - [`any.allow(value)`](#anyallowvalue)
-      - [`any.valid(value)`](#anyvalidvalue)
-      - [`any.invalid(value)`](#anyinvalidvalue)
+      - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
+      - [`any.invalid(value)` - aliases: `disallow`, `not`](#anyinvalidvalue---aliases-disallow-not)
       - [`any.required()`](#anyrequired)
       - [`any.optional()`](#anyoptional)
       - [`any.forbidden()`](#anyforbidden)
@@ -275,7 +275,8 @@ Whitelists a value where:
 - `value` - the allowed value which can be of any type and will be matched against the validated value before applying any other rules.
   `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
 
-Note that this whitelist of allowed values is in *addition* to any other permitted values.  To create an exclusive whitelist of values, see [`any.valid(value)`](#anyvalidvalue).
+Note that this whitelist of allowed values is in *addition* to any other permitted values.
+To create an exclusive whitelist of values, see [`any.valid(value)`](#anyvalidvalue).
 
 ```javascript
 var schema = {
@@ -285,7 +286,7 @@ var schema = {
 };
 ```
 
-#### `any.valid(value)`
+#### `any.valid(value)` - aliases: `only`, `equal`
 
 Adds the provided values into the allowed whitelist and marks them as the only valid values allowed where:
 - `value` - the allowed value which can be of any type and will be matched against the validated value before applying any other rules.
@@ -299,7 +300,7 @@ var schema = {
 };
 ```
 
-#### `any.invalid(value)`
+#### `any.invalid(value)` - aliases: `disallow`, `not`
 
 Blacklists a value where:
 - `value` - the forbidden value which can be of any type and will be matched against the validated value before applying any other rules.
