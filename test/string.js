@@ -1321,14 +1321,77 @@ describe('string', function () {
                 ['http://www.narwhaljs.org/blog/categories?id=news', true],
                 ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', true],
                 ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
-                ['file:/asda', false],
-                ['qwerty', false]
+                ['g:h', true],
+                ['http://a/b/c/g', true],
+                ['http://a/b/c/g/', true],
+                ['http://a/g', true],
+                ['http://g', true],
+                ['http://a/b/c/d;p?y', true],
+                ['http://a/b/c/g?y', true],
+                ['http://a/b/c/d;p?q#s', true],
+                ['http://a/b/c/g#s', true],
+                ['http://a/b/c/g?y#s', true],
+                ['http://a/b/c/;x', true],
+                ['http://a/b/c/g;x', true],
+                ['http://a/b/c/g;x?y#s', true],
+                ['http://a/b/c/d;p?q', true],
+                ['http://a/b/c/', true],
+                ['http://a/b/', true],
+                ['http://a/b/g', true],
+                ['http://a/', true],
+                ['http://a/g', true],
+                ['http://a/g', true],
+                ['file:/asda', true],
+                ['qwerty', false],
+                ['invalid uri', false],
+                ['1http://google.com', false],
+                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false],
+                ['', false]
+            ], done);
+        });
+
+        it('validates uri with a single scheme provided', function (done) {
+            var schema = Joi.string().uri({
+                scheme: 'http'
+            });
+            Helper.validate(schema, [
+                ['http://google.com', true],
+                ['https://google.com', false],
+                ['ftp://google.com', false],
+                ['file:/asdf', false],
+                ['/path?query=value#hash', false]
+            ], done);
+        });
+
+        it('validates uri with a single regex scheme provided', function (done) {
+            var schema = Joi.string().uri({
+                scheme: 'https?'
+            });
+            Helper.validate(schema, [
+                ['http://google.com', true],
+                ['https://google.com', true],
+                ['ftp://google.com', false],
+                ['file:/asdf', false],
+                ['/path?query=value#hash', false]
+            ], done);
+        });
+
+        it('validates uri with multiple schemes provided', function (done) {
+            var schema = Joi.string().uri({
+                scheme: ['http', 'https', 'ftp', 'file']
+            });
+            Helper.validate(schema, [
+                ['http://google.com', true],
+                ['https://google.com', true],
+                ['ftp://google.com', true],
+                ['file:/asdf', true],
+                ['/path?query=value#hash', false]
             ], done);
         });
 
         it('validates uri with a friendly error message', function (done) {
             var schema = { item: Joi.string().uri() };
-            Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+            Joi.compile(schema).validate({ item: 'something invalid' }, function (err, value) {
 
                 expect(err.message).to.contain('must be a valid uri');
                 done();
