@@ -1279,6 +1279,8 @@ describe('string', function () {
             // Also includes examples from RFC 8936: http://tools.ietf.org/html/rfc3986#page-7
             var schema = Joi.string().uri();
             Helper.validate(schema, [
+                ['foo://example.com:8042/over/there?name=ferret#nose', true],
+                ['urn:example:animal:ferret:nose', true],
                 ['ftp://ftp.is.co.za/rfc/rfc1808.txt', true],
                 ['http://www.ietf.org/rfc/rfc2396.txt', true],
                 ['ldap://[2001:db8::7]/c=GB?objectClass?one', true],
