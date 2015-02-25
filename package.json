@@ -12,10 +12,11 @@
     "node": ">=0.10.30"
   },
   "dependencies": {
+    "bson": "^0.2.19",
     "hoek": "^2.2.x",
-    "topo": "1.x.x",
     "isemail": "1.x.x",
-    "moment": "2.x.x"
+    "moment": "2.x.x",
+    "topo": "1.x.x"
   },
   "devDependencies": {
     "code": "1.x.x",

@@ -87,6 +87,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`object.type(constructor, [name])`](#objecttypeconstructor-name)
       - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
       - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
+    - [`objectId`](#objectid)
     - [`string`](#string)
       - [`string.insensitive()`](#stringinsensitive)
       - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
@@ -1050,6 +1051,17 @@ var requiredSchema = schema.optionalKeys('a.b', 'c.d');
 ```
 
 The behavior is exactly the same as `requiredKeys`.
+
+### `objectId`
+
+Generates a schema object that matches an ObjectId BSON type (as well as 24 character hex strings).
+
+Supports the same methods of the [`any()`](#any) type.
+
+```javascript
+var objectId = Joi.objectId();
+objectId.validate('507f1f77bcf86cd799439011', function (err, value) { });
+```
 
 ### `string`
 
