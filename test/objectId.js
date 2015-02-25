@@ -3,6 +3,7 @@
 var Lab = require('lab');
 var Code = require('code');
 var Joi = require('../lib');
+var Helper = require('./helper');
 var ObjectID = require('bson').BSONPure.ObjectID;
 
 
@@ -47,12 +48,11 @@ describe('objectId', function () {
 
     it('validates an objectId', function (done) {
 
-        var objectId = new ObjectID('507f1f77bcf86cd799439011');
-        Joi.objectId().validate(objectId, function (err, value) {
-
-            expect(err).to.not.exist();
-            expect(value).to.equal(objectId);
-            done();
-        });
+        var schema = Joi.objectId().required();
+        Helper.validate(schema, [
+            [null, false],
+            [new ObjectID('507f1f77bcf86cd799439011'), true],
+            ['', false]
+        ], done);
     });
 });
