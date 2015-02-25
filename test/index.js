@@ -496,7 +496,7 @@ describe('Joi', function () {
     it('validates an array of string with valid', function (done) {
 
         var schema = {
-            brand: Joi.array().includes(Joi.string().valid('amex', 'visa'))
+            brand: Joi.array().items(Joi.string().valid('amex', 'visa'))
         };
 
         Helper.validate(schema, [
@@ -1199,7 +1199,7 @@ describe('Joi', function () {
     it('should not convert values when convert is false', function (done) {
 
         var schema = {
-            arr: Joi.array().includes(Joi.string())
+            arr: Joi.array().items(Joi.string())
         };
 
         var input = { arr: 'foo' };
@@ -1234,16 +1234,16 @@ describe('Joi', function () {
     it('errors multiple times when abortEarly is false in a complex object', function(done) {
 
         var schema = Joi.object({
-          test: Joi.array().includes(Joi.object().keys({
+          test: Joi.array().items(Joi.object().keys({
             foo: Joi.string().required().max(3),
             bar: Joi.string().max(5)
           })),
           test2: Joi.object({
-              test3: Joi.array().includes(Joi.object().keys({
+              test3: Joi.array().items(Joi.object().keys({
                 foo: Joi.string().required().max(3),
                 bar: Joi.string().max(5),
                 baz: Joi.object({
-                    test4: Joi.array().includes(Joi.object().keys({
+                    test4: Joi.array().items(Joi.object().keys({
                         foo: Joi.string().required().max(3),
                         bar: Joi.string().max(5)
                     }))

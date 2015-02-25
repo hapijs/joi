@@ -73,11 +73,11 @@ describe('array', function () {
         });
     });
 
-    describe('#includes', function () {
+    describe('#items', function () {
 
         it('converts members', function (done) {
 
-            var schema = Joi.array().includes(Joi.number());
+            var schema = Joi.array().items(Joi.number());
             var input = ['1', '2', '3'];
             schema.validate(input, function (err, value) {
 
@@ -90,7 +90,7 @@ describe('array', function () {
         it('allows zero size', function (done) {
 
             var schema = Joi.object({
-                test: Joi.array().includes(Joi.object({
+                test: Joi.array().items(Joi.object({
                     foo: Joi.string().required()
                 }))
             });
@@ -106,7 +106,7 @@ describe('array', function () {
         it('returns the first error when only one inclusion', function (done) {
 
             var schema = Joi.object({
-                test: Joi.array().includes(Joi.object({
+                test: Joi.array().items(Joi.object({
                     foo: Joi.string().required()
                 }))
             });
@@ -122,8 +122,8 @@ describe('array', function () {
         it('validates multiple types added in two calls', function (done) {
 
             var schema = Joi.array()
-                .includes(Joi.number())
-                .includes(Joi.string());
+                .items(Joi.number())
+                .items(Joi.string());
 
             Helper.validate(schema, [
                 [[1, 2, 3], true],
@@ -131,6 +131,123 @@ describe('array', function () {
                 [[1, 'a', 5, 10], true],
                 [['joi', 'everydaylowprices', 5000], true]
             ], done);
+        });
+
+        it('allows forbidden to restrict values', function (done) {
+
+            var schema = Joi.array().items(Joi.string().valid('four').forbidden(), Joi.string());
+            var input = ['one', 'two', 'three', 'four'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" at position 3 contains an excluded value');
+                done();
+            });
+        });
+
+        it('validates that a required value exists', function (done) {
+
+            var schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string());
+            var input = ['one', 'two', 'three'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" does not contain 1 required value(s)');
+                done();
+            });
+        });
+
+        it('validates that a required value exists with abortEarly = false', function (done) {
+
+            var schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string()).options({ abortEarly: false });
+            var input = ['one', 'two', 'three'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" does not contain 1 required value(s)');
+                done();
+            });
+        });
+
+        it('does not re-run required tests that have already been matched', function (done) {
+
+            var schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string());
+            var input = ['one', 'two', 'three', 'four', 'four', 'four'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(input);
+                done();
+            });
+        });
+
+        it('can require duplicates of the same schema and fail', function (done) {
+
+            var schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string().valid('four').required(), Joi.string());
+            var input = ['one', 'two', 'three', 'four'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" does not contain 1 required value(s)');
+                done();
+            });
+        });
+
+        it('can require duplicates of the same schema and pass', function (done) {
+
+            var schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string().valid('four').required(), Joi.string());
+            var input = ['one', 'two', 'three', 'four', 'four'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(input);
+                done();
+            });
+        });
+
+        it('continues to validate after a required match', function (done) {
+
+            var schema = Joi.array().items(Joi.string().required(), Joi.boolean());
+            var input = [true, 'one', false, 'two'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(input);
+                done();
+            });
+        });
+
+        it('can use a label on a required parameter', function (done) {
+
+            var schema = Joi.array().items(Joi.string().required().label('required string'), Joi.boolean());
+            var input = [true, false];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" does not contain [required string]');
+                done();
+            });
+        });
+
+        it('can use a label on one required parameter, and no label on another', function (done) {
+
+            var schema = Joi.array().items(Joi.string().required().label('required string'), Joi.string().required(), Joi.boolean());
+            var input = [true, false];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" does not contain [required string] and 1 other required value(s)');
+                done();
+            });
         });
     });
 
@@ -249,18 +366,18 @@ describe('array', function () {
             ], done);
         });
 
-        it('excludes values when excludes is called', function (done) {
+        it('excludes values when items are forbidden', function (done) {
 
-            Helper.validate(Joi.array().excludes(Joi.string()), [
+            Helper.validate(Joi.array().items(Joi.string().forbidden()), [
                 [['2', '1'], false],
                 [['1'], false],
                 [[2], true]
             ], done);
         });
 
-        it('allows types to be excluded', function (done) {
+        it('allows types to be forbidden', function (done) {
 
-            var schema = Joi.array().excludes(Joi.number());
+            var schema = Joi.array().items(Joi.number().forbidden());
 
             var n = [1, 2, 'hippo'];
             schema.validate(n, function (err, value) {
@@ -278,7 +395,7 @@ describe('array', function () {
 
         it('validates array of Numbers', function (done) {
 
-            Helper.validate(Joi.array().includes(Joi.number()), [
+            Helper.validate(Joi.array().items(Joi.number()), [
                 [[1, 2, 3], true],
                 [[50, 100, 1000], true],
                 [['a', 1, 2], false],
@@ -288,7 +405,7 @@ describe('array', function () {
 
         it('validates array of mixed Numbers & Strings', function (done) {
 
-            Helper.validate(Joi.array().includes(Joi.number(), Joi.string()), [
+            Helper.validate(Joi.array().items(Joi.number(), Joi.string()), [
                 [[1, 2, 3], true],
                 [[50, 100, 1000], true],
                 [[1, 'a', 5, 10], true],
@@ -298,7 +415,7 @@ describe('array', function () {
 
         it('validates array of objects with schema', function (done) {
 
-            Helper.validate(Joi.array().includes(Joi.object({ h1: Joi.number().required() })), [
+            Helper.validate(Joi.array().items(Joi.object({ h1: Joi.number().required() })), [
                 [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
                 [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false],
                 [[1, 2, [1]], false]
@@ -307,7 +424,7 @@ describe('array', function () {
 
         it('errors on array of unallowed mixed types (Array)', function (done) {
 
-            Helper.validate(Joi.array().includes(Joi.number()), [
+            Helper.validate(Joi.array().items(Joi.number()), [
                 [[1, 2, 3], true],
                 [[1, 2, [1]], false]
             ], done);
@@ -316,7 +433,7 @@ describe('array', function () {
         it('errors on invalid number rule using includes', function (done) {
 
             var schema = Joi.object({
-                arr: Joi.array().includes(Joi.number().integer())
+                arr: Joi.array().items(Joi.number().integer())
             });
 
             var input = { arr: [1, 2, 2.1] };
@@ -331,7 +448,7 @@ describe('array', function () {
         it('validates an array within an object', function (done) {
 
             var schema = Joi.object({
-                array: Joi.array().includes(Joi.string().min(5), Joi.number().min(3))
+                array: Joi.array().items(Joi.string().min(5), Joi.number().min(3))
             }).options({ convert: false });
 
             Helper.validate(schema, [
@@ -344,7 +461,7 @@ describe('array', function () {
 
         it('should not change original value', function (done) {
 
-            var schema = Joi.array().includes(Joi.number()).unique();
+            var schema = Joi.array().items(Joi.number()).unique();
             var input = ['1', '2'];
 
             schema.validate(input, function (err, value) {
@@ -358,7 +475,7 @@ describe('array', function () {
 
         it('should have multiple errors if abort early is false', function (done) {
 
-            var schema = Joi.array().includes(Joi.number(), Joi.object()).excludes(Joi.boolean());
+            var schema = Joi.array().items(Joi.number(), Joi.object()).items(Joi.boolean().forbidden());
             var input = [1, undefined, true, 'a'];
 
             Joi.validate(input, schema, { abortEarly: false }, function (err, value) {
@@ -422,23 +539,21 @@ describe('array', function () {
 
         it('returns an includes array only if includes are specified', function (done) {
 
-            var schema = Joi.array().includes().max(5);
+            var schema = Joi.array().items().max(5);
             var desc = schema.describe();
-            expect(desc.includes).to.not.exist();
+            expect(desc.items).to.not.exist();
             done();
         });
 
         it('returns a recursively defined array of includes when specified', function (done) {
 
-            var schema = Joi.array().includes(Joi.number(), Joi.string()).excludes(Joi.boolean());
+            var schema = Joi.array().items(Joi.number(), Joi.string()).items(Joi.boolean().forbidden());
             var desc = schema.describe();
-            expect(desc.includes).to.have.length(2);
-            expect(desc.excludes).to.have.length(1);
+            expect(desc.items).to.have.length(3);
             expect(desc).to.deep.equal({
                 type: 'array',
                 flags: { sparse: false },
-                includes: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }],
-                excludes: [{ type: 'boolean' }]
+                items: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }, { type: 'boolean', flags: { presence: 'forbidden' } }]
             });
 
             done();
@@ -500,7 +615,7 @@ describe('array', function () {
 
         it('errors on undefined value', function (done) {
 
-            var schema = Joi.array().includes(Joi.number());
+            var schema = Joi.array().items(Joi.number());
 
             Helper.validate(schema, [
                 [[undefined], false],
@@ -510,7 +625,7 @@ describe('array', function () {
 
         it('validates on undefined value with sparse', function (done) {
 
-            var schema = Joi.array().includes(Joi.number()).sparse();
+            var schema = Joi.array().items(Joi.number()).sparse();
 
             Helper.validate(schema, [
                 [[undefined], true],
@@ -556,7 +671,7 @@ describe('array', function () {
 
         it('should allow a single element', function(done) {
 
-            var schema = Joi.array().includes(Joi.number()).excludes(Joi.boolean()).single();
+            var schema = Joi.array().items(Joi.number()).items(Joi.boolean().forbidden()).single();
 
             Helper.validate(schema, [
                 [[1, 2, 3], true],
@@ -569,7 +684,7 @@ describe('array', function () {
 
         it('should allow a single element with multiple types', function(done) {
 
-            var schema = Joi.array().includes(Joi.number(), Joi.string()).single();
+            var schema = Joi.array().items(Joi.number(), Joi.string()).single();
 
             Helper.validate(schema, [
                 [[1, 2, 3], true],
@@ -582,7 +697,7 @@ describe('array', function () {
 
         it('should allow nested arrays', function(done) {
 
-            var schema = Joi.array().includes(Joi.array().includes(Joi.number())).single();
+            var schema = Joi.array().items(Joi.array().items(Joi.number())).single();
 
             Helper.validate(schema, [
                 [[[1],[2],[3]], true],
@@ -597,7 +712,7 @@ describe('array', function () {
 
         it('should allow nested arrays with multiple types', function (done) {
 
-            var schema = Joi.array().includes(Joi.array().includes(Joi.number(), Joi.boolean())).single();
+            var schema = Joi.array().items(Joi.array().items(Joi.number(), Joi.boolean())).single();
 
             Helper.validate(schema, [
                 [[[1, true]], true],
