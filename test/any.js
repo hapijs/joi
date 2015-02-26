@@ -524,6 +524,33 @@ describe('any', function () {
         });
     });
 
+    describe('#strip', function () {
+
+        it('validates and returns undefined', function (done) {
+
+            var schema = Joi.string().strip();
+
+            schema.validate('test', function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.not.exist();
+                done();
+            });
+        });
+
+        it('validates and returns an error', function (done) {
+
+            var schema = Joi.string().strip();
+
+            schema.validate(1, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" must be a string');
+                done();
+            });
+        });
+    });
+
     describe('#description', function () {
 
         it('sets the description', function (done) {
