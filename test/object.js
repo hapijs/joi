@@ -1054,5 +1054,42 @@ describe('object', function () {
             expect(description.rules).to.deep.include({ name: 'type', arg: 'RegExp' });
             done();
         });
+
+        it('uses custom converter if supplied', function (done) {
+
+            function Foo (obj) {
+                this.foo = obj.foo;
+            }
+
+            var schema = Joi.object().type(Foo, function (value) {
+                return new Foo(value);
+            });
+
+            schema.validate({ foo: 'bar' }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value instanceof Foo).to.equal(true);
+                expect(value.foo).to.equal('bar');
+                done();
+            });
+        });
+
+        it('overrides constructor name with custom name when converter present', function (done) {
+
+            function Foo (obj) {
+                this.foo = obj.foo;
+            }
+
+            var schema = Joi.object().type(Foo, 'Bar', function (value) {
+                return value;
+            });
+
+            schema.validate({ foo: 'bar' }, function (err) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" must be an instance of "Bar"');
+                done();
+            });
+        });
     });
 });

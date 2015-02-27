@@ -35,6 +35,28 @@ describe('binary', function () {
         });
     });
 
+    it('validates a buffer with conversion disabled', function (done) {
+
+        Joi.validate(new Buffer('test'), Joi.binary(), { convert: false }, function (err, value) {
+
+            expect(err).to.not.exist();
+            expect(value instanceof Buffer).to.equal(true);
+            expect(value.length).to.equal(4);
+            expect(value.toString('utf8')).to.equal('test');
+            done();
+        });
+    });
+
+    it('returns an error when string conversion is disabled', function (done) {
+
+        Joi.validate('test', Joi.binary(), { convert: false }, function (err, value) {
+
+            expect(err).to.exist();
+            expect(err.message).to.equal('"value" must be a buffer or a string');
+            done();
+        });
+    });
+
     it('validates allowed buffer content', function (done) {
 
         var hello = new Buffer('hello');
