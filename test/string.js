@@ -1378,13 +1378,14 @@ describe('string', function () {
 
         it('validates uri with multiple schemes provided', function (done) {
             var schema = Joi.string().uri({
-                scheme: ['http', 'https', 'ftp', 'file']
+                scheme: ['http', 'https', 'ftp', 'file', 'git+http']
             });
             Helper.validate(schema, [
                 ['http://google.com', true],
                 ['https://google.com', true],
                 ['ftp://google.com', true],
                 ['file:/asdf', true],
+                ['git+http://github.com/hapijs/joi', true],
                 ['/path?query=value#hash', false]
             ], done);
         });
@@ -1396,6 +1397,22 @@ describe('string', function () {
                 expect(err.message).to.contain('must be a valid uri');
                 done();
             });
+        });
+
+        it('validates uri requires uriOptions as an object with a friendly error message', function (done) {
+            expect(function () {
+                Joi.string().uri('http');
+            }).to.throw(Error, 'uri options must be an object');
+            done();
+        });
+
+        it('validates uri requires uriOptions.scheme to be a valid scheme with a friendly error message', function (done) {
+            expect(function () {
+                Joi.string().uri({
+                    scheme: '~!@#$%^&*()_'
+                });
+            }).to.throw(Error, 'scheme must be a valid scheme');
+            done();
         });
 
         it('validates isoDate', function (done) {
