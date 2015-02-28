@@ -1166,12 +1166,21 @@ Requires the string value to be a valid email address.
 var schema = Joi.string().email();
 ```
 
-#### `string.uri()`
+#### `string.uri([options])`
 
 Requires the string value to be a valid [RFC 3986](http://tools.ietf.org/html/rfc3986) URI.
 
+- `options` - optional settings:
+    - `scheme` - Specifies one or more acceptable Schemes, should only include the scheme name. Can be an Array or String (strings are automatically escaped for use in a Regular Expression).
+
 ```javascript
-var schema = Joi.string().uri();
+// Accept git or git http/https
+var schema = Joi.string().uri({
+  scheme: [
+    'git',
+    /git\+https?/
+  ]
+});
 ```
 
 #### `string.guid()`
