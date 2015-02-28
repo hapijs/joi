@@ -1399,7 +1399,32 @@ describe('string', function () {
             });
         });
 
-        it('validates uri treats uriOptions.scheme as optional with a friendly error message', function (done) {
+        it('validates uri with a custom scheme with a friendly error message', function (done) {
+            var schema = { item: Joi.string().uri({
+                scheme: 'http'
+            }) };
+            Joi.compile(schema).validate({ item: 'something invalid' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid uri with a scheme matching the http pattern');
+                done();
+            });
+        });
+
+        it('validates uri with a custom array of schemes with a friendly error message', function (done) {
+            var schema = { item: Joi.string().uri({
+                scheme: [
+                    'http',
+                    /https?/
+                    ]
+            }) };
+            Joi.compile(schema).validate({ item: 'something invalid' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid uri with a scheme matching the http|https? pattern');
+                done();
+            });
+        });
+
+        it('validates uri treats uriOptions.scheme as optional', function (done) {
             expect(function () {
                 Joi.string().uri({});
             }).to.not.throw();
