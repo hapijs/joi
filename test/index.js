@@ -406,7 +406,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"mode" must be one of [required, optional, try, null]. "auth" must be a string. "auth" must be a boolean');
+            expect(err.message).to.equal('child "auth" fails because [child "mode" fails because ["mode" must be one of [required, optional, try, null]], "auth" must be a string, "auth" must be a boolean]');
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
@@ -436,7 +436,7 @@ describe('Joi', function () {
         schema.validate({ auth: { mode: 'none' } }, function (err, value) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"mode" must be one of [required, optional, try, null]. "auth" must be a string. "auth" must be a boolean');
+            expect(err.message).to.equal('child "auth" fails because [child "mode" fails because ["mode" must be one of [required, optional, try, null]], "auth" must be a string, "auth" must be a boolean]');
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
@@ -496,7 +496,7 @@ describe('Joi', function () {
     it('validates an array of string with valid', function (done) {
 
         var schema = {
-            brand: Joi.array().includes(Joi.string().valid('amex', 'visa'))
+            brand: Joi.array().items(Joi.string().valid('amex', 'visa'))
         };
 
         Helper.validate(schema, [
@@ -1199,7 +1199,7 @@ describe('Joi', function () {
     it('should not convert values when convert is false', function (done) {
 
         var schema = {
-            arr: Joi.array().includes(Joi.string())
+            arr: Joi.array().items(Joi.string())
         };
 
         var input = { arr: 'foo' };
@@ -1234,16 +1234,16 @@ describe('Joi', function () {
     it('errors multiple times when abortEarly is false in a complex object', function(done) {
 
         var schema = Joi.object({
-          test: Joi.array().includes(Joi.object().keys({
+          test: Joi.array().items(Joi.object().keys({
             foo: Joi.string().required().max(3),
             bar: Joi.string().max(5)
           })),
           test2: Joi.object({
-              test3: Joi.array().includes(Joi.object().keys({
+              test3: Joi.array().items(Joi.object().keys({
                 foo: Joi.string().required().max(3),
                 bar: Joi.string().max(5),
                 baz: Joi.object({
-                    test4: Joi.array().includes(Joi.object().keys({
+                    test4: Joi.array().items(Joi.object().keys({
                         foo: Joi.string().required().max(3),
                         bar: Joi.string().max(5)
                     }))
@@ -1385,6 +1385,19 @@ describe('Joi', function () {
 
     describe('#describe', function () {
 
+        var defaultFn = function () {
+
+            return 'test';
+        };
+        defaultFn.description = 'testing';
+
+        var defaultDescribedFn = function () {
+
+            return 'test';
+        };
+
+        var defaultRef = Joi.ref('xor');
+
         var schema = Joi.object({
             sub: {
                 email: Joi.string().email(),
@@ -1398,7 +1411,10 @@ describe('Joi', function () {
             required: Joi.string().required(),
             xor: Joi.string(),
             renamed: Joi.string().valid('456'),
-            notEmpty: Joi.string().required().description('a').notes('b').tags('c')
+            notEmpty: Joi.string().required().description('a').notes('b').tags('c'),
+            defaultRef: Joi.string().default(defaultRef, 'not here'),
+            defaultFn: Joi.string().default(defaultFn, 'not here'),
+            defaultDescribedFn: Joi.string().default(defaultDescribedFn, 'described test')
         }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
 
         var result = {
@@ -1474,6 +1490,27 @@ describe('Joi', function () {
                     notes: ['b'],
                     tags: ['c'],
                     invalids: ['']
+                },
+                defaultRef: {
+                    type: 'string',
+                    flags: {
+                        default: defaultRef
+                    },
+                    invalids: ['']
+                },
+                defaultFn: {
+                    type: 'string',
+                    flags: {
+                        default: defaultFn
+                    },
+                    invalids: ['']
+                },
+                defaultDescribedFn: {
+                    type: 'string',
+                    flags: {
+                        default: defaultDescribedFn
+                    },
+                    invalids: ['']
                 }
             },
             dependencies: [
@@ -1494,6 +1531,9 @@ describe('Joi', function () {
 
             var description = schema.describe();
             expect(description).to.deep.equal(result);
+            expect(description.children.defaultRef.flags.default.description).to.not.exist();
+            expect(description.children.defaultFn.flags.default.description).to.equal('testing');
+            expect(description.children.defaultDescribedFn.flags.default.description).to.equal('described test');
             done();
         });
 

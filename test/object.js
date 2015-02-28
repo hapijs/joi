@@ -383,6 +383,44 @@ describe('object', function () {
                 });
             });
         });
+
+        it('strips keys flagged with strip', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string().strip(),
+                b: Joi.string()
+            });
+            schema.validate({ a: 'test', b: 'test' }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.not.exist();
+                expect(value.b).to.equal('test');
+                done();
+            });
+        });
+
+        it('does not alter the original object when stripping keys', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string().strip(),
+                b: Joi.string()
+            });
+
+            var valid = {
+                a: 'test',
+                b: 'test'
+            };
+
+            schema.validate(valid, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.not.exist();
+                expect(valid.a).to.equal('test');
+                expect(value.b).to.equal('test');
+                expect(valid.b).to.equal('test');
+                done();
+            });
+        });
     });
 
     describe('#unknown', function () {
@@ -502,10 +540,10 @@ describe('object', function () {
             });
         });
 
-        it('renames when data is nested in an array via includes', function (done) {
+        it('renames when data is nested in an array via items', function (done) {
 
             var schema = {
-                arr: Joi.array().includes(Joi.object({
+                arr: Joi.array().items(Joi.object({
                     one: Joi.string(),
                     two: Joi.string()
                 }).rename('uno', 'one').rename('dos', 'two'))
@@ -702,7 +740,7 @@ describe('object', function () {
             Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of [x]');
+                expect(err.message).to.equal('child "5" fails because ["5" must be a boolean]. child "bb" fails because ["bb" must be one of [x]]');
 
                 Helper.validate(schema, [
                     [{ a: 5 }, true],
@@ -727,7 +765,7 @@ describe('object', function () {
             Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"5" must be a boolean. "bb" must be one of [x]');
+                expect(err.message).to.equal('child "x" fails because [child "5" fails because ["5" must be a boolean], child "bb" fails because ["bb" must be one of [x]]]');
                 done();
             });
         });
@@ -884,7 +922,7 @@ describe('object', function () {
             }).validate({ a: { b: { c: 1 } } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"value" must contain at least one of [x, y]');
+                expect(err.message).to.equal('child "a" fails because [child "b" fails because ["value" must contain at least one of [x, y]]]');
                 done();
             });
         });
@@ -907,7 +945,7 @@ describe('object', function () {
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"value" validation failed because "d.e" failed to equal to a.c');
+                expect(err.message).to.equal('"d.e" validation failed because "d.e" failed to equal to a.c');
 
                 Helper.validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
@@ -930,7 +968,7 @@ describe('object', function () {
             schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"value" validation failed because "d.e" failed to equal to a.c');
+                expect(err.message).to.equal('"d.e" validation failed because "d.e" failed to equal to a.c');
 
                 Helper.validate(schema, [
                     [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
@@ -991,7 +1029,7 @@ describe('object', function () {
             }, function (err) {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"value" validation failed because "d.e" failed to pass the assertion test');
+                expect(err.message).to.equal('"d.e" validation failed because "d.e" failed to pass the assertion test');
                 done();
             });
         });

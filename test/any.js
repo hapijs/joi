@@ -61,7 +61,7 @@ describe('any', function () {
         it('validates without converting', function (done) {
 
             var schema = Joi.object({
-                array: Joi.array().includes(Joi.string().min(5), Joi.number().min(3))
+                array: Joi.array().items(Joi.string().min(5), Joi.number().min(3))
             }).strict();
 
             Helper.validate(schema, [
@@ -214,6 +214,229 @@ describe('any', function () {
             });
         });
 
+        it('throws when value is a method and no description is provided', function (done) {
+
+            expect(function () {
+
+                var schema = Joi.object({ foo: Joi.string().default(function () { return 'test'; }) });
+            }).to.throw();
+
+            done();
+        });
+
+        it('allows passing description as a property of a default method', function (done) {
+
+            var defaultFn = function () {
+                
+                return 'test';
+            };
+            defaultFn.description = 'test';
+
+            expect(function () {
+
+                var schema = Joi.object({ foo: Joi.string().default(defaultFn) });
+            }).to.not.throw();
+
+            done();
+        });
+
+        it('sets the value when passing a method', function (done) {
+
+            var schema = Joi.object({ foo: Joi.string().default(function () { return 'test'; }, 'testing') });
+            var input = {};
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.foo).to.equal('test');
+                done();
+            });
+        });
+
+        it('executes the default method each time validate is called', function (done) {
+
+            var count = 0;
+            var schema = Joi.object({ foo: Joi.number().default(function () { return ++count; }, 'incrementer') });
+            var input = {};
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.foo).to.equal(1);
+            });
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.foo).to.equal(2);
+            });
+
+            done();
+        });
+
+        it('passes a clone of the context if the default method accepts an argument', function (done) {
+
+            var schema = Joi.object({
+                foo: Joi.string().default(function (context) { return context.bar + 'ing'; }, 'testing'),
+                bar: Joi.string()
+            });
+            var input = { bar: 'test' };
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.foo).to.equal('testing');
+                done();
+            });
+        });
+
+        it('does not modify the original object when modifying the clone in a default method', function (done) {
+
+            var defaultFn = function (context) {
+
+                context.bar = 'broken';
+                return 'test';
+            };
+            defaultFn.description = 'testing';
+
+            var schema = Joi.object({
+                foo: Joi.string().default(defaultFn),
+                bar: Joi.string()
+            });
+            var input = { bar: 'test' };
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.bar).to.equal('test');
+                expect(value.foo).to.equal('test');
+                done();
+            });
+        });
+
+        it('passes undefined as the context if the default method has no parent', function (done) {
+
+            var c;
+            var methodCalled = false;
+            var schema = Joi.string().default(function (context) {
+
+                methodCalled = true;
+                c = context;
+                return 'test';
+            }, 'testing');
+
+            schema.validate(undefined, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(methodCalled).to.equal(true);
+                expect(c).to.equal(undefined);
+                expect(value).to.equal('test');
+                done();
+            });
+        });
+
+        it('allows passing a method with no description to default when the object being validated is a function', function (done) {
+
+            var defaultFn = function () {
+
+                return 'just a function';
+            };
+
+            var schema;
+            expect(function () {
+
+                schema = Joi.func().default(defaultFn);
+            }).to.not.throw();
+
+            schema.validate(undefined, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(defaultFn);
+                done();
+            });
+        });
+
+        it('allows passing a method that generates a default method when validating a function', function (done) {
+
+            var defaultFn = function () {
+
+                return 'just a function';
+            };
+
+            var defaultGeneratorFn = function () {
+
+                return defaultFn;
+            };
+            defaultGeneratorFn.description = 'generate a default fn';
+
+            var schema;
+            expect(function () {
+
+                schema = Joi.func().default(defaultGeneratorFn);
+            }).to.not.throw();
+
+            schema.validate(undefined, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(defaultFn);
+                done();
+            });
+        });
+
+        it('allows passing a ref as a default without a description', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.string().default(Joi.ref('a'))
+            });
+
+            schema.validate({ a: 'test' }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.equal('test');
+                expect(value.b).to.equal('test');
+                done();
+            });
+        });
+
+        it('ignores description when passing a ref as a default', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.string().default(Joi.ref('a'), 'this is a ref')
+            });
+
+            schema.validate({ a: 'test' }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.equal('test');
+                expect(value.b).to.equal('test');
+                done();
+            });
+        });
+
+        it('catches errors in default methods', function (done) {
+
+            var defaultFn = function () {
+
+                throw new Error('boom');
+            };
+            defaultFn.description = 'broken method';
+
+            var schema = Joi.string().default(defaultFn);
+
+            schema.validate(undefined, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.details).to.have.length(1);
+                expect(err.details[0].message).to.contain('threw an error when running default method');
+                expect(err.details[0].type).to.equal('any.default');
+                expect(err.details[0].context).to.be.an.instanceof(Error);
+                expect(err.details[0].context.message).to.equal('boom');
+                done();
+            });
+        });
+
         it('should not overide a value when value is given', function (done) {
 
             var schema = Joi.object({ foo: Joi.string().default('bar') });
@@ -298,6 +521,33 @@ describe('any', function () {
                 [{ b: undefined }, true],
                 [{ b: null }, false]
             ], done);
+        });
+    });
+
+    describe('#strip', function () {
+
+        it('validates and returns undefined', function (done) {
+
+            var schema = Joi.string().strip();
+
+            schema.validate('test', function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.not.exist();
+                done();
+            });
+        });
+
+        it('validates and returns an error', function (done) {
+
+            var schema = Joi.string().strip();
+
+            schema.validate(1, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" must be a string');
+                done();
+            });
         });
     });
 

@@ -12,97 +12,104 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 ## Table of Contents
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
+
+<!-- toc -->
+
 - [Example](#example)
 - [Usage](#usage)
     - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
     - [`compile(schema)`](#compileschema)
     - [`assert(value, schema, [message])`](#assertvalue-schema-message)
     - [`any`](#any)
-        - [`any.allow(value)`](#anyallowvalue)
-        - [`any.valid(value)`](#anyvalidvalue)
-        - [`any.invalid(value)`](#anyinvalidvalue)
-        - [`any.required()`](#anyrequired)
-        - [`any.optional()`](#anyoptional)
-        - [`any.forbidden()`](#anyforbidden)
-        - [`any.description(desc)`](#anydescriptiondesc)
-        - [`any.notes(notes)`](#anynotesnotes)
-        - [`any.tags(tags)`](#anytagstags)
-        - [`any.meta(meta)`](#anymetameta)
-        - [`any.example(value)`](#anyexamplevalue)
-        - [`any.unit(name)`](#anyunitname)
-        - [`any.options(options)`](#anyoptionsoptions)
-        - [`any.strict()`](#anystrict)
-        - [`any.default(value)`](#anydefaultvalue)
-        - [`any.concat(schema)`](#anyconcatschema)
-        - [`any.when(ref, options)`](#anywhenref-options)
-        - [`any.label(name)`](#anylabelname)
-        - [`any.raw(isRaw)`](#anyrawisraw)
+      - [`any.allow(value)`](#anyallowvalue)
+      - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
+      - [`any.invalid(value)` - aliases: `disallow`, `not`](#anyinvalidvalue---aliases-disallow-not)
+      - [`any.required()`](#anyrequired)
+      - [`any.optional()`](#anyoptional)
+      - [`any.forbidden()`](#anyforbidden)
+      - [`any.strip()`](#anystrip)
+      - [`any.description(desc)`](#anydescriptiondesc)
+      - [`any.notes(notes)`](#anynotesnotes)
+      - [`any.tags(tags)`](#anytagstags)
+      - [`any.meta(meta)`](#anymetameta)
+      - [`any.example(value)`](#anyexamplevalue)
+      - [`any.unit(name)`](#anyunitname)
+      - [`any.options(options)`](#anyoptionsoptions)
+      - [`any.strict()`](#anystrict)
+      - [`any.default(value, [description])`](#anydefaultvalue-description)
+      - [`any.concat(schema)`](#anyconcatschema)
+      - [`any.when(ref, options)`](#anywhenref-options)
+      - [`any.label(name)`](#anylabelname)
+      - [`any.raw(isRaw)`](#anyrawisraw)
     - [`array`](#array)
-        - [`array.sparse(enabled)`](#arraysparseenabled)
-        - [`array.includes(type)`](#arrayincludestype)
-        - [`array.excludes(type)`](#arrayexcludestype)
-        - [`array.min(limit)`](#arrayminlimit)
-        - [`array.max(limit)`](#arraymaxlimit)
-        - [`array.length(limit)`](#arraylengthlimit)
-        - [`array.unique()`](#arrayunique)
+      - [`array.sparse(enabled)`](#arraysparseenabled)
+      - [`array.single(enabled)`](#arraysingleenabled)
+      - [`array.items(type)`](#arrayitemstype)
+      - [`array.min(limit)`](#arrayminlimit)
+      - [`array.max(limit)`](#arraymaxlimit)
+      - [`array.length(limit)`](#arraylengthlimit)
+      - [`array.unique()`](#arrayunique)
+    - [`boolean`](#boolean)
     - [`binary`](#binary)
       - [`binary.encoding(encoding)`](#binaryencodingencoding)
       - [`binary.min(limit)`](#binaryminlimit)
       - [`binary.max(limit)`](#binarymaxlimit)
       - [`binary.length(limit)`](#binarylengthlimit)
-    - [`boolean()`](#boolean)
     - [`date`](#date)
-        - [`date.min(date)`](#datemindate)
-        - [`date.max(date)`](#datemaxdate)
-        - [`date.format(format)`](#dateformatformat)
-        - [`date.iso()`](#dateiso)
+      - [`date.min(date)`](#datemindate)
+      - [`date.max(date)`](#datemaxdate)
+      - [`date.format(format)`](#dateformatformat)
+      - [`date.iso()`](#dateiso)
     - [`func`](#func)
     - [`number`](#number)
-        - [`number.min(limit)`](#numberminlimit)
-        - [`number.max(limit)`](#numbermaxlimit)
-        - [`number.greater(limit)`](#numbergreaterlimit)
-        - [`number.less(limit)`](#numberlesslimit)
-        - [`number.integer()`](#numberinteger)
-        - [`number.precision(limit)`](#numberprecisionlimit)
-        - [`number.multiple(base)`](#numbermultiplebase)
+      - [`number.min(limit)`](#numberminlimit)
+      - [`number.max(limit)`](#numbermaxlimit)
+      - [`number.greater(limit)`](#numbergreaterlimit)
+      - [`number.less(limit)`](#numberlesslimit)
+      - [`number.integer()`](#numberinteger)
+      - [`number.precision(limit)`](#numberprecisionlimit)
+      - [`number.multiple(base)`](#numbermultiplebase)
     - [`object`](#object)
-        - [`object.keys([schema])`](#objectkeysschema)
-        - [`object.min(limit)`](#objectminlimit)
-        - [`object.max(limit)`](#objectmaxlimit)
-        - [`object.length(limit)`](#objectlengthlimit)
-        - [`object.pattern(regex, schema)`](#objectpatternregex-schema)
-        - [`object.and(peers)`](#objectandpeers)
-        - [`object.nand(peers)`](#objectnandpeers)
-        - [`object.or(peers)`](#objectorpeers)
-        - [`object.xor(peers)`](#objectxorpeers)
-        - [`object.with(key, peers)`](#objectwithkey-peers)
-        - [`object.without(key, peers)`](#objectwithoutkey-peers)
-        - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
-        - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
-        - [`object.unknown([allow])`](#objectunknownallow)
-        - [`object.type(constructor, [name])`](#objecttypeconstructor-name)
-        - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
-        - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
+      - [`object.keys([schema])`](#objectkeysschema)
+      - [`object.min(limit)`](#objectminlimit)
+      - [`object.max(limit)`](#objectmaxlimit)
+      - [`object.length(limit)`](#objectlengthlimit)
+      - [`object.pattern(regex, schema)`](#objectpatternregex-schema)
+      - [`object.and(peers)`](#objectandpeers)
+      - [`object.nand(peers)`](#objectnandpeers)
+      - [`object.or(peers)`](#objectorpeers)
+      - [`object.xor(peers)`](#objectxorpeers)
+      - [`object.with(key, peers)`](#objectwithkey-peers)
+      - [`object.without(key, peers)`](#objectwithoutkey-peers)
+      - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
+      - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
+      - [`object.unknown([allow])`](#objectunknownallow)
+      - [`object.type(constructor, [name])`](#objecttypeconstructor-name)
+      - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
+      - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
     - [`string`](#string)
-        - [`string.insensitive()`](#stringinsensitive)
-        - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
-        - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
-        - [`string.creditCard()`](#stringcreditCard)
-        - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
-        - [`string.regex(pattern, [name])`](#stringregexpattern-name)
-        - [`string.alphanum()`](#stringalphanum)
-        - [`string.token()`](#stringtoken)
-        - [`string.email([options])`](#stringemailoptions)
-        - [`string.uri()`](#stringuri)
-        - [`string.guid()`](#stringguid)
-        - [`string.hostname()`](#stringhostname)
-        - [`string.lowercase()`](#stringlowercase)
-        - [`string.uppercase()`](#stringuppercase)
-        - [`string.trim()`](#stringtrim)
+      - [`string.insensitive()`](#stringinsensitive)
+      - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
+      - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
+      - [`string.creditCard()`](#stringcreditcard)
+      - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
+      - [`string.regex(pattern, [name])`](#stringregexpattern-name)
+      - [`string.alphanum()`](#stringalphanum)
+      - [`string.token()`](#stringtoken)
+      - [`string.email([options])`](#stringemailoptions)
+      - [`string.uri()`](#stringuri)
+      - [`string.guid()`](#stringguid)
+      - [`string.hex()`](#stringhex)
+      - [`string.hostname()`](#stringhostname)
+      - [`string.lowercase()`](#stringlowercase)
+      - [`string.uppercase()`](#stringuppercase)
+      - [`string.trim()`](#stringtrim)
     - [`alternatives`](#alternatives)
-        - [`alternatives.try(schemas)`](#alternativestryschemas)
-        - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
+      - [`alternatives.try(schemas)`](#alternativestryschemas)
+      - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
     - [`ref(key, [options])`](#refkey-options)
+
+<!-- tocstop -->
 
 # Example
 
@@ -269,6 +276,9 @@ Whitelists a value where:
 - `value` - the allowed value which can be of any type and will be matched against the validated value before applying any other rules.
   `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
 
+Note that this whitelist of allowed values is in *addition* to any other permitted values.
+To create an exclusive whitelist of values, see [`any.valid(value)`](#anyvalidvalue).
+
 ```javascript
 var schema = {
     a: Joi.any().allow('a'),
@@ -277,7 +287,7 @@ var schema = {
 };
 ```
 
-#### `any.valid(value)`
+#### `any.valid(value)` - aliases: `only`, `equal`
 
 Adds the provided values into the allowed whitelist and marks them as the only valid values allowed where:
 - `value` - the allowed value which can be of any type and will be matched against the validated value before applying any other rules.
@@ -291,7 +301,7 @@ var schema = {
 };
 ```
 
-#### `any.invalid(value)`
+#### `any.invalid(value)` - aliases: `disallow`, `not`
 
 Blacklists a value where:
 - `value` - the forbidden value which can be of any type and will be matched against the validated value before applying any other rules.
@@ -329,6 +339,27 @@ Marks a key as forbidden which will not allow any value except `undefined`. Used
 var schema = {
     a: Joi.any().forbidden()
 };
+```
+
+#### `any.strip()`
+
+Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
+
+```javascript
+var schema = {
+    username: Joi.string(),
+    password: Joi.string().strip()
+};
+
+schema.validate({ username: 'test', password: 'hunter2' }, function (err, value) {
+    // value = { username: 'test' }
+});
+
+var schema = Joi.array().items(Joi.string(), Joi.any().strip());
+
+schema.validate(['one', 'two', true, false, 1, 2], function (err, value) {
+    // value = ['one', 'two']
+});
 ```
 
 #### `any.description(desc)`
@@ -404,20 +435,40 @@ Sets the `options.convert` options to `false` which prevent type casting for the
 var schema = Joi.any().strict();
 ```
 
-#### `any.default(value)`
+#### `any.default(value, [description])`
 
 Sets a default value if the original value is undefined where:
-- `value` - the value. `value` supports [references](#refkey-options).
+- `value` - the value. `value` supports [references](#refkey-options). `value` may also be a function which returns the default value. If `value` is specified as a function that accepts a single parameter, that parameter will be a context object that can be used to derive the resulting value. **This clones the object however, which incurs some overhead so if you don't need access to the context define your method so that it does not accept any parameters**.
 
 Note that if `value` is an object, any changes to the object after `default()` is called will change the reference
 and any future assignment.
 
+Additionally, when specifying a method you must either have a `description` property on your method or the second parameter is required.
+
 ```javascript
-var schema = {
-    username: Joi.string().default('new_user')
+var generateUsername = function (context) {
+
+  return context.firstname.toLowerCase() + '-' + context.lastname.toLowerCase();
 };
-Joi.validate({}, schema, function (err, value) { });
-// value === { username: "new_user" }
+generateUsername.description = 'generated username';
+
+var schema = {
+    username: Joi.string().default(generateUsername),
+    firstname: Joi.string(),
+    lastname: Joi.string(),
+    created: Joi.date().default(Date.now, 'time of creation'),
+    status: Joi.string().default('registered')
+};
+
+Joi.validate({
+    firstname: 'Jane',
+    lastname: 'Doe'
+}, function (err, value) {
+
+    // value.status === 'registered'
+    // value.username === 'jane-doe'
+    // value.created will be the time of validation
+});
 ```
 
 #### `any.concat(schema)`
@@ -511,22 +562,18 @@ schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
 schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 ```
 
-#### `array.includes(type)`
+#### `array.items(type)`
 
 List the types allowed for the array values where:
 - `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
-```javascript
-var schema = Joi.array().includes(Joi.string(), Joi.number());
-```
-
-#### `array.excludes(type)`
-
-List the types forbidden for the array values where:
-- `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
+If a given type is `.required()` then there must be a matching item in the array. If a type is `.forbidden()` then it cannot appear in the array. Required items
+can be added multiple times to signify that multiple items must be found.
 
 ```javascript
-var schema = Joi.array().excludes(Joi.object());
+var schema = Joi.array().items(Joi.string(), Joi.number()); // array may contain strings and numbers
+var schema = Joi.array().items(Joi.string().required(), Joi.string().required()); // array must contain at least two strings
+var schema = Joi.array().items(Joi.string().valid('not allowed').forbidden(), Joi.string()); // array may contain strings, but none of those strings can match 'not allowed'
 ```
 
 #### `array.min(limit)`
@@ -1133,6 +1180,14 @@ Requires the string value to be a valid GUID.
 
 ```javascript
 var schema = Joi.string().guid();
+```
+
+#### `string.hex()`
+
+Requires the string value to be a valid hexadecimal string.
+
+```javascript
+var schema = Joi.string().hex();
 ```
 
 #### `string.hostname()`

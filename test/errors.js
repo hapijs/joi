@@ -74,7 +74,7 @@ describe('errors', function () {
 
             expect(err).to.exist();
             expect(err.name).to.equal('ValidationError');
-            expect(err.message).to.equal('"value" 11. "required" 7. "xor" 7. "email" 19. "date" 18. "alphanum" 16. "min" 14. "max" 15. "notEmpty" 3');
+            expect(err.message).to.equal('"value" 11. "required" 7. "xor" 7. child "email" fails because ["email" 19]. child "date" fails because ["date" 18]. child "alphanum" fails because ["alphanum" 16]. child "min" fails because ["min" 14]. child "max" fails because ["max" 15]. child "notEmpty" fails because ["notEmpty" 3]');
             done();
         });
     });
@@ -96,7 +96,7 @@ describe('errors', function () {
 
         Joi.validate({ 'a()': 'x' }, schema, function (err, value) {
 
-            expect(err.message).to.equal('"a()" must be a number');
+            expect(err.message).to.equal('child "a()" fails because ["a()" must be a number]');
 
             Joi.validate({ 'b()': 'x' }, schema, function (err, value) {
 
@@ -131,9 +131,9 @@ describe('errors', function () {
         });
     });
 
-    it('returns a full path to an error value on an array (includes)', function (done) {
+    it('returns a full path to an error value on an array (items)', function (done) {
 
-        var schema = Joi.array().includes(Joi.array().includes({ x: Joi.number() }));
+        var schema = Joi.array().items(Joi.array().items({ x: Joi.number() }));
         var input = [
             [{ x: 1 }],
             [{ x: 1 }, { x: 'a' }]
@@ -147,9 +147,9 @@ describe('errors', function () {
         });
     });
 
-    it('returns a full path to an error value on an array (excludes)', function (done) {
+    it('returns a full path to an error value on an array (items forbidden)', function (done) {
 
-        var schema = Joi.array().includes(Joi.array().excludes({ x: Joi.string() }));
+        var schema = Joi.array().items(Joi.array().items(Joi.object({ x: Joi.string() }).forbidden()));
         var input = [
             [{ x: 1 }],
             [{ x: 1 }, { x: 'a' }]
@@ -166,7 +166,7 @@ describe('errors', function () {
     it('returns a full path to an error value on an object', function (done) {
 
         var schema = {
-            x: Joi.array().includes({ x: Joi.number() })
+            x: Joi.array().items({ x: Joi.number() })
         };
 
         var input = {
@@ -201,7 +201,7 @@ describe('errors', function () {
 
     it('overrides wrapArrays', function (done) {
 
-        Joi.array().includes(Joi.boolean()).options({ language: { messages: { wrapArrays: false }}}).validate([4], function (err, value) {
+        Joi.array().items(Joi.boolean()).options({ language: { messages: { wrapArrays: false }}}).validate([4], function (err, value) {
 
             expect(err.message).to.equal('"value" at position 0 fails because "0" must be a boolean');
             done();
