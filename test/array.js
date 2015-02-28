@@ -755,4 +755,18 @@ describe('array', function () {
             done();
         });
     });
+
+    describe('#options', function () {
+
+        it('respects stripUnknown', function (done) {
+
+            var schema = Joi.array().items(Joi.string()).options({ stripUnknown: true });
+            schema.validate(['one', 'two', 3, 4, true, false], function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['one', 'two']);
+                done();
+            });
+        });
+    });
 });
