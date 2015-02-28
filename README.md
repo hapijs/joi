@@ -27,6 +27,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`any.required()`](#anyrequired)
       - [`any.optional()`](#anyoptional)
       - [`any.forbidden()`](#anyforbidden)
+      - [`any.strip()`](#anystrip)
       - [`any.description(desc)`](#anydescriptiondesc)
       - [`any.notes(notes)`](#anynotesnotes)
       - [`any.tags(tags)`](#anytagstags)
@@ -337,6 +338,27 @@ Marks a key as forbidden which will not allow any value except `undefined`. Used
 var schema = {
     a: Joi.any().forbidden()
 };
+```
+
+#### `any.strip()`
+
+Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
+
+```javascript
+var schema = {
+    username: Joi.string(),
+    password: Joi.string().strip()
+};
+
+schema.validate({ username: 'test', password: 'hunter2' }, function (err, value) {
+    // value = { username: 'test' }
+});
+
+var schema = Joi.array().items(Joi.string(), Joi.any().strip());
+
+schema.validate(['one', 'two', true, false, 1, 2], function (err, value) {
+    // value = ['one', 'two']
+});
 ```
 
 #### `any.description(desc)`

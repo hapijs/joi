@@ -249,6 +249,17 @@ describe('array', function () {
                 done();
             });
         });
+
+        it('can strip matching items', function (done) {
+
+            var schema = Joi.array().items(Joi.string(), Joi.any().strip());
+            schema.validate(['one', 'two', 3, 4], function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['one', 'two']);
+                done();
+            });
+        });
     });
 
     describe('#min', function () {
