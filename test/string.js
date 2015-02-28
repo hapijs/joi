@@ -1365,7 +1365,7 @@ describe('string', function () {
 
         it('validates uri with a single regex scheme provided', function (done) {
             var schema = Joi.string().uri({
-                scheme: 'https?'
+                scheme: /https?/
             });
             Helper.validate(schema, [
                 ['http://google.com', true],
@@ -1378,7 +1378,7 @@ describe('string', function () {
 
         it('validates uri with multiple schemes provided', function (done) {
             var schema = Joi.string().uri({
-                scheme: ['http', 'https', 'ftp', 'file', 'git+http']
+                scheme: [/https?/, 'ftp', 'file', 'git+http']
             });
             Helper.validate(schema, [
                 ['http://google.com', true],
@@ -1399,6 +1399,13 @@ describe('string', function () {
             });
         });
 
+        it('validates uri treats uriOptions.scheme as optional with a friendly error message', function (done) {
+            expect(function () {
+                Joi.string().uri({});
+            }).to.not.throw();
+            done();
+        });
+
         it('validates uri requires uriOptions as an object with a friendly error message', function (done) {
             expect(function () {
                 Joi.string().uri('http');
@@ -1406,7 +1413,40 @@ describe('string', function () {
             done();
         });
 
-        it('validates uri requires uriOptions.scheme to be a valid scheme with a friendly error message', function (done) {
+        it('validates uri requires uriOptions.scheme to be a RegExp, String, or Array with a friendly error message', function (done) {
+            expect(function () {
+                Joi.string().uri({
+                    scheme: {}
+                });
+            }).to.throw(Error, 'scheme must be a RegExp, String, or Array');
+            done();
+        });
+
+        it('validates uri requires uriOptions.scheme to be an Array of schemes to all be valid schemes with a friendly error message', function (done) {
+            expect(function () {
+                Joi.string().uri({
+                    scheme: [
+                        'http',
+                        '~!@#$%^&*()_'
+                    ]
+                });
+            }).to.throw(Error, 'scheme at position 1 must be a valid scheme');
+            done();
+        });
+
+        it('validates uri requires uriOptions.scheme to be an Array of schemes to be strings or RegExp', function (done) {
+            expect(function () {
+                Joi.string().uri({
+                    scheme: [
+                        'http',
+                        {}
+                    ]
+                });
+            }).to.throw(Error, 'scheme at position 1 must be a RegExp or String');
+            done();
+        });
+
+        it('validates uri requires uriOptions.scheme to be a valid String scheme with a friendly error message', function (done) {
             expect(function () {
                 Joi.string().uri({
                     scheme: '~!@#$%^&*()_'
