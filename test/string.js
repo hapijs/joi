@@ -1476,7 +1476,7 @@ describe('string', function () {
                 Joi.string().uri({
                     scheme: '~!@#$%^&*()_'
                 });
-            }).to.throw(Error, 'scheme must be a valid scheme');
+            }).to.throw(Error, 'scheme at position 0 must be a valid scheme');
             done();
         });
 
