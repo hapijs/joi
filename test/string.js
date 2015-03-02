@@ -1321,6 +1321,23 @@ describe('string', function () {
                 ['http://www.narwhaljs.org/blog/categories?id=news', true],
                 ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', true],
                 ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['http://_jabber._tcp.google.com:80/test', true],
+                ['http://user:pass@_jabber._tcp.google.com:80/test', true],
+                ['http://[fe80::1]/a/b?a=b#abc', true],
+                ['http://user:password@[3ffe:2a00:100:7031::1]:8080', true],
+                ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', true],
+                ['git+http://github.com/joyent/node.git', true],
+                ['http://bucket_name.s3.amazonaws.com/image.jpg', true],
+                ['dot.test://foo/bar', true],
+                ['svn+ssh://foo/bar', true],
+                ['dash-test://foo/bar', true],
+                ['xmpp:isaacschlueter@jabber.org', true],
+                ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', true],
+                ['javascript:alert(\'hello\');', true],
+                ['file://localhost/etc/node/', true],
+                ['file:///etc/node/', true],
+                ['http://USER:PW@www.ExAmPlE.com/', true],
                 ['g:h', true],
                 ['http://a/b/c/g', true],
                 ['http://a/b/c/g/', true],
@@ -1346,7 +1363,11 @@ describe('string', function () {
                 ['invalid uri', false],
                 ['1http://google.com', false],
                 ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false],
-                ['', false]
+                ['', false],
+                ['(╯°□°)╯︵ ┻━┻', false],
+                ['one/two/three?value=abc&value2=123#david-rules', false],
+                ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', false],
+                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false]
             ], done);
         });
 
