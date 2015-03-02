@@ -97,6 +97,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`string.alphanum()`](#stringalphanum)
       - [`string.token()`](#stringtoken)
       - [`string.email([options])`](#stringemailoptions)
+      - [`string.uri([options])`](#stringurioptions)
       - [`string.guid()`](#stringguid)
       - [`string.hex()`](#stringhex)
       - [`string.hostname()`](#stringhostname)
@@ -1163,6 +1164,23 @@ Requires the string value to be a valid email address.
 
 ```javascript
 var schema = Joi.string().email();
+```
+
+#### `string.uri([options])`
+
+Requires the string value to be a valid [RFC 3986](http://tools.ietf.org/html/rfc3986) URI.
+
+- `options` - optional settings:
+    - `scheme` - Specifies one or more acceptable Schemes, should only include the scheme name. Can be an Array or String (strings are automatically escaped for use in a Regular Expression).
+
+```javascript
+// Accept git or git http/https
+var schema = Joi.string().uri({
+  scheme: [
+    'git',
+    /git\+https?/
+  ]
+});
 ```
 
 #### `string.guid()`
