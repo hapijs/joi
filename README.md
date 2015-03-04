@@ -537,7 +537,7 @@ Generates a schema object that matches an array data type. Note that undefined v
 Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
-var array = Joi.array().includes(Joi.string().valid('a', 'b'));
+var array = Joi.array().items(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], function (err, value) { });
 ```
 
@@ -557,7 +557,7 @@ Allow single values to be checked against rules as if it were provided as an arr
 `enabled` can be used with a falsy value to go back to the default behavior.
 
 ```javascript
-var schema = Joi.array().includes(Joi.number()).single();
+var schema = Joi.array().items(Joi.number()).single();
 schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
 schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 ```
