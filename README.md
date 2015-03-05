@@ -463,7 +463,7 @@ var schema = {
 Joi.validate({
     firstname: 'Jane',
     lastname: 'Doe'
-}, function (err, value) {
+}, schema, function (err, value) {
 
     // value.status === 'registered'
     // value.username === 'jane-doe'
