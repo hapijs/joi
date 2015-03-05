@@ -185,6 +185,19 @@ describe('array', function () {
             });
         });
 
+        it('does not re-run required tests that have already failed', function (done) {
+
+            var schema = Joi.array().items(Joi.string().valid('four').required(), Joi.boolean().required(), Joi.number());
+            var input = ['one', 'two', 'three', 'four', 'four', 'four'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" at position 0 does not match any of the allowed types');
+                done();
+            });
+        });
+
         it('can require duplicates of the same schema and fail', function (done) {
 
             var schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string().valid('four').required(), Joi.string());
