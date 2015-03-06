@@ -567,13 +567,16 @@ schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 List the types allowed for the array values where:
 - `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
-If a given type is `.required()` then there must be a matching item in the array. If a type is `.forbidden()` then it cannot appear in the array. Required items
-can be added multiple times to signify that multiple items must be found.
+If a given type is `.required()` then there must be a matching item in the array. 
+If a type is `.forbidden()` then it cannot appear in the array. 
+Required items can be added multiple times to signify that multiple items must be found.
+Errors will contain the number of items that didn't match. Any unmatched item having a [label](#anylabelname) will be mentioned explicitly.
 
 ```javascript
 var schema = Joi.array().items(Joi.string(), Joi.number()); // array may contain strings and numbers
 var schema = Joi.array().items(Joi.string().required(), Joi.string().required()); // array must contain at least two strings
 var schema = Joi.array().items(Joi.string().valid('not allowed').forbidden(), Joi.string()); // array may contain strings, but none of those strings can match 'not allowed'
+var schema = Joi.array().items(Joi.string().label('My string').required(), Joi.number().required()); // If this fails it can result in `[ValidationError: "value" does not contain [My string] and 1 other required value(s)]`
 ```
 
 #### `array.min(limit)`
