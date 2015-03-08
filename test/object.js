@@ -421,6 +421,24 @@ describe('object', function () {
                 done();
             });
         });
+
+        it('should strip from an alternative', function (done) {
+
+            var schema = Joi.object({
+                a: [Joi.boolean().strip()]
+            });
+
+            var valid = {
+                a: true
+            };
+
+            schema.validate(valid, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal({});
+                done();
+            });
+        });
     });
 
     describe('#unknown', function () {
