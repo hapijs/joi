@@ -636,6 +636,22 @@ describe('object', function () {
                 done();
             });
         });
+
+        it('should remove a key with override if from does not exist', function (done) {
+
+            var schema = Joi.object().rename('b', 'a', { override: true });
+
+            var input = {
+                a: 'something'
+            };
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal({});
+                done();
+            });
+        });
     });
 
     describe('#describe', function () {

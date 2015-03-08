@@ -20,7 +20,7 @@
   "devDependencies": {
     "code": "1.x.x",
     "lab": "5.x.x",
-    "markdown-toc": "^0.7.2"
+    "markdown-toc": "^0.8.1"
   },
   "scripts": {
     "test": "lab -t 100 -a code",
