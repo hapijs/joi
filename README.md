@@ -488,12 +488,13 @@ Converts the type into an [`alternatives`](#alternatives) type where the conditi
 - `ref` - the key name or [reference](#refkey-options).
 - `options` - an object with:
     - `is` - the required condition **joi** type.
+    - `isnt` - the condition **joi** type required to not be met
     - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
     - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
 
 ```javascript
 var schema = {
-    a: Joi.any().valid('x').when('b', { is: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') }),
+    a: Joi.any().valid('x').when('b', { is: Joi.number(), isnt: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') }),
     b: Joi.any()
 };
 ```
