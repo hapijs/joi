@@ -134,7 +134,7 @@ describe('string', function () {
             expect(function () {
 
                 Joi.string().min('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
 
@@ -143,7 +143,16 @@ describe('string', function () {
             expect(function () {
 
                 Joi.string().min(1.2);
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
+            done();
+        });
+
+        it('throws when limit is not a positive integer', function (done) {
+
+            expect(function () {
+
+                Joi.string().min(-1);
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
 
@@ -155,6 +164,25 @@ describe('string', function () {
                 ['a', false]
             ], done);
         });
+
+        it('accepts references as min length', function(done) {
+
+            var schema = Joi.object({ a: Joi.number(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
+            Helper.validate(schema, [
+                [{ a: 2, b: '\u00bd' }, true],
+                [{ a: 2, b: 'a' }, false],
+                [{ a: 2, b: 'a' }, false, null, 'child "b" fails because ["b" length must be at least 2 characters long]']
+            ], done);
+        });
+
+        it('errors if reference is not a number', function(done) {
+
+            var schema = Joi.object({ a: Joi.any(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
+
+            Helper.validate(schema, [
+                [{ a: 'Hi there', b: '\u00bd' }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
     });
 
     describe('#max', function () {
@@ -164,7 +192,7 @@ describe('string', function () {
             expect(function () {
 
                 Joi.string().max('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
 
@@ -173,7 +201,16 @@ describe('string', function () {
             expect(function () {
 
                 Joi.string().max(1.2);
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
+            done();
+        });
+
+        it('throws when limit is not a positive integer', function (done) {
+
+            expect(function () {
+
+                Joi.string().max(-1);
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
 
@@ -183,6 +220,25 @@ describe('string', function () {
             Helper.validate(schema, [
                 ['\u00bd', false],
                 ['a', true]
+            ], done);
+        });
+
+        it('accepts references as min length', function(done) {
+
+            var schema = Joi.object({ a: Joi.number(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
+            Helper.validate(schema, [
+                [{ a: 2, b: '\u00bd' }, true],
+                [{ a: 2, b: 'three' }, false],
+                [{ a: 2, b: 'three' }, false, null, 'child "b" fails because ["b" length must be less than or equal to 2 characters long]']
+            ], done);
+        });
+
+        it('errors if reference is not a number', function(done) {
+
+            var schema = Joi.object({ a: Joi.any(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
+
+            Helper.validate(schema, [
+                [{ a: 'Hi there', b: '\u00bd' }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
@@ -231,7 +287,7 @@ describe('string', function () {
             expect(function () {
 
                 Joi.string().length('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
 
@@ -240,7 +296,16 @@ describe('string', function () {
             expect(function () {
 
                 Joi.string().length(1.2);
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
+            done();
+        });
+
+        it('throws when limit is not a positive integer', function (done) {
+
+            expect(function () {
+
+                Joi.string().length(-42);
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
 
@@ -250,6 +315,25 @@ describe('string', function () {
             Helper.validate(schema, [
                 ['\u00bd', true],
                 ['a', false]
+            ], done);
+        });
+
+        it('accepts references as length', function(done) {
+
+            var schema = Joi.object({ a: Joi.number(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
+            Helper.validate(schema, [
+                [{ a: 2, b: '\u00bd' }, true],
+                [{ a: 2, b: 'a' }, false],
+                [{ a: 2, b: 'a' }, false, null, 'child "b" fails because ["b" length must be 2 characters long]']
+            ], done);
+        });
+
+        it('errors if reference is not a number', function(done) {
+
+            var schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
+
+            Helper.validate(schema, [
+                [{ a: 'Hi there', b: '\u00bd' }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
