@@ -528,7 +528,7 @@ describe('number', function () {
         it('supports 64bit numbers', function (done) {
 
             var schema = Joi.number().min(1394035612500);
-            var input = 1394035612552
+            var input = 1394035612552;
 
             schema.validate(input, function (err, value) {
 
@@ -561,8 +561,8 @@ describe('number', function () {
                 [0.12345, true, null, 0.1235],
                 [123456, true, null, 123456],
                 [123456.123456, true, null, 123456.1235],
-                ["123456.123456", true, null, 123456.1235],
-                ["abc", false],
+                ['123456.123456', true, null, 123456.1235],
+                ['abc', false],
                 [NaN, false]
             ], done);
         });
@@ -574,12 +574,12 @@ describe('number', function () {
 
             var schema = Joi.number().min(0);
             expect(schema.describe()).to.deep.equal({
-                "type": "number",
-                "invalids": [Infinity, -Infinity],
-                "rules": [
+                type: 'number',
+                invalids: [Infinity, -Infinity],
+                rules: [
                     {
-                        "name": "min",
-                        "arg": 0
+                        name: 'min',
+                        arg: 0
                     }
                 ]
             });

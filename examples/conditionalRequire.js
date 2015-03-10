@@ -1,12 +1,12 @@
 // This is an example of a survey to obtain the reputation of Parisians
 // It contains examples of how to conditionally require keys based on values of other keys
 
-var Joi = require("../");
+var Joi = require('../');
 
 // This is a valid value for integer rating 1 - 5
 var intRating = Joi.number().integer().min(1).max(5);
 
-var schema = Joi.object().keys({ 
+var schema = Joi.object().keys({
     // Do you know any French people? yes or no (required)
     q1: Joi.boolean().required(),
     // Do you know any Parisians? yes or no (required if answered yes in q1)
@@ -28,7 +28,7 @@ var schema = Joi.object().keys({
         .when('q3', {is: '11-50', then: Joi.array().min(8).max(40).includes(intRating).required() })
         .when('q3', {is: '50+' , then: Joi.array().min(40).includes(intRating).required().required() }),
     // Rate the reputation of Parisians in general, 1-5 rating
-    q6: intRating.required()    
+    q6: intRating.required()
 });
 
 var response = {

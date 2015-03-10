@@ -767,7 +767,7 @@ describe('Joi', function () {
 
                 expect(err).to.be.null();
                 done();
-            })
+            });
         });
     });
 
@@ -947,7 +947,7 @@ describe('Joi', function () {
     it('fails validation when parameter is required to be an Array but is given as string', function (done) {
 
         var obj = {
-            a: "an array"
+            a: 'an array'
         };
 
         Joi.object({ a: Joi.array() }).validate(obj, function (err, value) {
@@ -1024,12 +1024,12 @@ describe('Joi', function () {
     it('fails validation with extra keys', function (done) {
 
         var schema = {
-            a: Joi.number(),
+            a: Joi.number()
         };
 
         var obj = {
             a: 1,
-            b: 'a',
+            b: 'a'
         };
 
         Joi.compile(schema).validate(obj, function (err, value) {

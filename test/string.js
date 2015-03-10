@@ -218,7 +218,7 @@ describe('string', function () {
                     ['4012888888881881', true], // visa
                     ['4111111111111111', true], // visa
                     ['4111111111111112', false],
-                    [null, false],
+                    [null, false]
                 ], done);
             });
         });
@@ -753,7 +753,7 @@ describe('string', function () {
             Helper.validate(schema, [
                 ['joe@example.com', false],
                 ['joe@www.example.com', false],
-                ['joe@sub.www.example.com', true],
+                ['joe@sub.www.example.com', true]
             ], done);
         });
 
