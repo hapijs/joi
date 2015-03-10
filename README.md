@@ -782,6 +782,15 @@ Specifies the minimum value where:
 var schema = Joi.number().min(2);
 ```
 
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  min: Joi.number().required(),
+  max: Joi.number().min(Joi.ref('min')).required()
+});
+```
+
 #### `number.max(limit)`
 
 Specifies the maximum value where:
@@ -789,6 +798,15 @@ Specifies the maximum value where:
 
 ```javascript
 var schema = Joi.number().max(10);
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  min: Joi.number().max(Joi.ref('max')).required(),
+  max: Joi.number().required()
+});
 ```
 
 #### `number.greater(limit)`
@@ -799,12 +817,28 @@ Specifies that the value must be greater than `limit`.
 var schema = Joi.number().greater(5);
 ```
 
+```javascript
+var schema = Joi.object({
+  min: Joi.number().required(),
+  max: Joi.number().greater(Joi.ref('min')).required()
+});
+```
+
 #### `number.less(limit)`
 
 Specifies that the value must be less than `limit`.
 
 ```javascript
 var schema = Joi.number().less(10);
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  min: Joi.number().less(Joi.ref('max')).required(),
+  max: Joi.number().required()
+});
 ```
 
 #### `number.integer()`
