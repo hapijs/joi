@@ -135,6 +135,49 @@ describe('alternatives', function () {
             ], done);
         });
 
+        it('validates conditional isnt alternative', function (done) {
+
+            var schema = {
+                a: Joi.alternatives().when('b', { isnt: 5, then: 'x', otherwise: 'y' }),
+                b: Joi.any()
+            };
+
+            Helper.validate(schema, [
+                [{ a: 'x', b: 5 }, false],
+                [{ a: 'x', b: 6 }, true],
+                [{ a: 'y', b: 5 }, true],
+                [{ a: 'y', b: 6 }, false]
+            ], done);
+        });
+
+        it('validates combination conditional alternatives', function (done) {
+
+            var schema = {
+                a: Joi.alternatives().when('b', { is: Joi.number(), isnt: 5, then: 'x', otherwise: 'y' }),
+                b: Joi.any()
+            };
+
+            Helper.validate(schema, [
+                [{ a: 'x', b: 5 }, false],
+                [{ a: 'x', b: 6 }, true],
+                [{ a: 'y', b: 5 }, true],
+                [{ a: 'y', b: 6 }, false]
+            ], done);
+        });
+
+        it('validates combination conditional alternatives when both fail', function (done) {
+
+            var schema = {
+                a: Joi.alternatives().when('b', { is: Joi.number().valid(42), isnt: 1337, then: 'x', otherwise: 'y' }),
+                b: Joi.any()
+            };
+
+            Helper.validate(schema, [
+                [{ a: 'x', b: 42 }, true],
+                [{ a: 'x', b: 1337 }, false]
+            ], done);
+        });
+
         it('validates conditional alternatives (empty key)', function (done) {
 
             var schema = {
@@ -272,7 +315,7 @@ describe('alternatives', function () {
         it('describes when', function (done) {
 
             var schema = {
-                a: Joi.alternatives().when('b', { is: 5, then: 'x', otherwise: 'y' })
+                a: Joi.alternatives().when('b', { is: Joi.number(), isnt: 5, then: 'x', otherwise: 'y' })
                                      .try('z'),
                 b: Joi.any()
             };
@@ -289,6 +332,70 @@ describe('alternatives', function () {
                       {
                           ref: 'ref:b',
                           is: {
+                              type: 'number',
+                              invalids: [Infinity, -Infinity]
+                          },
+                          isnt: {
+                              type: 'number',
+                              flags: {
+                                  allowOnly: true
+                              },
+                              valids: [5],
+                              invalids: [Infinity, -Infinity]
+                          },
+                          then: {
+                              type: 'string',
+                              flags: {
+                                  allowOnly: true
+                              },
+                              valids: ['x'],
+                              invalids: ['']
+                          },
+                          otherwise: {
+                              type: 'string',
+                              flags: {
+                                  allowOnly: true
+                              },
+                              valids: ['y'],
+                              invalids: ['']
+                          }
+                      },
+                      {
+                          type: 'string',
+                          flags: {
+                              allowOnly: true
+                          },
+                          valids: ['z'],
+                          invalids: ['']
+                      }
+                    ]
+                  }
+                }
+            };
+
+            expect(Joi.describe(schema)).to.deep.equal(outcome);
+            done();
+        });
+        it('describes when', function (done) {
+
+            var schema = {
+                a: Joi.alternatives().when('b', { isnt: 5, then: 'x', otherwise: 'y' })
+                                     .try('z'),
+                b: Joi.any()
+            };
+
+            var outcome = {
+                type: 'object',
+                children: {
+                    b: {
+                        type: 'any'
+                    },
+                    a: {
+                      type: 'alternatives',
+                      alternatives: [
+                      {
+                          ref: 'ref:b',
+                          isnt: {
                               type: 'number',
                               flags: {
                                   allowOnly: true
