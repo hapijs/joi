@@ -96,11 +96,11 @@ describe('errors', function () {
 
         Joi.validate({ 'a()': 'x' }, schema, function (err, value) {
 
-            expect(err.message).to.equal('child "a()" fails because ["a()" must be a number]');
+            expect(err.message).to.equal('child "a&#x28;&#x29;" fails because ["a&#x28;&#x29;" must be a number]');
 
             Joi.validate({ 'b()': 'x' }, schema, function (err, value) {
 
-                expect(err.message).to.equal('"b()" is not allowed');
+                expect(err.message).to.equal('"b&#x28;&#x29;" is not allowed');
                 done();
             });
         });
