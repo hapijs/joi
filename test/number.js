@@ -521,14 +521,14 @@ describe('number', function () {
             expect(function () {
 
                 Joi.number().min('a');
-            }).to.throw('limit must be an integer');
+            }).to.throw('limit must be an integer or reference');
             done();
         });
 
         it('supports 64bit numbers', function (done) {
 
             var schema = Joi.number().min(1394035612500);
-            var input = 1394035612552
+            var input = 1394035612552;
 
             schema.validate(input, function (err, value) {
 
@@ -536,6 +536,26 @@ describe('number', function () {
                 expect(value).to.equal(input);
                 done();
             });
+        });
+
+        it('accepts references as min value', function(done) {
+
+            var schema = Joi.object({ a: Joi.number(), b: Joi.number().min(Joi.ref('a')) });
+
+            Helper.validate(schema, [
+                [{ a: 42, b: 1337 }, true],
+                [{ a: 1337, b: 42 }, false],
+                [{ a: '1337', b: 42 }, false, null, 'child "b" fails because ["b" must be larger than or equal to 1337]']
+            ], done);
+        });
+
+        it('errors if reference is not a number', function(done) {
+
+            var schema = Joi.object({ a: Joi.string(), b: Joi.number().min(Joi.ref('a')) });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
         });
     });
 
@@ -546,8 +566,92 @@ describe('number', function () {
             expect(function () {
 
                 Joi.number().max('a');
-            }).to.throw('limit must be an integer');
+            }).to.throw('limit must be an integer or reference');
             done();
+        });
+
+        it('accepts references as max value', function(done) {
+
+            var schema = Joi.object({ a: Joi.number(), b: Joi.number().max(Joi.ref('a')) });
+
+            Helper.validate(schema, [
+                [{ a: 1337, b: 42 }, true],
+                [{ a: 42, b: 1337 }, false],
+                [{ a: '42', b: 1337 }, false, null, 'child "b" fails because ["b" must be less than or equal to 42]']
+            ], done);
+        });
+
+        it('errors if reference is not a number', function(done) {
+
+            var schema = Joi.object({ a: Joi.string(), b: Joi.number().max(Joi.ref('a')) });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
+    });
+
+    describe('#less', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.number().less('a');
+            }).to.throw('limit must be an integer or reference');
+            done();
+        });
+
+        it('accepts references as less value', function(done) {
+
+            var schema = Joi.object({ a: Joi.number(), b: Joi.number().less(Joi.ref('a')) });
+
+            Helper.validate(schema, [
+                [{ a: 1337, b: 42 }, true],
+                [{ a: 42, b: 1337 }, false],
+                [{ a: '42', b: 1337 }, false, null, 'child "b" fails because ["b" must be less than 42]']
+            ], done);
+        });
+
+        it('errors if reference is not a number', function(done) {
+
+            var schema = Joi.object({ a: Joi.string(), b: Joi.number().less(Joi.ref('a')) });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
+    });
+
+    describe('#greater', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.number().greater('a');
+            }).to.throw('limit must be an integer or reference');
+            done();
+        });
+
+        it('accepts references as greater value', function(done) {
+
+            var schema = Joi.object({ a: Joi.number(), b: Joi.number().greater(Joi.ref('a')) });
+
+            Helper.validate(schema, [
+                [{ a: 42, b: 1337 }, true],
+                [{ a: 1337, b: 42 }, false],
+                [{ a: '1337', b: 42 }, false, null, 'child "b" fails because ["b" must be greater than 1337]']
+            ], done);
+        });
+
+        it('errors if reference is not a number', function(done) {
+
+            var schema = Joi.object({ a: Joi.string(), b: Joi.number().greater(Joi.ref('a')) });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
         });
     });
 
