@@ -1101,6 +1101,15 @@ Specifies the minimum number string characters where:
 var schema = Joi.string().min(2);
 ```
 
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  min: Joi.string().required(),
+  value: Joi.string().min(Joi.ref('min'), 'utf8').required()
+});
+```
+
 #### `string.max(limit, [encoding])`
 
 Specifies the maximum number of string characters where:
@@ -1109,6 +1118,15 @@ Specifies the maximum number of string characters where:
 
 ```javascript
 var schema = Joi.string().max(10);
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  max: Joi.string().required(),
+  value: Joi.string().max(Joi.ref('max'), 'utf8').required()
+});
 ```
 
 #### `string.creditCard()`
@@ -1128,6 +1146,15 @@ Specifies the exact string length required where:
 
 ```javascript
 var schema = Joi.string().length(5);
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  length: Joi.string().required(),
+  value: Joi.string().length(Joi.ref('length'), 'utf8').required()
+});
 ```
 
 #### `string.regex(pattern, [name])`
