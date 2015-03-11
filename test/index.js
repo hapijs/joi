@@ -1282,27 +1282,27 @@ describe('Joi', function () {
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test.0.foo',
                 type: 'string.max',
-                context: { limit: 3, key: 'foo', value: 'test1' }
+                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
             }, {
                 message: '"bar" length must be less than or equal to 5 characters long',
                 path: 'test.0.bar',
                 type: 'string.max',
-                context: { limit: 5, key: 'bar', value: 'testfailed' }
+                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined }
             }, {
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test2.test3.1.foo',
                 type: 'string.max',
-                context: { limit: 3, key: 'foo', value: 'test1' }
+                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
             }, {
                 message: '"bar" length must be less than or equal to 5 characters long',
                 path: 'test2.test3.1.bar',
                 type: 'string.max',
-                context: { limit: 5, key: 'bar', value: 'testfailed' }
+                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined }
             }, {
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test2.test3.2.baz.test4.0.foo',
                 type: 'string.max',
-                context: { limit: 3, key: 'foo', value: 'test1' }
+                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
             }, {
                 message: '"baz" is not allowed',
                 path: 'test2.test3.2.baz.test4.0',
