@@ -285,5 +285,47 @@ describe('errors', function () {
                 done();
             });
         });
+
+        it('annotates circular input', function (done) {
+
+           var schema = {
+                x: Joi.object({
+                    y: Joi.object({
+                        z: Joi.number()
+                    })
+                })
+            };
+
+            var input = {};
+            input.x = input;
+
+            Joi.validate(input, schema, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1]\u001b[0m: \"[Circular ~]\"\n}\n\u001b[31m\n[1] \"x\" is not allowed\u001b[0m');
+                done();
+            });
+        });
+
+        it('annotates deep circular input', function (done) {
+
+           var schema = {
+                x: Joi.object({
+                    y: Joi.object({
+                        z: Joi.number()
+                    })
+                })
+            };
+
+            var input = { x: { y: {}}};
+            input.x.y.z = input.x.y;
+
+            Joi.validate(input, schema, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\": {\n      \"z\" \u001b[31m[1]\u001b[0m: \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"z\" must be a number\u001b[0m');
+                done();
+            });
+        });
     });
 });
