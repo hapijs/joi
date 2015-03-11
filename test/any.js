@@ -113,6 +113,15 @@ describe('any', function () {
             }).to.throw('presence should be one of required, optional, forbidden, ignore');
             done();
         });
+
+        it('does not throw with multiple options including presence key', function (done) {
+
+            expect(function () {
+
+                Joi.any().options({ presence: 'optional', raw: true});
+            }).to.not.throw();
+            done();
+        });
     });
 
     describe('#label', function () {
