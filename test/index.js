@@ -1121,7 +1121,7 @@ describe('Joi', function () {
 
         var localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c'),
+            b: Joi.string().valid('a', 'b', 'c')
         }).options({ allowUnknown: true });
 
         var obj = {
@@ -1404,7 +1404,7 @@ describe('Joi', function () {
                 date: Joi.date(),
                 child: Joi.object({
                     alphanum: Joi.string().alphanum()
-                }),
+                })
             },
             min: [Joi.number(), Joi.string().min(3)],
             max: Joi.string().max(3),
@@ -1559,7 +1559,7 @@ describe('Joi', function () {
             var description = Joi.allow(null).describe();
             expect(description.invalids).to.not.exist();
             done();
-        })
+        });
     });
 
     describe('#assert', function () {

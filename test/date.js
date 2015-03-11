@@ -84,8 +84,8 @@ describe('date', function () {
                     ['1-1-2001 UTC', true],
                     ['1-1-2000 UTC', true],
                     [0, false],
-                    ["0", false],
-                    ["-1", false],
+                    ['0', false],
+                    ['-1', false],
                     ['1-1-1999 UTC', false]
                 ], done);
             });
@@ -146,8 +146,8 @@ describe('date', function () {
                     ['1-1-1970 UTC', true],
                     [0, true],
                     [1, false],
-                    ["0", true],
-                    ["-1", true],
+                    ['0', true],
+                    ['-1', true],
                     ['1-1-2014 UTC', false]
                 ], done);
             });

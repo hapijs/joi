@@ -724,7 +724,7 @@ describe('array', function () {
             var schema = Joi.array().items(Joi.array().items(Joi.number())).single();
 
             Helper.validate(schema, [
-                [[[1],[2],[3]], true],
+                [[[1], [2], [3]], true],
                 [[1, 2, 3], true],
                 [[['a']], false, null, '"value" at position 0 fails because ["0" at position 0 fails because ["0" must be a number]]'],
                 [['a'], false, null, '"value" at position 0 fails because ["0" must be an array]'],

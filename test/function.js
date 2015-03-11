@@ -31,4 +31,3 @@ describe('func', function () {
         ], done);
     });
 });
-

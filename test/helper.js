@@ -23,7 +23,7 @@ var expect = Code.expect;
 exports.validate = function (schema, config, callback) {
 
     return exports.validateOptions(schema, config, null, callback);
-}
+};
 
 
 exports.validateOptions = function (schema, config, options, callback) {
@@ -67,4 +67,3 @@ exports.validateOptions = function (schema, config, options, callback) {
         callback();
     }
 };
-

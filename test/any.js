@@ -236,7 +236,7 @@ describe('any', function () {
         it('allows passing description as a property of a default method', function (done) {
 
             var defaultFn = function () {
-                
+
                 return 'test';
             };
             defaultFn.description = 'test';
@@ -1118,7 +1118,7 @@ describe('any', function () {
                 [{ b: 6 }, true],
                 [{ a: 'b' }, true],
                 [{ b: 5, a: 'x' }, true]
-            ], done)
+            ], done);
         });
     });
 
@@ -1277,4 +1277,3 @@ describe('any', function () {
         });
     });
 });
-

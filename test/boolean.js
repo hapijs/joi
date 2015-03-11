@@ -129,4 +129,3 @@ describe('boolean', function () {
         });
     });
 });
-
