@@ -327,5 +327,26 @@ describe('errors', function () {
                 done();
             });
         });
+
+        it('annotates deep circular input with extra keys', function (done) {
+
+           var schema = {
+                x: Joi.object({
+                    y: Joi.object({
+                        z: Joi.number()
+                    })
+                })
+            };
+
+            var input = { x: { y: { z: 1, foo: {}}}};
+            input.x.y.foo = input.x.y;
+
+            Joi.validate(input, schema, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\" \u001b[31m[1]\u001b[0m: {\n      \"z\": 1,\n      \"foo\": \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"foo\" is not allowed\u001b[0m');
+                done();
+            });
+        });
     });
 });
