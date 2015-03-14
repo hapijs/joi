@@ -627,6 +627,520 @@ describe('string', function () {
         });
     });
 
+    describe('#ip', function () {
+
+        var invalidIPs = [
+                ['ASDF', false],
+                ['192.0.2.16:80/30', false],
+                ['192.0.2.16a', false],
+                ['qwerty', false],
+                ['127.0.0.1:8000', false],
+                ['ftp://www.example.com', false],
+                ['Bananas in pajamas are coming down the stairs', false]
+            ],
+            invalidIPv4s = [
+                ['0.0.0.0/33', false],
+                ['256.0.0.0/0', false],
+                ['255.255.255.256/32', false],
+                ['256.0.0.0', false],
+                ['255.255.255.256', false]
+            ],
+            invalidIPv6s = [
+                ['2001:db8::7/33', false],
+                ['1080:0:0:0:8:800:200C:417G', false]
+            ],
+            invalidIPvFutures = [
+                ['v1.09azAZ-._~!$&\'()*+,;=:/33', false],
+                ['v1.09#', false]
+            ],
+            validIPv4sWithCidr = function(success) {
+
+                return [
+                    ['0.0.0.0/32', success],
+                    ['255.255.255.255/0', success],
+                    ['127.0.0.1/0', success],
+                    ['192.168.2.1/0', success],
+                    ['0.0.0.3/2', success],
+                    ['0.0.0.7/3', success],
+                    ['0.0.0.15/4', success],
+                    ['0.0.0.31/5', success],
+                    ['0.0.0.63/6', success],
+                    ['0.0.0.127/7', success],
+                    ['01.020.030.100/7', success],
+                    ['0.0.0.0/0', success],
+                    ['00.00.00.00/0', success],
+                    ['000.000.000.000/32', success]
+                ];
+            },
+            validIPv4sWithoutCidr = function(success) {
+
+                return [
+                    ['0.0.0.0', success],
+                    ['255.255.255.255', success],
+                    ['127.0.0.1', success],
+                    ['192.168.2.1', success],
+                    ['0.0.0.3', success],
+                    ['0.0.0.7', success],
+                    ['0.0.0.15', success],
+                    ['0.0.0.31', success],
+                    ['0.0.0.63', success],
+                    ['0.0.0.127', success],
+                    ['01.020.030.100', success],
+                    ['0.0.0.0', success],
+                    ['00.00.00.00', success],
+                    ['000.000.000.000', success]
+                ];
+            },
+            validIPv6sWithCidr = function (success) {
+
+                return [
+                    ['2001:db8::7/32', success],
+                    ['a:b:c:d:e::1.2.3.4/13', success],
+                    ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/0', success],
+                    ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/32', success],
+                    ['1080:0:0:0:8:800:200C:417A/27', success]
+                ];
+            },
+            validIPv6sWithoutCidr = function (success) {
+
+                return [
+                    ['2001:db8::7', success],
+                    ['a:b:c:d:e::1.2.3.4', success],
+                    ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', success],
+                    ['FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', success],
+                    ['1080:0:0:0:8:800:200C:417A', success]
+                ];
+            },
+            validIPvFuturesWithCidr = function (success) {
+
+                return [
+                    ['v1.09azAZ-._~!$&\'()*+,;=:/32', success]
+                ];
+            },
+            validIPvFuturesWithoutCidr = function (success) {
+
+                return [
+                    ['v1.09azAZ-._~!$&\'()*+,;=:', success]
+                ];
+            };
+
+        it('should validate all ip addresses with optional CIDR by default', function(done) {
+
+            var schema = Joi.string().ip();
+            Helper.validate(schema, []
+                .concat(validIPv4sWithCidr(true))
+                .concat(validIPv4sWithoutCidr(true))
+                .concat(validIPv6sWithCidr(true))
+                .concat(validIPv6sWithoutCidr(true))
+                .concat(validIPvFuturesWithCidr(true))
+                .concat(validIPvFuturesWithoutCidr(true))
+                .concat(invalidIPs)
+                .concat(invalidIPv4s)
+                .concat(invalidIPv6s)
+                .concat(invalidIPvFutures), done);
+        });
+
+        it('should validate all ip addresses with an optional CIDR', function(done) {
+
+            var schema = Joi.string().ip({ cidr: 'optional' });
+            Helper.validate(schema, []
+                .concat(validIPv4sWithCidr(true))
+                .concat(validIPv4sWithoutCidr(true))
+                .concat(validIPv6sWithCidr(true))
+                .concat(validIPv6sWithoutCidr(true))
+                .concat(validIPvFuturesWithCidr(true))
+                .concat(validIPvFuturesWithoutCidr(true))
+                .concat(invalidIPs)
+                .concat(invalidIPv4s)
+                .concat(invalidIPv6s)
+                .concat(invalidIPvFutures), done);
+        });
+
+        it('should validate all ip addresses with a required CIDR', function(done) {
+
+            var schema = Joi.string().ip({ cidr: 'required' });
+            Helper.validate(schema, []
+                .concat(validIPv4sWithCidr(true))
+                .concat(validIPv4sWithoutCidr(false))
+                .concat(validIPv6sWithCidr(true))
+                .concat(validIPv6sWithoutCidr(false))
+                .concat(validIPvFuturesWithCidr(true))
+                .concat(validIPvFuturesWithoutCidr(false))
+                .concat(invalidIPs)
+                .concat(invalidIPv4s)
+                .concat(invalidIPv6s)
+                .concat(invalidIPvFutures), done);
+        });
+
+        it('should validate all ip addresses with a forbidden CIDR', function(done) {
+
+            var schema = Joi.string().ip({ cidr: 'forbidden' });
+            Helper.validate(schema, []
+                .concat(validIPv4sWithCidr(false))
+                .concat(validIPv4sWithoutCidr(true))
+                .concat(validIPv6sWithCidr(false))
+                .concat(validIPv6sWithoutCidr(true))
+                .concat(validIPvFuturesWithCidr(false))
+                .concat(validIPvFuturesWithoutCidr(true))
+                .concat(invalidIPs)
+                .concat(invalidIPv4s)
+                .concat(invalidIPv6s)
+                .concat(invalidIPvFutures), done);
+        });
+
+        it('throws when options is not an object', function (done) {
+
+            expect(function () {
+
+                Joi.string().ip(42);
+            }).to.throw('options must be an object');
+            done();
+        });
+
+        it('throws when options.cidr is not a string', function (done) {
+
+            expect(function () {
+
+                Joi.string().ip({ cidr: 42 });
+            }).to.throw('cidr must be a string');
+            done();
+        });
+
+        it('throws when options.cidr is not a valid value', function (done) {
+
+            expect(function () {
+
+                Joi.string().ip({ cidr: '42' });
+            }).to.throw('cidr must be one of required, optional, forbidden');
+            done();
+        });
+
+        it('throws when options.version is an empty array', function (done) {
+
+            expect(function () {
+
+                Joi.string().ip({ version: [] });
+            }).to.throw('version must have at least 1 version specified');
+            done();
+        });
+
+        it('throws when options.version is not a string', function (done) {
+
+            expect(function () {
+
+                Joi.string().ip({ version: 42 });
+            }).to.throw('version at position 0 must be a string');
+            done();
+        });
+
+        it('throws when options.version is not a valid value', function (done) {
+
+            expect(function () {
+
+                Joi.string().ip({ version: '42' });
+            }).to.throw('version at position 0 must be one of ipv4, ipv6, ipvfuture');
+            done();
+        });
+
+        it('validates ip with a friendly error message', function (done) {
+
+            var schema = { item: Joi.string().ip() };
+            Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid ip address');
+                done();
+            });
+        });
+
+        it('validates ip and cidr presence with a friendly error message', function (done) {
+
+            var schema = { item: Joi.string().ip({cidr: 'required' }) };
+            Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+
+                expect(err.message).to.contain('must be a valid ip address with a required CIDR');
+                done();
+            });
+        });
+
+        it('validates custom ip version and cidr presence with a friendly error message', function (done) {
+
+            var schema = { item: Joi.string().ip({ version: 'ipv4', cidr: 'required' }) };
+            Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+
+                expect(err.message).to.contain('child "item" fails because ["item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR]');
+                done();
+            });
+        });
+
+        describe('#ip({ version: "ipv4" })', function() {
+
+            it('should validate all ipv4 addresses with a default CIDR strategy', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipv4' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(true))
+                    .concat(validIPv4sWithoutCidr(true))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipv4 addresses with an optional CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipv4', cidr: 'optional' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(true))
+                    .concat(validIPv4sWithoutCidr(true))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipv4 addresses with a required CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipv4', cidr: 'required' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(true))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipv4 addresses with a forbidden CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipv4', cidr: 'forbidden' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(true))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+        });
+
+        describe('#ip({ version: "ipv6" })', function() {
+
+            it('should validate all ipv6 addresses with a default CIDR strategy', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipv6' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(true))
+                    .concat(validIPv6sWithoutCidr(true))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipv6 addresses with an optional CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipv6', cidr: 'optional' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(true))
+                    .concat(validIPv6sWithoutCidr(true))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipv6 addresses with a required CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipv6', cidr: 'required' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(true))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipv6 addresses with a forbidden CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipv6', cidr: 'forbidden' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(true))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+        });
+
+        describe('#ip({ version: "ipvfuture" })', function() {
+
+            it('should validate all ipvfuture addresses with a default CIDR strategy', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipvfuture' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(true))
+                    .concat(validIPvFuturesWithoutCidr(true))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipvfuture addresses with an optional CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipvfuture', cidr: 'optional' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(true))
+                    .concat(validIPvFuturesWithoutCidr(true))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipvfuture addresses with a required CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipvfuture', cidr: 'required' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(true))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipvfuture addresses with a forbidden CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: 'ipvfuture', cidr: 'forbidden' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(true))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+        });
+
+        describe('#ip({ version: [ "ipv4", "ipv6" ] })', function() {
+
+            it('should validate all ipv4 and ipv6 addresses with a default CIDR strategy', function(done) {
+
+                var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ] });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(true))
+                    .concat(validIPv4sWithoutCidr(true))
+                    .concat(validIPv6sWithCidr(true))
+                    .concat(validIPv6sWithoutCidr(true))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipv4 and ipv6 addresses with an optional CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ], cidr: 'optional' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(true))
+                    .concat(validIPv4sWithoutCidr(true))
+                    .concat(validIPv6sWithCidr(true))
+                    .concat(validIPv6sWithoutCidr(true))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipv4 and ipv6 addresses with a required CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ], cidr: 'required' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(true))
+                    .concat(validIPv4sWithoutCidr(false))
+                    .concat(validIPv6sWithCidr(true))
+                    .concat(validIPv6sWithoutCidr(false))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+
+            it('should validate all ipv4 and ipv6 addresses with a forbidden CIDR', function(done) {
+
+                var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ], cidr: 'forbidden' });
+                Helper.validate(schema, []
+                    .concat(validIPv4sWithCidr(false))
+                    .concat(validIPv4sWithoutCidr(true))
+                    .concat(validIPv6sWithCidr(false))
+                    .concat(validIPv6sWithoutCidr(true))
+                    .concat(validIPvFuturesWithCidr(false))
+                    .concat(validIPvFuturesWithoutCidr(false))
+                    .concat(invalidIPs)
+                    .concat(invalidIPv4s)
+                    .concat(invalidIPv6s)
+                    .concat(invalidIPvFutures), done);
+            });
+        });
+    });
+
     describe('#validate', function () {
 
         it('should, by default, allow undefined, deny empty string', function (done) {
@@ -1551,7 +2065,7 @@ describe('string', function () {
             });
         });
 
-        it('validates uri treats uriOptions.scheme as optional', function (done) {
+        it('validates uri treats scheme as optional', function (done) {
 
             expect(function () {
 
@@ -1566,12 +2080,12 @@ describe('string', function () {
             expect(function () {
 
                 Joi.string().uri('http');
-            }).to.throw(Error, 'uri options must be an object');
+            }).to.throw(Error, 'options must be an object');
 
             done();
         });
 
-        it('validates uri requires uriOptions.scheme to be a RegExp, String, or Array with a friendly error message', function (done) {
+        it('validates uri requires scheme to be a RegExp, String, or Array with a friendly error message', function (done) {
 
             expect(function () {
 
@@ -1583,7 +2097,19 @@ describe('string', function () {
             done();
         });
 
-        it('validates uri requires uriOptions.scheme to be an Array of schemes to all be valid schemes with a friendly error message', function (done) {
+        it('validates uri requires scheme to not be an empty array', function (done) {
+
+            expect(function () {
+
+                Joi.string().uri({
+                    scheme: []
+                });
+            }).to.throw(Error, 'scheme must have at least 1 scheme specified');
+
+            done();
+        });
+
+        it('validates uri requires scheme to be an Array of schemes to all be valid schemes with a friendly error message', function (done) {
 
             expect(function () {
 
@@ -1598,7 +2124,7 @@ describe('string', function () {
             done();
         });
 
-        it('validates uri requires uriOptions.scheme to be an Array of schemes to be strings or RegExp', function (done) {
+        it('validates uri requires scheme to be an Array of schemes to be strings or RegExp', function (done) {
 
             expect(function () {
 
@@ -1613,7 +2139,7 @@ describe('string', function () {
             done();
         });
 
-        it('validates uri requires uriOptions.scheme to be a valid String scheme with a friendly error message', function (done) {
+        it('validates uri requires scheme to be a valid String scheme with a friendly error message', function (done) {
 
             expect(function () {
 
