@@ -96,11 +96,11 @@ describe('errors', function () {
 
         Joi.validate({ 'a()': 'x' }, schema, function (err, value) {
 
-            expect(err.message).to.equal('child "a()" fails because ["a()" must be a number]');
+            expect(err.message).to.equal('child "a&#x28;&#x29;" fails because ["a&#x28;&#x29;" must be a number]');
 
             Joi.validate({ 'b()': 'x' }, schema, function (err, value) {
 
-                expect(err.message).to.equal('"b()" is not allowed');
+                expect(err.message).to.equal('"b&#x28;&#x29;" is not allowed');
                 done();
             });
         });
@@ -282,6 +282,69 @@ describe('errors', function () {
 
                 expect(err).to.exist();
                 expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be a string\n[2] "x" must be a number\n[3] "x" must be a number of milliseconds or valid date string\u001b[0m');
+                done();
+            });
+        });
+
+        it('annotates circular input', function (done) {
+
+           var schema = {
+                x: Joi.object({
+                    y: Joi.object({
+                        z: Joi.number()
+                    })
+                })
+            };
+
+            var input = {};
+            input.x = input;
+
+            Joi.validate(input, schema, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1]\u001b[0m: \"[Circular ~]\"\n}\n\u001b[31m\n[1] \"x\" is not allowed\u001b[0m');
+                done();
+            });
+        });
+
+        it('annotates deep circular input', function (done) {
+
+           var schema = {
+                x: Joi.object({
+                    y: Joi.object({
+                        z: Joi.number()
+                    })
+                })
+            };
+
+            var input = { x: { y: {}}};
+            input.x.y.z = input.x.y;
+
+            Joi.validate(input, schema, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\": {\n      \"z\" \u001b[31m[1]\u001b[0m: \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"z\" must be a number\u001b[0m');
+                done();
+            });
+        });
+
+        it('annotates deep circular input with extra keys', function (done) {
+
+           var schema = {
+                x: Joi.object({
+                    y: Joi.object({
+                        z: Joi.number()
+                    })
+                })
+            };
+
+            var input = { x: { y: { z: 1, foo: {}}}};
+            input.x.y.foo = input.x.y;
+
+            Joi.validate(input, schema, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\" \u001b[31m[1]\u001b[0m: {\n      \"z\": 1,\n      \"foo\": \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"foo\" is not allowed\u001b[0m');
                 done();
             });
         });

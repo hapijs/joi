@@ -113,6 +113,15 @@ describe('any', function () {
             }).to.throw('presence should be one of required, optional, forbidden, ignore');
             done();
         });
+
+        it('does not throw with multiple options including presence key', function (done) {
+
+            expect(function () {
+
+                Joi.any().options({ presence: 'optional', raw: true});
+            }).to.not.throw();
+            done();
+        });
     });
 
     describe('#label', function () {
@@ -227,7 +236,7 @@ describe('any', function () {
         it('allows passing description as a property of a default method', function (done) {
 
             var defaultFn = function () {
-                
+
                 return 'test';
             };
             defaultFn.description = 'test';
@@ -1109,7 +1118,7 @@ describe('any', function () {
                 [{ b: 6 }, true],
                 [{ a: 'b' }, true],
                 [{ b: 5, a: 'x' }, true]
-            ], done)
+            ], done);
         });
     });
 
@@ -1268,4 +1277,3 @@ describe('any', function () {
         });
     });
 });
-

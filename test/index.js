@@ -767,7 +767,7 @@ describe('Joi', function () {
 
                 expect(err).to.be.null();
                 done();
-            })
+            });
         });
     });
 
@@ -947,7 +947,7 @@ describe('Joi', function () {
     it('fails validation when parameter is required to be an Array but is given as string', function (done) {
 
         var obj = {
-            a: "an array"
+            a: 'an array'
         };
 
         Joi.object({ a: Joi.array() }).validate(obj, function (err, value) {
@@ -1024,12 +1024,12 @@ describe('Joi', function () {
     it('fails validation with extra keys', function (done) {
 
         var schema = {
-            a: Joi.number(),
+            a: Joi.number()
         };
 
         var obj = {
             a: 1,
-            b: 'a',
+            b: 'a'
         };
 
         Joi.compile(schema).validate(obj, function (err, value) {
@@ -1121,7 +1121,7 @@ describe('Joi', function () {
 
         var localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
-            b: Joi.string().valid('a', 'b', 'c'),
+            b: Joi.string().valid('a', 'b', 'c')
         }).options({ allowUnknown: true });
 
         var obj = {
@@ -1282,27 +1282,27 @@ describe('Joi', function () {
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test.0.foo',
                 type: 'string.max',
-                context: { limit: 3, key: 'foo', value: 'test1' }
+                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
             }, {
                 message: '"bar" length must be less than or equal to 5 characters long',
                 path: 'test.0.bar',
                 type: 'string.max',
-                context: { limit: 5, key: 'bar', value: 'testfailed' }
+                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined }
             }, {
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test2.test3.1.foo',
                 type: 'string.max',
-                context: { limit: 3, key: 'foo', value: 'test1' }
+                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
             }, {
                 message: '"bar" length must be less than or equal to 5 characters long',
                 path: 'test2.test3.1.bar',
                 type: 'string.max',
-                context: { limit: 5, key: 'bar', value: 'testfailed' }
+                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined }
             }, {
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test2.test3.2.baz.test4.0.foo',
                 type: 'string.max',
-                context: { limit: 3, key: 'foo', value: 'test1' }
+                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
             }, {
                 message: '"baz" is not allowed',
                 path: 'test2.test3.2.baz.test4.0',
@@ -1404,7 +1404,7 @@ describe('Joi', function () {
                 date: Joi.date(),
                 child: Joi.object({
                     alphanum: Joi.string().alphanum()
-                }),
+                })
             },
             min: [Joi.number(), Joi.string().min(3)],
             max: Joi.string().max(3),
@@ -1559,7 +1559,7 @@ describe('Joi', function () {
             var description = Joi.allow(null).describe();
             expect(description.invalids).to.not.exist();
             done();
-        })
+        });
     });
 
     describe('#assert', function () {

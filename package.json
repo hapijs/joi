@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "6.0.4",
+  "version": "6.0.8",
   "repository": "git://github.com/hapijs/joi",
   "main": "index",
   "keywords": [
@@ -23,7 +23,7 @@
     "markdown-toc": "^0.8.1"
   },
   "scripts": {
-    "test": "lab -t 100 -a code",
+    "test": "lab -t 100 -a code -L",
     "test-cov-html": "lab -r html -o coverage.html -a code",
     "toc": "node generate-readme-toc.js"
   },

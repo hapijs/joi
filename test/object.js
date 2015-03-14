@@ -784,7 +784,7 @@ describe('object', function () {
                     [{ 5: 'x' }, false],
                     [{ 5: false }, true],
                     [{ 5: undefined }, true]
-                ], done)
+                ], done);
             });
         });
 
@@ -856,7 +856,7 @@ describe('object', function () {
 
             var schema = Joi.object().with('', 'b');
             Helper.validate(schema, [
-                [{ c: 'hi', d: 'there' }, true],
+                [{ c: 'hi', d: 'there' }, true]
             ]);
             done();
         });
@@ -1058,7 +1058,7 @@ describe('object', function () {
 
             schema.validate({
                 d: {
-                    e:[]
+                    e: []
                 }
             }, function (err) {
 
@@ -1073,7 +1073,7 @@ describe('object', function () {
 
         it('uses constructor name for default type name', function (done) {
 
-            function Foo () {}
+            var Foo = function Foo () {};
 
             var schema = Joi.object().type(Foo);
             schema.validate({}, function (err) {
@@ -1099,7 +1099,7 @@ describe('object', function () {
 
         it('overrides constructor name with custom name', function (done) {
 
-            function Foo () {}
+            var Foo = function Foo () {};
 
             var schema = Joi.object().type(Foo, 'Bar');
             schema.validate({}, function (err) {
