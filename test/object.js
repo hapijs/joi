@@ -898,6 +898,93 @@ describe('object', function () {
         });
     });
 
+    describe('#withor', function () {
+
+      it('should throw an error when a parameter is not a string', function (done) {
+
+        try {
+          Joi.object().withor({});
+          var error = false;
+        }
+        catch (e) {
+          error = true;
+        }
+        expect(error).to.equal(true);
+
+        try {
+          Joi.object().withor(123);
+          error = false;
+        }
+        catch (e) {
+          error = true;
+        }
+        expect(error).to.equal(true);
+        done();
+      });
+
+      it('should validate correctly when key is an empty string', function (done) {
+
+        var schema = Joi.object().withor('', 'b');
+        Helper.validate(schema, [
+          [{ c: 'hi', d: 'there' }, true],
+        ]);
+        done();
+      });
+
+      it('should validate correctly when either of the parameters is present', function (done) {
+        var schema = Joi.object({
+          first: Joi.valid('value'),
+          second: Joi.string(),
+          third: Joi.number(),
+          fourth: Joi.string()
+        }).withor('first', ['second', 'third']);
+
+        Helper.validate(schema, [
+          [{ first: 'value', third: 12345 }, true]
+        ], done);
+      });
+
+      it('should validate correctly when additonal parameters are present outside of those specifed', function (done) {
+        var schema = Joi.object({
+          first: Joi.valid('value'),
+          second: Joi.string(),
+          third: Joi.number(),
+          fourth: Joi.string()
+        }).withor('first', ['second', 'third']);
+
+        Helper.validate(schema, [
+          [{ first: 'value', second: 'othervalue', fourth: 'something'}, true]
+        ], done);
+      });
+
+      it('should fail if with both of the parameters', function (done) {
+        var schema = Joi.object({
+          first: Joi.valid('value'),
+          second: Joi.string(),
+          third: Joi.number(),
+          fourth: Joi.string()
+        }).withor('first', ['second', 'third']);
+
+        Helper.validate(schema, [
+          [{ first: 'value', second: 'othervalue', third: 12345 }, false]
+        ], done);
+      });
+
+      it('should fail if neither of the parameters are present', function (done) {
+        var schema = Joi.object({
+          first: Joi.valid('value'),
+          second: Joi.string(),
+          third: Joi.number(),
+          fourth: Joi.string()
+        }).withor('first', ['second', 'third']);
+
+        Helper.validate(schema, [
+          [{ first: 'value' }, false]
+        ], done);
+      });
+
+    });
+
     describe('#xor', function () {
 
         it('should throw an error when a parameter is not a string', function (done) {
