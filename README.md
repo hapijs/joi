@@ -362,6 +362,23 @@ schema.validate(['one', 'two', true, false, 1, 2], function (err, value) {
 });
 ```
 
+#### `any.transform(function, [options])`
+
+Allows a value to be transformed.
+- `scope` - the scope of the transformer function. Valid values: `pre` - executes the transformer before validation, `post` - executes the transformer after validation
+
+```javascript
+var schema = {
+    count: Joi.number().transform(function(value) {
+      return value + 1;
+    }, { scope: 'pre' })
+};
+
+schema.validate({ count: 41 }, function (err, value) {
+    // value = { count: 42 }
+});
+```
+
 #### `any.description(desc)`
 
 Annotates the key where:

@@ -1213,6 +1213,107 @@ describe('any', function () {
         });
     });
 
+    describe('#transform', function () {
+
+        it('should transform values before by default', function (done) {
+
+            var schema = Joi.object({ a: Joi.number().valid(5).required() }).transform(function(value) {
+
+                value.a += 1;
+                return value;
+            });
+            schema.validate({ a: 4 }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.equal(5);
+                done();
+            });
+        });
+
+        it('should transform values before', function (done) {
+
+            var schema = Joi.object({ a: Joi.number().valid(5).required() }).transform(function(value) {
+
+                value.a += 1;
+                return value;
+            }, { scope: 'pre' });
+            schema.validate({ a: 4 }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.equal(5);
+                done();
+            });
+        });
+
+        it('should transform values after', function (done) {
+
+            var schema = Joi.object({ a: Joi.number().valid(4).required() }).transform(function(value) {
+
+                value.a += 1;
+                return value;
+            }, { scope: 'post' });
+            schema.validate({ a: 4 }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.equal(5);
+                done();
+            });
+        });
+
+        it('throws when transformer is not a function', function (done) {
+
+            expect(function () {
+
+                Joi.any().transform('Robots in disguise');
+            }).to.throw('Transformer must be a function');
+            done();
+        });
+
+        it('throws when transformer has no arguments', function (done) {
+
+            expect(function () {
+
+                Joi.any().transform(function() {
+                    return 'Robots in disguise';
+                });
+            }).to.throw('Transformer must have exactly one argument, the value to transform');
+            done();
+        });
+
+        it('throws when transformer has too many arguments', function (done) {
+
+            expect(function () {
+
+                Joi.any().transform(function(value, options) {
+                    return 'Robots in disguise';
+                });
+            }).to.throw('Transformer must have exactly one argument, the value to transform');
+            done();
+        });
+
+        it('throws when options is not an object', function (done) {
+
+            expect(function () {
+
+                Joi.any().transform(function(value) {
+                    return value;
+                }, 'Robots in disguise');
+            }).to.throw('options must be an object');
+            done();
+        });
+
+        it('throws when options.scope is invalid', function (done) {
+
+            expect(function () {
+
+                Joi.any().transform(function(value) {
+                    return value;
+                }, { scope: 'after' });
+            }).to.throw('options.scope must be one of pre, post');
+            done();
+        });
+    });
+
     describe('Set', function () {
 
         describe('#add', function () {
