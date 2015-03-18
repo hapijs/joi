@@ -521,7 +521,7 @@ describe('number', function () {
             expect(function () {
 
                 Joi.number().min('a');
-            }).to.throw('limit must be an integer');
+            }).to.throw('limit must be a number');
             done();
         });
 
@@ -537,6 +537,17 @@ describe('number', function () {
                 done();
             });
         });
+
+        it('supports decimal numbers', function(done) {
+          var schema = Joi.number().min(42.123);
+          var input = 45;
+
+          schema.validate(input, function (err, value) {
+            expect(err).to.not.exist();
+            expect(value).to.equal(input);
+            done();
+          });
+        });
     });
 
     describe('#max', function () {
@@ -546,8 +557,19 @@ describe('number', function () {
             expect(function () {
 
                 Joi.number().max('a');
-            }).to.throw('limit must be an integer');
+            }).to.throw('limit must be a number');
             done();
+        });
+
+        it('supports decimal numbers', function(done) {
+          var schema = Joi.number().max(42.123);
+          var input = 40;
+
+          schema.validate(input, function (err, value) {
+            expect(err).to.not.exist();
+            expect(value).to.equal(input);
+            done();
+          });
         });
     });
 
