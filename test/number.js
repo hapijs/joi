@@ -521,7 +521,7 @@ describe('number', function () {
             expect(function () {
 
                 Joi.number().min('a');
-            }).to.throw('limit must be an integer or reference');
+            }).to.throw('limit must be a number or reference');
             done();
         });
 
@@ -566,7 +566,7 @@ describe('number', function () {
             expect(function () {
 
                 Joi.number().max('a');
-            }).to.throw('limit must be an integer or reference');
+            }).to.throw('limit must be a number or reference');
             done();
         });
 
@@ -598,7 +598,7 @@ describe('number', function () {
             expect(function () {
 
                 Joi.number().less('a');
-            }).to.throw('limit must be an integer or reference');
+            }).to.throw('limit must be a number or reference');
             done();
         });
 
@@ -630,7 +630,7 @@ describe('number', function () {
             expect(function () {
 
                 Joi.number().greater('a');
-            }).to.throw('limit must be an integer or reference');
+            }).to.throw('limit must be a number or reference');
             done();
         });
 
