@@ -548,6 +548,14 @@ describe('number', function () {
             done();
           });
         });
+
+        it('throws when limit is NaN', function(done) {
+          expect(function () {
+
+              Joi.number().min(NaN);
+          }).to.throw('limit must be a number');
+          done();
+        });
     });
 
     describe('#max', function () {
@@ -570,6 +578,76 @@ describe('number', function () {
             expect(value).to.equal(input);
             done();
           });
+        });
+
+        it('throws when limit is NaN', function(done) {
+          expect(function () {
+
+              Joi.number().max(NaN);
+          }).to.throw('limit must be a number');
+          done();
+        });
+    });
+
+    describe('#less', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.number().less('a');
+            }).to.throw('limit must be a number');
+            done();
+        });
+
+        it('supports decimal numbers', function(done) {
+          var schema = Joi.number().less(42.123);
+          var input = 40;
+
+          schema.validate(input, function (err, value) {
+            expect(err).to.not.exist();
+            expect(value).to.equal(input);
+            done();
+          });
+        });
+
+        it('throws when limit is NaN', function(done) {
+          expect(function () {
+
+              Joi.number().less(NaN);
+          }).to.throw('limit must be a number');
+          done();
+        });
+    });
+
+    describe('#greater', function () {
+
+        it('throws when limit is not a number', function (done) {
+
+            expect(function () {
+
+                Joi.number().greater('a');
+            }).to.throw('limit must be a number');
+            done();
+        });
+
+        it('supports decimal numbers', function(done) {
+          var schema = Joi.number().greater(42.123);
+          var input = 45;
+
+          schema.validate(input, function (err, value) {
+            expect(err).to.not.exist();
+            expect(value).to.equal(input);
+            done();
+          });
+        });
+
+        it('throws when limit is NaN', function(done) {
+          expect(function () {
+
+              Joi.number().greater(NaN);
+          }).to.throw('limit must be a number');
+          done();
         });
     });
 
