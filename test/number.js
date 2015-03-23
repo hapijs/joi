@@ -545,7 +545,11 @@ describe('number', function () {
             Helper.validate(schema, [
                 [{ a: 42, b: 1337 }, true],
                 [{ a: 1337, b: 42 }, false],
-                [{ a: '1337', b: 42 }, false, null, 'child "b" fails because ["b" must be larger than or equal to 1337]']
+                [{ a: '1337', b: 42 }, false, null, 'child "b" fails because ["b" must be larger than or equal to 1337]'],
+                [{ a: 2.4, b: 4.2 }, true],
+                [{ a: 4.2, b: 4.20000001 }, true],
+                [{ a: 4.20000001, b: 4.2 }, false],
+                [{ a: 4.2, b: 2.4 }, false, null, 'child "b" fails because ["b" must be larger than or equal to 4.2]']
             ], done);
         });
 
@@ -577,7 +581,11 @@ describe('number', function () {
             Helper.validate(schema, [
                 [{ a: 1337, b: 42 }, true],
                 [{ a: 42, b: 1337 }, false],
-                [{ a: '42', b: 1337 }, false, null, 'child "b" fails because ["b" must be less than or equal to 42]']
+                [{ a: '42', b: 1337 }, false, null, 'child "b" fails because ["b" must be less than or equal to 42]'],
+                [{ a: 4.2, b: 2.4 }, true],
+                [{ a: 4.2, b: 4.20000001 }, false],
+                [{ a: 4.20000001, b: 4.2 }, true],
+                [{ a: 2.4, b: 4.2 }, false, null, 'child "b" fails because ["b" must be less than or equal to 2.4]']
             ], done);
         });
 
@@ -609,7 +617,11 @@ describe('number', function () {
             Helper.validate(schema, [
                 [{ a: 1337, b: 42 }, true],
                 [{ a: 42, b: 1337 }, false],
-                [{ a: '42', b: 1337 }, false, null, 'child "b" fails because ["b" must be less than 42]']
+                [{ a: '42', b: 1337 }, false, null, 'child "b" fails because ["b" must be less than 42]'],
+                [{ a: 4.2, b: 2.4 }, true],
+                [{ a: 4.2, b: 4.20000001 }, false],
+                [{ a: 4.20000001, b: 4.2 }, true],
+                [{ a: 2.4, b: 4.2 }, false, null, 'child "b" fails because ["b" must be less than 2.4]']
             ], done);
         });
 
@@ -641,7 +653,11 @@ describe('number', function () {
             Helper.validate(schema, [
                 [{ a: 42, b: 1337 }, true],
                 [{ a: 1337, b: 42 }, false],
-                [{ a: '1337', b: 42 }, false, null, 'child "b" fails because ["b" must be greater than 1337]']
+                [{ a: '1337', b: 42 }, false, null, 'child "b" fails because ["b" must be greater than 1337]'],
+                [{ a: 2.4, b: 4.2 }, true],
+                [{ a: 4.2, b: 4.20000001 }, true],
+                [{ a: 4.20000001, b: 4.2 }, false],
+                [{ a: 4.2, b: 2.4 }, false, null, 'child "b" fails because ["b" must be greater than 4.2]']
             ], done);
         });
 
