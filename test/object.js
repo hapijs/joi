@@ -682,8 +682,7 @@ describe('object', function () {
             schema.validate(input, function (err, value) {
 
                 expect(err).to.not.exist();
-                expect(Object.keys(value)).to.include('a');
-                expect(value.a).to.equal('something');
+		expect(value).to.deep.equal({ a: 'something' });
                 done();
             });
         });
