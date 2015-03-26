@@ -1032,6 +1032,7 @@ Renames a key to another name (deletes the renamed key) where:
     - `alias` - if `true`, does not delete the old key name, keeping both the new and old keys in place. Defaults to `false`.
     - `multiple` - if `true`, allows renaming multiple keys to the same destination where the last rename wins. Defaults to `false`.
     - `override` - if `true`, allows renaming a key over an existing key. Defaults to `false`.
+    - `ignoreUndefined` - if `true`, skip renaming of a key if it's undefined. Defaults to `false`.
 
 Keys are renamed before any other validation rules are applied.
 

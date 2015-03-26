@@ -682,7 +682,23 @@ describe('object', function () {
             schema.validate(input, function (err, value) {
 
                 expect(err).to.not.exist();
-		expect(value).to.deep.equal({ a: 'something' });
+                expect(value).to.deep.equal({ a: 'something' });
+                done();
+            });
+        });
+
+        it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', function(done){
+
+            var schema = Joi.object().rename('b', 'a', { ignoreUndefined: true, override: true });
+
+            var input = {
+                a: 'something'
+            };
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal({ a: 'something' });
                 done();
             });
         });
