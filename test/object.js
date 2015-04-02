@@ -337,6 +337,21 @@ describe('object', function () {
         ], done);
     });
 
+    it('validates referenced arrays in valid()', function (done) {
+
+        var schema = Joi.object({
+            foo: Joi.valid(Joi.ref('$x'))
+        });
+
+        Helper.validate(schema, [
+            [{ foo: 'bar' }, true, { context: { x: 'bar' }}],
+            [{ foo: 'bar' }, true, { context: { x: ['baz', 'bar'] }}],
+            [{ foo: 'bar' }, false, { context: { x: 'baz' }}],
+            [{ foo: 'bar' }, false, { context: { x: ['baz', 'qux'] }}],
+            [{ foo: 'bar' }, false]
+        ], done);
+    });
+
     describe('#keys', function () {
 
         it('allows any key', function (done) {
@@ -667,6 +682,38 @@ describe('object', function () {
 
                 expect(err).to.not.exist();
                 expect(value).to.deep.equal({});
+                done();
+            });
+        });
+
+        it('should ignore a key with ignoredUndefined if from does not exist', function(done){
+
+            var schema = Joi.object().rename('b', 'a', { ignoreUndefined: true });
+
+            var input = {
+                a: 'something'
+            };
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal({ a: 'something' });
+                done();
+            });
+        });
+
+        it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', function(done){
+
+            var schema = Joi.object().rename('b', 'a', { ignoreUndefined: true, override: true });
+
+            var input = {
+                a: 'something'
+            };
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal({ a: 'something' });
                 done();
             });
         });

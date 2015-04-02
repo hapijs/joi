@@ -35,7 +35,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`any.example(value)`](#anyexamplevalue)
       - [`any.unit(name)`](#anyunitname)
       - [`any.options(options)`](#anyoptionsoptions)
-      - [`any.strict()`](#anystrict)
+      - [`any.strict(isStrict)`](#anystrictisstrict)
       - [`any.default(value, [description])`](#anydefaultvalue-description)
       - [`any.concat(schema)`](#anyconcatschema)
       - [`any.when(ref, options)`](#anywhenref-options)
@@ -97,6 +97,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`string.alphanum()`](#stringalphanum)
       - [`string.token()`](#stringtoken)
       - [`string.email([options])`](#stringemailoptions)
+      - [`string.ip([options])`](#stringipoptions)
       - [`string.uri([options])`](#stringurioptions)
       - [`string.guid()`](#stringguid)
       - [`string.hex()`](#stringhex)
@@ -427,9 +428,10 @@ Overrides the global `validate()` options for the current key and any sub-key wh
 var schema = Joi.any().options({ convert: false });
 ```
 
-#### `any.strict()`
+#### `any.strict(isStrict)`
 
-Sets the `options.convert` options to `false` which prevent type casting for the current key and any child keys.
+Strict mode sets the `options.convert` options to `false` which prevent type casting for the current key and any child keys.
+- `isStrict` - whether strict mode is enabled or not. Defaults to true.
 
 ```javascript
 var schema = Joi.any().strict();
@@ -567,8 +569,8 @@ schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 List the types allowed for the array values where:
 - `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
-If a given type is `.required()` then there must be a matching item in the array. 
-If a type is `.forbidden()` then it cannot appear in the array. 
+If a given type is `.required()` then there must be a matching item in the array.
+If a type is `.forbidden()` then it cannot appear in the array.
 Required items can be added multiple times to signify that multiple items must be found.
 Errors will contain the number of items that didn't match. Any unmatched item having a [label](#anylabelname) will be mentioned explicitly.
 
@@ -782,6 +784,15 @@ Specifies the minimum value where:
 var schema = Joi.number().min(2);
 ```
 
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  min: Joi.number().required(),
+  max: Joi.number().min(Joi.ref('min')).required()
+});
+```
+
 #### `number.max(limit)`
 
 Specifies the maximum value where:
@@ -789,6 +800,15 @@ Specifies the maximum value where:
 
 ```javascript
 var schema = Joi.number().max(10);
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  min: Joi.number().max(Joi.ref('max')).required(),
+  max: Joi.number().required()
+});
 ```
 
 #### `number.greater(limit)`
@@ -799,12 +819,28 @@ Specifies that the value must be greater than `limit`.
 var schema = Joi.number().greater(5);
 ```
 
+```javascript
+var schema = Joi.object({
+  min: Joi.number().required(),
+  max: Joi.number().greater(Joi.ref('min')).required()
+});
+```
+
 #### `number.less(limit)`
 
 Specifies that the value must be less than `limit`.
 
 ```javascript
 var schema = Joi.number().less(10);
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  min: Joi.number().less(Joi.ref('max')).required(),
+  max: Joi.number().required()
+});
 ```
 
 #### `number.integer()`
@@ -998,6 +1034,7 @@ Renames a key to another name (deletes the renamed key) where:
     - `alias` - if `true`, does not delete the old key name, keeping both the new and old keys in place. Defaults to `false`.
     - `multiple` - if `true`, allows renaming multiple keys to the same destination where the last rename wins. Defaults to `false`.
     - `override` - if `true`, allows renaming a key over an existing key. Defaults to `false`.
+    - `ignoreUndefined` - if `true`, skip renaming of a key if it's undefined. Defaults to `false`.
 
 Keys are renamed before any other validation rules are applied.
 
@@ -1101,6 +1138,15 @@ Specifies the minimum number string characters where:
 var schema = Joi.string().min(2);
 ```
 
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  min: Joi.string().required(),
+  value: Joi.string().min(Joi.ref('min'), 'utf8').required()
+});
+```
+
 #### `string.max(limit, [encoding])`
 
 Specifies the maximum number of string characters where:
@@ -1109,6 +1155,15 @@ Specifies the maximum number of string characters where:
 
 ```javascript
 var schema = Joi.string().max(10);
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  max: Joi.string().required(),
+  value: Joi.string().max(Joi.ref('max'), 'utf8').required()
+});
 ```
 
 #### `string.creditCard()`
@@ -1128,6 +1183,15 @@ Specifies the exact string length required where:
 
 ```javascript
 var schema = Joi.string().length(5);
+```
+
+It can also be a reference to another field.
+
+```javascript
+var schema = Joi.object({
+  length: Joi.string().required(),
+  value: Joi.string().length(Joi.ref('length'), 'utf8').required()
+});
 ```
 
 #### `string.regex(pattern, [name])`
@@ -1167,6 +1231,25 @@ Requires the string value to be a valid email address.
 
 ```javascript
 var schema = Joi.string().email();
+```
+
+#### `string.ip([options])`
+
+Requires the string value to be a valid ip address.
+
+- `options` - optional settings:
+    - `version` - One or more IP address versions to validate against. Valid values: `ipv4`, `ipv6`, `ipvfuture`
+    - `cidr` - Used to determine if a CIDR is allowed or not. Valid values: `optional`, `required`, `forbidden`
+
+```javascript
+// Accept only ipv4 and ipv6 addresses with a CIDR
+var schema = Joi.string().ip({
+  version: [
+    'ipv4',
+    'ipv6'
+  ],
+  cidr: 'required'
+});
 ```
 
 #### `string.uri([options])`

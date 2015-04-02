@@ -68,7 +68,25 @@ describe('any', function () {
                 [{ array: ['12345'] }, true],
                 [{ array: ['1'] }, false],
                 [{ array: [3] }, true],
-                [{ array: ['12345', 3] }, true]
+                [{ array: ['12345', 3] }, true],
+                [{ array: ['3'] }, false],
+                [{ array: [1] }, false]
+            ], done);
+        });
+
+        it('can be disabled', function (done) {
+
+            var schema = Joi.object({
+                array: Joi.array().items(Joi.string().min(5), Joi.number().min(3))
+            }).strict().strict(false);
+
+            Helper.validate(schema, [
+                [{ array: ['12345'] }, true],
+                [{ array: ['1'] }, false],
+                [{ array: [3] }, true],
+                [{ array: ['12345', 3] }, true],
+                [{ array: ['3'] }, true],
+                [{ array: [1] }, false]
             ], done);
         });
     });
