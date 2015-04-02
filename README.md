@@ -97,6 +97,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`string.alphanum()`](#stringalphanum)
       - [`string.token()`](#stringtoken)
       - [`string.email([options])`](#stringemailoptions)
+      - [`string.ip([options])`](#stringipoptions)
       - [`string.uri([options])`](#stringurioptions)
       - [`string.guid()`](#stringguid)
       - [`string.hex()`](#stringhex)
@@ -1229,6 +1230,25 @@ Requires the string value to be a valid email address.
 
 ```javascript
 var schema = Joi.string().email();
+```
+
+#### `string.ip([options])`
+
+Requires the string value to be a valid ip address.
+
+- `options` - optional settings:
+    - `version` - One or more IP address versions to validate against. Valid values: `ipv4`, `ipv6`, `ipvfuture`
+    - `cidr` - Used to determine if a CIDR is allowed or not. Valid values: `optional`, `required`, `forbidden`
+
+```javascript
+// Accept only ipv4 and ipv6 addresses with a CIDR
+var schema = Joi.string().ip({
+  version: [
+    'ipv4',
+    'ipv6'
+  ],
+  cidr: 'required'
+});
 ```
 
 #### `string.uri([options])`
