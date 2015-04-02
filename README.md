@@ -35,7 +35,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`any.example(value)`](#anyexamplevalue)
       - [`any.unit(name)`](#anyunitname)
       - [`any.options(options)`](#anyoptionsoptions)
-      - [`any.strict()`](#anystrict)
+      - [`any.strict(isStrict)`](#anystrictisstrict)
       - [`any.default(value, [description])`](#anydefaultvalue-description)
       - [`any.concat(schema)`](#anyconcatschema)
       - [`any.when(ref, options)`](#anywhenref-options)
@@ -427,9 +427,10 @@ Overrides the global `validate()` options for the current key and any sub-key wh
 var schema = Joi.any().options({ convert: false });
 ```
 
-#### `any.strict()`
+#### `any.strict(isStrict)`
 
-Sets the `options.convert` options to `false` which prevent type casting for the current key and any child keys.
+Strict mode sets the `options.convert` options to `false` which prevent type casting for the current key and any child keys.
+- `isStrict` - whether strict mode is enabled or not. Defaults to true.
 
 ```javascript
 var schema = Joi.any().strict();
@@ -567,8 +568,8 @@ schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 List the types allowed for the array values where:
 - `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
-If a given type is `.required()` then there must be a matching item in the array. 
-If a type is `.forbidden()` then it cannot appear in the array. 
+If a given type is `.required()` then there must be a matching item in the array.
+If a type is `.forbidden()` then it cannot appear in the array.
 Required items can be added multiple times to signify that multiple items must be found.
 Errors will contain the number of items that didn't match. Any unmatched item having a [label](#anylabelname) will be mentioned explicitly.
 
