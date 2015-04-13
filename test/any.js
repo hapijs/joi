@@ -1124,6 +1124,25 @@ describe('any', function () {
             ], done);
         });
 
+        it('forks type into alternatives (with a schema)', function (done) {
+
+            var schema = {
+                a: Joi.any(),
+                b: Joi.string().valid('x').when('a', { is: Joi.number().only(5).required(), then: Joi.valid('y') })
+            };
+
+            Helper.validate(schema, [
+                [{ a: 5, b: 'x' }, true],
+                [{ a: 5, b: 'y' }, true],
+                [{ a: 5, b: 'z' }, false],
+                [{ a: 1, b: 'x' }, true],
+                [{ a: 1, b: 'y' }, false],
+                [{ a: 1, b: 'z' }, false],
+                [{ a: 5, b: 'a' }, false],
+                [{ b: 'a' }, false]
+            ], done);
+        });
+
         it('makes peer required', function (done) {
 
             var schema = {

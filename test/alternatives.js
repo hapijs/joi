@@ -189,6 +189,22 @@ describe('alternatives', function () {
             ], done);
         });
 
+        it('validates when is is null', function (done) {
+
+            var schema = {
+                a: Joi.alternatives().when('b', { is: null, then: 'x', otherwise: Joi.number() }),
+                b: Joi.any()
+            };
+
+            Helper.validate(schema, [
+                [{ a: 1 }, true],
+                [{ a: 'y' }, false],
+                [{ a: 'x', b: null }, true],
+                [{ a: 'y', b: null }, false],
+                [{ a: 1, b: null }, false]
+            ], done);
+        });
+
         it('validates when is has ref', function (done) {
 
             var schema = {
