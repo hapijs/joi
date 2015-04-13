@@ -36,7 +36,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`any.unit(name)`](#anyunitname)
       - [`any.options(options)`](#anyoptionsoptions)
       - [`any.strict(isStrict)`](#anystrictisstrict)
-      - [`any.default(value, [description])`](#anydefaultvalue-description)
+      - [`any.default([value, [description]])`](#anydefaultvalue-description)
       - [`any.concat(schema)`](#anyconcatschema)
       - [`any.when(ref, options)`](#anywhenref-options)
       - [`any.label(name)`](#anylabelname)
@@ -437,10 +437,13 @@ Strict mode sets the `options.convert` options to `false` which prevent type cas
 var schema = Joi.any().strict();
 ```
 
-#### `any.default(value, [description])`
+#### `any.default([value, [description]])`
 
 Sets a default value if the original value is undefined where:
-- `value` - the value. `value` supports [references](#refkey-options). `value` may also be a function which returns the default value. If `value` is specified as a function that accepts a single parameter, that parameter will be a context object that can be used to derive the resulting value. **This clones the object however, which incurs some overhead so if you don't need access to the context define your method so that it does not accept any parameters**.
+- `value` - the value.
+  - `value` supports [references](#refkey-options).
+  - `value` may also be a function which returns the default value. If `value` is specified as a function that accepts a single parameter, that parameter will be a context object that can be used to derive the resulting value. **This clones the object however, which incurs some overhead so if you don't need access to the context define your method so that it does not accept any parameters**.
+  - without any `value`, `default` has no effect, except for `object` that will then create nested defaults (applying inner defaults of that object).
 
 Note that if `value` is an object, any changes to the object after `default()` is called will change the reference
 and any future assignment.
