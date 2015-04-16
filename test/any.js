@@ -506,6 +506,34 @@ describe('any', function () {
                 done();
             });
         });
+
+        it('creates deep defaults', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.number().default(42),
+                b: Joi.object({
+                    c: Joi.boolean().default(true),
+                    d: Joi.string()
+                }).default()
+            }).default();
+
+            Helper.validate(schema, [
+                [undefined, true, null, { a: 42, b: { c: true }}],
+                [{ a: 24 }, true, null, { a: 24, b: { c: true }}]
+            ], done);
+        });
+
+        it('should not affect objects other than object when called without an argument', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.number().default()
+            }).default();
+
+            Helper.validate(schema, [
+                [undefined, true, null, {}],
+                [{ a: 24 }, true, null, { a: 24 }]
+            ], done);
+        });
     });
 
     describe('#optional', function () {
