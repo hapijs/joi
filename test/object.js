@@ -719,6 +719,154 @@ describe('object', function () {
         });
     });
 
+    describe('#renameAfter', function () {
+
+        it('allows renaming after validation', function (done) {
+
+            var schema = Joi.object({
+                test: Joi.string()
+            }).renameAfter('test', 'test1');
+
+            Joi.compile(schema).validate({ test: 'a' }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal({ test1: 'a' });
+                done();
+            });
+        });
+
+        it('errors when renaming multiple times', function (done) {
+
+            var errorMessage;
+
+            try {
+              var schema = Joi.object({
+                  test: Joi.string()
+              }).renameAfter('test', 'test1').renameAfter('test', 'test2');
+            } catch (err) {
+              errorMessage = err.message;
+            } finally {
+              expect(errorMessage).to.equal('Cannot rename the same key multiple times');
+            }
+
+            done();
+
+        });
+
+        it('aliases a key', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.number()
+            }).renameAfter('a', 'b', { alias: true });
+
+            var obj = { a: 10 };
+
+            Joi.compile(schema).validate(obj, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.equal(10);
+                expect(value.b).to.equal(10);
+                done();
+            });
+        });
+
+        it('with override disabled should not allow overwriting existing value', function (done) {
+
+            var schema = Joi.object({
+                test: Joi.string(),
+                test1: Joi.string()
+            }).renameAfter('test', 'test1');
+
+            schema.validate({ test: 'b', test1: 'a' }, function (err, value) {
+
+                expect(err.message).to.equal('"value" cannot rename child "test" because override is disabled and target "test1" exists');
+                done();
+            });
+        });
+
+        it('with override enabled should allow overwriting existing value', function (done) {
+
+            var schema = Joi.object({
+                test: Joi.string(),
+                test1: Joi.string()
+            }).renameAfter('test', 'test1', { override: true });
+
+            schema.validate({ test: 'b', test1: 'a' }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal({ test1: 'b' });
+                done();
+            });
+        });
+
+        it('sets the default value before key is renamed', function (done) {
+
+            var schema = Joi.object({
+                foo: Joi.string().default('test')
+            }).renameAfter('foo', 'foo2');
+
+            var input = {};
+
+            Joi.validate(input, schema, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.foo2).to.equal('test');
+
+                done();
+            });
+        });
+
+        it('should not create new keys when they key in question does not exist', function (done) {
+
+            var schema = Joi.object().renameAfter('b', '_b');
+
+            var input = {
+                a: 'something'
+            };
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(Object.keys(value).length).to.equal(1);
+                done();
+            });
+        });
+
+        it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', function(done){
+
+            var schema = Joi.object({
+                a: Joi.string(),
+            }).renameAfter('b', 'a', { ignoreUndefined: true, override: true });
+
+            var input = {
+                a: 'something'
+            };
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal({ a: 'something' });
+                done();
+            });
+        });
+
+        it('errors multiple times when abortEarly is false', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).renameAfter('b', 'a').rename('c', 'a').options({ abortEarly: false });
+
+            schema.validate({ a: '1', b: '2', c: '3' }, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" cannot rename child "c" because override is disabled and target "a" exists. "value" cannot rename child "b" because override is disabled and target "a" exists');
+                done();
+            });
+        });
+    });
+
     describe('#describe', function () {
 
         it('return empty description when no schema defined', function (done) {
