@@ -245,7 +245,13 @@ describe('any', function () {
 
             expect(function () {
 
-                var schema = Joi.object({ foo: Joi.string().default(function () { return 'test'; }) });
+                var schema = Joi.object({
+                    foo: Joi.string().default(function () {
+
+                        return 'test';
+
+                    })
+                });
             }).to.throw();
 
             done();
@@ -269,7 +275,12 @@ describe('any', function () {
 
         it('sets the value when passing a method', function (done) {
 
-            var schema = Joi.object({ foo: Joi.string().default(function () { return 'test'; }, 'testing') });
+            var schema = Joi.object({
+                foo: Joi.string().default(function () {
+
+                    return 'test';
+                }, 'testing')
+            });
             var input = {};
 
             schema.validate(input, function (err, value) {
@@ -283,7 +294,12 @@ describe('any', function () {
         it('executes the default method each time validate is called', function (done) {
 
             var count = 0;
-            var schema = Joi.object({ foo: Joi.number().default(function () { return ++count; }, 'incrementer') });
+            var schema = Joi.object({
+                foo: Joi.number().default(function () {
+
+                    return ++count;
+                }, 'incrementer')
+            });
             var input = {};
 
             schema.validate(input, function (err, value) {
@@ -304,7 +320,10 @@ describe('any', function () {
         it('passes a clone of the context if the default method accepts an argument', function (done) {
 
             var schema = Joi.object({
-                foo: Joi.string().default(function (context) { return context.bar + 'ing'; }, 'testing'),
+                foo: Joi.string().default(function (context) {
+
+                    return context.bar + 'ing';
+                }, 'testing'),
                 bar: Joi.string()
             });
             var input = { bar: 'test' };
