@@ -479,7 +479,7 @@ Joi.validate({
 #### `any.concat(schema)`
 
 Returns a new type that is the result of adding the rules of one type to another where:
-- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the context type or `any`.
+- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the context type or `any`. If applied to an `any` type, the schema can be any other schema.
 
 ```javascript
 var a = Joi.string().valid('a');
