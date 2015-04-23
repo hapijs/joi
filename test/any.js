@@ -778,7 +778,7 @@ describe('any', function () {
             expect(function () {
 
                 Joi.string().concat(Joi.number());
-            }).to.throw('Cannot merge with another type: number');
+            }).to.throw('Cannot merge type string with another type: number');
             done();
         });
 
@@ -1046,7 +1046,7 @@ describe('any', function () {
             expect(function () {
 
                 a.concat(b);
-            }).to.throw('Cannot merge with another type: string');
+            }).to.throw('Cannot merge type number with another type: string');
             done();
         });
 
@@ -1079,6 +1079,23 @@ describe('any', function () {
             expect(a.concat(c)._meta).to.deep.equal([metaA]);
             expect(b.concat(c)._meta).to.deep.equal([metaB]);
             expect(c.concat(d)._meta).to.deep.equal([]);
+
+            done();
+        });
+
+        it('merges into an any', function (done) {
+
+            var a = Joi.any().required();
+            var b = Joi.number().only(0);
+
+            expect(function () {
+
+                a.concat(b);
+            }).to.not.throw();
+
+            var schema = a.concat(b);
+            expect(schema.validate().error.message).to.equal('"value" is required');
+            expect(schema.validate(1).error.message).to.equal('"value" must be one of [0]');
 
             done();
         });
