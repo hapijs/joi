@@ -1276,6 +1276,7 @@ describe('Joi', function () {
         };
 
         Joi.validate(value, schema, { abortEarly: false }, function (err, value) {
+
             expect(err).to.exist();
             expect(err.details).to.have.length(6);
             expect(err.details).to.deep.equal([{

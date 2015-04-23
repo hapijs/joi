@@ -339,7 +339,9 @@ describe('string', function () {
     });
 
     describe('#email', function() {
+
         it('throws when options are not an object', function (done) {
+
             expect(function () {
 
                 var emailOptions = true;
@@ -349,6 +351,7 @@ describe('string', function () {
         });
 
         it('throws when checkDNS option is enabled', function (done) {
+
             expect(function () {
 
                 var emailOptions = {checkDNS: true};
@@ -358,6 +361,7 @@ describe('string', function () {
         });
 
         it('throws when tldWhitelist is not an array or object', function (done) {
+
             expect(function () {
 
                 var emailOptions = {tldWhitelist: 'domain.tld'};
@@ -367,6 +371,7 @@ describe('string', function () {
         });
 
         it('throws when minDomainAtoms is not a number', function (done) {
+
             expect(function () {
 
                 var emailOptions = {minDomainAtoms: '1'};
@@ -376,6 +381,7 @@ describe('string', function () {
         });
 
         it('throws when minDomainAtoms is not an integer', function (done) {
+
             expect(function () {
 
                 var emailOptions = {minDomainAtoms: 1.2};
@@ -385,6 +391,7 @@ describe('string', function () {
         });
 
         it('throws when minDomainAtoms is not positive', function (done) {
+
             expect(function () {
 
                 var emailOptions = {minDomainAtoms: 0};
@@ -394,6 +401,7 @@ describe('string', function () {
         });
 
         it('does not throw when minDomainAtoms is a positive integer', function (done) {
+
             expect(function () {
 
                 var emailOptions = {minDomainAtoms: 1};
@@ -403,6 +411,7 @@ describe('string', function () {
         });
 
         it('throws when errorLevel is not an integer or boolean', function (done) {
+
             expect(function () {
 
                 var emailOptions = {errorLevel: 1.2};
@@ -412,6 +421,7 @@ describe('string', function () {
         });
 
         it('throws when errorLevel is negative', function (done) {
+
             expect(function () {
 
                 var emailOptions = {errorLevel: -1};
@@ -421,6 +431,7 @@ describe('string', function () {
         });
 
         it('does not throw when errorLevel is 0', function (done) {
+
             expect(function () {
 
                 var emailOptions = {errorLevel: 0};
@@ -1503,6 +1514,7 @@ describe('string', function () {
         });
 
         it('validates combination of null allowed and max', function (done) {
+
             var rule = Joi.string().allow(null).max(3);
             Helper.validate(rule, [
                 ['x', true],

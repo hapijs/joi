@@ -586,7 +586,8 @@ describe('array', function () {
 
     describe('#unique', function() {
 
-        it('errors if duplicate numbers, strings, objects, binaries, functions, dates and booleans', function(done) {
+        it('errors if duplicate numbers, strings, objects, binaries, functions, dates and booleans', function (done) {
+
             var buffer = new Buffer('hello world');
             var func = function() {};
             var now = new Date();
@@ -606,7 +607,8 @@ describe('array', function () {
             ], done);
         });
 
-        it('ignores duplicates if they are of different types', function(done) {
+        it('ignores duplicates if they are of different types', function (done) {
+
             var schema = Joi.array().unique();
 
             Helper.validate(schema, [
@@ -614,7 +616,8 @@ describe('array', function () {
             ], done);
         });
 
-        it('validates without duplicates', function(done) {
+        it('validates without duplicates', function (done) {
+
             var buffer = new Buffer('hello world');
             var buffer2 = new Buffer('Hello world');
             var func = function() {};
