@@ -686,7 +686,7 @@ describe('object', function () {
             });
         });
 
-        it('should ignore a key with ignoredUndefined if from does not exist', function(done){
+        it('should ignore a key with ignoredUndefined if from does not exist', function (done){
 
             var schema = Joi.object().rename('b', 'a', { ignoreUndefined: true });
 
@@ -702,7 +702,7 @@ describe('object', function () {
             });
         });
 
-        it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', function(done){
+        it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', function (done){
 
             var schema = Joi.object().rename('b', 'a', { ignoreUndefined: true, override: true });
 

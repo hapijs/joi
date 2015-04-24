@@ -90,7 +90,7 @@ describe('date', function () {
                 ], done);
             });
 
-            it('accepts "now" as the min date', function(done) {
+            it('accepts "now" as the min date', function (done) {
 
                 var future = new Date(Date.now() + 1000000);
 
@@ -102,7 +102,7 @@ describe('date', function () {
                 });
             });
 
-            it('errors if .min("now") is used with a past date', function(done) {
+            it('errors if .min("now") is used with a past date', function (done) {
 
                 var past = new Date(Date.now() - 1000000);
 
@@ -113,7 +113,7 @@ describe('date', function () {
                 });
             });
 
-            it('accepts references as min date', function(done) {
+            it('accepts references as min date', function (done) {
 
                 var schema = Joi.object({ a: Joi.date(), b: Joi.date().min(Joi.ref('a')) });
                 var now = Date.now();
@@ -125,7 +125,7 @@ describe('date', function () {
                 ], done);
             });
 
-            it('errors if reference is not a date', function(done) {
+            it('errors if reference is not a date', function (done) {
 
                 var schema = Joi.object({ a: Joi.string(), b: Joi.date().min(Joi.ref('a')) });
 
@@ -152,30 +152,30 @@ describe('date', function () {
                 ], done);
             });
 
-            it('accepts "now" as the max date', function(done) {
+            it('accepts "now" as the max date', function (done) {
 
-              var past = new Date(Date.now() - 1000000);
+                var past = new Date(Date.now() - 1000000);
 
-              Joi.date().max('now').validate(past, function (err, value) {
+                Joi.date().max('now').validate(past, function (err, value) {
 
-                expect(err).to.not.exist();
-                expect(value).to.deep.equal(past);
-                done();
-              });
+                    expect(err).to.not.exist();
+                    expect(value).to.deep.equal(past);
+                    done();
+                });
             });
 
-            it('errors if .max("now") is used with a future date', function(done) {
+            it('errors if .max("now") is used with a future date', function (done) {
 
-              var future = new Date(Date.now() + 1000000);
+                var future = new Date(Date.now() + 1000000);
 
-              Joi.date().max('now').validate(future, function (err, value) {
+                Joi.date().max('now').validate(future, function (err, value) {
 
-                expect(err).to.exist();
-                done();
-              });
+                    expect(err).to.exist();
+                    done();
+                });
             });
 
-            it('accepts references as max date', function(done) {
+            it('accepts references as max date', function (done) {
 
                 var schema = Joi.object({ a: Joi.date(), b: Joi.date().max(Joi.ref('a')) });
                 var now = Date.now();
@@ -187,7 +187,7 @@ describe('date', function () {
                 ], done);
             });
 
-            it('errors if reference is not a date', function(done) {
+            it('errors if reference is not a date', function (done) {
 
                 var schema = Joi.object({ a: Joi.string(), b: Joi.date().max(Joi.ref('a')) });
 
@@ -208,7 +208,7 @@ describe('date', function () {
             ], done);
         });
 
-        describe('#iso', function() {
+        describe('#iso', function () {
 
             it('validates isoDate', function (done) {
 

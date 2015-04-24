@@ -70,7 +70,7 @@ describe('number', function () {
             ], done);
         });
 
-        it('should return false for Infinity', function(done) {
+        it('should return false for Infinity', function (done) {
 
             var t = Joi.number();
             Helper.validate(t, [
@@ -79,7 +79,7 @@ describe('number', function () {
             ], done);
         });
 
-        it('should return true for allowed Infinity', function(done) {
+        it('should return true for allowed Infinity', function (done) {
 
             var t = Joi.number().allow(Infinity, -Infinity);
             Helper.validate(t, [
@@ -538,7 +538,7 @@ describe('number', function () {
             });
         });
 
-        it('accepts references as min value', function(done) {
+        it('accepts references as min value', function (done) {
 
             var schema = Joi.object({ a: Joi.number(), b: Joi.number().min(Joi.ref('a')) });
 
@@ -553,7 +553,7 @@ describe('number', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function(done) {
+        it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.string(), b: Joi.number().min(Joi.ref('a')) });
 
@@ -574,7 +574,7 @@ describe('number', function () {
             done();
         });
 
-        it('accepts references as max value', function(done) {
+        it('accepts references as max value', function (done) {
 
             var schema = Joi.object({ a: Joi.number(), b: Joi.number().max(Joi.ref('a')) });
 
@@ -589,7 +589,7 @@ describe('number', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function(done) {
+        it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.string(), b: Joi.number().max(Joi.ref('a')) });
 
@@ -610,7 +610,7 @@ describe('number', function () {
             done();
         });
 
-        it('accepts references as less value', function(done) {
+        it('accepts references as less value', function (done) {
 
             var schema = Joi.object({ a: Joi.number(), b: Joi.number().less(Joi.ref('a')) });
 
@@ -625,7 +625,7 @@ describe('number', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function(done) {
+        it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.string(), b: Joi.number().less(Joi.ref('a')) });
 
@@ -646,7 +646,7 @@ describe('number', function () {
             done();
         });
 
-        it('accepts references as greater value', function(done) {
+        it('accepts references as greater value', function (done) {
 
             var schema = Joi.object({ a: Joi.number(), b: Joi.number().greater(Joi.ref('a')) });
 
@@ -661,7 +661,7 @@ describe('number', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function(done) {
+        it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.string(), b: Joi.number().greater(Joi.ref('a')) });
 
@@ -707,7 +707,7 @@ describe('number', function () {
         });
     });
 
-    describe('#multiple', function() {
+    describe('#multiple', function () {
 
         it('throws when multiple is not a number', function (done) {
 

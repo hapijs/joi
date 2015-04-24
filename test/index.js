@@ -1231,7 +1231,7 @@ describe('Joi', function () {
         });
     });
 
-    it('errors multiple times when abortEarly is false in a complex object', function(done) {
+    it('errors multiple times when abortEarly is false in a complex object', function (done) {
 
         var schema = Joi.object({
           test: Joi.array().items(Joi.object().keys({

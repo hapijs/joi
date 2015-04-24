@@ -1267,12 +1267,12 @@ describe('any', function () {
 
         it('should throw on unknown key', function (done) {
 
-            expect(function() {
+            expect(function () {
 
                 Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'c', 'b', 'd', 'd.e.f');
             }).to.throw(Error, 'unknown key(s) c, d');
 
-            expect(function() {
+            expect(function () {
 
                 Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'b', 'a.c.d');
             }).to.throw(Error, 'unknown key(s) a.c.d');
@@ -1282,7 +1282,7 @@ describe('any', function () {
 
         it('should throw on empty object', function (done) {
 
-            expect(function() {
+            expect(function () {
 
                 Joi.object().requiredKeys('a', 'c', 'b', 'd');
             }).to.throw(Error, 'unknown key(s) a, b, c, d');

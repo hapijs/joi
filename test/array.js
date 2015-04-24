@@ -584,18 +584,18 @@ describe('array', function () {
         });
     });
 
-    describe('#unique', function() {
+    describe('#unique', function () {
 
         it('errors if duplicate numbers, strings, objects, binaries, functions, dates and booleans', function (done) {
 
             var buffer = new Buffer('hello world');
-            var func = function() {};
+            var func = function () {};
             var now = new Date();
             var schema = Joi.array().sparse().unique();
 
             Helper.validate(schema, [
                 [[2, 2], false],
-                [[02, 2], false],
+                [[02, 2], false], // eslint-disable-line no-octal
                 [[0x2, 2], false],
                 [['duplicate', 'duplicate'], false],
                 [[{ a: 'b' }, { a: 'b' }], false],
@@ -620,8 +620,8 @@ describe('array', function () {
 
             var buffer = new Buffer('hello world');
             var buffer2 = new Buffer('Hello world');
-            var func = function() {};
-            var func2 = function() {};
+            var func = function () {};
+            var func2 = function () {};
             var now = new Date();
             var now2 = new Date(+now + 100);
             var schema = Joi.array().unique();
@@ -694,9 +694,9 @@ describe('array', function () {
         });
     });
 
-    describe('#single', function() {
+    describe('#single', function () {
 
-        it('should allow a single element', function(done) {
+        it('should allow a single element', function (done) {
 
             var schema = Joi.array().items(Joi.number()).items(Joi.boolean().forbidden()).single();
 
@@ -709,7 +709,7 @@ describe('array', function () {
             ], done);
         });
 
-        it('should allow a single element with multiple types', function(done) {
+        it('should allow a single element with multiple types', function (done) {
 
             var schema = Joi.array().items(Joi.number(), Joi.string()).single();
 
@@ -722,7 +722,7 @@ describe('array', function () {
             ], done);
         });
 
-        it('should allow nested arrays', function(done) {
+        it('should allow nested arrays', function (done) {
 
             var schema = Joi.array().items(Joi.array().items(Joi.number())).single();
 

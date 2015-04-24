@@ -165,7 +165,7 @@ describe('string', function () {
             ], done);
         });
 
-        it('accepts references as min length', function(done) {
+        it('accepts references as min length', function (done) {
 
             var schema = Joi.object({ a: Joi.number(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
             Helper.validate(schema, [
@@ -175,7 +175,7 @@ describe('string', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function(done) {
+        it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.any(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
 
@@ -223,7 +223,7 @@ describe('string', function () {
             ], done);
         });
 
-        it('accepts references as min length', function(done) {
+        it('accepts references as min length', function (done) {
 
             var schema = Joi.object({ a: Joi.number(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
             Helper.validate(schema, [
@@ -233,7 +233,7 @@ describe('string', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function(done) {
+        it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.any(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
 
@@ -318,7 +318,7 @@ describe('string', function () {
             ], done);
         });
 
-        it('accepts references as length', function(done) {
+        it('accepts references as length', function (done) {
 
             var schema = Joi.object({ a: Joi.number(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
             Helper.validate(schema, [
@@ -328,7 +328,7 @@ describe('string', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function(done) {
+        it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
 
@@ -338,7 +338,7 @@ describe('string', function () {
         });
     });
 
-    describe('#email', function() {
+    describe('#email', function () {
 
         it('throws when options are not an object', function (done) {
 
@@ -664,7 +664,7 @@ describe('string', function () {
                 ['v1.09azAZ-._~!$&\'()*+,;=:/33', false],
                 ['v1.09#', false]
             ],
-            validIPv4sWithCidr = function(success) {
+            validIPv4sWithCidr = function (success) {
 
                 return [
                     ['0.0.0.0/32', success],
@@ -683,7 +683,7 @@ describe('string', function () {
                     ['000.000.000.000/32', success]
                 ];
             },
-            validIPv4sWithoutCidr = function(success) {
+            validIPv4sWithoutCidr = function (success) {
 
                 return [
                     ['0.0.0.0', success],
@@ -735,7 +735,7 @@ describe('string', function () {
                 ];
             };
 
-        it('should validate all ip addresses with optional CIDR by default', function(done) {
+        it('should validate all ip addresses with optional CIDR by default', function (done) {
 
             var schema = Joi.string().ip();
             Helper.validate(schema, []
@@ -751,7 +751,7 @@ describe('string', function () {
                 .concat(invalidIPvFutures), done);
         });
 
-        it('should validate all ip addresses with an optional CIDR', function(done) {
+        it('should validate all ip addresses with an optional CIDR', function (done) {
 
             var schema = Joi.string().ip({ cidr: 'optional' });
             Helper.validate(schema, []
@@ -767,7 +767,7 @@ describe('string', function () {
                 .concat(invalidIPvFutures), done);
         });
 
-        it('should validate all ip addresses with a required CIDR', function(done) {
+        it('should validate all ip addresses with a required CIDR', function (done) {
 
             var schema = Joi.string().ip({ cidr: 'required' });
             Helper.validate(schema, []
@@ -783,7 +783,7 @@ describe('string', function () {
                 .concat(invalidIPvFutures), done);
         });
 
-        it('should validate all ip addresses with a forbidden CIDR', function(done) {
+        it('should validate all ip addresses with a forbidden CIDR', function (done) {
 
             var schema = Joi.string().ip({ cidr: 'forbidden' });
             Helper.validate(schema, []
@@ -883,9 +883,9 @@ describe('string', function () {
             });
         });
 
-        describe('#ip({ version: "ipv4" })', function() {
+        describe('#ip({ version: "ipv4" })', function () {
 
-            it('should validate all ipv4 addresses with a default CIDR strategy', function(done) {
+            it('should validate all ipv4 addresses with a default CIDR strategy', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipv4' });
                 Helper.validate(schema, []
@@ -901,7 +901,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipv4 addresses with an optional CIDR', function(done) {
+            it('should validate all ipv4 addresses with an optional CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipv4', cidr: 'optional' });
                 Helper.validate(schema, []
@@ -917,7 +917,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipv4 addresses with a required CIDR', function(done) {
+            it('should validate all ipv4 addresses with a required CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipv4', cidr: 'required' });
                 Helper.validate(schema, []
@@ -933,7 +933,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipv4 addresses with a forbidden CIDR', function(done) {
+            it('should validate all ipv4 addresses with a forbidden CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipv4', cidr: 'forbidden' });
                 Helper.validate(schema, []
@@ -950,9 +950,9 @@ describe('string', function () {
             });
         });
 
-        describe('#ip({ version: "ipv6" })', function() {
+        describe('#ip({ version: "ipv6" })', function () {
 
-            it('should validate all ipv6 addresses with a default CIDR strategy', function(done) {
+            it('should validate all ipv6 addresses with a default CIDR strategy', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipv6' });
                 Helper.validate(schema, []
@@ -968,7 +968,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipv6 addresses with an optional CIDR', function(done) {
+            it('should validate all ipv6 addresses with an optional CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipv6', cidr: 'optional' });
                 Helper.validate(schema, []
@@ -984,7 +984,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipv6 addresses with a required CIDR', function(done) {
+            it('should validate all ipv6 addresses with a required CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipv6', cidr: 'required' });
                 Helper.validate(schema, []
@@ -1000,7 +1000,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipv6 addresses with a forbidden CIDR', function(done) {
+            it('should validate all ipv6 addresses with a forbidden CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipv6', cidr: 'forbidden' });
                 Helper.validate(schema, []
@@ -1017,9 +1017,9 @@ describe('string', function () {
             });
         });
 
-        describe('#ip({ version: "ipvfuture" })', function() {
+        describe('#ip({ version: "ipvfuture" })', function () {
 
-            it('should validate all ipvfuture addresses with a default CIDR strategy', function(done) {
+            it('should validate all ipvfuture addresses with a default CIDR strategy', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipvfuture' });
                 Helper.validate(schema, []
@@ -1035,7 +1035,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipvfuture addresses with an optional CIDR', function(done) {
+            it('should validate all ipvfuture addresses with an optional CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipvfuture', cidr: 'optional' });
                 Helper.validate(schema, []
@@ -1051,7 +1051,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipvfuture addresses with a required CIDR', function(done) {
+            it('should validate all ipvfuture addresses with a required CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipvfuture', cidr: 'required' });
                 Helper.validate(schema, []
@@ -1067,7 +1067,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipvfuture addresses with a forbidden CIDR', function(done) {
+            it('should validate all ipvfuture addresses with a forbidden CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: 'ipvfuture', cidr: 'forbidden' });
                 Helper.validate(schema, []
@@ -1084,9 +1084,9 @@ describe('string', function () {
             });
         });
 
-        describe('#ip({ version: [ "ipv4", "ipv6" ] })', function() {
+        describe('#ip({ version: [ "ipv4", "ipv6" ] })', function () {
 
-            it('should validate all ipv4 and ipv6 addresses with a default CIDR strategy', function(done) {
+            it('should validate all ipv4 and ipv6 addresses with a default CIDR strategy', function (done) {
 
                 var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ] });
                 Helper.validate(schema, []
@@ -1102,7 +1102,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipv4 and ipv6 addresses with an optional CIDR', function(done) {
+            it('should validate all ipv4 and ipv6 addresses with an optional CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ], cidr: 'optional' });
                 Helper.validate(schema, []
@@ -1118,7 +1118,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipv4 and ipv6 addresses with a required CIDR', function(done) {
+            it('should validate all ipv4 and ipv6 addresses with a required CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ], cidr: 'required' });
                 Helper.validate(schema, []
@@ -1134,7 +1134,7 @@ describe('string', function () {
                     .concat(invalidIPvFutures), done);
             });
 
-            it('should validate all ipv4 and ipv6 addresses with a forbidden CIDR', function(done) {
+            it('should validate all ipv4 and ipv6 addresses with a forbidden CIDR', function (done) {
 
                 var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ], cidr: 'forbidden' });
                 Helper.validate(schema, []
@@ -1916,7 +1916,7 @@ describe('string', function () {
                 ['file:///whatever', true],
                 ['mailto:asdf@asdf.com', true],
                 ['ftp://www.example.com', true],
-                ['javascript:alert(\'hello\');', true],
+                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
                 ['xmpp:isaacschlueter@jabber.org', true],
                 ['f://some.host/path', true],
                 ['http://localhost:18/asdf', true],
@@ -1946,7 +1946,7 @@ describe('string', function () {
                 ['dash-test://foo/bar', true],
                 ['xmpp:isaacschlueter@jabber.org', true],
                 ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', true],
-                ['javascript:alert(\'hello\');', true],
+                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
                 ['file://localhost/etc/node/', true],
                 ['file:///etc/node/', true],
                 ['http://USER:PW@www.ExAmPlE.com/', true],

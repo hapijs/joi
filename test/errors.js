@@ -288,7 +288,7 @@ describe('errors', function () {
 
         it('annotates circular input', function (done) {
 
-           var schema = {
+            var schema = {
                 x: Joi.object({
                     y: Joi.object({
                         z: Joi.number()
@@ -309,7 +309,7 @@ describe('errors', function () {
 
         it('annotates deep circular input', function (done) {
 
-           var schema = {
+            var schema = {
                 x: Joi.object({
                     y: Joi.object({
                         z: Joi.number()
@@ -330,7 +330,7 @@ describe('errors', function () {
 
         it('annotates deep circular input with extra keys', function (done) {
 
-           var schema = {
+            var schema = {
                 x: Joi.object({
                     y: Joi.object({
                         z: Joi.number()
