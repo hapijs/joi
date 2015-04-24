@@ -1,7 +1,7 @@
 {
   "name": "joi",
   "description": "Object schema validation",
-  "version": "6.3.0",
+  "version": "6.2.0",
   "repository": "git://github.com/hapijs/joi",
   "main": "index",
   "keywords": [
@@ -12,12 +12,17 @@
     "node": ">=0.10.30"
   },
   "dependencies": {
+    "es6-promise": "^2.1.1",
     "hoek": "^2.2.x",
-    "topo": "1.x.x",
     "isemail": "1.x.x",
-    "moment": "2.x.x"
+    "moment": "2.x.x",
+    "topo": "1.x.x"
   },
   "devDependencies": {
+    "bluebird": "^2.9.24",
+    "q": "^1.2.0",
+    "vow": "^0.4.9",
+    "when": "^3.7.2",
     "code": "1.x.x",
     "lab": "5.x.x",
     "markdown-toc": "^0.11.0"

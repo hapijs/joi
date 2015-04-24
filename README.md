@@ -109,6 +109,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`alternatives.try(schemas)`](#alternativestryschemas)
       - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
     - [`ref(key, [options])`](#refkey-options)
+- [Promises](#promises)
 
 <!-- tocstop -->
 
@@ -197,6 +198,8 @@ Validates a value using the given schema and options where:
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object). Defaults to `false`.
+  - `asPromise` - when `true`, will return a [Promises/A+](http://promisesaplus.com/) Promise. Defaults to `false`. (See [Promises](#Promises).)
+  - `withPromises` - provides the implementation of Promises to use if `asPromise` is true. Defaults to `null`.  (See [Promises](#Promises).)
   - `language` - overrides individual error messages, when `'label'` is set, it overrides the key name in the error message. Defaults to no override (`{}`).
   - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
     Defaults to `'optional'`.
@@ -479,7 +482,7 @@ Joi.validate({
 #### `any.concat(schema)`
 
 Returns a new type that is the result of adding the rules of one type to another where:
-- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the context type or `any`. If applied to an `any` type, the schema can be any other schema.
+- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the context type or `any`.
 
 ```javascript
 var a = Joi.string().valid('a');
@@ -1414,3 +1417,131 @@ var schema = Joi.object().keys({
 
 Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, function (err, value) {});
 ```
+
+# Promises
+
+Joi can be made to return a [Promises/A+](http://promisesaplus.com/)-compliant "resolved" or "rejected" Promise depending upon the result of `Joi.validate()`.
+
+The five most popular Promises implementations are supported "out-of-the-box":
+
+- [bluebird](https://github.com/petkaantonov/bluebird)
+- [q](https://github.com/kriskowal/q)
+- [when](https://github.com/cujojs/when)
+- [vow](https://github.com/dfilatov/vow)
+- [es6-promise](https://github.com/jakearchibald/es6-promise)
+
+as well as the native Promise implementation in ES6.
+
+The default for non-ES6 environments is to use `require('es6-promise').polyfill()` which adds an ES6-compliant Promise
+object to the `global` object.
+
+Other implementations should also work if they adhere to the [ES6 Promises Specification](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-promise-objects).
+The only requirement is that the implementation must provide (or can be made to provide) the `Promise.resolve(value)` and `Promise.reject(reason)` interfaces.
+
+**Usage:**
+
+To use Promises with Joi, call `joi.validate(data,schema,options)` with `options.asPromise` set to `true` to use the default implementation.
+
+Optionally, you can set `options.withPromises` to the ES6 Promises implementation you prefer.
+
+- For `bluebird` or `q`, simply pass the required module, as in:
+  - `options.withPromises: require('bluebird')` or
+  - `options.withPromises: require('q')`
+
+- For `vow` or `es6-promises`, use:
+  - `options.withPromises: require('vow').Promise` or
+  - `options.withPromises: require('es6-promises').Promise`
+
+- And for `when`, use:
+  - `options.withPromises: require('when/es6-shim/Promise')`.
+
+Check with your specific Promises implementation to see how to pass the ES6 Spec object to `options.withPromises`.
+
+**Example:**
+
+```javascript
+var Joi = require('joi');
+
+var schema = Joi.object().keys({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    birthyear: Joi.number().integer().min(1900).max(2015)
+});
+
+var options={
+    asPromise: true,
+    withPromises: require('vow').Promise
+};
+
+Joi.validate({ username: 'abc', birthyear: 1994 }, schema, options)
+  .then(function(result){
+    // where result is the successfully validated object
+    // typically returned by Joi as result.value
+  })
+  .catch(function(err){
+    // and err is an instance of Error
+    // typically returned by Joi as result.errors
+  });
+
+```
+
+Promise chaining is fully-supported, as in:
+
+```javascript
+
+var fs        = require('fs'),
+    Joi       = require('joi'),
+    Promise   = require('bluebird');
+
+Promise.promisifyAll(fs);
+
+var inPath    = './raw.json',
+    outPath   = './validated.json',
+    schema    = Joi.object({
+      number: Joi.number().min(1).max(10),
+      boolean: Joi.boolean().optional().default(false),
+      string: Joi.string()
+    }),
+    options   = {
+      asPromise: true,
+      withPromises: Promise
+    },
+    validate  = function(data){
+      return Joi.validate( data, schema, options); // returns a Promise
+    },
+    write     = function(json) {
+      return fs.writeFileSync(outPath,json);
+    };
+
+fs.readFileAsync(inPath)
+  .then(JSON.parse)
+  .then(validate)
+  .then(JSON.stringify)
+  .then(write)
+  .catch(SyntaxError, function(e) {
+    console.error("invalid json found in %s: %s", inPath, e);
+  })
+  .catch(ValidationError, function(e) {
+    console.error("failed to validate data read from : %s", inPath, e);
+  })
+  .catch(function(e) {
+    console.error("unable to process %s: %s', inPath, e);
+  });
+
+```
+
+Assuming that `./raw.json` contains:
+
+```json
+{
+  "number": 10,
+  "boolean": true,
+  "string": "bar"
+}
+```
+
+Run the example and `./validated.json` will now contain: `{"number":10,"boolean":true,"string":"bar"}`
+
+Run the example again after changing the `number` field  in `raw.json` to: `100` and the program will print the
+following message to STDERR:
+
+> *unable to process ./raw.json: ValidationError: child "number" fails because ["number" must be less than or equal to 10]*
