@@ -1413,6 +1413,7 @@ describe('Joi', function () {
             xor: Joi.string(),
             renamed: Joi.string().valid('456'),
             notEmpty: Joi.string().required().description('a').notes('b').tags('c'),
+            empty: Joi.string().empty('').strip(),
             defaultRef: Joi.string().default(defaultRef, 'not here'),
             defaultFn: Joi.string().default(defaultFn, 'not here'),
             defaultDescribedFn: Joi.string().default(defaultDescribedFn, 'described test')
@@ -1490,6 +1491,20 @@ describe('Joi', function () {
                     description: 'a',
                     notes: ['b'],
                     tags: ['c'],
+                    invalids: ['']
+                },
+                empty: {
+                    type: 'string',
+                    flags: {
+                        empty: {
+                            type: 'string',
+                            flags: {
+                                allowOnly: true
+                            },
+                            valids: ['']
+                        },
+                        strip: true
+                    },
                     invalids: ['']
                 },
                 defaultRef: {
