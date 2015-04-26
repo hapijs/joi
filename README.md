@@ -70,6 +70,8 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`number.integer()`](#numberinteger)
       - [`number.precision(limit)`](#numberprecisionlimit)
       - [`number.multiple(base)`](#numbermultiplebase)
+      - [`number.positive()`](#numberpositive)
+      - [`number.negative()`](#numbernegative)
     - [`object`](#object)
       - [`object.keys([schema])`](#objectkeysschema)
       - [`object.min(limit)`](#objectminlimit)
@@ -882,6 +884,22 @@ Specifies that the value must be a multiple of `base`:
 
 ```javascript
 var schema = Joi.number().multiple(3);
+```
+
+#### `number.positive()`
+
+Requires the number to be positive.
+
+```javascript
+var schema = Joi.number().positive();
+```
+
+#### `number.negative()`
+
+Requires the number to be negative.
+
+```javascript
+var schema = Joi.number().negative();
 ```
 
 ### `object`
