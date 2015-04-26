@@ -1319,6 +1319,65 @@ describe('any', function () {
         });
     });
 
+    describe('#empty', function () {
+
+        it('should void values when considered empty', function (done) {
+
+            var schema = Joi.string().empty('');
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', true, null, undefined]
+            ], done);
+        });
+
+        it('should override any previous empty', function (done) {
+
+            var schema = Joi.string().empty('').empty('abc');
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, undefined],
+                ['', false, null, '"value" is not allowed to be empty'],
+                ['def', true, null, 'def']
+            ], done);
+        });
+
+        it('should be possible to reset the empty value', function (done) {
+
+            var schema = Joi.string().empty('').empty();
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', false, null, '"value" is not allowed to be empty']
+            ], done);
+        });
+
+        it('should have no effect if only reset is used', function (done) {
+
+            var schema = Joi.string().empty();
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', false, null, '"value" is not allowed to be empty']
+            ], done);
+        });
+
+        it('should work with dependencies', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string().empty(''),
+                b: Joi.string().empty('')
+            }).or('a', 'b');
+
+            Helper.validate(schema, [
+                [{}, false, null, '"value" must contain at least one of [a, b]'],
+                [{ a: '' }, false, null, '"value" must contain at least one of [a, b]'],
+                [{ a: 'a' }, true, null, { a: 'a' }],
+                [{ a: '', b: 'b' }, true, null, { b: 'b' }]
+            ], done);
+        });
+    });
+
     describe('Set', function () {
 
         describe('#add', function () {

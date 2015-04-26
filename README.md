@@ -41,6 +41,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`any.when(ref, options)`](#anywhenref-options)
       - [`any.label(name)`](#anylabelname)
       - [`any.raw(isRaw)`](#anyrawisraw)
+      - [`any.empty(schema)`](#anyemptyschema)
     - [`array`](#array)
       - [`array.sparse(enabled)`](#arraysparseenabled)
       - [`array.single(enabled)`](#arraysingleenabled)
@@ -533,6 +534,18 @@ Outputs the original untouched value instead of the casted value.
 var schema = {
     timestamp: Joi.date().format('YYYYMMDD').raw()
 };
+```
+
+#### `any.empty(schema)`
+
+Considers anything that matches the schema to be empty (`undefined`).
+- `schema` - any object or joi schema to match. An undefined schema unsets that rule.
+
+```js
+var schema = Joi.string().empty('');
+schema.validate(''); // returns { error: null, value: undefined }
+schema = schema.empty();
+schema.validate(''); // returns { error: "value" is not allowed to be empty, value: '' }
 ```
 
 ### `array`
