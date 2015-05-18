@@ -555,6 +555,17 @@ describe('string', function () {
                 [1, false]
             ], done);
         });
+
+        it('should work in combination with a replacement', function (done) {
+
+            var schema = Joi.string().lowercase().replace(/\s+/g, ' ');
+            Helper.validate(schema, [
+                ['a\r b\n c', true, null, 'a b c'],
+                ['A\t B  C', true, null, 'a b c'],
+                ['ABC', true, null, 'abc'],
+                [1, false]
+            ], done);
+        });
     });
 
     describe('#uppercase', function () {
@@ -590,6 +601,17 @@ describe('string', function () {
                 [' abc', true],
                 [' ABC', true],
                 ['ABC', true],
+                [1, false]
+            ], done);
+        });
+
+        it('works in combination with a forced replacement', function (done) {
+
+            var schema = Joi.string().uppercase().replace(/\s+/g, ' ');
+            Helper.validate(schema, [
+                ['a\r b\n c', true, null, 'A B C'],
+                ['A\t B  C', true, null, 'A B C'],
+                ['ABC', true, null, 'ABC'],
                 [1, false]
             ], done);
         });
@@ -670,6 +692,95 @@ describe('string', function () {
                 ['ABC', true]
             ], done);
         });
+    });
+
+    describe('#replace', function () {
+
+        it('successfully replaces the first occurrence of the expression', function (done) {
+
+            var schema = Joi.string().replace(/\s+/, ''); // no "g" flag
+            Helper.validateOptions(schema, [
+                ['\tsomething', true, null, 'something'],
+                ['something\r', true, null, 'something'],
+                ['something  ', true, null, 'something'],
+                ['some  thing', true, null, 'something'],
+                ['so me thing', true, null, 'some thing'] // first occurrence!
+            ], { convert: true }, done);
+        });
+
+        it('successfully replaces all occurrences of the expression', function (done) {
+
+            var schema = Joi.string().replace(/\s+/g, ''); // has "g" flag
+            Helper.validateOptions(schema, [
+                ['\tsomething', true, null, 'something'],
+                ['something\r', true, null, 'something'],
+                ['something  ', true, null, 'something'],
+                ['some  thing', true, null, 'something'],
+                ['so me thing', true, null, 'something']
+            ], { convert: true }, done);
+        });
+
+        it('successfully replaces all occurrences of a string pattern', function (done) {
+
+            var schema = Joi.string().replace('foo', 'X'); // has "g" flag
+            Helper.validateOptions(schema, [
+                ['foobarfoobazfoo', true, null, 'XbarXbazX']
+            ], { convert: true }, done);
+        });
+
+        it('successfully replaces multiple times', function (done) {
+
+            var schema = Joi.string().replace(/a/g, 'b').replace(/b/g, 'c');
+            schema.validate('a quick brown fox', function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('c quick crown fox');
+                done();
+            });
+        });
+
+        it('should work in combination with trim', function (done) {
+
+            // The string below is the name "Yamada Tarou" separated by a
+            // carriage return, a "full width" ideographic space and a newline
+
+            var schema = Joi.string().trim().replace(/\s+/g, ' ');
+            schema.validate(' \u5C71\u7530\r\u3000\n\u592A\u90CE ', function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('\u5C71\u7530 \u592A\u90CE');
+                done();
+            });
+        });
+
+        it('should work in combination with min', function (done) {
+
+            var schema = Joi.string().min(4).replace(/\s+/g, ' ');
+            Helper.validate(schema, [
+                ['   a   ', false],
+                ['abc    ', true, null, 'abc '],
+                ['a\t\rbc', true, null, 'a bc']
+            ], done);
+        });
+
+        it('should work in combination with max', function (done) {
+
+            var schema = Joi.string().max(5).replace(/ CHANGE ME /g, '-b-');
+            Helper.validate(schema, [
+                ['a CHANGE ME c', true, null, 'a-b-c'],
+                ['a-b-c', true, null, 'a-b-c'] // nothing changes here!
+            ], done);
+        });
+
+        it('should work in combination with length', function (done) {
+
+            var schema = Joi.string().length(5).replace(/\s+/g, ' ');
+            Helper.validate(schema, [
+                ['a    bc', false],
+                ['a\tb\nc', true, null, 'a b c']
+            ], done);
+        });
+
     });
 
     describe('#regex', function () {
