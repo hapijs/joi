@@ -27,10 +27,5 @@
     "test-cov-html": "lab -r html -o coverage.html -a code --lint-errors-threshold 0 --lint-warnings-threshold 0",
     "toc": "node generate-readme-toc.js"
   },
-  "licenses": [
-    {
-      "type": "BSD",
-      "url": "http://github.com/hapijs/joi/raw/master/LICENSE"
-    }
-  ]
+  "license": "BSD"
 }
