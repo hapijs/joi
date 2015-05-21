@@ -3,7 +3,7 @@
   "description": "Object schema validation",
   "version": "6.4.1",
   "repository": "git://github.com/hapijs/joi",
-  "main": "index",
+  "main": "lib/index.js",
   "keywords": [
     "schema",
     "validation"
