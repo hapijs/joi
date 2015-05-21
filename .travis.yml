@@ -1,9 +1,10 @@
 # Travis optimizations, see http://docs.travis-ci.com/user/workers/container-based-infrastructure/
 sudo: false
-cache:
-  directories:
-    - node_modules
-install: npm update
+
+#cache:
+#  directories:
+#    - node_modules
+#install: npm update
 
 language: node_js
 
