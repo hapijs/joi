@@ -125,14 +125,38 @@ describe('date', function () {
                 ], done);
             });
 
+            it('accepts context references as min date', function (done) {
+
+                var schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });
+                var now = Date.now();
+
+                Helper.validate(schema, [
+                    [{ b: now }, true, { context: { a: now } }],
+                    [{ b: now + 1e3 }, true, { context: { a: now } }],
+                    [{ b: now - 1e3 }, false, { context: { a: now } }]
+                ], done);
+            });
+
             it('errors if reference is not a date', function (done) {
 
                 var schema = Joi.object({ a: Joi.string(), b: Joi.date().min(Joi.ref('a')) });
+                var now = Date.now();
 
                 Helper.validate(schema, [
-                    [{ a: 'abc', b: new Date() }, false, null, 'child "b" fails because ["b" references "a" which is not a date]'],
-                    [{ a: '123', b: new Date() }, true],
-                    [{ a: (Date.now() + 1e3).toString(), b: new Date() }, false, null, /^child "b" fails because \["b" must be larger than or equal to/]
+                    [{ a: 'abc', b: now }, false, null, 'child "b" fails because ["b" references "a" which is not a date]'],
+                    [{ a: '123', b: now }, true],
+                    [{ a: (now + 1e3).toString(), b: now }, false, null, /^child "b" fails because \["b" must be larger than or equal to/]
+                ], done);
+            });
+
+            it('errors if context reference is not a date', function (done) {
+
+                var schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });
+                var now = Date.now();
+
+                Helper.validate(schema, [
+                    [{ b: now }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a date]'],
+                    [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, /^child "b" fails because \["b" must be larger than or equal to/]
                 ], done);
             });
         });
@@ -187,14 +211,39 @@ describe('date', function () {
                 ], done);
             });
 
+            it('accepts references as max date', function (done) {
+
+                var schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
+                var now = Date.now();
+
+                Helper.validate(schema, [
+                    [{ b: now }, true, { context: { a: now } }],
+                    [{ b: now + 1e3 }, false, { context: { a: now } }],
+                    [{ b: now - 1e3 }, true, { context: { a: now } }]
+                ], done);
+            });
+
             it('errors if reference is not a date', function (done) {
 
                 var schema = Joi.object({ a: Joi.string(), b: Joi.date().max(Joi.ref('a')) });
+                var now = Date.now();
 
                 Helper.validate(schema, [
                     [{ a: 'abc', b: new Date() }, false, null, 'child "b" fails because ["b" references "a" which is not a date]'],
-                    [{ a: '100000000000000', b: new Date() }, true],
-                    [{ a: (Date.now() - 1e3).toString(), b: new Date() }, false, null, /^child "b" fails because \["b" must be less than or equal to/]
+                    [{ a: '100000000000000', b: now }, true],
+                    [{ a: (now - 1e3).toString(), b: now }, false, null, /^child "b" fails because \["b" must be less than or equal to/]
+                ], done);
+            });
+
+            it('errors if context reference is not a date', function (done) {
+
+                var schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
+                var now = Date.now();
+
+                Helper.validate(schema, [
+                    [{ b: now }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a date]'],
+                    [{ b: now }, true, { context: { a: '100000000000000' } }],
+                    [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, /^child "b" fails because \["b" must be less than or equal to/]
                 ], done);
             });
         });
