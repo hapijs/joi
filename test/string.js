@@ -175,12 +175,31 @@ describe('string', function () {
             ], done);
         });
 
+        it('accepts context references as min length', function (done) {
+
+            var schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
+            Helper.validate(schema, [
+                [{ b: '\u00bd' }, true, { context: { a: 2 } }],
+                [{ b: 'a' }, false, { context: { a: 2 } }],
+                [{ b: 'a' }, false, { context: { a: 2 } }, 'child "b" fails because ["b" length must be at least 2 characters long]']
+            ], done);
+        });
+
         it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.any(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
+
+        it('errors if context reference is not a number', function (done) {
+
+            var schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
+
+            Helper.validate(schema, [
+                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
@@ -233,12 +252,31 @@ describe('string', function () {
             ], done);
         });
 
+        it('accepts context references as min length', function (done) {
+
+            var schema = Joi.object({ b: Joi.string().max(Joi.ref('$a'), 'utf8') });
+            Helper.validate(schema, [
+                [{ b: '\u00bd' }, true, { context: { a: 2 } }],
+                [{ b: 'three' }, false, { context: { a: 2 } }],
+                [{ b: 'three' }, false, { context: { a: 2 } }, 'child "b" fails because ["b" length must be less than or equal to 2 characters long]']
+            ], done);
+        });
+
         it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.any(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
+
+        it('errors if context reference is not a number', function (done) {
+
+            var schema = Joi.object({ b: Joi.string().max(Joi.ref('$a'), 'utf8') });
+
+            Helper.validate(schema, [
+                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
@@ -328,12 +366,31 @@ describe('string', function () {
             ], done);
         });
 
+        it('accepts context references as length', function (done) {
+
+            var schema = Joi.object({ b: Joi.string().length(Joi.ref('$a'), 'utf8') });
+            Helper.validate(schema, [
+                [{ b: '\u00bd' }, true, { context: { a: 2 } }],
+                [{ b: 'a' }, false, { context: { a: 2 } }],
+                [{ b: 'a' }, false, { context: { a: 2 } }, 'child "b" fails because ["b" length must be 2 characters long]']
+            ], done);
+        });
+
         it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
+
+        it('errors if context reference is not a number', function (done) {
+
+            var schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('$a'), 'utf8') });
+
+            Helper.validate(schema, [
+                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
