@@ -553,12 +553,35 @@ describe('number', function () {
             ], done);
         });
 
+        it('accepts context references as min value', function (done) {
+
+            var schema = Joi.object({ b: Joi.number().min(Joi.ref('$a')) });
+
+            Helper.validate(schema, [
+                [{ b: 1337 }, true, { context: { a: 42 } }],
+                [{ b: 42 }, false, { context: { a: 1337 } }],
+                [{ b: 4.2 }, true, { context: { a: 2.4 } }],
+                [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
+                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }],
+                [{ b: 2.4 }, false, { context: { a: 4.2 } }, 'child "b" fails because ["b" must be larger than or equal to 4.2]']
+            ], done);
+        });
+
         it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.string(), b: Joi.number().min(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
+
+        it('errors if context reference is not a number', function (done) {
+
+            var schema = Joi.object({ b: Joi.number().min(Joi.ref('$a')) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
@@ -589,12 +612,35 @@ describe('number', function () {
             ], done);
         });
 
+        it('accepts context references as max value', function (done) {
+
+            var schema = Joi.object({ b: Joi.number().max(Joi.ref('$a')) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, true, { context: { a: 1337 } }],
+                [{ b: 1337 }, false, { context: { a: 42 } }],
+                [{ b: 2.4 }, true, { context: { a: 4.2 } }],
+                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }],
+                [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
+                [{ b: 4.2 }, false, { context: { a: 2.4 } }, 'child "b" fails because ["b" must be less than or equal to 2.4]']
+            ], done);
+        });
+
         it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.string(), b: Joi.number().max(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
+
+        it('errors if context reference is not a number', function (done) {
+
+            var schema = Joi.object({ b: Joi.number().max(Joi.ref('$a')) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
@@ -625,12 +671,35 @@ describe('number', function () {
             ], done);
         });
 
+        it('accepts context references as less value', function (done) {
+
+            var schema = Joi.object({ b: Joi.number().less(Joi.ref('$a')) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, true, { context: { a: 1337 } }],
+                [{ b: 1337 }, false, { context: { a: 42 } }],
+                [{ b: 2.4 }, true, { context: { a: 4.2 } }],
+                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }],
+                [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
+                [{ b: 4.2 }, false, { context: { a: 2.4 } }, 'child "b" fails because ["b" must be less than 2.4]']
+            ], done);
+        });
+
         it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.string(), b: Joi.number().less(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
+
+        it('errors if context reference is not a number', function (done) {
+
+            var schema = Joi.object({ a: Joi.string(), b: Joi.number().less(Joi.ref('$a')) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
@@ -661,12 +730,35 @@ describe('number', function () {
             ], done);
         });
 
+        it('accepts context references as greater value', function (done) {
+
+            var schema = Joi.object({ b: Joi.number().greater(Joi.ref('$a')) });
+
+            Helper.validate(schema, [
+                [{ b: 1337 }, true, { context: { a: 42 } }],
+                [{ b: 42 }, false, { context: { a: 1337 } }],
+                [{ b: 4.2 }, true, { context: { a: 2.4 } }],
+                [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
+                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }],
+                [{ b: 2.4 }, false, { context: { a: 4.2 } }, 'child "b" fails because ["b" must be greater than 4.2]']
+            ], done);
+        });
+
         it('errors if reference is not a number', function (done) {
 
             var schema = Joi.object({ a: Joi.string(), b: Joi.number().greater(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+            ], done);
+        });
+
+        it('errors if context reference is not a number', function (done) {
+
+            var schema = Joi.object({ b: Joi.number().greater(Joi.ref('$a')) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
