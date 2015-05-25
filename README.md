@@ -42,6 +42,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`any.label(name)`](#anylabelname)
       - [`any.raw(isRaw)`](#anyrawisraw)
       - [`any.empty(schema)`](#anyemptyschema)
+      - [`any.custom(function, message)`](#anycustomfunction-message)
     - [`array`](#array)
       - [`array.sparse(enabled)`](#arraysparseenabled)
       - [`array.single(enabled)`](#arraysingleenabled)
@@ -548,6 +549,20 @@ var schema = Joi.string().empty('');
 schema.validate(''); // returns { error: null, value: undefined }
 schema = schema.empty();
 schema.validate(''); // returns { error: "value" is not allowed to be empty, value: '' }
+```
+
+#### `any.custom(function, message)`
+
+Allows you to use a custom function to validate.
+- `function` - a function that returns a boolean dictating if the input is valid.
+- `message` - a custom message to be displayed if the test fails (Example: If the message is "Is invalid", the final message will display as: "myValue" is invalid).
+
+```js
+var magicNumber = 5;
+var validator = function (value) {
+  return value === magicNumber;
+}
+var schema = Joi.custom(, "is not the magic number. It should be.")
 ```
 
 ### `array`
