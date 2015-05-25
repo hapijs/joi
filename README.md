@@ -42,7 +42,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`any.label(name)`](#anylabelname)
       - [`any.raw(isRaw)`](#anyrawisraw)
       - [`any.empty(schema)`](#anyemptyschema)
-      - [`any.custom(function, message)`](#anycustomfunction-schema)
+      - [`any.custom(function, message)`](#anycustomfunction-message)
     - [`array`](#array)
       - [`array.sparse(enabled)`](#arraysparseenabled)
       - [`array.single(enabled)`](#arraysingleenabled)
@@ -562,7 +562,7 @@ var magicNumber = 5;
 var validator = function (value) {
   return value === magicNumber;
 }
-var schema = Joi.custom(validator, "is not the magic number. It should be.")
+var schema = Joi.custom(, "is not the magic number. It should be.")
 ```
 
 ### `array`
