@@ -229,7 +229,11 @@ describe('any', function () {
     describe('#custom', function () {
 
         it('validates based on a custom test', function (done) {
-            Helper.validate(Joi.custom(function (value) { return value === 4; }, 'is invalid'), [
+
+            Helper.validate(Joi.custom(function (value) {
+
+                return value === 4;
+            }, 'is invalid'), [
                 [4, true],
                 [5, false]
             ], done);
