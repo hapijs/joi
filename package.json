@@ -23,8 +23,8 @@
     "markdown-toc": "^0.11.0"
   },
   "scripts": {
-    "test": "lab -t 100 -a code -L --lint-errors-threshold 0 --lint-warnings-threshold 0",
-    "test-cov-html": "lab -r html -o coverage.html -a code --lint-errors-threshold 0 --lint-warnings-threshold 0",
+    "test": "lab -t 100 -a code -L",
+    "test-cov-html": "lab -r html -o coverage.html -a code",
     "toc": "node generate-readme-toc.js"
   },
   "license": "BSD-3-Clause"
