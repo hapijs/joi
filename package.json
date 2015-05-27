@@ -9,7 +9,8 @@
     "validation"
   ],
   "engines": {
-    "node": ">=0.10.30"
+    "node": ">=0.10.30",
+    "npm": "2.x"
   },
   "dependencies": {
     "hoek": "^2.2.x",
