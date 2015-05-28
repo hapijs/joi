@@ -1,26 +1,7 @@
-# Travis optimizations, see http://docs.travis-ci.com/user/workers/container-based-infrastructure/
 sudo: false
-
-#cache:
-#  directories:
-#    - node_modules
-#install: npm update
-
 language: node_js
 
 node_js:
   - "0.10"
   - "0.12"
   - iojs
-
-deploy:
-  provider: npm
-  email: marsup@gmail.com
-  edge: true
-  api_key:
-    secure: kY6qx95hnKJkiuriRRizFf2k2hneCVbGjZEds81hyL0SscdaCpd2UbkeY3fL/XrFfJaagdmDdEQ+H+y8+kTzOID/9HVnpcwVSCrPG20+eHDYL6ZdZCFOsGqq0ggi38XBp7WS1AHvq3uDGTYzoJdQDgA6RNqIBBim+o3zUKRpu34=
-  on:
-    branch: master
-    tags: true
-    repo: hapijs/joi
-    node: "0.10"
