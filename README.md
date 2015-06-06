@@ -97,6 +97,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`string.creditCard()`](#stringcreditcard)
       - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
       - [`string.regex(pattern, [name])`](#stringregexpattern-name)
+      - [`string.replace(pattern, replacement)`](#stringreplacepattern-replacement)
       - [`string.alphanum()`](#stringalphanum)
       - [`string.token()`](#stringtoken)
       - [`string.email([options])`](#stringemailoptions)
@@ -1237,6 +1238,23 @@ Defines a regular expression rule where:
 ```javascript
 var schema = Joi.string().regex(/^[abc]+$/);
 ```
+
+#### `string.replace(pattern, replacement)`
+
+Replace characters matching the given _pattern_ with the specified
+_replacement_ string where:
+- `pattern` - a regular expression object to match against, or a string of which _all_ occurrences will be replaced.
+- `replacement` - the string that will replace the pattern.
+
+
+```javascript
+var schema = Joi.string().replace(/b/gi, 'x');
+schema.validate('abBc', function (err, value) {
+  // here value will be 'axxc'
+});
+```
+
+When `pattern` is a _string_ all its occurrences will be replaced.
 
 #### `string.alphanum()`
 
