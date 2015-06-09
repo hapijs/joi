@@ -260,7 +260,7 @@ var schema = Joi.alternatives().try([
 Validates a value against a schema and throws if validation fails where:
 - `value` - the value to validate.
 - `schema` - the schema object.
-- `message` - optional message sting prefix added in front of the error message.
+- `message` - optional message string prefix added in front of the error message. may also be an Error object.
 
 ```javascript
 Joi.assert('x', Joi.number());
