@@ -344,10 +344,10 @@ describe('object', function () {
         });
 
         Helper.validate(schema, [
-            [{ foo: 'bar' }, true, { context: { x: 'bar' }}],
-            [{ foo: 'bar' }, true, { context: { x: ['baz', 'bar'] }}],
-            [{ foo: 'bar' }, false, { context: { x: 'baz' }}],
-            [{ foo: 'bar' }, false, { context: { x: ['baz', 'qux'] }}],
+            [{ foo: 'bar' }, true, { context: { x: 'bar' } }],
+            [{ foo: 'bar' }, true, { context: { x: ['baz', 'bar'] } }],
+            [{ foo: 'bar' }, false, { context: { x: 'baz' } }],
+            [{ foo: 'bar' }, false, { context: { x: ['baz', 'qux'] } }],
             [{ foo: 'bar' }, false]
         ], done);
     });

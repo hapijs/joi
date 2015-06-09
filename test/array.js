@@ -139,7 +139,7 @@ describe('array', function () {
 
             Helper.validate(schema, [
                 [[1, 2, 'a'], true, null, [1, 2, 'a']],
-                [[1, { foo: 'bar'}, 'a', 2], true, null, [1, 'a', 2]]
+                [[1, { foo: 'bar' }, 'a', 2], true, null, [1, 'a', 2]]
             ], done);
         });
 

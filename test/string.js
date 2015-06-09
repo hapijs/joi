@@ -411,7 +411,7 @@ describe('string', function () {
 
             expect(function () {
 
-                var emailOptions = {checkDNS: true};
+                var emailOptions = { checkDNS: true };
                 Joi.string().email(emailOptions);
             }).to.throw('checkDNS option is not supported');
             done();
@@ -421,7 +421,7 @@ describe('string', function () {
 
             expect(function () {
 
-                var emailOptions = {tldWhitelist: 'domain.tld'};
+                var emailOptions = { tldWhitelist: 'domain.tld' };
                 Joi.string().email(emailOptions);
             }).to.throw('tldWhitelist must be an array or object');
             done();
@@ -431,7 +431,7 @@ describe('string', function () {
 
             expect(function () {
 
-                var emailOptions = {minDomainAtoms: '1'};
+                var emailOptions = { minDomainAtoms: '1' };
                 Joi.string().email(emailOptions);
             }).to.throw('minDomainAtoms must be a positive integer');
             done();
@@ -441,7 +441,7 @@ describe('string', function () {
 
             expect(function () {
 
-                var emailOptions = {minDomainAtoms: 1.2};
+                var emailOptions = { minDomainAtoms: 1.2 };
                 Joi.string().email(emailOptions);
             }).to.throw('minDomainAtoms must be a positive integer');
             done();
@@ -451,7 +451,7 @@ describe('string', function () {
 
             expect(function () {
 
-                var emailOptions = {minDomainAtoms: 0};
+                var emailOptions = { minDomainAtoms: 0 };
                 Joi.string().email(emailOptions);
             }).to.throw('minDomainAtoms must be a positive integer');
             done();
@@ -461,7 +461,7 @@ describe('string', function () {
 
             expect(function () {
 
-                var emailOptions = {minDomainAtoms: 1};
+                var emailOptions = { minDomainAtoms: 1 };
                 Joi.string().email(emailOptions);
             }).to.not.throw();
             done();
@@ -471,7 +471,7 @@ describe('string', function () {
 
             expect(function () {
 
-                var emailOptions = {errorLevel: 1.2};
+                var emailOptions = { errorLevel: 1.2 };
                 Joi.string().email(emailOptions);
             }).to.throw('errorLevel must be a non-negative integer or boolean');
             done();
@@ -481,7 +481,7 @@ describe('string', function () {
 
             expect(function () {
 
-                var emailOptions = {errorLevel: -1};
+                var emailOptions = { errorLevel: -1 };
                 Joi.string().email(emailOptions);
             }).to.throw('errorLevel must be a non-negative integer or boolean');
             done();
@@ -491,7 +491,7 @@ describe('string', function () {
 
             expect(function () {
 
-                var emailOptions = {errorLevel: 0};
+                var emailOptions = { errorLevel: 0 };
                 Joi.string().email(emailOptions);
             }).to.not.throw();
             done();
@@ -1033,7 +1033,7 @@ describe('string', function () {
 
         it('validates ip and cidr presence with a friendly error message', function (done) {
 
-            var schema = { item: Joi.string().ip({cidr: 'required' }) };
+            var schema = { item: Joi.string().ip({ cidr: 'required' }) };
             Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
 
                 expect(err.message).to.contain('must be a valid ip address with a required CIDR');
@@ -1516,7 +1516,7 @@ describe('string', function () {
 
         it('validates email with tldWhitelist as object', function (done) {
 
-            var schema = Joi.string().email({ tldWhitelist: { com: true, org: true }});
+            var schema = Joi.string().email({ tldWhitelist: { com: true, org: true } });
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['joe@example.org', true],

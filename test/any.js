@@ -136,7 +136,7 @@ describe('any', function () {
 
             expect(function () {
 
-                Joi.any().options({ presence: 'optional', raw: true});
+                Joi.any().options({ presence: 'optional', raw: true });
             }).to.not.throw();
             done();
         });
@@ -537,8 +537,8 @@ describe('any', function () {
             }).default();
 
             Helper.validate(schema, [
-                [undefined, true, null, { a: 42, b: { c: true }}],
-                [{ a: 24 }, true, null, { a: 24, b: { c: true }}]
+                [undefined, true, null, { a: 42, b: { c: true } }],
+                [{ a: 24 }, true, null, { a: 24, b: { c: true } }]
             ], done);
         });
 

@@ -201,7 +201,7 @@ describe('errors', function () {
 
     it('overrides wrapArrays', function (done) {
 
-        Joi.array().items(Joi.boolean()).options({ language: { messages: { wrapArrays: false }}}).validate([4], function (err, value) {
+        Joi.array().items(Joi.boolean()).options({ language: { messages: { wrapArrays: false } } }).validate([4], function (err, value) {
 
             expect(err.message).to.equal('"value" at position 0 fails because "0" must be a boolean');
             done();
@@ -317,7 +317,7 @@ describe('errors', function () {
                 })
             };
 
-            var input = { x: { y: {}}};
+            var input = { x: { y: {} } };
             input.x.y.z = input.x.y;
 
             Joi.validate(input, schema, function (err, value) {
@@ -338,7 +338,7 @@ describe('errors', function () {
                 })
             };
 
-            var input = { x: { y: { z: 1, foo: {}}}};
+            var input = { x: { y: { z: 1, foo: {} } } };
             input.x.y.foo = input.x.y;
 
             Joi.validate(input, schema, function (err, value) {
