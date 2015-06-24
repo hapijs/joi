@@ -763,7 +763,7 @@ describe('number', function () {
         });
     });
 
-    describe('#precision', function (done) {
+    describe('#precision', function () {
 
         it('converts numbers', function (done) {
 
