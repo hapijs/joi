@@ -109,9 +109,9 @@ describe('ref', function () {
                 e: schema
             });
 
-            parent.validate({ e: input }, function (err, value) {
+            parent.validate({ e: input }, function (err2, value2) {
 
-                expect(err).to.not.exist();
+                expect(err2).to.not.exist();
                 done();
             });
         });
@@ -156,9 +156,9 @@ describe('ref', function () {
                 }
             });
 
-            ba.validate({ a: { c: '5' }, b: 5 }, function (err, value) {
+            ba.validate({ a: { c: '5' }, b: 5 }, function (err2, value2) {
 
-                expect(err).to.not.exist();
+                expect(err2).to.not.exist();
                 done();
             });
         });
@@ -196,10 +196,10 @@ describe('ref', function () {
                 a: Joi.default(Joi.ref('b'))
             });
 
-            ba.validate({ b: '6' }, function (err, value) {
+            ba.validate({ b: '6' }, function (err2, value2) {
 
-                expect(err).to.not.exist();
-                expect(value).to.deep.equal({ a: 6, b: 6 });
+                expect(err2).to.not.exist();
+                expect(value2).to.deep.equal({ a: 6, b: 6 });
                 done();
             });
         });

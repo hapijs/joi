@@ -419,7 +419,7 @@ describe('array', function () {
                 expect(err).to.exist();
 
                 var m = ['x', 'y', 'z'];
-                schema.validate(m, function (err2, value) {
+                schema.validate(m, function (err2, value2) {
 
                     expect(err2).to.not.exist();
                     done();

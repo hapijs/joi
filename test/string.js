@@ -1611,9 +1611,9 @@ describe('string', function () {
 
                 expect(err).to.not.exist();
 
-                text.validate('', function (err, value) {
+                text.validate('', function (err2, value2) {
 
-                    expect(err).to.exist();
+                    expect(err2).to.exist();
                     done();
                 });
             });

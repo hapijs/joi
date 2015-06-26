@@ -154,9 +154,9 @@ describe('Joi', function () {
         Joi.compile(/^5$/).validate('5', function (err, value) {
 
             expect(err).to.not.exist();
-            Joi.compile(/.{2}/).validate('6', function (err, value) {
+            Joi.compile(/.{2}/).validate('6', function (err2, value2) {
 
-                expect(err).to.exist();
+                expect(err2).to.exist();
                 done();
             });
         });
@@ -578,24 +578,24 @@ describe('Joi', function () {
         Joi.boolean().allow(null).validate(true, function (err, value) {
 
             expect(err).to.be.null();
-            Joi.object().validate({ auth: { mode: 'try' } }, function (err, value) {
+            Joi.object().validate({ auth: { mode: 'try' } }, function (err2, value2) {
 
-                expect(err).to.be.null();
+                expect(err2).to.be.null();
 
-                Joi.object().validate(true, function (err, value) {
+                Joi.object().validate(true, function (err3, value3) {
 
-                    expect(err.message).to.contain('"value" must be an object');
+                    expect(err3.message).to.contain('"value" must be an object');
 
-                    Joi.string().validate(true, function (err, value) {
+                    Joi.string().validate(true, function (err4, value4) {
 
-                        expect(err.message).to.contain('"value" must be a string');
+                        expect(err4.message).to.contain('"value" must be a string');
 
-                        Joi.string().email().validate('test@test.com', function (err, value) {
+                        Joi.string().email().validate('test@test.com', function (err5, value5) {
 
-                            expect(err).to.be.null();
-                            Joi.object({ param: Joi.string().required() }).validate({ param: 'item' }, function (err, value) {
+                            expect(err5).to.be.null();
+                            Joi.object({ param: Joi.string().required() }).validate({ param: 'item' }, function (err6, value6) {
 
-                                expect(err).to.be.null();
+                                expect(err6).to.be.null();
                                 done();
                             });
                         });
@@ -637,15 +637,15 @@ describe('Joi', function () {
             expect(err).to.exist();
             expect(err.message).to.equal('"foo" is not allowed');
 
-            Joi.compile({}).validate({ foo: 'bar' }, function (err, value) {
+            Joi.compile({}).validate({ foo: 'bar' }, function (err2, value2) {
 
-                expect(err).to.exist();
-                expect(err.message).to.equal('"foo" is not allowed');
+                expect(err2).to.exist();
+                expect(err2.message).to.equal('"foo" is not allowed');
 
-                Joi.compile({ other: Joi.number() }).validate({ foo: 'bar' }, function (err, value) {
+                Joi.compile({ other: Joi.number() }).validate({ foo: 'bar' }, function (err3, value3) {
 
-                    expect(err).to.exist();
-                    expect(err.message).to.equal('"foo" is not allowed');
+                    expect(err3).to.exist();
+                    expect(err3.message).to.equal('"foo" is not allowed');
 
                     done();
                 });
@@ -666,10 +666,10 @@ describe('Joi', function () {
             expect(err).to.not.be.null();
             expect(err.message).to.contain('"unknown" is not allowed');
 
-            Joi.compile(config).validate({ something: false }, function (err, value) {
+            Joi.compile(config).validate({ something: false }, function (err2, value2) {
 
-                expect(err).to.not.be.null();
-                expect(err.message).to.contain('"something" is not allowed');
+                expect(err2).to.not.be.null();
+                expect(err2.message).to.contain('"something" is not allowed');
 
                 done();
             });
@@ -693,19 +693,19 @@ describe('Joi', function () {
             expect(err).to.exist();
             expect(err.message).to.contain('"module" is required');
 
-            Joi.compile(config).validate({ module: 'test' }, function (err, value) {
+            Joi.compile(config).validate({ module: 'test' }, function (err2, value2) {
 
-                expect(err).to.be.null();
+                expect(err2).to.be.null();
 
-                Joi.compile(config).validate({ module: {} }, function (err, value) {
+                Joi.compile(config).validate({ module: {} }, function (err3, value3) {
 
-                    expect(err).to.not.be.null();
-                    expect(err.message).to.contain('"compile" is required');
-                    expect(err.message).to.contain('"module" must be a string');
+                    expect(err3).to.not.be.null();
+                    expect(err3.message).to.contain('"compile" is required');
+                    expect(err3.message).to.contain('"module" must be a string');
 
-                    Joi.compile(config).validate({ module: { compile: function () { } } }, function (err, value) {
+                    Joi.compile(config).validate({ module: { compile: function () { } } }, function (err4, value4) {
 
-                        expect(err).to.be.null();
+                        expect(err4).to.be.null();
                         done();
                     });
                 });
@@ -763,9 +763,9 @@ describe('Joi', function () {
 
             expect(err).to.be.null();
 
-            Joi.compile(config).validate({ position: 1 }, function (err, value) {
+            Joi.compile(config).validate({ position: 1 }, function (err2, value2) {
 
-                expect(err).to.be.null();
+                expect(err2).to.be.null();
                 done();
             });
         });
@@ -782,9 +782,9 @@ describe('Joi', function () {
 
             expect(err).to.be.null();
 
-            Joi.compile(config).validate({ position: 1 }, function (err, value) {
+            Joi.compile(config).validate({ position: 1 }, function (err2, value2) {
 
-                expect(err).to.be.null();
+                expect(err2).to.be.null();
                 done();
             });
         });
@@ -1135,10 +1135,10 @@ describe('Joi', function () {
             expect(err).to.be.null();
             expect(value).to.deep.equal({ a: 1, b: 'a', d: 'c' });
 
-            localConfig.validate(value, function (err, value) {
+            localConfig.validate(value, function (err2, value2) {
 
-                expect(err).to.be.null();
-                expect(value).to.deep.equal({ a: 1, b: 'a', d: 'c' });
+                expect(err2).to.be.null();
+                expect(value2).to.deep.equal({ a: 1, b: 'a', d: 'c' });
                 done();
             });
         });
@@ -1163,10 +1163,10 @@ describe('Joi', function () {
             expect(err).to.be.null();
             expect(value).to.deep.equal({ a: 1, b: 'a' });
 
-            localConfig.validate(value, function (err, value) {
+            localConfig.validate(value, function (err2, value2) {
 
-                expect(err).to.be.null();
-                expect(value).to.deep.equal({ a: 1, b: 'a' });
+                expect(err2).to.be.null();
+                expect(value2).to.deep.equal({ a: 1, b: 'a' });
                 done();
             });
         });
@@ -1219,9 +1219,9 @@ describe('Joi', function () {
 
         var input = { a: 1, b: 2 };
 
-        Joi.validate(input, schema, function (errOne, value) {
+        Joi.validate(input, schema, function (errOne, valueOne) {
 
-            Joi.validate(input, schema, { abortEarly: false }, function (errFull, value) {
+            Joi.validate(input, schema, { abortEarly: false }, function (errFull, valueFull) {
 
                 expect(errOne).to.exist();
                 expect(errFull).to.exist();
@@ -1252,7 +1252,7 @@ describe('Joi', function () {
           })
         });
 
-        var value = {
+        var input = {
             test: [{
                 foo: 'test1',
                 bar: 'testfailed'
@@ -1275,7 +1275,7 @@ describe('Joi', function () {
             }
         };
 
-        Joi.validate(value, schema, { abortEarly: false }, function (err, value) {
+        Joi.validate(input, schema, { abortEarly: false }, function (err, value) {
 
             expect(err).to.exist();
             expect(err.details).to.have.length(6);

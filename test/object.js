@@ -94,9 +94,9 @@ describe('object', function () {
 
             expect(err).to.not.exist();
 
-            Joi.object(undefined).validate({ a: 4 }, function (err, value) {
+            Joi.object(undefined).validate({ a: 4 }, function (err2, value2) {
 
-                expect(err).to.not.exist();
+                expect(err2).to.not.exist();
                 done();
             });
         });
@@ -361,9 +361,9 @@ describe('object', function () {
             a.validate({ b: 3 }, function (err, value) {
 
                 expect(err).to.exist();
-                b.validate({ b: 3 }, function (err, value) {
+                b.validate({ b: 3 }, function (err2, value2) {
 
-                    expect(err).to.not.exist();
+                    expect(err2).to.not.exist();
                     done();
                 });
             });
@@ -376,9 +376,9 @@ describe('object', function () {
             a.validate({ b: 3 }, function (err, value) {
 
                 expect(err).to.not.exist();
-                b.validate({ b: 3 }, function (err, value) {
+                b.validate({ b: 3 }, function (err2, value2) {
 
-                    expect(err).to.exist();
+                    expect(err2).to.exist();
                     done();
                 });
             });
@@ -391,9 +391,9 @@ describe('object', function () {
             a.validate({ a: 1, b: 2 }, function (err, value) {
 
                 expect(err).to.exist();
-                b.validate({ a: 1, b: 2 }, function (err, value) {
+                b.validate({ a: 1, b: 2 }, function (err2, value2) {
 
-                    expect(err).to.not.exist();
+                    expect(err2).to.not.exist();
                     done();
                 });
             });
