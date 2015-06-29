@@ -639,7 +639,7 @@ var schema = Joi.array().unique();
 
 ### `boolean`
 
-Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via `bool()`.
+Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', 'no', 'on' or 'off'). Can also be called via `bool()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
