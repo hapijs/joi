@@ -1469,7 +1469,7 @@ describe('Joi', function () {
                     flags: {
                         presence: 'required'
                     },
-                    invalids: [ '']
+                    invalids: ['']
                 },
                 xor: {
                     type: 'string',

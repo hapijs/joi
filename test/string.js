@@ -1256,7 +1256,7 @@ describe('string', function () {
 
             it('should validate all ipv4 and ipv6 addresses with a default CIDR strategy', function (done) {
 
-                var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ] });
+                var schema = Joi.string().ip({ version: ['ipv4', 'ipv6'] });
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
                     .concat(validIPv4sWithoutCidr(true))
@@ -1272,7 +1272,7 @@ describe('string', function () {
 
             it('should validate all ipv4 and ipv6 addresses with an optional CIDR', function (done) {
 
-                var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ], cidr: 'optional' });
+                var schema = Joi.string().ip({ version: ['ipv4', 'ipv6'], cidr: 'optional' });
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
                     .concat(validIPv4sWithoutCidr(true))
@@ -1288,7 +1288,7 @@ describe('string', function () {
 
             it('should validate all ipv4 and ipv6 addresses with a required CIDR', function (done) {
 
-                var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ], cidr: 'required' });
+                var schema = Joi.string().ip({ version: ['ipv4', 'ipv6'], cidr: 'required' });
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
                     .concat(validIPv4sWithoutCidr(false))
@@ -1304,7 +1304,7 @@ describe('string', function () {
 
             it('should validate all ipv4 and ipv6 addresses with a forbidden CIDR', function (done) {
 
-                var schema = Joi.string().ip({ version: [ 'ipv4', 'ipv6' ], cidr: 'forbidden' });
+                var schema = Joi.string().ip({ version: ['ipv4', 'ipv6'], cidr: 'forbidden' });
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(false))
                     .concat(validIPv4sWithoutCidr(true))
