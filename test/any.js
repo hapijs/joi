@@ -553,6 +553,70 @@ describe('any', function () {
                 [{ a: 24 }, true, null, { a: 24 }]
             ], done);
         });
+
+        it('should not apply default values if the noDefaults option is enquire', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string().default('foo'),
+                b: Joi.number()
+            });
+
+            var input = { b: 42 };
+
+            Joi.validate(input, schema, { noDefaults: true }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.not.exist();
+                expect(value.b).to.be.equal(42);
+
+                done();
+            });
+        });
+
+        it('should not apply default values from functions if the noDefaults option is enquire', function (done) {
+
+            var func = function (context) {
+
+                return 'foo';
+            };
+
+            func.description = 'test parameter';
+
+            var schema = Joi.object({
+                a: Joi.string().default(func),
+                b: Joi.number()
+            });
+
+            var input = { b: 42 };
+
+            Joi.validate(input, schema, { noDefaults: true }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.not.exist();
+                expect(value.b).to.be.equal(42);
+
+                done();
+            });
+        });
+
+        it('should not apply default values from references if the noDefaults option is enquire', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.string().default(Joi.ref('b')),
+                b: Joi.number()
+            });
+
+            var input = { b: 42 };
+
+            Joi.validate(input, schema, { noDefaults: true }, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.not.exist();
+                expect(value.b).to.be.equal(42);
+
+                done();
+            });
+        });
     });
 
     describe('#optional', function () {
