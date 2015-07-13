@@ -344,7 +344,7 @@ describe('errors', function () {
             Joi.validate(input, schema, function (err, value) {
 
                 expect(err).to.exist();
-                expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\" \u001b[31m[1]\u001b[0m: {\n      \"z\": 1,\n      \"foo\": \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"foo\" is not allowed\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\": {\n      \"z\": 1,\n      \"foo\" \u001b[31m[1]\u001b[0m: \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"foo\" is not allowed\u001b[0m');
                 done();
             });
         });

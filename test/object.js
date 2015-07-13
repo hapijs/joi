@@ -352,6 +352,18 @@ describe('object', function () {
         ], done);
     });
 
+    it('errors on unknown nested keys with the correct path', function (done) {
+
+        var schema = Joi.object({ a: Joi.object().keys({}) });
+        var obj = { a: { b: 'value' } };
+        schema.validate(obj, function (err, value) {
+
+            expect(err).to.exist();
+            expect(err.details[0].path).to.equal('a.b');
+            done();
+        });
+    });
+
     describe('#keys', function () {
 
         it('allows any key', function (done) {

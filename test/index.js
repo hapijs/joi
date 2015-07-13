@@ -1306,7 +1306,7 @@ describe('Joi', function () {
                 context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
             }, {
                 message: '"baz" is not allowed',
-                path: 'test2.test3.2.baz.test4.0',
+                path: 'test2.test3.2.baz.test4.0.baz',
                 type: 'object.allowUnknown',
                 context: { key: 'baz' }
             }]);
