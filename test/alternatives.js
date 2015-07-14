@@ -189,6 +189,22 @@ describe('alternatives', function () {
             ], done);
         });
 
+        it('validates when is is undefined', function (done) {
+
+            var schema = {
+                a: Joi.alternatives().when('b', { is: undefined, then: 'x', otherwise: Joi.number() }),
+                b: Joi.any()
+            };
+
+            Helper.validate(schema, [
+                [{ a: 1 }, false],
+                [{ a: 'y' }, false],
+                [{ a: 'x' }, true],
+                [{ a: 2, b: null }, true],
+                [{ a: 3, b: 'y' }, true]
+            ], done);
+        });
+
         it('validates when is is null', function (done) {
 
             var schema = {
