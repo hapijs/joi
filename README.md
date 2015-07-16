@@ -109,6 +109,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`string.lowercase()`](#stringlowercase)
       - [`string.uppercase()`](#stringuppercase)
       - [`string.trim()`](#stringtrim)
+      - [`string.isoDate()`](#stringisodate)
     - [`alternatives`](#alternatives)
       - [`alternatives.try(schemas)`](#alternativestryschemas)
       - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
@@ -1371,6 +1372,14 @@ default), the string will be trimmed.
 
 ```javascript
 var schema = Joi.string().trim();
+```
+
+#### `string.isoDate()`
+
+Requires the string value to be in valid ISO 8601 date format.
+
+```js
+var schema = Joi.string().isoDate();
 ```
 
 ### `alternatives`
