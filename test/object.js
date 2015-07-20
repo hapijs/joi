@@ -1015,6 +1015,7 @@ describe('object', function () {
             }).validate({ a: { b: { c: 1 } } }, function (err, value) {
 
                 expect(err).to.exist();
+                expect(err.details[0].path).to.equal('a.b');
                 expect(err.message).to.equal('child "a" fails because [child "b" fails because ["value" must contain at least one of [x, y]]]');
                 done();
             });
