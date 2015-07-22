@@ -1186,5 +1186,21 @@ describe('object', function () {
             expect(description.rules).to.deep.include({ name: 'type', arg: 'RegExp' });
             done();
         });
+
+        it('should work on prototype-less objects', function (done) {
+
+            var input = Object.create(null);
+            var schema = Joi.object().keys({
+                a: Joi.number()
+            });
+
+            input.a = 1337;
+
+            Joi.validate(input, schema, function (err) {
+
+                expect(err).to.not.exist();
+                done();
+            });
+        });
     });
 });
