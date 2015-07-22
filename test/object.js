@@ -381,6 +381,30 @@ describe('object', function () {
         });
     });
 
+    it('should be able to use rename safely with a fake hasOwnProperty', function (done) {
+
+        var input = { a: 1, hasOwnProperty: 'foo' };
+        var schema = Joi.object().rename('b', 'a');
+
+        Joi.validate(input, schema, function (err) {
+
+            expect(err.message).to.equal('"value" cannot rename child "b" because override is disabled and target "a" exists');
+            done();
+        });
+    });
+
+    it('should be able to use object.with() safely with a fake hasOwnProperty', function (done) {
+
+        var input = { a: 1, hasOwnProperty: 'foo' };
+        var schema = Joi.object({ a: 1 }).with('a', 'b');
+
+        Joi.validate(input, schema, function (err) {
+
+            expect(err.message).to.equal('"hasOwnProperty" is not allowed. "a" missing required peer "b"');
+            done();
+        });
+    });
+
     describe('#keys', function () {
 
         it('allows any key', function (done) {
