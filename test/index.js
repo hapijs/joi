@@ -884,6 +884,19 @@ describe('Joi', function () {
         });
     });
 
+    it('validates when missing a required parameter with the skipRequired option', function (done) {
+
+        var schema = {
+            a: Joi.string().required()
+        };
+
+        Joi.validate({}, schema, { skipRequired: true }, function (err, value) {
+
+            expect(err).to.be.null();
+            done();
+        });
+    });
+
     it('fails validation when missing a required parameter within an object config', function (done) {
 
         var obj = {
