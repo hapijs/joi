@@ -5,6 +5,7 @@
   "repository": "git://github.com/hapijs/joi",
   "main": "lib/index.js",
   "keywords": [
+    "hapi",
     "schema",
     "validation"
   ],
