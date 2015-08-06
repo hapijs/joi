@@ -260,8 +260,8 @@ describe('alternatives', function () {
             };
 
             Helper.validate(schema, [
-              [{ b: false }, true],
-              [{ b: true }, true]           // true because required() only applies to the one alternative
+                [{ b: false }, true],
+                [{ b: true }, true]           // true because required() only applies to the one alternative
             ], done);
         });
 
@@ -300,46 +300,46 @@ describe('alternatives', function () {
                         type: 'any'
                     },
                     a: {
-                      type: 'alternatives',
-                      alternatives: [
-                      {
-                          ref: 'ref:b',
-                          is: {
-                              type: 'number',
-                              flags: {
-                                  allowOnly: true,
-                                  presence: 'required'
-                              },
-                              valids: [5],
-                              invalids: [Infinity, -Infinity]
-                          },
-                          then: {
-                              type: 'string',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: ['x'],
-                              invalids: ['']
-                          },
-                          otherwise: {
-                              type: 'string',
-                              flags: {
-                                  allowOnly: true
-                              },
-                              valids: ['y'],
-                              invalids: ['']
-                          }
-                      },
-                      {
-                          type: 'string',
-                          flags: {
-                              allowOnly: true
-                          },
-                          valids: ['z'],
-                          invalids: ['']
-                      }
-                    ]
-                  }
+                        type: 'alternatives',
+                        alternatives: [
+                            {
+                                ref: 'ref:b',
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true,
+                                        presence: 'required'
+                                    },
+                                    valids: [5],
+                                    invalids: [Infinity, -Infinity]
+                                },
+                                then: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['x'],
+                                    invalids: ['']
+                                },
+                                otherwise: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['y'],
+                                    invalids: ['']
+                                }
+                            },
+                            {
+                                type: 'string',
+                                flags: {
+                                    allowOnly: true
+                                },
+                                valids: ['z'],
+                                invalids: ['']
+                            }
+                        ]
+                    }
                 }
             };
 

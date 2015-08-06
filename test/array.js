@@ -517,30 +517,30 @@ describe('array', function () {
                 expect(err).to.exist();
                 expect(err).to.have.length(4);
                 expect(err.details).to.deep.equal([{
-                  message: '"value" must not be a sparse array',
-                  path: '1',
-                  type: 'array.sparse',
-                  context: {
-                    key: 'value'
-                  }
+                    message: '"value" must not be a sparse array',
+                    path: '1',
+                    type: 'array.sparse',
+                    context: {
+                        key: 'value'
+                    }
                 }, {
-                  message: '"value" at position 2 contains an excluded value',
-                  path: '2',
-                  type: 'array.excludes',
-                  context: {
-                    pos: 2,
-                    key: 'value',
-                    value: true
-                  }
+                    message: '"value" at position 2 contains an excluded value',
+                    path: '2',
+                    type: 'array.excludes',
+                    context: {
+                        pos: 2,
+                        key: 'value',
+                        value: true
+                    }
                 }, {
-                  message: '"value" at position 3 does not match any of the allowed types',
-                  path: '3',
-                  type: 'array.includes',
-                  context: {
-                    pos: 3,
-                    key: 'value',
-                    value: 'a'
-                  }
+                    message: '"value" at position 3 does not match any of the allowed types',
+                    path: '3',
+                    type: 'array.includes',
+                    context: {
+                        pos: 3,
+                        key: 'value',
+                        value: 'a'
+                    }
                 }]);
                 done();
             });

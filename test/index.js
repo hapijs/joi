@@ -1234,22 +1234,22 @@ describe('Joi', function () {
     it('errors multiple times when abortEarly is false in a complex object', function (done) {
 
         var schema = Joi.object({
-          test: Joi.array().items(Joi.object().keys({
-            foo: Joi.string().required().max(3),
-            bar: Joi.string().max(5)
-          })),
-          test2: Joi.object({
-              test3: Joi.array().items(Joi.object().keys({
+            test: Joi.array().items(Joi.object().keys({
                 foo: Joi.string().required().max(3),
-                bar: Joi.string().max(5),
-                baz: Joi.object({
-                    test4: Joi.array().items(Joi.object().keys({
-                        foo: Joi.string().required().max(3),
-                        bar: Joi.string().max(5)
-                    }))
-                })
-              }))
-          })
+                bar: Joi.string().max(5)
+            })),
+            test2: Joi.object({
+                test3: Joi.array().items(Joi.object().keys({
+                    foo: Joi.string().required().max(3),
+                    bar: Joi.string().max(5),
+                    baz: Joi.object({
+                        test4: Joi.array().items(Joi.object().keys({
+                            foo: Joi.string().required().max(3),
+                            bar: Joi.string().max(5)
+                        }))
+                    })
+                }))
+            })
         });
 
         var input = {
