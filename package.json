@@ -11,7 +11,7 @@
   ],
   "engines": {
     "node": ">=0.10.30",
-    "npm": "2.x"
+    "npm": ">=2.0.0"
   },
   "dependencies": {
     "hoek": "^2.2.x",
