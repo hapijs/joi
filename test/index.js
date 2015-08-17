@@ -1580,11 +1580,25 @@ describe('Joi', function () {
 
     describe('#assert', function () {
 
+        it('does not have a return value', function (done) {
+
+            var result;
+            expect(function () {
+
+                result = Joi.assert('4', Joi.number());
+            }).to.not.throw();
+            expect(result).to.not.exist();
+            done();
+        });
+    });
+
+    describe('#attempt', function () {
+
         it('throws on invalid value', function (done) {
 
             expect(function () {
 
-                Joi.assert('x', Joi.number());
+                Joi.attempt('x', Joi.number());
             }).to.throw('"x"\n\u001b[31m\n[1] "value" must be a number\u001b[0m');
             done();
         });
@@ -1593,8 +1607,19 @@ describe('Joi', function () {
 
             expect(function () {
 
-                Joi.assert('4', Joi.number());
+                Joi.attempt('4', Joi.number());
             }).to.not.throw();
+            done();
+        });
+
+        it('returns validated structure', function (done) {
+
+            var valid;
+            expect(function () {
+
+                valid = Joi.attempt('4', Joi.number());
+            }).to.not.throw();
+            expect(valid).to.equal(4);
             done();
         });
 
@@ -1602,7 +1627,7 @@ describe('Joi', function () {
 
             expect(function () {
 
-                Joi.assert('x', Joi.number(), 'the reason is');
+                Joi.attempt('x', Joi.number(), 'the reason is');
             }).to.throw('the reason is "x"\n\u001b[31m\n[1] "value" must be a number\u001b[0m');
             done();
         });
@@ -1611,7 +1636,7 @@ describe('Joi', function () {
 
             expect(function () {
 
-                Joi.assert('x', Joi.number(), new Error('invalid value'));
+                Joi.attempt('x', Joi.number(), new Error('invalid value'));
             }).to.throw('invalid value');
             done();
         });
