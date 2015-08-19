@@ -452,6 +452,24 @@ describe('object', function () {
             });
         });
 
+        it('overrides existing keys', function (done) {
+
+            var a = Joi.object({ a: 1 });
+            var b = a.keys({ a: Joi.string() });
+
+            Helper.validate(a, [
+                [{ a: 1 }, true, null, { a: 1 }],
+                [{ a: '1' }, true, null, { a: 1 }],
+                [{ a: '2' }, false, null, 'child "a" fails because ["a" must be one of [1]]']
+            ], function () {
+
+                Helper.validate(b, [
+                    [{ a: 1 }, false, null, 'child "a" fails because ["a" must be a string]'],
+                    [{ a: '1' }, true, null, { a: '1' }]
+                ], done);
+            });
+        });
+
         it('strips keys flagged with strip', function (done) {
 
             var schema = Joi.object({
