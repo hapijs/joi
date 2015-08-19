@@ -1074,6 +1074,26 @@ describe('Joi', function () {
         });
     });
 
+    it('validates dependencies when stripUnknown is set', function (done) {
+
+        var schema = Joi.object({
+            a: Joi.number(),
+            b: Joi.string()
+        }).and('a', 'b');
+
+        var obj = {
+            a: 1,
+            foo: 'bar'
+        };
+
+        Joi.validate(obj, schema, { stripUnknown: true }, function (err, value) {
+
+            expect(err).to.exist();
+            expect(err.message).to.equal('"value" contains [a] without its required peers [b]');
+            done();
+        });
+    });
+
     it('fails to validate with incorrect property when asked to strip unkown keys without aborting early', function (done) {
 
         var schema = {
