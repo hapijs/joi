@@ -268,6 +268,18 @@ Validates a value against a schema and throws if validation fails where:
 Joi.assert('x', Joi.number());
 ```
 
+### `attempt(value, schema, [message])`
+
+Validates a value against a schema, returns valid object, and throws if validation fails where:
+- `value` - the value to validate.
+- `schema` - the schema object.
+- `message` - optional message string prefix added in front of the error message. may also be an Error object.
+
+```javascript
+Joi.attempt('x', Joi.number()); // throws error
+var result = Joi.attempt('4', Joi.number()); // result -> 4
+```
+
 ### `any`
 
 Generates a schema object that matches any data type.
