@@ -114,6 +114,8 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`alternatives.try(schemas)`](#alternativestryschemas)
       - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
     - [`ref(key, [options])`](#refkey-options)
+- [Useful Tips](#useful-tips)
+    - [`When to use the {}, Joi.object({}) or Joi.object().keys({}) notation`](#when-to-use-the--joiobject-or-joiobjectkeys-notation)
 
 <!-- tocstop -->
 
@@ -1485,3 +1487,69 @@ var schema = Joi.object().keys({
 
 Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, function (err, value) {});
 ```
+# Useful Tips
+### When to use the `{}`, `Joi.object({})` or `Joi.object().keys({})` notation
+
+We have three different ways to define a schema for performing a validation:
+
+- Using the plain JS object notation: 
+```javascript
+var schema = {
+    a: Joi.string(),
+    b: Joi.number()
+};
+```
+- Using the `Joi.object({})` notation
+```javascript
+var schema = Joi.object({
+    a: Joi.string(),
+    b: Joi.number()
+});
+```
+- Using the `Joi.object().keys({})` notation
+```javascript
+var schema = Joi.object().keys({
+    a: Joi.string(),
+    b: Joi.number()
+});
+```
+
+While all these three objects defined above will result in the same validation object, there are some differences in using one or another:
+
+#### `{} notation`
+
+When using the `{}` notation, you are just defining a plain JS object, which isn't a schema object. 
+You can pass it to the validation method but you can't call `validate()` method of the object because it's just a plain JS object.
+
+Besides, passing the `{}` object to the `validate()` method each time, will perform an expensive schema compilation operation on every validation.
+
+#### `Joi.object({}) notation`
+
+Using `Joi.object({})` will return a schema object, so you can call the `validate()` method directly, e.g:
+
+```javascript
+var schema = Joi.object({
+    a: Joi.boolean()
+});
+
+schema.validate(true, function (err, value) { 
+    console.log('err: ', err);
+});
+```
+
+When you use `Joi.object({})`, it gets compiled the first time, so you can pass it to the `validate()` method multiple times and no overhead is added.
+
+Another benefits of using `Joi.object({})` instead of a plain JS object is that you can set any options on the object like allowing unknown keys, e.g:
+
+```javascript
+var schema = Joi.object({
+    arg: Joi.string().valid('firstname', 'lastname', 'title', 'company', 'jobtitle'),
+    value: Joi.string(),
+}).pattern(/firstname|lastname/, Joi.string().min(2));
+```
+
+#### `Joi.object().keys({}) notation`
+
+This is basically the same as `Joi.object({})`, but using `Joi.object().keys({})` is more useful when you want to add more keys (e.g. call `keys()` multiple times). If you are only adding one set of keys, you can skip the `keys()` method and just use `object()` directly.
+
+Some people like to use `keys()` to make the code more explicit (this is style only).
