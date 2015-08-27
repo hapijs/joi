@@ -952,6 +952,71 @@ var extended = base.keys({
 });
 ```
 
+Notes: We have three different ways to define a schema for performing a validation
+
+- Using the plain JS object notation: 
+```javascript
+var schema = {
+    a: Joi.string(),
+    b: Joi.number()
+};
+```
+- Using the `Joi.object([schema])` notation
+```javascript
+var schema = Joi.object({
+    a: Joi.string(),
+    b: Joi.number()
+});
+```
+- Using the `Joi.object().keys([schema])` notation
+```javascript
+var schema = Joi.object().keys({
+    a: Joi.string(),
+    b: Joi.number()
+});
+```
+
+While all these three objects defined above will result in the same validation object, there are some differences in using one or another:
+
+##### `{} notation`
+
+When using the `{}` notation, you are just defining a plain JS object, which isn't a schema object. 
+You can pass it to the validation method but you can't call `validate()` method of the object because it's just a plain JS object.
+
+Besides, passing the `{}` object to the `validate()` method each time, will perform an expensive schema compilation operation on every validation.
+
+##### `Joi.object([schema]) notation`
+
+Using `Joi.object([schema])` will return a schema object, so you can call the `validate()` method directly, e.g:
+
+```javascript
+var schema = Joi.object({
+    a: Joi.boolean()
+});
+
+schema.validate(true, function (err, value) { 
+    console.log('err: ', err);
+});
+```
+
+When you use `Joi.object([schema])`, it gets compiled the first time, so you can pass it to the `validate()` method multiple times and no overhead is added.
+
+Another benefits of using `Joi.object([schema])` instead of a plain JS object is that you can set any options on the object like allowing unknown keys, e.g:
+
+```javascript
+var schema = Joi.object({
+    arg: Joi.string().valid('firstname', 'lastname', 'title', 'company', 'jobtitle'),
+    value: Joi.string(),
+}).pattern(/firstname|lastname/, Joi.string().min(2));
+```
+
+##### `Joi.object().keys([schema]) notation`
+
+This is basically the same as `Joi.object([schema])`, but using `Joi.object().keys([schema])` is more useful when you want to add more keys (e.g. call `keys()` multiple times). If you are only adding one set of keys, you can skip the `keys()` method and just use `object()` directly.
+
+Some people like to use `keys()` to make the code more explicit (this is style only).
+
+
 #### `object.min(limit)`
 
 Specifies the minimum number of keys in the object where:
