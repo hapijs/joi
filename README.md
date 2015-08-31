@@ -20,6 +20,8 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
     - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
     - [`compile(schema)`](#compileschema)
     - [`assert(value, schema, [message])`](#assertvalue-schema-message)
+    - [`attempt(value, schema, [message])`](#attemptvalue-schema-message)
+    - [`isRef(ref)`](#isrefref)
     - [`any`](#any)
       - [`any.allow(value)`](#anyallowvalue)
       - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
@@ -74,6 +76,9 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
       - [`number.negative()`](#numbernegative)
     - [`object`](#object)
       - [`object.keys([schema])`](#objectkeysschema)
+        - [`{} notation`](#-notation)
+        - [`Joi.object([schema]) notation`](#joiobjectschema-notation)
+        - [`Joi.object().keys([schema]) notation`](#joiobjectkeysschema-notation)
       - [`object.min(limit)`](#objectminlimit)
       - [`object.max(limit)`](#objectmaxlimit)
       - [`object.length(limit)`](#objectlengthlimit)
@@ -278,6 +283,16 @@ Validates a value against a schema, returns valid object, and throws if validati
 ```javascript
 Joi.attempt('x', Joi.number()); // throws error
 var result = Joi.attempt('4', Joi.number()); // result -> 4
+```
+
+### `isRef(ref)`
+
+Checks whether or not the provided argument is a reference.
+It's especially useful if you want to post-process error messages.
+
+```js
+var ref = Joi.ref('a');
+Joi.isRef(ref); // returns true
 ```
 
 ### `any`
@@ -954,7 +969,7 @@ var extended = base.keys({
 
 Notes: We have three different ways to define a schema for performing a validation
 
-- Using the plain JS object notation: 
+- Using the plain JS object notation:
 ```javascript
 var schema = {
     a: Joi.string(),
@@ -980,7 +995,7 @@ While all these three objects defined above will result in the same validation o
 
 ##### `{} notation`
 
-When using the `{}` notation, you are just defining a plain JS object, which isn't a schema object. 
+When using the `{}` notation, you are just defining a plain JS object, which isn't a schema object.
 You can pass it to the validation method but you can't call `validate()` method of the object because it's just a plain JS object.
 
 Besides, passing the `{}` object to the `validate()` method each time, will perform an expensive schema compilation operation on every validation.
@@ -994,7 +1009,7 @@ var schema = Joi.object({
     a: Joi.boolean()
 });
 
-schema.validate(true, function (err, value) { 
+schema.validate(true, function (err, value) {
     console.log('err: ', err);
 });
 ```
