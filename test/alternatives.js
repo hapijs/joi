@@ -130,8 +130,8 @@ describe('alternatives', () => {
                 [{ a: 'x', b: 6 }, false],
                 [{ a: 'y', b: 5 }, false],
                 [{ a: 'y', b: 6 }, true],
-                [{ a: 'z', b: 5 }, true],
-                [{ a: 'z', b: 6 }, true]
+                [{ a: 'z', b: 5 }, false],
+                [{ a: 'z', b: 6 }, false]
             ], done);
         });
 
@@ -148,8 +148,8 @@ describe('alternatives', () => {
                 [{ a: 'x', '': 6 }, false],
                 [{ a: 'y', '': 5 }, false],
                 [{ a: 'y', '': 6 }, true],
-                [{ a: 'z', '': 5 }, true],
-                [{ a: 'z', '': 6 }, true]
+                [{ a: 'z', '': 5 }, false],
+                [{ a: 'z', '': 6 }, false]
             ], done);
         });
 
@@ -166,7 +166,7 @@ describe('alternatives', () => {
                 [{ a: 'x', b: 6 }, false],
                 [{ a: 'y', b: 5 }, false],
                 [{ a: 'y', b: 6 }, false],
-                [{ a: 'z', b: 5 }, true],
+                [{ a: 'z', b: 5 }, false],
                 [{ a: 'z', b: 6 }, true]
             ], done);
         });
@@ -185,7 +185,7 @@ describe('alternatives', () => {
                 [{ a: 'y', b: 5 }, false],
                 [{ a: 'y', b: 6 }, true],
                 [{ a: 'z', b: 5 }, true],
-                [{ a: 'z', b: 6 }, true]
+                [{ a: 'z', b: 6 }, false]
             ], done);
         });
 
