@@ -7,6 +7,8 @@ Object schema description language and validator for JavaScript objects.
 [![Dependencies Status](https://david-dm.org/hapijs/joi.svg)](https://david-dm.org/hapijs/joi)
 [![DevDependencies Status](https://david-dm.org/hapijs/joi/dev-status.svg)](https://david-dm.org/hapijs/joi#info=devDependencies)
 
+[![Join the chat at https://gitter.im/hapijs/joi](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hapijs/joi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
 ## Table of Contents
