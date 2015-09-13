@@ -1,9 +1,10 @@
 var Toc = require('markdown-toc');
 var Fs = require('fs');
+var Package = require('./package.json');
 
-var filename = './README.md';
+var filename = './API.md';
 
-var readme = Fs.readFileSync(filename, 'utf8');
+var api = Fs.readFileSync(filename, 'utf8');
 var tocOptions = {
     bullets: '-',
     slugify: function (text) {
@@ -14,4 +15,7 @@ var tocOptions = {
     }
 };
 
-Fs.writeFileSync(filename, Toc.insert(readme, tocOptions));
+var output = Toc.insert(api, tocOptions)
+    .replace(/<!-- version -->(.|\n)*<!-- versionstop -->/, '<!-- version -->\n# ' + Package.version + ' API Reference\n<!-- versionstop -->');
+
+Fs.writeFileSync(filename, output);
