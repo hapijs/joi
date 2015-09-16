@@ -268,6 +268,80 @@ describe('errors', function () {
             });
         });
 
+        it('annotates error within array', function (done) {
+
+            var object = {
+                a: [1, 2, 3, 4, 2, 5]
+            };
+
+            var schema = {
+                a: Joi.array().items(Joi.valid(1, 2))
+            };
+
+            Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"a\": [\n    1,\n    2,\n    3, \u001b[31m[1]\u001b[0m\n    4, \u001b[31m[2]\u001b[0m\n    2,\n    5 \u001b[31m[3]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"2\" must be one of [1, 2]\n[2] \"3\" must be one of [1, 2]\n[3] \"5\" must be one of [1, 2]\u001b[0m');
+                done();
+            });
+        });
+
+        it('annotates error within array multiple times on the same element', function (done) {
+
+            var object = {
+                a: [2, 3 , 4]
+            };
+
+            var schema = {
+                a: Joi.array().items(Joi.number().min(4).max(2))
+            };
+
+            Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"a\": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[3, 2]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"0\" must be larger than or equal to 4\n[2] \"1\" must be larger than or equal to 4\n[3] \"1\" must be less than or equal to 2\n[4] \"2\" must be less than or equal to 2\u001b[0m');
+                done();
+            });
+        });
+
+        it('annotates error within array when it is an object', function (done) {
+
+            var object = {
+                a: [{ b: 2 }]
+            };
+
+            var schema = {
+                a: Joi.array().items(Joi.number())
+            };
+
+            Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"a\": [\n    { \u001b[31m[1]\u001b[0m\n      \"b\": 2\n    }\n  ]\n}\n\u001b[31m\n[1] \"0\" must be a number\u001b[0m');
+                done();
+            });
+        });
+
+        it('annotates error within multiple arrays and multiple times on the same element', function (done) {
+
+            var object = {
+                a: [2, 3 , 4],
+                b: [2, 3 , 4]
+            };
+
+            var schema = {
+                a: Joi.array().items(Joi.number().min(4).max(2)),
+                b: Joi.array().items(Joi.number().min(4).max(2))
+            };
+
+            Joi.validate(object, schema, { abortEarly: false }, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"a\": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[3, 2]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ],\n  \"b\": [\n    2, \u001b[31m[5]\u001b[0m\n    3, \u001b[31m[7, 6]\u001b[0m\n    4 \u001b[31m[8]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"0\" must be larger than or equal to 4\n[2] \"1\" must be larger than or equal to 4\n[3] \"1\" must be less than or equal to 2\n[4] \"2\" must be less than or equal to 2\n[5] \"0\" must be larger than or equal to 4\n[6] \"1\" must be larger than or equal to 4\n[7] \"1\" must be less than or equal to 2\n[8] \"2\" must be less than or equal to 2\u001b[0m');
+                done();
+            });
+        });
+
         it('displays alternatives fail as a single line', function (done) {
 
             var schema = {
