@@ -14,15 +14,15 @@
     "npm": ">=2.0.0"
   },
   "dependencies": {
-    "hoek": "^2.2.x",
+    "hoek": "2.x.x",
     "topo": "1.x.x",
     "isemail": "1.x.x",
     "moment": "2.x.x"
   },
   "devDependencies": {
     "code": "1.x.x",
-    "lab": "5.x.x",
-    "markdown-toc": "^0.11.0"
+    "lab": "6.x.x",
+    "markdown-toc": "0.11.x"
   },
   "scripts": {
     "test": "lab -t 100 -a code -L",

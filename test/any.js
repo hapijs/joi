@@ -14,8 +14,6 @@ var internals = {};
 // Test shortcuts
 
 var lab = exports.lab = Lab.script();
-var before = lab.before;
-var after = lab.after;
 var describe = lab.describe;
 var it = lab.it;
 var expect = Code.expect;
@@ -245,7 +243,7 @@ describe('any', function () {
 
             expect(function () {
 
-                var schema = Joi.object({
+                Joi.object({
                     foo: Joi.string().default(function () {
 
                         return 'test';
@@ -267,7 +265,7 @@ describe('any', function () {
 
             expect(function () {
 
-                var schema = Joi.object({ foo: Joi.string().default(defaultFn) });
+                Joi.object({ foo: Joi.string().default(defaultFn) });
             }).to.not.throw();
 
             done();
@@ -815,7 +813,7 @@ describe('any', function () {
 
             expect(function () {
 
-                var schema = Joi.valid(5, 6, 7).example(4);
+                Joi.valid(5, 6, 7).example(4);
             }).to.throw('Bad example: "value" must be one of [5, 6, 7]');
             done();
         });
