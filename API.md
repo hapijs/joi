@@ -721,7 +721,7 @@ var schema = Joi.date().iso();
 
 Generates a schema object that matches a function type.
 
-Supports the same methods of the [`any()`](#any) type.
+Supports the same methods of the [`object()`](#object) type.
 
 ```javascript
 var func = Joi.func();
