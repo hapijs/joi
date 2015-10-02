@@ -66,6 +66,30 @@ describe('func', function () {
         });
     });
 
+    it('retains validated value prototype', function (done) {
+
+        var schema = Joi.func().keys({ a: Joi.number() });
+
+        var value = function () {
+
+            this.x = 'o';
+        };
+
+        value.prototype.get = function () {
+
+            return this.x;
+        };
+
+        schema.validate(value, function (err, validated) {
+
+            expect(validated).to.be.a.function();
+            var p = new validated();
+            expect(p.get()).to.equal('o');
+            expect(validated).to.not.equal(value);
+            done();
+        });
+    });
+
     it('keeps validated value as a function (no clone)', function (done) {
 
         var schema = Joi.func();
