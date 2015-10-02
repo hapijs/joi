@@ -1,5 +1,6 @@
 // Load modules
 
+var Code = require('code');
 var Lab = require('lab');
 var Joi = require('../lib');
 var Helper = require('./helper');
@@ -15,6 +16,7 @@ var internals = {};
 var lab = exports.lab = Lab.script();
 var describe = lab.describe;
 var it = lab.it;
+var expect = Code.expect;
 
 
 describe('func', function () {
@@ -41,5 +43,71 @@ describe('func', function () {
             [b, false],
             ['', false]
         ], done);
+    });
+
+    it('keeps validated value as a function', function (done) {
+
+        var schema = Joi.func().keys({ a: Joi.number() });
+
+        var b = 'abc';
+        var value = function () {
+
+            return b;
+        };
+
+        value.a = '123';
+
+        schema.validate(value, function (err, validated) {
+
+            expect(validated).to.be.a.function();
+            expect(validated()).to.equal('abc');
+            expect(validated).to.not.equal(value);
+            done();
+        });
+    });
+
+    it('retains validated value prototype', function (done) {
+
+        var schema = Joi.func().keys({ a: Joi.number() });
+
+        var value = function () {
+
+            this.x = 'o';
+        };
+
+        value.prototype.get = function () {
+
+            return this.x;
+        };
+
+        schema.validate(value, function (err, validated) {
+
+            expect(validated).to.be.a.function();
+            var p = new validated();
+            expect(p.get()).to.equal('o');
+            expect(validated).to.not.equal(value);
+            done();
+        });
+    });
+
+    it('keeps validated value as a function (no clone)', function (done) {
+
+        var schema = Joi.func();
+
+        var b = 'abc';
+        var value = function () {
+
+            return b;
+        };
+
+        value.a = '123';
+
+        schema.validate(value, function (err, validated) {
+
+            expect(validated).to.be.a.function();
+            expect(validated()).to.equal('abc');
+            expect(validated).to.equal(value);
+            done();
+        });
     });
 });

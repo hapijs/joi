@@ -721,7 +721,9 @@ var schema = Joi.date().iso();
 
 Generates a schema object that matches a function type.
 
-Supports the same methods of the [`object()`](#object) type.
+Supports the same methods of the [`object()`](#object) type. Note that validating a function keys will cause the function
+to be cloned. While the function will retain its prototype and closure, it will lose its `length` property value (will be
+set to `0`).
 
 ```javascript
 var func = Joi.func();
