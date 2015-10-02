@@ -27,7 +27,8 @@
   "scripts": {
     "test": "lab -t 100 -a code -L",
     "test-cov-html": "lab -r html -o coverage.html -a code",
-    "toc": "node generate-readme-toc.js"
+    "toc": "node generate-readme-toc.js",
+    "version": "npm run toc && git add API.md"
   },
   "license": "BSD-3-Clause"
 }
