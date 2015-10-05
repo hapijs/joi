@@ -38,6 +38,7 @@
     - [`array.sparse(enabled)`](#arraysparseenabled)
     - [`array.single(enabled)`](#arraysingleenabled)
     - [`array.items(type)`](#arrayitemstype)
+    - [`array.ordered(type)`](#arrayorderedtype)
     - [`array.min(limit)`](#arrayminlimit)
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
@@ -545,6 +546,20 @@ var schema = Joi.array().items(Joi.string(), Joi.number()); // array may contain
 var schema = Joi.array().items(Joi.string().required(), Joi.string().required()); // array must contain at least two strings
 var schema = Joi.array().items(Joi.string().valid('not allowed').forbidden(), Joi.string()); // array may contain strings, but none of those strings can match 'not allowed'
 var schema = Joi.array().items(Joi.string().label('My string').required(), Joi.number().required()); // If this fails it can result in `[ValidationError: "value" does not contain [My string] and 1 other required value(s)]`
+```
+
+#### `array.ordered(type)`
+
+List the types in sequence order for the array values where:
+- `type` - a **joi** schema object to validate against each array item in sequence order. `type` can be an array of values, or multiple values can be passed as individual arguments.
+
+If a given type is `.required()` then there must be a matching item with the same index position in the array.
+Errors will contain the number of items that didn't match. Any unmatched item having a [label](#anylabelname) will be mentioned explicitly.
+
+```javascript
+var schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()); // array must have first item as string and second item as number
+var schema = Joi.array().ordered(Joi.string().required()).items(Joi.number().required()); // array must have first item as string and 1 or more subsequent items as number
+var schema = Joi.array().ordered(Joi.string().required(), Joi.number()); // array must have first item as string and optionally second item as number
 ```
 
 #### `array.min(limit)`

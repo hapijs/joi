@@ -793,4 +793,206 @@ describe('array', function () {
             });
         });
     });
+
+    describe('#ordered', function () {
+
+        it('validates input against items in order', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string().required(), Joi.number().required()]);
+            var input = ['s1', 2];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['s1', 2]);
+                done();
+            });
+        });
+
+        it('validates input with optional item', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string().required(), Joi.number().required(), Joi.number()]);
+            var input = ['s1', 2, 3];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['s1', 2, 3]);
+                done();
+            });
+        });
+
+        it('validates input without optional item', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string().required(), Joi.number().required(), Joi.number()]);
+            var input = ['s1', 2];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['s1', 2]);
+                done();
+            });
+        });
+
+        it('validates input without optional item', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string().required(), Joi.number().required(), Joi.number()]).sparse(true);
+            var input = ['s1', 2, undefined];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['s1', 2, undefined]);
+                done();
+            });
+        });
+
+        it('validates input without optional item in a sparse array', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string().required(), Joi.number(), Joi.number().required()]).sparse(true);
+            var input = ['s1', undefined, 3];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['s1', undefined, 3]);
+                done();
+            });
+        });
+
+        it('validates when input matches ordered items and matches regular items', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string().required(), Joi.number().required()]).items(Joi.number());
+            var input = ['s1', 2, 3, 4, 5];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['s1', 2, 3, 4, 5]);
+                done();
+            });
+        });
+
+        it('errors when input does not match ordered items', function (done) {
+
+            var schema = Joi.array().ordered([Joi.number().required(), Joi.string().required()]);
+            var input = ['s1', 2];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" at position 0 fails because ["0" must be a number]');
+                done();
+            });
+        });
+
+        it('errors when input has more items than ordered items', function (done) {
+
+            var schema = Joi.array().ordered([Joi.number().required(), Joi.string().required()]);
+            var input = [1, 's2', 3];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" at position 2 fails because array must contain at most 2 items');
+                done();
+            });
+        });
+
+        it('errors when input has more items than ordered items with abortEarly = false', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string(), Joi.number()]).options({ abortEarly: false });
+            var input = [1, 2, 3, 4, 5];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" at position 0 fails because ["0" must be a string]. "value" at position 2 fails because array must contain at most 2 items. "value" at position 3 fails because array must contain at most 2 items. "value" at position 4 fails because array must contain at most 2 items');
+                expect(err.details).to.have.length(4);
+                done();
+            });
+        });
+
+        it('errors when input has less items than ordered items', function (done) {
+
+            var schema = Joi.array().ordered([Joi.number().required(), Joi.string().required()]);
+            var input = [1];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" does not contain 1 required value(s)');
+                done();
+            });
+        });
+
+        it('errors when input matches ordered items but not matches regular items', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string().required(), Joi.number().required()]).items(Joi.number()).options({ abortEarly: false });
+            var input = ['s1', 2, 3, 4, 's5'];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" at position 4 fails because ["4" must be a number]');
+                done();
+            });
+        });
+
+        it('errors when input does not match ordered items but matches regular items', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string(), Joi.number()]).items(Joi.number()).options({ abortEarly: false });
+            var input = [1, 2, 3, 4, 5];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" at position 0 fails because ["0" must be a string]');
+                done();
+            });
+        });
+
+        it('errors when input does not match ordered items not matches regular items', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string(), Joi.number()]).items(Joi.string()).options({ abortEarly: false });
+            var input = [1, 2, 3, 4, 5];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" at position 0 fails because ["0" must be a string]. "value" at position 2 fails because ["2" must be a string]. "value" at position 3 fails because ["3" must be a string]. "value" at position 4 fails because ["4" must be a string]');
+                expect(err.details).to.have.length(4);
+                done();
+            });
+        });
+
+        it('errors but continues when abortEarly is set to false', function (done) {
+
+            var schema = Joi.array().ordered([Joi.number().required(), Joi.string().required()]).options({ abortEarly: false });
+            var input = ['s1', 2];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" at position 0 fails because ["0" must be a number]. "value" at position 1 fails because ["1" must be a string]');
+                expect(err.details).to.have.length(2);
+                done();
+            });
+        });
+
+        it('strips item', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string().required(), Joi.number().strip(), Joi.number().required()]);
+            var input = ['s1', 2, 3];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['s1', 3]);
+                done();
+            });
+        });
+
+        it('strips multiple items', function (done) {
+
+            var schema = Joi.array().ordered([Joi.string().strip(), Joi.number(), Joi.number().strip()]);
+            var input = ['s1', 2, 3];
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal([2]);
+                done();
+            });
+        });
+    });
 });
