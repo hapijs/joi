@@ -1595,6 +1595,32 @@ describe('Joi', function () {
         });
     });
 
+    describe('#isValid', function () {
+
+        it('returns true on valid value', function (done) {
+
+            var result = Joi.isValid('4', Joi.number());
+            expect(result).to.be.a.boolean().and.to.equal(true);
+            done();
+        });
+
+        it('returns false on invalid value', function (done) {
+
+            var result = Joi.isValid('x', Joi.number());
+            expect(result).to.be.a.boolean().and.to.equal(false);
+            done();
+        });
+
+        it('does not throw on invalid value', function (done) {
+
+            expect(function () {
+
+                Joi.isValid('x', Joi.number());
+            }).to.not.throw();
+            done();
+        });
+    });
+
     describe('#assert', function () {
 
         it('does not have a return value', function (done) {

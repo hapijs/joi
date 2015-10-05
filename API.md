@@ -8,6 +8,7 @@
 
 - [Joi](#joi)
   - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
+  - [`isValid(value, schema, [options])`](#isvalidvalue-schema-options)
   - [`compile(schema)`](#compileschema)
   - [`assert(value, schema, [message])`](#assertvalue-schema-message)
   - [`attempt(value, schema, [message])`](#attemptvalue-schema-message)
@@ -156,6 +157,10 @@ var result = Joi.validate(value, schema);
 // result.error -> null
 // result.value -> { "a" : 123 }
 ```
+
+### `isValid(value, schema, [options])`
+
+The same as `validate`, but returns `true` if the validation passed, otherwise `false`.
 
 ### `compile(schema)`
 
