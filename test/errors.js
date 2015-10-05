@@ -287,7 +287,7 @@ describe('errors', function () {
         it('annotates error within array multiple times on the same element', function (done) {
 
             var object = {
-                a: [2, 3 , 4]
+                a: [2, 3, 4]
             };
 
             var schema = {
@@ -323,8 +323,8 @@ describe('errors', function () {
         it('annotates error within multiple arrays and multiple times on the same element', function (done) {
 
             var object = {
-                a: [2, 3 , 4],
-                b: [2, 3 , 4]
+                a: [2, 3, 4],
+                b: [2, 3, 4]
             };
 
             var schema = {
