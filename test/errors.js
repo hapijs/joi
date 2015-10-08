@@ -467,5 +467,46 @@ describe('errors', () => {
                 done();
             });
         });
+
+        it('prints NaN, Infinity and -Infinity correctly in errors', (done) => {
+
+            const schema = {
+                x: Joi.object({
+                    y: Joi.date().allow(null),
+                    z: Joi.date().allow(null),
+                    u: Joi.date().allow(null),
+                    g: Joi.date().allow(null),
+                    h: Joi.date().allow(null),
+                    i: Joi.date().allow(null),
+                    k: Joi.date().allow(null),
+                    p: Joi.date().allow(null),
+                    f: Joi.date().allow(null)
+                })
+            };
+
+            const input = {
+                x: {
+                    y: NaN,
+                    z: Infinity,
+                    u: -Infinity,
+                    g: Symbol('foo'),
+                    h: -Infinity,
+                    i: Infinity,
+                    k: (a) => a,
+                    p: Symbol('bar'),
+                    f: function (x) {
+
+                        return [{ y: 2 }];
+                    }
+                }
+            };
+
+            Joi.validate(input, schema, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"z\": Infinity,\n    \"u\": -Infinity,\n    \"g\": Symbol(foo),\n    \"h\": -Infinity,\n    \"i\": Infinity,\n    \"k\": (a) => a,\n    \"p\": Symbol(bar),\n    \"f\": function (x) {\\n\\n                        return [{ y: 2 }];\\n                    },\n    \"y\" \u001b[31m[1]\u001b[0m: NaN\n  }\n}\n\u001b[31m\n[1] \"y\" must be a number of milliseconds or valid date string\u001b[0m');
+                done();
+            });
+        });
     });
 });
