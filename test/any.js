@@ -1444,6 +1444,17 @@ describe('any', function () {
 
         describe('#add', function () {
 
+            it('allows non-object and non-function values', function (done) {
+
+                expect(function () {
+
+                    var a = Joi.valid(null, new Date(), new Buffer(0));
+                    a.valid(true, 1, 'true');
+                    a._valids.add(undefined);
+                }).not.to.throw();
+                done();
+            });
+
             it('throws when adding a non ref function', function (done) {
 
                 expect(function () {
@@ -1497,8 +1508,72 @@ describe('any', function () {
 
             it('strips undefined', function (done) {
 
-                var b = Joi.any().allow(undefined);
+                var b = Joi.string().allow(1);
+                b._valids.add(undefined);
                 expect(b._valids.values({ stripUndefined: true })).to.not.include(undefined);
+                done();
+            });
+        });
+
+        describe('#allow', function () {
+
+            it('allows valid values to be set', function (done) {
+
+                expect(function () {
+
+                    Joi.any().allow(true, 1, 'hello', new Date());
+                }).not.to.throw();
+                done();
+            });
+
+            it('throws when passed undefined', function (done) {
+
+                expect(function () {
+
+                    Joi.any().allow(undefined);
+                }).to.throw('Cannot call allow with undefined');
+                done();
+            });
+        });
+
+        describe('#valid', function () {
+
+            it('allows valid values to be set', function (done) {
+
+                expect(function () {
+
+                    Joi.any().valid(true, 1, 'hello', new Date());
+                }).not.to.throw();
+                done();
+            });
+
+            it('throws when passed undefined', function (done) {
+
+                expect(function () {
+
+                    Joi.any().valid(undefined);
+                }).to.throw('Cannot call valid with undefined');
+                done();
+            });
+        });
+
+        describe('#invalid', function () {
+
+            it('allows invalid values to be set', function (done) {
+
+                expect(function () {
+
+                    Joi.any().valid(true, 1, 'hello', new Date());
+                }).not.to.throw();
+                done();
+            });
+
+            it('throws when passed undefined', function (done) {
+
+                expect(function () {
+
+                    Joi.any().invalid(undefined);
+                }).to.throw('Cannot call invalid with undefined');
                 done();
             });
         });
