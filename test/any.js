@@ -1444,17 +1444,6 @@ describe('any', function () {
 
         describe('#add', function () {
 
-            it('allows non-object and non-function values', function (done) {
-
-                expect(function () {
-
-                    var a = Joi.valid(null, new Date(), new Buffer(0));
-                    a.valid(true, 1, 'true');
-                    a._valids.add(undefined);
-                }).not.to.throw();
-                done();
-            });
-
             it('throws when adding a non ref function', function (done) {
 
                 expect(function () {
@@ -1508,9 +1497,9 @@ describe('any', function () {
 
             it('strips undefined', function (done) {
 
-                var b = Joi.string().allow(1);
-                b._valids.add(undefined);
-                expect(b._valids.values({ stripUndefined: true })).to.not.include(undefined);
+                var any = Joi.any().clone();
+                any._valids.add(undefined);
+                expect(any._valids.values({ stripUndefined: true })).to.not.include(undefined);
                 done();
             });
         });
@@ -1531,7 +1520,7 @@ describe('any', function () {
                 expect(function () {
 
                     Joi.any().allow(undefined);
-                }).to.throw('Cannot call allow with undefined');
+                }).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
                 done();
             });
         });
@@ -1552,7 +1541,7 @@ describe('any', function () {
                 expect(function () {
 
                     Joi.any().valid(undefined);
-                }).to.throw('Cannot call valid with undefined');
+                }).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
                 done();
             });
         });
@@ -1573,7 +1562,7 @@ describe('any', function () {
                 expect(function () {
 
                     Joi.any().invalid(undefined);
-                }).to.throw('Cannot call invalid with undefined');
+                }).to.throw('Cannot call allow/valid/invalid with undefined');
                 done();
             });
         });
