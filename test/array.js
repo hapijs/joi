@@ -569,7 +569,7 @@ describe('array', function () {
             done();
         });
 
-        it('returns an includes array only if includes are specified', function (done) {
+        it('returns an items array only if items are specified', function (done) {
 
             var schema = Joi.array().items().max(5);
             var desc = schema.describe();
@@ -577,14 +577,19 @@ describe('array', function () {
             done();
         });
 
-        it('returns a recursively defined array of includes when specified', function (done) {
+        it('returns a recursively defined array of items when specified', function (done) {
 
-            var schema = Joi.array().items(Joi.number(), Joi.string()).items(Joi.boolean().forbidden());
+            var schema = Joi.array()
+                .items(Joi.number(), Joi.string())
+                .items(Joi.boolean().forbidden())
+                .ordered(Joi.number(), Joi.string())
+                .ordered(Joi.string().required());
             var desc = schema.describe();
             expect(desc.items).to.have.length(3);
             expect(desc).to.deep.equal({
                 type: 'array',
                 flags: { sparse: false },
+                orderedItems: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }, { type: 'string', invalids: [''], flags: { presence: 'required' } }],
                 items: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }, { type: 'boolean', flags: { presence: 'forbidden' } }]
             });
 
