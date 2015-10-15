@@ -85,6 +85,29 @@ describe('array', function () {
             });
         });
 
+        it('shows path to errors in array items', function (done) {
+
+            expect(function () {
+
+                Joi.array().items({
+                    a: {
+                        b: {
+                            c: {
+                                d: undefined
+                            }
+                        }
+                    }
+                });
+            }).to.throw(Error, 'Invalid schema content: (0.a.b.c.d)');
+
+            expect(function () {
+
+                Joi.array().items({ foo: 'bar' }, undefined);
+            }).to.throw(Error, 'Invalid schema content: (1)');
+
+            done();
+        });
+
         it('allows zero size', function (done) {
 
             var schema = Joi.object({
@@ -800,6 +823,29 @@ describe('array', function () {
     });
 
     describe('#ordered', function () {
+
+        it('shows path to errors in array ordered items', function (done) {
+
+            expect(function () {
+
+                Joi.array().ordered({
+                    a: {
+                        b: {
+                            c: {
+                                d: undefined
+                            }
+                        }
+                    }
+                });
+            }).to.throw(Error, 'Invalid schema content: (0.a.b.c.d)');
+
+            expect(function () {
+
+                Joi.array().ordered({ foo: 'bar' }, undefined);
+            }).to.throw(Error, 'Invalid schema content: (1)');
+
+            done();
+        });
 
         it('validates input against items in order', function (done) {
 

@@ -881,6 +881,31 @@ describe('object', function () {
 
     describe('#pattern', function () {
 
+        it('shows path to errors in schema', function (done) {
+
+            expect(function () {
+
+                Joi.object().pattern(/.*/, {
+                    a: {
+                        b: {
+                            c: {
+                                d: undefined
+                            }
+                        }
+                    }
+                });
+            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+
+            expect(function () {
+
+                Joi.object().pattern(/.*/, function () {
+
+                });
+            }).to.throw(Error, 'Invalid schema content: ');
+
+            done();
+        });
+
         it('validates unknown keys using a pattern', function (done) {
 
             var schema = Joi.object({
@@ -1080,6 +1105,32 @@ describe('object', function () {
     });
 
     describe('#assert', function () {
+
+        it('shows path to errors in schema', function (done) {
+
+            expect(function () {
+
+                Joi.object().assert('a.b', {
+                    a: {
+                        b: {
+                            c: {
+                                d: undefined
+                            }
+                        }
+                    }
+                });
+            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+            done();
+        });
+
+        it('shows errors in schema', function (done) {
+
+            expect(function () {
+
+                Joi.object().assert('a.b', undefined);
+            }).to.throw(Error, 'Invalid schema content: ');
+            done();
+        });
 
         it('validates upwards reference', function (done) {
 

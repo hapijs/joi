@@ -1658,4 +1658,35 @@ describe('Joi', function () {
             done();
         });
     });
+
+    describe('#compile', function () {
+
+        it('throws an error on invalid value', function (done) {
+
+            expect(function () {
+
+                Joi.compile(undefined);
+            }).to.throw(Error, 'Invalid schema content: ');
+            done();
+        });
+
+        it('shows path to errors in object', function (done) {
+
+            var schema = {
+                a: {
+                    b: {
+                        c: {
+                            d: undefined
+                        }
+                    }
+                }
+            };
+
+            expect(function () {
+
+                Joi.compile(schema);
+            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+            done();
+        });
+    });
 });
