@@ -362,6 +362,17 @@ describe('object', function () {
         });
     });
 
+    it('errors on unknown nested keys with the correct path at the root level', function (done) {
+
+        var schema = Joi.object({ a: Joi.object().keys({}) });
+        var obj = { c: 'hello' };
+        schema.validate(obj, function (err, value) {
+
+            expect(err).to.exist();
+            expect(err.details[0].path).to.equal('c');
+            done();
+        });
+    });
 
     it('should work on prototype-less objects', function (done) {
 
