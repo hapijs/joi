@@ -233,6 +233,41 @@ describe('errors', function () {
         });
     });
 
+    it('has a name that is ValidationError', function (done) {
+
+        var schema = Joi.number();
+        schema.validate('a', function (validateErr) {
+
+            expect(validateErr).to.exist();
+            expect(validateErr.name).to.be.equal('ValidationError');
+
+            try {
+                Joi.assert('a', schema);
+                throw new Error('should not reach that');
+            }
+            catch (assertErr) {
+                expect(assertErr.name).to.be.equal('ValidationError');
+            }
+
+            try {
+                Joi.assert('a', schema, 'foo');
+                throw new Error('should not reach that');
+            }
+            catch (assertErr) {
+                expect(assertErr.name).to.be.equal('ValidationError');
+            }
+
+            try {
+                Joi.assert('a', schema, new Error('foo'));
+                throw new Error('should not reach that');
+            }
+            catch (assertErr) {
+                expect(assertErr.name).to.equal('Error');
+                done();
+            }
+        });
+    });
+
     describe('#annotate', function () {
 
         it('annotates error', function (done) {

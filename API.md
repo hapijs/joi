@@ -110,6 +110,7 @@
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
   - [`ref(key, [options])`](#refkey-options)
+- [Errors](#errors)
 
 <!-- tocstop -->
 
@@ -133,9 +134,9 @@ Validates a value using the given schema and options where:
     `validate()` and not using `any.options()`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
 - `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
-  - `err` - if validation failed, the error reason, otherwise `null`.
+  - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
-    incomplete if validation failed and `abortEarly` is `true`. If callback is not provided, then returns an object with error
+    incomplete if validation failed and `abortEarly` is `true`. If callback is not provided, then returns an object with [error](#errors)
     and value properties.
 
 ```javascript
@@ -183,7 +184,7 @@ var schema = Joi.alternatives().try([
 
 ### `assert(value, schema, [message])`
 
-Validates a value against a schema and throws if validation fails where:
+Validates a value against a schema and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
 - `schema` - the schema object.
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
@@ -194,7 +195,7 @@ Joi.assert('x', Joi.number());
 
 ### `attempt(value, schema, [message])`
 
-Validates a value against a schema, returns valid object, and throws if validation fails where:
+Validates a value against a schema, returns valid object, and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
 - `schema` - the schema object.
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
@@ -1500,3 +1501,15 @@ var schema = Joi.object().keys({
 
 Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, function (err, value) {});
 ```
+
+## Errors
+
+Joi throws classical javascript `Error`s containing :
+- `name` - `ValidationError`.
+- `details` - an array of errors :
+    - `message` - string with a description of the error.
+    - `path` - dotted path to the key where the error happened.
+    - `type` - type of the error.
+    - `context` - object providing context of the error.
+- `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occured.
+- `_object` - the original object to validate.
