@@ -1,7 +1,16 @@
-var Joi = require('../');
+'use strict';
+
+// Load modules
+
+const Joi = require('../');
 
 
-var schema = Joi.object().options({ abortEarly: false }).keys({
+// Declare internals
+
+const internals = {};
+
+
+const schema = Joi.object().options({ abortEarly: false }).keys({
     email: Joi.string().email().required().label('User Email'),
     password: Joi.string().min(8).required(),
     password_confirmation: Joi.any().valid(Joi.ref('password')).required().options({ language: { any: { allowOnly: 'must match password' }, label: 'Password Confirmation' } }).label('This label is not used because language.label takes precedence'),
@@ -11,7 +20,7 @@ var schema = Joi.object().options({ abortEarly: false }).keys({
 });
 
 
-var data = {
+const data = {
     email: 'not_a_valid_email_to_show_custom_label',
     password: 'abcd1234',
     password_confirmation: 'abc1',

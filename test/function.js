@@ -1,27 +1,29 @@
+'use strict';
+
 // Load modules
 
-var Code = require('code');
-var Lab = require('lab');
-var Joi = require('../lib');
-var Helper = require('./helper');
+const Code = require('code');
+const Lab = require('lab');
+const Joi = require('../lib');
+const Helper = require('./helper');
 
 
 // Declare internals
 
-var internals = {};
+const internals = {};
 
 
 // Test shortcuts
 
-var lab = exports.lab = Lab.script();
-var describe = lab.describe;
-var it = lab.it;
-var expect = Code.expect;
+const lab = exports.lab = Lab.script();
+const describe = lab.describe;
+const it = lab.it;
+const expect = Code.expect;
 
 
-describe('func', function () {
+describe('func', () => {
 
-    it('validates a function', function (done) {
+    it('validates a function', (done) => {
 
         Helper.validate(Joi.func().required(), [
             [function () { }, true],
@@ -29,12 +31,12 @@ describe('func', function () {
         ], done);
     });
 
-    it('validates a function with keys', function (done) {
+    it('validates a function with keys', (done) => {
 
-        var a = function () { };
+        const a = function () { };
         a.a = 'abc';
 
-        var b = function () { };
+        const b = function () { };
         b.a = 123;
 
         Helper.validate(Joi.func().keys({ a: Joi.string().required() }).required(), [
@@ -45,19 +47,19 @@ describe('func', function () {
         ], done);
     });
 
-    it('keeps validated value as a function', function (done) {
+    it('keeps validated value as a function', (done) => {
 
-        var schema = Joi.func().keys({ a: Joi.number() });
+        const schema = Joi.func().keys({ a: Joi.number() });
 
-        var b = 'abc';
-        var value = function () {
+        const b = 'abc';
+        const value = function () {
 
             return b;
         };
 
         value.a = '123';
 
-        schema.validate(value, function (err, validated) {
+        schema.validate(value, (err, validated) => {
 
             expect(validated).to.be.a.function();
             expect(validated()).to.equal('abc');
@@ -66,11 +68,11 @@ describe('func', function () {
         });
     });
 
-    it('retains validated value prototype', function (done) {
+    it('retains validated value prototype', (done) => {
 
-        var schema = Joi.func().keys({ a: Joi.number() });
+        const schema = Joi.func().keys({ a: Joi.number() });
 
-        var value = function () {
+        const value = function () {
 
             this.x = 'o';
         };
@@ -80,29 +82,29 @@ describe('func', function () {
             return this.x;
         };
 
-        schema.validate(value, function (err, validated) {
+        schema.validate(value, (err, validated) => {
 
             expect(validated).to.be.a.function();
-            var p = new validated();
+            const p = new validated();
             expect(p.get()).to.equal('o');
             expect(validated).to.not.equal(value);
             done();
         });
     });
 
-    it('keeps validated value as a function (no clone)', function (done) {
+    it('keeps validated value as a function (no clone)', (done) => {
 
-        var schema = Joi.func();
+        const schema = Joi.func();
 
-        var b = 'abc';
-        var value = function () {
+        const b = 'abc';
+        const value = function () {
 
             return b;
         };
 
         value.a = '123';
 
-        schema.validate(value, function (err, validated) {
+        schema.validate(value, (err, validated) => {
 
             expect(validated).to.be.a.function();
             expect(validated()).to.equal('abc');

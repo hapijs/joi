@@ -1,64 +1,66 @@
+'use strict';
+
 // Load modules
 
-var Lab = require('lab');
-var Code = require('code');
-var Joi = require('../lib');
-var Helper = require('./helper');
+const Lab = require('lab');
+const Code = require('code');
+const Joi = require('../lib');
+const Helper = require('./helper');
 
 
 // Declare internals
 
-var internals = {};
+const internals = {};
 
 
 // Test shortcuts
 
-var lab = exports.lab = Lab.script();
-var describe = lab.describe;
-var it = lab.it;
-var expect = Code.expect;
+const lab = exports.lab = Lab.script();
+const describe = lab.describe;
+const it = lab.it;
+const expect = Code.expect;
 
 
-describe('number', function () {
+describe('number', () => {
 
-    it('fails on boolean', function (done) {
+    it('fails on boolean', (done) => {
 
-        var schema = Joi.number();
+        const schema = Joi.number();
         Helper.validate(schema, [
             [true, false],
             [false, false]
         ], done);
     });
 
-    describe('#validate', function () {
+    describe('#validate', () => {
 
-        it('should, by default, allow undefined', function (done) {
+        it('should, by default, allow undefined', (done) => {
 
             Helper.validate(Joi.number(), [
                 [undefined, true]
             ], done);
         });
 
-        it('should, when .required(), deny undefined', function (done) {
+        it('should, when .required(), deny undefined', (done) => {
 
             Helper.validate(Joi.number().required(), [
                 [undefined, false]
             ], done);
         });
 
-        it('should return false for denied value', function (done) {
+        it('should return false for denied value', (done) => {
 
-            var text = Joi.number().invalid(50);
-            text.validate(50, function (err, value) {
+            const text = Joi.number().invalid(50);
+            text.validate(50, (err, value) => {
 
                 expect(err).to.exist();
                 done();
             });
         });
 
-        it('should validate integer', function (done) {
+        it('should validate integer', (done) => {
 
-            var t = Joi.number().integer();
+            const t = Joi.number().integer();
             Helper.validate(t, [
                 [100, true],
                 [0, true],
@@ -68,27 +70,27 @@ describe('number', function () {
             ], done);
         });
 
-        it('should return false for Infinity', function (done) {
+        it('should return false for Infinity', (done) => {
 
-            var t = Joi.number();
+            const t = Joi.number();
             Helper.validate(t, [
                 [Infinity, false],
                 [-Infinity, false]
             ], done);
         });
 
-        it('should return true for allowed Infinity', function (done) {
+        it('should return true for allowed Infinity', (done) => {
 
-            var t = Joi.number().allow(Infinity, -Infinity);
+            const t = Joi.number().allow(Infinity, -Infinity);
             Helper.validate(t, [
                 [Infinity, true],
                 [-Infinity, true]
             ], done);
         });
 
-        it('can accept string numbers', function (done) {
+        it('can accept string numbers', (done) => {
 
-            var t = Joi.number();
+            const t = Joi.number();
             Helper.validate(t, [
                 ['1', true],
                 ['100', true],
@@ -103,21 +105,21 @@ describe('number', function () {
             ], done);
         });
 
-        it('required validates correctly', function (done) {
+        it('required validates correctly', (done) => {
 
-            var t = Joi.number().required();
+            const t = Joi.number().required();
             Helper.validate(t, [
                 [NaN, false],
                 ['100', true]
             ], done);
         });
 
-        it('converts an object string to a number', function (done) {
+        it('converts an object string to a number', (done) => {
 
-            var config = { a: Joi.number() };
-            var obj = { a: '123' };
+            const config = { a: Joi.number() };
+            const obj = { a: '123' };
 
-            Joi.compile(config).validate(obj, function (err, value) {
+            Joi.compile(config).validate(obj, (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value.a).to.equal(123);
@@ -125,9 +127,9 @@ describe('number', function () {
             });
         });
 
-        it('converts a string to a number', function (done) {
+        it('converts a string to a number', (done) => {
 
-            Joi.number().validate('1', function (err, value) {
+            Joi.number().validate('1', (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal(1);
@@ -135,9 +137,9 @@ describe('number', function () {
             });
         });
 
-        it('errors on null', function (done) {
+        it('errors on null', (done) => {
 
-            Joi.number().validate(null, function (err, value) {
+            Joi.number().validate(null, (err, value) => {
 
                 expect(err).to.exist();
                 expect(value).to.equal(null);
@@ -145,9 +147,9 @@ describe('number', function () {
             });
         });
 
-        it('should handle combination of min and max', function (done) {
+        it('should handle combination of min and max', (done) => {
 
-            var rule = Joi.number().min(8).max(10);
+            const rule = Joi.number().min(8).max(10);
             Helper.validate(rule, [
                 [1, false],
                 [11, false],
@@ -157,9 +159,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, and null allowed', function (done) {
+        it('should handle combination of min, max, and null allowed', (done) => {
 
-            var rule = Joi.number().min(8).max(10).allow(null);
+            const rule = Joi.number().min(8).max(10).allow(null);
             Helper.validate(rule, [
                 [1, false],
                 [11, false],
@@ -169,9 +171,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min and positive', function (done) {
+        it('should handle combination of min and positive', (done) => {
 
-            var rule = Joi.number().min(-3).positive();
+            const rule = Joi.number().min(-3).positive();
             Helper.validate(rule, [
                 [1, true],
                 [-2, false],
@@ -180,9 +182,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of max and positive', function (done) {
+        it('should handle combination of max and positive', (done) => {
 
-            var rule = Joi.number().max(5).positive();
+            const rule = Joi.number().max(5).positive();
             Helper.validate(rule, [
                 [4, true],
                 [-2, false],
@@ -191,9 +193,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min and negative', function (done) {
+        it('should handle combination of min and negative', (done) => {
 
-            var rule = Joi.number().min(-3).negative();
+            const rule = Joi.number().min(-3).negative();
             Helper.validate(rule, [
                 [4, false],
                 [-2, true],
@@ -202,9 +204,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of negative and positive', function (done) {
+        it('should handle combination of negative and positive', (done) => {
 
-            var rule = Joi.number().negative().positive();
+            const rule = Joi.number().negative().positive();
             Helper.validate(rule, [
                 [4, false],
                 [-2, false],
@@ -213,9 +215,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of negative and allow', function (done) {
+        it('should handle combination of negative and allow', (done) => {
 
-            var rule = Joi.number().negative().allow(1);
+            const rule = Joi.number().negative().allow(1);
             Helper.validate(rule, [
                 [1, true],
                 [-10, true],
@@ -225,9 +227,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of positive and allow', function (done) {
+        it('should handle combination of positive and allow', (done) => {
 
-            var rule = Joi.number().positive().allow(-1);
+            const rule = Joi.number().positive().allow(-1);
             Helper.validate(rule, [
                 [1, true],
                 [-1, true],
@@ -237,9 +239,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of positive, allow, and null allowed', function (done) {
+        it('should handle combination of positive, allow, and null allowed', (done) => {
 
-            var rule = Joi.number().positive().allow(-1).allow(null);
+            const rule = Joi.number().positive().allow(-1).allow(null);
             Helper.validate(rule, [
                 [1, true],
                 [-1, true],
@@ -249,9 +251,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of negative, allow, and null allowed', function (done) {
+        it('should handle combination of negative, allow, and null allowed', (done) => {
 
-            var rule = Joi.number().negative().allow(1).allow(null);
+            const rule = Joi.number().negative().allow(1).allow(null);
             Helper.validate(rule, [
                 [1, true],
                 [-10, true],
@@ -261,9 +263,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of positive, allow, null allowed, and invalid', function (done) {
+        it('should handle combination of positive, allow, null allowed, and invalid', (done) => {
 
-            var rule = Joi.number().positive().allow(-1).allow(null).invalid(1);
+            const rule = Joi.number().positive().allow(-1).allow(null).invalid(1);
             Helper.validate(rule, [
                 [1, false],
                 [-1, true],
@@ -273,9 +275,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of negative, allow, null allowed, and invalid', function (done) {
+        it('should handle combination of negative, allow, null allowed, and invalid', (done) => {
 
-            var rule = Joi.number().negative().allow(1).allow(null).invalid(-5);
+            const rule = Joi.number().negative().allow(1).allow(null).invalid(-5);
             Helper.validate(rule, [
                 [1, true],
                 [-10, true],
@@ -286,9 +288,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, and allow', function (done) {
+        it('should handle combination of min, max, and allow', (done) => {
 
-            var rule = Joi.number().min(8).max(10).allow(1);
+            const rule = Joi.number().min(8).max(10).allow(1);
             Helper.validate(rule, [
                 [1, true],
                 [11, false],
@@ -298,9 +300,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, allow, and null allowed', function (done) {
+        it('should handle combination of min, max, allow, and null allowed', (done) => {
 
-            var rule = Joi.number().min(8).max(10).allow(1).allow(null);
+            const rule = Joi.number().min(8).max(10).allow(1).allow(null);
             Helper.validate(rule, [
                 [1, true],
                 [11, false],
@@ -310,9 +312,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, allow, and invalid', function (done) {
+        it('should handle combination of min, max, allow, and invalid', (done) => {
 
-            var rule = Joi.number().min(8).max(10).allow(1).invalid(9);
+            const rule = Joi.number().min(8).max(10).allow(1).invalid(9);
             Helper.validate(rule, [
                 [1, true],
                 [11, false],
@@ -322,9 +324,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, allow, invalid, and null allowed', function (done) {
+        it('should handle combination of min, max, allow, invalid, and null allowed', (done) => {
 
-            var rule = Joi.number().min(8).max(10).allow(1).invalid(9).allow(null);
+            const rule = Joi.number().min(8).max(10).allow(1).invalid(9).allow(null);
             Helper.validate(rule, [
                 [1, true],
                 [11, false],
@@ -334,9 +336,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, and integer', function (done) {
+        it('should handle combination of min, max, and integer', (done) => {
 
-            var rule = Joi.number().min(8).max(10).integer();
+            const rule = Joi.number().min(8).max(10).integer();
             Helper.validate(rule, [
                 [1, false],
                 [11, false],
@@ -347,9 +349,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, integer, and allow', function (done) {
+        it('should handle combination of min, max, integer, and allow', (done) => {
 
-            var rule = Joi.number().min(8).max(10).integer().allow(9.1);
+            const rule = Joi.number().min(8).max(10).integer().allow(9.1);
             Helper.validate(rule, [
                 [1, false],
                 [11, false],
@@ -361,9 +363,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, integer, allow, and invalid', function (done) {
+        it('should handle combination of min, max, integer, allow, and invalid', (done) => {
 
-            var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8);
+            const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8);
             Helper.validate(rule, [
                 [1, false],
                 [11, false],
@@ -375,9 +377,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, integer, allow, invalid, and null allowed', function (done) {
+        it('should handle combination of min, max, integer, allow, invalid, and null allowed', (done) => {
 
-            var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null);
+            const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null);
             Helper.validate(rule, [
                 [1, false],
                 [11, false],
@@ -389,9 +391,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle limiting the number of decimal places', function (done) {
+        it('should handle limiting the number of decimal places', (done) => {
 
-            var rule = Joi.number().precision(1).options({ convert: false });
+            const rule = Joi.number().precision(1).options({ convert: false });
             Helper.validate(rule, [
                 [1, true],
                 [9.1, true],
@@ -404,9 +406,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of min, max, integer, allow, invalid, null allowed and precision', function (done) {
+        it('should handle combination of min, max, integer, allow, invalid, null allowed and precision', (done) => {
 
-            var rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1).options({ convert: false });
+            const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1).options({ convert: false });
             Helper.validate(rule, [
                 [1, false],
                 [11, false],
@@ -420,9 +422,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of greater and less', function (done) {
+        it('should handle combination of greater and less', (done) => {
 
-            var rule = Joi.number().greater(5).less(10);
+            const rule = Joi.number().greater(5).less(10);
             Helper.validate(rule, [
                 [0, false],
                 [11, false],
@@ -435,9 +437,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of greater, less, and integer', function (done) {
+        it('should handle combination of greater, less, and integer', (done) => {
 
-            var rule = Joi.number().integer().greater(5).less(10);
+            const rule = Joi.number().integer().greater(5).less(10);
             Helper.validate(rule, [
                 [0, false],
                 [11, false],
@@ -450,9 +452,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of greater, less, and null allowed', function (done) {
+        it('should handle combination of greater, less, and null allowed', (done) => {
 
-            var rule = Joi.number().greater(5).less(10).allow(null);
+            const rule = Joi.number().greater(5).less(10).allow(null);
             Helper.validate(rule, [
                 [0, false],
                 [11, false],
@@ -465,9 +467,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('should handle combination of greater, less, invalid, and allow', function (done) {
+        it('should handle combination of greater, less, invalid, and allow', (done) => {
 
-            var rule = Joi.number().greater(5).less(10).invalid(6).allow(-3);
+            const rule = Joi.number().greater(5).less(10).invalid(6).allow(-3);
             Helper.validate(rule, [
                 [0, false],
                 [11, false],
@@ -483,28 +485,28 @@ describe('number', function () {
         });
     });
 
-    it('should instantiate separate copies on invocation', function (done) {
+    it('should instantiate separate copies on invocation', (done) => {
 
-        var result1 = Joi.number().min(5);
-        var result2 = Joi.number().max(5);
+        const result1 = Joi.number().min(5);
+        const result2 = Joi.number().max(5);
 
         expect(Object.keys(result1)).to.not.equal(Object.keys(result2));
         done();
     });
 
-    it('should show resulting object with #valueOf', function (done) {
+    it('should show resulting object with #valueOf', (done) => {
 
-        var result = Joi.number().min(5);
+        const result = Joi.number().min(5);
         expect(result.valueOf()).to.exist();
         done();
     });
 
-    describe('error message', function () {
+    describe('error message', () => {
 
-        it('should display correctly for int type', function (done) {
+        it('should display correctly for int type', (done) => {
 
-            var t = Joi.number().integer();
-            Joi.compile(t).validate('1.1', function (err, value) {
+            const t = Joi.number().integer();
+            Joi.compile(t).validate('1.1', (err, value) => {
 
                 expect(err.message).to.contain('integer');
                 done();
@@ -512,23 +514,23 @@ describe('number', function () {
         });
     });
 
-    describe('#min', function () {
+    describe('#min', () => {
 
-        it('throws when limit is not a number', function (done) {
+        it('throws when limit is not a number', (done) => {
 
-            expect(function () {
+            expect(() => {
 
                 Joi.number().min('a');
             }).to.throw('limit must be a number or reference');
             done();
         });
 
-        it('supports 64bit numbers', function (done) {
+        it('supports 64bit numbers', (done) => {
 
-            var schema = Joi.number().min(1394035612500);
-            var input = 1394035612552;
+            const schema = Joi.number().min(1394035612500);
+            const input = 1394035612552;
 
-            schema.validate(input, function (err, value) {
+            schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal(input);
@@ -536,9 +538,9 @@ describe('number', function () {
             });
         });
 
-        it('accepts references as min value', function (done) {
+        it('accepts references as min value', (done) => {
 
-            var schema = Joi.object({ a: Joi.number(), b: Joi.number().min(Joi.ref('a')) });
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().min(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 42, b: 1337 }, true],
@@ -551,9 +553,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('accepts context references as min value', function (done) {
+        it('accepts context references as min value', (done) => {
 
-            var schema = Joi.object({ b: Joi.number().min(Joi.ref('$a')) });
+            const schema = Joi.object({ b: Joi.number().min(Joi.ref('$a')) });
 
             Helper.validate(schema, [
                 [{ b: 1337 }, true, { context: { a: 42 } }],
@@ -565,18 +567,18 @@ describe('number', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function (done) {
+        it('errors if reference is not a number', (done) => {
 
-            var schema = Joi.object({ a: Joi.string(), b: Joi.number().min(Joi.ref('a')) });
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().min(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
 
-        it('errors if context reference is not a number', function (done) {
+        it('errors if context reference is not a number', (done) => {
 
-            var schema = Joi.object({ b: Joi.number().min(Joi.ref('$a')) });
+            const schema = Joi.object({ b: Joi.number().min(Joi.ref('$a')) });
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a number]']
@@ -584,20 +586,20 @@ describe('number', function () {
         });
     });
 
-    describe('#max', function () {
+    describe('#max', () => {
 
-        it('throws when limit is not a number', function (done) {
+        it('throws when limit is not a number', (done) => {
 
-            expect(function () {
+            expect(() => {
 
                 Joi.number().max('a');
             }).to.throw('limit must be a number or reference');
             done();
         });
 
-        it('accepts references as max value', function (done) {
+        it('accepts references as max value', (done) => {
 
-            var schema = Joi.object({ a: Joi.number(), b: Joi.number().max(Joi.ref('a')) });
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().max(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 1337, b: 42 }, true],
@@ -610,9 +612,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('accepts context references as max value', function (done) {
+        it('accepts context references as max value', (done) => {
 
-            var schema = Joi.object({ b: Joi.number().max(Joi.ref('$a')) });
+            const schema = Joi.object({ b: Joi.number().max(Joi.ref('$a')) });
 
             Helper.validate(schema, [
                 [{ b: 42 }, true, { context: { a: 1337 } }],
@@ -624,18 +626,18 @@ describe('number', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function (done) {
+        it('errors if reference is not a number', (done) => {
 
-            var schema = Joi.object({ a: Joi.string(), b: Joi.number().max(Joi.ref('a')) });
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().max(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
 
-        it('errors if context reference is not a number', function (done) {
+        it('errors if context reference is not a number', (done) => {
 
-            var schema = Joi.object({ b: Joi.number().max(Joi.ref('$a')) });
+            const schema = Joi.object({ b: Joi.number().max(Joi.ref('$a')) });
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a number]']
@@ -643,20 +645,20 @@ describe('number', function () {
         });
     });
 
-    describe('#less', function () {
+    describe('#less', () => {
 
-        it('throws when limit is not a number', function (done) {
+        it('throws when limit is not a number', (done) => {
 
-            expect(function () {
+            expect(() => {
 
                 Joi.number().less('a');
             }).to.throw('limit must be a number or reference');
             done();
         });
 
-        it('accepts references as less value', function (done) {
+        it('accepts references as less value', (done) => {
 
-            var schema = Joi.object({ a: Joi.number(), b: Joi.number().less(Joi.ref('a')) });
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().less(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 1337, b: 42 }, true],
@@ -669,9 +671,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('accepts context references as less value', function (done) {
+        it('accepts context references as less value', (done) => {
 
-            var schema = Joi.object({ b: Joi.number().less(Joi.ref('$a')) });
+            const schema = Joi.object({ b: Joi.number().less(Joi.ref('$a')) });
 
             Helper.validate(schema, [
                 [{ b: 42 }, true, { context: { a: 1337 } }],
@@ -683,18 +685,18 @@ describe('number', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function (done) {
+        it('errors if reference is not a number', (done) => {
 
-            var schema = Joi.object({ a: Joi.string(), b: Joi.number().less(Joi.ref('a')) });
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().less(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
 
-        it('errors if context reference is not a number', function (done) {
+        it('errors if context reference is not a number', (done) => {
 
-            var schema = Joi.object({ a: Joi.string(), b: Joi.number().less(Joi.ref('$a')) });
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().less(Joi.ref('$a')) });
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a number]']
@@ -702,20 +704,20 @@ describe('number', function () {
         });
     });
 
-    describe('#greater', function () {
+    describe('#greater', () => {
 
-        it('throws when limit is not a number', function (done) {
+        it('throws when limit is not a number', (done) => {
 
-            expect(function () {
+            expect(() => {
 
                 Joi.number().greater('a');
             }).to.throw('limit must be a number or reference');
             done();
         });
 
-        it('accepts references as greater value', function (done) {
+        it('accepts references as greater value', (done) => {
 
-            var schema = Joi.object({ a: Joi.number(), b: Joi.number().greater(Joi.ref('a')) });
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().greater(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 42, b: 1337 }, true],
@@ -728,9 +730,9 @@ describe('number', function () {
             ], done);
         });
 
-        it('accepts context references as greater value', function (done) {
+        it('accepts context references as greater value', (done) => {
 
-            var schema = Joi.object({ b: Joi.number().greater(Joi.ref('$a')) });
+            const schema = Joi.object({ b: Joi.number().greater(Joi.ref('$a')) });
 
             Helper.validate(schema, [
                 [{ b: 1337 }, true, { context: { a: 42 } }],
@@ -742,18 +744,18 @@ describe('number', function () {
             ], done);
         });
 
-        it('errors if reference is not a number', function (done) {
+        it('errors if reference is not a number', (done) => {
 
-            var schema = Joi.object({ a: Joi.string(), b: Joi.number().greater(Joi.ref('a')) });
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().greater(Joi.ref('a')) });
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
 
-        it('errors if context reference is not a number', function (done) {
+        it('errors if context reference is not a number', (done) => {
 
-            var schema = Joi.object({ b: Joi.number().greater(Joi.ref('$a')) });
+            const schema = Joi.object({ b: Joi.number().greater(Joi.ref('$a')) });
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a number]']
@@ -761,11 +763,11 @@ describe('number', function () {
         });
     });
 
-    describe('#precision', function () {
+    describe('#precision', () => {
 
-        it('converts numbers', function (done) {
+        it('converts numbers', (done) => {
 
-            var rule = Joi.number().precision(4);
+            const rule = Joi.number().precision(4);
             Helper.validate(rule, [
                 [1.5, true, null, 1.5],
                 [0.12345, true, null, 0.1235],
@@ -778,11 +780,11 @@ describe('number', function () {
         });
     });
 
-    describe('#describe', function () {
+    describe('#describe', () => {
 
-        it('should describe a minimum of 0', function (done) {
+        it('should describe a minimum of 0', (done) => {
 
-            var schema = Joi.number().min(0);
+            const schema = Joi.number().min(0);
             expect(schema.describe()).to.deep.equal({
                 type: 'number',
                 invalids: [Infinity, -Infinity],
@@ -797,29 +799,29 @@ describe('number', function () {
         });
     });
 
-    describe('#multiple', function () {
+    describe('#multiple', () => {
 
-        it('throws when multiple is not a number', function (done) {
+        it('throws when multiple is not a number', (done) => {
 
-            expect(function () {
+            expect(() => {
 
                 Joi.number().multiple('a');
             }).to.throw('multiple must be an integer');
             done();
         });
 
-        it('throws when multiple is 0', function (done) {
+        it('throws when multiple is 0', (done) => {
 
-            expect(function () {
+            expect(() => {
 
                 Joi.number().multiple(0);
             }).to.throw('multiple must be greater than 0');
             done();
         });
 
-        it('should handle multiples correctly', function (done) {
+        it('should handle multiples correctly', (done) => {
 
-            var rule = Joi.number().multiple(3);
+            const rule = Joi.number().multiple(3);
             Helper.validate(rule, [
                 [0, true], // 0 is a multiple of every integer
                 [3, true],
