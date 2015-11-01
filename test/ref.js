@@ -1,34 +1,36 @@
+'use strict';
+
 // Load modules
 
-var Lab = require('lab');
-var Code = require('code');
-var Joi = require('../lib');
-var Helper = require('./helper');
+const Lab = require('lab');
+const Code = require('code');
+const Joi = require('../lib');
+const Helper = require('./helper');
 
 
 // Declare internals
 
-var internals = {};
+const internals = {};
 
 
 // Test shortcuts
 
-var lab = exports.lab = Lab.script();
-var describe = lab.describe;
-var it = lab.it;
-var expect = Code.expect;
+const lab = exports.lab = Lab.script();
+const describe = lab.describe;
+const it = lab.it;
+const expect = Code.expect;
 
 
-describe('ref', function () {
+describe('ref', () => {
 
-    it('uses ref as a valid value', function (done) {
+    it('uses ref as a valid value', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: Joi.ref('b'),
             b: Joi.any()
         });
 
-        schema.validate({ a: 5, b: 6 }, function (err, value) {
+        schema.validate({ a: 5, b: 6 }, (err, value) => {
 
             expect(err).to.exist();
             expect(err.message).to.equal('child "a" fails because ["a" must be one of [ref:b]]');
@@ -42,14 +44,14 @@ describe('ref', function () {
         });
     });
 
-    it('uses ref as a valid value (empty key)', function (done) {
+    it('uses ref as a valid value (empty key)', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: Joi.ref(''),
             '': Joi.any()
         });
 
-        schema.validate({ a: 5, '': 6 }, function (err, value) {
+        schema.validate({ a: 5, '': 6 }, (err, value) => {
 
             expect(err).to.exist();
             expect(err.message).to.equal('child "a" fails because ["a" must be one of [ref:]]');
@@ -63,16 +65,16 @@ describe('ref', function () {
         });
     });
 
-    it('uses ref with nested keys as a valid value', function (done) {
+    it('uses ref with nested keys as a valid value', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: Joi.ref('b.c'),
             b: {
                 c: Joi.any()
             }
         });
 
-        schema.validate({ a: 5, b: { c: 6 } }, function (err, value) {
+        schema.validate({ a: 5, b: { c: 6 } }, (err, value) => {
 
             expect(err).to.exist();
             expect(err.message).to.equal('child "a" fails because ["a" must be one of [ref:b.c]]');
@@ -86,28 +88,28 @@ describe('ref', function () {
         });
     });
 
-    it('uses ref with combined nested keys in sub child', function (done) {
+    it('uses ref with combined nested keys in sub child', (done) => {
 
-        var ref = Joi.ref('b.c');
+        const ref = Joi.ref('b.c');
         expect(ref.root).to.equal('b');
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: ref,
             b: {
                 c: Joi.any()
             }
         });
 
-        var input = { a: 5, b: { c: 5 } };
-        schema.validate(input, function (err, value) {
+        const input = { a: 5, b: { c: 5 } };
+        schema.validate(input, (err, value) => {
 
             expect(err).to.not.exist();
 
-            var parent = Joi.object({
+            const parent = Joi.object({
                 e: schema
             });
 
-            parent.validate({ e: input }, function (err2, value2) {
+            parent.validate({ e: input }, (err2, value2) => {
 
                 expect(err2).to.not.exist();
                 done();
@@ -115,46 +117,46 @@ describe('ref', function () {
         });
     });
 
-    it('uses ref reach options', function (done) {
+    it('uses ref reach options', (done) => {
 
-        var ref = Joi.ref('b/c', { separator: '/' });
+        const ref = Joi.ref('b/c', { separator: '/' });
         expect(ref.root).to.equal('b');
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: ref,
             b: {
                 c: Joi.any()
             }
         });
 
-        schema.validate({ a: 5, b: { c: 5 } }, function (err, value) {
+        schema.validate({ a: 5, b: { c: 5 } }, (err, value) => {
 
             expect(err).to.not.exist();
             done();
         });
     });
 
-    it('ignores the order in which keys are defined', function (done) {
+    it('ignores the order in which keys are defined', (done) => {
 
-        var ab = Joi.object({
+        const ab = Joi.object({
             a: {
                 c: Joi.number()
             },
             b: Joi.ref('a.c')
         });
 
-        ab.validate({ a: { c: '5' }, b: 5 }, function (err, value) {
+        ab.validate({ a: { c: '5' }, b: 5 }, (err, value) => {
 
             expect(err).to.not.exist();
 
-            var ba = Joi.object({
+            const ba = Joi.object({
                 b: Joi.ref('a.c'),
                 a: {
                     c: Joi.number()
                 }
             });
 
-            ba.validate({ a: { c: '5' }, b: 5 }, function (err2, value2) {
+            ba.validate({ a: { c: '5' }, b: 5 }, (err2, value2) => {
 
                 expect(err2).to.not.exist();
                 done();
@@ -162,14 +164,14 @@ describe('ref', function () {
         });
     });
 
-    it('uses ref as default value', function (done) {
+    it('uses ref as default value', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: Joi.default(Joi.ref('b')),
             b: Joi.any()
         });
 
-        schema.validate({ b: 6 }, function (err, value) {
+        schema.validate({ b: 6 }, (err, value) => {
 
             expect(err).to.not.exist();
             expect(value).to.deep.equal({ a: 6, b: 6 });
@@ -177,24 +179,24 @@ describe('ref', function () {
         });
     });
 
-    it('uses ref as default value regardless of order', function (done) {
+    it('uses ref as default value regardless of order', (done) => {
 
-        var ab = Joi.object({
+        const ab = Joi.object({
             a: Joi.default(Joi.ref('b')),
             b: Joi.number()
         });
 
-        ab.validate({ b: '6' }, function (err, value) {
+        ab.validate({ b: '6' }, (err, value) => {
 
             expect(err).to.not.exist();
             expect(value).to.deep.equal({ a: 6, b: 6 });
 
-            var ba = Joi.object({
+            const ba = Joi.object({
                 b: Joi.number(),
                 a: Joi.default(Joi.ref('b'))
             });
 
-            ba.validate({ b: '6' }, function (err2, value2) {
+            ba.validate({ b: '6' }, (err2, value2) => {
 
                 expect(err2).to.not.exist();
                 expect(value2).to.deep.equal({ a: 6, b: 6 });
@@ -203,11 +205,11 @@ describe('ref', function () {
         });
     });
 
-    it('ignores the order in which keys are defined with alternatives', function (done) {
+    it('ignores the order in which keys are defined with alternatives', (done) => {
 
-        var a = { c: Joi.number() };
-        var b = [Joi.ref('a.c'), Joi.ref('c')];
-        var c = Joi.number();
+        const a = { c: Joi.number() };
+        const b = [Joi.ref('a.c'), Joi.ref('c')];
+        const c = Joi.number();
 
         Helper.validate({ a: a, b: b, c: c }, [
             [{ a: {} }, true],
@@ -252,14 +254,14 @@ describe('ref', function () {
         ], done);
     });
 
-    it('uses context as default value', function (done) {
+    it('uses context as default value', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: Joi.default(Joi.ref('$x')),
             b: Joi.any()
         });
 
-        Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
+        Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, (err, value) => {
 
             expect(err).to.not.exist();
             expect(value).to.deep.equal({ a: 22, b: 6 });
@@ -267,14 +269,14 @@ describe('ref', function () {
         });
     });
 
-    it('uses context as default value with custom prefix', function (done) {
+    it('uses context as default value with custom prefix', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: Joi.default(Joi.ref('%x', { contextPrefix: '%' })),
             b: Joi.any()
         });
 
-        Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
+        Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, (err, value) => {
 
             expect(err).to.not.exist();
             expect(value).to.deep.equal({ a: 22, b: 6 });
@@ -282,14 +284,14 @@ describe('ref', function () {
         });
     });
 
-    it('uses context as a valid value', function (done) {
+    it('uses context as a valid value', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: Joi.ref('$x'),
             b: Joi.any()
         });
 
-        Joi.validate({ a: 5, b: 6 }, schema, { context: { x: 22 } }, function (err, value) {
+        Joi.validate({ a: 5, b: 6 }, schema, { context: { x: 22 } }, (err, value) => {
 
             expect(err).to.exist();
             expect(err.message).to.equal('child "a" fails because ["a" must be one of [context:x]]');
@@ -304,9 +306,9 @@ describe('ref', function () {
         });
     });
 
-    it('uses context in when condition', function (done) {
+    it('uses context in when condition', (done) => {
 
-        var schema = {
+        const schema = {
             a: Joi.boolean().when('$x', { is: Joi.exist(), otherwise: Joi.forbidden() })
         };
 
@@ -323,9 +325,9 @@ describe('ref', function () {
         ], done);
     });
 
-    it('uses nested context in when condition', function (done) {
+    it('uses nested context in when condition', (done) => {
 
-        var schema = {
+        const schema = {
             a: Joi.boolean().when('$x.y', { is: Joi.exist(), otherwise: Joi.forbidden() })
         };
 
@@ -348,37 +350,37 @@ describe('ref', function () {
         ], done);
     });
 
-    it('describes schema with ref', function (done) {
+    it('describes schema with ref', (done) => {
 
-        var desc = Joi.compile(Joi.ref('a.b')).describe();
+        const desc = Joi.compile(Joi.ref('a.b')).describe();
         expect(Joi.isRef(desc.valids[0])).to.be.true();
         done();
     });
 
-    describe('#create', function () {
+    describe('#create', () => {
 
-        it('throws when key is missing', function (done) {
+        it('throws when key is missing', (done) => {
 
-            expect(function () {
+            expect(() => {
 
                 Joi.ref(5);
             }).to.throw('Invalid reference key: 5');
             done();
         });
 
-        it('finds root with default separator', function (done) {
+        it('finds root with default separator', (done) => {
 
             expect(Joi.ref('a.b.c').root).to.equal('a');
             done();
         });
 
-        it('finds root with default separator and options', function (done) {
+        it('finds root with default separator and options', (done) => {
 
             expect(Joi.ref('a.b.c', {}).root).to.equal('a');
             done();
         });
 
-        it('finds root with custom separator', function (done) {
+        it('finds root with custom separator', (done) => {
 
             expect(Joi.ref('a+b+c', { separator: '+' }).root).to.equal('a');
             done();

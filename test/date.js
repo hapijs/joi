@@ -1,48 +1,50 @@
+'use strict';
+
 // Load modules
 
-var Lab = require('lab');
-var Code = require('code');
-var Joi = require('../lib');
-var Helper = require('./helper');
+const Lab = require('lab');
+const Code = require('code');
+const Joi = require('../lib');
+const Helper = require('./helper');
 
 
 // Declare internals
 
-var internals = {};
+const internals = {};
 
 
 // Test shortcuts
 
-var lab = exports.lab = Lab.script();
-var describe = lab.describe;
-var it = lab.it;
-var expect = Code.expect;
+const lab = exports.lab = Lab.script();
+const describe = lab.describe;
+const it = lab.it;
+const expect = Code.expect;
 
 
-describe('date', function () {
+describe('date', () => {
 
-    it('fails on boolean', function (done) {
+    it('fails on boolean', (done) => {
 
-        var schema = Joi.date();
+        const schema = Joi.date();
         Helper.validate(schema, [
             [true, false],
             [false, false]
         ], done);
     });
 
-    it('matches specific date', function (done) {
+    it('matches specific date', (done) => {
 
-        var now = Date.now();
-        Joi.date().valid(new Date(now)).validate(new Date(now), function (err, value) {
+        const now = Date.now();
+        Joi.date().valid(new Date(now)).validate(new Date(now), (err, value) => {
 
             expect(err).to.not.exist();
             done();
         });
     });
 
-    it('errors on invalid input and convert disabled', function (done) {
+    it('errors on invalid input and convert disabled', (done) => {
 
-        Joi.date().options({ convert: false }).validate('1-1-2013 UTC', function (err, value) {
+        Joi.date().options({ convert: false }).validate('1-1-2013 UTC', (err, value) => {
 
             expect(err).to.exist();
             expect(err.message).to.equal('"value" must be a number of milliseconds or valid date string');
@@ -50,21 +52,21 @@ describe('date', function () {
         });
     });
 
-    it('validates date', function (done) {
+    it('validates date', (done) => {
 
-        Joi.date().validate(new Date(), function (err, value) {
+        Joi.date().validate(new Date(), (err, value) => {
 
             expect(err).to.not.exist();
             done();
         });
     });
 
-    it('validates millisecond date as a string', function (done) {
+    it('validates millisecond date as a string', (done) => {
 
-        var now = new Date();
-        var mili = now.getTime();
+        const now = new Date();
+        const mili = now.getTime();
 
-        Joi.date().validate(mili.toString(), function (err, value) {
+        Joi.date().validate(mili.toString(), (err, value) => {
 
             expect(err).to.not.exist();
             expect(value).to.deep.equal(now);
@@ -72,11 +74,11 @@ describe('date', function () {
         });
     });
 
-    describe('#validate', function () {
+    describe('#validate', () => {
 
-        describe('min', function () {
+        describe('min', () => {
 
-            it('validates min', function (done) {
+            it('validates min', (done) => {
 
                 Helper.validate(Joi.date().min('1-1-2000 UTC'), [
                     ['1-1-2001 UTC', true],
@@ -88,11 +90,11 @@ describe('date', function () {
                 ], done);
             });
 
-            it('accepts "now" as the min date', function (done) {
+            it('accepts "now" as the min date', (done) => {
 
-                var future = new Date(Date.now() + 1000000);
+                const future = new Date(Date.now() + 1000000);
 
-                Joi.date().min('now').validate(future, function (err, value) {
+                Joi.date().min('now').validate(future, (err, value) => {
 
                     expect(err).to.not.exist();
                     expect(value).to.deep.equal(future);
@@ -100,21 +102,21 @@ describe('date', function () {
                 });
             });
 
-            it('errors if .min("now") is used with a past date', function (done) {
+            it('errors if .min("now") is used with a past date', (done) => {
 
-                var past = new Date(Date.now() - 1000000);
+                const past = new Date(Date.now() - 1000000);
 
-                Joi.date().min('now').validate(past, function (err, value) {
+                Joi.date().min('now').validate(past, (err, value) => {
 
                     expect(err).to.exist();
                     done();
                 });
             });
 
-            it('accepts references as min date', function (done) {
+            it('accepts references as min date', (done) => {
 
-                var schema = Joi.object({ a: Joi.date(), b: Joi.date().min(Joi.ref('a')) });
-                var now = Date.now();
+                const schema = Joi.object({ a: Joi.date(), b: Joi.date().min(Joi.ref('a')) });
+                const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ a: now, b: now }, true],
@@ -123,10 +125,10 @@ describe('date', function () {
                 ], done);
             });
 
-            it('accepts context references as min date', function (done) {
+            it('accepts context references as min date', (done) => {
 
-                var schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });
-                var now = Date.now();
+                const schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });
+                const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, true, { context: { a: now } }],
@@ -135,10 +137,10 @@ describe('date', function () {
                 ], done);
             });
 
-            it('errors if reference is not a date', function (done) {
+            it('errors if reference is not a date', (done) => {
 
-                var schema = Joi.object({ a: Joi.string(), b: Joi.date().min(Joi.ref('a')) });
-                var now = Date.now();
+                const schema = Joi.object({ a: Joi.string(), b: Joi.date().min(Joi.ref('a')) });
+                const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ a: 'abc', b: now }, false, null, 'child "b" fails because ["b" references "a" which is not a date]'],
@@ -147,10 +149,10 @@ describe('date', function () {
                 ], done);
             });
 
-            it('errors if context reference is not a date', function (done) {
+            it('errors if context reference is not a date', (done) => {
 
-                var schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });
-                var now = Date.now();
+                const schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });
+                const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a date]'],
@@ -159,9 +161,9 @@ describe('date', function () {
             });
         });
 
-        describe('max', function () {
+        describe('max', () => {
 
-            it('validates max', function (done) {
+            it('validates max', (done) => {
 
                 Helper.validate(Joi.date().max('1-1-1970 UTC'), [
                     ['1-1-1971 UTC', false],
@@ -174,11 +176,11 @@ describe('date', function () {
                 ], done);
             });
 
-            it('accepts "now" as the max date', function (done) {
+            it('accepts "now" as the max date', (done) => {
 
-                var past = new Date(Date.now() - 1000000);
+                const past = new Date(Date.now() - 1000000);
 
-                Joi.date().max('now').validate(past, function (err, value) {
+                Joi.date().max('now').validate(past, (err, value) => {
 
                     expect(err).to.not.exist();
                     expect(value).to.deep.equal(past);
@@ -186,21 +188,21 @@ describe('date', function () {
                 });
             });
 
-            it('errors if .max("now") is used with a future date', function (done) {
+            it('errors if .max("now") is used with a future date', (done) => {
 
-                var future = new Date(Date.now() + 1000000);
+                const future = new Date(Date.now() + 1000000);
 
-                Joi.date().max('now').validate(future, function (err, value) {
+                Joi.date().max('now').validate(future, (err, value) => {
 
                     expect(err).to.exist();
                     done();
                 });
             });
 
-            it('accepts references as max date', function (done) {
+            it('accepts references as max date', (done) => {
 
-                var schema = Joi.object({ a: Joi.date(), b: Joi.date().max(Joi.ref('a')) });
-                var now = Date.now();
+                const schema = Joi.object({ a: Joi.date(), b: Joi.date().max(Joi.ref('a')) });
+                const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ a: now, b: now }, true],
@@ -209,10 +211,10 @@ describe('date', function () {
                 ], done);
             });
 
-            it('accepts references as max date', function (done) {
+            it('accepts references as max date', (done) => {
 
-                var schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
-                var now = Date.now();
+                const schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
+                const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, true, { context: { a: now } }],
@@ -221,10 +223,10 @@ describe('date', function () {
                 ], done);
             });
 
-            it('errors if reference is not a date', function (done) {
+            it('errors if reference is not a date', (done) => {
 
-                var schema = Joi.object({ a: Joi.string(), b: Joi.date().max(Joi.ref('a')) });
-                var now = Date.now();
+                const schema = Joi.object({ a: Joi.string(), b: Joi.date().max(Joi.ref('a')) });
+                const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ a: 'abc', b: new Date() }, false, null, 'child "b" fails because ["b" references "a" which is not a date]'],
@@ -233,10 +235,10 @@ describe('date', function () {
                 ], done);
             });
 
-            it('errors if context reference is not a date', function (done) {
+            it('errors if context reference is not a date', (done) => {
 
-                var schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
-                var now = Date.now();
+                const schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
+                const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, 'child "b" fails because ["b" references "a" which is not a date]'],
@@ -246,7 +248,7 @@ describe('date', function () {
             });
         });
 
-        it('validates only valid dates', function (done) {
+        it('validates only valid dates', (done) => {
 
             Helper.validate(Joi.date(), [
                 ['1-1-2013 UTC', true],
@@ -255,9 +257,9 @@ describe('date', function () {
             ], done);
         });
 
-        describe('#iso', function () {
+        describe('#iso', () => {
 
-            it('validates isoDate', function (done) {
+            it('validates isoDate', (done) => {
 
                 Helper.validate(Joi.date().iso(), [
                     ['2013-06-07T14:21:46.295Z', true],
@@ -281,20 +283,20 @@ describe('date', function () {
                 ], done);
             });
 
-            it('validates isoDate with a friendly error message', function (done) {
+            it('validates isoDate with a friendly error message', (done) => {
 
-                var schema = { item: Joi.date().iso() };
-                Joi.compile(schema).validate({ item: 'something' }, function (err, value) {
+                const schema = { item: Joi.date().iso() };
+                Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
 
                     expect(err.message).to.contain('must be a valid ISO 8601 date');
                     done();
                 });
             });
 
-            it('validates isoDate after clone', function (done) {
+            it('validates isoDate after clone', (done) => {
 
-                var schema = { item: Joi.date().iso().clone() };
-                Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' }, function (err, value) {
+                const schema = { item: Joi.date().iso().clone() };
+                Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' }, (err, value) => {
 
                     expect(err).to.not.exist();
                     done();
@@ -302,9 +304,9 @@ describe('date', function () {
             });
         });
 
-        describe('#format', function () {
+        describe('#format', () => {
 
-            it('validates custom format', function (done) {
+            it('validates custom format', (done) => {
 
                 Helper.validate(Joi.date().format('DD#YYYY$MM'), [
                     ['07#2013$06', true],
@@ -312,7 +314,7 @@ describe('date', function () {
                 ], done);
             });
 
-            it('validates several custom formats', function (done) {
+            it('validates several custom formats', (done) => {
 
                 Helper.validate(Joi.date().format(['DD#YYYY$MM', 'YY|DD|MM']), [
                     ['13|07|06', true],
@@ -320,14 +322,14 @@ describe('date', function () {
                 ], done);
             });
 
-            it('fails with bad formats', function (done) {
+            it('fails with bad formats', (done) => {
 
-                expect(function () {
+                expect(() => {
 
                     Joi.date().format(true);
                 }).to.throw('Invalid format.');
 
-                expect(function () {
+                expect(() => {
 
                     Joi.date().format(['YYYYMMDD', true]);
                 }).to.throw('Invalid format.');

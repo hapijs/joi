@@ -1,21 +1,35 @@
-var Toc = require('markdown-toc');
-var Fs = require('fs');
-var Package = require('./package.json');
+'use strict';
 
-var filename = './API.md';
+// Load modules
 
-var api = Fs.readFileSync(filename, 'utf8');
-var tocOptions = {
-    bullets: '-',
-    slugify: function (text) {
+const Toc = require('markdown-toc');
+const Fs = require('fs');
+const Package = require('./package.json');
 
-        return text.toLowerCase()
-            .replace(/\s/g, '-')
-            .replace(/[^\w-]/g, '');
-    }
+// Declare internals
+
+const internals = {
+    filename: './API.md'
 };
 
-var output = Toc.insert(api, tocOptions)
-    .replace(/<!-- version -->(.|\n)*<!-- versionstop -->/, '<!-- version -->\n# ' + Package.version + ' API Reference\n<!-- versionstop -->');
 
-Fs.writeFileSync(filename, output);
+internals.generate = function () {
+
+    const api = Fs.readFileSync(internals.filename, 'utf8');
+    const tocOptions = {
+        bullets: '-',
+        slugify: function (text) {
+
+            return text.toLowerCase()
+                .replace(/\s/g, '-')
+                .replace(/[^\w-]/g, '');
+        }
+    };
+
+    const output = Toc.insert(api, tocOptions)
+        .replace(/<!-- version -->(.|\n)*<!-- versionstop -->/, '<!-- version -->\n# ' + Package.version + ' API Reference\n<!-- versionstop -->');
+
+    Fs.writeFileSync(filename, output);
+};
+
+internals.generate();

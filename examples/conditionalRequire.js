@@ -1,12 +1,21 @@
+'use strict';
+
+// Load modules
+
+const Joi = require('../');
+
+// Delcare internals
+
+const internals = {};
+
+
 // This is an example of a survey to obtain the reputation of Parisians
 // It contains examples of how to conditionally require keys based on values of other keys
 
-var Joi = require('../');
-
 // This is a valid value for integer rating 1 - 5
-var intRating = Joi.number().integer().min(1).max(5);
+const intRating = Joi.number().integer().min(1).max(5);
 
-var schema = Joi.object().keys({
+const schema = Joi.object().keys({
     // Do you know any French people? yes or no (required)
     q1: Joi.boolean().required(),
     // Do you know any Parisians? yes or no (required if answered yes in q1)
@@ -31,7 +40,7 @@ var schema = Joi.object().keys({
     q6: intRating.required()
 });
 
-var response = {
+const response = {
 	q1: true,
 	q2: true,
 	q3: '1-5',

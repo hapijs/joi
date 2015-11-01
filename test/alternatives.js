@@ -1,29 +1,31 @@
+'use strict';
+
 // Load modules
 
-var Lab = require('lab');
-var Code = require('code');
-var Joi = require('..');
-var Helper = require('./helper');
+const Lab = require('lab');
+const Code = require('code');
+const Joi = require('..');
+const Helper = require('./helper');
 
 
 // Declare internals
 
-var internals = {};
+const internals = {};
 
 
 // Test shortcuts
 
-var lab = exports.lab = Lab.script();
-var describe = lab.describe;
-var it = lab.it;
-var expect = Code.expect;
+const lab = exports.lab = Lab.script();
+const describe = lab.describe;
+const it = lab.it;
+const expect = Code.expect;
 
 
-describe('alternatives', function () {
+describe('alternatives', () => {
 
-    it('fails when no alternatives are provided', function (done) {
+    it('fails when no alternatives are provided', (done) => {
 
-        Joi.alternatives().validate('a', function (err, value) {
+        Joi.alternatives().validate('a', (err, value) => {
 
             expect(err).to.exist();
             expect(err.message).to.equal('"value" not matching any of the allowed alternatives');
@@ -31,25 +33,25 @@ describe('alternatives', function () {
         });
     });
 
-    it('allows undefined when no alternatives are provided', function (done) {
+    it('allows undefined when no alternatives are provided', (done) => {
 
-        Joi.alternatives().validate(undefined, function (err, value) {
+        Joi.alternatives().validate(undefined, (err, value) => {
 
             expect(err).to.not.exist();
             done();
         });
     });
 
-    it('applies modifiers when higher priority converts', function (done) {
+    it('applies modifiers when higher priority converts', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: [
                 Joi.number(),
                 Joi.string()
             ]
         });
 
-        schema.validate({ a: '5' }, function (err, value) {
+        schema.validate({ a: '5' }, (err, value) => {
 
             expect(err).to.not.exist();
             expect(value.a).to.equal(5);
@@ -57,16 +59,16 @@ describe('alternatives', function () {
         });
     });
 
-    it('applies modifiers when lower priority valid is a match', function (done) {
+    it('applies modifiers when lower priority valid is a match', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: [
                 Joi.number(),
                 Joi.valid('5')
             ]
         });
 
-        schema.validate({ a: '5' }, function (err, value) {
+        schema.validate({ a: '5' }, (err, value) => {
 
             expect(err).to.not.exist();
             expect(value.a).to.equal(5);
@@ -74,17 +76,17 @@ describe('alternatives', function () {
         });
     });
 
-    it('does not apply modifier if alternative fails', function (done) {
+    it('does not apply modifier if alternative fails', (done) => {
 
-        var schema = Joi.object({
+        const schema = Joi.object({
             a: [
                 Joi.object({ c: Joi.any(), d: Joi.number() }).rename('b', 'c'),
                 { b: Joi.any(), d: Joi.string() }
             ]
         });
 
-        var input = { a: { b: 'any', d: 'string' } };
-        schema.validate(input, function (err, value) {
+        const input = { a: { b: 'any', d: 'string' } };
+        schema.validate(input, (err, value) => {
 
             expect(err).to.not.exist();
             expect(value.a.b).to.equal('any');
@@ -92,11 +94,11 @@ describe('alternatives', function () {
         });
     });
 
-    describe('#try', function () {
+    describe('#try', () => {
 
-        it('throws when missing alternatives', function (done) {
+        it('throws when missing alternatives', (done) => {
 
-            expect(function () {
+            expect(() => {
 
                 Joi.alternatives().try();
             }).to.throw('Cannot add other alternatives without at least one schema');
@@ -104,20 +106,20 @@ describe('alternatives', function () {
         });
     });
 
-    describe('#when', function () {
+    describe('#when', () => {
 
-        it('throws on invalid ref (not string)', function (done) {
+        it('throws on invalid ref (not string)', (done) => {
 
-            expect(function () {
+            expect(() => {
 
                 Joi.alternatives().when(5, { is: 6, then: Joi.number() });
             }).to.throw('Invalid reference: 5');
             done();
         });
 
-        it('validates conditional alternatives', function (done) {
+        it('validates conditional alternatives', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: 5, then: 'x', otherwise: 'y' })
                                      .try('z'),
                 b: Joi.any()
@@ -133,9 +135,9 @@ describe('alternatives', function () {
             ], done);
         });
 
-        it('validates conditional alternatives (empty key)', function (done) {
+        it('validates conditional alternatives (empty key)', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('', { is: 5, then: 'x', otherwise: 'y' })
                                      .try('z'),
                 '': Joi.any()
@@ -151,9 +153,9 @@ describe('alternatives', function () {
             ], done);
         });
 
-        it('validates only then', function (done) {
+        it('validates only then', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when(Joi.ref('b'), { is: 5, then: 'x' })
                                      .try('z'),
                 b: Joi.any()
@@ -169,9 +171,9 @@ describe('alternatives', function () {
             ], done);
         });
 
-        it('validates only otherwise', function (done) {
+        it('validates only otherwise', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: 5, otherwise: 'y' })
                                      .try('z'),
                 b: Joi.any()
@@ -187,9 +189,9 @@ describe('alternatives', function () {
             ], done);
         });
 
-        it('validates when is is null', function (done) {
+        it('validates when is is null', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: null, then: 'x', otherwise: Joi.number() }),
                 b: Joi.any()
             };
@@ -203,9 +205,9 @@ describe('alternatives', function () {
             ], done);
         });
 
-        it('validates when is has ref', function (done) {
+        it('validates when is has ref', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: Joi.ref('c'), then: 'x' }),
                 b: Joi.any(),
                 c: Joi.number()
@@ -220,9 +222,9 @@ describe('alternatives', function () {
             ], done);
         });
 
-        it('validates when then has ref', function (done) {
+        it('validates when then has ref', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: 5, then: Joi.ref('c') }),
                 b: Joi.any(),
                 c: Joi.number()
@@ -235,9 +237,9 @@ describe('alternatives', function () {
             ], done);
         });
 
-        it('validates when otherwise has ref', function (done) {
+        it('validates when otherwise has ref', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: 6, otherwise: Joi.ref('c') }),
                 b: Joi.any(),
                 c: Joi.number()
@@ -250,9 +252,9 @@ describe('alternatives', function () {
             ], done);
         });
 
-        it('validates when empty value', function (done) {
+        it('validates when empty value', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: true, then: Joi.required() }),
                 b: Joi.boolean().default(false)
             };
@@ -263,9 +265,9 @@ describe('alternatives', function () {
             ], done);
         });
 
-        it('validates when missing value', function (done) {
+        it('validates when missing value', (done) => {
 
-            var schema = Joi.object({
+            const schema = Joi.object({
                 a: Joi.alternatives().when('b', { is: 5, then: Joi.optional(), otherwise: Joi.required() }).required(),
                 b: Joi.number()
             });
@@ -281,17 +283,17 @@ describe('alternatives', function () {
         });
     });
 
-    describe('#describe', function () {
+    describe('#describe', () => {
 
-        it('describes when', function (done) {
+        it('describes when', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: 5, then: 'x', otherwise: 'y' })
                                      .try('z'),
                 b: Joi.any()
             };
 
-            var outcome = {
+            const outcome = {
                 type: 'object',
                 children: {
                     b: {
@@ -345,15 +347,15 @@ describe('alternatives', function () {
             done();
         });
 
-        it('describes when (only then)', function (done) {
+        it('describes when (only then)', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: 5, then: 'x' })
                                      .try('z'),
                 b: Joi.any()
             };
 
-            var outcome = {
+            const outcome = {
                 type: 'object',
                 children: {
                     b: {
@@ -399,15 +401,15 @@ describe('alternatives', function () {
             done();
         });
 
-        it('describes when (only otherwise)', function (done) {
+        it('describes when (only otherwise)', (done) => {
 
-            var schema = {
+            const schema = {
                 a: Joi.alternatives().when('b', { is: 5, otherwise: 'y' })
                                      .try('z'),
                 b: Joi.any()
             };
 
-            var outcome = {
+            const outcome = {
                 type: 'object',
                 children: {
                     b: {
@@ -453,9 +455,9 @@ describe('alternatives', function () {
             done();
         });
 
-        it('describes inherited fields (from any)', function (done) {
+        it('describes inherited fields (from any)', (done) => {
 
-            var schema = Joi.alternatives()
+            const schema = Joi.alternatives()
                 .try('a')
                 .description('d')
                 .example('a')
@@ -464,7 +466,7 @@ describe('alternatives', function () {
                 .notes('f')
                 .tags('g');
 
-            var outcome = {
+            const outcome = {
                 type: 'alternatives',
                 description: 'd',
                 notes: ['f'],

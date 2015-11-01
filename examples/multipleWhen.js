@@ -1,7 +1,16 @@
-var Joi = require('../');
+'use strict';
+
+// Load modules
+
+const Joi = require('../');
 
 
-var schema = {
+// Declare internals
+
+const internals = {};
+
+
+const schema = {
     type: Joi.string().required(),
     subtype: Joi.alternatives()
         .when('type', {is: 'video', then: Joi.valid('mp4', 'wav')})

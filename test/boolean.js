@@ -1,29 +1,31 @@
+'use strict';
+
 // Load modules
 
-var Lab = require('lab');
-var Code = require('code');
-var Joi = require('../lib');
-var Helper = require('./helper');
+const Lab = require('lab');
+const Code = require('code');
+const Joi = require('../lib');
+const Helper = require('./helper');
 
 
 // Declare internals
 
-var internals = {};
+const internals = {};
 
 
 // Test shortcuts
 
-var lab = exports.lab = Lab.script();
-var describe = lab.describe;
-var it = lab.it;
-var expect = Code.expect;
+const lab = exports.lab = Lab.script();
+const describe = lab.describe;
+const it = lab.it;
+const expect = Code.expect;
 
 
-describe('boolean', function () {
+describe('boolean', () => {
 
-    it('converts a string to a boolean', function (done) {
+    it('converts a string to a boolean', (done) => {
 
-        Joi.boolean().validate('true', function (err, value) {
+        Joi.boolean().validate('true', (err, value) => {
 
             expect(err).to.not.exist();
             expect(value).to.equal(true);
@@ -31,9 +33,9 @@ describe('boolean', function () {
         });
     });
 
-    it('errors on a number', function (done) {
+    it('errors on a number', (done) => {
 
-        Joi.boolean().validate(1, function (err, value) {
+        Joi.boolean().validate(1, (err, value) => {
 
             expect(err).to.exist();
             expect(value).to.equal(1);
@@ -41,11 +43,11 @@ describe('boolean', function () {
         });
     });
 
-    describe('#validate', function () {
+    describe('#validate', () => {
 
-        it('converts string values and validates', function (done) {
+        it('converts string values and validates', (done) => {
 
-            var rule = Joi.boolean();
+            const rule = Joi.boolean();
             Helper.validate(rule, [
                 ['1234', false],
                 [false, true],
@@ -60,9 +62,9 @@ describe('boolean', function () {
             ], done);
         });
 
-        it('should handle work with required', function (done) {
+        it('should handle work with required', (done) => {
 
-            var rule = Joi.boolean().required();
+            const rule = Joi.boolean().required();
             Helper.validate(rule, [
                 ['1234', false],
                 ['true', true],
@@ -72,9 +74,9 @@ describe('boolean', function () {
             ], done);
         });
 
-        it('should handle work with allow', function (done) {
+        it('should handle work with allow', (done) => {
 
-            var rule = Joi.boolean().allow(false);
+            const rule = Joi.boolean().allow(false);
             Helper.validate(rule, [
                 ['1234', false],
                 [false, true],
@@ -82,9 +84,9 @@ describe('boolean', function () {
             ], done);
         });
 
-        it('should handle work with invalid', function (done) {
+        it('should handle work with invalid', (done) => {
 
-            var rule = Joi.boolean().invalid(false);
+            const rule = Joi.boolean().invalid(false);
             Helper.validate(rule, [
                 ['1234', false],
                 [false, false],
@@ -93,9 +95,9 @@ describe('boolean', function () {
             ], done);
         });
 
-        it('should handle work with invalid and null allowed', function (done) {
+        it('should handle work with invalid and null allowed', (done) => {
 
-            var rule = Joi.boolean().invalid(false).allow(null);
+            const rule = Joi.boolean().invalid(false).allow(null);
             Helper.validate(rule, [
                 ['1234', false],
                 [false, false],
@@ -104,9 +106,9 @@ describe('boolean', function () {
             ], done);
         });
 
-        it('should handle work with allow and invalid', function (done) {
+        it('should handle work with allow and invalid', (done) => {
 
-            var rule = Joi.boolean().invalid(true).allow(false);
+            const rule = Joi.boolean().invalid(true).allow(false);
             Helper.validate(rule, [
                 ['1234', false],
                 [false, true],
@@ -115,9 +117,9 @@ describe('boolean', function () {
             ], done);
         });
 
-        it('should handle work with allow, invalid, and null allowed', function (done) {
+        it('should handle work with allow, invalid, and null allowed', (done) => {
 
-            var rule = Joi.boolean().invalid(true).allow(false).allow(null);
+            const rule = Joi.boolean().invalid(true).allow(false).allow(null);
             Helper.validate(rule, [
                 ['1234', false],
                 [false, true],
