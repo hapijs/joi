@@ -29,7 +29,7 @@ internals.generate = function () {
     const output = Toc.insert(api, tocOptions)
         .replace(/<!-- version -->(.|\n)*<!-- versionstop -->/, '<!-- version -->\n# ' + Package.version + ' API Reference\n<!-- versionstop -->');
 
-    Fs.writeFileSync(filename, output);
+    Fs.writeFileSync(internals.filename, output);
 };
 
 internals.generate();
