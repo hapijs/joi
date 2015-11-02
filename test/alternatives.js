@@ -94,7 +94,7 @@ describe('alternatives', () => {
         });
     });
 
-    describe('#try', () => {
+    describe('try()', () => {
 
         it('throws when missing alternatives', (done) => {
 
@@ -106,7 +106,7 @@ describe('alternatives', () => {
         });
     });
 
-    describe('#when', () => {
+    describe('when()', () => {
 
         it('throws on invalid ref (not string)', (done) => {
 
@@ -283,7 +283,7 @@ describe('alternatives', () => {
         });
     });
 
-    describe('#describe', () => {
+    describe('describe()', () => {
 
         it('describes when', (done) => {
 

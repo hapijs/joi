@@ -73,7 +73,7 @@ describe('array', () => {
         });
     });
 
-    describe('#items', () => {
+    describe('items()', () => {
 
         it('converts members', (done) => {
 
@@ -308,7 +308,7 @@ describe('array', () => {
         });
     });
 
-    describe('#min', () => {
+    describe('min()', () => {
 
         it('validates array size', (done) => {
 
@@ -338,7 +338,7 @@ describe('array', () => {
         });
     });
 
-    describe('#max', () => {
+    describe('max()', () => {
 
         it('validates array size', (done) => {
 
@@ -368,7 +368,7 @@ describe('array', () => {
         });
     });
 
-    describe('#length', () => {
+    describe('length()', () => {
 
         it('validates array size', (done) => {
 
@@ -398,7 +398,7 @@ describe('array', () => {
         });
     });
 
-    describe('#validate', () => {
+    describe('validate()', () => {
 
         it('should, by default, allow undefined, allow empty array', (done) => {
 
@@ -570,7 +570,7 @@ describe('array', () => {
         });
     });
 
-    describe('#describe', () => {
+    describe('describe()', () => {
 
         it('returns an empty description when no rules are applied', (done) => {
 
@@ -622,7 +622,7 @@ describe('array', () => {
         });
     });
 
-    describe('#unique', () => {
+    describe('unique()', () => {
 
         it('errors if duplicate numbers, strings, objects, binaries, functions, dates and booleans', (done) => {
 
@@ -675,7 +675,7 @@ describe('array', () => {
         });
     });
 
-    describe('#sparse', () => {
+    describe('sparse()', () => {
 
         it('errors on undefined value', (done) => {
 
@@ -731,7 +731,7 @@ describe('array', () => {
         });
     });
 
-    describe('#single', () => {
+    describe('single()', () => {
 
         it('should allow a single element', (done) => {
 
@@ -809,7 +809,7 @@ describe('array', () => {
         });
     });
 
-    describe('#options', () => {
+    describe('options()', () => {
 
         it('respects stripUnknown', (done) => {
 
@@ -823,7 +823,7 @@ describe('array', () => {
         });
     });
 
-    describe('#ordered', () => {
+    describe('ordered()', () => {
 
         it('shows path to errors in array ordered items', (done) => {
 

@@ -50,7 +50,7 @@ describe('binary', () => {
         ], done);
     });
 
-    describe('#validate', () => {
+    describe('validate()', () => {
 
         it('returns an error when a non-buffer or non-string is used', (done) => {
 
@@ -73,7 +73,7 @@ describe('binary', () => {
         });
     });
 
-    describe('#encoding', () => {
+    describe('encoding()', () => {
 
         it('applies encoding', (done) => {
 
@@ -98,7 +98,7 @@ describe('binary', () => {
         });
     });
 
-    describe('#min', () => {
+    describe('min()', () => {
 
         it('validates buffer size', (done) => {
 
@@ -128,7 +128,7 @@ describe('binary', () => {
         });
     });
 
-    describe('#max', () => {
+    describe('max()', () => {
 
         it('validates buffer size', (done) => {
 
@@ -158,7 +158,7 @@ describe('binary', () => {
         });
     });
 
-    describe('#length', () => {
+    describe('length()', () => {
 
         it('validates buffer size', (done) => {
 

@@ -270,7 +270,7 @@ describe('errors', () => {
         });
     });
 
-    describe('#annotate', () => {
+    describe('annotate()', () => {
 
         it('annotates error', (done) => {
 

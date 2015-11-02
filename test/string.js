@@ -32,7 +32,7 @@ describe('string', () => {
         ], done);
     });
 
-    describe('#valid', () => {
+    describe('valid()', () => {
 
         it('should throw error on input not matching type', (done) => {
 
@@ -86,7 +86,7 @@ describe('string', () => {
         });
     });
 
-    describe('#invalid', () => {
+    describe('invalid()', () => {
 
         it('should throw error on input not matching type', (done) => {
 
@@ -127,7 +127,7 @@ describe('string', () => {
         });
     });
 
-    describe('#min', () => {
+    describe('min()', () => {
 
         it('throws when limit is not a number', (done) => {
 
@@ -204,7 +204,7 @@ describe('string', () => {
         });
     });
 
-    describe('#max', () => {
+    describe('max()', () => {
 
         it('throws when limit is not a number', (done) => {
 
@@ -281,7 +281,7 @@ describe('string', () => {
         });
     });
 
-    describe('#creditCard', () => {
+    describe('creditCard()', () => {
 
         it('should validate credit card', (done) => {
 
@@ -318,7 +318,7 @@ describe('string', () => {
         });
     });
 
-    describe('#length', () => {
+    describe('length()', () => {
 
         it('throws when limit is not a number', (done) => {
 
@@ -395,7 +395,7 @@ describe('string', () => {
         });
     });
 
-    describe('#email', () => {
+    describe('email()', () => {
 
         it('throws when options are not an object', (done) => {
 
@@ -498,7 +498,7 @@ describe('string', () => {
         });
     });
 
-    describe('#hostname', () => {
+    describe('hostname()', () => {
 
         it('validates hostnames', (done) => {
 
@@ -519,7 +519,7 @@ describe('string', () => {
         });
     });
 
-    describe('#lowercase', () => {
+    describe('lowercase()', () => {
 
         it('only allows strings that are entirely lowercase', (done) => {
 
@@ -568,7 +568,7 @@ describe('string', () => {
         });
     });
 
-    describe('#uppercase', () => {
+    describe('uppercase()', () => {
 
         it('only allow strings that are entirely uppercase', (done) => {
 
@@ -617,7 +617,7 @@ describe('string', () => {
         });
     });
 
-    describe('#trim', () => {
+    describe('trim()', () => {
 
         it('only allow strings that have no leading or trailing whitespace', (done) => {
 
@@ -694,7 +694,7 @@ describe('string', () => {
         });
     });
 
-    describe('#replace', () => {
+    describe('replace()', () => {
 
         it('successfully replaces the first occurrence of the expression', (done) => {
 
@@ -783,7 +783,7 @@ describe('string', () => {
 
     });
 
-    describe('#regex', () => {
+    describe('regex()', () => {
 
         it('should not include a pattern name by default', (done) => {
 
@@ -806,7 +806,7 @@ describe('string', () => {
         });
     });
 
-    describe('#ip', () => {
+    describe('ip()', () => {
 
         const invalidIPs = [
             ['ASDF', false],
@@ -1060,7 +1060,7 @@ describe('string', () => {
             });
         });
 
-        describe('#ip({ version: "ipv4" })', () => {
+        describe('ip({ version: "ipv4" })', () => {
 
             it('should validate all ipv4 addresses with a default CIDR strategy', (done) => {
 
@@ -1127,7 +1127,7 @@ describe('string', () => {
             });
         });
 
-        describe('#ip({ version: "ipv6" })', () => {
+        describe('ip({ version: "ipv6" })', () => {
 
             it('should validate all ipv6 addresses with a default CIDR strategy', (done) => {
 
@@ -1194,7 +1194,7 @@ describe('string', () => {
             });
         });
 
-        describe('#ip({ version: "ipvfuture" })', () => {
+        describe('ip({ version: "ipvfuture" })', () => {
 
             it('should validate all ipvfuture addresses with a default CIDR strategy', (done) => {
 
@@ -1261,7 +1261,7 @@ describe('string', () => {
             });
         });
 
-        describe('#ip({ version: [ "ipv4", "ipv6" ] })', () => {
+        describe('ip({ version: [ "ipv4", "ipv6" ] })', () => {
 
             it('should validate all ipv4 and ipv6 addresses with a default CIDR strategy', (done) => {
 
@@ -1329,7 +1329,7 @@ describe('string', () => {
         });
     });
 
-    describe('#validate', () => {
+    describe('validate()', () => {
 
         it('should, by default, allow undefined, deny empty string', (done) => {
 

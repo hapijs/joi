@@ -357,7 +357,7 @@ describe('ref', () => {
         done();
     });
 
-    describe('#create', () => {
+    describe('create()', () => {
 
         it('throws when key is missing', (done) => {
 

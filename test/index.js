@@ -1403,7 +1403,7 @@ describe('Joi', () => {
         });
     });
 
-    describe('#describe', () => {
+    describe('describe()', () => {
 
         const defaultFn = function () {
 
@@ -1597,7 +1597,7 @@ describe('Joi', () => {
         });
     });
 
-    describe('#assert', () => {
+    describe('assert()', () => {
 
         it('does not have a return value', (done) => {
 
@@ -1611,7 +1611,7 @@ describe('Joi', () => {
         });
     });
 
-    describe('#attempt', () => {
+    describe('attempt()', () => {
 
         it('throws on invalid value', (done) => {
 
@@ -1661,7 +1661,7 @@ describe('Joi', () => {
         });
     });
 
-    describe('#compile', () => {
+    describe('compile()', () => {
 
         it('throws an error on invalid value', (done) => {
 

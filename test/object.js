@@ -416,7 +416,7 @@ describe('object', () => {
         });
     });
 
-    describe('#keys', () => {
+    describe('keys()', () => {
 
         it('allows any key', (done) => {
 
@@ -538,7 +538,7 @@ describe('object', () => {
         });
     });
 
-    describe('#unknown', () => {
+    describe('unknown()', () => {
 
         it('allows local unknown without applying to children', (done) => {
 
@@ -573,7 +573,7 @@ describe('object', () => {
         });
     });
 
-    describe('#rename', () => {
+    describe('rename()', () => {
 
         it('allows renaming multiple times with multiple enabled', (done) => {
 
@@ -801,7 +801,7 @@ describe('object', () => {
         });
     });
 
-    describe('#describe', () => {
+    describe('describe()', () => {
 
         it('return empty description when no schema defined', (done) => {
 
@@ -856,7 +856,7 @@ describe('object', () => {
         });
     });
 
-    describe('#length', () => {
+    describe('length()', () => {
 
         it('throws when length is not a number', (done) => {
 
@@ -868,7 +868,7 @@ describe('object', () => {
         });
     });
 
-    describe('#min', () => {
+    describe('min()', () => {
 
         it('throws when limit is not a number', (done) => {
 
@@ -880,7 +880,7 @@ describe('object', () => {
         });
     });
 
-    describe('#max', () => {
+    describe('max()', () => {
 
         it('throws when limit is not a number', (done) => {
 
@@ -892,7 +892,7 @@ describe('object', () => {
         });
     });
 
-    describe('#pattern', () => {
+    describe('pattern()', () => {
 
         it('shows path to errors in schema', (done) => {
 
@@ -982,7 +982,7 @@ describe('object', () => {
         });
     });
 
-    describe('#with', () => {
+    describe('with()', () => {
 
         it('should throw an error when a parameter is not a string', (done) => {
 
@@ -1017,7 +1017,7 @@ describe('object', () => {
         });
     });
 
-    describe('#without', () => {
+    describe('without()', () => {
 
         it('should throw an error when a parameter is not a string', (done) => {
 
@@ -1054,7 +1054,7 @@ describe('object', () => {
         });
     });
 
-    describe('#xor', () => {
+    describe('xor()', () => {
 
         it('should throw an error when a parameter is not a string', (done) => {
 
@@ -1080,7 +1080,7 @@ describe('object', () => {
         });
     });
 
-    describe('#or', () => {
+    describe('or()', () => {
 
         it('should throw an error when a parameter is not a string', (done) => {
 
@@ -1121,7 +1121,7 @@ describe('object', () => {
         });
     });
 
-    describe('#assert', () => {
+    describe('assert()', () => {
 
         it('shows path to errors in schema', (done) => {
 
@@ -1254,7 +1254,7 @@ describe('object', () => {
         });
     });
 
-    describe('#type', () => {
+    describe('type()', () => {
 
         it('uses constructor name for default type name', (done) => {
 

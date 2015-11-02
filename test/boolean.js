@@ -43,7 +43,7 @@ describe('boolean', () => {
         });
     });
 
-    describe('#validate', () => {
+    describe('validate()', () => {
 
         it('converts string values and validates', (done) => {
 

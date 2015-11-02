@@ -142,7 +142,7 @@ describe('any', () => {
         });
     });
 
-    describe('#label', () => {
+    describe('label()', () => {
 
         it('adds to existing options', (done) => {
 
@@ -173,7 +173,7 @@ describe('any', () => {
         });
     });
 
-    describe('#strict', () => {
+    describe('strict()', () => {
 
         it('adds to existing options', (done) => {
 
@@ -188,7 +188,7 @@ describe('any', () => {
         });
     });
 
-    describe('#raw', () => {
+    describe('raw()', () => {
 
         it('gives the raw input', (done) => {
 
@@ -226,7 +226,7 @@ describe('any', () => {
         });
     });
 
-    describe('#default', () => {
+    describe('default()', () => {
 
         it('sets the value', (done) => {
 
@@ -620,7 +620,7 @@ describe('any', () => {
         });
     });
 
-    describe('#optional', () => {
+    describe('optional()', () => {
 
         it('validates optional with default required', (done) => {
 
@@ -643,7 +643,7 @@ describe('any', () => {
         });
     });
 
-    describe('#forbidden', () => {
+    describe('forbidden()', () => {
 
         it('validates forbidden', (done) => {
 
@@ -663,7 +663,7 @@ describe('any', () => {
         });
     });
 
-    describe('#strip', () => {
+    describe('strip()', () => {
 
         it('validates and returns undefined', (done) => {
 
@@ -690,7 +690,7 @@ describe('any', () => {
         });
     });
 
-    describe('#description', () => {
+    describe('description()', () => {
 
         it('sets the description', (done) => {
 
@@ -709,7 +709,7 @@ describe('any', () => {
         });
     });
 
-    describe('#notes', () => {
+    describe('notes()', () => {
 
         it('sets the notes', (done) => {
 
@@ -737,7 +737,7 @@ describe('any', () => {
         });
     });
 
-    describe('#tags', () => {
+    describe('tags()', () => {
 
         it('sets the tags', (done) => {
 
@@ -767,7 +767,7 @@ describe('any', () => {
         });
     });
 
-    describe('#meta', () => {
+    describe('meta()', () => {
 
         it('sets the meta', (done) => {
 
@@ -793,7 +793,7 @@ describe('any', () => {
         });
     });
 
-    describe('#example', () => {
+    describe('example()', () => {
 
         it('sets an example', (done) => {
 
@@ -822,7 +822,7 @@ describe('any', () => {
         });
     });
 
-    describe('#unit', () => {
+    describe('unit()', () => {
 
         it('sets the unit', (done) => {
 
@@ -842,7 +842,7 @@ describe('any', () => {
         });
     });
 
-    describe('#_validate', () => {
+    describe('_validate()', () => {
 
         it('checks value after conversion', (done) => {
 
@@ -855,7 +855,7 @@ describe('any', () => {
         });
     });
 
-    describe('#concat', () => {
+    describe('concat()', () => {
 
         it('throws when schema is not any', (done) => {
 
@@ -1185,7 +1185,7 @@ describe('any', () => {
         });
     });
 
-    describe('#when', () => {
+    describe('when()', () => {
 
         it('throws when options are invalid', (done) => {
 
@@ -1288,7 +1288,7 @@ describe('any', () => {
         });
     });
 
-    describe('#requiredKeys', () => {
+    describe('requiredKeys()', () => {
 
         it('should set keys as required', (done) => {
 
@@ -1371,7 +1371,7 @@ describe('any', () => {
         });
     });
 
-    describe('#optionalKeys', () => {
+    describe('optionalKeys()', () => {
 
         it('should set keys as optional', (done) => {
 
@@ -1384,7 +1384,7 @@ describe('any', () => {
         });
     });
 
-    describe('#empty', () => {
+    describe('empty()', () => {
 
         it('should void values when considered empty', (done) => {
 
@@ -1445,7 +1445,7 @@ describe('any', () => {
 
     describe('Set', () => {
 
-        describe('#add', () => {
+        describe('add()', () => {
 
             it('throws when adding a non ref function', (done) => {
 
@@ -1466,7 +1466,7 @@ describe('any', () => {
             });
         });
 
-        describe('#has', () => {
+        describe('has()', () => {
 
             it('compares date to null', (done) => {
 
@@ -1485,7 +1485,7 @@ describe('any', () => {
             });
         });
 
-        describe('#values', () => {
+        describe('values()', () => {
 
             it('returns array', (done) => {
 
@@ -1507,7 +1507,7 @@ describe('any', () => {
             });
         });
 
-        describe('#allow', () => {
+        describe('allow()', () => {
 
             it('allows valid values to be set', (done) => {
 
@@ -1528,7 +1528,7 @@ describe('any', () => {
             });
         });
 
-        describe('#valid', () => {
+        describe('valid()', () => {
 
             it('allows valid values to be set', (done) => {
 
@@ -1549,7 +1549,7 @@ describe('any', () => {
             });
         });
 
-        describe('#invalid', () => {
+        describe('invalid()', () => {
 
             it('allows invalid values to be set', (done) => {
 

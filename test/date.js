@@ -74,7 +74,7 @@ describe('date', () => {
         });
     });
 
-    describe('#validate', () => {
+    describe('validate()', () => {
 
         describe('min', () => {
 
@@ -257,7 +257,7 @@ describe('date', () => {
             ], done);
         });
 
-        describe('#iso', () => {
+        describe('iso()', () => {
 
             it('validates isoDate', (done) => {
 
@@ -304,7 +304,7 @@ describe('date', () => {
             });
         });
 
-        describe('#format', () => {
+        describe('format()', () => {
 
             it('validates custom format', (done) => {
 

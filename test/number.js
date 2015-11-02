@@ -32,7 +32,7 @@ describe('number', () => {
         ], done);
     });
 
-    describe('#validate', () => {
+    describe('validate()', () => {
 
         it('should, by default, allow undefined', (done) => {
 
@@ -514,7 +514,7 @@ describe('number', () => {
         });
     });
 
-    describe('#min', () => {
+    describe('min()', () => {
 
         it('throws when limit is not a number', (done) => {
 
@@ -586,7 +586,7 @@ describe('number', () => {
         });
     });
 
-    describe('#max', () => {
+    describe('max()', () => {
 
         it('throws when limit is not a number', (done) => {
 
@@ -645,7 +645,7 @@ describe('number', () => {
         });
     });
 
-    describe('#less', () => {
+    describe('less()', () => {
 
         it('throws when limit is not a number', (done) => {
 
@@ -704,7 +704,7 @@ describe('number', () => {
         });
     });
 
-    describe('#greater', () => {
+    describe('greater()', () => {
 
         it('throws when limit is not a number', (done) => {
 
@@ -763,7 +763,7 @@ describe('number', () => {
         });
     });
 
-    describe('#precision', () => {
+    describe('precision()', () => {
 
         it('converts numbers', (done) => {
 
@@ -780,7 +780,7 @@ describe('number', () => {
         });
     });
 
-    describe('#describe', () => {
+    describe('describe()', () => {
 
         it('should describe a minimum of 0', (done) => {
 
@@ -799,7 +799,7 @@ describe('number', () => {
         });
     });
 
-    describe('#multiple', () => {
+    describe('multiple()', () => {
 
         it('throws when multiple is not a number', (done) => {
 
