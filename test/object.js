@@ -1258,7 +1258,7 @@ describe('object', () => {
 
         it('uses constructor name for default type name', (done) => {
 
-            const Foo = function Foo () { };
+            const Foo = function Foo() { };
 
             const schema = Joi.object().type(Foo);
             schema.validate({}, (err) => {
@@ -1284,7 +1284,7 @@ describe('object', () => {
 
         it('overrides constructor name with custom name', (done) => {
 
-            const Foo = function Foo () { };
+            const Foo = function Foo() { };
 
             const schema = Joi.object().type(Foo, 'Bar');
             schema.validate({}, (err) => {
