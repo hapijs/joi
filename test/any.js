@@ -566,7 +566,17 @@ describe('any', () => {
                 expect(err).to.not.exist();
                 expect(value.foo).to.not.equal(defaultValue);
                 expect(value.foo).to.only.deep.include({ bar: 'val' });
-                done();
+
+                value.foo.bar = 'mutated';
+
+                schema.validate(input, (err2, value2) => {
+
+                    expect(err2).to.not.exist();
+                    expect(value2.foo).to.not.equal(defaultValue);
+                    expect(value2.foo).to.only.deep.include({ bar: 'val' });
+
+                    done();
+                });
             });
         });
 
