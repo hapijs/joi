@@ -555,6 +555,31 @@ describe('any', () => {
             ], done);
         });
 
+        it('should set default value as a clone', (done) => {
+
+            const defaultValue = { bar: 'val' };
+            const schema = Joi.object({ foo: Joi.object().default(defaultValue) });
+            const input = {};
+
+            schema.validate(input, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value.foo).to.not.equal(defaultValue);
+                expect(value.foo).to.only.deep.include({ bar: 'val' });
+
+                value.foo.bar = 'mutated';
+
+                schema.validate(input, (err2, value2) => {
+
+                    expect(err2).to.not.exist();
+                    expect(value2.foo).to.not.equal(defaultValue);
+                    expect(value2.foo).to.only.deep.include({ bar: 'val' });
+
+                    done();
+                });
+            });
+        });
+
         it('should not apply default values if the noDefaults option is enquire', (done) => {
 
             const schema = Joi.object({
