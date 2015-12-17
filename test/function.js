@@ -61,6 +61,7 @@ describe('func', () => {
 
         schema.validate(value, (err, validated) => {
 
+            expect(err).not.to.exist();
             expect(validated).to.be.a.function();
             expect(validated()).to.equal('abc');
             expect(validated).to.not.equal(value);
@@ -84,6 +85,7 @@ describe('func', () => {
 
         schema.validate(value, (err, validated) => {
 
+            expect(err).not.to.exist();
             expect(validated).to.be.a.function();
             const p = new validated();
             expect(p.get()).to.equal('o');
@@ -106,6 +108,7 @@ describe('func', () => {
 
         schema.validate(value, (err, validated) => {
 
+            expect(err).not.to.exist();
             expect(validated).to.be.a.function();
             expect(validated()).to.equal('abc');
             expect(validated).to.equal(value);

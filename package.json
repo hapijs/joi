@@ -20,8 +20,8 @@
   },
   "devDependencies": {
     "code": "2.x.x",
-    "lab": "7.x.x",
-    "markdown-toc": "0.11.x"
+    "lab": "8.x.x",
+    "markdown-toc": "0.12.x"
   },
   "scripts": {
     "test": "lab -t 100 -a code -L",

@@ -62,6 +62,7 @@ describe('object', () => {
         const item = { x: 5 };
         schema.validate({ a: item }, (err, value) => {
 
+            expect(err).not.to.exist();
             expect(value.a).to.equal(item);
             done();
         });
@@ -72,6 +73,7 @@ describe('object', () => {
         const schema = Joi.object();
         schema.validate({ a: 5 }, (err, value) => {
 
+            expect(err).not.to.exist();
             expect(value.a).to.equal(5);
             done();
         });
@@ -82,6 +84,7 @@ describe('object', () => {
         const schema = Joi.object({ b: 5 }).unknown(true);
         schema.validate({ b: '5', a: 5 }, (err, value) => {
 
+            expect(err).not.to.exist();
             expect(value.a).to.equal(5);
             expect(value.b).to.equal(5);
             done();
