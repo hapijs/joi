@@ -1163,7 +1163,6 @@ describe('Joi', () => {
         });
     });
 
-
     it('should pass validation with extra keys and remove them when skipExtraKeys is set locally', (done) => {
 
         const localConfig = Joi.object({
@@ -1758,6 +1757,249 @@ describe('Joi', () => {
 
             const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
             expect(Joi.reach(schema, 'foo.baz')).to.be.undefined();
+            done();
+        });
+    });
+
+    describe('extend()', () => {
+
+        it('defines a custom type with a default base', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType'
+            });
+
+            expect(Joi.myType).to.not.exist();
+            expect(customJoi.myType).to.be.a.function();
+
+            const schema = customJoi.myType();
+            expect(schema._type).to.equal('myType');
+            expect(schema.isJoi).to.be.true();
+
+            done();
+        });
+
+        it('defines a custom type with a custom base', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string().min(2),
+                name: 'myType'
+            });
+
+            expect(Joi.myType).to.not.exist();
+            expect(customJoi.myType).to.be.a.function();
+
+            const schema = customJoi.myType();
+            Helper.validate(schema, [
+                [123, false, null, '"value" must be a string'],
+                ['a', false, null, '"value" length must be at least 2 characters long'],
+                ['abc', true]
+            ], done);
+        });
+
+        it('defines a custom type with new rules', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                language: {
+                    bar: 'oh no bar !'
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return null; // Valid
+                        }
+                    },
+                    {
+                        name: 'bar',
+                        validate(params, value, state, options) {
+
+                            return this.createError('myType.bar', null, state, options);
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.any();
+            expect(original.foo).to.not.exist();
+            expect(original.bar).to.not.exist();
+
+            const schema = customJoi.myType();
+            const valid = schema.foo().validate({});
+            const invalid = schema.bar().validate({});
+
+            expect(valid.error).to.be.null();
+            expect(invalid.error).to.be.an.instanceof(Error);
+            expect(invalid.error.toString()).to.equal('ValidationError: "value" oh no bar !');
+
+            done();
+        });
+
+        it('defines a rule that validates its parameters', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'multiply',
+                        parameters: {
+                            q: Joi.number().required(),
+                            currency: Joi.string()
+                        },
+                        validate(params, value, state, options) {
+
+                            const v = value * params.q;
+                            return params.currency ? params.currency + v : v;
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.number();
+            expect(original.double).to.not.exist();
+
+            expect(customJoi.number().multiply(2).validate(3)).to.deep.equal({ error: null, value: 6 });
+            expect(customJoi.number().multiply(5, '$').validate(7)).to.deep.equal({ error: null, value: '$35' });
+            expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
+
+            done();
+        });
+
+        it('defines a rule that can change the value', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'double',
+                        validate(params, value, state, options) {
+
+                            return value * 2;
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.number();
+            expect(original.double).to.not.exist();
+
+            const schema = customJoi.number().double();
+            expect(schema.validate(3)).to.deep.equal({ error: null, value: 6 });
+
+            done();
+        });
+
+        it('overrides a predefined language', (done) => {
+
+            const base = Joi.any().options({
+                language: {
+                    myType: {
+                        foo: 'original'
+                    }
+                }
+            });
+
+            const customJoi = Joi.extend({
+                base,
+                name: 'myType',
+                language: {
+                    foo: 'modified'
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('myType.foo', null, state, options);
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType().foo();
+            const result = schema.validate({});
+            expect(result.error).to.be.an.instanceof(Error);
+            expect(result.error.toString()).to.equal('ValidationError: "value" modified');
+
+            done();
+        });
+
+        it('defines a custom type casting its input value', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string(),
+                pre(value, state, options) {
+
+                    return Symbol(value);
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.be.null();
+            expect(typeof result.value).to.equal('symbol');
+            expect(result.value.toString()).to.equal('Symbol(foo)');
+
+            done();
+        });
+
+        it('defines a custom type with a failing pre', (done) => {
+
+            const customJoi = Joi.extend({
+                pre(value, state, options) {
+
+                    return this.createError('any.invalid', null, state, options);
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.exist();
+            expect(result.error.toString()).to.equal('ValidationError: "value" contains an invalid value');
+
+            done();
+        });
+
+        it('defines a custom type with a non-modifying pre', (done) => {
+
+            const customJoi = Joi.extend({
+                pre(value, state, options) {
+
+                    return null;
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.not.exist();
+            expect(result.value).to.equal('foo');
+
+            done();
+        });
+
+        it('never reaches a pre if the base is failing', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                pre(value, state, options) {
+
+                    throw new Error('should not reach here');
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.exist();
+            expect(result.error.toString()).to.equal('ValidationError: "value" must be a number');
+
             done();
         });
     });
