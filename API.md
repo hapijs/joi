@@ -1421,7 +1421,7 @@ Alternatives can be expressed using the shorter `[]` notation.
 
 ```javascript
 var alt = Joi.alternatives().try(Joi.number(), Joi.string());
-// Same as [Joi.number(), Joi.string()]
+// Same as Joi.alternatives([Joi.number(), Joi.string()])
 ```
 
 #### `alternatives.try(schemas)`
