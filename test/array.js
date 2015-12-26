@@ -538,7 +538,6 @@ describe('array', () => {
             Joi.validate(input, schema, { abortEarly: false }, (err, value) => {
 
                 expect(err).to.exist();
-                expect(err).to.have.length(4);
                 expect(err.details).to.deep.equal([{
                     message: '"value" must not be a sparse array',
                     path: '1',

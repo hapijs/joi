@@ -22,6 +22,16 @@ const expect = Code.expect;
 
 describe('errors', () => {
 
+    it('has an isJoi property', (done) => {
+
+        Joi.validate('bar', Joi.valid('foo'), (err) => {
+
+            expect(err).to.exist();
+            expect(err.isJoi).to.be.true();
+            done();
+        });
+    });
+
     it('supports custom errors when validating types', (done) => {
 
         const schema = Joi.object({

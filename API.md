@@ -1505,7 +1505,8 @@ Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, function (err
 ## Errors
 
 Joi throws classical javascript `Error`s containing :
-- `name` - `ValidationError`.
+- `name` - `'ValidationError'`.
+- `isJoi` - `true`.
 - `details` - an array of errors :
     - `message` - string with a description of the error.
     - `path` - dotted path to the key where the error happened.
