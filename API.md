@@ -1436,8 +1436,11 @@ Joi.validate(alt, 'a');
 Adds an alternative schema type for attempting to match against the validated value where:
 - `schema` - an array of alternative **joi** types. Also supports providing each type as a separate argument.
 
+The `try()` is optional.
+
 ```javascript
 var alt = Joi.alternatives().try(Joi.number(), Joi.string());
+// Same as Joi.alternatives(Joi.number(), Joi.string());
 alt.validate('a', function (err, value) { });
 ```
 
