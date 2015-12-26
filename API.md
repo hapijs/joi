@@ -163,6 +163,8 @@ var result = Joi.validate(value, schema);
 Converts literal schema definition to **joi** schema object (or returns the same back if already a **joi** schema object) where:
 - `schema` - the schema definition to compile.
 
+The definition below here is referred to as the `[]` notation.
+
 ```javascript
 var definition = ['key', 5, { a: true, b: [/^a/, 'boom'] }];
 var schema = Joi.compile(definition);
@@ -1421,7 +1423,12 @@ Alternatives can be expressed using the shorter `[]` notation.
 
 ```javascript
 var alt = Joi.alternatives().try(Joi.number(), Joi.string());
-// Same as Joi.alternatives([Joi.number(), Joi.string()])
+Joi.validate(alt, 'a');
+
+// using `[]` notation:
+
+var alt = [Joi.number(), Joi.string()];
+Joi.validate(alt, 'a');
 ```
 
 #### `alternatives.try(schemas)`
