@@ -55,6 +55,9 @@
     - [`date.format(format)`](#dateformatformat)
     - [`date.iso()`](#dateiso)
   - [`func`](#func)
+    - [`func.arity(n)`](#funcarityn)
+    - [`func.minArity(n)`](#funcminarityn)
+    - [`func.maxArity(n)`](#funcmaxarityn)
   - [`number`](#number)
     - [`number.min(limit)`](#numberminlimit)
     - [`number.max(limit)`](#numbermaxlimit)
@@ -745,6 +748,34 @@ set to `0`).
 var func = Joi.func();
 func.validate(function () {}, function (err, value) { });
 ```
+
+#### `func.arity(n)`
+
+Specifies the arity of the function where:
+- `n` - the arity expected.
+
+```javascript
+var schema = Joi.func().arity(2);
+```
+
+#### `func.minArity(n)`
+
+Specifies the minimal arity of the function where:
+- `n` - the minimal arity expected.
+
+```javascript
+var schema = Joi.func().minArity(1);
+```
+
+#### `func.maxArity(n)`
+
+Specifies the maximal arity of the function where:
+- `n` - the maximum arity expected.
+
+```javascript
+var schema = Joi.func().arity(3);
+```
+
 
 ### `number`
 
