@@ -151,7 +151,7 @@ const value = {
     a: '123'
 };
 
-Joi.validate(value, schema, function (err, value) { });
+Joi.validate(value, schema, (err, value) => { });
 // err -> null
 // value.a -> 123 (number, not string)
 
@@ -224,7 +224,7 @@ Generates a schema object that matches any data type.
 
 ```javascript
 const any = Joi.any();
-any.validate('a', function (err, value) { });
+any.validate('a', (err, value) => { });
 ```
 
 #### `any.allow(value)`
@@ -308,13 +308,13 @@ const schema = {
     password: Joi.string().strip()
 };
 
-schema.validate({ username: 'test', password: 'hunter2' }, function (err, value) {
+schema.validate({ username: 'test', password: 'hunter2' }, (err, value) => {
     // value = { username: 'test' }
 });
 
 const schema = Joi.array().items(Joi.string(), Joi.any().strip());
 
-schema.validate(['one', 'two', true, false, 1, 2], function (err, value) {
+schema.validate(['one', 'two', true, false, 1, 2], (err, value) => {
     // value = ['one', 'two']
 });
 ```
@@ -407,7 +407,7 @@ and any future assignment.
 Additionally, when specifying a method you must either have a `description` property on your method or the second parameter is required.
 
 ```javascript
-const generateUsername = function (context) {
+const generateUsername = (context) => {
 
   return context.firstname.toLowerCase() + '-' + context.lastname.toLowerCase();
 };
@@ -424,7 +424,7 @@ const schema = {
 Joi.validate({
     firstname: 'Jane',
     lastname: 'Doe'
-}, schema, function (err, value) {
+}, schema, (err, value) => {
 
     // value.status === 'registered'
     // value.username === 'jane-doe'
@@ -511,7 +511,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 const array = Joi.array().items(Joi.string().valid('a', 'b'));
-array.validate(['a', 'b', 'a'], function (err, value) { });
+array.validate(['a', 'b', 'a'], (err, value) => { });
 ```
 
 #### `array.sparse(enabled)`
@@ -611,7 +611,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 const boolean = Joi.boolean();
-boolean.validate(true, function (err, value) { });
+boolean.validate(true, (err, value) => { });
 ```
 
 ### `binary`
@@ -668,7 +668,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 const date = Joi.date();
-date.validate('12-21-2012', function (err, value) { });
+date.validate('12-21-2012', (err, value) => { });
 ```
 
 #### `date.min(date)`
@@ -746,7 +746,7 @@ set to `0`).
 
 ```javascript
 const func = Joi.func();
-func.validate(function () {}, function (err, value) { });
+func.validate(function () {}, (err, value) => { });
 ```
 
 #### `func.arity(n)`
@@ -787,7 +787,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 const number = Joi.number();
-number.validate(5, function (err, value) { });
+number.validate(5, (err, value) => { });
 ```
 
 #### `number.min(limit)`
@@ -912,7 +912,7 @@ const object = Joi.object().keys({
     b: 'some string'
 });
 
-object.validate({ a: 5 }, function (err, value) { });
+object.validate({ a: 5 }, (err, value) => { });
 ```
 
 #### `object.keys([schema])`
@@ -976,7 +976,7 @@ const schema = Joi.object({
     a: Joi.boolean()
 });
 
-schema.validate(true, function (err, value) {
+schema.validate(true, (err, value) => {
     console.log('err: ', err);
 });
 ```
@@ -1139,7 +1139,7 @@ const object = Joi.object().keys({
     a: Joi.number()
 }).rename('b', 'a');
 
-object.validate({ b: 5 }, function (err, value) { });
+object.validate({ b: 5 }, (err, value) => { });
 ```
 
 #### `object.assert(ref, schema, [message])`
@@ -1213,7 +1213,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```javascript
 const schema = Joi.string().min(1).max(10);
-schema.validate('12345', function (err, value) { });
+schema.validate('12345', (err, value) => { });
 ```
 
 #### `string.insensitive()`
@@ -1310,7 +1310,7 @@ _replacement_ string where:
 
 ```javascript
 const schema = Joi.string().replace(/b/gi, 'x');
-schema.validate('abBc', function (err, value) {
+schema.validate('abBc', (err, value) => {
   // here value will be 'axxc'
 });
 ```
@@ -1462,7 +1462,7 @@ Adds an alternative schema type for attempting to match against the validated va
 
 ```javascript
 const alt = Joi.alternatives().try(Joi.number(), Joi.string());
-alt.validate('a', function (err, value) { });
+alt.validate('a', (err, value) => { });
 ```
 
 #### `alternatives.when(ref, options)`
@@ -1530,7 +1530,7 @@ const schema = Joi.object().keys({
     c: Joi.ref('$x')
 });
 
-Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, function (err, value) {});
+Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, (err, value) => {});
 ```
 
 ## Errors
