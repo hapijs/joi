@@ -211,42 +211,42 @@ describe('ref', () => {
         const b = [Joi.ref('a.c'), Joi.ref('c')];
         const c = Joi.number();
 
-        Helper.validate({ a: a, b: b, c: c }, [
+        Helper.validate({ a, b, c }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Helper.validate({ b: b, a: a, c: c }, [
+        Helper.validate({ b, a, c }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Helper.validate({ b: b, c: c, a: a }, [
+        Helper.validate({ b, c, a }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Helper.validate({ a: a, c: c, b: b }, [
+        Helper.validate({ a, c, b }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Helper.validate({ c: c, a: a, b: b }, [
+        Helper.validate({ c, a, b }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false]
         ]);
 
-        Helper.validate({ c: c, b: b, a: a }, [
+        Helper.validate({ c, b, a }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
