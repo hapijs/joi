@@ -32,6 +32,16 @@ describe('date', () => {
         ], done);
     });
 
+    it('fails on non-finite numbers', (done) => {
+
+        const schema = Joi.date();
+        Helper.validate(schema, [
+            [Infinity, false, null, /number of milliseconds or valid date string/],
+            [-Infinity, false, null, /number of milliseconds or valid date string/],
+            [NaN, false, null, /number of milliseconds or valid date string/]
+        ], done);
+    });
+
     it('matches specific date', (done) => {
 
         const now = Date.now();
@@ -252,6 +262,8 @@ describe('date', () => {
 
             Helper.validate(Joi.date(), [
                 ['1-1-2013 UTC', true],
+                [new Date().getTime(), true],
+                [new Date().getTime().toFixed(4), true],
                 ['not a valid date', false],
                 [new Date('not a valid date'), false]
             ], done);
@@ -301,6 +313,95 @@ describe('date', () => {
                     expect(err).to.not.exist();
                     done();
                 });
+            });
+        });
+
+        describe('timestamp()', () => {
+
+            it('validates javascript timestamp', (done) => {
+
+                const now = new Date();
+                const milliseconds = now.getTime();
+
+                Joi.date().timestamp().validate(milliseconds, (err, value) => {
+
+                    expect(err).to.not.exist();
+                    expect(value).to.deep.equal(now);
+                });
+                Joi.date().timestamp('javascript').validate(milliseconds, (err, value) => {
+
+                    expect(err).to.not.exist();
+                    expect(value).to.deep.equal(now);
+                });
+                Joi.date().timestamp('unix').timestamp('javascript').validate(milliseconds, (err, value) => {
+
+                    expect(err).to.not.exist();
+                    expect(value).to.deep.equal(now);
+                });
+                done();
+            });
+
+            it('validates unix timestamp', (done) => {
+
+                const now = new Date();
+                const seconds = now.getTime() / 1000;
+
+                Joi.date().timestamp('unix').validate(seconds, (err, value) => {
+
+                    expect(err).to.not.exist();
+                    expect(value).to.deep.equal(now);
+                });
+                Joi.date().timestamp().timestamp('unix').validate(seconds, (err, value) => {
+
+                    expect(err).to.not.exist();
+                    expect(value).to.deep.equal(now);
+                });
+                Joi.date().timestamp('javascript').timestamp('unix').validate(seconds, (err, value) => {
+
+                    expect(err).to.not.exist();
+                    expect(value).to.deep.equal(now);
+                });
+                done();
+            });
+
+            it('validates timestamps with decimals', (done) => {
+
+                Helper.validate(Joi.date().timestamp(), [
+                    [new Date().getTime().toFixed(4), true]
+                ]);
+                Helper.validate(Joi.date().timestamp('javascript'), [
+                    [new Date().getTime().toFixed(4), true]
+                ]);
+                Helper.validate(Joi.date().timestamp('unix'), [
+                    [(new Date().getTime() / 1000).toFixed(4), true]
+                ]);
+                done();
+            });
+
+            it('validates only valid timestamps and returns a friendly error message', (done) => {
+
+                Helper.validate(Joi.date().timestamp(), [
+                    [new Date().getTime(), true],
+                    [new Date().getTime().toFixed(4), true],
+                    ['1.452126061677e+12', true],
+                    [1.452126061677e+12, true],
+                    [1E3, true],
+                    ['1E3', true],
+                    [',', false, null, /must be a valid timestamp/],
+                    ['123A,0xA', false, null, /must be a valid timestamp/],
+                    ['1-1-2013 UTC', false, null, /must be a valid timestamp/],
+                    ['not a valid timestamp', false, null, /must be a valid timestamp/],
+                    [new Date('not a valid date'), false, null, /must be a valid timestamp/]
+                ], done);
+            });
+
+            it('fails with not allowed type', (done) => {
+
+                expect(() => {
+
+                    Joi.date().timestamp('not allowed');
+                }).to.throw(Error, /"type" must be one of/);
+                done();
             });
         });
 
