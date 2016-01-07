@@ -54,6 +54,7 @@
     - [`date.max(date)`](#datemaxdate)
     - [`date.format(format)`](#dateformatformat)
     - [`date.iso()`](#dateiso)
+    - [`date.timestamp([type])`](#datetimestamptype)
   - [`func`](#func)
     - [`func.arity(n)`](#funcarityn)
     - [`func.minArity(n)`](#funcminarityn)
@@ -734,6 +735,18 @@ Requires the string value to be in valid ISO 8601 date format.
 
 ```javascript
 const schema = Joi.date().iso();
+```
+
+#### `date.timestamp([type])`
+
+Requires the value to be a timestamp interval from [Unix Time](https://en.wikipedia.org/wiki/Unix_time).
+
+- `type` - the type of timestamp (allowed values are `unix` or `javascript` [default])
+
+```javascript
+const schema = Joi.date().timestamp(); // defaults to javascript timestamp
+const schema = Joi.date().timestamp('javascript'); // also, for javascript timestamp (milliseconds)
+const schema = Joi.date().timestamp('unix'); // for unix timestamp (seconds)
 ```
 
 ### `func`
