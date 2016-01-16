@@ -2,6 +2,7 @@
   "name": "joi",
   "description": "Object schema validation",
   "version": "7.2.0",
+  "homepage": "https://github.com/hapijs/joi",
   "repository": "git://github.com/hapijs/joi",
   "main": "lib/index.js",
   "keywords": [
@@ -27,7 +28,7 @@
     "test": "lab -t 100 -a code -L",
     "test-cov-html": "lab -r html -o coverage.html -a code",
     "toc": "node generate-readme-toc.js",
-    "version": "npm run toc && git add API.md"
+    "version": "npm run toc && git add API.md README.md"
   },
   "license": "BSD-3-Clause"
 }
