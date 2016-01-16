@@ -40,7 +40,7 @@ internals.generateToc = function () {
 internals.generateLink = function () {
     // create absolute URL for versioned docs
     const readme = internals.readme.contents
-        .replace(/\[API Reference\]\(.*\)/gi, `[API Reference](${Package.homepage || ''}/blob/v${Package.version}/${internals.api.filename})`);
+        .replace(/\[API Reference\]\(.*\)/gi, `[API Reference](${Package.homepage || ''}/blob/v${Package.version}/${internals.api.filename.substr(2)})`);
 
     Fs.writeFileSync(internals.readme.filename, readme);
 };
