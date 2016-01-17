@@ -20,6 +20,7 @@
     - [`any.optional()`](#anyoptional)
     - [`any.forbidden()`](#anyforbidden)
     - [`any.strip()`](#anystrip)
+    - [`any.noChange(value)`](#anynochangevalue)
     - [`any.description(desc)`](#anydescriptiondesc)
     - [`any.notes(notes)`](#anynotesnotes)
     - [`any.tags(tags)`](#anytagstags)
@@ -318,6 +319,17 @@ const schema = Joi.array().items(Joi.string(), Joi.any().strip());
 schema.validate(['one', 'two', true, false, 1, 2], (err, value) => {
     // value = ['one', 'two']
 });
+```
+
+#### `any.noChange(value)`
+
+Checks that the value being checked exactly equals the the corresponding value in `value`.
+- `value` - any primitive or object to check against
+
+```js
+const schema = Joi.object().keys({ nested: 'nestedValue' });
+schema.validate({ nested: 'nestedValue' }); // returns { error: null, value: { nested: 'nestedValue' } }
+schema.validate({ nested: 'differentValue' }); // returns { error: "value" is not allowed to be changed, value: { nested: 'nestedValue' } }
 ```
 
 #### `any.description(desc)`

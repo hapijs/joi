@@ -715,6 +715,61 @@ describe('any', () => {
         });
     });
 
+    describe('noChange()', () => {
+
+        it('validates and returns undefined for a non-nested change check', (done) => {
+
+            const schema = Joi.string().noChange('test');
+
+            schema.validate('test', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('test');
+                done();
+            });
+        });
+
+        it('validates and returns undefined for a nested change check', (done) => {
+
+            const schema = Joi.object().keys({
+                nested: Joi.string().noChange({ nested: 'test' })
+            });
+
+            schema.validate({ nested: 'test' }, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal({ nested: 'test' });
+                done();
+            });
+        });
+
+        it('validates and returns an error for a non-nested change check', (done) => {
+
+            const schema = Joi.string().noChange('test');
+
+            schema.validate('change!', (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" is not allowed to be changed');
+                done();
+            });
+        });
+
+        it('validates and returns an error for a nested change check', (done) => {
+
+            const schema = Joi.object().keys({
+                nested: Joi.string().noChange({ nested: 'test' })
+            });
+
+            schema.validate({ nested: 'change!' }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('child "nested" fails because ["nested" is not allowed to be changed]');
+                done();
+            });
+        });
+    });
+
     describe('description()', () => {
 
         it('sets the description', (done) => {
