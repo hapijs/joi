@@ -171,6 +171,28 @@ describe('any', () => {
             expect(schema).to.deep.equal({ type: 'object', label: 'lbl' });
             done();
         });
+
+        it('does not leak into sub objects', (done) => {
+
+            const schema = Joi.object({ a: Joi.number() }).label('foo');
+            schema.validate({ a: 'a' }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('child "foo" fails because ["a" must be a number]');
+                done();
+            });
+        });
+
+        it('does not leak into sub objects from an array', (done) => {
+
+            const schema = Joi.array().items(Joi.object({ a: Joi.number() }).label('foo')).label('bar');
+            schema.validate([{ a: 'a' }], (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"bar" at position 0 fails because [child "foo" fails because ["a" must be a number]]');
+                done();
+            });
+        });
     });
 
     describe('strict()', () => {
