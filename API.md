@@ -1264,7 +1264,7 @@ const schema = Joi.object({
 
 Specifies the maximum number of string characters where:
 - `limit` - the maximum number of string characters allowed.
-- `encoding` - is specified, the string length is calculated in bytes using the provided encoding.
+- `encoding` - if specified, the string length is calculated in bytes using the provided encoding.
 
 ```javascript
 const schema = Joi.string().max(10);
