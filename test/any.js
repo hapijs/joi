@@ -178,7 +178,7 @@ describe('any', () => {
             schema.validate({ a: 'a' }, (err, value) => {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('child "foo" fails because ["a" must be a number]');
+                expect(err.message).to.equal('child "a" fails because ["a" must be a number]');
                 done();
             });
         });
@@ -189,7 +189,7 @@ describe('any', () => {
             schema.validate([{ a: 'a' }], (err, value) => {
 
                 expect(err).to.exist();
-                expect(err.message).to.equal('"bar" at position 0 fails because [child "foo" fails because ["a" must be a number]]');
+                expect(err.message).to.equal('"bar" at position 0 fails because [child "a" fails because ["a" must be a number]]');
                 done();
             });
         });
