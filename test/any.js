@@ -193,6 +193,17 @@ describe('any', () => {
                 done();
             });
         });
+
+        it('does not leak into unknown keys', (done) => {
+
+            const schema = Joi.object({ a: Joi.number() }).label('foo');
+            schema.validate({ b: 'a' }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"b" is not allowed');
+                done();
+            });
+        });
     });
 
     describe('strict()', () => {
