@@ -11,6 +11,13 @@ Object schema description language and validator for JavaScript objects.
 
 Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
+# Introduction
+
+Imagine you run facebook and you need people to sign up on the form with real names and not something like `l337_p@nda` in the first name field. How do you define the limitations of what can be inputted and validate it against the set restrictions? 
+
+This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (where information is stored) to ensure *validation* of key information.
+
+
 # Example
 
 ```javascript
