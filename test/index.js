@@ -1691,4 +1691,71 @@ describe('Joi', () => {
             done();
         });
     });
+
+    describe('reach()', () => {
+
+        it('should fail without any parameter', (done) => {
+
+            expect(() => Joi.reach()).to.throw('you must provide a joi schema');
+            done();
+        });
+
+        it('should fail when schema is not a joi object', (done) => {
+
+            expect(() => Joi.reach({ foo: 'bar' }, 'foo')).to.throw('you must provide a joi schema');
+            done();
+        });
+
+        it('should fail without a proper path', (done) => {
+
+            const schema = Joi.object();
+            expect(() => Joi.reach(schema)).to.throw('path must be a string');
+            expect(() => Joi.reach(schema, true)).to.throw('path must be a string');
+            done();
+        });
+
+        it('should return undefined when no keys are defined', (done) => {
+
+            const schema = Joi.object();
+            expect(Joi.reach(schema, 'a')).to.be.undefined();
+            done();
+        });
+
+        it('should return undefined when key is not found', (done) => {
+
+            const schema = Joi.object().keys({ a: Joi.number() });
+            expect(Joi.reach(schema, 'foo')).to.be.undefined();
+            done();
+        });
+
+        it('should return a schema when key is found', (done) => {
+
+            const a = Joi.number();
+            const schema = Joi.object().keys({ a });
+            expect(Joi.reach(schema, 'a')).to.equal(a);
+            done();
+        });
+
+        it('should return undefined on a schema that does not support reach', (done) => {
+
+            const schema = Joi.number();
+            expect(Joi.reach(schema, 'a')).to.be.undefined();
+            done();
+        });
+
+        it('should return a schema when deep key is found', (done) => {
+
+            const bar = Joi.number();
+            const schema = Joi.object({ foo: Joi.object({ bar }) });
+            expect(Joi.reach(schema, 'foo.bar')).to.equal(bar);
+            done();
+        });
+
+        it('should return undefined when deep key is not found', (done) => {
+
+            const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
+            expect(Joi.reach(schema, 'foo.baz')).to.be.undefined();
+            done();
+        });
+    });
 });

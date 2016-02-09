@@ -223,6 +223,15 @@ const ref = Joi.ref('a');
 Joi.isRef(ref); // returns true
 ```
 
+### `reach(schema, path)`
+
+Get a sub-schema of an existing schema based on a path. Path separatar is a dot (`.`).
+
+```js
+const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }});
+const number = Joi.reach(schema, 'foo.bar');
+```
+
 ### `any`
 
 Generates a schema object that matches any data type.
