@@ -496,6 +496,89 @@ describe('string', () => {
             }).to.not.throw();
             done();
         });
+
+        it('validates email', (done) => {
+
+            const schema = Joi.string().email();
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['"joe"@example.com', true],
+                ['@iaminvalid.com', false],
+                ['joe@[IPv6:2a00:1450:4001:c02::1b]', true],
+                ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false],
+                ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', false]
+            ], done);
+        });
+
+        it('validates email with tldWhitelist as array', (done) => {
+
+            const schema = Joi.string().email({ tldWhitelist: ['com', 'org'] });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@example.org', true],
+                ['joe@example.edu', false]
+            ], done);
+        });
+
+        it('validates email with tldWhitelist as object', (done) => {
+
+            const schema = Joi.string().email({ tldWhitelist: { com: true, org: true } });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@example.org', true],
+                ['joe@example.edu', false]
+            ], done);
+        });
+
+        it('validates email with minDomainAtoms', (done) => {
+
+            const schema = Joi.string().email({ minDomainAtoms: 4 });
+            Helper.validate(schema, [
+                ['joe@example.com', false],
+                ['joe@www.example.com', false],
+                ['joe@sub.www.example.com', true]
+            ], done);
+        });
+
+        it('validates email with errorLevel as boolean', (done) => {
+
+            let schema = Joi.string().email({ errorLevel: false });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@www.example.com', true],
+                ['joe@localhost', true],
+                ['joe', false]
+            ]);
+
+            schema = Joi.string().email({ errorLevel: true });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@www.example.com', true],
+                ['joe@localhost', false],
+                ['joe', false]
+            ], done);
+        });
+
+        it('validates email with errorLevel as integer', (done) => {
+
+            const schema = Joi.string().email({ errorLevel: 10 });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@www.example.com', true],
+                ['joe@localhost', true],
+                ['joe', false]
+            ], done);
+        });
+
+        it('validates email with a friendly error message', (done) => {
+
+            const schema = { item: Joi.string().email() };
+            Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
+
+                expect(err.message).to.contain('must be a valid email');
+                done();
+            });
+        });
     });
 
     describe('hostname()', () => {
@@ -1329,6 +1412,393 @@ describe('string', () => {
         });
     });
 
+    describe('uri()', () => {
+
+        it('validates uri', (done) => {
+
+            // Handful of tests taken from Node: https://github.com/joyent/node/blob/cfcb1de130867197cbc9c6012b7e84e08e53d032/test/simple/test-url.js
+            // Also includes examples from RFC 8936: http://tools.ietf.org/html/rfc3986#page-7
+            const schema = Joi.string().uri();
+
+            Helper.validate(schema, [
+                ['foo://example.com:8042/over/there?name=ferret#nose', true],
+                ['urn:example:animal:ferret:nose', true],
+                ['ftp://ftp.is.co.za/rfc/rfc1808.txt', true],
+                ['http://www.ietf.org/rfc/rfc2396.txt', true],
+                ['ldap://[2001:db8::7]/c=GB?objectClass?one', true],
+                ['mailto:John.Doe@example.com', true],
+                ['news:comp.infosystems.www.servers.unix', true],
+                ['tel:+1-816-555-1212', true],
+                ['telnet://192.0.2.16:80/', true],
+                ['urn:oasis:names:specification:docbook:dtd:xml:4.1.2', true],
+                ['file:///example.txt', true],
+                ['http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon', true],
+                ['http://asdf@localhost:8000', true],
+                ['http://[v1.09azAZ-._~!$&\'()*+,;=:]', true],
+                ['http://[a:b:c:d:e::1.2.3.4]', true],
+                ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', true],
+                ['http://[1080:0:0:0:8:800:200C:417A]', true],
+                ['http://127.0.0.1:8000/foo?bar', true],
+                ['http://asdf:qwer@localhost:8000', true],
+                ['http://user:pass%3A@localhost:80', true],
+                ['http://localhost:123', true],
+                ['https://localhost:123', true],
+                ['file:///whatever', true],
+                ['mailto:asdf@asdf.com', true],
+                ['ftp://www.example.com', true],
+                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
+                ['xmpp:isaacschlueter@jabber.org', true],
+                ['f://some.host/path', true],
+                ['http://localhost:18/asdf', true],
+                ['http://localhost:42/asdf?qwer=zxcv', true],
+                ['HTTP://www.example.com/', true],
+                ['HTTP://www.example.com', true],
+                ['http://www.ExAmPlE.com/', true],
+                ['http://user:pw@www.ExAmPlE.com/', true],
+                ['http://USER:PW@www.ExAmPlE.com/', true],
+                ['http://user@www.example.com/', true],
+                ['http://user%3Apw@www.example.com/', true],
+                ['http://x.com/path?that%27s#all,%20folks', true],
+                ['HTTP://X.COM/Y', true],
+                ['http://www.narwhaljs.org/blog/categories?id=news', true],
+                ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['http://_jabber._tcp.google.com:80/test', true],
+                ['http://user:pass@_jabber._tcp.google.com:80/test', true],
+                ['http://[fe80::1]/a/b?a=b#abc', true],
+                ['http://user:password@[3ffe:2a00:100:7031::1]:8080', true],
+                ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', true],
+                ['git+http://github.com/joyent/node.git', true],
+                ['http://bucket_name.s3.amazonaws.com/image.jpg', true],
+                ['dot.test://foo/bar', true],
+                ['svn+ssh://foo/bar', true],
+                ['dash-test://foo/bar', true],
+                ['xmpp:isaacschlueter@jabber.org', true],
+                ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', true],
+                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
+                ['file://localhost/etc/node/', true],
+                ['file:///etc/node/', true],
+                ['http://USER:PW@www.ExAmPlE.com/', true],
+                ['mailto:local1@domain1?query1', true],
+                ['http://example/a/b?c/../d', true],
+                ['http://example/x%2Fabc', true],
+                ['http://a/b/c/d;p=1/g;x=1/y', true],
+                ['http://a/b/c/g#s/../x', true],
+                ['http://a/b/c/.foo', true],
+                ['http://example.com/b//c//d;p?q#blarg', true],
+                ['g:h', true],
+                ['http://a/b/c/g', true],
+                ['http://a/b/c/g/', true],
+                ['http://a/g', true],
+                ['http://g', true],
+                ['http://a/b/c/d;p?y', true],
+                ['http://a/b/c/g?y', true],
+                ['http://a/b/c/d;p?q#s', true],
+                ['http://a/b/c/g#s', true],
+                ['http://a/b/c/g?y#s', true],
+                ['http://a/b/c/;x', true],
+                ['http://a/b/c/g;x', true],
+                ['http://a/b/c/g;x?y#s', true],
+                ['http://a/b/c/d;p?q', true],
+                ['http://a/b/c/', true],
+                ['http://a/b/', true],
+                ['http://a/b/g', true],
+                ['http://a/', true],
+                ['http://a/g', true],
+                ['http://a/g', true],
+                ['file:/asda', true],
+                ['qwerty', false],
+                ['invalid uri', false],
+                ['1http://google.com', false],
+                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false],
+                ['', false],
+                ['(╯°□°)╯︵ ┻━┻', false],
+                ['one/two/three?value=abc&value2=123#david-rules', false],
+                ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', false],
+                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false],
+                ['/absolute', false]
+            ], done);
+        });
+
+        it('validates uri with a single scheme provided', (done) => {
+
+            const schema = Joi.string().uri({
+                scheme: 'http'
+            });
+
+            Helper.validate(schema, [
+                ['http://google.com', true],
+                ['https://google.com', false],
+                ['ftp://google.com', false],
+                ['file:/asdf', false],
+                ['/path?query=value#hash', false]
+            ], done);
+        });
+
+        it('validates uri with a single regex scheme provided', (done) => {
+
+            const schema = Joi.string().uri({
+                scheme: /https?/
+            });
+
+            Helper.validate(schema, [
+                ['http://google.com', true],
+                ['https://google.com', true],
+                ['ftp://google.com', false],
+                ['file:/asdf', false],
+                ['/path?query=value#hash', false]
+            ], done);
+        });
+
+        it('validates uri with multiple schemes provided', (done) => {
+
+            const schema = Joi.string().uri({
+                scheme: [/https?/, 'ftp', 'file', 'git+http']
+            });
+
+            Helper.validate(schema, [
+                ['http://google.com', true],
+                ['https://google.com', true],
+                ['ftp://google.com', true],
+                ['file:/asdf', true],
+                ['git+http://github.com/hapijs/joi', true],
+                ['/path?query=value#hash', false]
+            ], done);
+        });
+
+        it('validates uri with a friendly error message', (done) => {
+
+            const schema = { item: Joi.string().uri() };
+
+            Joi.compile(schema).validate({ item: 'something invalid' }, (err, value) => {
+
+                expect(err.message).to.contain('must be a valid uri');
+                done();
+            });
+        });
+
+        it('validates uri with a custom scheme with a friendly error message', (done) => {
+
+            const schema = {
+                item: Joi.string().uri({
+                    scheme: 'http'
+                })
+            };
+
+            Joi.compile(schema).validate({ item: 'something invalid' }, (err, value) => {
+
+                expect(err.message).to.contain('must be a valid uri with a scheme matching the http pattern');
+                done();
+            });
+        });
+
+        it('validates uri with a custom array of schemes with a friendly error message', (done) => {
+
+            const schema = {
+                item: Joi.string().uri({
+                    scheme: ['http', /https?/]
+                })
+            };
+
+            Joi.compile(schema).validate({ item: 'something invalid' }, (err, value) => {
+
+                expect(err.message).to.contain('must be a valid uri with a scheme matching the http|https? pattern');
+                done();
+            });
+        });
+
+        it('validates uri treats scheme as optional', (done) => {
+
+            expect(() => {
+
+                Joi.string().uri({});
+            }).to.not.throw();
+
+            done();
+        });
+
+        it('validates uri requires uriOptions as an object with a friendly error message', (done) => {
+
+            expect(() => {
+
+                Joi.string().uri('http');
+            }).to.throw(Error, 'options must be an object');
+
+            done();
+        });
+
+        it('validates uri requires scheme to be a RegExp, String, or Array with a friendly error message', (done) => {
+
+            expect(() => {
+
+                Joi.string().uri({
+                    scheme: {}
+                });
+            }).to.throw(Error, 'scheme must be a RegExp, String, or Array');
+
+            done();
+        });
+
+        it('validates uri requires scheme to not be an empty array', (done) => {
+
+            expect(() => {
+
+                Joi.string().uri({
+                    scheme: []
+                });
+            }).to.throw(Error, 'scheme must have at least 1 scheme specified');
+
+            done();
+        });
+
+        it('validates uri requires scheme to be an Array of schemes to all be valid schemes with a friendly error message', (done) => {
+
+            expect(() => {
+
+                Joi.string().uri({
+                    scheme: [
+                        'http',
+                        '~!@#$%^&*()_'
+                    ]
+                });
+            }).to.throw(Error, 'scheme at position 1 must be a valid scheme');
+
+            done();
+        });
+
+        it('validates uri requires scheme to be an Array of schemes to be strings or RegExp', (done) => {
+
+            expect(() => {
+
+                Joi.string().uri({
+                    scheme: [
+                        'http',
+                        {}
+                    ]
+                });
+            }).to.throw(Error, 'scheme at position 1 must be a RegExp or String');
+
+            done();
+        });
+
+        it('validates uri requires scheme to be a valid String scheme with a friendly error message', (done) => {
+
+            expect(() => {
+
+                Joi.string().uri({
+                    scheme: '~!@#$%^&*()_'
+                });
+            }).to.throw(Error, 'scheme at position 0 must be a valid scheme');
+
+            done();
+        });
+
+        it('validates relative uri', (done) => {
+
+            const schema = Joi.string().uri({ allowRelative: true });
+            Helper.validate(schema, [
+                ['foo://example.com:8042/over/there?name=ferret#nose', true],
+                ['urn:example:animal:ferret:nose', true],
+                ['ftp://ftp.is.co.za/rfc/rfc1808.txt', true],
+                ['http://www.ietf.org/rfc/rfc2396.txt', true],
+                ['ldap://[2001:db8::7]/c=GB?objectClass?one', true],
+                ['mailto:John.Doe@example.com', true],
+                ['news:comp.infosystems.www.servers.unix', true],
+                ['tel:+1-816-555-1212', true],
+                ['telnet://192.0.2.16:80/', true],
+                ['urn:oasis:names:specification:docbook:dtd:xml:4.1.2', true],
+                ['file:///example.txt', true],
+                ['http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon', true],
+                ['http://asdf@localhost:8000', true],
+                ['http://[v1.09azAZ-._~!$&\'()*+,;=:]', true],
+                ['http://[a:b:c:d:e::1.2.3.4]', true],
+                ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', true],
+                ['http://[1080:0:0:0:8:800:200C:417A]', true],
+                ['http://127.0.0.1:8000/foo?bar', true],
+                ['http://asdf:qwer@localhost:8000', true],
+                ['http://user:pass%3A@localhost:80', true],
+                ['http://localhost:123', true],
+                ['https://localhost:123', true],
+                ['file:///whatever', true],
+                ['mailto:asdf@asdf.com', true],
+                ['ftp://www.example.com', true],
+                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
+                ['xmpp:isaacschlueter@jabber.org', true],
+                ['f://some.host/path', true],
+                ['http://localhost:18/asdf', true],
+                ['http://localhost:42/asdf?qwer=zxcv', true],
+                ['HTTP://www.example.com/', true],
+                ['HTTP://www.example.com', true],
+                ['http://www.ExAmPlE.com/', true],
+                ['http://user:pw@www.ExAmPlE.com/', true],
+                ['http://USER:PW@www.ExAmPlE.com/', true],
+                ['http://user@www.example.com/', true],
+                ['http://user%3Apw@www.example.com/', true],
+                ['http://x.com/path?that%27s#all,%20folks', true],
+                ['HTTP://X.COM/Y', true],
+                ['http://www.narwhaljs.org/blog/categories?id=news', true],
+                ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
+                ['http://_jabber._tcp.google.com:80/test', true],
+                ['http://user:pass@_jabber._tcp.google.com:80/test', true],
+                ['http://[fe80::1]/a/b?a=b#abc', true],
+                ['http://user:password@[3ffe:2a00:100:7031::1]:8080', true],
+                ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', true],
+                ['git+http://github.com/joyent/node.git', true],
+                ['http://bucket_name.s3.amazonaws.com/image.jpg', true],
+                ['dot.test://foo/bar', true],
+                ['svn+ssh://foo/bar', true],
+                ['dash-test://foo/bar', true],
+                ['xmpp:isaacschlueter@jabber.org', true],
+                ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', true],
+                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
+                ['file://localhost/etc/node/', true],
+                ['file:///etc/node/', true],
+                ['http://USER:PW@www.ExAmPlE.com/', true],
+                ['mailto:local1@domain1?query1', true],
+                ['http://example/a/b?c/../d', true],
+                ['http://example/x%2Fabc', true],
+                ['http://a/b/c/d;p=1/g;x=1/y', true],
+                ['http://a/b/c/g#s/../x', true],
+                ['http://a/b/c/.foo', true],
+                ['http://example.com/b//c//d;p?q#blarg', true],
+                ['g:h', true],
+                ['http://a/b/c/g', true],
+                ['http://a/b/c/g/', true],
+                ['http://a/g', true],
+                ['http://g', true],
+                ['http://a/b/c/d;p?y', true],
+                ['http://a/b/c/g?y', true],
+                ['http://a/b/c/d;p?q#s', true],
+                ['http://a/b/c/g#s', true],
+                ['http://a/b/c/g?y#s', true],
+                ['http://a/b/c/;x', true],
+                ['http://a/b/c/g;x', true],
+                ['http://a/b/c/g;x?y#s', true],
+                ['http://a/b/c/d;p?q', true],
+                ['http://a/b/c/', true],
+                ['http://a/b/', true],
+                ['http://a/b/g', true],
+                ['http://a/', true],
+                ['http://a/g', true],
+                ['http://a/g', true],
+                ['file:/asda', true],
+                ['qwerty', true],
+                ['invalid uri', false],
+                ['1http://google.com', false],
+                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false],
+                ['', false],
+                ['(╯°□°)╯︵ ┻━┻', false],
+                ['one/two/three?value=abc&value2=123#david-rules', true],
+                ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', true],
+                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false],
+                ['/absolute', true]
+            ], done);
+        });
+    });
+
     describe('validate()', () => {
 
         it('should, by default, allow undefined, deny empty string', (done) => {
@@ -1498,89 +1968,6 @@ describe('string', () => {
                 ['w0rldofw4lm4rtl4bs', true],
                 ['abcd#f?h1j orly?', false]
             ], done);
-        });
-
-        it('validates email', (done) => {
-
-            const schema = Joi.string().email();
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['"joe"@example.com', true],
-                ['@iaminvalid.com', false],
-                ['joe@[IPv6:2a00:1450:4001:c02::1b]', true],
-                ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false],
-                ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', false]
-            ], done);
-        });
-
-        it('validates email with tldWhitelist as array', (done) => {
-
-            const schema = Joi.string().email({ tldWhitelist: ['com', 'org'] });
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['joe@example.org', true],
-                ['joe@example.edu', false]
-            ], done);
-        });
-
-        it('validates email with tldWhitelist as object', (done) => {
-
-            const schema = Joi.string().email({ tldWhitelist: { com: true, org: true } });
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['joe@example.org', true],
-                ['joe@example.edu', false]
-            ], done);
-        });
-
-        it('validates email with minDomainAtoms', (done) => {
-
-            const schema = Joi.string().email({ minDomainAtoms: 4 });
-            Helper.validate(schema, [
-                ['joe@example.com', false],
-                ['joe@www.example.com', false],
-                ['joe@sub.www.example.com', true]
-            ], done);
-        });
-
-        it('validates email with errorLevel as boolean', (done) => {
-
-            let schema = Joi.string().email({ errorLevel: false });
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['joe@www.example.com', true],
-                ['joe@localhost', true],
-                ['joe', false]
-            ]);
-
-            schema = Joi.string().email({ errorLevel: true });
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['joe@www.example.com', true],
-                ['joe@localhost', false],
-                ['joe', false]
-            ], done);
-        });
-
-        it('validates email with errorLevel as integer', (done) => {
-
-            const schema = Joi.string().email({ errorLevel: 10 });
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['joe@www.example.com', true],
-                ['joe@localhost', true],
-                ['joe', false]
-            ], done);
-        });
-
-        it('validates email with a friendly error message', (done) => {
-
-            const schema = { item: Joi.string().email() };
-            Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
-
-                expect(err.message).to.contain('must be a valid email');
-                done();
-            });
         });
 
         it('should return false for denied value', (done) => {
@@ -2059,285 +2446,6 @@ describe('string', () => {
                 ['', false],
                 [null, false]
             ], done);
-        });
-
-        it('validates uri', (done) => {
-
-            // Handful of tests taken from Node: https://github.com/joyent/node/blob/cfcb1de130867197cbc9c6012b7e84e08e53d032/test/simple/test-url.js
-            // Also includes examples from RFC 8936: http://tools.ietf.org/html/rfc3986#page-7
-            const schema = Joi.string().uri();
-
-            Helper.validate(schema, [
-                ['foo://example.com:8042/over/there?name=ferret#nose', true],
-                ['urn:example:animal:ferret:nose', true],
-                ['ftp://ftp.is.co.za/rfc/rfc1808.txt', true],
-                ['http://www.ietf.org/rfc/rfc2396.txt', true],
-                ['ldap://[2001:db8::7]/c=GB?objectClass?one', true],
-                ['mailto:John.Doe@example.com', true],
-                ['news:comp.infosystems.www.servers.unix', true],
-                ['tel:+1-816-555-1212', true],
-                ['telnet://192.0.2.16:80/', true],
-                ['urn:oasis:names:specification:docbook:dtd:xml:4.1.2', true],
-                ['file:///example.txt', true],
-                ['http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon', true],
-                ['http://asdf@localhost:8000', true],
-                ['http://[v1.09azAZ-._~!$&\'()*+,;=:]', true],
-                ['http://[a:b:c:d:e::1.2.3.4]', true],
-                ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', true],
-                ['http://[1080:0:0:0:8:800:200C:417A]', true],
-                ['http://127.0.0.1:8000/foo?bar', true],
-                ['http://asdf:qwer@localhost:8000', true],
-                ['http://user:pass%3A@localhost:80', true],
-                ['http://localhost:123', true],
-                ['https://localhost:123', true],
-                ['file:///whatever', true],
-                ['mailto:asdf@asdf.com', true],
-                ['ftp://www.example.com', true],
-                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
-                ['xmpp:isaacschlueter@jabber.org', true],
-                ['f://some.host/path', true],
-                ['http://localhost:18/asdf', true],
-                ['http://localhost:42/asdf?qwer=zxcv', true],
-                ['HTTP://www.example.com/', true],
-                ['HTTP://www.example.com', true],
-                ['http://www.ExAmPlE.com/', true],
-                ['http://user:pw@www.ExAmPlE.com/', true],
-                ['http://USER:PW@www.ExAmPlE.com/', true],
-                ['http://user@www.example.com/', true],
-                ['http://user%3Apw@www.example.com/', true],
-                ['http://x.com/path?that%27s#all,%20folks', true],
-                ['HTTP://X.COM/Y', true],
-                ['http://www.narwhaljs.org/blog/categories?id=news', true],
-                ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', true],
-                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
-                ['http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', true],
-                ['http://_jabber._tcp.google.com:80/test', true],
-                ['http://user:pass@_jabber._tcp.google.com:80/test', true],
-                ['http://[fe80::1]/a/b?a=b#abc', true],
-                ['http://user:password@[3ffe:2a00:100:7031::1]:8080', true],
-                ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', true],
-                ['git+http://github.com/joyent/node.git', true],
-                ['http://bucket_name.s3.amazonaws.com/image.jpg', true],
-                ['dot.test://foo/bar', true],
-                ['svn+ssh://foo/bar', true],
-                ['dash-test://foo/bar', true],
-                ['xmpp:isaacschlueter@jabber.org', true],
-                ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', true],
-                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
-                ['file://localhost/etc/node/', true],
-                ['file:///etc/node/', true],
-                ['http://USER:PW@www.ExAmPlE.com/', true],
-                ['mailto:local1@domain1?query1', true],
-                ['http://example/a/b?c/../d', true],
-                ['http://example/x%2Fabc', true],
-                ['http://a/b/c/d;p=1/g;x=1/y', true],
-                ['http://a/b/c/g#s/../x', true],
-                ['http://a/b/c/.foo', true],
-                ['http://example.com/b//c//d;p?q#blarg', true],
-                ['g:h', true],
-                ['http://a/b/c/g', true],
-                ['http://a/b/c/g/', true],
-                ['http://a/g', true],
-                ['http://g', true],
-                ['http://a/b/c/d;p?y', true],
-                ['http://a/b/c/g?y', true],
-                ['http://a/b/c/d;p?q#s', true],
-                ['http://a/b/c/g#s', true],
-                ['http://a/b/c/g?y#s', true],
-                ['http://a/b/c/;x', true],
-                ['http://a/b/c/g;x', true],
-                ['http://a/b/c/g;x?y#s', true],
-                ['http://a/b/c/d;p?q', true],
-                ['http://a/b/c/', true],
-                ['http://a/b/', true],
-                ['http://a/b/g', true],
-                ['http://a/', true],
-                ['http://a/g', true],
-                ['http://a/g', true],
-                ['file:/asda', true],
-                ['qwerty', false],
-                ['invalid uri', false],
-                ['1http://google.com', false],
-                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false],
-                ['', false],
-                ['(╯°□°)╯︵ ┻━┻', false],
-                ['one/two/three?value=abc&value2=123#david-rules', false],
-                ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', false],
-                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false]
-            ], done);
-        });
-
-        it('validates uri with a single scheme provided', (done) => {
-
-            const schema = Joi.string().uri({
-                scheme: 'http'
-            });
-
-            Helper.validate(schema, [
-                ['http://google.com', true],
-                ['https://google.com', false],
-                ['ftp://google.com', false],
-                ['file:/asdf', false],
-                ['/path?query=value#hash', false]
-            ], done);
-        });
-
-        it('validates uri with a single regex scheme provided', (done) => {
-
-            const schema = Joi.string().uri({
-                scheme: /https?/
-            });
-
-            Helper.validate(schema, [
-                ['http://google.com', true],
-                ['https://google.com', true],
-                ['ftp://google.com', false],
-                ['file:/asdf', false],
-                ['/path?query=value#hash', false]
-            ], done);
-        });
-
-        it('validates uri with multiple schemes provided', (done) => {
-
-            const schema = Joi.string().uri({
-                scheme: [/https?/, 'ftp', 'file', 'git+http']
-            });
-
-            Helper.validate(schema, [
-                ['http://google.com', true],
-                ['https://google.com', true],
-                ['ftp://google.com', true],
-                ['file:/asdf', true],
-                ['git+http://github.com/hapijs/joi', true],
-                ['/path?query=value#hash', false]
-            ], done);
-        });
-
-        it('validates uri with a friendly error message', (done) => {
-
-            const schema = { item: Joi.string().uri() };
-
-            Joi.compile(schema).validate({ item: 'something invalid' }, (err, value) => {
-
-                expect(err.message).to.contain('must be a valid uri');
-                done();
-            });
-        });
-
-        it('validates uri with a custom scheme with a friendly error message', (done) => {
-
-            const schema = {
-                item: Joi.string().uri({
-                    scheme: 'http'
-                })
-            };
-
-            Joi.compile(schema).validate({ item: 'something invalid' }, (err, value) => {
-
-                expect(err.message).to.contain('must be a valid uri with a scheme matching the http pattern');
-                done();
-            });
-        });
-
-        it('validates uri with a custom array of schemes with a friendly error message', (done) => {
-
-            const schema = {
-                item: Joi.string().uri({
-                    scheme: ['http', /https?/]
-                })
-            };
-
-            Joi.compile(schema).validate({ item: 'something invalid' }, (err, value) => {
-
-                expect(err.message).to.contain('must be a valid uri with a scheme matching the http|https? pattern');
-                done();
-            });
-        });
-
-        it('validates uri treats scheme as optional', (done) => {
-
-            expect(() => {
-
-                Joi.string().uri({});
-            }).to.not.throw();
-
-            done();
-        });
-
-        it('validates uri requires uriOptions as an object with a friendly error message', (done) => {
-
-            expect(() => {
-
-                Joi.string().uri('http');
-            }).to.throw(Error, 'options must be an object');
-
-            done();
-        });
-
-        it('validates uri requires scheme to be a RegExp, String, or Array with a friendly error message', (done) => {
-
-            expect(() => {
-
-                Joi.string().uri({
-                    scheme: {}
-                });
-            }).to.throw(Error, 'scheme must be a RegExp, String, or Array');
-
-            done();
-        });
-
-        it('validates uri requires scheme to not be an empty array', (done) => {
-
-            expect(() => {
-
-                Joi.string().uri({
-                    scheme: []
-                });
-            }).to.throw(Error, 'scheme must have at least 1 scheme specified');
-
-            done();
-        });
-
-        it('validates uri requires scheme to be an Array of schemes to all be valid schemes with a friendly error message', (done) => {
-
-            expect(() => {
-
-                Joi.string().uri({
-                    scheme: [
-                        'http',
-                        '~!@#$%^&*()_'
-                    ]
-                });
-            }).to.throw(Error, 'scheme at position 1 must be a valid scheme');
-
-            done();
-        });
-
-        it('validates uri requires scheme to be an Array of schemes to be strings or RegExp', (done) => {
-
-            expect(() => {
-
-                Joi.string().uri({
-                    scheme: [
-                        'http',
-                        {}
-                    ]
-                });
-            }).to.throw(Error, 'scheme at position 1 must be a RegExp or String');
-
-            done();
-        });
-
-        it('validates uri requires scheme to be a valid String scheme with a friendly error message', (done) => {
-
-            expect(() => {
-
-                Joi.string().uri({
-                    scheme: '~!@#$%^&*()_'
-                });
-            }).to.throw(Error, 'scheme at position 0 must be a valid scheme');
-
-            done();
         });
 
         it('validates isoDate', (done) => {

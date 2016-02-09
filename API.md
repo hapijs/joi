@@ -1388,6 +1388,7 @@ Requires the string value to be a valid [RFC 3986](http://tools.ietf.org/html/rf
 
 - `options` - optional settings:
     - `scheme` - Specifies one or more acceptable Schemes, should only include the scheme name. Can be an Array or String (strings are automatically escaped for use in a Regular Expression).
+    - `allowRelative` - Allow relative URIs. Defaults to `false`.
 
 ```javascript
 // Accept git or git http/https
