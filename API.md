@@ -502,7 +502,7 @@ Considers anything that matches the schema to be empty (`undefined`).
 - `schema` - any object or joi schema to match. An undefined schema unsets that rule.
 
 ```js
-const schema = Joi.string().empty('');
+let schema = Joi.string().empty('');
 schema.validate(''); // returns { error: null, value: undefined }
 schema = schema.empty();
 schema.validate(''); // returns { error: "value" is not allowed to be empty, value: '' }
@@ -524,7 +524,7 @@ array.validate(['a', 'b', 'a'], (err, value) => { });
 Allow this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
 
 ```javascript
-const schema = Joi.array().sparse(); // undefined values are now allowed
+let schema = Joi.array().sparse(); // undefined values are now allowed
 schema = schema.sparse(false); // undefined values are now denied
 ```
 
