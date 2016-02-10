@@ -1503,27 +1503,6 @@ describe('any', () => {
 
     describe('Set', () => {
 
-        describe('add()', () => {
-
-            it('throws when adding a non ref function', (done) => {
-
-                expect(() => {
-
-                    Joi.valid(() => { });
-                }).to.throw('Value cannot be an object or function');
-                done();
-            });
-
-            it('throws when adding an object function', (done) => {
-
-                expect(() => {
-
-                    Joi.valid({});
-                }).to.throw('Value cannot be an object or function');
-                done();
-            });
-        });
-
         describe('has()', () => {
 
             it('compares date to null', (done) => {
@@ -1541,6 +1520,7 @@ describe('any', () => {
                 expect(any._valids.has(new Buffer(''))).to.equal(false);
                 done();
             });
+
         });
 
         describe('values()', () => {
@@ -1592,7 +1572,7 @@ describe('any', () => {
 
                 expect(() => {
 
-                    Joi.any().valid(true, 1, 'hello', new Date());
+                    Joi.any().valid(true, 1, 'hello', new Date(), Symbol('foo'), () => {}, {});
                 }).not.to.throw();
                 done();
             });
@@ -1603,6 +1583,38 @@ describe('any', () => {
 
                     Joi.any().valid(undefined);
                 }).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
+                done();
+            });
+
+            it('validates differents types of values', (done) => {
+
+                expect(Joi.valid(1).validate(1).error).to.be.null();
+                expect(Joi.valid(1).validate(2).error).to.exist();
+
+                const d = new Date();
+                expect(Joi.valid(d).validate(new Date(d.getTime())).error).to.be.null();
+                expect(Joi.valid(d).validate(new Date(d.getTime() + 1)).error).to.exist();
+
+                const str = 'foo';
+                expect(Joi.valid(str).validate(str).error).to.be.null();
+                expect(Joi.valid(str).validate('foobar').error).to.exist();
+
+                const s = Symbol('foo');
+                expect(Joi.valid(s).validate(s).error).to.be.null();
+                expect(Joi.valid(s).validate(Symbol('foo')).error).to.exist();
+
+                const o = {};
+                expect(Joi.valid(o).validate(o).error).to.be.null();
+                expect(Joi.valid(o).validate({}).error).to.exist();
+
+                const f = () => {};
+                expect(Joi.valid(f).validate(f).error).to.be.null();
+                expect(Joi.valid(f).validate(() => {}).error).to.exist();
+
+                const b = new Buffer('foo');
+                expect(Joi.valid(b).validate(b).error).to.be.null();
+                expect(Joi.valid(b).validate(new Buffer('foobar')).error).to.exist();
+
                 done();
             });
         });

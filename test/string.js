@@ -34,24 +34,6 @@ describe('string', () => {
 
     describe('valid()', () => {
 
-        it('should throw error on input not matching type', (done) => {
-
-            expect(() => {
-
-                Joi.string().valid({});
-            }).to.throw();
-            done();
-        });
-
-        it('should not throw on input matching type', (done) => {
-
-            expect(() => {
-
-                Joi.string().valid('joi');
-            }).to.not.throw();
-            done();
-        });
-
         it('validates case sensitive values', (done) => {
 
             Helper.validate(Joi.string().valid('a', 'b'), [
@@ -87,24 +69,6 @@ describe('string', () => {
     });
 
     describe('invalid()', () => {
-
-        it('should throw error on input not matching type', (done) => {
-
-            expect(() => {
-
-                Joi.string().invalid({});
-            }).to.throw();
-            done();
-        });
-
-        it('should not throw on input matching type', (done) => {
-
-            expect(() => {
-
-                Joi.string().invalid('joi');
-            }).to.not.throw();
-            done();
-        });
 
         it('invalidates case sensitive values', (done) => {
 
