@@ -3150,5 +3150,28 @@ describe('string', () => {
                 ['123afg', false, null, '"value" must only contain hexadecimal characters']
             ], done);
         });
+
+        it('validates combination of uppercase, min, max, alphanum and valid', (done) => {
+
+            const rule = Joi.string().uppercase().min(2).max(3).alphanum().valid('AB', 'BC');
+            Helper.validate(rule, [
+                ['x', false],
+                ['123', false],
+                ['1234', false],
+                ['12', false],
+                ['ab', true],
+                ['abc', false],
+                ['a2c', false],
+                ['abcd', false],
+                ['*ab', false],
+                ['', false],
+                ['bc', true],
+                ['BC', true],
+                ['de', false],
+                ['ABc', false],
+                ['AB', true],
+                [null, false]
+            ], done);
+        });
     });
 });
