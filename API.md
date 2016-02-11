@@ -1,5 +1,5 @@
 <!-- version -->
-# 7.2.3 API Reference
+# 7.3.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -12,6 +12,7 @@
   - [`assert(value, schema, [message])`](#assertvalue-schema-message)
   - [`attempt(value, schema, [message])`](#attemptvalue-schema-message)
   - [`isRef(ref)`](#isrefref)
+  - [`reach(schema, path)`](#reachschema-path)
   - [`any`](#any)
     - [`any.allow(value)`](#anyallowvalue)
     - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
