@@ -23,6 +23,12 @@ const expect = Code.expect;
 
 describe('ref', () => {
 
+    it('detects references', (done) => {
+
+        expect(Joi.isRef(Joi.ref('a.b'))).to.be.true();
+        done();
+    });
+
     it('uses ref as a valid value', (done) => {
 
         const schema = Joi.object({
@@ -352,8 +358,85 @@ describe('ref', () => {
 
     it('describes schema with ref', (done) => {
 
-        const desc = Joi.compile(Joi.ref('a.b')).describe();
-        expect(Joi.isRef(desc.valids[0])).to.be.true();
+        const desc = Joi
+            .valid(Joi.ref('a.b'))
+            .invalid(Joi.ref('$b.c'))
+            .default(Joi.ref('a.b'))
+            .when('a.b', {
+                is: Joi.date().min(Joi.ref('a.b')).max(Joi.ref('a.b')),
+                then: Joi.number().min(Joi.ref('a.b')).max(Joi.ref('a.b')).greater(Joi.ref('a.b')).less(Joi.ref('a.b')),
+                otherwise: Joi.object({
+                    a: Joi.string().min(Joi.ref('a.b')).max(Joi.ref('a.b')).length(Joi.ref('a.b'))
+                }).with('a', 'b').without('b', 'c').assert('a.b', Joi.ref('a.b'))
+            })
+            .describe();
+
+        expect(desc).to.deep.equal({
+            type: 'any',
+            flags: { allowOnly: true, default: 'ref:a.b' },
+            valids: ['ref:a.b'],
+            invalids: ['context:b.c'],
+            alternatives: [{
+                ref: 'ref:a.b',
+                is: {
+                    type: 'date',
+                    rules: [
+                        { name: 'min', arg: 'ref:a.b' },
+                        { name: 'max', arg: 'ref:a.b' }
+                    ]
+                },
+                then: {
+                    type: 'number',
+                    flags: { allowOnly: true, default: 'ref:a.b' },
+                    valids: ['ref:a.b'],
+                    invalids: ['context:b.c', Infinity, -Infinity],
+                    rules: [
+                        { name: 'min', arg: 'ref:a.b' },
+                        { name: 'max', arg: 'ref:a.b' },
+                        { name: 'greater', arg: 'ref:a.b' },
+                        { name: 'less', arg: 'ref:a.b' }
+                    ]
+                },
+                otherwise: {
+                    type: 'object',
+                    flags: { allowOnly: true, default: 'ref:a.b' },
+                    valids: ['ref:a.b'],
+                    invalids: ['context:b.c'],
+                    rules: [{
+                        name: 'assert',
+                        arg: {
+                            schema: {
+                                type: 'any',
+                                flags: { allowOnly: true },
+                                valids: ['ref:a.b']
+                            },
+                            ref: 'ref:a.b'
+                        }
+                    }],
+                    children: {
+                        a: {
+                            type: 'string',
+                            invalids: [''],
+                            rules: [
+                                { name: 'min', arg: 'ref:a.b' },
+                                { name: 'max', arg: 'ref:a.b' },
+                                { name: 'length', arg: 'ref:a.b' }
+                            ]
+                        }
+                    },
+                    dependencies: [{
+                        type: 'with',
+                        key: 'a',
+                        peers: ['b']
+                    },
+                    {
+                        type: 'without',
+                        key: 'b',
+                        peers: ['c']
+                    }]
+                }
+            }]
+        });
         done();
     });
 

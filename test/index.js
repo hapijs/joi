@@ -1427,7 +1427,7 @@ describe('Joi', () => {
                 })
             },
             min: [Joi.number(), Joi.string().min(3)],
-            max: Joi.string().max(3),
+            max: Joi.string().max(3).default(0),
             required: Joi.string().required(),
             xor: Joi.string(),
             renamed: Joi.string().valid('456'),
@@ -1480,6 +1480,9 @@ describe('Joi', () => {
                 },
                 max: {
                     type: 'string',
+                    flags: {
+                        default: 0
+                    },
                     invalids: [''],
                     rules: [{ name: 'max', arg: 3 }]
                 },
@@ -1529,21 +1532,21 @@ describe('Joi', () => {
                 defaultRef: {
                     type: 'string',
                     flags: {
-                        default: defaultRef
+                        default: 'ref:xor'
                     },
                     invalids: ['']
                 },
                 defaultFn: {
                     type: 'string',
                     flags: {
-                        default: defaultFn
+                        default: 'testing'
                     },
                     invalids: ['']
                 },
                 defaultDescribedFn: {
                     type: 'string',
                     flags: {
-                        default: defaultDescribedFn
+                        default: 'described test'
                     },
                     invalids: ['']
                 }
@@ -1566,9 +1569,9 @@ describe('Joi', () => {
 
             const description = schema.describe();
             expect(description).to.deep.equal(result);
-            expect(description.children.defaultRef.flags.default.description).to.not.exist();
-            expect(description.children.defaultFn.flags.default.description).to.equal('testing');
-            expect(description.children.defaultDescribedFn.flags.default.description).to.equal('described test');
+            expect(description.children.defaultRef.flags.default).to.equal('ref:xor');
+            expect(description.children.defaultFn.flags.default).to.equal('testing');
+            expect(description.children.defaultDescribedFn.flags.default).to.equal('described test');
             done();
         });
 
