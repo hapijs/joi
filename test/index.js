@@ -1763,6 +1763,110 @@ describe('Joi', () => {
 
     describe('extend()', () => {
 
+        describe('parameters', () => {
+
+            it('must be an object or array of objects', (done) => {
+
+                expect(() => Joi.extend(true)).to.throw(/"0" must be an object/);
+                expect(() => Joi.extend(null)).to.throw(/"0" must be an object/);
+                expect(() => Joi.extend([{ name: 'foo' }, true])).to.throw(/"1" must be an object/);
+                expect(() => Joi.extend([{ name: 'foo' }, null])).to.throw(/"1" must be an object/);
+                expect(() => Joi.extend()).to.throw('You need to provide at least one extension');
+                done();
+            });
+
+            it('must have a valid string as name for the type', (done) => {
+
+                expect(() => Joi.extend({ base: Joi.number() })).to.throw(/"name" is required/);
+                expect(() => Joi.extend({ name: 123 })).to.throw(/"name" must be a string/);
+                expect(() => Joi.extend({ name: '' })).to.throw(/"name" is not allowed to be empty/);
+                done();
+            });
+
+            it('must have a Joi schema as base when present', (done) => {
+
+                expect(() => Joi.extend({ base: true })).to.throw(/"base" must be an object/);
+                expect(() => Joi.extend({ base: { isJoi: true } })).to.throw(/"base" must be an instance of "Joi object"/);
+                done();
+            });
+
+            it('must have valid pre function', (done) => {
+
+                expect(() => Joi.extend({ name: 'a', pre: true })).to.throw(/"pre" must be a Function/);
+                expect(() => Joi.extend({ name: 'a', pre() {} })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre(a, b) {} })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre(a, b, c, d) {} })).to.throw(/"pre" must have an arity of 3/);
+                done();
+            });
+
+            it('must have valid language object', (done) => {
+
+                expect(() => Joi.extend({ name: 'a', language: true })).to.throw(/"language" must be an object/);
+                expect(() => Joi.extend({ name: 'a', language() {} })).to.throw(/"language" must be an object/);
+                expect(() => Joi.extend({ name: 'a', language: null })).to.throw(/"language" must be an object/);
+                done();
+            });
+
+            it('must have valid rules', (done) => {
+
+                expect(() => Joi.extend({ name: 'a', rules: true })).to.throw(/"rules" must be an array/);
+                expect(() => Joi.extend({ name: 'a', rules: [true] })).to.throw(/"0" must be an object/);
+                expect(() => Joi.extend({ name: 'a', rules: [{}] })).to.throw(/"name" is required/);
+                expect(() => Joi.extend({ name: 'a', rules: [{ name: true }] })).to.throw(/"name" must be a string/);
+                expect(() => Joi.extend({ name: 'a', rules: [{ name: 'foo' }] })).to.throw(/"validate" is required/);
+                expect(() => {
+
+                    Joi.extend({ name: 'a', rules: [{ name: 'foo', validate: true }] });
+                }).to.throw(/"validate" must be a Function/);
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate() {}
+                        }]
+                    });
+                }).to.throw(/"validate" must have an arity of 4/);
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate(a, b, c, d) {},
+                            parameters: {
+                                foo: true
+                            }
+                        }]
+                    });
+                }).to.throw(/"foo" must be an object/);
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate(a, b, c, d) {},
+                            parameters: {
+                                foo: {}
+                            }
+                        }]
+                    });
+                }).to.throw(/"foo" must be an instance of "Joi object"/);
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate(a, b, c, d) {},
+                            parameters: {
+                                foo: { isJoi: true }
+                            }
+                        }]
+                    });
+                }).to.throw(/"foo" must be an instance of "Joi object"/);
+                done();
+            });
+        });
+
         it('defines a custom type with a default base', (done) => {
 
             const customJoi = Joi.extend({
