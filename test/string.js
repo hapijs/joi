@@ -1791,6 +1791,17 @@ describe('string', () => {
             });
         });
 
+        it('should, when .required(), print a friendly error message for trimmed whitespace', (done) => {
+
+            const schema = Joi.string().trim().required();
+
+            Joi.compile(schema).validate('    ', (err) => {
+
+                expect(err.message).to.contain('be empty');
+                done();
+            });
+        });
+
         it('should, when .required(), validate non-empty strings', (done) => {
 
             const schema = Joi.string().required();
