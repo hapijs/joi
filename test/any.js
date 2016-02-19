@@ -929,6 +929,14 @@ describe('any', () => {
             done();
         });
 
+        it('does not flatten examples', (done) => {
+
+            const schema = Joi.array().items(5, 6, 7).example([5, 6]);
+            expect(schema._examples).to.deep.equal([[5, 6]]);
+            expect(schema.describe().examples).to.deep.equal([[5, 6]]);
+            done();
+        });
+
         it('throws when tags are missing', (done) => {
 
             expect(() => {
