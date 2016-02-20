@@ -2106,5 +2106,186 @@ describe('Joi', () => {
 
             done();
         });
+
+        describe('describe()', () => {
+
+            it('should describe a basic schema', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType'
+                });
+
+                const schema = customJoi.myType();
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType'
+                });
+
+                done();
+            });
+
+            it('should describe a schema with a base', (done) => {
+
+                const customJoi = Joi.extend({
+                    base: Joi.number(),
+                    name: 'myType'
+                });
+
+                const schema = customJoi.myType();
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType',
+                    invalids: [Infinity, -Infinity]
+                });
+
+                done();
+            });
+
+            it('should describe a schema with rules', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType',
+                    rules: [
+                        {
+                            name: 'foo',
+                            validate(params, value, state, options) {}
+                        },
+                        {
+                            name: 'bar',
+                            validate(params, value, state, options) {}
+                        }
+                    ]
+                });
+
+                const schema = customJoi.myType().foo().bar();
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType',
+                    rules: [
+                        { name: 'foo', arg: {} },
+                        { name: 'bar', arg: {} }
+                    ]
+                });
+
+                done();
+            });
+
+            it('should describe a schema with rules and parameters', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType',
+                    rules: [
+                        {
+                            name: 'foo',
+                            parameters: {
+                                bar: Joi.string(),
+                                baz: Joi.number()
+                            },
+                            validate(params, value, state, options) {}
+                        }
+                    ]
+                });
+
+                const schema = customJoi.myType().foo('bar', 42);
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType',
+                    rules: [
+                        { name: 'foo', arg: { bar: 'bar', baz: 42 } }
+                    ]
+                });
+
+                done();
+            });
+
+            it('should describe a schema with rules and parameters with custom description', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType',
+                    rules: [
+                        {
+                            name: 'foo',
+                            parameters: {
+                                bar: Joi.string()
+                            },
+                            description: 'something',
+                            validate(params, value, state, options) {}
+                        },
+                        {
+                            name: 'bar',
+                            parameters: {
+                                baz: Joi.string()
+                            },
+                            description(params) {
+
+                                expect(params).to.deep.equal({ baz: 'baz' });
+                                return 'whatever';
+                            },
+                            validate(params, value, state, options) {}
+                        }
+                    ]
+                });
+
+                const schema = customJoi.myType().foo('bar').bar('baz');
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType',
+                    rules: [
+                        { name: 'foo', description: 'something', arg: { bar: 'bar' } },
+                        { name: 'bar', description: 'whatever', arg: { baz: 'baz' } }
+                    ]
+                });
+
+                done();
+            });
+
+            it('should describe a schema with rules and parameters with custom description', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType',
+                    describe(description) {
+
+                        expect(description).to.deep.equal({
+                            type: 'myType',
+                            rules: [
+                                { name: 'foo', description: 'something', arg: { bar: 'bar' } },
+                                { name: 'bar', description: 'whatever', arg: { baz: 'baz' } }
+                            ]
+                        });
+
+                        description.type = 'zalgo';
+                        return description;
+                    },
+                    rules: [
+                        {
+                            name: 'foo',
+                            parameters: {
+                                bar: Joi.string()
+                            },
+                            description: 'something',
+                            validate(params, value, state, options) {}
+                        },
+                        {
+                            name: 'bar',
+                            parameters: {
+                                baz: Joi.string()
+                            },
+                            description(params) {
+
+                                expect(params).to.deep.equal({ baz: 'baz' });
+                                return 'whatever';
+                            },
+                            validate(params, value, state, options) {}
+                        }
+                    ]
+                });
+
+                const schema = customJoi.myType().foo('bar').bar('baz');
+                expect(schema.describe()).to.deep.equal({
+                    type: 'zalgo',
+                    rules: [
+                        { name: 'foo', description: 'something', arg: { bar: 'bar' } },
+                        { name: 'bar', description: 'whatever', arg: { baz: 'baz' } }
+                    ]
+                });
+
+                done();
+            });
+        });
     });
 });
