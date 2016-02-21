@@ -1972,6 +1972,38 @@ describe('Joi', () => {
             done();
         });
 
+        it('defines a rule that validates its parameters with references', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'multiply',
+                        parameters: {
+                            q: Joi.func().ref(),
+                            currency: Joi.string()
+                        },
+                        validate(params, value, state, options) {
+
+                            const v = typeof params.q === 'number' ? value * params.q : 0;
+                            return params.currency ? params.currency + v : v;
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.object({
+                a: customJoi.number(),
+                b: customJoi.number().multiply(customJoi.ref('a'))
+            });
+
+            Helper.validate(schema, [
+                [{ a: 3, b: 5 }, true, null, { a: 3, b: 15 }],
+                [{ b: 42 }, true, null, { b: 0 }]
+            ], done);
+        });
+
         it('defines a rule that can change the value', (done) => {
 
             const customJoi = Joi.extend({
@@ -2176,18 +2208,20 @@ describe('Joi', () => {
                             name: 'foo',
                             parameters: {
                                 bar: Joi.string(),
-                                baz: Joi.number()
+                                baz: Joi.number(),
+                                qux: Joi.func().ref(),
+                                quux: Joi.func().ref()
                             },
                             validate(params, value, state, options) {}
                         }
                     ]
                 });
 
-                const schema = customJoi.myType().foo('bar', 42);
+                const schema = customJoi.myType().foo('bar', 42, Joi.ref('a.b'), Joi.ref('$c.d'));
                 expect(schema.describe()).to.deep.equal({
                     type: 'myType',
                     rules: [
-                        { name: 'foo', arg: { bar: 'bar', baz: 42 } }
+                        { name: 'foo', arg: { bar: 'bar', baz: 42, qux: 'ref:a.b', quux: 'context:c.d' } }
                     ]
                 });
 

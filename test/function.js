@@ -210,4 +210,15 @@ describe('func', () => {
             done();
         });
     });
+
+    it('validates references', (done) => {
+
+        const schema = Joi.func().ref();
+
+        Helper.validate(schema, [
+            [() => {}, false, null, '"value" must be a Joi reference'],
+            [{}, false, null, '"value" must be a Function'],
+            [Joi.ref('a.b'), true]
+        ], done);
+    });
 });
