@@ -740,7 +740,7 @@ describe('array', () => {
                 [[1, 2, 3], true],
                 [1, true],
                 [['a'], false, null, '"value" at position 0 fails because ["0" must be a number]'],
-                ['a', false, null, 'single value of "value" fails because ["0" must be a number]'],
+                ['a', false, null, 'single value of "value" fails because ["value" must be a number]'],
                 [true, false, null, 'single value of "value" contains an excluded value']
             ], done);
         });
@@ -767,9 +767,9 @@ describe('array', () => {
                 [[1, 2, 3], true],
                 [[['a']], false, null, '"value" at position 0 fails because ["0" at position 0 fails because ["0" must be a number]]'],
                 [['a'], false, null, '"value" at position 0 fails because ["0" must be an array]'],
-                ['a', false, null, 'single value of "value" fails because ["0" must be an array]'],
-                [1, false, null, 'single value of "value" fails because ["0" must be an array]'],
-                [true, false, null, 'single value of "value" fails because ["0" must be an array]']
+                ['a', false, null, 'single value of "value" fails because ["value" must be an array]'],
+                [1, false, null, 'single value of "value" fails because ["value" must be an array]'],
+                [true, false, null, 'single value of "value" fails because ["value" must be an array]']
             ], done);
         });
 
