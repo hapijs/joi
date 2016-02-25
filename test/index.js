@@ -1846,7 +1846,7 @@ describe('Joi', () => {
                         name: 'a', rules: [{
                             name: 'foo',
                             validate(a, b, c, d) {},
-                            parameters: {
+                            params: {
                                 foo: true
                             }
                         }]
@@ -1858,7 +1858,7 @@ describe('Joi', () => {
                         name: 'a', rules: [{
                             name: 'foo',
                             validate(a, b, c, d) {},
-                            parameters: {
+                            params: {
                                 foo: {}
                             }
                         }]
@@ -1870,7 +1870,7 @@ describe('Joi', () => {
                         name: 'a', rules: [{
                             name: 'foo',
                             validate(a, b, c, d) {},
-                            parameters: {
+                            params: {
                                 foo: { isJoi: true }
                             }
                         }]
@@ -1965,7 +1965,7 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'foo',
-                        parameters: {
+                        params: {
                             first: Joi.string(),
                             second: Joi.func().ref()
                         },
@@ -1995,7 +1995,7 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'addTwice',
-                        parameters: {
+                        params: {
                             factor: Joi.number().required()
                         },
                         setup(params) {
@@ -2023,7 +2023,7 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'multiply',
-                        parameters: {
+                        params: {
                             q: Joi.number().required(),
                             currency: Joi.string()
                         },
@@ -2054,7 +2054,7 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'multiply',
-                        parameters: {
+                        params: {
                             q: Joi.func().ref(),
                             currency: Joi.string()
                         },
@@ -2280,7 +2280,7 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'foo',
-                            parameters: {
+                            params: {
                                 bar: Joi.string(),
                                 baz: Joi.number(),
                                 qux: Joi.func().ref(),
@@ -2309,7 +2309,7 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'foo',
-                            parameters: {
+                            params: {
                                 bar: Joi.string()
                             },
                             description: 'something',
@@ -2317,7 +2317,7 @@ describe('Joi', () => {
                         },
                         {
                             name: 'bar',
-                            parameters: {
+                            params: {
                                 baz: Joi.string()
                             },
                             description(params) {
@@ -2362,7 +2362,7 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'foo',
-                            parameters: {
+                            params: {
                                 bar: Joi.string()
                             },
                             description: 'something',
@@ -2370,7 +2370,7 @@ describe('Joi', () => {
                         },
                         {
                             name: 'bar',
-                            parameters: {
+                            params: {
                                 baz: Joi.string()
                             },
                             description(params) {
