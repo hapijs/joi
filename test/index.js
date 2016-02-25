@@ -1813,7 +1813,7 @@ describe('Joi', () => {
                 expect(() => Joi.extend({ name: 'a', rules: [true] })).to.throw(/"0" must be an object/);
                 expect(() => Joi.extend({ name: 'a', rules: [{}] })).to.throw(/"name" is required/);
                 expect(() => Joi.extend({ name: 'a', rules: [{ name: true }] })).to.throw(/"name" must be a string/);
-                expect(() => Joi.extend({ name: 'a', rules: [{ name: 'foo' }] })).to.throw(/"validate" is required/);
+                expect(() => Joi.extend({ name: 'a', rules: [{ name: 'foo' }] })).to.throw(/must contain at least one of \[setup, validate\]/);
                 expect(() => {
 
                     Joi.extend({ name: 'a', rules: [{ name: 'foo', validate: true }] });
@@ -1827,6 +1827,19 @@ describe('Joi', () => {
                         }]
                     });
                 }).to.throw(/"validate" must have an arity of 4/);
+                expect(() => {
+
+                    Joi.extend({ name: 'a', rules: [{ name: 'foo', setup: true }] });
+                }).to.throw(/"setup" must be a Function/);
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            setup() {}
+                        }]
+                    });
+                }).to.throw(/"setup" must have an arity of 1/);
                 expect(() => {
 
                     Joi.extend({
@@ -1938,6 +1951,67 @@ describe('Joi', () => {
             expect(invalid.error).to.be.an.instanceof(Error);
             expect(invalid.error.toString()).to.equal('ValidationError: "value" oh no bar !');
 
+            done();
+        });
+
+        it('defines a custom type with a rule with setup', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                pre(value, state, options) {
+
+                    return this._flags.foo;
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        parameters: {
+                            first: Joi.string(),
+                            second: Joi.func().ref()
+                        },
+                        setup(params) {
+
+                            this._flags.foo = params;
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(schema.foo('bar').validate(null).value).to.deep.equal({ first: 'bar', second: undefined });
+            expect(schema.foo('bar', Joi.ref('a.b')).validate(null).value.first).to.equal('bar');
+            expect(Joi.isRef(schema.foo('bar', Joi.ref('a.b')).validate(null).value.second)).to.be.true();
+            done();
+        });
+
+        it('defines a custom type with a rule with both setup and validate', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                pre(value, state, options) {
+
+                    return value + this._flags.add;
+                },
+                rules: [
+                    {
+                        name: 'addTwice',
+                        parameters: {
+                            factor: Joi.number().required()
+                        },
+                        setup(params) {
+
+                            this._flags.add = params.factor;
+                        },
+                        validate(params, value, state, options) {
+
+                            return value + params.factor;
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(schema.addTwice(3).validate(0).value).to.equal(6);
             done();
         });
 
