@@ -1814,10 +1814,12 @@ describe('Joi', () => {
                 expect(() => Joi.extend({ name: 'a', rules: [{}] })).to.throw(/"name" is required/);
                 expect(() => Joi.extend({ name: 'a', rules: [{ name: true }] })).to.throw(/"name" must be a string/);
                 expect(() => Joi.extend({ name: 'a', rules: [{ name: 'foo' }] })).to.throw(/must contain at least one of \[setup, validate\]/);
+
                 expect(() => {
 
                     Joi.extend({ name: 'a', rules: [{ name: 'foo', validate: true }] });
                 }).to.throw(/"validate" must be a Function/);
+
                 expect(() => {
 
                     Joi.extend({
@@ -1827,10 +1829,12 @@ describe('Joi', () => {
                         }]
                     });
                 }).to.throw(/"validate" must have an arity of 4/);
+
                 expect(() => {
 
                     Joi.extend({ name: 'a', rules: [{ name: 'foo', setup: true }] });
                 }).to.throw(/"setup" must be a Function/);
+
                 expect(() => {
 
                     Joi.extend({
@@ -1840,6 +1844,7 @@ describe('Joi', () => {
                         }]
                     });
                 }).to.throw(/"setup" must have an arity of 1/);
+
                 expect(() => {
 
                     Joi.extend({
@@ -1852,6 +1857,7 @@ describe('Joi', () => {
                         }]
                     });
                 }).to.throw(/"foo" must be an object/);
+
                 expect(() => {
 
                     Joi.extend({
@@ -1864,6 +1870,7 @@ describe('Joi', () => {
                         }]
                     });
                 }).to.throw(/"foo" must be an instance of "Joi object"/);
+
                 expect(() => {
 
                     Joi.extend({
@@ -1876,6 +1883,18 @@ describe('Joi', () => {
                         }]
                     });
                 }).to.throw(/"foo" must be an instance of "Joi object"/);
+
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate(a, b, c, d) {},
+                            params: Joi.number()
+                        }]
+                    });
+                }).to.throw(/"params" must be an instance of "Joi object"/);
+
                 done();
             });
         });
@@ -2027,6 +2046,37 @@ describe('Joi', () => {
                             q: Joi.number().required(),
                             currency: Joi.string()
                         },
+                        validate(params, value, state, options) {
+
+                            const v = value * params.q;
+                            return params.currency ? params.currency + v : v;
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.number();
+            expect(original.double).to.not.exist();
+
+            expect(customJoi.number().multiply(2).validate(3)).to.deep.equal({ error: null, value: 6 });
+            expect(customJoi.number().multiply(5, '$').validate(7)).to.deep.equal({ error: null, value: '$35' });
+            expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
+
+            done();
+        });
+
+        it('defines a rule that validates its parameters when provided as a Joi schema', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'multiply',
+                        params: Joi.object({
+                            q: Joi.number().required(),
+                            currency: Joi.string()
+                        }),
                         validate(params, value, state, options) {
 
                             const v = value * params.q;
