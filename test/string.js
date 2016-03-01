@@ -969,7 +969,15 @@ describe('string', () => {
                 ['3:2:1::1', success],
                 ['4:3:2:1::1', success],
                 ['5:4:3:2:1::1', success],
-                ['6:5:4:3:2:1::1', success]
+                ['6:5:4:3:2:1::1', success],
+                ['::', success],
+                ['1::', success],
+                ['2:1::', success],
+                ['3:2:1::', success],
+                ['4:3:2:1::', success],
+                ['5:4:3:2:1::', success],
+                ['6:5:4:3:2:1::', success],
+                ['7:6:5:4:3:2:1::', success]
             ];
         };
 
