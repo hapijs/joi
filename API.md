@@ -1545,6 +1545,7 @@ References support the following arguments:
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator.
     - `contextPrefix` - overrides the default `$` context prefix signifier.
+    - `defaultFor` - optional array defining what should be considered as candidate for default in addition to not finding the reference.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
 (parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
