@@ -101,6 +101,7 @@
     - [`string.replace(pattern, replacement)`](#stringreplacepattern-replacement)
     - [`string.alphanum()`](#stringalphanum)
     - [`string.token()`](#stringtoken)
+    - [`string.version()`](#stringversion)
     - [`string.email([options])`](#stringemailoptions)
     - [`string.ip([options])`](#stringipoptions)
     - [`string.uri([options])`](#stringurioptions)
@@ -1358,6 +1359,14 @@ Requires the string value to only contain a-z, A-Z, 0-9, and underscore _.
 
 ```javascript
 const schema = Joi.string().token();
+```
+
+#### `string.version()`
+
+Requires the string value to be according to semver requirements (http://semver.org/).
+
+```javascript
+const schema = Joi.string().version();
 ```
 
 #### `string.email([options])`

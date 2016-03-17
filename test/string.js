@@ -1978,6 +1978,17 @@ describe('string', () => {
             ], done);
         });
 
+        it('validate version', (done) => {
+
+            const schema = Joi.string().version();
+            Helper.validate(schema, [
+                ['1.1.1', true],
+                ['1.0.100', true],
+                ['0.0.1-beta', true],
+                ['1a', false]
+            ], done);
+        });
+
         it('validates alphanum', (done) => {
 
             const schema = Joi.string().alphanum();
