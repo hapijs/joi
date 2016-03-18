@@ -1425,9 +1425,10 @@ describe('any', () => {
 
             const schema = Joi.number().min(10).when('a', { is: 5, then: Joi.number().max(20).required() }).describe();
             expect(schema).to.deep.equal({
-                type: 'number',
-                invalids: [Infinity, -Infinity],
-                rules: [{ name: 'min', arg: 10 }],
+                type: 'alternatives',
+                flags: {
+                    presence: 'ignore'
+                },
                 alternatives: [{
                     ref: 'ref:a',
                     is: {
