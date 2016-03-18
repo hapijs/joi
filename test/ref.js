@@ -438,38 +438,6 @@ describe('ref', () => {
         done();
     });
 
-    it('uses ref default', (done) => {
-
-        const schema = Joi.object({
-            a: Joi.number().min(Joi.ref('b', { default: 2 })),
-            b: Joi.any()
-        });
-
-        Helper.validate(schema, [
-            [{ a: 5 }, true],
-            [{ b: 5 }, true],
-            [{ a: 1 }, false, null, 'child "a" fails because ["a" must be larger than or equal to 2]'],
-            [{ a: 0, b: 1 }, false, null, 'child "a" fails because ["a" must be larger than or equal to 1]']
-        ], done);
-    });
-
-    it('uses ref default with defaultFor', (done) => {
-
-        const schema = Joi.object({
-            a: Joi.number().min(Joi.ref('b', { default: 2, defaultFor: ['', 3] })),
-            b: Joi.any()
-        });
-
-        Helper.validate(schema, [
-            [{ a: 5 }, true],
-            [{ b: 5 }, true],
-            [{ a: 1 }, false, null, 'child "a" fails because ["a" must be larger than or equal to 2]'],
-            [{ a: 0, b: 1 }, false, null, 'child "a" fails because ["a" must be larger than or equal to 1]'],
-            [{ a: 1, b: '' }, false, null, 'child "a" fails because ["a" must be larger than or equal to 2]'],
-            [{ a: 1, b: 3 }, false, null, 'child "a" fails because ["a" must be larger than or equal to 2]']
-        ], done);
-    });
-
     describe('create()', () => {
 
         it('throws when key is missing', (done) => {
