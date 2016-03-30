@@ -43,7 +43,7 @@
     - [`array.min(limit)`](#arrayminlimit)
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
-    - [`array.unique()`](#arrayunique)
+    - [`array.unique(options)`](#arrayuniqueoptions)
   - [`boolean`](#boolean)
   - [`binary`](#binary)
     - [`binary.encoding(encoding)`](#binaryencodingencoding)
@@ -608,14 +608,27 @@ Specifies the exact number of items in the array where:
 const schema = Joi.array().length(5);
 ```
 
-#### `array.unique()`
+#### `array.unique(options)`
 
-Requires the array values to be unique.
+Requires the array values to be unique where:
+- `options` - an object with:
+    - `objectComparator` - a comparator function used to compare two object. Optional, if missing deep equality is performed.
 
 Be aware that a deep equality is performed on elements of the array having a type of `object`, a performance penalty is to be expected for this kind of operation.
 
 ```javascript
 const schema = Joi.array().unique();
+
+
+// Compare objects with custom logic
+const objectComparator = (left, right) => {
+
+  return left.username = right.username;
+};
+
+const objectSchema = Joi.array().unique({
+  objectComparator: objectComparator
+});
 ```
 
 ### `boolean`

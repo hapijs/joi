@@ -672,6 +672,61 @@ describe('array', () => {
                 [[true, false], true]
             ], done);
         });
+
+        it('validates using a comparator for objects', (done) => {
+
+            const schema = Joi.array().unique({
+                objectComparator: (left, right) => {
+
+                    return left.a === right.a;
+                }
+            });
+
+            Helper.validate(schema, [
+                [[{ a: 'b' }, { a: 'c' }], true],
+                [[{ a: 'b', c: 'd' }, { a: 'c', c: 'd' }], true],
+                [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false],
+                [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false]
+            ], done);
+        });
+
+        it('validates with empty options', (done) => {
+
+            const schema = Joi.array().unique({});
+
+            Helper.validate(schema, [
+                [[2, '2'], true]
+            ], done);
+        });
+
+        it('requires objectComparator to be a function with only 2 parameters', (done) => {
+
+            expect(() => {
+
+                Joi.array().unique({ objectComparator: 'a' });
+            }).to.throw(Error, 'objectComparator must be a function');
+
+            expect(() => {
+
+                Joi.array().unique({
+                    objectComparator: (left) => {
+
+                        return left;
+                    }
+                });
+            }).to.throw(Error, 'objectComparator must have exactly 2 parameters');
+
+            expect(() => {
+
+                Joi.array().unique({
+                    objectComparator: (left, right, somethingElse) => {
+
+                        return left === right;
+                    }
+                });
+            }).to.throw(Error, 'objectComparator must have exactly 2 parameters');
+            done();
+        });
     });
 
     describe('sparse()', () => {
