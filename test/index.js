@@ -2110,7 +2110,8 @@ describe('Joi', () => {
                         },
                         validate(params, value, state, options) {
 
-                            const v = typeof params.q === 'number' ? value * params.q : 0;
+                            const q = params.q(state.parent, options) || 0;
+                            const v = value * q;
                             return params.currency ? params.currency + v : v;
                         }
                     }
