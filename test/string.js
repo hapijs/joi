@@ -32,6 +32,17 @@ describe('string', () => {
         ], done);
     });
 
+    it('fails on integer', (done) => {
+
+        const schema = Joi.string();
+        Helper.validate(schema, [
+            [123, false],
+            [0, false],
+            ['123', true],
+            ['0', true]
+        ], done);
+    });
+
     describe('valid()', () => {
 
         it('validates case sensitive values', (done) => {
