@@ -318,10 +318,10 @@ const schema = {
 Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
 
 ```javascript
-const schema = {
+const schema = Joi.object({
     username: Joi.string(),
     password: Joi.string().strip()
-};
+});
 
 schema.validate({ username: 'test', password: 'hunter2' }, (err, value) => {
     // value = { username: 'test' }
