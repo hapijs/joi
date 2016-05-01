@@ -14,7 +14,7 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "hoek": "3.x.x",
+    "hoek": "4.x.x",
     "topo": "2.x.x",
     "isemail": "2.x.x",
     "moment": "2.x.x"
