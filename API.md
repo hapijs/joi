@@ -110,6 +110,7 @@
     - [`string.lowercase()`](#stringlowercase)
     - [`string.uppercase()`](#stringuppercase)
     - [`string.trim()`](#stringtrim)
+    - [`string.truncate(limit)`](#stringtruncate)
     - [`string.isoDate()`](#stringisodate)
   - [`alternatives`](#alternatives)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
@@ -1460,6 +1461,16 @@ default), the string will be trimmed.
 ```javascript
 const schema = Joi.string().trim();
 ```
+
+#### `string.truncate(limit)`
+
+Specifies the maximum number of string characters  allowed.
+If the validation `convert` option is on (enabled by default), the string will be truncated.
+
+```javascript
+const schema = Joi.string().truncate(4);
+```
+
 
 #### `string.isoDate()`
 
