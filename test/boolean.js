@@ -33,12 +33,12 @@ describe('boolean', () => {
         });
     });
 
-    it('errors on a number', (done) => {
+    it('errors on a number not 0 or 1', (done) => {
 
-        Joi.boolean().validate(1, (err, value) => {
+        Joi.boolean().validate(2, (err, value) => {
 
             expect(err).to.exist();
-            expect(value).to.equal(1);
+            expect(value).to.equal(2);
             done();
         });
     });
@@ -58,8 +58,40 @@ describe('boolean', () => {
                 ['true', true],
                 ['false', true],
                 ['yes', true],
-                ['no', true]
+                ['no', true],
+                ['1', true],
+                ['0', true]
             ], done);
+        });
+
+        it('converts number values and validates', (done) => {
+
+            const rule = Joi.boolean();
+            Helper.validate(rule, [
+                [1234, false],
+                [1, true],
+                [0, true]
+            ], done);
+        });
+
+        it('converts 1 to true', (done) => {
+
+            Joi.boolean().validate(1, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(true);
+                done();
+            });
+        });
+
+        it('converts 0 to false', (done) => {
+
+            Joi.boolean().validate(0, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(false);
+                done();
+            });
         });
 
         it('should handle work with required', (done) => {
