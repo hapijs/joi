@@ -1163,7 +1163,6 @@ describe('Joi', () => {
         });
     });
 
-
     it('should pass validation with extra keys and remove them when skipExtraKeys is set locally', (done) => {
 
         const localConfig = Joi.object({
@@ -1759,6 +1758,693 @@ describe('Joi', () => {
             const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
             expect(Joi.reach(schema, 'foo.baz')).to.be.undefined();
             done();
+        });
+    });
+
+    describe('extend()', () => {
+
+        describe('parameters', () => {
+
+            it('must be an object or array of objects', (done) => {
+
+                expect(() => Joi.extend(true)).to.throw(/"0" must be an object/);
+                expect(() => Joi.extend(null)).to.throw(/"0" must be an object/);
+                expect(() => Joi.extend([{ name: 'foo' }, true])).to.throw(/"1" must be an object/);
+                expect(() => Joi.extend([{ name: 'foo' }, null])).to.throw(/"1" must be an object/);
+                expect(() => Joi.extend()).to.throw('You need to provide at least one extension');
+                done();
+            });
+
+            it('must have a valid string as name for the type', (done) => {
+
+                expect(() => Joi.extend({ base: Joi.number() })).to.throw(/"name" is required/);
+                expect(() => Joi.extend({ name: 123 })).to.throw(/"name" must be a string/);
+                expect(() => Joi.extend({ name: '' })).to.throw(/"name" is not allowed to be empty/);
+                done();
+            });
+
+            it('must have a Joi schema as base when present', (done) => {
+
+                expect(() => Joi.extend({ base: true })).to.throw(/"base" must be an object/);
+                expect(() => Joi.extend({ base: { isJoi: true } })).to.throw(/"base" must be an instance of "Joi object"/);
+                done();
+            });
+
+            it('must have valid pre function', (done) => {
+
+                expect(() => Joi.extend({ name: 'a', pre: true })).to.throw(/"pre" must be a Function/);
+                expect(() => Joi.extend({ name: 'a', pre() {} })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre(a, b) {} })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre(a, b, c, d) {} })).to.throw(/"pre" must have an arity of 3/);
+                done();
+            });
+
+            it('must have valid language object', (done) => {
+
+                expect(() => Joi.extend({ name: 'a', language: true })).to.throw(/"language" must be an object/);
+                expect(() => Joi.extend({ name: 'a', language() {} })).to.throw(/"language" must be an object/);
+                expect(() => Joi.extend({ name: 'a', language: null })).to.throw(/"language" must be an object/);
+                done();
+            });
+
+            it('must have valid rules', (done) => {
+
+                expect(() => Joi.extend({ name: 'a', rules: true })).to.throw(/"rules" must be an array/);
+                expect(() => Joi.extend({ name: 'a', rules: [true] })).to.throw(/"0" must be an object/);
+                expect(() => Joi.extend({ name: 'a', rules: [{}] })).to.throw(/"name" is required/);
+                expect(() => Joi.extend({ name: 'a', rules: [{ name: true }] })).to.throw(/"name" must be a string/);
+                expect(() => Joi.extend({ name: 'a', rules: [{ name: 'foo' }] })).to.throw(/must contain at least one of \[setup, validate\]/);
+
+                expect(() => {
+
+                    Joi.extend({ name: 'a', rules: [{ name: 'foo', validate: true }] });
+                }).to.throw(/"validate" must be a Function/);
+
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate() {}
+                        }]
+                    });
+                }).to.throw(/"validate" must have an arity of 4/);
+
+                expect(() => {
+
+                    Joi.extend({ name: 'a', rules: [{ name: 'foo', setup: true }] });
+                }).to.throw(/"setup" must be a Function/);
+
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            setup() {}
+                        }]
+                    });
+                }).to.throw(/"setup" must have an arity of 1/);
+
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate(a, b, c, d) {},
+                            params: {
+                                foo: true
+                            }
+                        }]
+                    });
+                }).to.throw(/"foo" must be an object/);
+
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate(a, b, c, d) {},
+                            params: {
+                                foo: {}
+                            }
+                        }]
+                    });
+                }).to.throw(/"foo" must be an instance of "Joi object"/);
+
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate(a, b, c, d) {},
+                            params: {
+                                foo: { isJoi: true }
+                            }
+                        }]
+                    });
+                }).to.throw(/"foo" must be an instance of "Joi object"/);
+
+                expect(() => {
+
+                    Joi.extend({
+                        name: 'a', rules: [{
+                            name: 'foo',
+                            validate(a, b, c, d) {},
+                            params: Joi.number()
+                        }]
+                    });
+                }).to.throw(/"params" must be an instance of "Joi object"/);
+
+                done();
+            });
+        });
+
+        it('defines a custom type with a default base', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType'
+            });
+
+            expect(Joi.myType).to.not.exist();
+            expect(customJoi.myType).to.be.a.function();
+
+            const schema = customJoi.myType();
+            expect(schema._type).to.equal('myType');
+            expect(schema.isJoi).to.be.true();
+
+            done();
+        });
+
+        it('defines a custom type with a custom base', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string().min(2),
+                name: 'myType'
+            });
+
+            expect(Joi.myType).to.not.exist();
+            expect(customJoi.myType).to.be.a.function();
+
+            const schema = customJoi.myType();
+            Helper.validate(schema, [
+                [123, false, null, '"value" must be a string'],
+                ['a', false, null, '"value" length must be at least 2 characters long'],
+                ['abc', true]
+            ], done);
+        });
+
+        it('defines a custom type with new rules', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                language: {
+                    bar: 'oh no bar !'
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return null; // Valid
+                        }
+                    },
+                    {
+                        name: 'bar',
+                        validate(params, value, state, options) {
+
+                            return this.createError('myType.bar', null, state, options);
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.any();
+            expect(original.foo).to.not.exist();
+            expect(original.bar).to.not.exist();
+
+            const schema = customJoi.myType();
+            const valid = schema.foo().validate({});
+            const invalid = schema.bar().validate({});
+
+            expect(valid.error).to.be.null();
+            expect(invalid.error).to.be.an.instanceof(Error);
+            expect(invalid.error.toString()).to.equal('ValidationError: "value" oh no bar !');
+
+            done();
+        });
+
+        it('defines a custom type with a rule with setup', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                pre(value, state, options) {
+
+                    return this._flags.foo;
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        params: {
+                            first: Joi.string(),
+                            second: Joi.func().ref()
+                        },
+                        setup(params) {
+
+                            this._flags.foo = params;
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(schema.foo('bar').validate(null).value).to.deep.equal({ first: 'bar', second: undefined });
+            expect(schema.foo('bar', Joi.ref('a.b')).validate(null).value.first).to.equal('bar');
+            expect(Joi.isRef(schema.foo('bar', Joi.ref('a.b')).validate(null).value.second)).to.be.true();
+            done();
+        });
+
+        it('defines a custom type with a rule with both setup and validate', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                pre(value, state, options) {
+
+                    return value + this._flags.add;
+                },
+                rules: [
+                    {
+                        name: 'addTwice',
+                        params: {
+                            factor: Joi.number().required()
+                        },
+                        setup(params) {
+
+                            this._flags.add = params.factor;
+                        },
+                        validate(params, value, state, options) {
+
+                            return value + params.factor;
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(schema.addTwice(3).validate(0).value).to.equal(6);
+            done();
+        });
+
+        it('defines a rule that validates its parameters', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'multiply',
+                        params: {
+                            q: Joi.number().required(),
+                            currency: Joi.string()
+                        },
+                        validate(params, value, state, options) {
+
+                            const v = value * params.q;
+                            return params.currency ? params.currency + v : v;
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.number();
+            expect(original.double).to.not.exist();
+
+            expect(customJoi.number().multiply(2).validate(3)).to.deep.equal({ error: null, value: 6 });
+            expect(customJoi.number().multiply(5, '$').validate(7)).to.deep.equal({ error: null, value: '$35' });
+            expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
+
+            done();
+        });
+
+        it('defines a rule that validates its parameters when provided as a Joi schema', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'multiply',
+                        params: Joi.object({
+                            q: Joi.number().required(),
+                            currency: Joi.string()
+                        }),
+                        validate(params, value, state, options) {
+
+                            const v = value * params.q;
+                            return params.currency ? params.currency + v : v;
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.number();
+            expect(original.double).to.not.exist();
+
+            expect(customJoi.number().multiply(2).validate(3)).to.deep.equal({ error: null, value: 6 });
+            expect(customJoi.number().multiply(5, '$').validate(7)).to.deep.equal({ error: null, value: '$35' });
+            expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
+
+            done();
+        });
+
+        it('defines a rule that validates its parameters with references', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'multiply',
+                        params: {
+                            q: Joi.func().ref(),
+                            currency: Joi.string()
+                        },
+                        validate(params, value, state, options) {
+
+                            const q = params.q(state.parent, options) || 0;
+                            const v = value * q;
+                            return params.currency ? params.currency + v : v;
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.object({
+                a: customJoi.number(),
+                b: customJoi.number().multiply(customJoi.ref('a'))
+            });
+
+            Helper.validate(schema, [
+                [{ a: 3, b: 5 }, true, null, { a: 3, b: 15 }],
+                [{ b: 42 }, true, null, { b: 0 }]
+            ], done);
+        });
+
+        it('defines a rule that can change the value', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'double',
+                        validate(params, value, state, options) {
+
+                            return value * 2;
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.number();
+            expect(original.double).to.not.exist();
+
+            const schema = customJoi.number().double();
+            expect(schema.validate(3)).to.deep.equal({ error: null, value: 6 });
+
+            done();
+        });
+
+        it('overrides a predefined language', (done) => {
+
+            const base = Joi.any().options({
+                language: {
+                    myType: {
+                        foo: 'original'
+                    }
+                }
+            });
+
+            const customJoi = Joi.extend({
+                base,
+                name: 'myType',
+                language: {
+                    foo: 'modified'
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('myType.foo', null, state, options);
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType().foo();
+            const result = schema.validate({});
+            expect(result.error).to.be.an.instanceof(Error);
+            expect(result.error.toString()).to.equal('ValidationError: "value" modified');
+
+            done();
+        });
+
+        it('defines a custom type casting its input value', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string(),
+                pre(value, state, options) {
+
+                    return Symbol(value);
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.be.null();
+            expect(typeof result.value).to.equal('symbol');
+            expect(result.value.toString()).to.equal('Symbol(foo)');
+
+            done();
+        });
+
+        it('defines a custom type with a failing pre', (done) => {
+
+            const customJoi = Joi.extend({
+                pre(value, state, options) {
+
+                    return this.createError('any.invalid', null, state, options);
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.exist();
+            expect(result.error.toString()).to.equal('ValidationError: "value" contains an invalid value');
+
+            done();
+        });
+
+        it('defines a custom type with a non-modifying pre', (done) => {
+
+            const customJoi = Joi.extend({
+                pre(value, state, options) {
+
+                    return null;
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.not.exist();
+            expect(result.value).to.equal('foo');
+
+            done();
+        });
+
+        it('never reaches a pre if the base is failing', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                pre(value, state, options) {
+
+                    throw new Error('should not reach here');
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.exist();
+            expect(result.error.toString()).to.equal('ValidationError: "value" must be a number');
+
+            done();
+        });
+
+        describe('describe()', () => {
+
+            it('should describe a basic schema', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType'
+                });
+
+                const schema = customJoi.myType();
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType'
+                });
+
+                done();
+            });
+
+            it('should describe a schema with a base', (done) => {
+
+                const customJoi = Joi.extend({
+                    base: Joi.number(),
+                    name: 'myType'
+                });
+
+                const schema = customJoi.myType();
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType',
+                    invalids: [Infinity, -Infinity]
+                });
+
+                done();
+            });
+
+            it('should describe a schema with rules', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType',
+                    rules: [
+                        {
+                            name: 'foo',
+                            validate(params, value, state, options) {}
+                        },
+                        {
+                            name: 'bar',
+                            validate(params, value, state, options) {}
+                        }
+                    ]
+                });
+
+                const schema = customJoi.myType().foo().bar();
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType',
+                    rules: [
+                        { name: 'foo', arg: {} },
+                        { name: 'bar', arg: {} }
+                    ]
+                });
+
+                done();
+            });
+
+            it('should describe a schema with rules and parameters', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType',
+                    rules: [
+                        {
+                            name: 'foo',
+                            params: {
+                                bar: Joi.string(),
+                                baz: Joi.number(),
+                                qux: Joi.func().ref(),
+                                quux: Joi.func().ref()
+                            },
+                            validate(params, value, state, options) {}
+                        }
+                    ]
+                });
+
+                const schema = customJoi.myType().foo('bar', 42, Joi.ref('a.b'), Joi.ref('$c.d'));
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType',
+                    rules: [
+                        { name: 'foo', arg: { bar: 'bar', baz: 42, qux: 'ref:a.b', quux: 'context:c.d' } }
+                    ]
+                });
+
+                done();
+            });
+
+            it('should describe a schema with rules and parameters with custom description', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType',
+                    rules: [
+                        {
+                            name: 'foo',
+                            params: {
+                                bar: Joi.string()
+                            },
+                            description: 'something',
+                            validate(params, value, state, options) {}
+                        },
+                        {
+                            name: 'bar',
+                            params: {
+                                baz: Joi.string()
+                            },
+                            description(params) {
+
+                                expect(params).to.deep.equal({ baz: 'baz' });
+                                return 'whatever';
+                            },
+                            validate(params, value, state, options) {}
+                        }
+                    ]
+                });
+
+                const schema = customJoi.myType().foo('bar').bar('baz');
+                expect(schema.describe()).to.deep.equal({
+                    type: 'myType',
+                    rules: [
+                        { name: 'foo', description: 'something', arg: { bar: 'bar' } },
+                        { name: 'bar', description: 'whatever', arg: { baz: 'baz' } }
+                    ]
+                });
+
+                done();
+            });
+
+            it('should describe a schema with rules and parameters with custom description', (done) => {
+
+                const customJoi = Joi.extend({
+                    name: 'myType',
+                    describe(description) {
+
+                        expect(description).to.deep.equal({
+                            type: 'myType',
+                            rules: [
+                                { name: 'foo', description: 'something', arg: { bar: 'bar' } },
+                                { name: 'bar', description: 'whatever', arg: { baz: 'baz' } }
+                            ]
+                        });
+
+                        description.type = 'zalgo';
+                        return description;
+                    },
+                    rules: [
+                        {
+                            name: 'foo',
+                            params: {
+                                bar: Joi.string()
+                            },
+                            description: 'something',
+                            validate(params, value, state, options) {}
+                        },
+                        {
+                            name: 'bar',
+                            params: {
+                                baz: Joi.string()
+                            },
+                            description(params) {
+
+                                expect(params).to.deep.equal({ baz: 'baz' });
+                                return 'whatever';
+                            },
+                            validate(params, value, state, options) {}
+                        }
+                    ]
+                });
+
+                const schema = customJoi.myType().foo('bar').bar('baz');
+                expect(schema.describe()).to.deep.equal({
+                    type: 'zalgo',
+                    rules: [
+                        { name: 'foo', description: 'something', arg: { bar: 'bar' } },
+                        { name: 'bar', description: 'whatever', arg: { baz: 'baz' } }
+                    ]
+                });
+
+                done();
+            });
         });
     });
 });
