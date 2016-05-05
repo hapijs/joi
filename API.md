@@ -1,5 +1,5 @@
 <!-- version -->
-# 8.0.5 API Reference
+# 9.0.0-0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -11,8 +11,13 @@
   - [`compile(schema)`](#compileschema)
   - [`assert(value, schema, [message])`](#assertvalue-schema-message)
   - [`attempt(value, schema, [message])`](#attemptvalue-schema-message)
+  - [`ref(key, options)`](#refkey-options)
   - [`isRef(ref)`](#isrefref)
   - [`reach(schema, path)`](#reachschema-path)
+  - [`extend(extension)`](#extendextension)
+    - [Terms](#terms)
+    - [Extension](#extension)
+    - [Examples](#examples)
   - [`any`](#any)
     - [`any.allow(value)`](#anyallowvalue)
     - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
@@ -60,6 +65,7 @@
     - [`func.arity(n)`](#funcarityn)
     - [`func.minArity(n)`](#funcminarityn)
     - [`func.maxArity(n)`](#funcmaxarityn)
+    - [`func.ref()`](#funcref)
   - [`number`](#number)
     - [`number.min(limit)`](#numberminlimit)
     - [`number.max(limit)`](#numbermaxlimit)
