@@ -3202,5 +3202,48 @@ describe('string', () => {
                 [null, false]
             ], done);
         });
+
+
+        describe('truncate()', () => {
+
+            it('throws when max size is not a number', (done) => {
+
+                expect(() => {
+
+                    Joi.string().truncate('a');
+                }).to.throw('max size must be an integer');
+                done();
+            });
+
+            it('throws when max size is not an integer', (done) => {
+
+                expect(() => {
+
+                    Joi.string().truncate(5.1);
+                }).to.throw('max size must be an integer');
+                done();
+            });
+
+            it('throws when max size is not positive', (done) => {
+
+                expect(() => {
+
+                    Joi.string().truncate(-1);
+                }).to.throw('max size must be a POSITIVE integer');
+                done();
+            });
+
+            it('should truncate a string longer than the max length provided', (done) => {
+
+                const schema = Joi.string().truncate(3);
+                Helper.validate(schema, [
+                    ['foo', true, null, 'foo'],
+                    ['barfoo', true, null, 'bar'],
+                    ['fo', true, null, 'fo']
+                ], done);
+            });
+
+
+        });
     });
 });
