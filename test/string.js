@@ -3210,7 +3210,7 @@ describe('string', () => {
                 expect(() => {
 
                     Joi.string().truncate('a');
-                }).to.throw('max size must be a positive integer or reference');
+                }).to.throw('max size must be an integer');
                 done();
             });
 
@@ -3218,7 +3218,7 @@ describe('string', () => {
                 expect(() => {
 
                     Joi.string().truncate(5.1);
-                }).to.throw('max size must be a positive integer or reference');
+                }).to.throw('max size must be an integer');
                 done();
             });
 
@@ -3226,7 +3226,7 @@ describe('string', () => {
                 expect(() => {
 
                     Joi.string().truncate(-1);
-                }).to.throw('max size must be a positive integer or reference');
+                }).to.throw('max size must be a POSITIVE integer');
                 done();
             });
             
