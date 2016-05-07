@@ -142,6 +142,7 @@ Validates a value using the given schema and options where:
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
     `validate()` and not using `any.options()`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
+  - `error` - overrides the default joi error as described in [`any.error(err)`](#anyerrorerr). Defaults to no override.
 - `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
@@ -516,6 +517,21 @@ let schema = Joi.string().empty('');
 schema.validate(''); // returns { error: null, value: undefined }
 schema = schema.empty();
 schema.validate(''); // returns { error: "value" is not allowed to be empty, value: '' }
+```
+
+#### `any.error(err)`
+
+Overrides the default joi error with a custom error if the rule fails where:
+- `err` - the override error.
+
+Note that the provided error will be returned as-is, unmodified and undecorated with any of the
+normal joi error properties. If validation fails and another error is found before the error
+override, that error will be returned and the override will be ignored (unless the `abortEarly`
+option has been set to `false`).
+
+```js
+let schema = Joi.string().error(new Error('Was REALLY expecting a string'));
+schema.validate(3);     // returns err.message === 'Was REALLY expecting a string'
 ```
 
 ### `array`
