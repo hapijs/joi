@@ -592,6 +592,24 @@ const schema = {
 };
 ```
 
+If you need to validate a child key inside a nested object based on a sibling's value, you can do so like this:
+
+```js
+const schema = Joi.object().keys({
+    a: Joi.boolean().required(),
+    b: Joi.object()
+        .keys({
+            c: Joi.string(),
+            d: Joi.number().required()
+        })
+        .required()
+        .when('a', {
+            is: true,
+            then: Joi.object({ c: Joi.required() })		// b.c is required only when a is true
+        })
+});
+```
+
 #### `any.label(name)`
 
 Overrides the key name in error messages.
@@ -639,7 +657,7 @@ array.validate(['a', 'b', 'a'], (err, value) => { });
 
 #### `array.sparse(enabled)`
 
-Allow this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
+Allows this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
 
 ```js
 let schema = Joi.array().sparse(); // undefined values are now allowed
@@ -648,7 +666,7 @@ schema = schema.sparse(false); // undefined values are now denied
 
 #### `array.single(enabled)`
 
-Allow single values to be checked against rules as if it were provided as an array.
+Allows single values to be checked against rules as if it were provided as an array.
 
 `enabled` can be used with a falsy value to go back to the default behavior.
 
@@ -660,7 +678,7 @@ schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 
 #### `array.items(type)`
 
-List the types allowed for the array values where:
+Lists the types allowed for the array values where:
 - `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
 If a given type is `.required()` then there must be a matching item in the array.
@@ -677,7 +695,7 @@ const schema = Joi.array().items(Joi.string().label('My string').required(), Joi
 
 #### `array.ordered(type)`
 
-List the types in sequence order for the array values where:
+Lists the types in sequence order for the array values where:
 - `type` - a **joi** schema object to validate against each array item in sequence order. `type` can be an array of values, or multiple values can be passed as individual arguments.
 
 If a given type is `.required()` then there must be a matching item with the same index position in the array.
