@@ -179,6 +179,25 @@ describe('array', () => {
             });
         });
 
+        it('allows forbidden to restrict values (ref)', (done) => {
+
+            const schema = Joi.object({
+                array: Joi.array().items(Joi.valid(Joi.ref('value')).forbidden(), Joi.string()),
+                value: Joi.string().required()
+            });
+
+            const input = {
+                array: ['one', 'two', 'three', 'four'],
+                value: 'four'
+            };
+
+            schema.validate(input, (err, value) => {
+
+                expect(err).to.be.an.error('child "array" fails because ["array" at position 3 contains an excluded value]');
+                done();
+            });
+        });
+
         it('validates that a required value exists', (done) => {
 
             const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string());
