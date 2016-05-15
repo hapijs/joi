@@ -1,5 +1,5 @@
 <!-- version -->
-# 9.0.0-0 API Reference
+# 9.0.0-1 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -96,6 +96,7 @@
     - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
     - [`object.unknown([allow])`](#objectunknownallow)
     - [`object.type(constructor, [name])`](#objecttypeconstructor-name)
+    - [`object.schema()`](#objectschema)
     - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
     - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
   - [`string`](#string)
