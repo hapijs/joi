@@ -1358,6 +1358,14 @@ Requires the object to be an instance of a given constructor where:
 const schema = Joi.object().type(RegExp);
 ```
 
+#### `object.schema()`
+
+Requires the object to be a Joi schema instance.
+
+```js
+const schema = Joi.object().schema();
+```
+
 #### `object.requiredKeys(children)`
 
 Sets the specified children to required.

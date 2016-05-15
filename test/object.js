@@ -1315,4 +1315,18 @@ describe('object', () => {
             done();
         });
     });
+
+    describe('schema()', () => {
+
+        it('should detect joi instances', (done) => {
+
+            const schema = Joi.object().schema();
+            Helper.validate(schema, [
+                [{}, false, null, '"value" must be a Joi instance'],
+                [{ isJoi: true }, false, null, '"value" must be a Joi instance'],
+                [Joi.number().max(2), true]
+            ], done);
+        });
+
+    });
 });
