@@ -1068,7 +1068,7 @@ describe('Joi', () => {
         Joi.validate(obj, schema, { stripUnknown: true, allowUnknown: true }, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a' });
+            expect(value).to.equal({ a: 1, b: 'a' });
             done();
         });
     });
@@ -1090,7 +1090,7 @@ describe('Joi', () => {
         Joi.validate(obj, schema, { stripUnknown: { arrays: false, objects: true }, allowUnknown: true }, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a' });
+            expect(value).to.equal({ a: 1, b: 'a' });
             done();
         });
     });
@@ -1194,7 +1194,7 @@ describe('Joi', () => {
         Joi.validate(obj, schema, { allowUnknown: true }, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a', d: 'c' });
+            expect(value).to.equal({ a: 1, b: 'a', d: 'c' });
             done();
         });
     });
@@ -1215,12 +1215,12 @@ describe('Joi', () => {
         localConfig.validate(obj, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a', d: 'c' });
+            expect(value).to.equal({ a: 1, b: 'a', d: 'c' });
 
             localConfig.validate(value, (err2, value2) => {
 
                 expect(err2).to.be.null();
-                expect(value2).to.deep.equal({ a: 1, b: 'a', d: 'c' });
+                expect(value2).to.equal({ a: 1, b: 'a', d: 'c' });
                 done();
             });
         });
@@ -1243,12 +1243,12 @@ describe('Joi', () => {
         localConfig.validate(obj, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a' });
+            expect(value).to.equal({ a: 1, b: 'a' });
 
             localConfig.validate(value, (err2, value2) => {
 
                 expect(err2).to.be.null();
-                expect(value2).to.deep.equal({ a: 1, b: 'a' });
+                expect(value2).to.equal({ a: 1, b: 'a' });
                 done();
             });
         });
@@ -1270,12 +1270,12 @@ describe('Joi', () => {
         localConfig.validate(obj, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a' });
+            expect(value).to.equal({ a: 1, b: 'a' });
 
             localConfig.validate(value, (err2, value2) => {
 
                 expect(err2).to.be.null();
-                expect(value2).to.deep.equal({ a: 1, b: 'a' });
+                expect(value2).to.equal({ a: 1, b: 'a' });
                 done();
             });
         });
@@ -1388,7 +1388,7 @@ describe('Joi', () => {
 
             expect(err).to.exist();
             expect(err.details).to.have.length(6);
-            expect(err.details).to.deep.equal([{
+            expect(err.details).to.equal([{
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test.0.foo',
                 type: 'string.max',
@@ -1658,7 +1658,7 @@ describe('Joi', () => {
         it('describes schema (direct)', (done) => {
 
             const description = schema.describe();
-            expect(description).to.deep.equal(result);
+            expect(description).to.equal(result);
             expect(description.children.defaultRef.flags.default).to.equal('ref:xor');
             expect(description.children.defaultFn.flags.default).to.equal('testing');
             expect(description.children.defaultDescribedFn.flags.default).to.equal('described test');
@@ -1668,7 +1668,7 @@ describe('Joi', () => {
         it('describes schema (root)', (done) => {
 
             const description = Joi.describe(schema);
-            expect(description).to.deep.equal(result);
+            expect(description).to.equal(result);
             done();
         });
 
@@ -1676,7 +1676,7 @@ describe('Joi', () => {
 
             const any = Joi;
             const description = any.describe();
-            expect(description).to.deep.equal({
+            expect(description).to.equal({
                 type: 'any'
             });
             done();

@@ -180,7 +180,7 @@ describe('ref', () => {
         schema.validate({ b: 6 }, (err, value) => {
 
             expect(err).to.not.exist();
-            expect(value).to.deep.equal({ a: 6, b: 6 });
+            expect(value).to.equal({ a: 6, b: 6 });
             done();
         });
     });
@@ -195,7 +195,7 @@ describe('ref', () => {
         ab.validate({ b: '6' }, (err, value) => {
 
             expect(err).to.not.exist();
-            expect(value).to.deep.equal({ a: 6, b: 6 });
+            expect(value).to.equal({ a: 6, b: 6 });
 
             const ba = Joi.object({
                 b: Joi.number(),
@@ -205,7 +205,7 @@ describe('ref', () => {
             ba.validate({ b: '6' }, (err2, value2) => {
 
                 expect(err2).to.not.exist();
-                expect(value2).to.deep.equal({ a: 6, b: 6 });
+                expect(value2).to.equal({ a: 6, b: 6 });
                 done();
             });
         });
@@ -270,7 +270,7 @@ describe('ref', () => {
         Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, (err, value) => {
 
             expect(err).to.not.exist();
-            expect(value).to.deep.equal({ a: 22, b: 6 });
+            expect(value).to.equal({ a: 22, b: 6 });
             done();
         });
     });
@@ -285,7 +285,7 @@ describe('ref', () => {
         Joi.validate({ b: 6 }, schema, { context: { x: 22 } }, (err, value) => {
 
             expect(err).to.not.exist();
-            expect(value).to.deep.equal({ a: 22, b: 6 });
+            expect(value).to.equal({ a: 22, b: 6 });
             done();
         });
     });
@@ -371,7 +371,7 @@ describe('ref', () => {
             })
             .describe();
 
-        expect(desc).to.deep.equal({
+        expect(desc).to.equal({
             type: 'alternatives',
             flags: { presence: 'ignore' },
             alternatives: [{

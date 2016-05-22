@@ -46,14 +46,14 @@ exports.validateOptions = function (schema, config, options, callback) {
         if (item.length >= 4) {
             const comparator = item[3];
             if (item[1]) {
-                expect(value).to.deep.equal(comparator);
+                expect(value).to.equal(comparator);
             }
             else {
                 if (comparator instanceof RegExp) {
                     expect(err.message).to.match(comparator);
                 }
                 else {
-                    expect(err.message).to.deep.equal(comparator);
+                    expect(err.message).to.equal(comparator);
                 }
             }
         }

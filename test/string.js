@@ -1823,7 +1823,7 @@ describe('string', () => {
 
             const schema = Joi.string().truncate();
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'string',
                 invalids: [''],
                 flags: { truncate: true }
@@ -1835,7 +1835,7 @@ describe('string', () => {
 
             const schema = Joi.string().truncate(true);
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'string',
                 invalids: [''],
                 flags: { truncate: true }
@@ -1847,7 +1847,7 @@ describe('string', () => {
 
             const schema = Joi.string().truncate().truncate(false);
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'string',
                 invalids: [''],
                 flags: { truncate: false }

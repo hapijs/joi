@@ -85,7 +85,7 @@ describe('lazy', () => {
                 children: Joi.array().items(Joi.lazy(() => schema).description('person'))
             });
 
-            expect(schema.describe()).to.deep.equal({
+            expect(schema.describe()).to.equal({
                 type: 'object',
                 children: {
                     children: {

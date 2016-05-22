@@ -231,7 +231,7 @@ describe('errors', () => {
 
         Joi.object({ length: Joi.number().min(3).required() }).validate({ length: 1 }, (err) => {
 
-            expect(err.details).to.deep.equal([{
+            expect(err.details).to.equal([{
                 message: '"length" must be larger than or equal to 3',
                 path: 'length',
                 type: 'number.min',

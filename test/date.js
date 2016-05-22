@@ -79,7 +79,7 @@ describe('date', () => {
         Joi.date().validate(mili.toString(), (err, value) => {
 
             expect(err).to.not.exist();
-            expect(value).to.deep.equal(now);
+            expect(value).to.equal(now);
             done();
         });
     });
@@ -107,7 +107,7 @@ describe('date', () => {
                 Joi.date().min('now').validate(future, (err, value) => {
 
                     expect(err).to.not.exist();
-                    expect(value).to.deep.equal(future);
+                    expect(value).to.equal(future);
                     done();
                 });
             });
@@ -193,7 +193,7 @@ describe('date', () => {
                 Joi.date().max('now').validate(past, (err, value) => {
 
                     expect(err).to.not.exist();
-                    expect(value).to.deep.equal(past);
+                    expect(value).to.equal(past);
                     done();
                 });
             });
@@ -326,17 +326,17 @@ describe('date', () => {
                 Joi.date().timestamp().validate(milliseconds, (err, value) => {
 
                     expect(err).to.not.exist();
-                    expect(value).to.deep.equal(now);
+                    expect(value).to.equal(now);
                 });
                 Joi.date().timestamp('javascript').validate(milliseconds, (err, value) => {
 
                     expect(err).to.not.exist();
-                    expect(value).to.deep.equal(now);
+                    expect(value).to.equal(now);
                 });
                 Joi.date().timestamp('unix').timestamp('javascript').validate(milliseconds, (err, value) => {
 
                     expect(err).to.not.exist();
-                    expect(value).to.deep.equal(now);
+                    expect(value).to.equal(now);
                 });
                 done();
             });
@@ -349,17 +349,17 @@ describe('date', () => {
                 Joi.date().timestamp('unix').validate(seconds, (err, value) => {
 
                     expect(err).to.not.exist();
-                    expect(value).to.deep.equal(now);
+                    expect(value).to.equal(now);
                 });
                 Joi.date().timestamp().timestamp('unix').validate(seconds, (err, value) => {
 
                     expect(err).to.not.exist();
-                    expect(value).to.deep.equal(now);
+                    expect(value).to.equal(now);
                 });
                 Joi.date().timestamp('javascript').timestamp('unix').validate(seconds, (err, value) => {
 
                     expect(err).to.not.exist();
-                    expect(value).to.deep.equal(now);
+                    expect(value).to.equal(now);
                 });
                 done();
             });

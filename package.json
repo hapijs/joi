@@ -20,7 +20,7 @@
     "moment": "2.x.x"
   },
   "devDependencies": {
-    "code": "2.x.x",
+    "code": "3.x.x",
     "lab": "10.x.x",
     "markdown-toc": "0.12.x",
     "npmignore": "0.2.x"
