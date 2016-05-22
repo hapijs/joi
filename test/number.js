@@ -490,7 +490,7 @@ describe('number', () => {
         const result1 = Joi.number().min(5);
         const result2 = Joi.number().max(5);
 
-        expect(Object.keys(result1)).to.not.equal(Object.keys(result2));
+        expect(Object.keys(result1)).to.not.shallow.equal(Object.keys(result2));
         done();
     });
 
@@ -785,7 +785,7 @@ describe('number', () => {
         it('should describe a minimum of 0', (done) => {
 
             const schema = Joi.number().min(0);
-            expect(schema.describe()).to.deep.equal({
+            expect(schema.describe()).to.equal({
                 type: 'number',
                 invalids: [Infinity, -Infinity],
                 rules: [

@@ -535,7 +535,7 @@ describe('object', () => {
             schema.validate(valid, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal({});
+                expect(value).to.equal({});
                 done();
             });
         });
@@ -766,7 +766,7 @@ describe('object', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal({});
+                expect(value).to.equal({});
                 done();
             });
         });
@@ -782,7 +782,7 @@ describe('object', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal({ a: 'something' });
+                expect(value).to.equal({ a: 'something' });
                 done();
             });
         });
@@ -798,7 +798,7 @@ describe('object', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal({ a: 'something' });
+                expect(value).to.equal({ a: 'something' });
                 done();
             });
         });
@@ -810,7 +810,7 @@ describe('object', () => {
 
             const schema = Joi.object();
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'object'
             });
             done();
@@ -837,7 +837,7 @@ describe('object', () => {
                 a: Joi.string()
             }).pattern(/\w\d/i, Joi.boolean());
 
-            expect(schema.describe()).to.deep.equal({
+            expect(schema.describe()).to.equal({
                 type: 'object',
                 children: {
                     a: {
@@ -1311,7 +1311,7 @@ describe('object', () => {
 
             const description = Joi.object().type(RegExp).describe();
 
-            expect(description.rules).to.deep.include({ name: 'type', arg: 'RegExp' });
+            expect(description.rules).to.include({ name: 'type', arg: 'RegExp' });
             done();
         });
     });

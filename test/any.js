@@ -168,7 +168,7 @@ describe('any', () => {
         it('can describe a label', (done) => {
 
             const schema = Joi.object().label('lbl').describe();
-            expect(schema).to.deep.equal({ type: 'object', label: 'lbl' });
+            expect(schema).to.equal({ type: 'object', label: 'lbl' });
             done();
         });
 
@@ -431,7 +431,7 @@ describe('any', () => {
             schema.validate(undefined, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(defaultFn);
+                expect(value).to.equal(defaultFn);
                 done();
             });
         });
@@ -458,7 +458,7 @@ describe('any', () => {
             schema.validate(undefined, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(defaultFn);
+                expect(value).to.equal(defaultFn);
                 done();
             });
         });
@@ -665,16 +665,16 @@ describe('any', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value.foo).to.not.equal(defaultValue);
-                expect(value.foo).to.only.deep.include({ bar: 'val' });
+                expect(value.foo).to.not.shallow.equal(defaultValue);
+                expect(value.foo).to.only.include({ bar: 'val' });
 
                 value.foo.bar = 'mutated';
 
                 schema.validate(input, (err2, value2) => {
 
                     expect(err2).to.not.exist();
-                    expect(value2.foo).to.not.equal(defaultValue);
-                    expect(value2.foo).to.only.deep.include({ bar: 'val' });
+                    expect(value2.foo).to.not.shallow.equal(defaultValue);
+                    expect(value2.foo).to.only.include({ bar: 'val' });
 
                     done();
                 });
@@ -840,7 +840,7 @@ describe('any', () => {
         it('sets the notes', (done) => {
 
             const b = Joi.notes(['a']).notes('my notes');
-            expect(b._notes).to.deep.equal(['a', 'my notes']);
+            expect(b._notes).to.equal(['a', 'my notes']);
             done();
         });
 
@@ -899,10 +899,10 @@ describe('any', () => {
 
             const meta = { prop: 'val', prop2: 3 };
             let b = Joi.meta(meta);
-            expect(b.describe().meta).to.deep.equal([meta]);
+            expect(b.describe().meta).to.equal([meta]);
 
             b = b.meta({ other: true });
-            expect(b.describe().meta).to.deep.equal([meta, {
+            expect(b.describe().meta).to.equal([meta, {
                 other: true
             }]);
 
@@ -925,15 +925,15 @@ describe('any', () => {
 
             const schema = Joi.valid(5, 6, 7).example(5);
             expect(schema._examples).to.include(5);
-            expect(schema.describe().examples).to.deep.equal([5]);
+            expect(schema.describe().examples).to.equal([5]);
             done();
         });
 
         it('does not flatten examples', (done) => {
 
             const schema = Joi.array().items(5, 6, 7).example([5, 6]);
-            expect(schema._examples).to.deep.equal([[5, 6]]);
-            expect(schema.describe().examples).to.deep.equal([[5, 6]]);
+            expect(schema._examples).to.equal([[5, 6]]);
+            expect(schema.describe().examples).to.equal([[5, 6]]);
             done();
         });
 
@@ -1130,7 +1130,7 @@ describe('any', () => {
             const b = Joi.description('b').unit('b').tags('b').example('b');
 
             const desc = a.concat(b).describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'any',
                 description: 'b',
                 tags: ['a', 'b'],
@@ -1214,7 +1214,7 @@ describe('any', () => {
             a.concat(b).validate({ c: 1, d: 2 }, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal({ a: 1, b: 2 });
+                expect(value).to.equal({ a: 1, b: 2 });
                 done();
             });
         });
@@ -1293,10 +1293,10 @@ describe('any', () => {
             const c = Joi.any();
             const d = Joi.any();
 
-            expect(a.concat(b)._meta).to.deep.equal([{ a: 1 }, { b: 1 }]);
-            expect(a.concat(c)._meta).to.deep.equal([metaA]);
-            expect(b.concat(c)._meta).to.deep.equal([metaB]);
-            expect(c.concat(d)._meta).to.deep.equal([]);
+            expect(a.concat(b)._meta).to.equal([{ a: 1 }, { b: 1 }]);
+            expect(a.concat(c)._meta).to.equal([metaA]);
+            expect(b.concat(c)._meta).to.equal([metaB]);
+            expect(c.concat(d)._meta).to.equal([]);
 
             done();
         });
@@ -1424,7 +1424,7 @@ describe('any', () => {
         it('can describe as the original object', (done) => {
 
             const schema = Joi.number().min(10).when('a', { is: 5, then: Joi.number().max(20).required() }).describe();
-            expect(schema).to.deep.equal({
+            expect(schema).to.equal({
                 type: 'alternatives',
                 flags: {
                     presence: 'ignore'

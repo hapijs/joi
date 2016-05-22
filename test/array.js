@@ -82,7 +82,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal([1, 2, 3]);
+                expect(value).to.equal([1, 2, 3]);
                 done();
             });
         });
@@ -232,7 +232,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(input);
+                expect(value).to.equal(input);
                 done();
             });
         });
@@ -271,7 +271,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(input);
+                expect(value).to.equal(input);
                 done();
             });
         });
@@ -284,7 +284,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(input);
+                expect(value).to.equal(input);
                 done();
             });
         });
@@ -321,7 +321,7 @@ describe('array', () => {
             schema.validate(['one', 'two', 3, 4], (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(['one', 'two']);
+                expect(value).to.equal(['one', 'two']);
                 done();
             });
         });
@@ -543,8 +543,8 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal([1, 2]);
-                expect(input).to.deep.equal(['1', '2']);
+                expect(value).to.equal([1, 2]);
+                expect(input).to.equal(['1', '2']);
                 done();
             });
         });
@@ -557,7 +557,7 @@ describe('array', () => {
             Joi.validate(input, schema, { abortEarly: false }, (err, value) => {
 
                 expect(err).to.exist();
-                expect(err.details).to.deep.equal([{
+                expect(err.details).to.equal([{
                     message: '"value" must not be a sparse array',
                     path: '1',
                     type: 'array.sparse',
@@ -594,7 +594,7 @@ describe('array', () => {
 
             const schema = Joi.array();
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: false }
             });
@@ -605,7 +605,7 @@ describe('array', () => {
 
             const schema = Joi.array().sparse();
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: true }
             });
@@ -629,7 +629,7 @@ describe('array', () => {
                 .ordered(Joi.string().required());
             const desc = schema.describe();
             expect(desc.items).to.have.length(3);
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: false },
                 orderedItems: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }, { type: 'string', invalids: [''], flags: { presence: 'required' } }],
@@ -719,7 +719,7 @@ describe('array', () => {
 
             const schema = Joi.array().sparse();
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: true }
             });
@@ -730,7 +730,7 @@ describe('array', () => {
 
             const schema = Joi.array().sparse(true);
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: true }
             });
@@ -741,7 +741,7 @@ describe('array', () => {
 
             const schema = Joi.array().sparse().sparse(false);
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: false }
             });
@@ -808,7 +808,7 @@ describe('array', () => {
 
             const schema = Joi.array().single(true);
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: false, single: true }
             });
@@ -819,7 +819,7 @@ describe('array', () => {
 
             const schema = Joi.array().single().single(false);
             const desc = schema.describe();
-            expect(desc).to.deep.equal({
+            expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: false, single: false }
             });
@@ -835,7 +835,7 @@ describe('array', () => {
             schema.validate(['one', 'two', 3, 4, true, false], (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(['one', 'two']);
+                expect(value).to.equal(['one', 'two']);
                 done();
             });
         });
@@ -873,7 +873,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(['s1', 2]);
+                expect(value).to.equal(['s1', 2]);
                 done();
             });
         });
@@ -886,7 +886,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(['s1', 2, 3]);
+                expect(value).to.equal(['s1', 2, 3]);
                 done();
             });
         });
@@ -899,7 +899,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(['s1', 2]);
+                expect(value).to.equal(['s1', 2]);
                 done();
             });
         });
@@ -912,7 +912,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(['s1', 2, undefined]);
+                expect(value).to.equal(['s1', 2, undefined]);
                 done();
             });
         });
@@ -925,7 +925,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(['s1', undefined, 3]);
+                expect(value).to.equal(['s1', undefined, 3]);
                 done();
             });
         });
@@ -937,7 +937,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(['s1', 2, 3, 4, 5]);
+                expect(value).to.equal(['s1', 2, 3, 4, 5]);
                 done();
             });
         });
@@ -1048,7 +1048,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal(['s1', 3]);
+                expect(value).to.equal(['s1', 3]);
                 done();
             });
         });
@@ -1060,7 +1060,7 @@ describe('array', () => {
             schema.validate(input, (err, value) => {
 
                 expect(err).to.not.exist();
-                expect(value).to.deep.equal([2]);
+                expect(value).to.equal([2]);
                 done();
             });
         });

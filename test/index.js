@@ -1068,7 +1068,7 @@ describe('Joi', () => {
         Joi.validate(obj, schema, { stripUnknown: true, allowUnknown: true }, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a' });
+            expect(value).to.equal({ a: 1, b: 'a' });
             done();
         });
     });
@@ -1131,7 +1131,7 @@ describe('Joi', () => {
         Joi.validate(obj, schema, { allowUnknown: true }, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a', d: 'c' });
+            expect(value).to.equal({ a: 1, b: 'a', d: 'c' });
             done();
         });
     });
@@ -1152,12 +1152,12 @@ describe('Joi', () => {
         localConfig.validate(obj, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a', d: 'c' });
+            expect(value).to.equal({ a: 1, b: 'a', d: 'c' });
 
             localConfig.validate(value, (err2, value2) => {
 
                 expect(err2).to.be.null();
-                expect(value2).to.deep.equal({ a: 1, b: 'a', d: 'c' });
+                expect(value2).to.equal({ a: 1, b: 'a', d: 'c' });
                 done();
             });
         });
@@ -1179,12 +1179,12 @@ describe('Joi', () => {
         localConfig.validate(obj, (err, value) => {
 
             expect(err).to.be.null();
-            expect(value).to.deep.equal({ a: 1, b: 'a' });
+            expect(value).to.equal({ a: 1, b: 'a' });
 
             localConfig.validate(value, (err2, value2) => {
 
                 expect(err2).to.be.null();
-                expect(value2).to.deep.equal({ a: 1, b: 'a' });
+                expect(value2).to.equal({ a: 1, b: 'a' });
                 done();
             });
         });
@@ -1297,7 +1297,7 @@ describe('Joi', () => {
 
             expect(err).to.exist();
             expect(err.details).to.have.length(6);
-            expect(err.details).to.deep.equal([{
+            expect(err.details).to.equal([{
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test.0.foo',
                 type: 'string.max',
@@ -1567,7 +1567,7 @@ describe('Joi', () => {
         it('describes schema (direct)', (done) => {
 
             const description = schema.describe();
-            expect(description).to.deep.equal(result);
+            expect(description).to.equal(result);
             expect(description.children.defaultRef.flags.default).to.equal('ref:xor');
             expect(description.children.defaultFn.flags.default).to.equal('testing');
             expect(description.children.defaultDescribedFn.flags.default).to.equal('described test');
@@ -1577,7 +1577,7 @@ describe('Joi', () => {
         it('describes schema (root)', (done) => {
 
             const description = Joi.describe(schema);
-            expect(description).to.deep.equal(result);
+            expect(description).to.equal(result);
             done();
         });
 
@@ -1585,7 +1585,7 @@ describe('Joi', () => {
 
             const any = Joi;
             const description = any.describe();
-            expect(description).to.deep.equal({
+            expect(description).to.equal({
                 type: 'any'
             });
             done();
@@ -1997,7 +1997,7 @@ describe('Joi', () => {
             });
 
             const schema = customJoi.myType();
-            expect(schema.foo('bar').validate(null).value).to.deep.equal({ first: 'bar', second: undefined });
+            expect(schema.foo('bar').validate(null).value).to.equal({ first: 'bar', second: undefined });
             expect(schema.foo('bar', Joi.ref('a.b')).validate(null).value.first).to.equal('bar');
             expect(Joi.isRef(schema.foo('bar', Joi.ref('a.b')).validate(null).value.second)).to.be.true();
             done();
@@ -2058,8 +2058,8 @@ describe('Joi', () => {
             const original = Joi.number();
             expect(original.double).to.not.exist();
 
-            expect(customJoi.number().multiply(2).validate(3)).to.deep.equal({ error: null, value: 6 });
-            expect(customJoi.number().multiply(5, '$').validate(7)).to.deep.equal({ error: null, value: '$35' });
+            expect(customJoi.number().multiply(2).validate(3)).to.equal({ error: null, value: 6 });
+            expect(customJoi.number().multiply(5, '$').validate(7)).to.equal({ error: null, value: '$35' });
             expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
 
             done();
@@ -2089,8 +2089,8 @@ describe('Joi', () => {
             const original = Joi.number();
             expect(original.double).to.not.exist();
 
-            expect(customJoi.number().multiply(2).validate(3)).to.deep.equal({ error: null, value: 6 });
-            expect(customJoi.number().multiply(5, '$').validate(7)).to.deep.equal({ error: null, value: '$35' });
+            expect(customJoi.number().multiply(2).validate(3)).to.equal({ error: null, value: 6 });
+            expect(customJoi.number().multiply(5, '$').validate(7)).to.equal({ error: null, value: '$35' });
             expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
 
             done();
@@ -2149,7 +2149,7 @@ describe('Joi', () => {
             expect(original.double).to.not.exist();
 
             const schema = customJoi.number().double();
-            expect(schema.validate(3)).to.deep.equal({ error: null, value: 6 });
+            expect(schema.validate(3)).to.equal({ error: null, value: 6 });
 
             done();
         });
@@ -2273,7 +2273,7 @@ describe('Joi', () => {
                 });
 
                 const schema = customJoi.myType();
-                expect(schema.describe()).to.deep.equal({
+                expect(schema.describe()).to.equal({
                     type: 'myType'
                 });
 
@@ -2288,7 +2288,7 @@ describe('Joi', () => {
                 });
 
                 const schema = customJoi.myType();
-                expect(schema.describe()).to.deep.equal({
+                expect(schema.describe()).to.equal({
                     type: 'myType',
                     invalids: [Infinity, -Infinity]
                 });
@@ -2313,7 +2313,7 @@ describe('Joi', () => {
                 });
 
                 const schema = customJoi.myType().foo().bar();
-                expect(schema.describe()).to.deep.equal({
+                expect(schema.describe()).to.equal({
                     type: 'myType',
                     rules: [
                         { name: 'foo', arg: {} },
@@ -2343,7 +2343,7 @@ describe('Joi', () => {
                 });
 
                 const schema = customJoi.myType().foo('bar', 42, Joi.ref('a.b'), Joi.ref('$c.d'));
-                expect(schema.describe()).to.deep.equal({
+                expect(schema.describe()).to.equal({
                     type: 'myType',
                     rules: [
                         { name: 'foo', arg: { bar: 'bar', baz: 42, qux: 'ref:a.b', quux: 'context:c.d' } }
@@ -2373,7 +2373,7 @@ describe('Joi', () => {
                             },
                             description(params) {
 
-                                expect(params).to.deep.equal({ baz: 'baz' });
+                                expect(params).to.equal({ baz: 'baz' });
                                 return 'whatever';
                             },
                             validate(params, value, state, options) {}
@@ -2382,7 +2382,7 @@ describe('Joi', () => {
                 });
 
                 const schema = customJoi.myType().foo('bar').bar('baz');
-                expect(schema.describe()).to.deep.equal({
+                expect(schema.describe()).to.equal({
                     type: 'myType',
                     rules: [
                         { name: 'foo', description: 'something', arg: { bar: 'bar' } },
@@ -2399,7 +2399,7 @@ describe('Joi', () => {
                     name: 'myType',
                     describe(description) {
 
-                        expect(description).to.deep.equal({
+                        expect(description).to.equal({
                             type: 'myType',
                             rules: [
                                 { name: 'foo', description: 'something', arg: { bar: 'bar' } },
@@ -2426,7 +2426,7 @@ describe('Joi', () => {
                             },
                             description(params) {
 
-                                expect(params).to.deep.equal({ baz: 'baz' });
+                                expect(params).to.equal({ baz: 'baz' });
                                 return 'whatever';
                             },
                             validate(params, value, state, options) {}
@@ -2435,7 +2435,7 @@ describe('Joi', () => {
                 });
 
                 const schema = customJoi.myType().foo('bar').bar('baz');
-                expect(schema.describe()).to.deep.equal({
+                expect(schema.describe()).to.equal({
                     type: 'zalgo',
                     rules: [
                         { name: 'foo', description: 'something', arg: { bar: 'bar' } },

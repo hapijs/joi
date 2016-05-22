@@ -343,7 +343,7 @@ describe('alternatives', () => {
                 }
             };
 
-            expect(Joi.describe(schema)).to.deep.equal(outcome);
+            expect(Joi.describe(schema)).to.equal(outcome);
             done();
         });
 
@@ -397,7 +397,7 @@ describe('alternatives', () => {
                 }
             };
 
-            expect(Joi.describe(schema)).to.deep.equal(outcome);
+            expect(Joi.describe(schema)).to.equal(outcome);
             done();
         });
 
@@ -451,7 +451,7 @@ describe('alternatives', () => {
                 }
             };
 
-            expect(Joi.describe(schema)).to.deep.equal(outcome);
+            expect(Joi.describe(schema)).to.equal(outcome);
             done();
         });
 
@@ -483,7 +483,7 @@ describe('alternatives', () => {
                 }]
             };
 
-            expect(Joi.describe(schema)).to.deep.equal(outcome);
+            expect(Joi.describe(schema)).to.equal(outcome);
             done();
         });
     });
