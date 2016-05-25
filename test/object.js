@@ -379,6 +379,21 @@ describe('object', () => {
         });
     });
 
+    it('should allow root level references from nested children', (done) => {
+        const schema = Joi.object({
+            a: Joi.array(),
+            b: Joi.object().keys({
+                c: Joi.object().keys({
+                    d: Joi.valid(Joi.ref('/a'))
+                })
+            })
+        });
+        Helper.validate(schema, [
+            [{ a: ['foo','bar'], b: { c: { d: 'foo' } } }, true],
+            [{ a: ['foo','bar'], b: { c: { d: 'baz' } } }, false]
+        ], done);
+    });
+
     it('should work on prototype-less objects', (done) => {
 
         const input = Object.create(null);

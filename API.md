@@ -1698,7 +1698,7 @@ const schema = {
 Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency
 so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
 References support the following arguments:
-- `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
+- `key` - the reference target. If a key starts with the root prefix (defaults to  '/') the reference will be resolved against the complete value passed for validation. In all other cases, references cannot point up the object tree, only to sibling keys, but they can point to
   their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
   which is looked up in the `context` option object.
 - `options` - optional settings:
@@ -1713,11 +1713,13 @@ const schema = Joi.object().keys({
     a: Joi.ref('b.c'),
     b: {
         c: Joi.any()
+        d: Joi.ref('/d')
     },
     c: Joi.ref('$x')
+    d: Joi.any()
 });
 
-Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, (err, value) => {});
+Joi.validate({ a: 5, b: { c: 5, d: 3 }, d: 3 }, schema, { context: { x: 5 } }, (err, value) => {});
 ```
 
 ## Errors
