@@ -137,13 +137,15 @@ describe('ref', () => {
             a: Joi.object({
                 b: Joi.string()
             }),
-            c: ref
+            c: Joi.object({
+                d: ref
+            })
         });
         Helper.validate(schema, [
-          [{ a: { b: 'x' }, c: 'x' }, true],
-          [{ a: { b: 'y' }, c: 'y' }, true],
-          [{ a: { b: 'x' }, c: 'y' }, false],
-          [{ c: 'y'}, false]
+          [{ a: { b: 'x' }, c: { d: 'x' } }, true],
+          [{ a: { b: 'y' }, c: { d: 'y' } }, true],
+          [{ a: { b: 'x' }, c: { d: 'y' } }, false],
+          [{ c: { d: 'y' } }, false]
         ], done);
     });
 
@@ -156,13 +158,15 @@ describe('ref', () => {
             a: Joi.object({
                 b: Joi.string()
             }),
-            c: ref
+            c: Joi.object({
+                d: ref
+            })
         });
         Helper.validate(schema, [
-          [{ a: { b: 'x' }, c: 'x' }, true],
-          [{ a: { b: 'y' }, c: 'y' }, true],
-          [{ a: { b: 'x' }, c: 'y' }, false],
-          [{ c: 'y'}, false]
+          [{ a: { b: 'x' }, c: { d: 'x' } }, true],
+          [{ a: { b: 'y' }, c: { d: 'y' } }, true],
+          [{ a: { b: 'x' }, c: { d: 'y' } }, false],
+          [{ c: { d: 'y' } }, false]
         ], done);
     });
 
@@ -174,13 +178,15 @@ describe('ref', () => {
             a: Joi.object({
                 b: Joi.string()
             }),
-            c: ref
+            c: Joi.object({
+                d: ref
+            })
         });
         Helper.validate(schema, [
-          [{ a: { b: 'x' }, c: 'x' }, true],
-          [{ a: { b: 'y' }, c: 'y' }, true],
-          [{ a: { b: 'x' }, c: 'y' }, false],
-          [{ c: 'y'}, false]
+          [{ a: { b: 'x' }, c: { d: 'x' } }, true],
+          [{ a: { b: 'y' }, c: { d: 'y' } }, true],
+          [{ a: { b: 'x' }, c: { d: 'y' } }, false],
+          [{ c: { d: 'y' } }, false]
         ], done);
     });
 
