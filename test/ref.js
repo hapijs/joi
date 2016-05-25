@@ -130,6 +130,7 @@ describe('ref', () => {
     });
 
     it('uses ref with root key as a valid value', (done) => {
+
         const ref = Joi.ref('/a.b');
         expect(ref.root).to.equal('a');
 
@@ -151,6 +152,7 @@ describe('ref', () => {
 
 
     it('uses ref with custom rootPrefix', (done) => {
+
         const ref = Joi.ref('@a.b', { rootPrefix: '@' });
         expect(ref.root).to.equal('a');
 
@@ -171,6 +173,7 @@ describe('ref', () => {
     });
 
     it('allows ref with same rootPrefix as separator', (done) => {
+
         const ref = Joi.ref('/a/b', { separator: '/' });
         expect(ref.root).to.equal('a');
 

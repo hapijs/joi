@@ -380,6 +380,7 @@ describe('object', () => {
     });
 
     it('should allow root level references from nested children', (done) => {
+
         const schema = Joi.object({
             a: Joi.array(),
             b: Joi.object().keys({

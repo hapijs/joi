@@ -287,13 +287,13 @@ describe('alternatives', () => {
             const schema = Joi.object({
                 a: Joi.number(),
                 b: {
-                    c: Joi.alternatives().when('/a', { is: 5, then: Joi.valid('x'), otherwise: Joi.valid('y') }),
+                    c: Joi.alternatives().when('/a', { is: 5, then: Joi.valid('x'), otherwise: Joi.valid('y') })
                 }
             });
             Helper.validate(schema, [
-                [{ a: 5, b: { c: 'x'} }, true],
-                [{ a: 4, b: { c: 'y'} }, true],
-                [{ a: 5, b: { c: 'y'} }, false],
+                [{ a: 5, b: { c: 'x' } }, true],
+                [{ a: 4, b: { c: 'y' } }, true],
+                [{ a: 5, b: { c: 'y' } }, false],
                 [{ a: 5 }, true]
             ], done);
         });
