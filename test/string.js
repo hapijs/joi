@@ -752,6 +752,41 @@ describe('string', () => {
         });
     });
 
+    describe('truncate()', () => {
+
+        it('truncates string before validation', (done) => {
+
+            const schema = Joi.string().truncate(4);
+            schema.validate('some string', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('some');
+                done();
+            });
+        });
+
+        it('doesn\'t truncate if the length small', (done) => {
+
+            const schema = Joi.string().truncate(5);
+            schema.validate('som', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('som');
+                done();
+            });
+        });
+
+        it('truncate fails if convert is false', (done) => {
+
+            const schema = Joi.string().truncate(5);
+            Helper.validateOptions(schema, [
+                ['some text 2', false],
+                ['some ', true],
+                ['some', true]
+            ], { convert: false }, done);
+        });
+    });
+
     describe('replace()', () => {
 
         it('successfully replaces the first occurrence of the expression', (done) => {
