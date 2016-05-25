@@ -281,6 +281,22 @@ describe('alternatives', () => {
                 [{ b: 5 }, false]
             ], done);
         });
+
+        it('validates when ref is root ref', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: {
+                    c: Joi.alternatives().when('/a', { is: 5, then: Joi.valid('x'), otherwise: Joi.valid('y') })
+                }
+            });
+            Helper.validate(schema, [
+                [{ a: 5, b: { c: 'x' } }, true],
+                [{ a: 4, b: { c: 'y' } }, true],
+                [{ a: 5, b: { c: 'y' } }, false],
+                [{ a: 5 }, true]
+            ], done);
+        });
     });
 
     describe('describe()', () => {

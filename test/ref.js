@@ -29,6 +29,12 @@ describe('ref', () => {
         done();
     });
 
+    it('detects root references', (done) => {
+
+        expect(Joi.isRef(Joi.ref('/a.b'))).to.be.true();
+        done();
+    });
+
     it('uses ref as a valid value', (done) => {
 
         const schema = Joi.object({
@@ -121,6 +127,70 @@ describe('ref', () => {
                 done();
             });
         });
+    });
+
+    it('uses ref with root key as a valid value', (done) => {
+
+        const ref = Joi.ref('/a.b');
+        expect(ref.root).to.equal('a');
+
+        const schema = Joi.object({
+            a: Joi.object({
+                b: Joi.string()
+            }),
+            c: Joi.object({
+                d: ref
+            })
+        });
+        Helper.validate(schema, [
+          [{ a: { b: 'x' }, c: { d: 'x' } }, true],
+          [{ a: { b: 'y' }, c: { d: 'y' } }, true],
+          [{ a: { b: 'x' }, c: { d: 'y' } }, false],
+          [{ c: { d: 'y' } }, false]
+        ], done);
+    });
+
+
+    it('uses ref with custom rootPrefix', (done) => {
+
+        const ref = Joi.ref('@a.b', { rootPrefix: '@' });
+        expect(ref.root).to.equal('a');
+
+        const schema = Joi.object({
+            a: Joi.object({
+                b: Joi.string()
+            }),
+            c: Joi.object({
+                d: ref
+            })
+        });
+        Helper.validate(schema, [
+          [{ a: { b: 'x' }, c: { d: 'x' } }, true],
+          [{ a: { b: 'y' }, c: { d: 'y' } }, true],
+          [{ a: { b: 'x' }, c: { d: 'y' } }, false],
+          [{ c: { d: 'y' } }, false]
+        ], done);
+    });
+
+    it('allows ref with same rootPrefix as separator', (done) => {
+
+        const ref = Joi.ref('/a/b', { separator: '/' });
+        expect(ref.root).to.equal('a');
+
+        const schema = Joi.object({
+            a: Joi.object({
+                b: Joi.string()
+            }),
+            c: Joi.object({
+                d: ref
+            })
+        });
+        Helper.validate(schema, [
+          [{ a: { b: 'x' }, c: { d: 'x' } }, true],
+          [{ a: { b: 'y' }, c: { d: 'y' } }, true],
+          [{ a: { b: 'x' }, c: { d: 'y' } }, false],
+          [{ c: { d: 'y' } }, false]
+        ], done);
     });
 
     it('uses ref reach options', (done) => {
