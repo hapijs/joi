@@ -1073,6 +1073,28 @@ describe('Joi', () => {
         });
     });
 
+    it('validates with extra keys and remove them when stripUnknown (as an object) is set', (done) => {
+
+        const schema = {
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        };
+
+        const obj = {
+            a: 1,
+            b: 'a',
+            d: 'c'
+        };
+
+        Joi.validate(obj, schema, { stripUnknown: { arrays: false, objects: true }, allowUnknown: true }, (err, value) => {
+
+            expect(err).to.be.null();
+            expect(value).to.deep.equal({ a: 1, b: 'a' });
+            done();
+        });
+    });
+
     it('validates dependencies when stripUnknown is set', (done) => {
 
         const schema = Joi.object({
@@ -1093,7 +1115,27 @@ describe('Joi', () => {
         });
     });
 
-    it('fails to validate with incorrect property when asked to strip unkown keys without aborting early', (done) => {
+    it('validates dependencies when stripUnknown (as an object) is set', (done) => {
+
+        const schema = Joi.object({
+            a: Joi.number(),
+            b: Joi.string()
+        }).and('a', 'b');
+
+        const obj = {
+            a: 1,
+            foo: 'bar'
+        };
+
+        Joi.validate(obj, schema, { stripUnknown: { arrays: false, objects: true } }, (err, value) => {
+
+            expect(err).to.exist();
+            expect(err.message).to.equal('"value" contains [a] without its required peers [b]');
+            done();
+        });
+    });
+
+    it('fails to validate with incorrect property when asked to strip unknown keys without aborting early', (done) => {
 
         const schema = {
             a: Joi.number().min(0).max(3),
@@ -1108,6 +1150,27 @@ describe('Joi', () => {
         };
 
         Joi.validate(obj, schema, { stripUnknown: true, abortEarly: false }, (err, value) => {
+
+            expect(err).to.exist();
+            done();
+        });
+    });
+
+    it('fails to validate with incorrect property when asked to strip unknown keys (as an object) without aborting early', (done) => {
+
+        const schema = {
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        };
+
+        const obj = {
+            a: 1,
+            b: 'f',
+            d: 'c'
+        };
+
+        Joi.validate(obj, schema, { stripUnknown: { arrays: false, objects: true }, abortEarly: false }, (err, value) => {
 
             expect(err).to.exist();
             done();
@@ -1164,12 +1227,39 @@ describe('Joi', () => {
     });
 
 
-    it('should pass validation with extra keys and remove them when skipExtraKeys is set locally', (done) => {
+    it('should pass validation with extra keys and remove them when stripUnknown is set locally', (done) => {
 
         const localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c')
         }).options({ stripUnknown: true, allowUnknown: true });
+
+        const obj = {
+            a: 1,
+            b: 'a',
+            d: 'c'
+        };
+
+        localConfig.validate(obj, (err, value) => {
+
+            expect(err).to.be.null();
+            expect(value).to.deep.equal({ a: 1, b: 'a' });
+
+            localConfig.validate(value, (err2, value2) => {
+
+                expect(err2).to.be.null();
+                expect(value2).to.deep.equal({ a: 1, b: 'a' });
+                done();
+            });
+        });
+    });
+
+    it('should pass validation with extra keys and remove them when stripUnknown (as an object) is set locally', (done) => {
+
+        const localConfig = Joi.object({
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c')
+        }).options({ stripUnknown: { arrays: false, objects: true }, allowUnknown: true });
 
         const obj = {
             a: 1,

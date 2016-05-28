@@ -134,7 +134,11 @@ Validates a value using the given schema and options where:
   - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
-  - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object or an array). Defaults to `false`.
+  - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
+    - when `true`, all unknown elements will be removed.
+    - when an `object` :
+      - `arrays` - set to `true` to remove unknown items from arrays.
+      - `objects` - set to `true` to remove unknown keys from objects.
   - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
     - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped
     - strings are always preceeded by the key name, unless a `{{key}}` is found elsewhere or if the string is prefixed by a `!!`

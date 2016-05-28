@@ -166,6 +166,16 @@ describe('array', () => {
             ], done);
         });
 
+        it('validates multiple types with stripUnknown (as an object)', (done) => {
+
+            const schema = Joi.array().items(Joi.number(), Joi.string()).options({ stripUnknown: { arrays: true, objects: false } });
+
+            Helper.validate(schema, [
+                [[1, 2, 'a'], true, null, [1, 2, 'a']],
+                [[1, { foo: 'bar' }, 'a', 2], true, null, [1, 'a', 2]]
+            ], done);
+        });
+
         it('allows forbidden to restrict values', (done) => {
 
             const schema = Joi.array().items(Joi.string().valid('four').forbidden(), Joi.string());
@@ -813,6 +823,17 @@ describe('array', () => {
         it('respects stripUnknown', (done) => {
 
             const schema = Joi.array().items(Joi.string()).options({ stripUnknown: true });
+            schema.validate(['one', 'two', 3, 4, true, false], (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.deep.equal(['one', 'two']);
+                done();
+            });
+        });
+
+        it('respects stripUnknown (as an object)', (done) => {
+
+            const schema = Joi.array().items(Joi.string()).options({ stripUnknown: { arrays: true, objects: false } });
             schema.validate(['one', 'two', 3, 4, true, false], (err, value) => {
 
                 expect(err).to.not.exist();
