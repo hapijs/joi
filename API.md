@@ -1,5 +1,5 @@
 <!-- version -->
-# 8.1.1 API Reference
+# 8.2.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -37,8 +37,8 @@
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
   - [`array`](#array)
-    - [`array.sparse(enabled)`](#arraysparseenabled)
-    - [`array.single(enabled)`](#arraysingleenabled)
+    - [`array.sparse([enabled])`](#arraysparseenabled)
+    - [`array.single([enabled])`](#arraysingleenabled)
     - [`array.items(type)`](#arrayitemstype)
     - [`array.ordered(type)`](#arrayorderedtype)
     - [`array.min(limit)`](#arrayminlimit)
@@ -96,6 +96,7 @@
     - [`string.insensitive()`](#stringinsensitive)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
     - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
+    - [`string.truncate([enabled])`](#stringtruncateenabled)
     - [`string.creditCard()`](#stringcreditcard)
     - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
     - [`string.regex(pattern, [name])`](#stringregexpattern-name)
@@ -115,6 +116,7 @@
   - [`alternatives`](#alternatives)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
+  - [`lazy(fn)`](#lazyfn)
   - [`ref(key, [options])`](#refkey-options)
 - [Errors](#errors)
 
