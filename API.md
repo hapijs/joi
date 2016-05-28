@@ -1562,6 +1562,21 @@ const schema = {
 };
 ```
 
+### `lazy(fn)`
+
+Generates a placeholder schema for a schema that you would provide with the `fn`.
+
+Supports the same methods of the [`any()`](#any) type.
+
+This is mostly useful for recursive schemas, like :
+```js
+const Person = Joi.object({
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    children: Joi.array().items(Joi.lazy(() => Person).description('Person schema'))
+});
+```
+
 ### `ref(key, [options])`
 
 Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency
