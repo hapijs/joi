@@ -546,7 +546,7 @@ const array = Joi.array().items(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], (err, value) => { });
 ```
 
-#### `array.sparse(enabled)`
+#### `array.sparse([enabled])`
 
 Allow this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
 
@@ -555,7 +555,7 @@ let schema = Joi.array().sparse(); // undefined values are now allowed
 schema = schema.sparse(false); // undefined values are now denied
 ```
 
-#### `array.single(enabled)`
+#### `array.single([enabled])`
 
 Allow single values to be checked against rules as if it were provided as an array.
 
@@ -1304,6 +1304,17 @@ const schema = Joi.object({
   max: Joi.string().required(),
   value: Joi.string().max(Joi.ref('max'), 'utf8').required()
 });
+```
+
+#### `string.truncate([enabled])`
+
+Specifies whether the `string.max()` limit should be used as a truncation.
+
+Parameters are:
+- `enabled` - optional parameter defaulting to `true` which allows you to reset the behavior of truncate by providing a falsy value.
+
+```js
+const schema = Joi.string().max(5).truncate();
 ```
 
 #### `string.creditCard()`
