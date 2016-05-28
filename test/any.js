@@ -241,8 +241,7 @@ describe('any', () => {
                 const input = test[1];
                 const schemas = [
                     baseSchema.raw(),
-                    baseSchema.raw(true),
-                    baseSchema.options({ raw: true })
+                    baseSchema.raw(true)
                 ];
 
                 schemas.forEach((schema) => {

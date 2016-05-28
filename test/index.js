@@ -1416,7 +1416,7 @@ describe('Joi', () => {
                 message: '"baz" is not allowed',
                 path: 'test2.test3.2.baz.test4.0.baz',
                 type: 'object.allowUnknown',
-                context: { key: 'baz' }
+                context: { key: 'baz', child: 'baz' }
             }]);
             done();
         });
