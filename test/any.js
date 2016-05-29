@@ -989,6 +989,47 @@ describe('any', () => {
         });
     });
 
+    describe('validate()', () => {
+
+        it('accepts only value (sync way)', (done) => {
+
+            const schema = Joi.number();
+            const result = schema.validate('2');
+            expect(result).to.deep.equal({ value: 2, error: null });
+            done();
+        });
+
+        it('accepts value and callback', (done) => {
+
+            const schema = Joi.number();
+            schema.validate('2', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(2);
+                done();
+            });
+        });
+
+        it('accepts value and options', (done) => {
+
+            const schema = Joi.number();
+            const result = schema.validate('2', { convert: false });
+            expect(result.error).to.be.an.error('"value" must be a number');
+            done();
+        });
+
+        it('accepts value, options and callback', (done) => {
+
+            const schema = Joi.number();
+            schema.validate('2', { convert: false }, (err, value) => {
+
+                expect(err).to.be.an.error('"value" must be a number');
+                done();
+            });
+        });
+
+    });
+
     describe('concat()', () => {
 
         it('throws when schema is not any', (done) => {
