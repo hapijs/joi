@@ -110,7 +110,7 @@ describe('any', () => {
             expect(() => {
 
                 Joi.any().options({ foo: 'bar' });
-            }).to.throw('unknown key foo');
+            }).to.throw('"foo" is not allowed');
             done();
         });
 
@@ -119,7 +119,7 @@ describe('any', () => {
             expect(() => {
 
                 Joi.any().options({ convert: 'yes' });
-            }).to.throw('convert should be of type boolean');
+            }).to.throw('"convert" must be a boolean');
             done();
         });
 
@@ -128,7 +128,7 @@ describe('any', () => {
             expect(() => {
 
                 Joi.any().options({ presence: 'yes' });
-            }).to.throw('presence should be one of required, optional, forbidden, ignore');
+            }).to.throw('"presence" must be one of [required, optional, forbidden, ignore]');
             done();
         });
 
@@ -987,6 +987,47 @@ describe('any', () => {
                 done();
             });
         });
+    });
+
+    describe('validate()', () => {
+
+        it('accepts only value (sync way)', (done) => {
+
+            const schema = Joi.number();
+            const result = schema.validate('2');
+            expect(result).to.equal({ value: 2, error: null });
+            done();
+        });
+
+        it('accepts value and callback', (done) => {
+
+            const schema = Joi.number();
+            schema.validate('2', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(2);
+                done();
+            });
+        });
+
+        it('accepts value and options', (done) => {
+
+            const schema = Joi.number();
+            const result = schema.validate('2', { convert: false });
+            expect(result.error).to.be.an.error('"value" must be a number');
+            done();
+        });
+
+        it('accepts value, options and callback', (done) => {
+
+            const schema = Joi.number();
+            schema.validate('2', { convert: false }, (err, value) => {
+
+                expect(err).to.be.an.error('"value" must be a number');
+                done();
+            });
+        });
+
     });
 
     describe('concat()', () => {

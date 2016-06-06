@@ -42,8 +42,8 @@
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
   - [`array`](#array)
-    - [`array.sparse(enabled)`](#arraysparseenabled)
-    - [`array.single(enabled)`](#arraysingleenabled)
+    - [`array.sparse([enabled])`](#arraysparseenabled)
+    - [`array.single([enabled])`](#arraysingleenabled)
     - [`array.items(type)`](#arrayitemstype)
     - [`array.ordered(type)`](#arrayorderedtype)
     - [`array.min(limit)`](#arrayminlimit)
@@ -103,6 +103,7 @@
     - [`string.insensitive()`](#stringinsensitive)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
     - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
+    - [`string.truncate([enabled])`](#stringtruncateenabled)
     - [`string.creditCard()`](#stringcreditcard)
     - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
     - [`string.regex(pattern, [name])`](#stringregexpattern-name)
@@ -122,6 +123,7 @@
   - [`alternatives`](#alternatives)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
+  - [`lazy(fn)`](#lazyfn)
   - [`ref(key, [options])`](#refkey-options)
 - [Errors](#errors)
 
@@ -139,7 +141,11 @@ Validates a value using the given schema and options where:
   - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
-  - `stripUnknown` - when `true`, unknown keys are deleted (only when value is an object or an array). Defaults to `false`.
+  - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
+    - when `true`, all unknown elements will be removed.
+    - when an `object` :
+      - `arrays` - set to `true` to remove unknown items from arrays.
+      - `objects` - set to `true` to remove unknown keys from objects.
   - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
     - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped
     - strings are always preceeded by the key name, unless a `{{key}}` is found elsewhere or if the string is prefixed by a `!!`
@@ -673,7 +679,7 @@ const array = Joi.array().items(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], (err, value) => { });
 ```
 
-#### `array.sparse(enabled)`
+#### `array.sparse([enabled])`
 
 Allows this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
 
@@ -682,7 +688,7 @@ let schema = Joi.array().sparse(); // undefined values are now allowed
 schema = schema.sparse(false); // undefined values are now denied
 ```
 
-#### `array.single(enabled)`
+#### `array.single([enabled])`
 
 Allows single values to be checked against rules as if it were provided as an array.
 
@@ -1448,6 +1454,17 @@ const schema = Joi.object({
 });
 ```
 
+#### `string.truncate([enabled])`
+
+Specifies whether the `string.max()` limit should be used as a truncation.
+
+Parameters are:
+- `enabled` - optional parameter defaulting to `true` which allows you to reset the behavior of truncate by providing a falsy value.
+
+```js
+const schema = Joi.string().max(5).truncate();
+```
+
 #### `string.creditCard()`
 
 Requires the number to be a credit card number (Using [Lunh
@@ -1691,6 +1708,21 @@ const schema = {
     a: Joi.when('b', { is: true, then: Joi.required() }),
     b: Joi.boolean()
 };
+```
+
+### `lazy(fn)`
+
+Generates a placeholder schema for a schema that you would provide with the `fn`.
+
+Supports the same methods of the [`any()`](#any) type.
+
+This is mostly useful for recursive schemas, like :
+```js
+const Person = Joi.object({
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    children: Joi.array().items(Joi.lazy(() => Person).description('Person schema'))
+});
 ```
 
 ### `ref(key, [options])`

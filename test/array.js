@@ -166,6 +166,16 @@ describe('array', () => {
             ], done);
         });
 
+        it('validates multiple types with stripUnknown (as an object)', (done) => {
+
+            const schema = Joi.array().items(Joi.number(), Joi.string()).options({ stripUnknown: { arrays: true, objects: false } });
+
+            Helper.validate(schema, [
+                [[1, 2, 'a'], true, null, [1, 2, 'a']],
+                [[1, { foo: 'bar' }, 'a', 2], true, null, [1, 'a', 2]]
+            ], done);
+        });
+
         it('allows forbidden to restrict values', (done) => {
 
             const schema = Joi.array().items(Joi.string().valid('four').forbidden(), Joi.string());
@@ -705,6 +715,60 @@ describe('array', () => {
             ], done);
         });
 
+        it('errors on undefined value after validation', (done) => {
+
+            const schema = Joi.array().items(Joi.object().empty({}));
+
+            Helper.validate(schema, [
+                [[{ a: 1 }, {}, { c: 3 }], false, null, '"value" must not be a sparse array']
+            ], done);
+        });
+
+        it('errors on undefined value after validation with abortEarly false', (done) => {
+
+            const schema = Joi.array().items(Joi.object().empty({})).options({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[{ a: 1 }, {}, 3], false, null, '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be an object]']
+            ], done);
+        });
+
+        it('errors on undefined value after validation with required', (done) => {
+
+            const schema = Joi.array().items(Joi.object().empty({}).required());
+
+            Helper.validate(schema, [
+                [[{}, { c: 3 }], false, null, '"value" must not be a sparse array']
+            ], done);
+        });
+
+        it('errors on undefined value after validation with required and abortEarly false', (done) => {
+
+            const schema = Joi.array().items(Joi.object().empty({}).required()).options({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[{}, 3], false, null, '"value" must not be a sparse array. "value" at position 1 fails because ["1" must be an object]']
+            ], done);
+        });
+
+        it('errors on undefined value after validation with ordered', (done) => {
+
+            const schema = Joi.array().ordered(Joi.object().empty({}));
+
+            Helper.validate(schema, [
+                [[{}], false, null, '"value" must not be a sparse array']
+            ], done);
+        });
+
+        it('errors on undefined value after validation with ordered and abortEarly false', (done) => {
+
+            const schema = Joi.array().ordered(Joi.object().empty({}).required()).options({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[{}, 3], false, null, '"value" must not be a sparse array. "value" at position 1 fails because array must contain at most 1 items']
+            ], done);
+        });
+
         it('validates on undefined value with sparse', (done) => {
 
             const schema = Joi.array().items(Joi.number()).sparse();
@@ -712,6 +776,33 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[undefined], true],
                 [[2, undefined], true]
+            ], done);
+        });
+
+        it('validates on undefined value after validation', (done) => {
+
+            const schema = Joi.array().items(Joi.object().empty({})).sparse();
+
+            Helper.validate(schema, [
+                [[{ a: 1 }, {}, { c: 3 }], true, null, [{ a: 1 }, undefined, { c: 3 }]]
+            ], done);
+        });
+
+        it('validates on undefined value after validation with required', (done) => {
+
+            const schema = Joi.array().items(Joi.object().empty({}).required()).sparse();
+
+            Helper.validate(schema, [
+                [[{ a: 1 }, {}, { c: 3 }], true, null, [{ a: 1 }, undefined, { c: 3 }]]
+            ], done);
+        });
+
+        it('validates on undefined value after validation with ordered', (done) => {
+
+            const schema = Joi.array().ordered(Joi.object().empty({})).sparse();
+
+            Helper.validate(schema, [
+                [[{}], true, null, [undefined]]
             ], done);
         });
 
@@ -832,6 +923,17 @@ describe('array', () => {
         it('respects stripUnknown', (done) => {
 
             const schema = Joi.array().items(Joi.string()).options({ stripUnknown: true });
+            schema.validate(['one', 'two', 3, 4, true, false], (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(['one', 'two']);
+                done();
+            });
+        });
+
+        it('respects stripUnknown (as an object)', (done) => {
+
+            const schema = Joi.array().items(Joi.string()).options({ stripUnknown: { arrays: true, objects: false } });
             schema.validate(['one', 'two', 3, 4, true, false], (err, value) => {
 
                 expect(err).to.not.exist();

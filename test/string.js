@@ -1817,6 +1817,79 @@ describe('string', () => {
         });
     });
 
+    describe('truncate()', () => {
+
+        it('switches the truncate flag', (done) => {
+
+            const schema = Joi.string().truncate();
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'string',
+                invalids: [''],
+                flags: { truncate: true }
+            });
+            done();
+        });
+
+        it('switches the truncate flag with explicit value', (done) => {
+
+            const schema = Joi.string().truncate(true);
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'string',
+                invalids: [''],
+                flags: { truncate: true }
+            });
+            done();
+        });
+
+        it('switches the truncate flag back', (done) => {
+
+            const schema = Joi.string().truncate().truncate(false);
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'string',
+                invalids: [''],
+                flags: { truncate: false }
+            });
+            done();
+        });
+
+        it('does not change anything when used without max', (done) => {
+
+            const schema = Joi.string().min(2).truncate();
+            schema.validate('fooooooooooooooooooo', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('fooooooooooooooooooo');
+                done();
+            });
+        });
+
+        it('truncates a string when used with max', (done) => {
+
+            const schema = Joi.string().max(5).truncate();
+
+            Helper.validate(schema, [
+                ['abc', true, null, 'abc'],
+                ['abcde', true, null, 'abcde'],
+                ['abcdef', true, null, 'abcde']
+            ], done);
+        });
+
+        it('truncates a string after transformations', (done) => {
+
+            const schema = Joi.string().max(5).truncate().trim().replace(/a/g, 'aa');
+
+            Helper.validate(schema, [
+                ['abc', true, null, 'aabc'],
+                ['abcde', true, null, 'aabcd'],
+                ['abcdef', true, null, 'aabcd'],
+                ['  abcdef  ', true, null, 'aabcd']
+            ], done);
+        });
+    });
+
     describe('validate()', () => {
 
         it('should, by default, allow undefined, deny empty string', (done) => {
