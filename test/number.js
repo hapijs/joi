@@ -820,16 +820,17 @@ describe('number', () => {
 
             const rule = Joi.number().multiple(0.723);
             Helper.validate(rule, [
-                [0, true], // 0 is a multiple of every integer
+                [0, true],
                 [0.723, true],
                 [2.169, true],
-                [14.46, true],
+                [1.446e1, true],
+                [1.4463e-20, false],
                 [72.3, true],
-                [1446, true]
+                [1446, true],
                 [0.75, false],
                 [3.514, false],
                 [72.6, false],
-                [1215, false]
+                [1215, false],
                 [4, false],
                 ['a', false],
                 [true, false]
@@ -860,16 +861,15 @@ describe('number', () => {
             ], done);
         });
 
-        it('should handle references correctly', (done) => {
+        it('should handle number references correctly', (done) => {
 
             const schema = Joi.object({ a: Joi.number(), b: Joi.number().multiple(Joi.ref('a')) });
-
             Helper.validate(schema, [
                 [{ a: 2, b: 32 }, true],
                 [{ a: 4, b: 25 }, false],
                 [{ a: 2, b: 42.916 }, false],
                 [{ a: 43, b: 0 }, true],
-                [{ a: 31, b: 'abc'}, false],
+                [{ a: 31, b: 'abc' }, false],
                 [{ a: 82, b: false }, false],
                 [{ a: 0.6, b: 4.2 }, true],
                 [{ a: 1.2, b: 3.9 }, false],
@@ -881,7 +881,19 @@ describe('number', () => {
                 [{ a: 0, b: 31 }, false],
                 [{ a: 0.00, b: 22.63 }, false],
                 [{ a: 0, b: 0 }, false],
-                [{ a: 0.00, b: 0 }, false]
+                [{ a: 0.00, b: 0 }, false],
+                [{ a: 'abc', b: 21 }, false]
+            ], done);
+        });
+
+        it('should handle non-number references correctly', (done) => {
+
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().multiple(Joi.ref('a')) });
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 32 }, false],
+                [{ a: 'abc', b: 42.916 }, false],
+                [{ a: 'abc', b: 'xyz' }, false],
+                [{ a: 'abc', b: 0 }, false]
             ], done);
         });
     });
