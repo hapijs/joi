@@ -23,16 +23,14 @@
   "devDependencies": {
     "code": "3.x.x",
     "lab": "10.x.x",
-    "markdown-toc": "0.12.x",
-    "npmignore": "0.2.x"
+    "markdown-toc": "0.12.x"
   },
   "scripts": {
     "test": "lab -t 100 -a code -L",
     "test-debug": "node $NODE_DEBUG_OPTION ./node_modules/.bin/lab -a code",
     "test-cov-html": "lab -r html -o coverage.html -a code",
     "toc": "node generate-readme-toc.js",
-    "update-npmignore": "npmignore",
-    "version": "npm run toc && npm run update-npmignore && git add API.md README.md .npmignore"
+    "version": "npm run toc && git add API.md README.md"
   },
   "license": "BSD-3-Clause"
 }
