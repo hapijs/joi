@@ -1880,6 +1880,15 @@ describe('Joi', () => {
                 done();
             });
 
+            it('must have valid coerce function', (done) => {
+
+                expect(() => Joi.extend({ name: 'a', coerce: true })).to.throw(/"coerce" must be a Function/);
+                expect(() => Joi.extend({ name: 'a', coerce() {} })).to.throw(/"coerce" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', coerce(a, b) {} })).to.throw(/"coerce" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', coerce(a, b, c, d) {} })).to.throw(/"coerce" must have an arity of 3/);
+                done();
+            });
+
             it('must have valid pre function', (done) => {
 
                 expect(() => Joi.extend({ name: 'a', pre: true })).to.throw(/"pre" must be a Function/);
@@ -2279,6 +2288,25 @@ describe('Joi', () => {
             done();
         });
 
+        it('defines a custom type coercing its input value', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string(),
+                coerce(value, state, options) {
+
+                    return 'foobar';
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate(true);
+            expect(result.error).to.be.null();
+            expect(result.value).to.equal('foobar');
+
+            done();
+        });
+
         it('defines a custom type casting its input value', (done) => {
 
             const customJoi = Joi.extend({
@@ -2299,6 +2327,48 @@ describe('Joi', () => {
             done();
         });
 
+
+        it('defines a custom type coercing and casting its input value', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.bool(),
+                coerce(value, state, options) {
+
+                    return true;
+                },
+                pre(value, state, options) {
+
+                    return value.toString();
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.be.null();
+            expect(result.value).to.equal('true');
+
+            done();
+        });
+
+        it('defines a custom type with a failing coerce', (done) => {
+
+            const customJoi = Joi.extend({
+                coerce(value, state, options) {
+
+                    return this.createError('any.invalid', null, state, options);
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.exist();
+            expect(result.error.toString()).to.equal('ValidationError: "value" contains an invalid value');
+
+            done();
+        });
+
         it('defines a custom type with a failing pre', (done) => {
 
             const customJoi = Joi.extend({
@@ -2313,6 +2383,24 @@ describe('Joi', () => {
             const result = schema.validate('foo');
             expect(result.error).to.exist();
             expect(result.error.toString()).to.equal('ValidationError: "value" contains an invalid value');
+
+            done();
+        });
+
+        it('defines a custom type with a non-modifying coerce', (done) => {
+
+            const customJoi = Joi.extend({
+                coerce(value, state, options) {
+
+                    return null;
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('foo');
+            expect(result.error).to.not.exist();
+            expect(result.value).to.equal('foo');
 
             done();
         });
