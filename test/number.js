@@ -801,7 +801,7 @@ describe('number', () => {
 
     describe('multiple()', () => {
 
-        it('should handle integer multiple correctly', (done) => {
+        it('should handle integer multiples correctly', (done) => {
 
             const rule = Joi.number().multiple(3);
             Helper.validate(rule, [
@@ -810,13 +810,12 @@ describe('number', () => {
                 [4, false],
                 [9, true],
                 ['a', false],
-                [true, false],
                 [9.1, false],
                 [8.9, false]
             ], done);
         });
 
-        it('should handle float multiple correctly', (done) => {
+        it('should handle float multiples correctly', (done) => {
 
             const rule = Joi.number().multiple(0.723);
             Helper.validate(rule, [
