@@ -220,7 +220,7 @@ describe('errors', () => {
 
     it('allows html escaping', (done) => {
 
-        Joi.string().options({ language: { root: 'blah', label: 'bleh' } }).validate(4, (err, value) => {
+        Joi.string().options({ language: { root: 'blah' } }).label('bleh').validate(4, (err, value) => {
 
             expect(err.message).to.equal('"bleh" must be a string');
             done();
@@ -298,24 +298,6 @@ describe('errors', () => {
         });
     });
 
-    it('returns custom error (validate options)', (done) => {
-
-        const schema = Joi.object({
-            a: Joi.string(),
-            b: {
-                c: Joi.number()
-            }
-        });
-
-        Joi.validate({ a: 'abc', b: { c: 'x' } }, schema, { error: new Error('Really wanted a number!') }, (err) => {
-
-            expect(err).to.exist();
-            expect(err.isJoi).to.not.exist();
-            expect(err.message).to.equal('Really wanted a number!');
-            done();
-        });
-    });
-
     it('returns first custom error with multiple errors', (done) => {
 
         const schema = Joi.object({
@@ -347,24 +329,6 @@ describe('errors', () => {
 
             expect(err).to.exist();
             expect(err.isJoi).to.be.true();
-            done();
-        });
-    });
-
-    it('returns custom error (options)', (done) => {
-
-        const schema = Joi.object({
-            a: Joi.string(),
-            b: {
-                c: Joi.number().options({ error: new Error('Really wanted a number!') })
-            }
-        });
-
-        Joi.validate({ a: 'abc', b: { c: 'x' } }, schema, (err) => {
-
-            expect(err).to.exist();
-            expect(err.isJoi).to.not.exist();
-            expect(err.message).to.equal('Really wanted a number!');
             done();
         });
     });
