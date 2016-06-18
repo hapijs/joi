@@ -135,7 +135,7 @@ describe('func', () => {
         b.a = 123;
 
         Helper.validate(Joi.func().keys({ a: Joi.string().required() }).required(), [
-            [function () { }, false],
+            [function () { }, false, null, 'child "a" fails because ["a" is required]'],
             [a, true],
             [b, false, null, 'child "a" fails because ["a" must be a string]'],
             ['', false, null, '"value" must be a Function']

@@ -127,11 +127,11 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 'x', b: 5 }, true],
-                [{ a: 'x', b: 6 }, false],
-                [{ a: 'y', b: 5 }, false],
+                [{ a: 'x', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]'],
+                [{ a: 'y', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
                 [{ a: 'y', b: 6 }, true],
-                [{ a: 'z', b: 5 }, false],
-                [{ a: 'z', b: 6 }, false]
+                [{ a: 'z', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
+                [{ a: 'z', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]']
             ], done);
         });
 
@@ -145,11 +145,11 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 'x', '': 5 }, true],
-                [{ a: 'x', '': 6 }, false],
-                [{ a: 'y', '': 5 }, false],
+                [{ a: 'x', '': 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]'],
+                [{ a: 'y', '': 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
                 [{ a: 'y', '': 6 }, true],
-                [{ a: 'z', '': 5 }, false],
-                [{ a: 'z', '': 6 }, false]
+                [{ a: 'z', '': 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
+                [{ a: 'z', '': 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]']
             ], done);
         });
 
@@ -163,10 +163,10 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 'x', b: 5 }, true],
-                [{ a: 'x', b: 6 }, false],
-                [{ a: 'y', b: 5 }, false],
-                [{ a: 'y', b: 6 }, false],
-                [{ a: 'z', b: 5 }, false],
+                [{ a: 'x', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [z]]'],
+                [{ a: 'y', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
+                [{ a: 'y', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [z]]'],
+                [{ a: 'z', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
                 [{ a: 'z', b: 6 }, true]
             ], done);
         });
@@ -180,12 +180,12 @@ describe('alternatives', () => {
             };
 
             Helper.validate(schema, [
-                [{ a: 'x', b: 5 }, false],
-                [{ a: 'x', b: 6 }, false],
-                [{ a: 'y', b: 5 }, false],
+                [{ a: 'x', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [z]]'],
+                [{ a: 'x', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]'],
+                [{ a: 'y', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [z]]'],
                 [{ a: 'y', b: 6 }, true],
                 [{ a: 'z', b: 5 }, true],
-                [{ a: 'z', b: 6 }, false]
+                [{ a: 'z', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]']
             ], done);
         });
 
@@ -198,10 +198,10 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 1 }, true],
-                [{ a: 'y' }, false],
+                [{ a: 'y' }, false, null, 'child "a" fails because ["a" must be a number]'],
                 [{ a: 'x', b: null }, true],
-                [{ a: 'y', b: null }, false],
-                [{ a: 1, b: null }, false]
+                [{ a: 'y', b: null }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
+                [{ a: 1, b: null }, false, null, 'child "a" fails because ["a" must be a string]']
             ], done);
         });
 
@@ -215,10 +215,10 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 'x', b: 5, c: '5' }, true],
-                [{ a: 'x', b: 5, c: '1' }, false],
-                [{ a: 'x', b: '5', c: '5' }, false],
-                [{ a: 'y', b: 5, c: 5 }, false],
-                [{ a: 'y' }, false]
+                [{ a: 'x', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" not matching any of the allowed alternatives]'],
+                [{ a: 'x', b: '5', c: '5' }, false, null, 'child "a" fails because ["a" not matching any of the allowed alternatives]'],
+                [{ a: 'y', b: 5, c: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
+                [{ a: 'y' }, false, null, 'child "a" fails because ["a" must be one of [x]]']
             ], done);
         });
 
@@ -231,9 +231,9 @@ describe('alternatives', () => {
             };
 
             Helper.validate(schema, [
-                [{ a: 'x', b: 5, c: '1' }, false],
+                [{ a: 'x', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" must be one of [ref:c]]'],
                 [{ a: 1, b: 5, c: '1' }, true],
-                [{ a: '1', b: 5, c: '1' }, false]
+                [{ a: '1', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" must be one of [ref:c]]']
             ], done);
         });
 
@@ -246,9 +246,9 @@ describe('alternatives', () => {
             };
 
             Helper.validate(schema, [
-                [{ a: 'x', b: 5, c: '1' }, false],
+                [{ a: 'x', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" must be one of [ref:c]]'],
                 [{ a: 1, b: 5, c: '1' }, true],
-                [{ a: '1', b: 5, c: '1' }, false]
+                [{ a: '1', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" must be one of [ref:c]]']
             ], done);
         });
 
@@ -274,11 +274,11 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 1 }, true],
-                [{}, false],
-                [{ b: 1 }, false],
+                [{}, false, null, 'child "a" fails because ["a" is required]'],
+                [{ b: 1 }, false, null, 'child "a" fails because ["a" is required]'],
                 [{ a: 1, b: 1 }, true],
                 [{ a: 1, b: 5 }, true],
-                [{ b: 5 }, false]
+                [{ b: 5 }, false, null, 'child "a" fails because ["a" is required]']
             ], done);
         });
     });

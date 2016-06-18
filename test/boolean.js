@@ -49,10 +49,10 @@ describe('boolean', () => {
 
             const rule = Joi.boolean();
             Helper.validate(rule, [
-                ['1234', false],
+                ['1234', false, null, '"value" must be a boolean'],
                 [false, true],
                 [true, true],
-                [null, false],
+                [null, false, null, '"value" must be a boolean'],
                 ['on', true],
                 ['off', true],
                 ['true', true],
@@ -68,7 +68,7 @@ describe('boolean', () => {
 
             const rule = Joi.boolean();
             Helper.validate(rule, [
-                [1234, false],
+                [1234, false, null, '"value" must be a boolean'],
                 [1, true],
                 [0, true]
             ], done);
@@ -98,11 +98,11 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().required();
             Helper.validate(rule, [
-                ['1234', false],
+                ['1234', false, null, '"value" must be a boolean'],
                 ['true', true],
                 [false, true],
                 [true, true],
-                [null, false]
+                [null, false, null, '"value" must be a boolean']
             ], done);
         });
 
@@ -110,9 +110,9 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().allow(false);
             Helper.validate(rule, [
-                ['1234', false],
+                ['1234', false, null, '"value" must be a boolean'],
                 [false, true],
-                [null, false]
+                [null, false, null, '"value" must be a boolean']
             ], done);
         });
 
@@ -120,10 +120,10 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().invalid(false);
             Helper.validate(rule, [
-                ['1234', false],
-                [false, false],
+                ['1234', false, null, '"value" must be a boolean'],
+                [false, false, null, '"value" contains an invalid value'],
                 [true, true],
-                [null, false]
+                [null, false, null, '"value" must be a boolean']
             ], done);
         });
 
@@ -131,8 +131,8 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().invalid(false).allow(null);
             Helper.validate(rule, [
-                ['1234', false],
-                [false, false],
+                ['1234', false, null, '"value" must be a boolean'],
+                [false, false, null, '"value" contains an invalid value'],
                 [true, true],
                 [null, true]
             ], done);
@@ -142,10 +142,10 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().invalid(true).allow(false);
             Helper.validate(rule, [
-                ['1234', false],
+                ['1234', false, null, '"value" must be a boolean'],
                 [false, true],
-                [true, false],
-                [null, false]
+                [true, false, null, '"value" contains an invalid value'],
+                [null, false, null, '"value" must be a boolean']
             ], done);
         });
 
@@ -153,9 +153,9 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().invalid(true).allow(false).allow(null);
             Helper.validate(rule, [
-                ['1234', false],
+                ['1234', false, null, '"value" must be a boolean'],
                 [false, true],
-                [true, false],
+                [true, false, null, '"value" contains an invalid value'],
                 [null, true]
             ], done);
         });

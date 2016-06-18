@@ -27,8 +27,8 @@ describe('number', () => {
 
         const schema = Joi.number();
         Helper.validate(schema, [
-            [true, false],
-            [false, false]
+            [true, false, null, '"value" must be a number'],
+            [false, false, null, '"value" must be a number']
         ], done);
     });
 
@@ -44,7 +44,7 @@ describe('number', () => {
         it('should, when .required(), deny undefined', (done) => {
 
             Helper.validate(Joi.number().required(), [
-                [undefined, false]
+                [undefined, false, null, '"value" is required']
             ], done);
         });
 
@@ -64,9 +64,9 @@ describe('number', () => {
             Helper.validate(t, [
                 [100, true],
                 [0, true],
-                [null, false],
-                [1.02, false],
-                [0.01, false]
+                [null, false, null, '"value" must be a number'],
+                [1.02, false, null, '"value" must be an integer'],
+                [0.01, false, null, '"value" must be an integer']
             ], done);
         });
 
@@ -74,8 +74,8 @@ describe('number', () => {
 
             const t = Joi.number();
             Helper.validate(t, [
-                [Infinity, false],
-                [-Infinity, false]
+                [Infinity, false, null, '"value" contains an invalid value'],
+                [-Infinity, false, null, '"value" contains an invalid value']
             ], done);
         });
 
@@ -95,13 +95,13 @@ describe('number', () => {
                 ['1', true],
                 ['100', true],
                 ['1e3', true],
-                ['1 some text', false],
-                ['\t\r', false],
-                [' ', false],
+                ['1 some text', false, null, '"value" must be a number'],
+                ['\t\r', false, null, '"value" must be a number'],
+                [' ', false, null, '"value" must be a number'],
                 [' 2', true],
                 ['\t\r43', true],
                 ['43 ', true],
-                ['', false]
+                ['', false, null, '"value" must be a number']
             ], done);
         });
 
@@ -109,7 +109,7 @@ describe('number', () => {
 
             const t = Joi.number().required();
             Helper.validate(t, [
-                [NaN, false],
+                [NaN, false, null, '"value" must be a number'],
                 ['100', true]
             ], done);
         });
@@ -151,11 +151,11 @@ describe('number', () => {
 
             const rule = Joi.number().min(8).max(10);
             Helper.validate(rule, [
-                [1, false],
-                [11, false],
+                [1, false, null, '"value" must be larger than or equal to 8'],
+                [11, false, null, '"value" must be less than or equal to 10'],
                 [8, true],
                 [9, true],
-                [null, false]
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -163,8 +163,8 @@ describe('number', () => {
 
             const rule = Joi.number().min(8).max(10).allow(null);
             Helper.validate(rule, [
-                [1, false],
-                [11, false],
+                [1, false, null, '"value" must be larger than or equal to 8'],
+                [11, false, null, '"value" must be less than or equal to 10'],
                 [8, true],
                 [9, true],
                 [null, true]
@@ -176,9 +176,9 @@ describe('number', () => {
             const rule = Joi.number().min(-3).positive();
             Helper.validate(rule, [
                 [1, true],
-                [-2, false],
+                [-2, false, null, '"value" must be a positive number'],
                 [8, true],
-                [null, false]
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -187,9 +187,9 @@ describe('number', () => {
             const rule = Joi.number().max(5).positive();
             Helper.validate(rule, [
                 [4, true],
-                [-2, false],
-                [8, false],
-                [null, false]
+                [-2, false, null, '"value" must be a positive number'],
+                [8, false, null, '"value" must be less than or equal to 5'],
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -197,10 +197,10 @@ describe('number', () => {
 
             const rule = Joi.number().min(-3).negative();
             Helper.validate(rule, [
-                [4, false],
+                [4, false, null, '"value" must be a negative number'],
                 [-2, true],
-                [-4, false],
-                [null, false]
+                [-4, false, null, '"value" must be larger than or equal to -3'],
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -208,10 +208,10 @@ describe('number', () => {
 
             const rule = Joi.number().negative().positive();
             Helper.validate(rule, [
-                [4, false],
-                [-2, false],
-                [0, false],
-                [null, false]
+                [4, false, null, '"value" must be a negative number'],
+                [-2, false, null, '"value" must be a positive number'],
+                [0, false, null, '"value" must be a negative number'],
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -221,9 +221,9 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, true],
                 [-10, true],
-                [8, false],
-                [0, false],
-                [null, false]
+                [8, false, null, '"value" must be a negative number'],
+                [0, false, null, '"value" must be a negative number'],
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -234,8 +234,8 @@ describe('number', () => {
                 [1, true],
                 [-1, true],
                 [8, true],
-                [-10, false],
-                [null, false]
+                [-10, false, null, '"value" must be a positive number'],
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -246,7 +246,7 @@ describe('number', () => {
                 [1, true],
                 [-1, true],
                 [8, true],
-                [-10, false],
+                [-10, false, null, '"value" must be a positive number'],
                 [null, true]
             ], done);
         });
@@ -257,8 +257,8 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, true],
                 [-10, true],
-                [8, false],
-                [0, false],
+                [8, false, null, '"value" must be a negative number'],
+                [0, false, null, '"value" must be a negative number'],
                 [null, true]
             ], done);
         });
@@ -267,10 +267,10 @@ describe('number', () => {
 
             const rule = Joi.number().positive().allow(-1).allow(null).invalid(1);
             Helper.validate(rule, [
-                [1, false],
+                [1, false, null, '"value" contains an invalid value'],
                 [-1, true],
                 [8, true],
-                [-10, false],
+                [-10, false, null, '"value" must be a positive number'],
                 [null, true]
             ], done);
         });
@@ -281,9 +281,9 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, true],
                 [-10, true],
-                [-5, false],
-                [8, false],
-                [0, false],
+                [-5, false, null, '"value" contains an invalid value'],
+                [8, false, null, '"value" must be a negative number'],
+                [0, false, null, '"value" must be a negative number'],
                 [null, true]
             ], done);
         });
@@ -293,10 +293,10 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).allow(1);
             Helper.validate(rule, [
                 [1, true],
-                [11, false],
+                [11, false, null, '"value" must be less than or equal to 10'],
                 [8, true],
                 [9, true],
-                [null, false]
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -305,7 +305,7 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).allow(1).allow(null);
             Helper.validate(rule, [
                 [1, true],
-                [11, false],
+                [11, false, null, '"value" must be less than or equal to 10'],
                 [8, true],
                 [9, true],
                 [null, true]
@@ -317,10 +317,10 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).allow(1).invalid(9);
             Helper.validate(rule, [
                 [1, true],
-                [11, false],
+                [11, false, null, '"value" must be less than or equal to 10'],
                 [8, true],
-                [9, false],
-                [null, false]
+                [9, false, null, '"value" contains an invalid value'],
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -329,9 +329,9 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).allow(1).invalid(9).allow(null);
             Helper.validate(rule, [
                 [1, true],
-                [11, false],
+                [11, false, null, '"value" must be less than or equal to 10'],
                 [8, true],
-                [9, false],
+                [9, false, null, '"value" contains an invalid value'],
                 [null, true]
             ], done);
         });
@@ -340,12 +340,12 @@ describe('number', () => {
 
             const rule = Joi.number().min(8).max(10).integer();
             Helper.validate(rule, [
-                [1, false],
-                [11, false],
+                [1, false, null, '"value" must be larger than or equal to 8'],
+                [11, false, null, '"value" must be less than or equal to 10'],
                 [8, true],
                 [9, true],
-                [9.1, false],
-                [null, false]
+                [9.1, false, null, '"value" must be an integer'],
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -353,13 +353,13 @@ describe('number', () => {
 
             const rule = Joi.number().min(8).max(10).integer().allow(9.1);
             Helper.validate(rule, [
-                [1, false],
-                [11, false],
+                [1, false, null, '"value" must be larger than or equal to 8'],
+                [11, false, null, '"value" must be less than or equal to 10'],
                 [8, true],
                 [9, true],
                 [9.1, true],
-                [9.2, false],
-                [null, false]
+                [9.2, false, null, '"value" must be an integer'],
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -367,13 +367,13 @@ describe('number', () => {
 
             const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8);
             Helper.validate(rule, [
-                [1, false],
-                [11, false],
-                [8, false],
+                [1, false, null, '"value" must be larger than or equal to 8'],
+                [11, false, null, '"value" must be less than or equal to 10'],
+                [8, false, null, '"value" contains an invalid value'],
                 [9, true],
                 [9.1, true],
-                [9.2, false],
-                [null, false]
+                [9.2, false, null, '"value" must be an integer'],
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -381,12 +381,12 @@ describe('number', () => {
 
             const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null);
             Helper.validate(rule, [
-                [1, false],
-                [11, false],
-                [8, false],
+                [1, false, null, '"value" must be larger than or equal to 8'],
+                [11, false, null, '"value" must be less than or equal to 10'],
+                [8, false, null, '"value" contains an invalid value'],
                 [9, true],
                 [9.1, true],
-                [9.2, false],
+                [9.2, false, null, '"value" must be an integer'],
                 [null, true]
             ], done);
         });
@@ -397,12 +397,12 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, true],
                 [9.1, true],
-                [9.21, false],
-                [9.9999, false],
+                [9.21, false, null, '"value" must have no more than 1 decimal places'],
+                [9.9999, false, null, '"value" must have no more than 1 decimal places'],
                 [9.999e99, true],
-                [9.9e-99, false],
+                [9.9e-99, false, null, '"value" must have no more than 1 decimal places'],
                 [9.9e3, true],
-                [null, false]
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -410,14 +410,14 @@ describe('number', () => {
 
             const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1).options({ convert: false });
             Helper.validate(rule, [
-                [1, false],
-                [11, false],
-                [8, false],
+                [1, false, null, '"value" must be larger than or equal to 8'],
+                [11, false, null, '"value" must be less than or equal to 10'],
+                [8, false, null, '"value" contains an invalid value'],
                 [9, true],
                 [9.1, true],
-                [9.11, false],
-                [9.2, false],
-                [9.22, false],
+                [9.11, false, null, '"value" must be an integer'],
+                [9.2, false, null, '"value" must be an integer'],
+                [9.22, false, null, '"value" must be an integer'],
                 [null, true]
             ], done);
         });
@@ -426,14 +426,14 @@ describe('number', () => {
 
             const rule = Joi.number().greater(5).less(10);
             Helper.validate(rule, [
-                [0, false],
-                [11, false],
-                [5, false],
-                [10, false],
+                [0, false, null, '"value" must be greater than 5'],
+                [11, false, null, '"value" must be less than 10'],
+                [5, false, null, '"value" must be greater than 5'],
+                [10, false, null, '"value" must be less than 10'],
                 [8, true],
                 [5.01, true],
                 [9.99, true],
-                [null, false]
+                [null, false, null, '"value" must be a number']
             ], done);
         });
 
@@ -441,14 +441,14 @@ describe('number', () => {
 
             const rule = Joi.number().integer().greater(5).less(10);
             Helper.validate(rule, [
-                [0, false],
-                [11, false],
-                [5, false],
-                [10, false],
+                [0, false, null, '"value" must be greater than 5'],
+                [11, false, null, '"value" must be less than 10'],
+                [5, false, null, '"value" must be greater than 5'],
+                [10, false, null, '"value" must be less than 10'],
                 [6, true],
                 [9, true],
-                [5.01, false],
-                [9.99, false]
+                [5.01, false, null, '"value" must be an integer'],
+                [9.99, false, null, '"value" must be an integer']
             ], done);
         });
 
@@ -456,10 +456,10 @@ describe('number', () => {
 
             const rule = Joi.number().greater(5).less(10).allow(null);
             Helper.validate(rule, [
-                [0, false],
-                [11, false],
-                [5, false],
-                [10, false],
+                [0, false, null, '"value" must be greater than 5'],
+                [11, false, null, '"value" must be less than 10'],
+                [5, false, null, '"value" must be greater than 5'],
+                [10, false, null, '"value" must be less than 10'],
                 [8, true],
                 [5.01, true],
                 [9.99, true],
@@ -471,16 +471,16 @@ describe('number', () => {
 
             const rule = Joi.number().greater(5).less(10).invalid(6).allow(-3);
             Helper.validate(rule, [
-                [0, false],
-                [11, false],
-                [5, false],
-                [10, false],
-                [6, false],
+                [0, false, null, '"value" must be greater than 5'],
+                [11, false, null, '"value" must be less than 10'],
+                [5, false, null, '"value" must be greater than 5'],
+                [10, false, null, '"value" must be less than 10'],
+                [6, false, null, '"value" contains an invalid value'],
                 [8, true],
                 [5.01, true],
                 [9.99, true],
                 [-3, true],
-                [null, false]
+                [null, false, null, '"value" must be a number']
             ], done);
         });
     });
@@ -544,11 +544,11 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 42, b: 1337 }, true],
-                [{ a: 1337, b: 42 }, false],
+                [{ a: 1337, b: 42 }, false, null, 'child "b" fails because ["b" must be larger than or equal to 1337]'],
                 [{ a: '1337', b: 42 }, false, null, 'child "b" fails because ["b" must be larger than or equal to 1337]'],
                 [{ a: 2.4, b: 4.2 }, true],
                 [{ a: 4.2, b: 4.20000001 }, true],
-                [{ a: 4.20000001, b: 4.2 }, false],
+                [{ a: 4.20000001, b: 4.2 }, false, null, 'child "b" fails because ["b" must be larger than or equal to 4.20000001]'],
                 [{ a: 4.2, b: 2.4 }, false, null, 'child "b" fails because ["b" must be larger than or equal to 4.2]']
             ], done);
         });
@@ -559,10 +559,10 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 1337 }, true, { context: { a: 42 } }],
-                [{ b: 42 }, false, { context: { a: 1337 } }],
+                [{ b: 42 }, false, { context: { a: 1337 } }, 'child "b" fails because ["b" must be larger than or equal to 1337]'],
                 [{ b: 4.2 }, true, { context: { a: 2.4 } }],
                 [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
-                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }],
+                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, 'child "b" fails because ["b" must be larger than or equal to 4.20000001]'],
                 [{ b: 2.4 }, false, { context: { a: 4.2 } }, 'child "b" fails because ["b" must be larger than or equal to 4.2]']
             ], done);
         });
@@ -603,10 +603,10 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 1337, b: 42 }, true],
-                [{ a: 42, b: 1337 }, false],
+                [{ a: 42, b: 1337 }, false, null, 'child "b" fails because ["b" must be less than or equal to 42]'],
                 [{ a: '42', b: 1337 }, false, null, 'child "b" fails because ["b" must be less than or equal to 42]'],
                 [{ a: 4.2, b: 2.4 }, true],
-                [{ a: 4.2, b: 4.20000001 }, false],
+                [{ a: 4.2, b: 4.20000001 }, false, null, 'child "b" fails because ["b" must be less than or equal to 4.2]'],
                 [{ a: 4.20000001, b: 4.2 }, true],
                 [{ a: 2.4, b: 4.2 }, false, null, 'child "b" fails because ["b" must be less than or equal to 2.4]']
             ], done);
@@ -618,9 +618,9 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, true, { context: { a: 1337 } }],
-                [{ b: 1337 }, false, { context: { a: 42 } }],
+                [{ b: 1337 }, false, { context: { a: 42 } }, 'child "b" fails because ["b" must be less than or equal to 42]'],
                 [{ b: 2.4 }, true, { context: { a: 4.2 } }],
-                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }],
+                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, 'child "b" fails because ["b" must be less than or equal to 4.2]'],
                 [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
                 [{ b: 4.2 }, false, { context: { a: 2.4 } }, 'child "b" fails because ["b" must be less than or equal to 2.4]']
             ], done);
@@ -662,10 +662,10 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 1337, b: 42 }, true],
-                [{ a: 42, b: 1337 }, false],
+                [{ a: 42, b: 1337 }, false, null, 'child "b" fails because ["b" must be less than 42]'],
                 [{ a: '42', b: 1337 }, false, null, 'child "b" fails because ["b" must be less than 42]'],
                 [{ a: 4.2, b: 2.4 }, true],
-                [{ a: 4.2, b: 4.20000001 }, false],
+                [{ a: 4.2, b: 4.20000001 }, false, null, 'child "b" fails because ["b" must be less than 4.2]'],
                 [{ a: 4.20000001, b: 4.2 }, true],
                 [{ a: 2.4, b: 4.2 }, false, null, 'child "b" fails because ["b" must be less than 2.4]']
             ], done);
@@ -677,9 +677,9 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, true, { context: { a: 1337 } }],
-                [{ b: 1337 }, false, { context: { a: 42 } }],
+                [{ b: 1337 }, false, { context: { a: 42 } }, 'child "b" fails because ["b" must be less than 42]'],
                 [{ b: 2.4 }, true, { context: { a: 4.2 } }],
-                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }],
+                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, 'child "b" fails because ["b" must be less than 4.2]'],
                 [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
                 [{ b: 4.2 }, false, { context: { a: 2.4 } }, 'child "b" fails because ["b" must be less than 2.4]']
             ], done);
@@ -721,11 +721,11 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 42, b: 1337 }, true],
-                [{ a: 1337, b: 42 }, false],
+                [{ a: 1337, b: 42 }, false, null, 'child "b" fails because ["b" must be greater than 1337]'],
                 [{ a: '1337', b: 42 }, false, null, 'child "b" fails because ["b" must be greater than 1337]'],
                 [{ a: 2.4, b: 4.2 }, true],
                 [{ a: 4.2, b: 4.20000001 }, true],
-                [{ a: 4.20000001, b: 4.2 }, false],
+                [{ a: 4.20000001, b: 4.2 }, false, null, 'child "b" fails because ["b" must be greater than 4.20000001]'],
                 [{ a: 4.2, b: 2.4 }, false, null, 'child "b" fails because ["b" must be greater than 4.2]']
             ], done);
         });
@@ -736,10 +736,10 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 1337 }, true, { context: { a: 42 } }],
-                [{ b: 42 }, false, { context: { a: 1337 } }],
+                [{ b: 42 }, false, { context: { a: 1337 } }, 'child "b" fails because ["b" must be greater than 1337]'],
                 [{ b: 4.2 }, true, { context: { a: 2.4 } }],
                 [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
-                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }],
+                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, 'child "b" fails because ["b" must be greater than 4.20000001]'],
                 [{ b: 2.4 }, false, { context: { a: 4.2 } }, 'child "b" fails because ["b" must be greater than 4.2]']
             ], done);
         });
@@ -774,8 +774,8 @@ describe('number', () => {
                 [123456, true, null, 123456],
                 [123456.123456, true, null, 123456.1235],
                 ['123456.123456', true, null, 123456.1235],
-                ['abc', false],
-                [NaN, false]
+                ['abc', false, null, '"value" must be a number'],
+                [NaN, false, null, '"value" must be a number']
             ], done);
         });
     });
@@ -825,11 +825,11 @@ describe('number', () => {
             Helper.validate(rule, [
                 [0, true], // 0 is a multiple of every integer
                 [3, true],
-                [4, false],
+                [4, false, null, '"value" must be a multiple of 3'],
                 [9, true],
-                ['a', false],
-                [9.1, false],
-                [8.9, false]
+                ['a', false, null, '"value" must be a number'],
+                [9.1, false, null, '"value" must be a multiple of 3'],
+                [8.9, false, null, '"value" must be a multiple of 3']
             ], done);
         });
     });
