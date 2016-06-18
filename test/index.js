@@ -2070,6 +2070,30 @@ describe('Joi', () => {
             done();
         });
 
+        it('new rules should have the correct this', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                language: {
+                    bar: 'oh no bar !'
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('myType.bar', { v: value }, state, options);
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType().foo().label('baz');
+            expect(schema.validate({}).error).to.be.an.error('"baz" oh no bar !');
+
+            done();
+        });
+
         it('defines a custom type with a rule with setup', (done) => {
 
             const customJoi = Joi.extend({
