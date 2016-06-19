@@ -852,7 +852,6 @@ describe('number', () => {
 
         it('should handle number references correctly', (done) => {
 
-<<<<<<< HEAD
             const schema = Joi.object({ a: Joi.number(), b: Joi.number().multiple(Joi.ref('a')) });
             Helper.validate(schema, [
                 [{ a: 2, b: 32 }, true],
@@ -901,17 +900,6 @@ describe('number', () => {
                 [{ b: 32 }, false, { context: { a: 'test' } }, 'child "b" fails because ["b" references "a" which is not a number]'],
                 [{ b: 42.916 }, false, { context: { a: 'test' } }, 'child "b" fails because ["b" references "a" which is not a number]'],
                 [{ b: 0 }, false, { context: { a: 'test' } }, 'child "b" fails because ["b" references "a" which is not a number]']
-=======
-            const rule = Joi.number().multiple(3);
-            Helper.validate(rule, [
-                [0, true], // 0 is a multiple of every integer
-                [3, true],
-                [4, false, null, '"value" must be a multiple of 3'],
-                [9, true],
-                ['a', false, null, '"value" must be a number'],
-                [9.1, false, null, '"value" must be a multiple of 3'],
-                [8.9, false, null, '"value" must be a multiple of 3']
->>>>>>> hapijs/master
             ], done);
         });
     });
