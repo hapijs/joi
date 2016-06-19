@@ -27,8 +27,8 @@ describe('date', () => {
 
         const schema = Joi.date();
         Helper.validate(schema, [
-            [true, false],
-            [false, false]
+            [true, false, null, '"value" must be a number of milliseconds or valid date string'],
+            [false, false, null, '"value" must be a number of milliseconds or valid date string']
         ], done);
     });
 
@@ -93,10 +93,10 @@ describe('date', () => {
                 Helper.validate(Joi.date().min('1-1-2000 UTC'), [
                     ['1-1-2001 UTC', true],
                     ['1-1-2000 UTC', true],
-                    [0, false],
-                    ['0', false],
-                    ['-1', false],
-                    ['1-1-1999 UTC', false]
+                    [0, false, null, /^"value" must be larger than or equal to ".+"$/],
+                    ['0', false, null, /^"value" must be larger than or equal to ".+"$/],
+                    ['-1', false, null, /^"value" must be larger than or equal to ".+"$/],
+                    ['1-1-1999 UTC', false, null, /^"value" must be larger than or equal to ".+"$/]
                 ], done);
             });
 
@@ -131,7 +131,7 @@ describe('date', () => {
                 Helper.validate(schema, [
                     [{ a: now, b: now }, true],
                     [{ a: now, b: now + 1e3 }, true],
-                    [{ a: now, b: now - 1e3 }, false]
+                    [{ a: now, b: now - 1e3 }, false, null, /^child "b" fails because \["b" must be larger than or equal to ".+"\]$/]
                 ], done);
             });
 
@@ -143,7 +143,7 @@ describe('date', () => {
                 Helper.validate(schema, [
                     [{ b: now }, true, { context: { a: now } }],
                     [{ b: now + 1e3 }, true, { context: { a: now } }],
-                    [{ b: now - 1e3 }, false, { context: { a: now } }]
+                    [{ b: now - 1e3 }, false, { context: { a: now } }, /^child "b" fails because \["b" must be larger than or equal to ".+"\]$/]
                 ], done);
             });
 
@@ -176,13 +176,13 @@ describe('date', () => {
             it('validates max', (done) => {
 
                 Helper.validate(Joi.date().max('1-1-1970 UTC'), [
-                    ['1-1-1971 UTC', false],
+                    ['1-1-1971 UTC', false, null, /^"value" must be less than or equal to ".+"$/],
                     ['1-1-1970 UTC', true],
                     [0, true],
-                    [1, false],
+                    [1, false, null, /^"value" must be less than or equal to ".+"$/],
                     ['0', true],
                     ['-1', true],
-                    ['1-1-2014 UTC', false]
+                    ['1-1-2014 UTC', false, null, /^"value" must be less than or equal to ".+"$/]
                 ], done);
             });
 
@@ -216,7 +216,7 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ a: now, b: now }, true],
-                    [{ a: now, b: now + 1e3 }, false],
+                    [{ a: now, b: now + 1e3 }, false, null, /^child "b" fails because \["b" must be less than or equal to ".+"\]$/],
                     [{ a: now, b: now - 1e3 }, true]
                 ], done);
             });
@@ -228,7 +228,7 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ b: now }, true, { context: { a: now } }],
-                    [{ b: now + 1e3 }, false, { context: { a: now } }],
+                    [{ b: now + 1e3 }, false, { context: { a: now } }, /^child "b" fails because \["b" must be less than or equal to ".+"\]$/],
                     [{ b: now - 1e3 }, true, { context: { a: now } }]
                 ], done);
             });
@@ -264,8 +264,8 @@ describe('date', () => {
                 ['1-1-2013 UTC', true],
                 [new Date().getTime(), true],
                 [new Date().getTime().toFixed(4), true],
-                ['not a valid date', false],
-                [new Date('not a valid date'), false]
+                ['not a valid date', false, null, '"value" must be a number of milliseconds or valid date string'],
+                [new Date('not a valid date'), false, null, '"value" must be a number of milliseconds or valid date string']
             ], done);
         });
 
@@ -275,23 +275,23 @@ describe('date', () => {
 
                 Helper.validate(Joi.date().iso(), [
                     ['2013-06-07T14:21:46.295Z', true],
-                    ['2013-06-07T14:21:46.295Z0', false],
+                    ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                     ['2013-06-07T14:21:46.295+07:00', true],
-                    ['2013-06-07T14:21:46.295+07:000', false],
+                    ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
                     ['2013-06-07T14:21:46.295-07:00', true],
                     ['2013-06-07T14:21:46Z', true],
-                    ['2013-06-07T14:21:46Z0', false],
+                    ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
                     ['2013-06-07T14:21:46+07:00', true],
                     ['2013-06-07T14:21:46-07:00', true],
                     ['2013-06-07T14:21Z', true],
                     ['2013-06-07T14:21+07:00', true],
-                    ['2013-06-07T14:21+07:000', false],
+                    ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
                     ['2013-06-07T14:21-07:00', true],
-                    ['2013-06-07T14:21Z+7:00', false],
+                    ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
                     ['2013-06-07', true],
-                    ['2013-06-07T', false],
+                    ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
                     ['2013-06-07T14:21', true],
-                    ['1-1-2013', false]
+                    ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date']
                 ], done);
             });
 
@@ -411,7 +411,7 @@ describe('date', () => {
 
                 Helper.validate(Joi.date().format('DD#YYYY$MM'), [
                     ['07#2013$06', true],
-                    ['2013-06-07', false]
+                    ['2013-06-07', false, null, '"value" must be a string with one of the following formats DD#YYYY$MM']
                 ], done);
             });
 
@@ -419,7 +419,7 @@ describe('date', () => {
 
                 Helper.validate(Joi.date().format(['DD#YYYY$MM', 'YY|DD|MM']), [
                     ['13|07|06', true],
-                    ['2013-06-07', false]
+                    ['2013-06-07', false, null, '"value" must be a string with one of the following formats [DD#YYYY$MM, YY|DD|MM]']
                 ], done);
             });
 

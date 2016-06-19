@@ -44,9 +44,9 @@ describe('binary', () => {
             ['hello', true],
             [hello, true],
             [new Buffer('hello'), true],
-            ['goodbye', false],
-            [new Buffer('goodbye'), false],
-            [new Buffer('HELLO'), false]
+            ['goodbye', false, null, '"value" must be one of [hello]'],
+            [new Buffer('goodbye'), false, null, '"value" must be one of [hello]'],
+            [new Buffer('HELLO'), false, null, '"value" must be one of [hello]']
         ], done);
     });
 
@@ -105,7 +105,7 @@ describe('binary', () => {
             const schema = Joi.binary().min(5);
             Helper.validate(schema, [
                 [new Buffer('testing'), true],
-                [new Buffer('test'), false]
+                [new Buffer('test'), false, null, '"value" must be at least 5 bytes']
             ], done);
         });
 
@@ -134,7 +134,7 @@ describe('binary', () => {
 
             const schema = Joi.binary().max(5);
             Helper.validate(schema, [
-                [new Buffer('testing'), false],
+                [new Buffer('testing'), false, null, '"value" must be less than or equal to 5 bytes'],
                 [new Buffer('test'), true]
             ], done);
         });
@@ -165,7 +165,7 @@ describe('binary', () => {
             const schema = Joi.binary().length(4);
             Helper.validate(schema, [
                 [new Buffer('test'), true],
-                [new Buffer('testing'), false]
+                [new Buffer('testing'), false, null, '"value" must be 4 bytes']
             ], done);
         });
 

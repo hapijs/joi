@@ -52,13 +52,13 @@ describe('Joi', () => {
         Helper.validate(a, [
             ['a', true],
             ['b', true],
-            [5, false]
+            [5, false, null, '"value" must be a string']
         ], () => {
 
             Helper.validate(b, [
-                ['a', false],
+                ['a', false, null, '"value" must be one of [b]'],
                 ['b', true],
-                [5, false]
+                [5, false, null, '"value" must be a string']
             ], done);
         });
 
@@ -77,7 +77,7 @@ describe('Joi', () => {
     it('validates null schema', (done) => {
 
         Helper.validate(null, [
-            ['a', false],
+            ['a', false, null, '"value" must be one of [null]'],
             [null, true]
         ], done);
     });
@@ -85,7 +85,7 @@ describe('Joi', () => {
     it('validates number literal', (done) => {
 
         Helper.validate(5, [
-            [6, false],
+            [6, false, null, '"value" must be one of [5]'],
             [5, true]
         ], done);
     });
@@ -93,7 +93,7 @@ describe('Joi', () => {
     it('validates string literal', (done) => {
 
         Helper.validate('5', [
-            ['6', false],
+            ['6', false, null, '"value" must be one of [5]'],
             ['5', true]
         ], done);
     });
@@ -101,7 +101,7 @@ describe('Joi', () => {
     it('validates boolean literal', (done) => {
 
         Helper.validate(true, [
-            [false, false],
+            [false, false, null, '"value" must be one of [true]'],
             [true, true]
         ], done);
     });
@@ -112,7 +112,7 @@ describe('Joi', () => {
         Helper.validate(new Date(now), [
             [new Date(now), true],
             [now, true],
-            [now * 2, false]
+            [now * 2, false, null, /^"value" must be one of \[.*\]$/]
         ], done);
     });
 
@@ -122,13 +122,13 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false],
-            [6, false],
-            [{ c: 5 }, false],
+            ['other', false, null, '"value" must be one of [key]. "value" must be a number. "value" must be an object'],
+            [6, false, null, '"value" must be a string. "value" must be one of [5]. "value" must be an object'],
+            [{ c: 5 }, false, null, '"value" must be a string. "value" must be a number. "c" is not allowed'],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false]
+            [{ a: 5, b: 'a' }, false, null, '"value" must be a string. "value" must be a number. child "a" fails because ["a" must be a boolean]']
         ], done);
     });
 
@@ -138,13 +138,13 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false],
-            [6, false],
-            [{ c: 5 }, false],
+            ['other', false, null, '"value" must be one of [key]. "value" must be a number. "value" must be an object'],
+            [6, false, null, '"value" must be a string. "value" must be one of [5]. "value" must be an object'],
+            [{ c: 5 }, false, null, '"value" must be a string. "value" must be a number. "c" is not allowed'],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false]
+            [{ a: 5, b: 'a' }, false, null, '"value" must be a string. "value" must be a number. child "a" fails because ["a" must be a boolean]']
         ], done);
     });
 
@@ -174,10 +174,10 @@ describe('Joi', () => {
 
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
-                [{ txt: 'test' }, false],
-                [{ txt: 'test', upc: null }, false],
-                [{ txt: 'test', upc: '' }, false],
-                [{ txt: 'test', upc: undefined }, false],
+                [{ txt: 'test' }, false, null, '"txt" missing required peer "upc"'],
+                [{ txt: 'test', upc: null }, false, null, 'child "upc" fails because ["upc" must be a string]'],
+                [{ txt: 'test', upc: '' }, false, null, 'child "upc" fails because ["upc" is not allowed to be empty]'],
+                [{ txt: 'test', upc: undefined }, false, null, '"txt" missing required peer "upc"'],
                 [{ txt: 'test', upc: 'test' }, true]
             ], done);
         });
@@ -197,10 +197,10 @@ describe('Joi', () => {
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
                 [{ txt: 'test' }, true],
-                [{ txt: 'test', upc: null }, false],
-                [{ txt: 'test', upc: '' }, false],
+                [{ txt: 'test', upc: null }, false, null, 'child "upc" fails because ["upc" must be a string]'],
+                [{ txt: 'test', upc: '' }, false, null, 'child "upc" fails because ["upc" is not allowed to be empty]'],
                 [{ txt: 'test', upc: undefined }, true],
-                [{ txt: 'test', upc: 'test' }, false]
+                [{ txt: 'test', upc: 'test' }, false, null, '"txt" conflict with forbidden peer "upc"']
             ], done);
         });
     });
@@ -217,21 +217,19 @@ describe('Joi', () => {
             expect(err.message).to.equal('"value" must contain at least one of [txt, upc]');
 
             Helper.validate(schema, [
-                [{ upc: null }, false],
+                [{ upc: null }, false, null, 'child "upc" fails because ["upc" must be a string]'],
                 [{ upc: 'test' }, true],
-                [{ txt: null }, false],
+                [{ txt: null }, false, null, 'child "txt" fails because ["txt" must be a string]'],
                 [{ txt: 'test' }, true],
-                [{ txt: 'test', upc: null }, false],
-                [{ txt: 'test', upc: '' }, false],
-                [{ txt: '', upc: 'test' }, false],
-                [{ txt: null, upc: 'test' }, false],
+                [{ txt: 'test', upc: null }, false, null, 'child "upc" fails because ["upc" must be a string]'],
+                [{ txt: 'test', upc: '' }, false, null, 'child "upc" fails because ["upc" is not allowed to be empty]'],
+                [{ txt: '', upc: 'test' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: null, upc: 'test' }, false, null, 'child "txt" fails because ["txt" must be a string]'],
                 [{ txt: undefined, upc: 'test' }, true],
                 [{ txt: 'test', upc: undefined }, true],
-                [{ txt: 'test', upc: '' }, false],
-                [{ txt: 'test', upc: null }, false],
-                [{ txt: '', upc: undefined }, false],
-                [{ txt: '', upc: '' }, false],
-                [{ txt: 'test', upc: 'test' }, false]
+                [{ txt: '', upc: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: '', upc: '' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: 'test', upc: 'test' }, false, null, '"value" contains a conflict between exclusive peers [txt, upc]']
             ], done);
         });
     });
@@ -247,7 +245,7 @@ describe('Joi', () => {
         Helper.validate(schema, [
             [{ upc: 'test' }, true],
             [{ txt: 'test' }, true],
-            [{}, false]
+            [{}, false, null, '"value" must contain at least one of [txt, upc, code]']
         ], done);
     });
 
@@ -261,8 +259,8 @@ describe('Joi', () => {
         Helper.validate(schema, [
             [{ upc: 123 }, true],
             [{ code: 456 }, true],
-            [{ code: 456, upc: 123 }, false],
-            [{}, false]
+            [{ code: 456, upc: 123 }, false, null, '"value" contains a conflict between exclusive peers [code, upc]'],
+            [{}, false, null, '"value" must contain at least one of [code, upc]']
         ], done);
     });
 
@@ -277,8 +275,8 @@ describe('Joi', () => {
             [{ upc: '' }, true],
             [{ upc: '123' }, true],
             [{ code: '456' }, true],
-            [{ code: '456', upc: '' }, false],
-            [{}, false]
+            [{ code: '456', upc: '' }, false, null, '"value" contains a conflict between exclusive peers [code, upc]'],
+            [{}, false, null, '"value" must contain at least one of [code, upc]']
         ], done);
     });
 
@@ -297,22 +295,22 @@ describe('Joi', () => {
             Helper.validate(schema, [
                 [{ upc: null }, true],
                 [{ upc: 'test' }, true],
-                [{ txt: null }, false],
+                [{ txt: null }, false, null, 'child "txt" fails because ["txt" must be a string]'],
                 [{ txt: 'test' }, true],
-                [{ code: null }, false],
+                [{ code: null }, false, null, 'child "code" fails because ["code" must be a number]'],
                 [{ code: 123 }, true],
                 [{ txt: 'test', upc: null }, true],
                 [{ txt: 'test', upc: '' }, true],
-                [{ txt: '', upc: 'test' }, false],
-                [{ txt: null, upc: 'test' }, false],
+                [{ txt: '', upc: 'test' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: null, upc: 'test' }, false, null, 'child "txt" fails because ["txt" must be a string]'],
                 [{ txt: undefined, upc: 'test' }, true],
                 [{ txt: 'test', upc: undefined }, true],
                 [{ txt: 'test', upc: '' }, true],
                 [{ txt: 'test', upc: null }, true],
-                [{ txt: '', upc: undefined }, false],
-                [{ txt: '', upc: undefined, code: 999 }, false],
-                [{ txt: '', upc: undefined, code: undefined }, false],
-                [{ txt: '', upc: '' }, false],
+                [{ txt: '', upc: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: '', upc: undefined, code: 999 }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: '', upc: undefined, code: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: '', upc: '' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
                 [{ txt: 'test', upc: 'test' }, true],
                 [{ txt: 'test', upc: 'test', code: 322 }, true]
             ], done);
@@ -333,25 +331,25 @@ describe('Joi', () => {
 
             Helper.validate(schema, [
                 [{}, true],
-                [{ upc: null }, false],
-                [{ upc: 'test' }, false],
-                [{ txt: null }, false],
-                [{ txt: 'test' }, false],
-                [{ code: null }, false],
-                [{ code: 123 }, false],
-                [{ txt: 'test', upc: null }, false],
-                [{ txt: 'test', upc: '' }, false],
-                [{ txt: '', upc: 'test' }, false],
-                [{ txt: null, upc: 'test' }, false],
-                [{ txt: undefined, upc: 'test' }, false],
-                [{ txt: 'test', upc: undefined }, false],
-                [{ txt: 'test', upc: '' }, false],
-                [{ txt: 'test', upc: null }, false],
-                [{ txt: '', upc: undefined }, false],
-                [{ txt: '', upc: undefined, code: 999 }, false],
-                [{ txt: '', upc: undefined, code: undefined }, false],
-                [{ txt: '', upc: '' }, false],
-                [{ txt: 'test', upc: 'test' }, false],
+                [{ upc: null }, false, null, '"value" contains [upc] without its required peers [txt, code]'],
+                [{ upc: 'test' }, false, null, '"value" contains [upc] without its required peers [txt, code]'],
+                [{ txt: null }, false, null, 'child "txt" fails because ["txt" must be a string]'],
+                [{ txt: 'test' }, false, null, '"value" contains [txt] without its required peers [upc, code]'],
+                [{ code: null }, false, null, 'child "code" fails because ["code" must be a number]'],
+                [{ code: 123 }, false, null, '"value" contains [code] without its required peers [txt, upc]'],
+                [{ txt: 'test', upc: null }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
+                [{ txt: 'test', upc: '' }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
+                [{ txt: '', upc: 'test' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: null, upc: 'test' }, false, null, 'child "txt" fails because ["txt" must be a string]'],
+                [{ txt: undefined, upc: 'test' }, false, null, '"value" contains [upc] without its required peers [txt, code]'],
+                [{ txt: 'test', upc: undefined }, false, null, '"value" contains [txt] without its required peers [upc, code]'],
+                [{ txt: 'test', upc: '' }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
+                [{ txt: 'test', upc: null }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
+                [{ txt: '', upc: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: '', upc: undefined, code: 999 }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: '', upc: undefined, code: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: '', upc: '' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: 'test', upc: 'test' }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
                 [{ txt: 'test', upc: 'test', code: 322 }, true],
                 [{ txt: 'test', upc: null, code: 322 }, true]
             ], done);
@@ -384,8 +382,8 @@ describe('Joi', () => {
                 [{ txt: 'test', upc: null }, true],
                 [{ txt: 'test', upc: undefined, code: 999 }, true],
                 [{ txt: 'test', upc: 'test' }, true],
-                [{ txt: 'test', upc: 'test', code: 322 }, false],
-                [{ txt: 'test', upc: null, code: 322 }, false]
+                [{ txt: 'test', upc: 'test', code: 322 }, false, null, '"txt" must not exist simultaneously with [upc, code]'],
+                [{ txt: 'test', upc: null, code: 322 }, false, null, '"txt" must not exist simultaneously with [upc, code]']
             ], done);
         });
     });
@@ -409,13 +407,13 @@ describe('Joi', () => {
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
-                [{ something: undefined }, false],
-                [{ auth: { something: undefined } }, false],
+                [{ something: undefined }, false, null, '"something" is not allowed'],
+                [{ auth: { something: undefined } }, false, null, 'child "auth" fails because ["something" is not allowed, "auth" must be a string, "auth" must be a boolean]'],
                 [{ auth: null }, true],
                 [{ auth: undefined }, true],
                 [{}, true],
                 [{ auth: true }, true],
-                [{ auth: 123 }, false]
+                [{ auth: 123 }, false, null, 'child "auth" fails because ["auth" must be an object, "auth" must be a string, "auth" must be a boolean]']
             ], done);
         });
     });
@@ -439,13 +437,13 @@ describe('Joi', () => {
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
-                [{ something: undefined }, false],
-                [{ auth: { something: undefined } }, false],
+                [{ something: undefined }, false, null, '"something" is not allowed'],
+                [{ auth: { something: undefined } }, false, null, 'child "auth" fails because ["something" is not allowed, "auth" must be a string, "auth" must be a boolean]'],
                 [{ auth: null }, true],
                 [{ auth: undefined }, true],
                 [{}, true],
                 [{ auth: true }, true],
-                [{ auth: 123 }, false]
+                [{ auth: 123 }, false, null, 'child "auth" fails because ["auth" must be an object, "auth" must be a string, "auth" must be a boolean]']
             ], done);
         });
     });
@@ -460,14 +458,14 @@ describe('Joi', () => {
         };
 
         Helper.validate(schema, [
-            [{ a: null }, false],
+            [{ a: null }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
             [{ a: undefined }, true],
             [{}, true],
             [{ a: true }, true],
             [{ a: 'true' }, true],
-            [{ a: 123 }, false],
-            [{ a: { c: 1 } }, false],
-            [{ b: undefined }, false]
+            [{ a: 123 }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
+            [{ a: { c: 1 } }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
+            [{ b: undefined }, false, null, '"b" is not allowed']
         ], done);
     });
 
@@ -481,14 +479,14 @@ describe('Joi', () => {
         };
 
         Helper.validate(schema, [
-            [{ a: null }, false],
+            [{ a: null }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
             [{ a: undefined }, true],
             [{}, true],
             [{ a: true }, true],
             [{ a: 'true' }, true],
-            [{ a: 123 }, false],
-            [{ a: { c: 1 } }, false],
-            [{ b: undefined }, false]
+            [{ a: 123 }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
+            [{ a: { c: 1 } }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
+            [{ b: undefined }, false, null, '"b" is not allowed']
         ], done);
     });
 
@@ -500,7 +498,7 @@ describe('Joi', () => {
 
         Helper.validate(schema, [
             [{ brand: ['amex'] }, true],
-            [{ brand: ['visa', 'mc'] }, false]
+            [{ brand: ['visa', 'mc'] }, false, null, 'child "brand" fails because ["brand" at position 1 fails because ["1" must be one of [amex, visa]]]']
         ], done);
     });
 
@@ -553,8 +551,8 @@ describe('Joi', () => {
         const schema = Joi.number().invalid(5);
 
         Helper.validate(schema, [
-            [5, false],
-            ['5', false]
+            [5, false, null, '"value" contains an invalid value'],
+            ['5', false, null, '"value" contains an invalid value']
         ], done);
     });
 
@@ -2068,6 +2066,30 @@ describe('Joi', () => {
             expect(valid.error).to.be.null();
             expect(invalid.error).to.be.an.instanceof(Error);
             expect(invalid.error.toString()).to.equal('ValidationError: "value" oh no bar !');
+
+            done();
+        });
+
+        it('new rules should have the correct this', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                language: {
+                    bar: 'oh no bar !'
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('myType.bar', { v: value }, state, options);
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType().foo().label('baz');
+            expect(schema.validate({}).error).to.be.an.error('"baz" oh no bar !');
 
             done();
         });

@@ -344,7 +344,7 @@ describe('array', () => {
             const schema = Joi.array().min(2);
             Helper.validate(schema, [
                 [[1, 2], true],
-                [[1], false]
+                [[1], false, null, '"value" must contain at least 2 items']
             ], done);
         });
 
@@ -373,7 +373,7 @@ describe('array', () => {
 
             const schema = Joi.array().max(1);
             Helper.validate(schema, [
-                [[1, 2], false],
+                [[1, 2], false, null, '"value" must contain less than or equal to 1 items'],
                 [[1], true]
             ], done);
         });
@@ -404,7 +404,7 @@ describe('array', () => {
             const schema = Joi.array().length(2);
             Helper.validate(schema, [
                 [[1, 2], true],
-                [[1], false]
+                [[1], false, null, '"value" must contain 2 items']
             ], done);
         });
 
@@ -440,7 +440,7 @@ describe('array', () => {
         it('should, when .required(), deny undefined', (done) => {
 
             Helper.validate(Joi.array().required(), [
-                [undefined, false]
+                [undefined, false, null, '"value" is required']
             ], done);
         });
 
@@ -455,8 +455,8 @@ describe('array', () => {
         it('excludes values when items are forbidden', (done) => {
 
             Helper.validate(Joi.array().items(Joi.string().forbidden()), [
-                [['2', '1'], false],
-                [['1'], false],
+                [['2', '1'], false, null, '"value" at position 0 contains an excluded value'],
+                [['1'], false, null, '"value" at position 0 contains an excluded value'],
                 [[2], true]
             ], done);
         });
@@ -484,7 +484,7 @@ describe('array', () => {
             Helper.validate(Joi.array().items(Joi.number()), [
                 [[1, 2, 3], true],
                 [[50, 100, 1000], true],
-                [['a', 1, 2], false],
+                [['a', 1, 2], false, null, '"value" at position 0 fails because ["0" must be a number]'],
                 [['1', '2', 4], true]
             ], done);
         });
@@ -503,8 +503,8 @@ describe('array', () => {
 
             Helper.validate(Joi.array().items(Joi.object({ h1: Joi.number().required() })), [
                 [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
-                [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false],
-                [[1, 2, [1]], false]
+                [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false, null, '"value" at position 0 fails because [child "h1" fails because ["h1" is required]]'],
+                [[1, 2, [1]], false, null, '"value" at position 0 fails because ["0" must be an object]']
             ], done);
         });
 
@@ -512,7 +512,7 @@ describe('array', () => {
 
             Helper.validate(Joi.array().items(Joi.number()), [
                 [[1, 2, 3], true],
-                [[1, 2, [1]], false]
+                [[1, 2, [1]], false, null, '"value" at position 2 fails because ["2" must be a number]']
             ], done);
         });
 
@@ -539,7 +539,7 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
-                [{ array: ['1'] }, false],
+                [{ array: ['1'] }, false, null, 'child "array" fails because ["array" at position 0 does not match any of the allowed types]'],
                 [{ array: [3] }, true],
                 [{ array: ['12345', 3] }, true]
             ], done);
@@ -660,15 +660,15 @@ describe('array', () => {
             const schema = Joi.array().sparse().unique();
 
             Helper.validate(schema, [
-                [[2, 2], false],
-                [[0x2, 2], false],
-                [['duplicate', 'duplicate'], false],
-                [[{ a: 'b' }, { a: 'b' }], false],
-                [[buffer, buffer], false],
-                [[func, func], false],
-                [[now, now], false],
-                [[true, true], false],
-                [[undefined, undefined], false]
+                [[2, 2], false, null, '"value" position 1 contains a duplicate value'],
+                [[0x2, 2], false, null, '"value" position 1 contains a duplicate value'],
+                [['duplicate', 'duplicate'], false, null, '"value" position 1 contains a duplicate value'],
+                [[{ a: 'b' }, { a: 'b' }], false, null, '"value" position 1 contains a duplicate value'],
+                [[buffer, buffer], false, null, '"value" position 1 contains a duplicate value'],
+                [[func, func], false, null, '"value" position 1 contains a duplicate value'],
+                [[now, now], false, null, '"value" position 1 contains a duplicate value'],
+                [[true, true], false, null, '"value" position 1 contains a duplicate value'],
+                [[undefined, undefined], false, null, '"value" position 1 contains a duplicate value']
             ], done);
         });
 
@@ -710,8 +710,8 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.number());
 
             Helper.validate(schema, [
-                [[undefined], false],
-                [[2, undefined], false]
+                [[undefined], false, null, '"value" must not be a sparse array'],
+                [[2, undefined], false, null, '"value" must not be a sparse array']
             ], done);
         });
 
