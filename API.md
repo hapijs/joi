@@ -1068,6 +1068,10 @@ Specifies that the value must be a multiple of `base`:
 const schema = Joi.number().multiple(3);
 ```
 
+Notes: `Joi.number.multiple(base)` _uses the modulo operator (%) to determine if a number is multiple of another number.
+Hence, it has the normal limitations of Javascript modulo operator. It will work perfectly alright with integers, but
+results with decimals/floats is unpredictable._
+
 #### `number.positive()`
 
 Requires the number to be positive.
