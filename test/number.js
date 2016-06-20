@@ -806,7 +806,7 @@ describe('number', () => {
             expect(() => {
 
                 Joi.number().multiple('a');
-            }).to.throw('multiple must be an integer');
+            }).to.throw('multiple must be a number');
             done();
         });
 
