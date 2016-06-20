@@ -1069,8 +1069,7 @@ const schema = Joi.number().multiple(3);
 ```
 
 Notes: `Joi.number.multiple(base)` _uses the modulo operator (%) to determine if a number is multiple of another number.
-Hence, it has the normal limitations of Javascript modulo operator. It will work perfectly alright with integers, but
-results with decimals/floats is unpredictable._
+Therefore, it has the normal limitations of Javascript modulo operator. The results with decimal/floats maybe incorrect._
 
 #### `number.positive()`
 
