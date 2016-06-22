@@ -701,6 +701,56 @@ describe('array', () => {
                 [[true, false], true]
             ], done);
         });
+
+        it('validates using a comparator', (done) => {
+
+            const schema = Joi.array().unique((left, right) => left.a === right.a);
+
+            Helper.validate(schema, [
+                [[{ a: 'b' }, { a: 'c' }], true],
+                [[{ a: 'b', c: 'd' }, { a: 'c', c: 'd' }], true],
+                [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, null, '"value" position 1 contains a duplicate value'],
+                [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, null, '"value" position 1 contains a duplicate value']
+            ], done);
+        });
+
+        it('validates using a comparator with different types', (done) => {
+
+            const schema = Joi.array().items(Joi.string(), Joi.object({ a: Joi.string() })).unique((left, right) => {
+                if (typeof left === 'object') {
+                    if (typeof right === 'object') {
+                        return left.a === right.a;
+                    }
+
+                    return left.a === right;
+                }
+
+                if (typeof right === 'object') {
+                    return left === right.a;
+                }
+
+                return left === right;
+            });
+
+            Helper.validate(schema, [
+                [[{ a: 'b' }, { a: 'c' }], true],
+                [[{ a: 'b' }, 'c'], true],
+                [[{ a: 'b' }, 'c', { a: 'd' }, 'e'], true],
+                [[{ a: 'b' }, { a: 'b' }], false, null, '"value" position 1 contains a duplicate value'],
+                [[{ a: 'b' }, 'b'], false, null, '"value" position 1 contains a duplicate value']
+            ], done);
+        });
+
+        it('fails with invalid comparator', (done) => {
+
+            expect(() => {
+
+                Joi.array().unique({});
+            }).to.throw(Error, 'comparator must be a function');
+
+            done();
+        });
+
     });
 
     describe('sparse()', () => {

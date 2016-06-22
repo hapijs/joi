@@ -759,14 +759,20 @@ Specifies the exact number of items in the array where:
 const schema = Joi.array().length(5);
 ```
 
-#### `array.unique()`
+#### `array.unique([comparator])`
 
 Requires the array values to be unique.
+
+You can provide a custom `comparator` function that takes 2 parameters to compare. This function should return whether the 2 parameters are equal or not, you are also **responsible** for this function not to fail, any `Error` would bubble out of Joi. 
 
 Be aware that a deep equality is performed on elements of the array having a type of `object`, a performance penalty is to be expected for this kind of operation.
 
 ```js
 const schema = Joi.array().unique();
+```
+
+```js
+const schema = Joi.array().unique((a, b) => a.property === b.property);
 ```
 
 ### `boolean`
