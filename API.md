@@ -1,5 +1,5 @@
 <!-- version -->
-# 9.0.0-6 API Reference
+# 9.0.0-7 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -49,7 +49,7 @@
     - [`array.min(limit)`](#arrayminlimit)
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
-    - [`array.unique()`](#arrayunique)
+    - [`array.unique([comparator])`](#arrayuniquecomparator)
   - [`boolean`](#boolean)
   - [`binary`](#binary)
     - [`binary.encoding(encoding)`](#binaryencodingencoding)
