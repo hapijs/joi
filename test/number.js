@@ -806,7 +806,7 @@ describe('number', () => {
             expect(() => {
 
                 Joi.number().multiple('a');
-            }).to.throw('multiple must be an integer');
+            }).to.throw('multiple must be a number');
             done();
         });
 
@@ -819,17 +819,68 @@ describe('number', () => {
             done();
         });
 
-        it('should handle multiples correctly', (done) => {
+        it('should handle integer multiples correctly', (done) => {
 
             const rule = Joi.number().multiple(3);
             Helper.validate(rule, [
-                [0, true], // 0 is a multiple of every integer
-                [3, true],
-                [4, false, null, '"value" must be a multiple of 3'],
-                [9, true],
-                ['a', false, null, '"value" must be a number'],
-                [9.1, false, null, '"value" must be a multiple of 3'],
-                [8.9, false, null, '"value" must be a multiple of 3']
+                    [0, true], // 0 is a multiple of every integer
+                    [3, true],
+                    [4, false, null, '"value" must be a multiple of 3'],
+                    [9, true],
+                    ['a', false, null, '"value" must be a number'],
+                    [9.1, false, null, '"value" must be a multiple of 3'],
+                    [8.9, false, null, '"value" must be a multiple of 3']
+            ], done);
+        });
+
+        it('should handle floats multiples correctly', (done) => {
+
+            const schema = Joi.number().multiple(3.5);
+            Helper.validate(schema, [
+                    [0, true], // 0 is a multiple of every integer
+                    [3.5, true],
+                    [3.6, false, null, '"value" must be a multiple of 3.5'],
+                    [10.5, true],
+                    ['a', false, null, '"value" must be a number'],
+                    [10.501, false, null, '"value" must be a multiple of 3.5'],
+                    [10.499, false, null, '"value" must be a multiple of 3.5']
+            ], done);
+        });
+
+        it('should handle references correctly', (done) => {
+
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().multiple(Joi.ref('a')) });
+            Helper.validate(schema, [
+                [{ a: 2, b: 32 }, true],
+                [{ a: 43, b: 0 }, true],
+                [{ a: 4, b: 25 }, false, null, 'child "b" fails because ["b" must be a multiple of ref:a]'],
+                [{ a: 0, b: 31 }, false, null, 'child "b" fails because ["b" must be a multiple of ref:a]'],
+                [{ a: 0, b: 0 }, false, null, 'child "b" fails because ["b" must be a multiple of ref:a]']
+            ], done);
+        });
+
+        it('should handle non-number references correctly', (done) => {
+
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().multiple(Joi.ref('a')) });
+            Helper.validate(schema, [
+                [{ a: 'test', b: 32 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]'],
+                [{ a: 'test', b: 0 }, false, null, 'child "b" fails because ["b" references "a" which is not a number]'],
+                [{ a: 'test', b: NaN }, false, null, 'child "b" fails because ["b" must be a number]']
+            ], done);
+        });
+
+        it('should handle context references correctly', (done) => {
+
+            const schema = Joi.object({ b: Joi.number().multiple(Joi.ref('$a')) });
+            Helper.validate(schema, [
+                [{ b: 32 }, true, { context: { a: 2 } }],
+                [{ b: 0 }, true, { context: { a: 43 } }],
+                [{ b: 25 }, false, { context: { a: 4 } }, 'child "b" fails because ["b" must be a multiple of context:a]'],
+                [{ b: 31 }, false, { context: { a: 0 } }, 'child "b" fails because ["b" must be a multiple of context:a]'],
+                [{ b: 0 }, false, { context: { a: 0 } }, 'child "b" fails because ["b" must be a multiple of context:a]'],
+                [{ b: 32 }, false, { context: { a: 'test' } }, 'child "b" fails because ["b" references "a" which is not a number]'],
+                [{ b: 0 }, false, { context: { a: 'test' } }, 'child "b" fails because ["b" references "a" which is not a number]'],
+                [{ b: 0 }, false, { context: { a: NaN } }, 'child "b" fails because ["b" references "a" which is not a number]']
             ], done);
         });
     });
