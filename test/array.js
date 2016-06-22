@@ -717,6 +717,7 @@ describe('array', () => {
         it('validates using a comparator with different types', (done) => {
 
             const schema = Joi.array().items(Joi.string(), Joi.object({ a: Joi.string() })).unique((left, right) => {
+
                 if (typeof left === 'object') {
                     if (typeof right === 'object') {
                         return left.a === right.a;
