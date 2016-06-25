@@ -2414,7 +2414,7 @@ describe('Joi', () => {
             const customJoi = Joi.extend({
                 coerce(value, state, options) {
 
-                    return null;
+                    return value;
                 },
                 name: 'myType'
             });
@@ -2432,7 +2432,7 @@ describe('Joi', () => {
             const customJoi = Joi.extend({
                 pre(value, state, options) {
 
-                    return null;
+                    return value;
                 },
                 name: 'myType'
             });

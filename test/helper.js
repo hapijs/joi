@@ -70,6 +70,7 @@ exports.validateOptions = function (schema, config, options, callback) {
     }
     catch (err) {
 
+        console.error(err.stack);
         // Reframe the error location, we don't care about the helper
         err.at = internals.thrownAt();
         throw err;

@@ -311,7 +311,7 @@ const customJoi = Joi.extend({
             return Math.round(value); // Change the value
         }
 
-        return null; // Keep the value as it was
+        return value; // Keep the value as it was
     },
     rules: [
         {
@@ -327,7 +327,7 @@ const customJoi = Joi.extend({
                     return this.createError('number.round', { v: value }, state, options);
                 }
 
-                return null; // Everything is OK
+                return value; // Everything is OK
             }
         },
         {
@@ -342,7 +342,7 @@ const customJoi = Joi.extend({
                     return this.createError('number.dividable', { v: value, q: params.q }, state, options);
                 }
 
-                return null; // Everything is OK
+                return value; // Everything is OK
             }
         }
     ]
