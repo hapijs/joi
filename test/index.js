@@ -2646,5 +2646,17 @@ describe('Joi', () => {
                 done();
             });
         });
+
+        it('should return a custom Joi as an instance of Any', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType'
+            });
+
+            const Any = require('../lib/any');
+            expect(customJoi).to.be.an.instanceof(Any);
+            done();
+        });
+
     });
 });
