@@ -35,7 +35,7 @@
     "toc": "node generate-readme-toc.js",
     "version": "npm run toc && git add API.md README.md",
     "prebuild": "npm install",
-    "build": "mkdir -p build/ && browserify lib/index.js -o build/bundle.js && babel build/bundle.js -o build/bundle-compiled.js"
+    "build": "mkdir -p build/ && browserify lib/index.js -o build/bundle.js -s Joi && babel build/bundle.js -o build/bundle-compiled.js"
   },
   "license": "BSD-3-Clause"
 }
