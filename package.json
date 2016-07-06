@@ -4,7 +4,7 @@
   "version": "9.0.0-9",
   "homepage": "https://github.com/hapijs/joi",
   "repository": "git://github.com/hapijs/joi",
-  "main": "lib/index.js",
+  "main": "build/bundle-compiled.js",
   "keywords": [
     "hapi",
     "schema",
@@ -21,6 +21,9 @@
     "topo": "2.x.x"
   },
   "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-preset-es2015": "^6.9.0",
+    "browserify": "^13.0.1",
     "code": "3.x.x",
     "lab": "10.x.x",
     "markdown-toc": "0.12.x"
@@ -30,7 +33,9 @@
     "test-debug": "node $NODE_DEBUG_OPTION ./node_modules/.bin/lab -a code",
     "test-cov-html": "lab -r html -o coverage.html -a code",
     "toc": "node generate-readme-toc.js",
-    "version": "npm run toc && git add API.md README.md"
+    "version": "npm run toc && git add API.md README.md",
+    "prebuild": "npm install",
+    "build": "mkdir -p build/ && browserify lib/index.js -o build/bundle.js && babel build/bundle.js -o build/bundle-compiled.js"
   },
   "license": "BSD-3-Clause"
 }
