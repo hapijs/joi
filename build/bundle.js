@@ -3975,7 +3975,7 @@ exports.push = function (array, ref) {
 
 // Load modules
 
-const Joi = require('../');
+const Joi = require('./');
 
 
 // Declare internals
@@ -3997,7 +3997,7 @@ exports.options = Joi.object({
     error: Joi.object()
 }).strict();
 
-},{"../":9}],16:[function(require,module,exports){
+},{"./":9}],16:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
