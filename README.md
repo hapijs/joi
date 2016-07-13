@@ -96,3 +96,7 @@ When validating a schema:
 
 # API
 See the [API Reference](https://github.com/hapijs/joi/blob/v9.0.0/API.md).
+
+# Browsers
+
+Joi doesn't directly support browsers, but you could use [joi-browser](https://github.com/jeffbski/joi-browser) for an ES5 build of Joi that works in browsers, or as a source of inspiration for your own builds.
