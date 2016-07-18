@@ -11,7 +11,7 @@
   - [`compile(schema)`](#compileschema)
   - [`assert(value, schema, [message])`](#assertvalue-schema-message)
   - [`attempt(value, schema, [message])`](#attemptvalue-schema-message)
-  - [`ref(key, options)`](#refkey-options)
+  - [`ref(key, [options])`](#refkey-options)
   - [`isRef(ref)`](#isrefref)
   - [`reach(schema, path)`](#reachschema-path)
   - [`extend(extension)`](#extendextension)
@@ -124,7 +124,6 @@
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
   - [`lazy(fn)`](#lazyfn)
-  - [`ref(key, [options])`](#refkey-options)
 - [Errors](#errors)
 
 <!-- tocstop -->
@@ -229,18 +228,32 @@ Joi.attempt('x', Joi.number()); // throws error
 const result = Joi.attempt('4', Joi.number()); // result -> 4
 ```
 
-### `ref(key, options)`
+### `ref(key, [options])`
 
-Creates a reference to another property in the object being validated.
+Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency
+so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
+References support the following arguments:
+- `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
+  their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
+  which is looked up in the `context` option object.
+- `options` - optional settings:
+    - `separator` - overrides the default `.` hierarchy separator.
+    - `contextPrefix` - overrides the default `$` context prefix signifier.
+    - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
 
-- `key` - the path to the property. By default it uses `.` as separator and `$` to indicate that the reference should look in the context and not in the object being validated.
-- `options` - an optional object containing options for the syntax of the key :
-  - `contextPrefix` - changes the context prefix. Defaults to `$`.
-  - `separator` - changes the separator for the path. Defaults to `.`.
-  - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
+Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
+(parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
 
 ```js
-const ref = Joi.ref('#a/b/c', { contextPrefix: '#', separator: '/' });
+const schema = Joi.object().keys({
+    a: Joi.ref('b.c'),
+    b: {
+        c: Joi.any()
+    },
+    c: Joi.ref('$x')
+});
+
+Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, (err, value) => {});
 ```
 
 ### `isRef(ref)`
@@ -1735,33 +1748,6 @@ const Person = Joi.object({
     lastName: Joi.string().required(),
     children: Joi.array().items(Joi.lazy(() => Person).description('Person schema'))
 });
-```
-
-### `ref(key, [options])`
-
-Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency
-so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
-References support the following arguments:
-- `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
-  their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
-  which is looked up in the `context` option object.
-- `options` - optional settings:
-    - `separator` - overrides the default `.` hierarchy separator.
-    - `contextPrefix` - overrides the default `$` context prefix signifier.
-
-Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
-(parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
-
-```js
-const schema = Joi.object().keys({
-    a: Joi.ref('b.c'),
-    b: {
-        c: Joi.any()
-    },
-    c: Joi.ref('$x')
-});
-
-Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, (err, value) => {});
 ```
 
 ## Errors
