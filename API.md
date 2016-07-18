@@ -584,6 +584,7 @@ Converts the type into an [`alternatives`](#alternatives) type where the conditi
     - `is` - the required condition **joi** type.
     - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
     - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
+    - `default` - default value used if referenced key is not present
 
 ```js
 const schema = {
