@@ -237,7 +237,7 @@ Creates a reference to another property in the object being validated.
 - `options` - an optional object containing options for the syntax of the key :
   - `contextPrefix` - changes the context prefix. Defaults to `$`.
   - `separator` - changes the separator for the path. Defaults to `.`.
-  - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek#reachobj-chain-options) supports.
+  - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
 
 ```js
 const ref = Joi.ref('#a/b/c', { contextPrefix: '#', separator: '/' });
