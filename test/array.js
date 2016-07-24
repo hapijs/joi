@@ -789,7 +789,51 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.object().empty({}).required());
 
             Helper.validate(schema, [
+                [[{}, { c: 3 }], false, null, '"value" at position 0 fails because ["0" is required]']
+            ], done);
+        });
+
+        it('errors on undefined value after custom validation with required', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return undefined;
+                        }
+                    }
+                ]
+            });
+
+            const schema = Joi.array().items(customJoi.myType().foo().required());
+
+            Helper.validate(schema, [
                 [[{}, { c: 3 }], false, null, '"value" must not be a sparse array']
+            ], done);
+        });
+
+        it('errors on undefined value after custom validation with required and abortEarly false', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return undefined;
+                        }
+                    }
+                ]
+            });
+
+            const schema = Joi.array().items(customJoi.myType().foo().required()).options({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[{}, { c: 3 }], false, null, '"value" must not be a sparse array. "value" must not be a sparse array']
             ], done);
         });
 
@@ -798,7 +842,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.object().empty({}).required()).options({ abortEarly: false });
 
             Helper.validate(schema, [
-                [[{}, 3], false, null, '"value" must not be a sparse array. "value" at position 1 fails because ["1" must be an object]']
+                [[{}, 3], false, null, '"value" at position 0 fails because ["0" is required]. "value" at position 1 fails because ["1" must be an object]. "value" does not contain 1 required value(s)']
             ], done);
         });
 
@@ -813,7 +857,7 @@ describe('array', () => {
 
         it('errors on undefined value after validation with ordered and abortEarly false', (done) => {
 
-            const schema = Joi.array().ordered(Joi.object().empty({}).required()).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.object().empty({})).options({ abortEarly: false });
 
             Helper.validate(schema, [
                 [[{}, 3], false, null, '"value" must not be a sparse array. "value" at position 1 fails because array must contain at most 1 items']
@@ -844,7 +888,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.object().empty({}).required()).sparse();
 
             Helper.validate(schema, [
-                [[{ a: 1 }, {}, { c: 3 }], true, null, [{ a: 1 }, undefined, { c: 3 }]]
+                [[{ a: 1 }, {}, { c: 3 }], false, null, '"value" at position 1 fails because ["1" is required]']
             ], done);
         });
 
