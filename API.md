@@ -307,6 +307,10 @@ The extension makes use of some common structures that need to be described prio
   * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `options`. One of `setup` or `validate` **must** be provided.
   * `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
 
+#### npm note
+
+If you publish your extension on npm, make sure to add `joi` and `extension` as keywords so that it's discoverable more easily.
+
 #### Examples
 
 ```js
