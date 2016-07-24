@@ -1,5 +1,5 @@
 <!-- version -->
-# 9.0.1 API Reference
+# 9.0.2 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -17,6 +17,7 @@
   - [`extend(extension)`](#extendextension)
     - [Terms](#terms)
     - [Extension](#extension)
+    - [npm note](#npm-note)
     - [Examples](#examples)
   - [`any`](#any)
     - [`any.allow(value)`](#anyallowvalue)
