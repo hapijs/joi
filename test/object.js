@@ -1055,6 +1055,18 @@ describe('object', () => {
             ]);
             done();
         });
+
+        it('should validate correctly when key is stripped', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.any().strip(),
+                b: Joi.any()
+            }).without('a', 'b');
+            Helper.validate(schema, [
+                [{ a: 'hi', b: 'there' }, true]
+            ]);
+            done();
+        });
     });
 
     describe('xor()', () => {
