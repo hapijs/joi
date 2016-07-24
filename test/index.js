@@ -2329,6 +2329,82 @@ describe('Joi', () => {
             done();
         });
 
+        it('defines a custom type coercing its input value that runs early enough', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string(),
+                coerce(value, state, options) {
+
+                    return 'foobar';
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi.myType();
+            const result = schema.validate('');
+            expect(result.error).to.be.null();
+            expect(result.value).to.equal('foobar');
+
+            done();
+        });
+
+        it('defines multiple levels of coercion', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string(),
+                coerce(value, state, options) {
+
+                    return 'foobar';
+                },
+                name: 'myType'
+            });
+
+            const customJoi2 = customJoi.extend({
+                base: customJoi.myType(),
+                coerce(value, state, options) {
+
+                    expect(value).to.equal('foobar');
+                    return 'baz';
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi2.myType();
+            const result = schema.validate('');
+            expect(result.error).to.be.null();
+            expect(result.value).to.equal('baz');
+
+            done();
+        });
+
+        it('defines multiple levels of coercion where base fails', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string(),
+                coerce(value, state, options) {
+
+                    return this.createError('any.invalid', null, state, options);
+                },
+                name: 'myType'
+            });
+
+            const customJoi2 = customJoi.extend({
+                base: customJoi.myType(),
+                coerce(value, state, options) {
+
+                    expect(value).to.equal('foobar');
+                    return 'baz';
+                },
+                name: 'myType'
+            });
+
+            const schema = customJoi2.myType();
+            const result = schema.validate('');
+            expect(result.error).to.an.error('"value" contains an invalid value');
+
+            done();
+        });
+
         it('defines a custom type casting its input value', (done) => {
 
             const customJoi = Joi.extend({
