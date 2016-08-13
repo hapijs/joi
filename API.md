@@ -114,7 +114,7 @@
     - [`string.email([options])`](#stringemailoptions)
     - [`string.ip([options])`](#stringipoptions)
     - [`string.uri([options])`](#stringurioptions)
-    - [`string.guid() - aliases: `uuid`](#stringguid---aliases-uuid)
+    - [`string.guid()` - aliases: `uuid`](#stringguid---aliases-uuid)
     - [`string.hex()`](#stringhex)
     - [`string.hostname()`](#stringhostname)
     - [`string.lowercase()`](#stringlowercase)
