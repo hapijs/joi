@@ -114,8 +114,7 @@
     - [`string.email([options])`](#stringemailoptions)
     - [`string.ip([options])`](#stringipoptions)
     - [`string.uri([options])`](#stringurioptions)
-    - [`string.guid()`](#stringguid)
-    - [`string.uuid()`](#stringuuid)
+    - [`string.guid() - aliases: `uuid`](#stringguid---aliases-uuid)
     - [`string.hex()`](#stringhex)
     - [`string.hostname()`](#stringhostname)
     - [`string.lowercase()`](#stringlowercase)
@@ -1617,20 +1616,12 @@ const schema = Joi.string().uri({
 });
 ```
 
-#### `string.guid()`
+#### `string.guid()`- aliases: `uuid`
 
 Requires the string value to be a valid GUID.
 
 ```js
 const schema = Joi.string().guid();
-```
-
-#### `string.uuid()`
-
-Requires the string value to be a valid UUID.
-
-```js
-const schema = Joi.string().uuid();
 ```
 
 #### `string.hex()`
