@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "code": "3.x.x",
-    "lab": "10.x.x",
+    "lab": "11.x.x",
     "markdown-toc": "0.12.x"
   },
   "scripts": {
