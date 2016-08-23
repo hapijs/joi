@@ -435,6 +435,8 @@ const schema = Joi.any().required();
 
 Marks a key as optional which will allow `undefined` as values. Used to annotate the schema for readability as all keys are optional by default.
 
+Note: this does not allow a `null` value. To do that, use [`any.allow(value)`](#anyallowvalue). Or both!
+
 ```js
 const schema = Joi.any().optional();
 ```
