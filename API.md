@@ -1424,7 +1424,7 @@ Sets the specified children to optional.
 
 ```js
 const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
-const requiredSchema = schema.optionalKeys('a.b', 'c.d');
+const optionalSchema = schema.optionalKeys('a.b', 'c.d');
 ```
 
 The behavior is exactly the same as `requiredKeys`.
