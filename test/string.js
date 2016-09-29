@@ -3463,4 +3463,32 @@ describe('string', () => {
             ], done);
         });
     });
+
+    describe('describe()', () => {
+
+        it('describes various versions of a guid', (done) => {
+
+            const schema = Joi.string().guid({ version: ['uuidv1', 'uuidv3', 'uuidv5'] });
+            const description = schema.describe();
+            expect(description).to.equal({
+                invalids: [
+                    ''
+                ],
+                rules: [
+                    {
+                        arg: {
+                            version: [
+                                'uuidv1',
+                                'uuidv3',
+                                'uuidv5'
+                            ]
+                        },
+                        name: 'guid'
+                    }
+                ],
+                type: 'string'
+            });
+            done();
+        });
+    });
 });
