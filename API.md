@@ -114,7 +114,7 @@
     - [`string.email([options])`](#stringemailoptions)
     - [`string.ip([options])`](#stringipoptions)
     - [`string.uri([options])`](#stringurioptions)
-    - [`string.guid()`](#stringguid)
+    - [`string.guid()` - aliases: `uuid`](#stringguid---aliases-uuid)
     - [`string.hex()`](#stringhex)
     - [`string.hostname()`](#stringhostname)
     - [`string.lowercase()`](#stringlowercase)
@@ -783,7 +783,7 @@ const schema = Joi.array().length(5);
 
 Requires the array values to be unique.
 
-You can provide a custom `comparator` function that takes 2 parameters to compare. This function should return whether the 2 parameters are equal or not, you are also **responsible** for this function not to fail, any `Error` would bubble out of Joi. 
+You can provide a custom `comparator` function that takes 2 parameters to compare. This function should return whether the 2 parameters are equal or not, you are also **responsible** for this function not to fail, any `Error` would bubble out of Joi.
 
 Note: remember that if you provide a custom comparator, different types can be passed as parameter depending on the rules you set on items.
 
@@ -1618,12 +1618,21 @@ const schema = Joi.string().uri({
 });
 ```
 
-#### `string.guid()`
+#### `string.guid()`- aliases: `uuid`
 
 Requires the string value to be a valid GUID.
 
+- `options` - optional settings:
+    - `version` - Specifies one or more acceptable versions. Can be an Array or String with the following values:
+    `uuidv1`, `uuidv2`, `uuidv3`, `uuidv4`, or `uuidv5`. If no `version` is specified then it is assumed to be a generic `guid`.
+
 ```js
-const schema = Joi.string().guid();
+const schema = Joi.string().guid({
+    version: [
+        'uuidv4',
+        'uuidv5'
+    ]
+});
 ```
 
 #### `string.hex()`

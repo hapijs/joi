@@ -2970,6 +2970,60 @@ describe('string', () => {
             ], done);
         });
 
+        it('validates an hexadecimal string', (done) => {
+
+            const rule = Joi.string().hex();
+            Helper.validate(rule, [
+                ['123456789abcdef', true],
+                ['123456789AbCdEf', true],
+                ['123afg', false, null, '"value" must only contain hexadecimal characters']
+            ], done);
+        });
+
+        it('validates combination of uppercase, min, max, alphanum and valid', (done) => {
+
+            const rule = Joi.string().uppercase().min(2).max(3).alphanum().valid('AB', 'BC');
+            Helper.validate(rule, [
+                ['x', false, null, '"value" must be one of [AB, BC]'],
+                ['123', false, null, '"value" must be one of [AB, BC]'],
+                ['1234', false, null, '"value" must be one of [AB, BC]'],
+                ['12', false, null, '"value" must be one of [AB, BC]'],
+                ['ab', true],
+                ['abc', false, null, '"value" must be one of [AB, BC]'],
+                ['a2c', false, null, '"value" must be one of [AB, BC]'],
+                ['abcd', false, null, '"value" must be one of [AB, BC]'],
+                ['*ab', false, null, '"value" must be one of [AB, BC]'],
+                ['', false, null, '"value" is not allowed to be empty'],
+                ['bc', true],
+                ['BC', true],
+                ['de', false, null, '"value" must be one of [AB, BC]'],
+                ['ABc', false, null, '"value" must be one of [AB, BC]'],
+                ['AB', true],
+                [null, false, null, '"value" must be a string']
+            ], done);
+        });
+    });
+
+    describe('guid()', () => {
+
+        it('throws when options.version is not a string', (done) => {
+
+            expect(() => {
+
+                Joi.string().guid({ version: 42 });
+            }).to.throw('version at position 0 must be a string');
+            done();
+        });
+
+        it('throws when options.version is not a valid value', (done) => {
+
+            expect(() => {
+
+                Joi.string().guid({ version: '42' });
+            }).to.throw('version at position 0 must be one of uuidv1, uuidv2, uuidv3, uuidv4, uuidv5');
+            done();
+        });
+
         it('validates guid', (done) => {
 
             Helper.validate(Joi.string().guid(), [
@@ -2981,9 +3035,161 @@ describe('string', () => {
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
+                ['{D1A5279D-B27D-0CD4-005E-EFDD53D08E8D}', true],
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+            ], done);
+        });
+
+        it('validates uuidv1', (done) => {
+
+            Helper.validate(Joi.string().guid({ version: ['uuidv1'] }), [
+                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D}', true],
+                ['{B59511BD6A5F1DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-1548-85E4-04FC71357423', true],
+                ['677E2553DD4D13B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-1717-88c1-b7c4b7ba80db}', true],
+                ['{7e9081b59a6d1cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-1c48-9b33-68921dd72463', true],
+                ['b4b2fb69c6241e5eb0698e0c6ec66618', true],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-1CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{283B67B2-430F-1E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D:B27D-1CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D:1CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-1CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-1CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+            ], done);
+        });
+
+        it('validates uuidv2', (done) => {
+
+            Helper.validate(Joi.string().guid({ version: ['uuidv2'] }), [
+                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D}', true],
+                ['{B59511BD6A5F2DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-2548-85E4-04FC71357423', true],
+                ['677E2553DD4D23B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-2717-88c1-b7c4b7ba80db}', true],
+                ['{7e9081b59a6d2cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-2c48-9b33-68921dd72463', true],
+                ['b4b2fb69c6242e5eb0698e0c6ec66618', true],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-2CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{283B67B2-430F-2E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D:B27D-2CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D:2CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-2CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-2CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+            ], done);
+        });
+
+        it('validates uuidv3', (done) => {
+
+            Helper.validate(Joi.string().guid({ version: ['uuidv3'] }), [
+                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D}', true],
+                ['{B59511BD6A5F3DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-3548-85E4-04FC71357423', true],
+                ['677E2553DD4D33B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-3717-88c1-b7c4b7ba80db}', true],
+                ['{7e9081b59a6d3cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-3c48-9b33-68921dd72463', true],
+                ['b4b2fb69c6243e5eb0698e0c6ec66618', true],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-3CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{283B67B2-430F-3E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D:B27D-3CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D:3CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-3CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-3CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+            ], done);
+        });
+
+        it('validates uuidv4', (done) => {
+
+            Helper.validate(Joi.string().guid({ version: ['uuidv4'] }), [
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', true],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', true],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', true],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-4CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+            ], done);
+        });
+
+        it('validates uuidv5', (done) => {
+
+            Helper.validate(Joi.string().guid({ version: ['uuidv5'] }), [
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', true],
+                ['{B59511BD6A5F5DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-5548-85E4-04FC71357423', true],
+                ['677E2553DD4D53B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-5717-88c1-b7c4b7ba80db}', true],
+                ['{7e9081b59a6d5cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-5c48-9b33-68921dd72463', true],
+                ['b4b2fb69c6245e5eb0698e0c6ec66618', true],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+            ], done);
+        });
+
+        it('validates multiple uuid versions (1,3,5)', (done) => {
+
+            Helper.validate(Joi.string().guid({ version: ['uuidv1', 'uuidv3', 'uuidv5'] }), [
+                ['{D1A5279D-B27D-1CD4-805E-EFDD53D08E8D}', true],
+                ['{D1A5279D-B27D-3CD4-905E-EFDD53D08E8D}', true],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', true],
+                ['{B59511BD6A5F5DF09ECF562A108D8A2E}', true],
+                ['69593D62-71EA-5548-85E4-04FC71357423', true],
+                ['677E2553DD4D53B09DA77414DB1EB8EA', true],
+                ['{5ba3bba3-729a-5717-88c1-b7c4b7ba80db}', true],
+                ['{7e9081b59a6d5cc1a8c347f69fb4198d}', true],
+                ['0c74f13f-fa83-5c48-9b33-68921dd72463', true],
+                ['b4b2fb69c6245e5eb0698e0c6ec66618', true],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
             ], done);
         });
 
@@ -3253,39 +3459,6 @@ describe('string', () => {
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
                 ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
                 ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
-            ], done);
-        });
-
-        it('validates an hexadecimal string', (done) => {
-
-            const rule = Joi.string().hex();
-            Helper.validate(rule, [
-                ['123456789abcdef', true],
-                ['123456789AbCdEf', true],
-                ['123afg', false, null, '"value" must only contain hexadecimal characters']
-            ], done);
-        });
-
-        it('validates combination of uppercase, min, max, alphanum and valid', (done) => {
-
-            const rule = Joi.string().uppercase().min(2).max(3).alphanum().valid('AB', 'BC');
-            Helper.validate(rule, [
-                ['x', false, null, '"value" must be one of [AB, BC]'],
-                ['123', false, null, '"value" must be one of [AB, BC]'],
-                ['1234', false, null, '"value" must be one of [AB, BC]'],
-                ['12', false, null, '"value" must be one of [AB, BC]'],
-                ['ab', true],
-                ['abc', false, null, '"value" must be one of [AB, BC]'],
-                ['a2c', false, null, '"value" must be one of [AB, BC]'],
-                ['abcd', false, null, '"value" must be one of [AB, BC]'],
-                ['*ab', false, null, '"value" must be one of [AB, BC]'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                ['bc', true],
-                ['BC', true],
-                ['de', false, null, '"value" must be one of [AB, BC]'],
-                ['ABc', false, null, '"value" must be one of [AB, BC]'],
-                ['AB', true],
                 [null, false, null, '"value" must be a string']
             ], done);
         });
