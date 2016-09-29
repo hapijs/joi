@@ -21,9 +21,9 @@
     "topo": "2.x.x"
   },
   "devDependencies": {
-    "code": "3.x.x",
+    "code": "4.x.x",
     "lab": "11.x.x",
-    "markdown-toc": "0.12.x"
+    "markdown-toc": "0.13.x"
   },
   "scripts": {
     "test": "lab -t 100 -a code -L",
