@@ -1618,7 +1618,7 @@ const schema = Joi.string().uri({
 });
 ```
 
-#### `string.guid()`- aliases: `uuid`
+#### `string.guid()` - aliases: `uuid`
 
 Requires the string value to be a valid GUID.
 
