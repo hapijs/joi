@@ -52,6 +52,8 @@
     - [`array.length(limit)`](#arraylengthlimit)
     - [`array.unique([comparator])`](#arrayuniquecomparator)
   - [`boolean`](#boolean)
+    - [`boolean.truthy(value)`](#booleantruthyvalue)
+    - [`boolean.falsy(value)`](#booleanfalsyvalue)
   - [`binary`](#binary)
     - [`binary.encoding(encoding)`](#binaryencodingencoding)
     - [`binary.min(limit)`](#binaryminlimit)
@@ -806,6 +808,24 @@ Supports the same methods of the [`any()`](#any) type.
 ```js
 const boolean = Joi.boolean();
 boolean.validate(true, (err, value) => { });
+```
+
+#### `boolean.truthy(value)`
+
+Allows for additional strings to be considered valid boolean values in addition to default 'truthy' strings: ['true', 'yes', '1', 'on']. Accepts a string or an array of strings.
+
+```js
+const boolean = Joi.boolean().truthy('Y');
+boolean.validate('Y', (err, value) => { });
+```
+
+#### `boolean.falsy(value)`
+
+Allows for additional strings to be considered valid boolean values in addition to default 'falsy' strings: ['false', 'no', '0', 'off']. Accepts a string or an array of strings.
+
+```js
+const boolean = Joi.boolean().falsy('N');
+boolean.validate('N', (err, value) => { });
 ```
 
 ### `binary`

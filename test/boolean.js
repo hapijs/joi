@@ -159,5 +159,106 @@ describe('boolean', () => {
                 [null, true]
             ], done);
         });
+
+        it('should handle work with additional truthy value', (done) => {
+
+            const rule = Joi.boolean().truthy('Y');
+            Helper.validate(rule, [
+                ['Y', true],
+                ['y', true],
+                [true, true],
+                [false, true],
+                ['N', false, null, '"value" must be a boolean']
+            ], done);
+        });
+
+        it('should handle work with additional truthy array', (done) => {
+
+            const rule = Joi.boolean().truthy(['Y', 'Si']);
+            Helper.validate(rule, [
+                ['Si', true],
+                ['si', true],
+                ['Y', true],
+                ['y', true],
+                [true, true],
+                [false, true],
+                ['N', false, null, '"value" must be a boolean'],
+                [null, false, null, '"value" must be a boolean']
+            ], done);
+        });
+
+        it('should handle work with additional falsy value', (done) => {
+
+            const rule = Joi.boolean().falsy('N');
+            Helper.validate(rule, [
+                ['N', true],
+                ['n', true],
+                ['Y', false, null, '"value" must be a boolean'],
+                [true, true],
+                [false, true]
+            ], done);
+        });
+
+        it('should handle work with additional falsy array', (done) => {
+
+            const rule = Joi.boolean().falsy(['N', 'Never']);
+            Helper.validate(rule, [
+                ['N', true],
+                ['n', true],
+                ['Never', true],
+                ['never', true],
+                ['Y', false, null, '"value" must be a boolean'],
+                [null, false, null, '"value" must be a boolean'],
+                [true, true],
+                [false, true]
+            ], done);
+        });
+
+        it('should handle work with required, null allowed, and both additional truthy and falsy values', (done) => {
+
+            const rule = Joi.boolean().truthy(['Y', 'Si']).falsy(['N', 'Never']).allow(null).required();
+            Helper.validate(rule, [
+                ['N', true],
+                ['n', true],
+                ['Never', true],
+                ['never', true],
+                ['Y', true],
+                ['y', true],
+                ['Si', true],
+                ['si', true],
+                [true, true],
+                [false, true],
+                [null, true],
+                ['M', false, null, '"value" must be a boolean']
+            ], done);
+        });
+
+        it('errors on non-string truthy value', (done) => {
+
+            expect(() => {
+
+                Joi.boolean().truthy({});
+            }).to.throw('truthy value must be a string');
+
+            expect(() => {
+
+                Joi.boolean().truthy(['valid', {}]);
+            }).to.throw('truthy value must be a string');
+            done();
+        });
+
+        it('errors on non-string falsy value', (done) => {
+
+            expect(() => {
+
+                Joi.boolean().falsy({});
+            }).to.throw('falsy value must be a string');
+
+            expect(() => {
+
+                Joi.boolean().falsy(['valid', {}]);
+            }).to.throw('falsy value must be a string');
+            done();
+        });
     });
 });
