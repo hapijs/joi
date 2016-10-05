@@ -816,7 +816,7 @@ Allows for additional strings to be considered valid boolean values in addition 
 
 ```js
 const boolean = Joi.boolean().truthy('Y');
-boolean.validate('Y', (err, value) => { });
+boolean.validate('Y', (err, value) => { }); // Valid
 ```
 
 #### `boolean.falsy(value)`
@@ -825,7 +825,7 @@ Allows for additional strings to be considered valid boolean values in addition 
 
 ```js
 const boolean = Joi.boolean().falsy('N');
-boolean.validate('N', (err, value) => { });
+boolean.validate('N', (err, value) => { }); // Valid
 ```
 
 ### `binary`
