@@ -801,18 +801,20 @@ const schema = Joi.array().unique((a, b) => a.property === b.property);
 
 ### `boolean`
 
-Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', 'no', 'on', 'off', 1, 0, '1', or '0'). Can also be called via `bool()`.
+Generates a schema object that matches a boolean data type. Can also be called via `bool()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const boolean = Joi.boolean();
-boolean.validate(true, (err, value) => { });
+boolean.validate(true, (err, value) => { }); // Valid
+
+boolean.validate(1, (err, value) => { }); // Invalid
 ```
 
 #### `boolean.truthy(value)`
-
-Allows for additional strings to be considered valid boolean values in addition to default 'truthy' strings: ['true', 'yes', '1', 'on']. Accepts a string or an array of strings.
+``
+Allows for additional values to be considered valid booleans by converting them to `true` during validation. Accepts a value or an array of values.
 
 ```js
 const boolean = Joi.boolean().truthy('Y');
@@ -821,7 +823,7 @@ boolean.validate('Y', (err, value) => { }); // Valid
 
 #### `boolean.falsy(value)`
 
-Allows for additional strings to be considered valid boolean values in addition to default 'falsy' strings: ['false', 'no', '0', 'off']. Accepts a string or an array of strings.
+Allows for additional values to be considered valid booleans by converting them to `false` during validation. Accepts a value or an array of values.
 
 ```js
 const boolean = Joi.boolean().falsy('N');

@@ -228,7 +228,7 @@ describe('any', () => {
             const tests = [
                 [Joi.array(), '[1,2,3]'],
                 [Joi.binary(), 'abc'],
-                [Joi.boolean(), 'false'],
+                [Joi.boolean(), false],
                 [Joi.date().format('YYYYMMDD'), '19700101'],
                 [Joi.number(), '12'],
                 [Joi.object(), '{ "a": 1 }'],
