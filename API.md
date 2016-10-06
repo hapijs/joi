@@ -813,7 +813,7 @@ boolean.validate(1, (err, value) => { }); // Invalid
 ```
 
 #### `boolean.truthy(value)`
-``
+
 Allows for additional values to be considered valid booleans by converting them to `true` during validation. Accepts a value or an array of values.
 
 ```js
