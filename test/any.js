@@ -1812,5 +1812,40 @@ describe('any', () => {
                 done();
             });
         });
+
+        describe('slice', () => {
+
+            it('returns a new Set', (done) => {
+
+                const any = Joi.any().clone();
+                any._valids.add(null);
+                const otherValids = any._valids.slice();
+                otherValids.add('null');
+                expect(any._valids.has(null)).to.equal(true);
+                expect(otherValids.has(null)).to.equal(true);
+                expect(any._valids.has('null')).to.equal(false);
+                expect(otherValids.has('null')).to.equal(true);
+                done();
+            });
+        });
+
+        describe('concat', () => {
+
+            it('merges _set into a new Set', (done) => {
+
+                const any = Joi.any().clone();
+                const otherValids = any._valids.slice();
+                any._valids.add(null);
+                otherValids.add('null');
+                const thirdSet = otherValids.concat(any._valids);
+                expect(any._valids.has(null)).to.equal(true);
+                expect(otherValids.has(null)).to.equal(false);
+                expect(any._valids.has('null')).to.equal(false);
+                expect(otherValids.has('null')).to.equal(true);
+                expect(thirdSet.has(null)).to.equal(true);
+                expect(thirdSet.has('null')).to.equal(true);
+                done();
+            });
+        });
     });
 });

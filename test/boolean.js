@@ -197,5 +197,40 @@ describe('boolean', () => {
                 ['y', false, null, '"value" must be a boolean']
             ], done);
         });
+
+        it('should handle concatenated schema', (done) => {
+
+            const a = Joi.boolean().truthy('yes');
+            const b = Joi.boolean().falsy('no');
+
+            Helper.validate(a, [
+                ['yes', true],
+                ['no', false, null, '"value" must be a boolean']
+            ]);
+
+            Helper.validate(b, [
+                ['no', true],
+                ['yes', false, null, '"value" must be a boolean']
+            ]);
+
+            Helper.validate(a.concat(b), [
+                ['yes', true],
+                ['no', true]
+            ], done);
+        });
+
+        it('should describe truthy and falsy values', (done) => {
+
+            const schema = Joi.boolean().truthy('yes').falsy('no').required().describe();
+            expect(schema).to.equal({
+                type: 'boolean',
+                flags: {
+                    presence: 'required'
+                },
+                truthyValues: ['yes'],
+                falsyValues : ['no']
+            });
+            done();
+        });
     });
 });
