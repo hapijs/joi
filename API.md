@@ -1776,5 +1776,5 @@ Joi throws classical javascript `Error`s containing :
     - `path` - dotted path to the key where the error happened.
     - `type` - type of the error.
     - `context` - object providing context of the error.
-- `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occured.
+- `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occurred. Takes an optional parameter that, if truthy, will strip the colors out of the output.
 - `_object` - the original object to validate.
