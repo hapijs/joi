@@ -391,7 +391,25 @@ describe('errors', () => {
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
                 expect(err).to.exist();
-                expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[1]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  "a" \u001b[31m[3]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] "a" must be one of [a, b, c, d]\n[2] "u" is required\n[3] "b" must be a string\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[3]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  "a" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] "a" must be one of [a, b, c, d]\n[2] "u" is required\n[3] "b" must be a string\u001b[0m');
+                done();
+            });
+        });
+
+        it('annotates error without colors if requested', (done) => {
+
+            const object = {
+                a: 'm'
+            };
+
+            const schema = {
+                a: Joi.string().valid('a', 'b', 'c', 'd')
+            };
+
+            Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.annotate(true)).to.equal('{\n  "a" [1]: \"m\"\n}\n\n[1] "a" must be one of [a, b, c, d]');
                 done();
             });
         });
@@ -483,7 +501,7 @@ describe('errors', () => {
             Joi.validate({ x: true }, schema, (err, value) => {
 
                 expect(err).to.exist();
-                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be a string\n[2] "x" must be a number\n[3] "x" must be a number of milliseconds or valid date string\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[3, 2, 1]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be a string\n[2] "x" must be a number\n[3] "x" must be a number of milliseconds or valid date string\u001b[0m');
                 done();
             });
         });
