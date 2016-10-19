@@ -156,7 +156,6 @@ Validates a value using the given schema and options where:
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
     `validate()` and not using `any.options()`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
-  - `error` - overrides the default joi error as described in [`any.error(err)`](#anyerrorerr). Defaults to no override.
 - `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
