@@ -297,7 +297,7 @@ describe('errors', () => {
             done();
         });
     });
-    
+
     it('returns custom error (validate options)', (done) => {
 
         const schema = Joi.object({
@@ -350,7 +350,7 @@ describe('errors', () => {
             done();
         });
     });
-    
+
     it('returns custom error (options)', (done) => {
 
         const schema = Joi.object({
