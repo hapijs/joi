@@ -849,7 +849,9 @@ describe('object', () => {
                     {
                         regex: '/\\w\\d/i',
                         rule: {
-                            type: 'boolean'
+                            type: 'boolean',
+                            truthy: [true],
+                            falsy: [false]
                         }
                     }
                 ]

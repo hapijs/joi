@@ -1674,178 +1674,98 @@ describe('any', () => {
         });
     });
 
-    describe('Set', () => {
+    describe('allow()', () => {
 
-        describe('has()', () => {
+        it('allows valid values to be set', (done) => {
 
-            it('compares date to null', (done) => {
+            expect(() => {
 
-                const any = Joi.any().clone();
-                any._valids.add(null);
-                expect(any._valids.has(new Date())).to.equal(false);
-                done();
-            });
-
-            it('compares buffer to null', (done) => {
-
-                const any = Joi.any().clone();
-                any._valids.add(null);
-                expect(any._valids.has(new Buffer(''))).to.equal(false);
-                done();
-            });
-
+                Joi.any().allow(true, 1, 'hello', new Date());
+            }).not.to.throw();
+            done();
         });
 
-        describe('values()', () => {
+        it('throws when passed undefined', (done) => {
 
-            it('returns array', (done) => {
+            expect(() => {
 
-                const a = Joi.any().valid('x').invalid('y');
-                const b = a.invalid('x');
-                expect(a._valids.values().length).to.equal(1);
-                expect(b._valids.values().length).to.equal(0);
-                expect(a._invalids.values().length).to.equal(1);
-                expect(b._invalids.values().length).to.equal(2);
-                done();
-            });
+                Joi.any().allow(undefined);
+            }).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
+            done();
+        });
+    });
 
-            it('strips undefined', (done) => {
+    describe('valid()', () => {
 
-                const any = Joi.any().clone();
-                any._valids.add(undefined);
-                expect(any._valids.values({ stripUndefined: true })).to.not.include(undefined);
-                done();
-            });
+        it('allows valid values to be set', (done) => {
+
+            expect(() => {
+
+                Joi.any().valid(true, 1, 'hello', new Date(), Symbol('foo'), () => {}, {});
+            }).not.to.throw();
+            done();
         });
 
-        describe('allow()', () => {
+        it('throws when passed undefined', (done) => {
 
-            it('allows valid values to be set', (done) => {
+            expect(() => {
 
-                expect(() => {
-
-                    Joi.any().allow(true, 1, 'hello', new Date());
-                }).not.to.throw();
-                done();
-            });
-
-            it('throws when passed undefined', (done) => {
-
-                expect(() => {
-
-                    Joi.any().allow(undefined);
-                }).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
-                done();
-            });
+                Joi.any().valid(undefined);
+            }).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
+            done();
         });
 
-        describe('valid()', () => {
+        it('validates differents types of values', (done) => {
 
-            it('allows valid values to be set', (done) => {
+            expect(Joi.valid(1).validate(1).error).to.be.null();
+            expect(Joi.valid(1).validate(2).error).to.exist();
 
-                expect(() => {
+            const d = new Date();
+            expect(Joi.valid(d).validate(new Date(d.getTime())).error).to.be.null();
+            expect(Joi.valid(d).validate(new Date(d.getTime() + 1)).error).to.exist();
 
-                    Joi.any().valid(true, 1, 'hello', new Date(), Symbol('foo'), () => {}, {});
-                }).not.to.throw();
-                done();
-            });
+            const str = 'foo';
+            expect(Joi.valid(str).validate(str).error).to.be.null();
+            expect(Joi.valid(str).validate('foobar').error).to.exist();
 
-            it('throws when passed undefined', (done) => {
+            const s = Symbol('foo');
+            expect(Joi.valid(s).validate(s).error).to.be.null();
+            expect(Joi.valid(s).validate(Symbol('foo')).error).to.exist();
 
-                expect(() => {
+            const o = {};
+            expect(Joi.valid(o).validate(o).error).to.be.null();
+            expect(Joi.valid(o).validate({}).error).to.exist();
 
-                    Joi.any().valid(undefined);
-                }).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
-                done();
-            });
+            const f = () => {};
+            expect(Joi.valid(f).validate(f).error).to.be.null();
+            expect(Joi.valid(f).validate(() => {}).error).to.exist();
 
-            it('validates differents types of values', (done) => {
+            const b = new Buffer('foo');
+            expect(Joi.valid(b).validate(b).error).to.be.null();
+            expect(Joi.valid(b).validate(new Buffer('foobar')).error).to.exist();
 
-                expect(Joi.valid(1).validate(1).error).to.be.null();
-                expect(Joi.valid(1).validate(2).error).to.exist();
+            done();
+        });
+    });
 
-                const d = new Date();
-                expect(Joi.valid(d).validate(new Date(d.getTime())).error).to.be.null();
-                expect(Joi.valid(d).validate(new Date(d.getTime() + 1)).error).to.exist();
+    describe('invalid()', () => {
 
-                const str = 'foo';
-                expect(Joi.valid(str).validate(str).error).to.be.null();
-                expect(Joi.valid(str).validate('foobar').error).to.exist();
+        it('allows invalid values to be set', (done) => {
 
-                const s = Symbol('foo');
-                expect(Joi.valid(s).validate(s).error).to.be.null();
-                expect(Joi.valid(s).validate(Symbol('foo')).error).to.exist();
+            expect(() => {
 
-                const o = {};
-                expect(Joi.valid(o).validate(o).error).to.be.null();
-                expect(Joi.valid(o).validate({}).error).to.exist();
-
-                const f = () => {};
-                expect(Joi.valid(f).validate(f).error).to.be.null();
-                expect(Joi.valid(f).validate(() => {}).error).to.exist();
-
-                const b = new Buffer('foo');
-                expect(Joi.valid(b).validate(b).error).to.be.null();
-                expect(Joi.valid(b).validate(new Buffer('foobar')).error).to.exist();
-
-                done();
-            });
+                Joi.any().valid(true, 1, 'hello', new Date(), Symbol('foo'));
+            }).not.to.throw();
+            done();
         });
 
-        describe('invalid()', () => {
+        it('throws when passed undefined', (done) => {
 
-            it('allows invalid values to be set', (done) => {
+            expect(() => {
 
-                expect(() => {
-
-                    Joi.any().valid(true, 1, 'hello', new Date());
-                }).not.to.throw();
-                done();
-            });
-
-            it('throws when passed undefined', (done) => {
-
-                expect(() => {
-
-                    Joi.any().invalid(undefined);
-                }).to.throw('Cannot call allow/valid/invalid with undefined');
-                done();
-            });
-        });
-
-        describe('slice', () => {
-
-            it('returns a new Set', (done) => {
-
-                const any = Joi.any().clone();
-                any._valids.add(null);
-                const otherValids = any._valids.slice();
-                otherValids.add('null');
-                expect(any._valids.has(null)).to.equal(true);
-                expect(otherValids.has(null)).to.equal(true);
-                expect(any._valids.has('null')).to.equal(false);
-                expect(otherValids.has('null')).to.equal(true);
-                done();
-            });
-        });
-
-        describe('concat', () => {
-
-            it('merges _set into a new Set', (done) => {
-
-                const any = Joi.any().clone();
-                const otherValids = any._valids.slice();
-                any._valids.add(null);
-                otherValids.add('null');
-                const thirdSet = otherValids.concat(any._valids);
-                expect(any._valids.has(null)).to.equal(true);
-                expect(otherValids.has(null)).to.equal(false);
-                expect(any._valids.has('null')).to.equal(false);
-                expect(otherValids.has('null')).to.equal(true);
-                expect(thirdSet.has(null)).to.equal(true);
-                expect(thirdSet.has('null')).to.equal(true);
-                done();
-            });
+                Joi.any().invalid(undefined);
+            }).to.throw('Cannot call allow/valid/invalid with undefined');
+            done();
         });
     });
 });

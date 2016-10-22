@@ -227,8 +227,8 @@ describe('boolean', () => {
                 flags: {
                     presence: 'required'
                 },
-                truthyValues: ['yes'],
-                falsyValues : ['no']
+                truthy: [true, 'yes'],
+                falsy : [false, 'no']
             });
             done();
         });

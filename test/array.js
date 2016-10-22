@@ -642,8 +642,16 @@ describe('array', () => {
             expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: false },
-                orderedItems: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }, { type: 'string', invalids: [''], flags: { presence: 'required' } }],
-                items: [{ type: 'number', invalids: [Infinity, -Infinity] }, { type: 'string', invalids: [''] }, { type: 'boolean', flags: { presence: 'forbidden' } }]
+                orderedItems: [
+                    { type: 'number', invalids: [Infinity, -Infinity] },
+                    { type: 'string', invalids: [''] },
+                    { type: 'string', invalids: [''], flags: { presence: 'required' } }
+                ],
+                items: [
+                    { type: 'number', invalids: [Infinity, -Infinity] },
+                    { type: 'string', invalids: [''] },
+                    { type: 'boolean', flags: { presence: 'forbidden' }, truthy: [true], falsy: [false] }
+                ]
             });
 
             done();
