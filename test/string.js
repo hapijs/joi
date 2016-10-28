@@ -2980,6 +2980,17 @@ describe('string', () => {
             ], done);
         });
 
+        it('validates an base64 string', (done) => {
+
+            const rule = Joi.string().base64();
+            Helper.validate(rule, [
+                ['ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=', true],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must only contain base64 characters'],
+                ['$#%#$^$^)(*&^%', false, null, '"value" must only contain base64 characters']
+            ], done);
+        });
+
         it('validates combination of uppercase, min, max, alphanum and valid', (done) => {
 
             const rule = Joi.string().uppercase().min(2).max(3).alphanum().valid('AB', 'BC');

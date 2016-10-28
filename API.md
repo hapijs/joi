@@ -118,6 +118,7 @@
     - [`string.uri([options])`](#stringurioptions)
     - [`string.guid()` - aliases: `uuid`](#stringguid---aliases-uuid)
     - [`string.hex()`](#stringhex)
+    - [`string.base64()`](#stringbase64)
     - [`string.hostname()`](#stringhostname)
     - [`string.lowercase()`](#stringlowercase)
     - [`string.uppercase()`](#stringuppercase)
@@ -1662,6 +1663,14 @@ Requires the string value to be a valid hexadecimal string.
 
 ```js
 const schema = Joi.string().hex();
+```
+
+#### `string.base64()`
+
+Requires the string value to be a valid base64 string.
+
+```js
+const schema = Joi.string().base64();
 ```
 
 #### `string.hostname()`
