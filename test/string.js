@@ -2986,8 +2986,8 @@ describe('string', () => {
             Helper.validate(rule, [
                 ['ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=', true],
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
-                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must only contain base64 characters'],
-                ['$#%#$^$^)(*&^%', false, null, '"value" must only contain base64 characters']
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
             ], done);
         });
 
