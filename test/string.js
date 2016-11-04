@@ -2984,9 +2984,14 @@ describe('string', () => {
 
             const rule = Joi.string().base64();
             Helper.validate(rule, [
-                ['ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=', true],
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
                 ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['Y=', false, null, '"value" must be a valid base64 string'],
+                ['Y===', false, null, '"value" must be a valid base64 string'],
+                ['YW', false, null, '"value" must be a valid base64 string'],
+                ['YW==', true],
+                ['YW5', false, null, '"value" must be a valid base64 string'],
+                ['YW5=', true],
                 ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
             ], done);
         });
