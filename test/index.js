@@ -1649,6 +1649,17 @@ describe('Joi', () => {
                     key: 'xor',
                     peers: ['required']
                 }
+            ],
+            renames: [
+                {
+                    from: 'renamed',
+                    to: 'required',
+                    options: {
+                        alias: false,
+                        multiple: false,
+                        override: false
+                    }
+                }
             ]
         };
 
