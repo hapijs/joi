@@ -1328,6 +1328,15 @@ describe('object', () => {
             expect(description.rules).to.include({ name: 'type', arg: 'RegExp' });
             done();
         });
+
+        it.only('uses the constructor reference in the schema description', (done) => {
+
+            const Foo = function Foo() { };
+            const description = Joi.object().type(Foo).describe();
+
+            expect(new Foo()).to.be.an.instanceof(description.rules[0].constructor);
+            done();
+        });
     });
 
     describe('schema()', () => {
