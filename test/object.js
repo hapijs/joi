@@ -802,6 +802,46 @@ describe('object', () => {
                 done();
             });
         });
+
+        it('should fulfill describe() with defaults', (done) => {
+
+            const schema = Joi.object().rename('b', 'a');
+            const desc = schema.describe();
+
+            expect(desc).to.equal({
+                type: 'object',
+                renames: [{
+                    from: 'b',
+                    to: 'a',
+                    options: {
+                        alias: false,
+                        multiple: false,
+                        override: false
+                    }
+                }]
+            });
+            done();
+        });
+
+        it('should fulfill describe() with non-defaults', (done) => {
+
+            const schema = Joi.object().rename('b', 'a', { alias: true, multiple: true, override: true });
+            const desc = schema.describe();
+
+            expect(desc).to.equal({
+                type: 'object',
+                renames: [{
+                    from: 'b',
+                    to: 'a',
+                    options: {
+                        alias: true,
+                        multiple: true,
+                        override: true
+                    }
+                }]
+            });
+            done();
+        });
     });
 
     describe('describe()', () => {
