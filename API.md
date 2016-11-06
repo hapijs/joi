@@ -1000,7 +1000,7 @@ Specifies the maximal arity of the function where:
 - `n` - the maximum arity expected.
 
 ```js
-const schema = Joi.func().arity(3);
+const schema = Joi.func().maxArity(3);
 ```
 
 #### `func.ref()`
