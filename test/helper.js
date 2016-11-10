@@ -37,7 +37,6 @@ exports.validateOptions = function (schema, config, options, callback) {
             if (!shouldValidate) {
                 expect(expectedValueOrError, 'Failing tests messages must be tested').to.exist();
             }
-
             const result = Joi.validate(input, compiled, validationOptions || options);
 
             const err = result.error;

@@ -1365,7 +1365,16 @@ describe('object', () => {
 
             const description = Joi.object().type(RegExp).describe();
 
-            expect(description.rules).to.include({ name: 'type', arg: 'RegExp' });
+            expect(description.rules).to.include({ name: 'type', arg: { name: 'RegExp', ctor: RegExp } });
+            done();
+        });
+
+        it('uses the constructor reference in the schema description', (done) => {
+
+            const Foo = function Foo() { };
+            const description = Joi.object().type(Foo).describe();
+
+            expect(new Foo()).to.be.an.instanceof(description.rules[0].arg.ctor);
             done();
         });
     });
