@@ -135,6 +135,26 @@ describe('date', () => {
                 ], done);
             });
 
+            it('accepts references as min date within a when', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.date().required(),
+                    b: Joi.date().required(),
+                    c: Joi.number().required().when('a', {
+                        is: Joi.date().min(Joi.ref('b')), // a >= b
+                        then: Joi.number().valid(0)
+                    })
+                });
+
+                Helper.validate(schema, [
+                    [{ a: 123, b: 123, c: 0 }, true],
+                    [{ a: 123, b: 456, c: 42 }, true],
+                    [{ a: 456, b: 123, c: 0 }, true],
+                    [{ a: 123, b: 123, c: 42 }, false, null, 'child "c" fails because ["c" must be one of [0]]'],
+                    [{ a: 456, b: 123, c: 42 }, false, null, 'child "c" fails because ["c" must be one of [0]]']
+                ], done);
+            });
+
             it('accepts context references as min date', (done) => {
 
                 const schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });

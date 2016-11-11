@@ -149,6 +149,24 @@ describe('string', () => {
             ], done);
         });
 
+        it('accepts references as min length within a when', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.string().required(),
+                b: Joi.number().required(),
+                c: Joi.number().required().when('a', {
+                    is: Joi.string().min(Joi.ref('b')), // a.length >= b
+                    then: Joi.number().valid(0)
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 4, c: 42 }, true],
+                [{ a: 'abc', b: 3, c: 0 }, true],
+                [{ a: 'abc', b: 3, c: 42 }, false, null, 'child "c" fails because ["c" must be one of [0]]']
+            ], done);
+        });
+
         it('accepts context references as min length', (done) => {
 
             const schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
