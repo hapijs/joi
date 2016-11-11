@@ -7,6 +7,7 @@
 <!-- toc -->
 
 - [Joi](#joi)
+  - [`version`](#version)
   - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
   - [`compile(schema)`](#compileschema)
   - [`assert(value, schema, [message])`](#assertvalue-schema-message)
@@ -133,6 +134,10 @@
 <!-- tocstop -->
 
 ## Joi
+
+### `version`
+
+Property showing the current version of joi being used.
 
 ### `validate(value, schema, [options], [callback])`
 
