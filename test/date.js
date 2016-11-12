@@ -135,6 +135,26 @@ describe('date', () => {
                 ], done);
             });
 
+            it('accepts references as min date within a when', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.date().required(),
+                    b: Joi.date().required(),
+                    c: Joi.number().required().when('a', {
+                        is: Joi.date().min(Joi.ref('b')), // a >= b
+                        then: Joi.number().valid(0)
+                    })
+                });
+
+                Helper.validate(schema, [
+                    [{ a: 123, b: 123, c: 0 }, true],
+                    [{ a: 123, b: 456, c: 42 }, true],
+                    [{ a: 456, b: 123, c: 0 }, true],
+                    [{ a: 123, b: 123, c: 42 }, false, null, 'child "c" fails because ["c" must be one of [0]]'],
+                    [{ a: 456, b: 123, c: 42 }, false, null, 'child "c" fails because ["c" must be one of [0]]']
+                ], done);
+            });
+
             it('accepts context references as min date', (done) => {
 
                 const schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });
@@ -401,39 +421,6 @@ describe('date', () => {
 
                     Joi.date().timestamp('not allowed');
                 }).to.throw(Error, /"type" must be one of/);
-                done();
-            });
-        });
-
-        describe('format()', () => {
-
-            it('validates custom format', (done) => {
-
-                Helper.validate(Joi.date().format('DD#YYYY$MM'), [
-                    ['07#2013$06', true],
-                    ['2013-06-07', false, null, '"value" must be a string with one of the following formats DD#YYYY$MM']
-                ], done);
-            });
-
-            it('validates several custom formats', (done) => {
-
-                Helper.validate(Joi.date().format(['DD#YYYY$MM', 'YY|DD|MM']), [
-                    ['13|07|06', true],
-                    ['2013-06-07', false, null, '"value" must be a string with one of the following formats [DD#YYYY$MM, YY|DD|MM]']
-                ], done);
-            });
-
-            it('fails with bad formats', (done) => {
-
-                expect(() => {
-
-                    Joi.date().format(true);
-                }).to.throw('Invalid format.');
-
-                expect(() => {
-
-                    Joi.date().format(['YYYYMMDD', true]);
-                }).to.throw('Invalid format.');
                 done();
             });
         });

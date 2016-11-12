@@ -553,6 +553,26 @@ describe('number', () => {
             ], done);
         });
 
+        it('accepts references as min value within a when', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().required(),
+                c: Joi.number().required().when('a', {
+                    is: Joi.number().min(Joi.ref('b')), // a >= b
+                    then: Joi.number().valid(0)
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 0, b: 1, c: 42 }, true],
+                [{ a: 1, b: 1, c: 0 }, true],
+                [{ a: 2, b: 1, c: 0 }, true],
+                [{ a: 1, b: 1, c: 42 }, false, null, 'child "c" fails because ["c" must be one of [0]]'],
+                [{ a: 2, b: 1, c: 42 }, false, null, 'child "c" fails because ["c" must be one of [0]]']
+            ], done);
+        });
+
         it('accepts context references as min value', (done) => {
 
             const schema = Joi.object({ b: Joi.number().min(Joi.ref('$a')) });
@@ -856,6 +876,25 @@ describe('number', () => {
                 [{ a: 4, b: 25 }, false, null, 'child "b" fails because ["b" must be a multiple of ref:a]'],
                 [{ a: 0, b: 31 }, false, null, 'child "b" fails because ["b" must be a multiple of ref:a]'],
                 [{ a: 0, b: 0 }, false, null, 'child "b" fails because ["b" must be a multiple of ref:a]']
+            ], done);
+        });
+
+        it('should handle references correctly within a when', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().required(),
+                c: Joi.number().required().when('a', {
+                    is: Joi.number().multiple(Joi.ref('b')), // a % b === 0
+                    then: Joi.number().valid(0)
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 2, b: 3, c: 42 }, true],
+                [{ a: 2, b: 4, c: 42 }, true],
+                [{ a: 4, b: 2, c: 0 }, true],
+                [{ a: 4, b: 2, c: 42 }, false, null, 'child "c" fails because ["c" must be one of [0]]']
             ], done);
         });
 

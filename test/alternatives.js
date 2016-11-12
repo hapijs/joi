@@ -281,6 +281,35 @@ describe('alternatives', () => {
                 [{ b: 5 }, false, null, 'child "a" fails because ["a" is required]']
             ], done);
         });
+
+        it('validates with nested whens', (done) => {
+
+            // If ((b === 0 && a === 123) ||
+            //     (b !== 0 && a === anything))
+            // then c === 456
+            // else c === 789
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().required(),
+                c: Joi.when('a', {
+                    is: Joi.when('b', {
+                        is: Joi.valid(0),
+                        then: Joi.valid(123)
+                    }),
+                    then: Joi.valid(456),
+                    otherwise: Joi.valid(789)
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 123, b: 0, c: 456 }, true],
+                [{ a: 0, b: 1, c: 456 }, true],
+                [{ a: 0, b: 0, c: 789 }, true],
+                [{ a: 123, b: 456, c: 456 }, true],
+                [{ a: 0, b: 0, c: 456 }, false, null, 'child "c" fails because ["c" must be one of [789]]'],
+                [{ a: 123, b: 456, c: 789 }, false, null, 'child "c" fails because ["c" must be one of [456]]']
+            ], done);
+        });
     });
 
     describe('describe()', () => {
