@@ -3561,5 +3561,19 @@ describe('string', () => {
             });
             done();
         });
+
+        it('describes invalid RegExp patterns', (done) => {
+
+            const schema = Joi.string().regex(/[0-9]/).invalid(/[a-zA-Z]/);
+            const description = schema.describe();
+
+            expect(description.rules).to.be.an.array();
+            expect(description.rules.length).to.equal(2);
+            expect(description.rules.filter((rule) => {
+
+                return rule.name === 'regexInvalid';
+            }).length).to.equal(1);
+            done();
+        });
     });
 });
