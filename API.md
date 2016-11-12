@@ -63,7 +63,6 @@
   - [`date`](#date)
     - [`date.min(date)`](#datemindate)
     - [`date.max(date)`](#datemaxdate)
-    - [`date.format(format)`](#dateformatformat)
     - [`date.iso()`](#dateiso)
     - [`date.timestamp([type])`](#datetimestamptype)
   - [`func`](#func)
@@ -938,15 +937,6 @@ const schema = Joi.object({
   from: Joi.date().max(Joi.ref('to')).required(),
   to: Joi.date().required()
 });
-```
-
-#### `date.format(format)`
-
-Specifies the allowed date format:
-- `format` - string or array of strings that follow the `moment.js` [format](http://momentjs.com/docs/#/parsing/string-format/).
-
-```js
-const schema = Joi.date().format('YYYY/MM/DD');
 ```
 
 #### `date.iso()`

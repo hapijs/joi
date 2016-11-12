@@ -229,7 +229,7 @@ describe('any', () => {
                 [Joi.array(), '[1,2,3]'],
                 [Joi.binary(), 'abc'],
                 [Joi.boolean(), false],
-                [Joi.date().format('YYYYMMDD'), '19700101'],
+                [Joi.date(), '1970/01/01'],
                 [Joi.number(), '12'],
                 [Joi.object(), '{ "a": 1 }'],
                 [Joi.any().strict(), 'abc']

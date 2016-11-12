@@ -17,7 +17,6 @@
     "hoek": "4.x.x",
     "isemail": "2.x.x",
     "items": "2.x.x",
-    "moment": "2.x.x",
     "topo": "2.x.x"
   },
   "devDependencies": {

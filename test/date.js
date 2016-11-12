@@ -424,38 +424,5 @@ describe('date', () => {
                 done();
             });
         });
-
-        describe('format()', () => {
-
-            it('validates custom format', (done) => {
-
-                Helper.validate(Joi.date().format('DD#YYYY$MM'), [
-                    ['07#2013$06', true],
-                    ['2013-06-07', false, null, '"value" must be a string with one of the following formats DD#YYYY$MM']
-                ], done);
-            });
-
-            it('validates several custom formats', (done) => {
-
-                Helper.validate(Joi.date().format(['DD#YYYY$MM', 'YY|DD|MM']), [
-                    ['13|07|06', true],
-                    ['2013-06-07', false, null, '"value" must be a string with one of the following formats [DD#YYYY$MM, YY|DD|MM]']
-                ], done);
-            });
-
-            it('fails with bad formats', (done) => {
-
-                expect(() => {
-
-                    Joi.date().format(true);
-                }).to.throw('Invalid format.');
-
-                expect(() => {
-
-                    Joi.date().format(['YYYYMMDD', true]);
-                }).to.throw('Invalid format.');
-                done();
-            });
-        });
     });
 });
