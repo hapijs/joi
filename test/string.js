@@ -3674,7 +3674,7 @@ describe('string', () => {
                         name: 'regex',
                         arg: {
                             pattern: /[a-z]/,
-                            inverted: true
+                            invert: true
                         }
                     }
                 ]

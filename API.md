@@ -1542,17 +1542,20 @@ const schema = Joi.object({
 });
 ```
 
-#### `string.regex(pattern, [name | config])`
+#### `string.regex(pattern, [name | options])`
 
 Defines a regular expression rule where:
 - `pattern` - a regular expression object the string value must match against.
 - `name` - optional name for patterns (useful with multiple patterns).
-- `config` - an optional configuration object with the following supported properties:
+- `options` - an optional configuration object with the following supported properties:
   - `name` - optional pattern name.
   - `invert` - optional boolean flag. Defaults to `false` behavior. If specified as `true`, the provided pattern will be disallowed instead of required.
 
 ```js
 const schema = Joi.string().regex(/^[abc]+$/);
+
+const inlineNamedSchema = Joi.string().regex(/[0-9]/, 'numbers');
+inlineNamedSchema.validate('alpha'); // ValidationError: "value" with value "alpha" fails to match the numbers pattern
 
 const namedSchema = Joi.string().regex(/[0-9]/, { name: 'numbers'});
 namedSchema.validate('alpha'); // ValidationError: "value" with value "alpha" fails to match the numbers pattern
