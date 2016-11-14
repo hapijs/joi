@@ -875,6 +875,37 @@ describe('string', () => {
                 done();
             });
         });
+
+        it('should include a pattern name in options object', (done) => {
+
+            const schema = Joi.string().regex(/[a-z]+/, { name: 'letters' }).regex(/[0-9]+/, { name: 'numbers' });
+            schema.validate('abcd', (err, value) => {
+
+                expect(err.message).to.contain('numbers pattern');
+                done();
+            });
+        });
+
+        it('should "invalidate" regex pattern if specified in options object', (done) => {
+
+            const schema = Joi.string().regex(/[a-z]/, { invalidate: true });
+            Helper.validate(schema, [
+                ['0123456789', true],
+                ['abcdefg', false, null, '"value" with value "abcdefg" matches the invalidated pattern: /[a-z]/']
+            ], done);
+        });
+
+        it('should include invalidated pattern name if specified', (done) => {
+
+            const schema = Joi.string().regex(/[a-z]/, {
+                name      : 'lowercase',
+                invalidate: true
+            });
+            Helper.validate(schema, [
+                ['0123456789', true],
+                ['abcdefg', false, null, '"value" with value "abcdefg" matches the invalidated lowercase pattern']
+            ], done);
+        });
     });
 
     describe('ip()', () => {
