@@ -109,7 +109,7 @@
     - [`string.truncate([enabled])`](#stringtruncateenabled)
     - [`string.creditCard()`](#stringcreditcard)
     - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
-    - [`string.regex(pattern, [name])`](#stringregexpattern-name)
+    - [`string.regex(pattern, [name | options])`](#stringregexpattern-name--options)
     - [`string.replace(pattern, replacement)`](#stringreplacepattern-replacement)
     - [`string.alphanum()`](#stringalphanum)
     - [`string.token()`](#stringtoken)
@@ -1542,14 +1542,29 @@ const schema = Joi.object({
 });
 ```
 
-#### `string.regex(pattern, [name])`
+#### `string.regex(pattern, [name | options])`
 
 Defines a regular expression rule where:
 - `pattern` - a regular expression object the string value must match against.
-- `name` - optional name for patterns (useful with multiple patterns). Defaults to 'required'.
+- `name` - optional name for patterns (useful with multiple patterns).
+- `options` - an optional configuration object with the following supported properties:
+  - `name` - optional pattern name.
+  - `invert` - optional boolean flag. Defaults to `false` behavior. If specified as `true`, the provided pattern will be disallowed instead of required.
 
 ```js
 const schema = Joi.string().regex(/^[abc]+$/);
+
+const inlineNamedSchema = Joi.string().regex(/[0-9]/, 'numbers');
+inlineNamedSchema.validate('alpha'); // ValidationError: "value" with value "alpha" fails to match the numbers pattern
+
+const namedSchema = Joi.string().regex(/[0-9]/, { name: 'numbers'});
+namedSchema.validate('alpha'); // ValidationError: "value" with value "alpha" fails to match the numbers pattern
+
+const invertedSchema = Joi.string().regex(/[a-z]/, { invert: true });
+invertedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted pattern: [a-z]
+
+const invertedNamedSchema = Joi.string().regex(/[a-z]/, { name: 'alpha', invert: true });
+invertedNamedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted alpha pattern
 ```
 
 #### `string.replace(pattern, replacement)`
