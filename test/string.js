@@ -100,6 +100,43 @@ describe('string', () => {
                 ['B', false, null, '"value" contains an invalid value']
             ], done);
         });
+
+        it('invalidates RegExp patterns', (done) => {
+
+            Helper.validate(Joi.string().invalid(/[a-bA-B]/i), [
+                ['c', true],
+                ['a', false, null, '"value" with value "a" matches the invalid pattern: /[a-bA-B]/i'],
+                ['b', false, null, '"value" with value "b" matches the invalid pattern: /[a-bA-B]/i'],
+                ['A', false, null, '"value" with value "A" matches the invalid pattern: /[a-bA-B]/i'],
+                ['B', false, null, '"value" with value "B" matches the invalid pattern: /[a-bA-B]/i']
+            ], done);
+        });
+    });
+
+    describe('not', () => {
+
+        it('invalidates RegExp patterns', (done) => {
+
+            Helper.validate(Joi.string().not(/[a-bA-B]/), [
+                ['a', false, null, '"value" with value "a" matches the invalid pattern: /[a-bA-B]/'],
+                ['b', false, null, '"value" with value "b" matches the invalid pattern: /[a-bA-B]/'],
+                ['A', false, null, '"value" with value "A" matches the invalid pattern: /[a-bA-B]/'],
+                ['B', false, null, '"value" with value "B" matches the invalid pattern: /[a-bA-B]/']
+            ], done);
+        });
+    });
+
+    describe('disallow', () => {
+
+        it('invalidates RegExp patterns', (done) => {
+
+            Helper.validate(Joi.string().disallow(/[a-bA-B]/), [
+                ['a', false, null, '"value" with value "a" matches the invalid pattern: /[a-bA-B]/'],
+                ['b', false, null, '"value" with value "b" matches the invalid pattern: /[a-bA-B]/'],
+                ['A', false, null, '"value" with value "A" matches the invalid pattern: /[a-bA-B]/'],
+                ['B', false, null, '"value" with value "B" matches the invalid pattern: /[a-bA-B]/']
+            ], done);
+        });
     });
 
     describe('min()', () => {
@@ -3626,6 +3663,20 @@ describe('string', () => {
                 ],
                 type: 'string'
             });
+            done();
+        });
+
+        it('describes invalid RegExp patterns', (done) => {
+
+            const schema = Joi.string().regex(/[0-9]/).invalid(/[a-zA-Z]/);
+            const description = schema.describe();
+
+            expect(description.rules).to.be.an.array();
+            expect(description.rules.length).to.equal(2);
+            expect(description.rules.filter((rule) => {
+
+                return rule.name === 'regexInvalid';
+            }).length).to.equal(1);
             done();
         });
     });
