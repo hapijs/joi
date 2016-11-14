@@ -3659,5 +3659,24 @@ describe('string', () => {
             });
             done();
         });
+
+        it('describes invalidate regex pattern', (done) => {
+
+            const schema = Joi.string().regex(/[a-z]/, {
+                invalidate: true
+            });
+            const description = schema.describe();
+            expect(description).to.equal({
+                type: 'string',
+                invalids: [''],
+                rules: [
+                    {
+                        name: 'invalidatedRegex',
+                        arg: /[a-z]/
+                    }
+                ]
+            });
+            done();
+        });
     });
 });
