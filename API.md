@@ -1546,10 +1546,10 @@ const schema = Joi.object({
 
 Defines a regular expression rule where:
 - `pattern` - a regular expression object the string value must match against.
-- `name` - optional name for patterns (useful with multiple patterns). Defaults to 'required'.
+- `name` - optional name for patterns (useful with multiple patterns).
 - `config` - an optional configuration object with the following supported properties:
-  - `name` - optional pattern name. Defaults to `required`.
-  - `invalidate` - optional boolean flag. Defaults to `false` behavior. If specified as `true`, the provided pattern will be disallowed instead of required.
+  - `name` - optional pattern name.
+  - `invert` - optional boolean flag. Defaults to `false` behavior. If specified as `true`, the provided pattern will be disallowed instead of required.
 
 ```js
 const schema = Joi.string().regex(/^[abc]+$/);
@@ -1557,11 +1557,11 @@ const schema = Joi.string().regex(/^[abc]+$/);
 const namedSchema = Joi.string().regex(/[0-9]/, { name: 'numbers'});
 namedSchema.validate('alpha'); // ValidationError: "value" with value "alpha" fails to match the numbers pattern
 
-const invalidatedSchema = Joi.string().regex(/[a-z]/, { invalidate: true });
-invalidatedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the invalidated pattern: [a-z]
+const invertedSchema = Joi.string().regex(/[a-z]/, { invert: true });
+invertedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted pattern: [a-z]
 
-const invalidatedNamedSchema = Joi.string().regex(/[a-z]/, { name: 'alpha', invalidate: true });
-invalidatedNamedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the invalidated alpha pattern
+const invertedNamedSchema = Joi.string().regex(/[a-z]/, { name: 'alpha', invert: true });
+invertedNamedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted alpha pattern
 ```
 
 #### `string.replace(pattern, replacement)`

@@ -81,7 +81,7 @@ describe('string', () => {
 
     describe('invalid()', () => {
 
-        it('invalidates case sensitive values', (done) => {
+        it('inverts case sensitive values', (done) => {
 
             Helper.validate(Joi.string().invalid('a', 'b'), [
                 ['a', false, null, '"value" contains an invalid value'],
@@ -91,7 +91,7 @@ describe('string', () => {
             ], done);
         });
 
-        it('invalidates case insensitive values', (done) => {
+        it('inverts case insensitive values', (done) => {
 
             Helper.validate(Joi.string().invalid('a', 'b').insensitive(), [
                 ['a', false, null, '"value" contains an invalid value'],
@@ -886,24 +886,24 @@ describe('string', () => {
             });
         });
 
-        it('should "invalidate" regex pattern if specified in options object', (done) => {
+        it('should "invert" regex pattern if specified in options object', (done) => {
 
-            const schema = Joi.string().regex(/[a-z]/, { invalidate: true });
+            const schema = Joi.string().regex(/[a-z]/, { invert: true });
             Helper.validate(schema, [
                 ['0123456789', true],
-                ['abcdefg', false, null, '"value" with value "abcdefg" matches the invalidated pattern: /[a-z]/']
+                ['abcdefg', false, null, '"value" with value "abcdefg" matches the inverted pattern: /[a-z]/']
             ], done);
         });
 
-        it('should include invalidated pattern name if specified', (done) => {
+        it('should include inverted pattern name if specified', (done) => {
 
             const schema = Joi.string().regex(/[a-z]/, {
-                name      : 'lowercase',
-                invalidate: true
+                name  : 'lowercase',
+                invert: true
             });
             Helper.validate(schema, [
                 ['0123456789', true],
-                ['abcdefg', false, null, '"value" with value "abcdefg" matches the invalidated lowercase pattern']
+                ['abcdefg', false, null, '"value" with value "abcdefg" matches the inverted lowercase pattern']
             ], done);
         });
     });
@@ -2116,7 +2116,7 @@ describe('string', () => {
             ], done);
         });
 
-        it('should invalidate invalid values', (done) => {
+        it('should invert invalid values', (done) => {
 
             const schema = Joi.string().valid('a', 'b', 'c');
             Helper.validate(schema, [
@@ -3660,10 +3660,10 @@ describe('string', () => {
             done();
         });
 
-        it('describes invalidate regex pattern', (done) => {
+        it('describes invert regex pattern', (done) => {
 
             const schema = Joi.string().regex(/[a-z]/, {
-                invalidate: true
+                invert: true
             });
             const description = schema.describe();
             expect(description).to.equal({
@@ -3671,8 +3671,11 @@ describe('string', () => {
                 invalids: [''],
                 rules: [
                     {
-                        name: 'invalidatedRegex',
-                        arg: /[a-z]/
+                        name: 'regex',
+                        arg: {
+                            pattern: /[a-z]/,
+                            inverted: true
+                        }
                     }
                 ]
             });
