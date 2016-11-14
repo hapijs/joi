@@ -109,7 +109,7 @@
     - [`string.truncate([enabled])`](#stringtruncateenabled)
     - [`string.creditCard()`](#stringcreditcard)
     - [`string.length(limit, [encoding])`](#stringlengthlimit-encoding)
-    - [`string.regex(pattern, [name])`](#stringregexpattern-name)
+    - [`string.regex(pattern, [name | options])`](#stringregexpattern-name--options)
     - [`string.replace(pattern, replacement)`](#stringreplacepattern-replacement)
     - [`string.alphanum()`](#stringalphanum)
     - [`string.token()`](#stringtoken)
