@@ -1627,6 +1627,19 @@ describe('any', () => {
             ], done);
         });
 
+        it('should void values with trim enabled', (done) => {
+
+            const schema = Joi.string().empty('').trim();
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', true, null, undefined],
+                [' ', true, null, undefined],
+                ['       ', true, null, undefined],
+                [42, false, null, '"value" must be a string']
+            ], done);
+        });
+
         it('should override any previous empty', (done) => {
 
             const schema = Joi.string().empty('').empty('abc');
