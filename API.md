@@ -44,6 +44,7 @@
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
   - [`array`](#array)
+    - [`any.*()` methods](#array)
     - [`array.sparse([enabled])`](#arraysparseenabled)
     - [`array.single([enabled])`](#arraysingleenabled)
     - [`array.items(type)`](#arrayitemstype)
@@ -53,24 +54,29 @@
     - [`array.length(limit)`](#arraylengthlimit)
     - [`array.unique([comparator])`](#arrayuniquecomparator)
   - [`boolean`](#boolean)
+    - [`any.*()` methods](#boolean)
     - [`boolean.truthy(value)`](#booleantruthyvalue)
     - [`boolean.falsy(value)`](#booleanfalsyvalue)
   - [`binary`](#binary)
+    - [`any.*()` methods](#binary)
     - [`binary.encoding(encoding)`](#binaryencodingencoding)
     - [`binary.min(limit)`](#binaryminlimit)
     - [`binary.max(limit)`](#binarymaxlimit)
     - [`binary.length(limit)`](#binarylengthlimit)
   - [`date`](#date)
+    - [`any.*()` methods](#date)
     - [`date.min(date)`](#datemindate)
     - [`date.max(date)`](#datemaxdate)
     - [`date.iso()`](#dateiso)
     - [`date.timestamp([type])`](#datetimestamptype)
   - [`func`](#func)
+    - [`any.*()` methods](#func)
     - [`func.arity(n)`](#funcarityn)
     - [`func.minArity(n)`](#funcminarityn)
     - [`func.maxArity(n)`](#funcmaxarityn)
     - [`func.ref()`](#funcref)
   - [`number`](#number)
+    - [`any.*()` methods](#number)
     - [`number.min(limit)`](#numberminlimit)
     - [`number.max(limit)`](#numbermaxlimit)
     - [`number.greater(limit)`](#numbergreaterlimit)
@@ -81,6 +87,7 @@
     - [`number.positive()`](#numberpositive)
     - [`number.negative()`](#numbernegative)
   - [`object`](#object)
+    - [`any.*()` methods](#object)
     - [`object.keys([schema])`](#objectkeysschema)
       - [`{} notation`](#-notation)
       - [`Joi.object([schema]) notation`](#joiobjectschema-notation)
@@ -103,6 +110,7 @@
     - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
     - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
   - [`string`](#string)
+    - [`any.*()` methods](#string)
     - [`string.insensitive()`](#stringinsensitive)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
     - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
@@ -125,6 +133,7 @@
     - [`string.trim()`](#stringtrim)
     - [`string.isoDate()`](#stringisodate)
   - [`alternatives`](#alternatives)
+    - [`any.*()` methods](#alternatives)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
   - [`lazy(fn)`](#lazyfn)
@@ -699,7 +708,7 @@ schema.validate(3);     // returns err.message === 'Was REALLY expecting a strin
 
 Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by default but can be by using `sparse()`.
 
-Supports the same methods of the [`any()`](#any) type.
+#### Every [`any()`](#any) methods
 
 ```js
 const array = Joi.array().items(Joi.string().valid('a', 'b'));
@@ -807,7 +816,7 @@ const schema = Joi.array().unique((a, b) => a.property === b.property);
 
 Generates a schema object that matches a boolean data type. Can also be called via `bool()`.
 
-Supports the same methods of the [`any()`](#any) type.
+#### Every [`any()`](#any) methods
 
 ```js
 const boolean = Joi.boolean();
@@ -838,7 +847,7 @@ boolean.validate('N', (err, value) => { }); // Valid
 
 Generates a schema object that matches a Buffer data type (as well as the strings which will be converted to Buffers).
 
-Supports the same methods of the [`any()`](#any) type.
+#### Every [`any()`](#any) type. methods
 
 ```js
 const schema = Joi.binary();
@@ -884,7 +893,7 @@ const schema = Joi.binary().length(5);
 
 Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds).
 
-Supports the same methods of the [`any()`](#any) type.
+#### Every [`any()`](#any) methods
 
 ```js
 const date = Joi.date();
@@ -1013,7 +1022,7 @@ Generates a schema object that matches a number data type (as well as strings th
 
 `Infinity` and `-Infinity` are invalid by default, you can change that behavior by calling `allow(Infinity, -Infinity)`.
 
-Supports the same methods of the [`any()`](#any) type.
+#### Every [`any()`](#any) type. methods
 
 ```js
 const number = Joi.number();
@@ -1137,7 +1146,7 @@ const schema = Joi.number().negative();
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
 to allowing any child key.
 
-Supports the same methods of the [`any()`](#any) type.
+#### Every [`any()`](#any) type. methods
 
 ```js
 const object = Joi.object().keys({
@@ -1450,7 +1459,7 @@ The behavior is exactly the same as `requiredKeys`.
 
 Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with `allow('')`.
 
-Supports the same methods of the [`any()`](#any) type.
+#### Every [`any()`](#any) type. methods
 
 ```js
 const schema = Joi.string().min(1).max(10);
@@ -1732,7 +1741,7 @@ const schema = Joi.string().isoDate();
 Generates a type that will match one of the provided alternative schemas via the [`try()`](#alternativestryschemas)
 method. If no schemas are added, the type will not match any value except for `undefined`.
 
-Supports the same methods of the [`any()`](#any) type.
+#### Every [`any()`](#any) type. methods
 
 Alternatives can be expressed using the shorter `[]` notation.
 
@@ -1796,7 +1805,7 @@ const schema = {
 
 Generates a placeholder schema for a schema that you would provide with the `fn`.
 
-Supports the same methods of the [`any()`](#any) type.
+#### Every [`any()`](#any) type. methods
 
 This is mostly useful for recursive schemas, like :
 ```js
