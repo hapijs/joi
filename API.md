@@ -55,6 +55,7 @@
   - [`boolean`](#boolean)
     - [`boolean.truthy(value)`](#booleantruthyvalue)
     - [`boolean.falsy(value)`](#booleanfalsyvalue)
+    - [`boolean.insensitive([enabled])`](#booleaninsensitiveenabled)
   - [`binary`](#binary)
     - [`binary.encoding(encoding)`](#binaryencodingencoding)
     - [`binary.min(limit)`](#binaryminlimit)
@@ -820,6 +821,8 @@ boolean.validate(1, (err, value) => { }); // Invalid
 
 Allows for additional values to be considered valid booleans by converting them to `true` during validation. Accepts a value or an array of values.
 
+String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior. 
+
 ```js
 const boolean = Joi.boolean().truthy('Y');
 boolean.validate('Y', (err, value) => { }); // Valid
@@ -829,9 +832,22 @@ boolean.validate('Y', (err, value) => { }); // Valid
 
 Allows for additional values to be considered valid booleans by converting them to `false` during validation. Accepts a value or an array of values.
 
+String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior. 
+
 ```js
 const boolean = Joi.boolean().falsy('N');
 boolean.validate('N', (err, value) => { }); // Valid
+```
+
+#### `boolean.insensitive([enabled])`
+
+Allows the values provided to `truthy` and `falsy` to be matched in a case insensitive manner.
+
+Parameters are:
+- `enabled` - optional parameter defaulting to `true` which allows you to reset the behavior of `insensitive` by providing a falsy value.
+
+```js
+const schema = Joi.boolean().truthy('yes').falsy('no').insensitive(false);
 ```
 
 ### `binary`

@@ -42,6 +42,44 @@ describe('boolean', () => {
         ], done);
     });
 
+    describe('insensitive()', () => {
+
+        it('should default to case insensitive', (done) => {
+
+            const schema = Joi.boolean().truthy('Y');
+            expect(schema.validate('y').error).not.to.exist();
+            done();
+        });
+
+        it('should stick to case insensitive if called', (done) => {
+
+            const schema = Joi.boolean().truthy('Y').insensitive();
+            expect(schema.validate('y').error).not.to.exist();
+            done();
+        });
+
+        it('should be able to do strict comparison', (done) => {
+
+            const schema = Joi.boolean().truthy('Y').insensitive(false);
+            expect(schema.validate('y').error).to.be.an.error('"value" must be a boolean');
+            done();
+        });
+
+        it('should return the same instance if nothing changed', (done) => {
+
+            const insensitiveSchema = Joi.boolean();
+            expect(insensitiveSchema.insensitive()).to.shallow.equal(insensitiveSchema);
+            expect(insensitiveSchema.insensitive(false)).to.not.shallow.equal(insensitiveSchema);
+
+            const sensitiveSchema = Joi.boolean().insensitive(false);
+            expect(sensitiveSchema.insensitive(false)).to.shallow.equal(sensitiveSchema);
+            expect(sensitiveSchema.insensitive()).to.not.shallow.equal(sensitiveSchema);
+
+            done();
+        });
+
+    });
+
     describe('validate()', () => {
 
         it('does not convert string values and validates', (done) => {
@@ -186,6 +224,7 @@ describe('boolean', () => {
                 ['N', true],
                 ['Never', true],
                 ['Y', true],
+                ['y', true],
                 ['Si', true],
                 [true, true],
                 [false, true],
@@ -193,8 +232,7 @@ describe('boolean', () => {
                 [0, true],
                 [null, true],
                 ['M', false, null, '"value" must be a boolean'],
-                ['Yes', false, null, '"value" must be a boolean'],
-                ['y', false, null, '"value" must be a boolean']
+                ['Yes', false, null, '"value" must be a boolean']
             ], done);
         });
 
@@ -225,7 +263,8 @@ describe('boolean', () => {
             expect(schema).to.equal({
                 type: 'boolean',
                 flags: {
-                    presence: 'required'
+                    presence: 'required',
+                    insensitive: true
                 },
                 truthy: [true, 'yes'],
                 falsy : [false, 'no']

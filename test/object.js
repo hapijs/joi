@@ -891,7 +891,10 @@ describe('object', () => {
                         rule: {
                             type: 'boolean',
                             truthy: [true],
-                            falsy: [false]
+                            falsy: [false],
+                            flags: {
+                                insensitive: true
+                            }
                         }
                     }
                 ]
