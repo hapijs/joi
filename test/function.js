@@ -23,6 +23,15 @@ const expect = Code.expect;
 
 describe('func', () => {
 
+    it('should throw an exception if arguments were passed.', (done) => {
+
+        expect(
+          () => Joi.func('invalid argument.')
+        ).to.throw('Joi.func() does not allow arguments.');
+
+        done();
+    });
+
     it('validates a function', (done) => {
 
         Helper.validate(Joi.func().required(), [

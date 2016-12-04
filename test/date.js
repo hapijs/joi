@@ -23,6 +23,15 @@ const expect = Code.expect;
 
 describe('date', () => {
 
+    it('should throw an exception if arguments were passed.', (done) => {
+
+        expect(
+          () => Joi.date('invalid argument.')
+        ).to.throw('Joi.date() does not allow arguments.');
+
+        done();
+    });
+
     it('fails on boolean', (done) => {
 
         const schema = Joi.date();

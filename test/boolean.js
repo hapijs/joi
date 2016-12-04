@@ -23,6 +23,15 @@ const expect = Code.expect;
 
 describe('boolean', () => {
 
+    it('should throw an exception if arguments were passed.', (done) => {
+
+        expect(
+          () => Joi.boolean('invalid argument.')
+        ).to.throw('Joi.boolean() does not allow arguments.');
+
+        done();
+    });
+
     it('does not convert a string to a boolean', (done) => {
 
         Joi.boolean().validate('true', (err, value) => {

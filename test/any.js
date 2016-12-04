@@ -23,6 +23,15 @@ const expect = Code.expect;
 
 describe('any', () => {
 
+    it('should throw an exception if arguments were passed.', (done) => {
+
+        expect(
+          () => Joi.any('invalid argument.')
+        ).to.throw('Joi.any() does not allow arguments.');
+
+        done();
+    });
+
     describe('equal()', () => {
 
         it('validates valid values', (done) => {
