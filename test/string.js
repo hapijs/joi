@@ -23,6 +23,15 @@ const expect = Code.expect;
 
 describe('string', () => {
 
+    it('should throw an exception if arguments were passed.', (done) => {
+
+        expect(
+          () => Joi.string('invalid argument.')
+        ).to.throw('Joi.string() does not allow arguments.');
+
+        done();
+    });
+
     it('fails on boolean', (done) => {
 
         const schema = Joi.string();

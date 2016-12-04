@@ -23,6 +23,15 @@ const expect = Code.expect;
 
 describe('array', () => {
 
+    it('should throw an exception if arguments were passed.', (done) => {
+
+        expect(
+          () => Joi.array('invalid argument.')
+        ).to.throw('Joi.array() does not allow arguments.');
+
+        done();
+    });
+
     it('converts a string to an array', (done) => {
 
         Joi.array().validate('[1,2,3]', (err, value) => {

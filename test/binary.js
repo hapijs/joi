@@ -23,6 +23,15 @@ const expect = Code.expect;
 
 describe('binary', () => {
 
+    it('should throw an exception if arguments were passed.', (done) => {
+
+        expect(
+          () => Joi.binary('invalid argument.')
+        ).to.throw('Joi.binary() does not allow arguments.');
+
+        done();
+    });
+
     it('converts a string to a buffer', (done) => {
 
         Joi.binary().validate('test', (err, value) => {
