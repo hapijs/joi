@@ -3153,7 +3153,6 @@ describe('string', () => {
                 ['YW', false, null, '"value" must be a valid base64 string'],
                 ['YW==', true],
                 ['YW5', false, null, '"value" must be a valid base64 string'],
-                ['password', false, null, '"value" must be a valid base64 string'],
                 ['YW5=', true],
                 ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
             ], done);
