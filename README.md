@@ -102,7 +102,7 @@ When validating a schema:
 * Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
 
 # API
-See the [API Reference](https://github.com/hapijs/joi/blob/v10.0.4/API.md).
+See the [API Reference](https://github.com/hapijs/joi/blob/v10.0.5/API.md).
 
 # Browsers
 
