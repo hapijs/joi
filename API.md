@@ -665,7 +665,7 @@ Outputs the original untouched value instead of the casted value.
 
 ```js
 const schema = {
-    timestamp: Joi.date().format('YYYYMMDD').raw()
+    timestamp: Joi.date().raw()
 };
 ```
 
