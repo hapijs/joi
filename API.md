@@ -664,9 +664,11 @@ Outputs the original untouched value instead of the casted value.
 - `isRaw` - whether to enable raw mode or not. Defaults to true.
 
 ```js
-const schema = {
-    timestamp: Joi.date().raw()
-};
+const timestampSchema = Joi.date().timestamp();
+timestampSchema.validate('12376834097810'); // { error: null, value: Sat Mar 17 2362 04:28:17 GMT-0500 (CDT) }
+
+const rawTimestampSchema = Joi.date().timestamp().raw();
+rawTimestampSchema.validate('12376834097810'); // { error: null, value: '12376834097810' }
 ```
 
 #### `any.empty(schema)`
