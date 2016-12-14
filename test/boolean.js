@@ -32,14 +32,24 @@ describe('boolean', () => {
         done();
     });
 
-    it('does not convert a string to a boolean', (done) => {
+    it('converts boolean string to a boolean', (done) => {
 
-        Joi.boolean().validate('true', (err, value) => {
+        Helper.validate(Joi.boolean(), [
+            ['true', true, null, true],
+            ['false', true, null, false],
+            ['TrUe', true, null, true],
+            ['FalSe', true, null, false]
+        ], done);
+    });
 
-            expect(err).to.exist();
-            expect(value).to.not.equal(true);
-            done();
-        });
+    it('does not convert boolean string to a boolean in strict mode', (done) => {
+
+        Helper.validate(Joi.boolean().strict(), [
+            ['true', false, null, '"value" must be a boolean'],
+            ['false', false, null, '"value" must be a boolean'],
+            ['TrUe', false, null, '"value" must be a boolean'],
+            ['FalSe', false, null, '"value" must be a boolean']
+        ], done);
     });
 
     it('errors on a number', (done) => {
@@ -87,6 +97,16 @@ describe('boolean', () => {
             done();
         });
 
+        it('converts boolean string to a boolean with a sensitive case', (done) => {
+
+            Helper.validate(Joi.boolean().insensitive(false), [
+                ['true', true, null, true],
+                ['false', true, null, false],
+                ['TrUe', false, null, '"value" must be a boolean'],
+                ['FalSe', false, null, '"value" must be a boolean']
+            ], done);
+        });
+
     });
 
     describe('validate()', () => {
@@ -101,8 +121,6 @@ describe('boolean', () => {
                 [null, false, null, '"value" must be a boolean'],
                 ['on', false, null, '"value" must be a boolean'],
                 ['off', false, null, '"value" must be a boolean'],
-                ['true', false, null, '"value" must be a boolean'],
-                ['false', false, null, '"value" must be a boolean'],
                 ['yes', false, null, '"value" must be a boolean'],
                 ['no', false, null, '"value" must be a boolean'],
                 ['1', false, null, '"value" must be a boolean'],
@@ -115,7 +133,6 @@ describe('boolean', () => {
             const rule = Joi.boolean().required();
             Helper.validate(rule, [
                 ['1234', false, null, '"value" must be a boolean'],
-                ['true', false, null, '"value" must be a boolean'],
                 [false, true],
                 [true, true],
                 [null, false, null, '"value" must be a boolean']
