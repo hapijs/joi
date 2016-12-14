@@ -808,7 +808,7 @@ const schema = Joi.array().unique((a, b) => a.property === b.property);
 
 ### `boolean`
 
-Generates a schema object that matches a boolean data type. Can also be called via `bool()`.
+Generates a schema object that matches a boolean data type. Can also be called via `bool()`. It will also validate the strings `"true"` and `"false"` unless you set the schema in `strict()` mode.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -843,7 +843,7 @@ boolean.validate('N', (err, value) => { }); // Valid
 
 #### `boolean.insensitive([enabled])`
 
-Allows the values provided to `truthy` and `falsy` to be matched in a case insensitive manner.
+Allows the values provided to `truthy` and `falsy` as well as the `"true"` and `"false"` default conversion (when not in `strict()` mode) to be matched in a case insensitive manner.
 
 Parameters are:
 - `enabled` - optional parameter defaulting to `true` which allows you to reset the behavior of `insensitive` by providing a falsy value.
