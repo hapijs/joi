@@ -1572,16 +1572,16 @@ Defines a regular expression rule where:
 ```js
 const schema = Joi.string().regex(/^[abc]+$/);
 
-const inlineNamedSchema = Joi.string().regex(/[0-9]/, 'numbers');
+const inlineNamedSchema = Joi.string().regex(/^[0-9]+$/, 'numbers');
 inlineNamedSchema.validate('alpha'); // ValidationError: "value" with value "alpha" fails to match the numbers pattern
 
-const namedSchema = Joi.string().regex(/[0-9]/, { name: 'numbers'});
+const namedSchema = Joi.string().regex(/^[0-9]+$/, { name: 'numbers'});
 namedSchema.validate('alpha'); // ValidationError: "value" with value "alpha" fails to match the numbers pattern
 
-const invertedSchema = Joi.string().regex(/[a-z]/, { invert: true });
+const invertedSchema = Joi.string().regex(/^[a-z]+$/, { invert: true });
 invertedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted pattern: [a-z]
 
-const invertedNamedSchema = Joi.string().regex(/[a-z]/, { name: 'alpha', invert: true });
+const invertedNamedSchema = Joi.string().regex(/^[a-z]+$/, { name: 'alpha', invert: true });
 invertedNamedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted alpha pattern
 ```
 
