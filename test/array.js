@@ -689,6 +689,79 @@ describe('array', () => {
             ], done);
         });
 
+        it('errors with the correct details', (done) => {
+
+            let error = Joi.array().items(Joi.number()).unique().validate([1, 2, 3, 1, 4]).error;
+            expect(error).to.be.an.error('"value" position 3 contains a duplicate value');
+            expect(error.details).to.equal([
+                {
+                    context: {
+                        key: 'value',
+                        pos: 3,
+                        value: 1,
+                        dupePos: 0,
+                        dupeValue: 1
+                    },
+                    message: '"value" position 3 contains a duplicate value',
+                    path: '3',
+                    type: 'array.unique'
+                }
+            ]);
+
+            error = Joi.array().items(Joi.number()).unique((a, b) => a === b).validate([1, 2, 3, 1, 4]).error;
+            expect(error).to.be.an.error('"value" position 3 contains a duplicate value');
+            expect(error.details).to.equal([
+                {
+                    context: {
+                        key: 'value',
+                        pos: 3,
+                        value: 1,
+                        dupePos: 0,
+                        dupeValue: 1
+                    },
+                    message: '"value" position 3 contains a duplicate value',
+                    path: '3',
+                    type: 'array.unique'
+                }
+            ]);
+
+            error = Joi.object({ a: Joi.array().items(Joi.number()).unique() }).validate({ a: [1, 2, 3, 1, 4] }).error;
+            expect(error).to.be.an.error('child "a" fails because ["a" position 3 contains a duplicate value]');
+            expect(error.details).to.equal([
+                {
+                    context: {
+                        key: 'a',
+                        pos: 3,
+                        value: 1,
+                        dupePos: 0,
+                        dupeValue: 1
+                    },
+                    message: '"a" position 3 contains a duplicate value',
+                    path: 'a.3',
+                    type: 'array.unique'
+                }
+            ]);
+
+            error = Joi.object({ a: Joi.array().items(Joi.number()).unique((a, b) => a === b) }).validate({ a: [1, 2, 3, 1, 4] }).error;
+            expect(error).to.be.an.error('child "a" fails because ["a" position 3 contains a duplicate value]');
+            expect(error.details).to.equal([
+                {
+                    context: {
+                        key: 'a',
+                        pos: 3,
+                        value: 1,
+                        dupePos: 0,
+                        dupeValue: 1
+                    },
+                    message: '"a" position 3 contains a duplicate value',
+                    path: 'a.3',
+                    type: 'array.unique'
+                }
+            ]);
+
+            done();
+        });
+
         it('ignores duplicates if they are of different types', (done) => {
 
             const schema = Joi.array().unique();
