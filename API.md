@@ -792,9 +792,11 @@ const schema = Joi.array().length(5);
 
 Requires the array values to be unique.
 
-You can provide a custom `comparator` function that takes 2 parameters to compare. This function should return whether the 2 parameters are equal or not, you are also **responsible** for this function not to fail, any `Error` would bubble out of Joi.
+You can provide a custom `comparator` that is either :
+- a function that takes 2 parameters to compare. This function should return whether the 2 parameters are equal or not, you are also **responsible** for this function not to fail, any `Error` would bubble out of Joi.
+- a string in dot notation representing the path of the element to do uniqueness check on. Any missing path will be considered undefined, and can as well only exist once.
 
-Note: remember that if you provide a custom comparator, different types can be passed as parameter depending on the rules you set on items.
+Note: remember that if you provide a custom comparator function, different types can be passed as parameter depending on the rules you set on items.
 
 Be aware that a deep equality is performed on elements of the array having a type of `object`, a performance penalty is to be expected for this kind of operation.
 
@@ -804,6 +806,10 @@ const schema = Joi.array().unique();
 
 ```js
 const schema = Joi.array().unique((a, b) => a.property === b.property);
+```
+
+```js
+const schema = Joi.array().unique('customer.id');
 ```
 
 ### `boolean`

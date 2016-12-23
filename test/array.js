@@ -832,12 +832,134 @@ describe('array', () => {
             ], done);
         });
 
+        it('validates using a path comparator', (done) => {
+
+            let schema = Joi.array().items(Joi.object({ id: Joi.number() })).unique('id');
+
+            Helper.validate(schema, [
+                [[{ id: 1 }, { id: 2 }, { id: 3 }], true],
+                [[{ id: 1 }, { id: 2 }, {}], true],
+                [[{ id: 1 }, { id: 2 }, { id: 1 }], false, null, {
+                    message: '"value" position 2 contains a duplicate value',
+                    details: [{
+                        context: {
+                            dupePos: 0,
+                            dupeValue: { id: 1 },
+                            key: 'value',
+                            path: 'id',
+                            pos: 2,
+                            value: { id: 1 }
+                        },
+                        message: '"value" position 2 contains a duplicate value',
+                        path: '2',
+                        type: 'array.unique'
+                    }]
+                }],
+                [[{ id: 1 }, { id: 2 }, {}, { id: 3 }, {}], false, null, {
+                    message: '"value" position 4 contains a duplicate value',
+                    details: [{
+                        context: {
+                            dupePos: 2,
+                            dupeValue: {},
+                            key: 'value',
+                            path: 'id',
+                            pos: 4,
+                            value: {}
+                        },
+                        message: '"value" position 4 contains a duplicate value',
+                        path: '4',
+                        type: 'array.unique'
+                    }]
+                }]
+            ]);
+
+            schema = Joi.array().items(Joi.object({ nested: { id: Joi.number() } })).unique('nested.id');
+
+            Helper.validate(schema, [
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 3 } }], true],
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}], true],
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, null, {
+                    message: '"value" position 2 contains a duplicate value',
+                    details: [{
+                        context: {
+                            dupePos: 0,
+                            dupeValue: { nested: { id: 1 } },
+                            key: 'value',
+                            path: 'nested.id',
+                            pos: 2,
+                            value: { nested: { id: 1 } }
+                        },
+                        message: '"value" position 2 contains a duplicate value',
+                        path: '2',
+                        type: 'array.unique'
+                    }]
+                }],
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, null, {
+                    message: '"value" position 4 contains a duplicate value',
+                    details: [{
+                        context: {
+                            dupePos: 2,
+                            dupeValue: {},
+                            key: 'value',
+                            path: 'nested.id',
+                            pos: 4,
+                            value: {}
+                        },
+                        message: '"value" position 4 contains a duplicate value',
+                        path: '4',
+                        type: 'array.unique'
+                    }]
+                }]
+            ]);
+
+            schema = Joi.array().items(Joi.object({ nested: { id: Joi.number() } })).unique('nested');
+
+            Helper.validate(schema, [
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 3 } }], true],
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}], true],
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, null, {
+                    message: '"value" position 2 contains a duplicate value',
+                    details: [{
+                        context: {
+                            dupePos: 0,
+                            dupeValue: { nested: { id: 1 } },
+                            key: 'value',
+                            path: 'nested',
+                            pos: 2,
+                            value: { nested: { id: 1 } }
+                        },
+                        message: '"value" position 2 contains a duplicate value',
+                        path: '2',
+                        type: 'array.unique'
+                    }]
+                }],
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, null, {
+                    message: '"value" position 4 contains a duplicate value',
+                    details: [{
+                        context: {
+                            dupePos: 2,
+                            dupeValue: {},
+                            key: 'value',
+                            path: 'nested',
+                            pos: 4,
+                            value: {}
+                        },
+                        message: '"value" position 4 contains a duplicate value',
+                        path: '4',
+                        type: 'array.unique'
+                    }]
+                }]
+            ]);
+
+            done();
+        });
+
         it('fails with invalid comparator', (done) => {
 
             expect(() => {
 
                 Joi.array().unique({});
-            }).to.throw(Error, 'comparator must be a function');
+            }).to.throw(Error, 'comparator must be a function or a string');
 
             done();
         });
