@@ -2729,6 +2729,11 @@ describe('string', () => {
         it('validates isoDate', (done) => {
 
             Helper.validate(Joi.string().isoDate(), [
+                ['+002013-06-07T14:21:46.295Z', true],
+                ['-002013-06-07T14:21:46.295Z', true],
+                ['002013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
+                ['+2013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
+                ['-2013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295Z', true],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', true],
