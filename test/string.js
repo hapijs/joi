@@ -2240,7 +2240,7 @@ describe('string', () => {
 
         it('validates alphanum', (done) => {
 
-            const schema = Joi.string().alphanum();
+            const schema = Joi.string().alphanum(100);
             Helper.validate(schema, [
                 ['w0rld of w4lm4rtl4bs', false, null, '"value" must only contain alpha-numeric characters'],
                 ['w0rldofw4lm4rtl4bs', true],
