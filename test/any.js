@@ -752,6 +752,25 @@ describe('any', () => {
                 done();
             });
         });
+
+        it('should be able to support both empty and noDefaults', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.string().empty('foo').default('bar'),
+                b: Joi.number()
+            });
+
+            const input = { a: 'foo', b: 42 };
+
+            Joi.validate(input, schema, { noDefaults: true }, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.not.exist();
+                expect(value.b).to.be.equal(42);
+
+                done();
+            });
+        });
     });
 
     describe('optional()', () => {
