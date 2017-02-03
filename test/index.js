@@ -1760,6 +1760,25 @@ describe('Joi', () => {
             }).to.throw('invalid value');
             done();
         });
+
+        it('throws a validation error and not a TypeError when parameter is given as a json string with incorrect property', (done) => {
+
+            const schema = {
+                a: Joi.object({
+                    b: Joi.string()
+                })
+            };
+
+            const input = {
+                a: '{"c":"string"}'
+            };
+
+            expect(() => {
+
+                Joi.attempt(input, schema);
+            }).to.throw(/\"c\" is not allowed/);
+            done();
+        });
     });
 
     describe('compile()', () => {
