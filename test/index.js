@@ -2192,6 +2192,7 @@ describe('Joi', () => {
 
             expect(customJoi.number().multiply(2).validate(3)).to.equal({ error: null, value: 6 });
             expect(customJoi.number().multiply(5, '$').validate(7)).to.equal({ error: null, value: '$35' });
+            expect(() => customJoi.number().multiply(5, 5)).to.throw('child "currency" fails because ["currency" must be a string]');
             expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
 
             done();
@@ -2259,6 +2260,36 @@ describe('Joi', () => {
                 [{ a: 3, b: 5 }, true, null, { a: 3, b: 15 }],
                 [{ b: 42 }, true, null, { b: 0 }]
             ], done);
+        });
+
+        it('defines a rule that sets defaults for its parameters', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'multiply',
+                        params: {
+                            q: Joi.number().required(),
+                            currency: Joi.string().default('$')
+                        },
+                        validate(params, value, state, options) {
+
+                            const v = value * params.q;
+                            return params.currency + v;
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.number();
+            expect(original.double).to.not.exist();
+
+            expect(customJoi.number().multiply(5).validate(7)).to.equal({ error: null, value: '$35' });
+            expect(() => customJoi.number().multiply(5, 5)).to.throw('child "currency" fails because ["currency" must be a string]');
+
+            done();
         });
 
         it('defines a rule that can change the value', (done) => {
