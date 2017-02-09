@@ -1466,7 +1466,7 @@ The behavior is exactly the same as `requiredKeys`.
 
 ### `string`
 
-Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with `allow('')`.
+Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with `allow('')`. However, if you want to specify a default value in case of empty string you have to use a different pattern: `Joi.string().empty('').default('default value')`. This tells joi that the empty string should be considered as an empty value (instead of invalid) and which value to use as default.
 
 Supports the same methods of the [`any()`](#any) type.
 
