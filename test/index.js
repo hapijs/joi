@@ -2192,7 +2192,7 @@ describe('Joi', () => {
 
             expect(customJoi.number().multiply(2).validate(3)).to.equal({ error: null, value: 6 });
             expect(customJoi.number().multiply(5, '$').validate(7)).to.equal({ error: null, value: '$35' });
-            expect(() => customJoi.number().multiply(5, 5)).to.throw('child "currency" fails because ["currency" must be a string]');
+            expect(() => customJoi.number().multiply(5, 5)).to.throw(/"currency" must be a string/);
             expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
 
             done();
@@ -2287,7 +2287,7 @@ describe('Joi', () => {
             expect(original.double).to.not.exist();
 
             expect(customJoi.number().multiply(5).validate(7)).to.equal({ error: null, value: '$35' });
-            expect(() => customJoi.number().multiply(5, 5)).to.throw('child "currency" fails because ["currency" must be a string]');
+            expect(() => customJoi.number().multiply(5, 5)).to.throw(/"currency" must be a string/);
 
             done();
         });
