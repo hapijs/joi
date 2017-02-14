@@ -21,7 +21,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
 # Introduction
 
-Imagine you run facebook and you want visitors to sign up on the website with real names and not something like `l337_p@nda` in the first name field. How would you define the limitations of what can be inputted and validate it against the set rules? 
+Imagine you run facebook and you want visitors to sign up on the website with real names and not something like `l337_p@nda` in the first name field. How would you define the limitations of what can be inputted and validate it against the set rules?
 
 This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object that stores information) to ensure *validation* of key information.
 
@@ -39,7 +39,13 @@ var schema = Joi.object().keys({
     email: Joi.string().email()
 }).with('username', 'birthyear').without('password', 'access_token');
 
+// Return result.
+var results = Joi.validate({ username: 'abc', birthyear: 1994 }, schema);
+// results.error === null -> valid
+
+// You can also pass a callback which will be called with the validation result.
 Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err, value) { });  // err === null -> valid
+
 ```
 
 The above schema defines the following constraints:
@@ -75,10 +81,10 @@ new schema object.
 Then the value is validated against the schema:
 
 ```javascript
-Joi.validate({ a: 'a string' }, schema, function (err, value) { });
+const {error, value} = Joi.validate({ a: 'a string' }, schema);
 ```
 
-If the value is valid, `null` is returned, otherwise an `Error` object.
+If the input is valid, then the error property in the return object will be null, otherwise it will be an Error object.
 
 The schema can be a plain JavaScript object where every key is assigned a **joi** type, or it can be a **joi** type directly:
 
