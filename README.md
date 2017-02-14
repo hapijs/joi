@@ -29,9 +29,9 @@ This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript o
 # Example
 
 ```javascript
-var Joi = require('joi');
+const Joi = require('joi');
 
-var schema = Joi.object().keys({
+const schema = Joi.object().keys({
     username: Joi.string().alphanum().min(3).max(30).required(),
     password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
     access_token: [Joi.string(), Joi.number()],
@@ -40,8 +40,8 @@ var schema = Joi.object().keys({
 }).with('username', 'birthyear').without('password', 'access_token');
 
 // Return result.
-var results = Joi.validate({ username: 'abc', birthyear: 1994 }, schema);
-// results.error === null -> valid
+const result = Joi.validate({ username: 'abc', birthyear: 1994 }, schema);
+// result.error === null -> valid
 
 // You can also pass a callback which will be called with the validation result.
 Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err, value) { });  // err === null -> valid
@@ -70,7 +70,7 @@ The above schema defines the following constraints:
 Usage is a two steps process. First, a schema is constructed using the provided types and constraints:
 
 ```javascript
-var schema = {
+const schema = {
     a: Joi.string()
 };
 ```
@@ -82,21 +82,25 @@ Then the value is validated against the schema:
 
 ```javascript
 const {error, value} = Joi.validate({ a: 'a string' }, schema);
+
+// or
+
+Joi.validate({ a: 'a string' }, schema, function (err, value) { });
 ```
 
-If the input is valid, then the error property in the return object will be null, otherwise it will be an Error object.
+If the input is valid, then the error will be `null`, otherwise it will be an Error object.
 
 The schema can be a plain JavaScript object where every key is assigned a **joi** type, or it can be a **joi** type directly:
 
 ```javascript
-var schema = Joi.string().min(10);
+const schema = Joi.string().min(10);
 ```
 
 If the schema is a **joi** type, the `schema.validate(value, callback)` can be called directly on the type. When passing a non-type schema object,
 the module converts it internally to an object() type equivalent to:
 
 ```javascript
-var schema = Joi.object().keys({
+const schema = Joi.object().keys({
     a: Joi.string()
 });
 ```
