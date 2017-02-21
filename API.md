@@ -829,7 +829,7 @@ boolean.validate(1, (err, value) => { }); // Invalid
 
 Allows for additional values to be considered valid booleans by converting them to `true` during validation. Accepts a value or an array of values.
 
-String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior. 
+String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
 
 ```js
 const boolean = Joi.boolean().truthy('Y');
@@ -840,7 +840,7 @@ boolean.validate('Y', (err, value) => { }); // Valid
 
 Allows for additional values to be considered valid booleans by converting them to `false` during validation. Accepts a value or an array of values.
 
-String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior. 
+String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
 
 ```js
 const boolean = Joi.boolean().falsy('N');
@@ -1033,7 +1033,7 @@ const schema = Joi.func().ref();
 
 ### `number`
 
-Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
+Generates a schema object that matches a number data type (as well as strings that can be converted to numbers, if the validation convert option is on (enabled by default)).
 
 `Infinity` and `-Infinity` are invalid by default, you can change that behavior by calling `allow(Infinity, -Infinity)`.
 
