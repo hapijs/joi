@@ -700,7 +700,10 @@ schema.validate(3);     // returns err.message === 'Was REALLY expecting a strin
 
 ### `array`
 
-Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by default but can be by using `sparse()`.
+Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by
+default but can be by using `sparse()`. If the validation `convert` option is on (enabled by default), a string will be
+converted to an `array` if specified via `JSON.parse()`. Also, if `convert` `array.single()` are both on, then when a
+single value is specified it will be converted to an `array`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -814,7 +817,8 @@ const schema = Joi.array().unique('customer.id');
 
 ### `boolean`
 
-Generates a schema object that matches a boolean data type. Can also be called via `bool()`. It will also validate the strings `"true"` and `"false"` unless you set the schema in `strict()` mode.
+Generates a schema object that matches a boolean data type. Can also be called via `bool()`. If the validation `convert`
+option is on (enabled by default), a string (either "true" or "false") will be converted to a `boolean` if specified.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -860,7 +864,8 @@ const schema = Joi.boolean().truthy('yes').falsy('no').insensitive(false);
 
 ### `binary`
 
-Generates a schema object that matches a Buffer data type (as well as the strings which will be converted to Buffers).
+Generates a schema object that matches a Buffer data type. If the validation `convert` option is on (enabled by default), a string
+will be converted to a Buffer if specified.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -906,7 +911,8 @@ const schema = Joi.binary().length(5);
 
 ### `date`
 
-Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds).
+Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). If
+the validation `convert` option is on (enabled by default), a string or number will be converted to a Date if specified.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -1033,7 +1039,9 @@ const schema = Joi.func().ref();
 
 ### `number`
 
-Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
+Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). If the
+validation `convert` option is on (enabled by default), a string will be converted to a `number` if specified. Also, if
+`convert` is on and `number.precision()` is used, the value will be converted to the specified `precision` as well.
 
 `Infinity` and `-Infinity` are invalid by default, you can change that behavior by calling `allow(Infinity, -Infinity)`.
 
@@ -1159,7 +1167,8 @@ const schema = Joi.number().negative();
 ### `object`
 
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
-to allowing any child key.
+to allowing any child key. If the validation `convert` option is on (enabled by default), a string will be converted to
+an `object` if specified via `JSON.parse()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -1472,7 +1481,13 @@ The behavior is exactly the same as `requiredKeys`.
 
 ### `string`
 
-Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with `allow('')`. However, if you want to specify a default value in case of empty string you have to use a different pattern: `Joi.string().empty('').default('default value')`. This tells joi that the empty string should be considered as an empty value (instead of invalid) and which value to use as default.
+Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must
+be enabled with `allow('')`. However, if you want to specify a default value in case of empty string you have to use a
+different pattern: `Joi.string().empty('').default('default value')`. This tells Joi that the empty string should be
+considered as an empty value (instead of invalid) and which value to use as default.
+
+If the validation `convert` option is on (enabled by default), a string will be converted using the specified modifiers
+for `string.lowercase()`, `string.uppercase()`, `string.trim()`, and each replacement specified with `string.replace()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
