@@ -43,7 +43,7 @@ const schema = Joi.object().keys({
 const result = Joi.validate({ username: 'abc', birthyear: 1994 }, schema);
 // result.error === null -> valid
 
-// You can also pass a callback which will be called with the validation result.
+// You can also pass a callback which will be called synchronously with the validation result.
 Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err, value) { });  // err === null -> valid
 
 ```
