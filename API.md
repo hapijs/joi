@@ -612,6 +612,8 @@ Converts the type into an [`alternatives`](#alternatives) type where the conditi
     - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
     - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
 
+Note: by default, the `is` condition schema allows for `undefined` values. Use `.required()` to override.
+
 ```js
 const schema = {
     a: Joi.any().valid('x').when('b', { is: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') }),

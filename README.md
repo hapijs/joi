@@ -107,7 +107,20 @@ const schema = Joi.object().keys({
 
 When validating a schema:
 
-* Keys are optional by default.
+* Values (or keys in case of objects) are optional by default.
+
+    ```javascript
+    Joi.validate(undefined, Joi.string()); // validates fine
+    ```
+
+    To disallow this behavior, you can either set the schema as `required()`, or set `presence` to `"required"` when passing `options`:
+
+    ```javascript
+    Joi.validate(undefined, Joi.string().required());
+    // or
+    Joi.validate(undefined, Joi.string(), /* options */ { presence: "required" });
+    ```
+
 * Strings are utf-8 encoded by default.
 * Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
 
