@@ -301,7 +301,12 @@ The extension makes use of some common structures that need to be described prio
 
 #### Extension
 
-`extension` can be a single extension object or an array of extension objects using the following parameters :
+`extension` can be :
+- a single extension object
+- a factory function generating an extension object
+- or an array of those
+
+Extension objects use the following parameters :
 * `name` - name of the new type you are defining, this can be an existing type. **Required**.
 * `base` - an existing Joi schema to base your type upon. Defaults to `Joi.any()`.
 * `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `options`.
@@ -315,6 +320,8 @@ The extension makes use of some common structures that need to be described prio
   * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `options`. One of `setup` or `validate` **must** be provided.
   * `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
 
+Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended joi being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
+
 #### npm note
 
 If you publish your extension on npm, make sure to add `joi` and `extension` as keywords so that it's discoverable more easily.
@@ -323,8 +330,8 @@ If you publish your extension on npm, make sure to add `joi` and `extension` as 
 
 ```js
 const Joi = require('joi');
-const customJoi = Joi.extend({
-    base: Joi.number(),
+const customJoi = Joi.extend((joi) => ({
+    base: joi.number(),
     name: 'number',
     language: {
         round: 'needs to be a rounded number', // Used below as 'number.round'
@@ -371,7 +378,7 @@ const customJoi = Joi.extend({
             }
         }
     ]
-});
+}));
 
 const schema = customJoi.number().round().dividable(3);
 ```

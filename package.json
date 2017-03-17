@@ -26,7 +26,7 @@
   },
   "scripts": {
     "test": "lab -t 100 -a code -L",
-    "test-debug": "node $NODE_DEBUG_OPTION ./node_modules/.bin/lab -a code",
+    "test-debug": "lab -a code",
     "test-cov-html": "lab -r html -o coverage.html -a code",
     "toc": "node generate-readme-toc.js",
     "version": "npm run toc && git add API.md README.md"

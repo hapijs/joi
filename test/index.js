@@ -1866,10 +1866,10 @@ describe('Joi', () => {
 
             it('must be an object or array of objects', (done) => {
 
-                expect(() => Joi.extend(true)).to.throw(/"0" must be an object/);
-                expect(() => Joi.extend(null)).to.throw(/"0" must be an object/);
-                expect(() => Joi.extend([{ name: 'foo' }, true])).to.throw(/"1" must be an object/);
-                expect(() => Joi.extend([{ name: 'foo' }, null])).to.throw(/"1" must be an object/);
+                expect(() => Joi.extend(true)).to.throw(/"value" at position 0 does not match any of the allowed types/);
+                expect(() => Joi.extend(null)).to.throw(/"value" at position 0 does not match any of the allowed types/);
+                expect(() => Joi.extend([{ name: 'foo' }, true])).to.throw(/"value" at position 1 does not match any of the allowed types/);
+                expect(() => Joi.extend([{ name: 'foo' }, null])).to.throw(/"value" at position 1 does not match any of the allowed types/);
                 expect(() => Joi.extend()).to.throw('You need to provide at least one extension');
                 done();
             });
@@ -2783,6 +2783,104 @@ describe('Joi', () => {
 
             const schema = customJoi.valid(true);
             expect(schema.isRef).to.not.exist();
+            done();
+        });
+
+        it('should be able to define a type in a factory function', (done) => {
+
+            const customJoi = Joi.extend((joi) => ({
+                name: 'myType'
+            }));
+
+            expect(() => customJoi.myType()).to.not.throw();
+            done();
+        });
+
+        it('should be able to use types defined in the same extend call', (done) => {
+
+            const customJoi = Joi.extend([
+                {
+                    name: 'myType'
+                },
+                (joi) => ({
+                    name: 'mySecondType',
+                    base: joi.myType()
+                })
+            ]);
+
+            expect(() => customJoi.mySecondType()).to.not.throw();
+            done();
+        });
+
+        it('should be able to merge rules when type is defined several times in the same extend call', (done) => {
+
+            const customJoi = Joi.extend([
+                (joi) => ({
+                    name: 'myType',
+                    base: joi.myType ? joi.myType() : joi.number(), // Inherit an already existing implementation or number
+                    rules: [
+                        {
+                            name: 'foo',
+                            validate(params, value, state, options) {
+
+                                return 1;
+                            }
+                        }
+                    ]
+                }),
+                (joi) => ({
+                    name: 'myType',
+                    base: joi.myType ? joi.myType() : joi.number(),
+                    rules: [
+                        {
+                            name: 'bar',
+                            validate(params, value, state, options) {
+
+                                return 2;
+                            }
+                        }
+                    ]
+                })
+            ]);
+
+            expect(() => customJoi.myType().foo().bar()).to.not.throw();
+            expect(customJoi.attempt({ a: 123, b: 456 }, { a: customJoi.myType().foo(), b: customJoi.myType().bar() })).to.equal({ a: 1, b: 2 });
+            done();
+        });
+
+        it('should only keep last definition when type is defined several times with different bases', (done) => {
+
+            const customJoi = Joi.extend([
+                (joi) => ({
+                    name: 'myType',
+                    base: Joi.number(),
+                    rules: [
+                        {
+                            name: 'foo',
+                            validate(params, value, state, options) {
+
+                                return 1;
+                            }
+                        }
+                    ]
+                }),
+                (joi) => ({
+                    name: 'myType',
+                    base: Joi.string(),
+                    rules: [
+                        {
+                            name: 'bar',
+                            validate(params, value, state, options) {
+
+                                return 2;
+                            }
+                        }
+                    ]
+                })
+            ]);
+
+            expect(() => customJoi.myType().foo()).to.throw();
+            expect(() => customJoi.myType().bar()).to.not.throw();
             done();
         });
 
