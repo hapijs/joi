@@ -2467,7 +2467,6 @@ describe('Joi', () => {
             done();
         });
 
-
         it('defines a custom type coercing and casting its input value', (done) => {
 
             const customJoi = Joi.extend({
@@ -2773,6 +2772,17 @@ describe('Joi', () => {
 
             const Any = require('../lib/any');
             expect(customJoi).to.be.an.instanceof(Any);
+            done();
+        });
+
+        it('should return a custom Joi with types not inheriting root properties', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType'
+            });
+
+            const schema = customJoi.valid(true);
+            expect(schema.isRef).to.not.exist();
             done();
         });
 
