@@ -499,6 +499,21 @@ describe('object', () => {
             });
         });
 
+        it('strips keys after validation', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.string().strip(),
+                b: Joi.string().default(Joi.ref('a'))
+            });
+            schema.validate({ a: 'test' }, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.not.exist();
+                expect(value.b).to.equal('test');
+                done();
+            });
+        });
+
         it('does not alter the original object when stripping keys', (done) => {
 
             const schema = Joi.object({
