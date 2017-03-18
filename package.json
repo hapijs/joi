@@ -21,14 +21,14 @@
   },
   "devDependencies": {
     "code": "4.x.x",
-    "lab": "13.x.x",
-    "markdown-toc": "1.1.x"
+    "hapitoc": "1.x.x",
+    "lab": "13.x.x"
   },
   "scripts": {
     "test": "lab -t 100 -a code -L",
     "test-debug": "lab -a code",
     "test-cov-html": "lab -r html -o coverage.html -a code",
-    "toc": "node generate-readme-toc.js",
+    "toc": "hapitoc",
     "version": "npm run toc && git add API.md README.md"
   },
   "license": "BSD-3-Clause"
