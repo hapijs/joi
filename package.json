@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "code": "4.x.x",
-    "lab": "12.x.x",
+    "lab": "13.x.x",
     "markdown-toc": "1.1.x"
   },
   "scripts": {
