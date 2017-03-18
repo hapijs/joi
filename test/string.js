@@ -52,6 +52,16 @@ describe('string', () => {
         ], done);
     });
 
+    describe('insensitive', () => {
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.string().insensitive();
+            expect(schema.insensitive()).to.shallow.equal(schema);
+            done();
+        });
+    });
+
     describe('valid()', () => {
 
         it('validates case sensitive values', (done) => {
@@ -1994,6 +2004,13 @@ describe('string', () => {
     });
 
     describe('truncate()', () => {
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.string().truncate();
+            expect(schema.truncate()).to.shallow.equal(schema);
+            done();
+        });
 
         it('switches the truncate flag', (done) => {
 

@@ -558,6 +558,13 @@ describe('object', () => {
 
     describe('unknown()', () => {
 
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.object().unknown();
+            expect(schema.unknown()).to.shallow.equal(schema);
+            done();
+        });
+
         it('allows local unknown without applying to children', (done) => {
 
             const schema = Joi.object({

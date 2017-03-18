@@ -265,6 +265,13 @@ describe('any', () => {
 
             done();
         });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().raw();
+            expect(schema.raw()).to.shallow.equal(schema);
+            done();
+        });
     });
 
     describe('default()', () => {
@@ -773,6 +780,16 @@ describe('any', () => {
         });
     });
 
+    describe('required', () => {
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().required();
+            expect(schema.required()).to.shallow.equal(schema);
+            done();
+        });
+    });
+
     describe('optional()', () => {
 
         it('validates optional with default required', (done) => {
@@ -794,6 +811,13 @@ describe('any', () => {
                 [{ b: 5 }, false, null, 'child "a" fails because ["a" is required]']
             ], done);
         });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().optional();
+            expect(schema.optional()).to.shallow.equal(schema);
+            done();
+        });
     });
 
     describe('forbidden()', () => {
@@ -813,6 +837,13 @@ describe('any', () => {
                 [{ b: undefined }, true],
                 [{ b: null }, false, null, 'child "b" fails because ["b" is not allowed]']
             ], done);
+        });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().forbidden();
+            expect(schema.forbidden()).to.shallow.equal(schema);
+            done();
         });
     });
 
@@ -840,6 +871,13 @@ describe('any', () => {
                 expect(err.message).to.equal('"value" must be a string');
                 done();
             });
+        });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().strip();
+            expect(schema.strip()).to.shallow.equal(schema);
+            done();
         });
     });
 

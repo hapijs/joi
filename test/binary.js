@@ -105,6 +105,13 @@ describe('binary', () => {
             }).to.throw('Invalid encoding: base6');
             done();
         });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.binary().encoding('base64');
+            expect(schema.encoding('base64')).to.shallow.equal(schema);
+            done();
+        });
     });
 
     describe('min()', () => {

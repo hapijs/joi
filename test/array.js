@@ -1145,6 +1145,13 @@ describe('array', () => {
             });
             done();
         });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.array().sparse();
+            expect(schema.sparse()).to.shallow.equal(schema);
+            done();
+        });
     });
 
     describe('single()', () => {
@@ -1221,6 +1228,13 @@ describe('array', () => {
                 type: 'array',
                 flags: { sparse: false, single: false }
             });
+            done();
+        });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.array().single();
+            expect(schema.single()).to.shallow.equal(schema);
             done();
         });
     });
