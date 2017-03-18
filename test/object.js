@@ -574,6 +574,26 @@ describe('object', () => {
                 [{ a: { b: 5, c: 'ignore' } }, true]
             ], done);
         });
+
+        it('overrides stripUnknown at a local level', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.object({
+                    b: Joi.number(),
+                    c: Joi.object({
+                        d: Joi.number()
+                    })
+                }).unknown()
+            }).options({ allowUnknown: false, stripUnknown: true });
+
+            Helper.validate(schema, [
+                [{ a: { b: 5 } }, true, null, { a: { b: 5 } }],
+                [{ a: { b: 'x' } }, false, null, 'child "a" fails because [child "b" fails because ["b" must be a number]]'],
+                [{ a: { b: 5 }, d: 'ignore' }, true, null, { a: { b: 5 } }],
+                [{ a: { b: 5, d: 'ignore' } }, true, null, { a: { b: 5, d: 'ignore' } }],
+                [{ a: { b: 5, c: { e: 'ignore' } } }, true, null, { a: { b: 5, c: {} } }]
+            ], done);
+        });
     });
 
     describe('rename()', () => {
