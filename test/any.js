@@ -149,6 +149,15 @@ describe('any', () => {
             }).to.not.throw();
             done();
         });
+
+        it('describes a schema with options', (done) => {
+
+            const schema = Joi.any().options({ abortEarly: false, convert: false });
+            const description = schema.describe();
+
+            expect(description).to.equal({ type: 'any', options: { abortEarly: false, convert: false } });
+            done();
+        });
     });
 
     describe('label()', () => {
