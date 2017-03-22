@@ -298,6 +298,21 @@ describe('errors', () => {
         });
     });
 
+    it('returns custom errors when validating alternatives', (done) => {
+
+        const schema = Joi.alternatives().try(Joi.number(), Joi.string()).error(new Error('Neither a number nor a string!'));
+
+        const input = []; // not a string nor a number
+
+        Joi.validate(input, schema, (err, value) => {
+
+            expect(err).to.exist();
+            expect(err.isJoi).to.not.exist();
+            expect(err.message).to.equal('Neither a number nor a string!');
+            done();
+        });
+    });
+
     it('returns first custom error with multiple errors', (done) => {
 
         const schema = Joi.object({
