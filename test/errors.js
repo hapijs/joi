@@ -609,5 +609,25 @@ describe('errors', () => {
                 done();
             });
         });
+
+        it('pinpoints an error in a stringified JSON object', (done) => {
+
+            const object = {
+                a: '{"c":"string"}'
+            };
+
+            const schema = {
+                a: Joi.object({
+                    b: Joi.string()
+                })
+            };
+
+            Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.annotate(true)).to.equal('{\n  \"a\" [1]: \"{\\\"c\\\":\\\"string\\\"}\"\n}\n\n[1] \"c\" is not allowed');
+                done();
+            });
+        });
     });
 });
