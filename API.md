@@ -143,7 +143,7 @@ Property showing the current version of joi being used.
 
 Validates a value using the given schema and options where:
 - `value` - the value being validated.
-- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object.
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
 - `options` - an optional object with the following optional keys:
   - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
   - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
@@ -217,7 +217,7 @@ const schema = Joi.alternatives().try([
 
 Validates a value against a schema and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
-- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object.
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
 
 ```js
@@ -228,7 +228,7 @@ Joi.assert('x', Joi.number());
 
 Validates a value against a schema, returns valid object, and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
-- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object.
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
 
 ```js
@@ -279,7 +279,7 @@ Joi.isRef(ref); // returns true
 Get a sub-schema of an existing schema based on a path. Path separator is a dot (`.`).
 
 ```js
-const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }});
+const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
 const number = Joi.reach(schema, 'foo.bar');
 ```
 
