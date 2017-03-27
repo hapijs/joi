@@ -217,7 +217,7 @@ const schema = Joi.alternatives().try([
 
 Validates a value against a schema and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
-- `schema` - the schema object.
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object.
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
 
 ```js
@@ -228,7 +228,7 @@ Joi.assert('x', Joi.number());
 
 Validates a value against a schema, returns valid object, and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
-- `schema` - the schema object.
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object.
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
 
 ```js
