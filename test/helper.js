@@ -57,6 +57,7 @@ exports.validateOptions = function (schema, config, options, callback) {
                     expect(value).to.equal(expectedValueOrError);
                 }
                 else {
+                    console.log(err.details);
                     const message = expectedValueOrError.message || expectedValueOrError;
                     if (message instanceof RegExp) {
                         expect(err.message).to.match(message);
