@@ -1779,6 +1779,24 @@ describe('Joi', () => {
             }).to.throw(/\"c\" is not allowed/);
             done();
         });
+
+        it('throws a custom error from the schema if provided', (done) => {
+
+            expect(() => {
+
+                Joi.attempt('x', Joi.number().error(new Error('Oh noes !')));
+            }).to.throw('Oh noes !');
+            done();
+        });
+
+        it('throws an error with combined messages', (done) => {
+
+            expect(() => {
+
+                Joi.attempt('x', Joi.number().error(new Error('Oh noes !')), 'invalid value');
+            }).to.throw('invalid value Oh noes !');
+            done();
+        });
     });
 
     describe('compile()', () => {
