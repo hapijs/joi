@@ -1791,10 +1791,9 @@ describe('Joi', () => {
 
         it('throws an error with combined messages', (done) => {
 
-            expect(() => {
-
-                Joi.attempt('x', Joi.number().error(new Error('Oh noes !')), 'invalid value');
-            }).to.throw('invalid value Oh noes !');
+            const schema = Joi.number().error(new Error('Oh noes !'));
+            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('Oh noes !');
+            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('Oh noes !');
             done();
         });
     });
