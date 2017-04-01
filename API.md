@@ -695,9 +695,18 @@ schema.validate(''); // returns { error: "value" is not allowed to be empty, val
 #### `any.error(err)`
 
 Overrides the default joi error with a custom error if the rule fails where:
-- `err` - the override error.
+- `err` can be:
+  - an instance of `Error` - the override error.
+  - a `function(errors)`, taking an array of errors as argument, where it must either:
+    - return a `string` - substitutes the error message with this text
+    - return a single `object` or an `Array` of it, where:
+      - `type` - optional parameter providing the type of the error (eg. `number.min`).
+      - `message` - optional parameter if `template` is provided, containing the text of the error.
+      - `template` - optional parameter if `message` is provided, containing a template string, using the same format as usual joi language errors.
+      - `context` - optional parameter, to provide context to your error if you are using the `template`.
+    - return an `Error` - same as when you directly provide an `Error`, but you can customize the error message based on the errors.
 
-Note that the provided error will be returned as-is, unmodified and undecorated with any of the
+Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any of the
 normal joi error properties. If validation fails and another error is found before the error
 override, that error will be returned and the override will be ignored (unless the `abortEarly`
 option has been set to `false`).
@@ -705,7 +714,38 @@ option has been set to `false`).
 ```js
 let schema = Joi.string().error(new Error('Was REALLY expecting a string'));
 schema.validate(3);     // returns err.message === 'Was REALLY expecting a string'
+
+let schema = Joi.object({
+    foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
+});
+schema.validate({ foo: -2 });    // returns err.message === 'child "foo" fails because ["foo" requires a positive number]'
+
+let schema = Joi.object({
+    foo: Joi.number().min(0).error((errors) => {
+        
+        return 'found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and ');
+    })
+});
+schema.validate({ foo: -2 });    // returns err.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
+
+let schema = Joi.object({
+    foo: Joi.number().min(0).error((errors) => {
+        
+        return {
+            template: 'contains {{errors}} errors, here is the list : {{codes}}',
+            context: {
+                errors: errors.length,
+                codes: errors.map((err) => err.type)
+            }
+        };
+    })
+});
+schema.validate({ foo: -2 });    // returns err.message === 'child "foo" fails because ["foo" contains 1 errors, here is the list : [number.min]]'
 ```
+
+Note that if you want to intercept errors on nested structures such as objects and arrays, you will also get a nested structure to explore the children errors, going one level down through the `err.context.reason` property.
+
+If you want a full substitution of the error system, you can hook at the root and render that `errors` array with whatever templating system you want, just be aware that you will have to crawl the nested errors for the information you want to actually show.
 
 ### `array`
 
