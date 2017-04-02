@@ -280,7 +280,7 @@ describe('Joi', () => {
         ], done);
     });
 
-    it('validates or', (done) => {
+    it('validates or()', (done) => {
 
         const schema = Joi.object({
             txt: Joi.string(),
@@ -317,7 +317,7 @@ describe('Joi', () => {
         });
     });
 
-    it('validates and', (done) => {
+    it('validates and()', (done) => {
 
         const schema = Joi.object({
             txt: Joi.string(),

@@ -1105,6 +1105,16 @@ describe('object', () => {
             ]);
             done();
         });
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).with('a', ['b']);
+            expect(schema.validate({ a: 1 }).error).to.be.an.error('"first" missing required peer "second"');
+            done();
+        });
     });
 
     describe('without()', () => {
@@ -1154,6 +1164,16 @@ describe('object', () => {
             ]);
             done();
         });
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).without('a', ['b']);
+            expect(schema.validate({ a: 1, b: 'b' }).error).to.be.an.error('"first" conflict with forbidden peer "second"');
+            done();
+        });
     });
 
     describe('xor()', () => {
@@ -1178,6 +1198,26 @@ describe('object', () => {
                 error = true;
             }
             expect(error).to.equal(true);
+            done();
+        });
+
+        it('should apply labels without any peer', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).xor('a', 'b');
+            expect(schema.validate({}).error).to.be.an.error('"value" must contain at least one of [first, second]');
+            done();
+        });
+
+        it('should apply labels with too many peers', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).xor('a', 'b');
+            expect(schema.validate({ a: 1, b: 'b' }).error).to.be.an.error('"value" contains a conflict between exclusive peers [first, second]');
             done();
         });
     });
@@ -1220,6 +1260,42 @@ describe('object', () => {
                 expect(err.message).to.equal('child "a" fails because [child "b" fails because ["value" must contain at least one of [x, y]]]');
                 done();
             });
+        });
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).or('a', 'b');
+            expect(schema.validate({}).error).to.be.an.error('"value" must contain at least one of [first, second]');
+            done();
+        });
+    });
+
+    describe('and()', () => {
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).and('a', 'b');
+            expect(schema.validate({ a: 1 }).error).to.be.an.error('"value" contains [first] without its required peers [second]');
+            done();
+        });
+    });
+
+    describe('nand()', () => {
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).nand('a', 'b');
+            expect(schema.validate({ a: 1, b: 'b' }).error).to.be.an.error('"first" must not exist simultaneously with [second]');
+            done();
         });
     });
 
