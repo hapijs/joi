@@ -514,6 +514,24 @@ describe('object', () => {
             });
         });
 
+        it('strips keys while preserving transformed values', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().strip(),
+                b: Joi.number().min(Joi.ref('a'))
+            });
+
+            const result = schema.validate({ a: '1', b: '2' });
+            expect(result.error).to.not.exist();
+            expect(result.value.a).to.not.exist();
+            expect(result.value.b).to.equal(2);
+
+            const result2 = schema.validate({ a: '1', b: '0' });
+            expect(result2.error).to.be.an.error('child "b" fails because ["b" must be larger than or equal to 1]');
+
+            done();
+        });
+
         it('does not alter the original object when stripping keys', (done) => {
 
             const schema = Joi.object({
