@@ -615,7 +615,7 @@ const ab = a.concat(b);
 Converts the type into an [`alternatives`](#alternatives) type where the conditions are merged into the type definition where:
 - `ref` - the key name or [reference](#refkey-options).
 - `options` - an object with:
-    - `is` - the required condition **joi** type.
+    - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted using [Joi.compile](#compileschema).
     - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
     - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
 
