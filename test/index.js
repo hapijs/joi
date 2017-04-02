@@ -122,13 +122,13 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false, null, '"value" must be one of [key]. "value" must be a number. "value" must be an object'],
-            [6, false, null, '"value" must be a string. "value" must be one of [5]. "value" must be an object'],
-            [{ c: 5 }, false, null, '"value" must be a string. "value" must be a number. "c" is not allowed'],
+            ['other', false, null, '"value" must be one of [key], "value" must be a number, "value" must be an object'],
+            [6, false, null, '"value" must be a string, "value" must be one of [5], "value" must be an object'],
+            [{ c: 5 }, false, null, '"value" must be a string, "value" must be a number, "c" is not allowed'],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false, null, '"value" must be a string. "value" must be a number. child "a" fails because ["a" must be a boolean]']
+            [{ a: 5, b: 'a' }, false, null, '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]']
         ], done);
     });
 
@@ -138,13 +138,13 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false, null, '"value" must be one of [key]. "value" must be a number. "value" must be an object'],
-            [6, false, null, '"value" must be a string. "value" must be one of [5]. "value" must be an object'],
-            [{ c: 5 }, false, null, '"value" must be a string. "value" must be a number. "c" is not allowed'],
+            ['other', false, null, '"value" must be one of [key], "value" must be a number, "value" must be an object'],
+            [6, false, null, '"value" must be a string, "value" must be one of [5], "value" must be an object'],
+            [{ c: 5 }, false, null, '"value" must be a string, "value" must be a number, "c" is not allowed'],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false, null, '"value" must be a string. "value" must be a number. child "a" fails because ["a" must be a boolean]']
+            [{ a: 5, b: 'a' }, false, null, '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]']
         ], done);
     });
 
