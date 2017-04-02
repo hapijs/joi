@@ -43,7 +43,7 @@
     - [`any.raw(isRaw)`](#anyrawisraw)
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
-  - [`array`](#array)
+  - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.sparse([enabled])`](#arraysparseenabled)
     - [`array.single([enabled])`](#arraysingleenabled)
     - [`array.items(type)`](#arrayitemstype)
@@ -52,26 +52,26 @@
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
     - [`array.unique([comparator])`](#arrayuniquecomparator)
-  - [`boolean`](#boolean)
+  - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
     - [`boolean.truthy(value)`](#booleantruthyvalue)
     - [`boolean.falsy(value)`](#booleanfalsyvalue)
     - [`boolean.insensitive([enabled])`](#booleaninsensitiveenabled)
-  - [`binary`](#binary)
+  - [`binary` - inherits from `Any`](#binary---inherits-from-any)
     - [`binary.encoding(encoding)`](#binaryencodingencoding)
     - [`binary.min(limit)`](#binaryminlimit)
     - [`binary.max(limit)`](#binarymaxlimit)
     - [`binary.length(limit)`](#binarylengthlimit)
-  - [`date`](#date)
+  - [`date` - inherits from `Any`](#date---inherits-from-any)
     - [`date.min(date)`](#datemindate)
     - [`date.max(date)`](#datemaxdate)
     - [`date.iso()`](#dateiso)
     - [`date.timestamp([type])`](#datetimestamptype)
-  - [`func`](#func)
+  - [`func` - inherits from `Any`](#func---inherits-from-any)
     - [`func.arity(n)`](#funcarityn)
     - [`func.minArity(n)`](#funcminarityn)
     - [`func.maxArity(n)`](#funcmaxarityn)
     - [`func.ref()`](#funcref)
-  - [`number`](#number)
+  - [`number` - inherits from `Any`](#number---inherits-from-any)
     - [`number.min(limit)`](#numberminlimit)
     - [`number.max(limit)`](#numbermaxlimit)
     - [`number.greater(limit)`](#numbergreaterlimit)
@@ -81,7 +81,7 @@
     - [`number.multiple(base)`](#numbermultiplebase)
     - [`number.positive()`](#numberpositive)
     - [`number.negative()`](#numbernegative)
-  - [`object`](#object)
+  - [`object` - inherits from `Any`](#object---inherits-from-any)
     - [`object.keys([schema])`](#objectkeysschema)
       - [`{} notation`](#-notation)
       - [`Joi.object([schema]) notation`](#joiobjectschema-notation)
@@ -103,7 +103,7 @@
     - [`object.schema()`](#objectschema)
     - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
     - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
-  - [`string`](#string)
+  - [`string` - inherits from `Any`](#string---inherits-from-any)
     - [`string.insensitive()`](#stringinsensitive)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
     - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
@@ -125,10 +125,10 @@
     - [`string.uppercase()`](#stringuppercase)
     - [`string.trim()`](#stringtrim)
     - [`string.isoDate()`](#stringisodate)
-  - [`alternatives`](#alternatives)
+  - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
-  - [`lazy(fn)`](#lazyfn)
+  - [`lazy(fn)` - inherits from `Any`](#lazyfn---inherits-from-any)
 - [Errors](#errors)
 
 <!-- tocstop -->
@@ -747,7 +747,7 @@ Note that if you want to intercept errors on nested structures such as objects a
 
 If you want a full substitution of the error system, you can hook at the root and render that `errors` array with whatever templating system you want, just be aware that you will have to crawl the nested errors for the information you want to actually show.
 
-### `array`
+### `array` - inherits from `Any`
 
 Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by
 default but can be by using `sparse()`. If the validation `convert` option is on (enabled by default), a string will be
@@ -864,7 +864,7 @@ const schema = Joi.array().unique((a, b) => a.property === b.property);
 const schema = Joi.array().unique('customer.id');
 ```
 
-### `boolean`
+### `boolean` - inherits from `Any`
 
 Generates a schema object that matches a boolean data type. Can also be called via `bool()`. If the validation `convert`
 option is on (enabled by default), a string (either "true" or "false") will be converted to a `boolean` if specified.
@@ -911,7 +911,7 @@ Parameters are:
 const schema = Joi.boolean().truthy('yes').falsy('no').insensitive(false);
 ```
 
-### `binary`
+### `binary` - inherits from `Any`
 
 Generates a schema object that matches a Buffer data type. If the validation `convert` option is on (enabled by default), a string
 will be converted to a Buffer if specified.
@@ -958,7 +958,7 @@ Specifies the exact length of the buffer:
 const schema = Joi.binary().length(5);
 ```
 
-### `date`
+### `date` - inherits from `Any`
 
 Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). If
 the validation `convert` option is on (enabled by default), a string or number will be converted to a Date if specified.
@@ -1038,7 +1038,7 @@ const schema = Joi.date().timestamp('javascript'); // also, for javascript times
 const schema = Joi.date().timestamp('unix'); // for unix timestamp (seconds)
 ```
 
-### `func`
+### `func` - inherits from `Any`
 
 Generates a schema object that matches a function type.
 
@@ -1086,7 +1086,7 @@ Requires the function to be a Joi reference.
 const schema = Joi.func().ref();
 ```
 
-### `number`
+### `number` - inherits from `Any`
 
 Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). If the
 validation `convert` option is on (enabled by default), a string will be converted to a `number` if specified. Also, if
@@ -1213,7 +1213,7 @@ Requires the number to be negative.
 const schema = Joi.number().negative();
 ```
 
-### `object`
+### `object` - inherits from `Any`
 
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
 to allowing any child key. If the validation `convert` option is on (enabled by default), a string will be converted to
@@ -1528,7 +1528,7 @@ const optionalSchema = schema.optionalKeys('a.b', 'c.d');
 
 The behavior is exactly the same as `requiredKeys`.
 
-### `string`
+### `string` - inherits from `Any`
 
 Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must
 be enabled with `allow('')`. However, if you want to specify a default value in case of empty string you have to use a
@@ -1815,7 +1815,7 @@ Requires the string value to be in valid ISO 8601 date format.
 const schema = Joi.string().isoDate();
 ```
 
-### `alternatives`
+### `alternatives` - inherits from `Any`
 
 Generates a type that will match one of the provided alternative schemas via the [`try()`](#alternativestryschemas)
 method. If no schemas are added, the type will not match any value except for `undefined`.
@@ -1880,7 +1880,7 @@ const schema = {
 };
 ```
 
-### `lazy(fn)`
+### `lazy(fn)` - inherits from `Any`
 
 Generates a placeholder schema for a schema that you would provide with the `fn`.
 
