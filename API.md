@@ -713,12 +713,12 @@ option has been set to `false`).
 
 ```js
 let schema = Joi.string().error(new Error('Was REALLY expecting a string'));
-schema.validate(3);     // returns err.message === 'Was REALLY expecting a string'
+schema.validate(3);     // returns error.message === 'Was REALLY expecting a string'
 
 let schema = Joi.object({
     foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
 });
-schema.validate({ foo: -2 });    // returns err.message === 'child "foo" fails because ["foo" requires a positive number]'
+schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" requires a positive number]'
 
 let schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
@@ -726,7 +726,7 @@ let schema = Joi.object({
         return 'found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and ');
     })
 });
-schema.validate({ foo: -2 });    // returns err.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
+schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
 
 let schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
@@ -740,7 +740,7 @@ let schema = Joi.object({
         };
     })
 });
-schema.validate({ foo: -2 });    // returns err.message === 'child "foo" fails because ["foo" contains 1 errors, here is the list : [number.min]]'
+schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" contains 1 errors, here is the list : [number.min]]'
 ```
 
 Note that if you want to intercept errors on nested structures such as objects and arrays, you will also get a nested structure to explore the children errors, going one level down through the `err.context.reason` property.
