@@ -171,6 +171,16 @@ describe('any', () => {
                     abortEarly: false,
                     convert: false
                 },
+                baseType: {
+                    type: 'number',
+                    invalids: [
+                        Infinity,
+                        -Infinity
+                    ],
+                    rules: [
+                        { arg: 10, name: 'min' }
+                    ]
+                },
                 alternatives: [{
                     ref: 'ref:a',
                     is: {
@@ -1604,6 +1614,13 @@ describe('any', () => {
                 type: 'alternatives',
                 flags: {
                     presence: 'ignore'
+                },
+                baseType: {
+                    type: 'number',
+                    invalids: [Infinity, -Infinity],
+                    rules: [
+                        { arg: 10, name: 'min' }
+                    ]
                 },
                 alternatives: [{
                     ref: 'ref:a',
