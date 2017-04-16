@@ -1239,6 +1239,66 @@ describe('object', () => {
             done();
         });
     });
+    
+    describe('#and', function() {
+        it('should throw an error when a parameter is not a string', function (done) {
+
+            try {
+                Joi.object().and({});
+                var error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().and(123);
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+            done();
+        });
+        
+        it('should give error when keys are missing', function (done) {
+
+            Joi.object({
+                a: Joi.object().and('x', 'y', 'z')
+            }).validate({ a: { x: 1 } }, function (err, value) {
+                
+                expect(err).to.exist;
+                expect(err.message).to.equal('value contains x without its required peers y, z');
+                done();
+            });
+        });
+        
+        it('should validate correctly when all keys are present', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.object().and('x', 'y', 'z')
+            })
+            
+            Helper.validate(schema, [
+                [{ a: { x: 1, y: 2, z: 3 } }, true]
+            ]);
+            done();
+        });
+        
+        it('should validate correctly when no specified keys are present', function (done) {
+
+            var schema = Joi.object({
+                a: Joi.object().and('x', 'y', 'z')
+            })
+            
+            Helper.validate(schema, [
+                [{ a: { b : 1 }  }, true]
+            ]);
+            done();
+        });
+    });
 
     describe('or()', () => {
 
