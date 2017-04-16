@@ -344,6 +344,19 @@ describe('array', () => {
                 done();
             });
         });
+
+        it('supports any() type methods', function (done) {
+            var schema = Joi.array();
+            schema.includes(Joi.string().valid('a'));
+            var input = ['a', 'b', 'a'];
+
+            schema.validate(input, function (err, value) {
+
+                expect(err).to.exist;
+                expect(err.message).to.equal('value position 1 fails because 1 must be one of a');
+                done();
+            });
+        });
     });
 
     describe('min()', () => {
