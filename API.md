@@ -21,6 +21,7 @@
     - [npm note](#npm-note)
     - [Examples](#examples)
   - [`any`](#any)
+    - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
     - [`any.allow(value)`](#anyallowvalue)
     - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
     - [`any.invalid(value)` - aliases: `disallow`, `not`](#anyinvalidvalue---aliases-disallow-not)
@@ -390,6 +391,55 @@ Generates a schema object that matches any data type.
 ```js
 const any = Joi.any();
 any.validate('a', (err, value) => { });
+```
+
+#### `any.validate(value, [options], [callback])`
+
+Validates a value using the given schema and options where:
+- `value` - the value being validated.
+- `options` - an optional object with the following optional keys:
+  - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
+  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
+  - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
+  - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
+  - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
+    - when `true`, all unknown elements will be removed.
+    - when an `object` :
+      - `arrays` - set to `true` to remove unknown items from arrays.
+      - `objects` - set to `true` to remove unknown keys from objects.
+  - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
+    - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped
+    - strings are always preceeded by the key name, unless a `{{key}}` is found elsewhere or if the string is prefixed by a `!!`
+    - when `'label'` is set, it overrides the key name in the error message
+    - to better understand the structure of the language, it's advised to have a look at the existing messages you want to override [here](lib/language.js)
+  - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
+    Defaults to `'optional'`.
+  - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
+    `validate()` and not using `any.options()`.
+  - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
+- `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
+  - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
+  - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
+    incomplete if validation failed and `abortEarly` is `true`. If callback is not provided, then returns an object with [error](#errors)
+    and value properties.
+
+```js
+const schema = Joi.object({
+    a: Joi.number()
+});
+
+const value = {
+    a: '123'
+};
+
+schema.validate(value, (err, value) => { });
+// err -> null
+// value.a -> 123 (number, not string)
+
+// or
+const result = schema.validate(value, schema);
+// result.error -> null
+// result.value -> { "a" : 123 }
 ```
 
 #### `any.allow(value)`
