@@ -238,7 +238,8 @@ describe('errors', () => {
                 context: {
                     limit: 3,
                     key: 'length',
-                    value: 1
+                    value: 1,
+                    label: 'length'
                 }
             }]);
             done();

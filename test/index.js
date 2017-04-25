@@ -1389,32 +1389,32 @@ describe('Joi', () => {
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test.0.foo',
                 type: 'string.max',
-                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
+                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined, label: 'foo' }
             }, {
                 message: '"bar" length must be less than or equal to 5 characters long',
                 path: 'test.0.bar',
                 type: 'string.max',
-                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined }
+                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined, label: 'bar' }
             }, {
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test2.test3.1.foo',
                 type: 'string.max',
-                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
+                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined, label: 'foo' }
             }, {
                 message: '"bar" length must be less than or equal to 5 characters long',
                 path: 'test2.test3.1.bar',
                 type: 'string.max',
-                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined }
+                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined, label: 'bar' }
             }, {
                 message: '"foo" length must be less than or equal to 3 characters long',
                 path: 'test2.test3.2.baz.test4.0.foo',
                 type: 'string.max',
-                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
+                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined, label: 'foo' }
             }, {
                 message: '"baz" is not allowed',
                 path: 'test2.test3.2.baz.test4.0.baz',
                 type: 'object.allowUnknown',
-                context: { key: 'baz', child: 'baz' }
+                context: { key: 'baz', child: 'baz', label: 'baz' }
             }]);
             done();
         });
