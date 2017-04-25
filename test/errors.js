@@ -245,6 +245,23 @@ describe('errors', () => {
         });
     });
 
+    it('uses the original key name for context.key when the key has a label', (done) => {
+
+        Joi.object({ length: Joi.required().label('custom label') }).validate({}, (err) => {
+
+            expect(err.details).to.equal([{
+                message: '"custom label" is required',
+                path: 'length',
+                type: 'any.required',
+                context: {
+                    key: 'length',
+                    label: 'custom label'
+                }
+            }]);
+            done();
+        });
+    });
+
     it('has a name that is ValidationError', (done) => {
 
         const schema = Joi.number();
