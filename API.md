@@ -330,8 +330,8 @@ If you publish your extension on npm, make sure to add `joi` and `extension` as 
 
 ```js
 const Joi = require('joi');
-const customJoi = Joi.extend((joi) => ({
-    base: joi.number(),
+const customJoi = Joi.extend({
+    base: Joi.number(),
     name: 'number',
     language: {
         round: 'needs to be a rounded number', // Used below as 'number.round'
@@ -378,7 +378,7 @@ const customJoi = Joi.extend((joi) => ({
             }
         }
     ]
-}));
+});
 
 const schema = customJoi.number().round().dividable(3);
 ```
