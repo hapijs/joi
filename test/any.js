@@ -171,7 +171,7 @@ describe('any', () => {
                     abortEarly: false,
                     convert: false
                 },
-                baseType: {
+                base: {
                     type: 'number',
                     invalids: [
                         Infinity,
@@ -1615,7 +1615,7 @@ describe('any', () => {
                 flags: {
                     presence: 'ignore'
                 },
-                baseType: {
+                base: {
                     type: 'number',
                     invalids: [Infinity, -Infinity],
                     rules: [

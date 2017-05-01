@@ -374,7 +374,7 @@ describe('ref', () => {
         expect(desc).to.equal({
             type: 'alternatives',
             flags: { presence: 'ignore' },
-            baseType: {
+            base: {
                 type: 'any',
                 flags: {
                     allowOnly: true,
