@@ -2810,7 +2810,7 @@ describe('Joi', () => {
                 name: 'myType'
             });
 
-            const Any = require('../lib/any');
+            const Any = require('../lib/types/any');
             expect(customJoi).to.be.an.instanceof(Any);
             done();
         });
