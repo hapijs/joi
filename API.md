@@ -119,7 +119,7 @@
     - [`string.uri([options])`](#stringurioptions)
     - [`string.guid()` - aliases: `uuid`](#stringguid---aliases-uuid)
     - [`string.hex()`](#stringhex)
-    - [`string.base64()`](#stringbase64)
+    - [`string.base64([padding])`](#stringbase64)
     - [`string.hostname()`](#stringhostname)
     - [`string.lowercase()`](#stringlowercase)
     - [`string.uppercase()`](#stringuppercase)
@@ -722,7 +722,7 @@ schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails
 
 let schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
-        
+
         return 'found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and ');
     })
 });
@@ -730,7 +730,7 @@ schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails
 
 let schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
-        
+
         return {
             template: 'contains {{errors}} errors, here is the list : {{codes}}',
             context: {
@@ -882,7 +882,7 @@ boolean.validate(1, (err, value) => { }); // Invalid
 
 Allows for additional values to be considered valid booleans by converting them to `true` during validation. Accepts a value or an array of values.
 
-String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior. 
+String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
 
 ```js
 const boolean = Joi.boolean().truthy('Y');
@@ -893,7 +893,7 @@ boolean.validate('Y', (err, value) => { }); // Valid
 
 Allows for additional values to be considered valid booleans by converting them to `false` during validation. Accepts a value or an array of values.
 
-String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior. 
+String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
 
 ```js
 const boolean = Joi.boolean().falsy('N');
@@ -1764,12 +1764,23 @@ Requires the string value to be a valid hexadecimal string.
 const schema = Joi.string().hex();
 ```
 
-#### `string.base64()`
+#### `string.base64([padding])`
 
-Requires the string value to be a valid base64 string.
+Requires the string value to be a valid base64 string; does not check the decoded value.
+
+* padding - optional parameter defaulting to `true` which will require `=` padding if `true` or make padding optional (`false`).
+
+Padding characters are not required for decoding, as the number of missing bytes can be inferred from the number of digits. With that said, try to use padding if at all possible.
 
 ```js
 const schema = Joi.string().base64();
+
+const paddingRequiredSchema = Joi.string().base64(true);
+paddingRequiredSchema.validate('VE9PTUFOWVNFQ1JFVFM'); // ValidationError: "value" must be a valid base64 string
+paddingRequiredSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
+
+const paddingOptionalSchema = Joi.string().base64(false);
+paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM'); // No Error
 ```
 
 #### `string.hostname()`

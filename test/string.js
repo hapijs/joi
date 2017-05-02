@@ -3164,7 +3164,7 @@ describe('string', () => {
             ], done);
         });
 
-        it('validates an base64 string', (done) => {
+        it('validates an base64 string with implicit padding required', (done) => {
 
             const rule = Joi.string().base64();
             Helper.validate(rule, [
@@ -3175,6 +3175,40 @@ describe('string', () => {
                 ['YW', false, null, '"value" must be a valid base64 string'],
                 ['YW==', true],
                 ['YW5', false, null, '"value" must be a valid base64 string'],
+                ['YW5=', true],
+                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
+            ], done);
+        });
+
+        it('validates an base64 string with explicit padding required', (done) => {
+
+            const rule = Joi.string().base64(true);
+            Helper.validate(rule, [
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['Y=', false, null, '"value" must be a valid base64 string'],
+                ['Y===', false, null, '"value" must be a valid base64 string'],
+                ['YW', false, null, '"value" must be a valid base64 string'],
+                ['YW==', true],
+                ['YW5', false, null, '"value" must be a valid base64 string'],
+                ['YW5=', true],
+                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
+            ], done);
+        });
+
+        it('validates an base64 string with padding not required', (done) => {
+
+            const rule = Joi.string().base64(false);
+            Helper.validate(rule, [
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', true],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['Y$', false, null, '"value" must be a valid base64 string'],
+                ['Y', false, null, '"value" must be a valid base64 string'],
+                ['Y===', false, null, '"value" must be a valid base64 string'],
+                ['YW', true],
+                ['YW==', true],
+                ['YW5', true],
                 ['YW5=', true],
                 ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
             ], done);
