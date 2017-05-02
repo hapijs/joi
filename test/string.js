@@ -3203,6 +3203,8 @@ describe('string', () => {
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4', true],
                 ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IG==cm5hbCBwbGVhc3VyZS4=', false, null, '"value" must be a valid base64 string'],
                 ['Y$', false, null, '"value" must be a valid base64 string'],
                 ['Y', false, null, '"value" must be a valid base64 string'],
                 ['Y===', false, null, '"value" must be a valid base64 string'],
