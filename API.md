@@ -21,6 +21,7 @@
     - [npm note](#npm-note)
     - [Examples](#examples)
   - [`any`](#any)
+    - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
     - [`any.allow(value)`](#anyallowvalue)
     - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
     - [`any.invalid(value)` - aliases: `disallow`, `not`](#anyinvalidvalue---aliases-disallow-not)
@@ -390,6 +391,32 @@ Generates a schema object that matches any data type.
 ```js
 const any = Joi.any();
 any.validate('a', (err, value) => { });
+```
+
+#### `any.validate(value, [options], [callback])`
+
+Validates a value using the schema and options where:
+- `value` - the value being validated.
+- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+- `callback` - an optional synchronous callback method using the the same signature as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+
+```js
+const schema = Joi.object({
+    a: Joi.number()
+});
+
+const value = {
+    a: '123'
+};
+
+schema.validate(value, (err, value) => { });
+// err -> null
+// value.a -> 123 (number, not string)
+
+// or
+const result = schema.validate(value, schema);
+// result.error -> null
+// result.value -> { "a" : 123 }
 ```
 
 #### `any.allow(value)`
