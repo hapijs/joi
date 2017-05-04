@@ -1374,7 +1374,7 @@ Specify validation rules for unknown keys matching a pattern where:
 - `regex` - a regular expression tested against the unknown key names.
 - `schema` - the schema object matching keys must validate against.
 
-```javascrip
+```js
 const schema = Joi.object({
     a: Joi.string()
 }).pattern(/\w\d/, Joi.boolean());
