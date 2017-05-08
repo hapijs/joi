@@ -317,8 +317,8 @@ Extension objects use the following parameters :
 * `rules` - an optional array of rules to add.
   * `name` - name of the new rule. **Required**.
   * `params` - an optional object containing Joi schemas of each parameter ordered. You can also pass a single Joi schema as long as it is a `Joi.object()`, of course some methods such as `pattern` or `rename` won't be useful or won't work at all in this given context.
-  * `setup` - an optional function that takes an object with the provided parameters. One of `setup` or `validate` **must** be provided.
-  * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `options`. One of `setup` or `validate` **must** be provided.
+  * `setup` - an optional function that takes an object with the provided parameters. At least one of `setup` or `validate` **must** be provided.
+  * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `options`. At least one of `setup` or `validate` **must** be provided.
   * `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
 
 Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended joi being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
