@@ -122,13 +122,13 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false, null, '"value" must be one of [key]. "value" must be a number. "value" must be an object'],
-            [6, false, null, '"value" must be a string. "value" must be one of [5]. "value" must be an object'],
-            [{ c: 5 }, false, null, '"value" must be a string. "value" must be a number. "c" is not allowed'],
+            ['other', false, null, '"value" must be one of [key], "value" must be a number, "value" must be an object'],
+            [6, false, null, '"value" must be a string, "value" must be one of [5], "value" must be an object'],
+            [{ c: 5 }, false, null, '"value" must be a string, "value" must be a number, "c" is not allowed'],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false, null, '"value" must be a string. "value" must be a number. child "a" fails because ["a" must be a boolean]']
+            [{ a: 5, b: 'a' }, false, null, '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]']
         ], done);
     });
 
@@ -138,13 +138,13 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false, null, '"value" must be one of [key]. "value" must be a number. "value" must be an object'],
-            [6, false, null, '"value" must be a string. "value" must be one of [5]. "value" must be an object'],
-            [{ c: 5 }, false, null, '"value" must be a string. "value" must be a number. "c" is not allowed'],
+            ['other', false, null, '"value" must be one of [key], "value" must be a number, "value" must be an object'],
+            [6, false, null, '"value" must be a string, "value" must be one of [5], "value" must be an object'],
+            [{ c: 5 }, false, null, '"value" must be a string, "value" must be a number, "c" is not allowed'],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false, null, '"value" must be a string. "value" must be a number. child "a" fails because ["a" must be a boolean]']
+            [{ a: 5, b: 'a' }, false, null, '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]']
         ], done);
     });
 
@@ -280,7 +280,7 @@ describe('Joi', () => {
         ], done);
     });
 
-    it('validates or', (done) => {
+    it('validates or()', (done) => {
 
         const schema = Joi.object({
             txt: Joi.string(),
@@ -317,7 +317,7 @@ describe('Joi', () => {
         });
     });
 
-    it('validates and', (done) => {
+    it('validates and()', (done) => {
 
         const schema = Joi.object({
             txt: Joi.string(),
@@ -1760,6 +1760,42 @@ describe('Joi', () => {
             }).to.throw('invalid value');
             done();
         });
+
+        it('throws a validation error and not a TypeError when parameter is given as a json string with incorrect property', (done) => {
+
+            const schema = {
+                a: Joi.object({
+                    b: Joi.string()
+                })
+            };
+
+            const input = {
+                a: '{"c":"string"}'
+            };
+
+            expect(() => {
+
+                Joi.attempt(input, schema);
+            }).to.throw(/\"c\" is not allowed/);
+            done();
+        });
+
+        it('throws a custom error from the schema if provided', (done) => {
+
+            expect(() => {
+
+                Joi.attempt('x', Joi.number().error(new Error('Oh noes !')));
+            }).to.throw('Oh noes !');
+            done();
+        });
+
+        it('throws an error with combined messages', (done) => {
+
+            const schema = Joi.number().error(new Error('Oh noes !'));
+            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('Oh noes !');
+            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('Oh noes !');
+            done();
+        });
     });
 
     describe('compile()', () => {
@@ -1866,10 +1902,10 @@ describe('Joi', () => {
 
             it('must be an object or array of objects', (done) => {
 
-                expect(() => Joi.extend(true)).to.throw(/"0" must be an object/);
-                expect(() => Joi.extend(null)).to.throw(/"0" must be an object/);
-                expect(() => Joi.extend([{ name: 'foo' }, true])).to.throw(/"1" must be an object/);
-                expect(() => Joi.extend([{ name: 'foo' }, null])).to.throw(/"1" must be an object/);
+                expect(() => Joi.extend(true)).to.throw(/"value" at position 0 does not match any of the allowed types/);
+                expect(() => Joi.extend(null)).to.throw(/"value" at position 0 does not match any of the allowed types/);
+                expect(() => Joi.extend([{ name: 'foo' }, true])).to.throw(/"value" at position 1 does not match any of the allowed types/);
+                expect(() => Joi.extend([{ name: 'foo' }, null])).to.throw(/"value" at position 1 does not match any of the allowed types/);
                 expect(() => Joi.extend()).to.throw('You need to provide at least one extension');
                 done();
             });
@@ -2192,6 +2228,7 @@ describe('Joi', () => {
 
             expect(customJoi.number().multiply(2).validate(3)).to.equal({ error: null, value: 6 });
             expect(customJoi.number().multiply(5, '$').validate(7)).to.equal({ error: null, value: '$35' });
+            expect(() => customJoi.number().multiply(5, 5)).to.throw(/"currency" must be a string/);
             expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
 
             done();
@@ -2259,6 +2296,36 @@ describe('Joi', () => {
                 [{ a: 3, b: 5 }, true, null, { a: 3, b: 15 }],
                 [{ b: 42 }, true, null, { b: 0 }]
             ], done);
+        });
+
+        it('defines a rule that sets defaults for its parameters', (done) => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                name: 'number',
+                rules: [
+                    {
+                        name: 'multiply',
+                        params: {
+                            q: Joi.number().required(),
+                            currency: Joi.string().default('$')
+                        },
+                        validate(params, value, state, options) {
+
+                            const v = value * params.q;
+                            return params.currency + v;
+                        }
+                    }
+                ]
+            });
+
+            const original = Joi.number();
+            expect(original.double).to.not.exist();
+
+            expect(customJoi.number().multiply(5).validate(7)).to.equal({ error: null, value: '$35' });
+            expect(() => customJoi.number().multiply(5, 5)).to.throw(/"currency" must be a string/);
+
+            done();
         });
 
         it('defines a rule that can change the value', (done) => {
@@ -2435,7 +2502,6 @@ describe('Joi', () => {
 
             done();
         });
-
 
         it('defines a custom type coercing and casting its input value', (done) => {
 
@@ -2742,6 +2808,115 @@ describe('Joi', () => {
 
             const Any = require('../lib/any');
             expect(customJoi).to.be.an.instanceof(Any);
+            done();
+        });
+
+        it('should return a custom Joi with types not inheriting root properties', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType'
+            });
+
+            const schema = customJoi.valid(true);
+            expect(schema.isRef).to.not.exist();
+            done();
+        });
+
+        it('should be able to define a type in a factory function', (done) => {
+
+            const customJoi = Joi.extend((joi) => ({
+                name: 'myType'
+            }));
+
+            expect(() => customJoi.myType()).to.not.throw();
+            done();
+        });
+
+        it('should be able to use types defined in the same extend call', (done) => {
+
+            const customJoi = Joi.extend([
+                {
+                    name: 'myType'
+                },
+                (joi) => ({
+                    name: 'mySecondType',
+                    base: joi.myType()
+                })
+            ]);
+
+            expect(() => customJoi.mySecondType()).to.not.throw();
+            done();
+        });
+
+        it('should be able to merge rules when type is defined several times in the same extend call', (done) => {
+
+            const customJoi = Joi.extend([
+                (joi) => ({
+                    name: 'myType',
+                    base: joi.myType ? joi.myType() : joi.number(), // Inherit an already existing implementation or number
+                    rules: [
+                        {
+                            name: 'foo',
+                            validate(params, value, state, options) {
+
+                                return 1;
+                            }
+                        }
+                    ]
+                }),
+                (joi) => ({
+                    name: 'myType',
+                    base: joi.myType ? joi.myType() : joi.number(),
+                    rules: [
+                        {
+                            name: 'bar',
+                            validate(params, value, state, options) {
+
+                                return 2;
+                            }
+                        }
+                    ]
+                })
+            ]);
+
+            expect(() => customJoi.myType().foo().bar()).to.not.throw();
+            expect(customJoi.attempt({ a: 123, b: 456 }, { a: customJoi.myType().foo(), b: customJoi.myType().bar() })).to.equal({ a: 1, b: 2 });
+            done();
+        });
+
+        it('should only keep last definition when type is defined several times with different bases', (done) => {
+
+            const customJoi = Joi.extend([
+                (joi) => ({
+                    name: 'myType',
+                    base: Joi.number(),
+                    rules: [
+                        {
+                            name: 'foo',
+                            validate(params, value, state, options) {
+
+                                return 1;
+                            }
+                        }
+                    ]
+                }),
+                (joi) => ({
+                    name: 'myType',
+                    base: Joi.string(),
+                    rules: [
+                        {
+                            name: 'bar',
+                            validate(params, value, state, options) {
+
+                                return 2;
+                            }
+                        }
+                    ]
+                })
+            ]);
+
+            expect(() => customJoi.myType().foo()).to.throw();
+            expect(() => customJoi.myType().bar()).to.not.throw();
             done();
         });
 

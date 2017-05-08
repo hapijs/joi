@@ -104,6 +104,39 @@ describe('alternatives', () => {
             }).to.throw('Cannot add other alternatives without at least one schema');
             done();
         });
+
+        it('validates deep alternatives', (done) => {
+
+            const schema = Joi.alternatives().try(Joi.boolean(), Joi.object({
+                p: Joi.alternatives().try(Joi.boolean(), Joi.string().valid('foo', 'bar'))
+            }));
+            Helper.validate(schema, [
+                [{ p: 1 }, false, null, '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be a string]'],
+                [{ p: '...' }, false, null, '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be one of [foo, bar]]'],
+                [1, false, null, '"value" must be a boolean, "value" must be an object']
+            ], done);
+        });
+
+        it('validates deep alternatives (with wrapArrays false)', (done) => {
+
+            const schema = Joi.alternatives().try(Joi.boolean(), Joi.object({
+                p: Joi.alternatives().try(Joi.boolean(), Joi.string().valid('foo', 'bar'))
+            })).options({ language: { messages: { wrapArrays: false } } });
+            Helper.validate(schema, [
+                [{ p: 1 }, false, null, '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be a string'],
+                [{ p: '...' }, false, null, '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be one of foo, bar'],
+                [1, false, null, '"value" must be a boolean, "value" must be an object']
+            ], done);
+        });
+
+        it('validates deep alternatives', (done) => {
+
+            const schema = Joi.alternatives().try(Joi.boolean(), Joi.object({
+                p: Joi.number()
+            })).error(new Error('oops'));
+            expect(schema.validate({ p: 'a' }).error).to.be.an.error('oops');
+            done();
+        });
     });
 
     describe('when()', () => {

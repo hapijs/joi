@@ -265,6 +265,13 @@ describe('any', () => {
 
             done();
         });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().raw();
+            expect(schema.raw()).to.shallow.equal(schema);
+            done();
+        });
     });
 
     describe('default()', () => {
@@ -752,6 +759,35 @@ describe('any', () => {
                 done();
             });
         });
+
+        it('should be able to support both empty and noDefaults', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.string().empty('foo').default('bar'),
+                b: Joi.number()
+            });
+
+            const input = { a: 'foo', b: 42 };
+
+            Joi.validate(input, schema, { noDefaults: true }, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.not.exist();
+                expect(value.b).to.be.equal(42);
+
+                done();
+            });
+        });
+    });
+
+    describe('required', () => {
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().required();
+            expect(schema.required()).to.shallow.equal(schema);
+            done();
+        });
     });
 
     describe('optional()', () => {
@@ -775,6 +811,13 @@ describe('any', () => {
                 [{ b: 5 }, false, null, 'child "a" fails because ["a" is required]']
             ], done);
         });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().optional();
+            expect(schema.optional()).to.shallow.equal(schema);
+            done();
+        });
     });
 
     describe('forbidden()', () => {
@@ -794,6 +837,13 @@ describe('any', () => {
                 [{ b: undefined }, true],
                 [{ b: null }, false, null, 'child "b" fails because ["b" is not allowed]']
             ], done);
+        });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().forbidden();
+            expect(schema.forbidden()).to.shallow.equal(schema);
+            done();
         });
     });
 
@@ -821,6 +871,13 @@ describe('any', () => {
                 expect(err.message).to.equal('"value" must be a string');
                 done();
             });
+        });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.any().strip();
+            expect(schema.strip()).to.shallow.equal(schema);
+            done();
         });
     });
 
@@ -1788,6 +1845,451 @@ describe('any', () => {
                 Joi.any().invalid(undefined);
             }).to.throw('Cannot call allow/valid/invalid with undefined');
             done();
+        });
+    });
+
+    describe('error()', () => {
+
+        it('returns custom error', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: {
+                    c: Joi.number().strict().error(new Error('Really wanted a number!'))
+                }
+            });
+
+            Joi.validate({ a: 'abc', b: { c: 'x' } }, schema, (err) => {
+
+                expect(err).to.exist();
+                expect(err.isJoi).to.not.exist();
+                expect(err.message).to.equal('Really wanted a number!');
+                done();
+            });
+        });
+
+        it('returns first custom error with multiple errors', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: {
+                    c: Joi.number().error(new Error('Really wanted a number!'))
+                }
+            }).options({ abortEarly: false });
+
+            Joi.validate({ a: 22, b: { c: 'x' } }, schema, (err) => {
+
+                expect(err).to.exist();
+                expect(err.isJoi).to.not.exist();
+                expect(err.message).to.equal('Really wanted a number!');
+                done();
+            });
+        });
+
+        it('returns first error with multiple errors (first not custom)', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: {
+                    c: Joi.number().error(new Error('Really wanted a number!'))
+                }
+            });
+
+            Joi.validate({ a: 22, b: { c: 'x' } }, schema, (err) => {
+
+                expect(err).to.exist();
+                expect(err.isJoi).to.be.true();
+                done();
+            });
+        });
+
+        it('errors on invalid error option', (done) => {
+
+            expect(() => {
+
+                Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().error('Really wanted a number!')
+                    }
+                });
+            }).to.throw('Must provide a valid Error object or a function');
+
+            done();
+        });
+
+        it('errors on missing error option', (done) => {
+
+            expect(() => {
+
+                Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().error()
+                    }
+                });
+            }).to.throw('Must provide a valid Error object or a function');
+
+            done();
+        });
+
+        describe('with a function', () => {
+
+            it('should replace the error message with a string', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().strict().error(() => 'Really wanted a number!')
+                    }
+                });
+
+                Joi.validate({ a: 'abc', b: { c: 'x' } }, schema, (err) => {
+
+                    expect(err).to.exist();
+                    expect(err.isJoi).to.exist();
+                    expect(err.message).to.equal('child "b" fails because [child "c" fails because [Really wanted a number!]]');
+                    expect(err.details).to.equal([{
+                        message: '"c" must be a number',
+                        path: 'b.c',
+                        type: 'number.base',
+                        context: { key: 'c' }
+                    }]);
+                    done();
+                });
+            });
+
+            it('should be able to combine several error messages', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict().error((errors) => {
+
+                            return errors.join(' and '); // Automatic toString() of each error on join
+                        })
+                    }
+                });
+
+                Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.exist();
+                    expect(err.isJoi).to.exist();
+                    expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" must be larger than or equal to 0 and "c" must be an integer]]');
+                    expect(err.details).to.equal([
+                        {
+                            message: '"c" must be larger than or equal to 0',
+                            path: 'b.c',
+                            type: 'number.min',
+                            context: { limit: 0, value: -1.5, key: 'c' }
+                        },
+                        {
+                            message: '"c" must be an integer',
+                            path: 'b.c',
+                            type: 'number.integer',
+                            context: { value: -1.5, key: 'c' }
+                        }
+                    ]);
+                    done();
+                });
+            });
+
+            it('should be able to combine several error messages using context', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict().error((errors) => {
+
+                            return errors.reduce((memo, error) => {
+
+                                let text = memo ? ' && ' : '';
+                                switch (error.type) {
+                                    case 'number.base':
+                                        text += `"${error.context.key}" ∈ ℝ`;
+                                        break;
+                                    case 'number.min':
+                                        text += `"${error.context.key}" > ${error.context.limit}`;
+                                        break;
+                                    case 'number.integer':
+                                        text += `"${error.context.key}" ∈ ℤ`;
+                                        break;
+                                }
+                                return memo + text;
+                            }, '');
+                        })
+                    }
+                });
+
+                Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.exist();
+                    expect(err.isJoi).to.exist();
+                    expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" > 0 && "c" ∈ ℤ]]');
+                    expect(err.details).to.equal([
+                        {
+                            message: '"c" must be larger than or equal to 0',
+                            path: 'b.c',
+                            type: 'number.min',
+                            context: { limit: 0, value: -1.5, key: 'c' }
+                        },
+                        {
+                            message: '"c" must be an integer',
+                            path: 'b.c',
+                            type: 'number.integer',
+                            context: { value: -1.5, key: 'c' }
+                        }
+                    ]);
+                    done();
+                });
+            });
+
+            it('should be able to override at the root level', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict()
+                    }
+                }).error((errors) => {
+
+                    const getLeafs = (errs, leafs) => {
+
+                        leafs = leafs || [];
+
+                        errs.forEach((err) => {
+
+                            if (err.context.reason) {
+                                getLeafs(err.context.reason, leafs);
+                            }
+                            else {
+                                leafs.push(err);
+                            }
+                        });
+
+                        return leafs;
+                    };
+
+                    return getLeafs(errors).join(' | ');
+                });
+
+                Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.exist();
+                    expect(err.isJoi).to.exist();
+                    expect(err.message).to.equal('"c" must be larger than or equal to 0 | "c" must be an integer');
+                    expect(err.details).to.equal([
+                        {
+                            message: '"c" must be larger than or equal to 0',
+                            path: 'b.c',
+                            type: 'number.min',
+                            context: { limit: 0, value: -1.5, key: 'c' }
+                        },
+                        {
+                            message: '"c" must be an integer',
+                            path: 'b.c',
+                            type: 'number.integer',
+                            context: { value: -1.5, key: 'c' }
+                        }
+                    ]);
+                    done();
+                });
+            });
+
+            it('should be able to override at several levels', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict().error(() => '"c" must be a positive integer')
+                    }
+                }).error((errors) => {
+
+                    const getLeafs = (errs, leafs) => {
+
+                        leafs = leafs || [];
+
+                        errs.forEach((err) => {
+
+                            if (err.context.reason && err.type !== 'override') {
+                                getLeafs(err.context.reason, leafs);
+                            }
+                            else {
+                                leafs.push(err);
+                            }
+                        });
+
+                        return leafs;
+                    };
+
+                    return getLeafs(errors).join(' | ');
+                });
+
+                Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.exist();
+                    expect(err.isJoi).to.exist();
+                    expect(err.message).to.equal('"c" must be a positive integer');
+                    expect(err.details).to.equal([
+                        {
+                            message: '"c" must be larger than or equal to 0',
+                            path: 'b.c',
+                            type: 'number.min',
+                            context: { limit: 0, value: -1.5, key: 'c' }
+                        },
+                        {
+                            message: '"c" must be an integer',
+                            path: 'b.c',
+                            type: 'number.integer',
+                            context: { value: -1.5, key: 'c' }
+                        }
+                    ]);
+                    done();
+                });
+            });
+
+            it('should be able to create an error out of nowhere', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict().error((errors) => ({
+                            type: 'override',
+                            message: 'Moar numbers !',
+                            context: {
+                                value: errors[0].context.value
+                            }
+                        }))
+                    }
+                });
+
+                Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.exist();
+                    expect(err.isJoi).to.exist();
+                    expect(err.message).to.equal('child "b" fails because [child "c" fails because [Moar numbers !]]');
+                    expect(err.details).to.equal([
+                        {
+                            message: 'Moar numbers !',
+                            path: 'b.c',
+                            type: 'override',
+                            context: { value: -1.5, key: 'c' }
+                        }
+                    ]);
+                    done();
+                });
+            });
+
+            it('should be able to create an error out of nowhere without giving a type', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict().error((errors) => ({
+                            message: 'Moar numbers !',
+                            context: {
+                                value: errors[0].context.value
+                            }
+                        }))
+                    }
+                });
+
+                Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.exist();
+                    expect(err.isJoi).to.exist();
+                    expect(err.message).to.equal('child "b" fails because [child "c" fails because [Moar numbers !]]');
+                    expect(err.details).to.equal([
+                        {
+                            message: 'Moar numbers !',
+                            path: 'b.c',
+                            type: 'override',
+                            context: { value: -1.5, key: 'c' }
+                        }
+                    ]);
+                    done();
+                });
+            });
+
+            it('should be able to create an error with a template', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict().error((errors) => ({
+                            template: 'oops, I received {{value}}',
+                            context: {
+                                value: errors[0].context.value
+                            }
+                        }))
+                    }
+                });
+
+                Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.exist();
+                    expect(err.isJoi).to.exist();
+                    expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" oops, I received -1.5]]');
+                    expect(err.details).to.equal([
+                        {
+                            message: '"c" oops, I received -1.5',
+                            path: 'b.c',
+                            type: 'override',
+                            context: { value: -1.5, key: 'c' }
+                        }
+                    ]);
+                    done();
+                });
+            });
+
+            it('should be able to do a no-op on errors', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict().error((errors) => errors)
+                    }
+                });
+
+                Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.exist();
+                    expect(err.isJoi).to.exist();
+                    expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" must be larger than or equal to 0, "c" must be an integer]]');
+                    expect(err.details).to.equal([
+                        {
+                            message: '"c" must be larger than or equal to 0',
+                            path: 'b.c',
+                            type: 'number.min',
+                            context: { limit: 0, value: -1.5, key: 'c' }
+                        },
+                        {
+                            message: '"c" must be an integer',
+                            path: 'b.c',
+                            type: 'number.integer',
+                            context: { value: -1.5, key: 'c' }
+                        }
+                    ]);
+                    done();
+                });
+            });
+
+            it('should be able to throw a javascript Error', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict().error((errors) => new Error(`error of type ${errors[0].type}`))
+                    }
+                });
+
+                Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.be.an.error('error of type number.min');
+                    expect(err.isJoi).to.not.exist();
+                    done();
+                });
+            });
         });
     });
 });

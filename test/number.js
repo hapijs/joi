@@ -75,7 +75,8 @@ describe('number', () => {
                 [0, true],
                 [null, false, null, '"value" must be a number'],
                 [1.02, false, null, '"value" must be an integer'],
-                [0.01, false, null, '"value" must be an integer']
+                [0.01, false, null, '"value" must be an integer'],
+                ['90071992547409910.1', false, null, '"value" must be an integer']
             ], done);
         });
 

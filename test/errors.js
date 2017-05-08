@@ -280,89 +280,6 @@ describe('errors', () => {
         });
     });
 
-    it('returns custom error', (done) => {
-
-        const schema = Joi.object({
-            a: Joi.string(),
-            b: {
-                c: Joi.number().strict().error(new Error('Really wanted a number!'))
-            }
-        });
-
-        Joi.validate({ a: 'abc', b: { c: 'x' } }, schema, (err) => {
-
-            expect(err).to.exist();
-            expect(err.isJoi).to.not.exist();
-            expect(err.message).to.equal('Really wanted a number!');
-            done();
-        });
-    });
-
-    it('returns first custom error with multiple errors', (done) => {
-
-        const schema = Joi.object({
-            a: Joi.string(),
-            b: {
-                c: Joi.number().error(new Error('Really wanted a number!'))
-            }
-        }).options({ abortEarly: false });
-
-        Joi.validate({ a: 22, b: { c: 'x' } }, schema, (err) => {
-
-            expect(err).to.exist();
-            expect(err.isJoi).to.not.exist();
-            expect(err.message).to.equal('Really wanted a number!');
-            done();
-        });
-    });
-
-    it('returns first error with multiple errors (first not custom)', (done) => {
-
-        const schema = Joi.object({
-            a: Joi.string(),
-            b: {
-                c: Joi.number().error(new Error('Really wanted a number!'))
-            }
-        });
-
-        Joi.validate({ a: 22, b: { c: 'x' } }, schema, (err) => {
-
-            expect(err).to.exist();
-            expect(err.isJoi).to.be.true();
-            done();
-        });
-    });
-
-    it('errors on invalid error option', (done) => {
-
-        expect(() => {
-
-            Joi.object({
-                a: Joi.string(),
-                b: {
-                    c: Joi.number().error('Really wanted a number!')
-                }
-            });
-        }).to.throw('Must provide a valid Error object');
-
-        done();
-    });
-
-    it('errors on missing error option', (done) => {
-
-        expect(() => {
-
-            Joi.object({
-                a: Joi.string(),
-                b: {
-                    c: Joi.number().error()
-                }
-            });
-        }).to.throw('Must provide a valid Error object');
-
-        done();
-    });
-
     describe('annotate()', () => {
 
         it('annotates error', (done) => {
@@ -445,7 +362,7 @@ describe('errors', () => {
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
                 expect(err).to.exist();
-                expect(err.annotate()).to.equal('{\n  \"a\": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[3, 2]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"0\" must be larger than or equal to 4\n[2] \"1\" must be larger than or equal to 4\n[3] \"1\" must be less than or equal to 2\n[4] \"2\" must be less than or equal to 2\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"a\": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"0\" must be larger than or equal to 4\n[2] \"1\" must be larger than or equal to 4\n[3] \"1\" must be less than or equal to 2\n[4] \"2\" must be less than or equal to 2\u001b[0m');
                 done();
             });
         });
@@ -483,7 +400,7 @@ describe('errors', () => {
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
                 expect(err).to.exist();
-                expect(err.annotate()).to.equal('{\n  \"a\": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[3, 2]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ],\n  \"b\": [\n    2, \u001b[31m[5]\u001b[0m\n    3, \u001b[31m[7, 6]\u001b[0m\n    4 \u001b[31m[8]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"0\" must be larger than or equal to 4\n[2] \"1\" must be larger than or equal to 4\n[3] \"1\" must be less than or equal to 2\n[4] \"2\" must be less than or equal to 2\n[5] \"0\" must be larger than or equal to 4\n[6] \"1\" must be larger than or equal to 4\n[7] \"1\" must be less than or equal to 2\n[8] \"2\" must be less than or equal to 2\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"a\": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ],\n  \"b\": [\n    2, \u001b[31m[5]\u001b[0m\n    3, \u001b[31m[6, 7]\u001b[0m\n    4 \u001b[31m[8]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"0\" must be larger than or equal to 4\n[2] \"1\" must be larger than or equal to 4\n[3] \"1\" must be less than or equal to 2\n[4] \"2\" must be less than or equal to 2\n[5] \"0\" must be larger than or equal to 4\n[6] \"1\" must be larger than or equal to 4\n[7] \"1\" must be less than or equal to 2\n[8] \"2\" must be less than or equal to 2\u001b[0m');
                 done();
             });
         });
@@ -501,7 +418,7 @@ describe('errors', () => {
             Joi.validate({ x: true }, schema, (err, value) => {
 
                 expect(err).to.exist();
-                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[3, 2, 1]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be a string\n[2] "x" must be a number\n[3] "x" must be a number of milliseconds or valid date string\u001b[0m');
+                expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be a string\n[2] "x" must be a number\n[3] "x" must be a number of milliseconds or valid date string\u001b[0m');
                 done();
             });
         });
@@ -606,6 +523,70 @@ describe('errors', () => {
 
                 expect(err).to.exist();
                 expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"z\": Infinity,\n    \"u\": -Infinity,\n    \"g\": Symbol(foo),\n    \"h\": -Infinity,\n    \"i\": Infinity,\n    \"k\": (a) => a,\n    \"p\": Symbol(bar),\n    \"f\": function (x) {\\n\\n                        return [{ y: 2 }];\\n                    },\n    \"y\" \u001b[31m[1]\u001b[0m: NaN\n  }\n}\n\u001b[31m\n[1] \"y\" must be a number of milliseconds or valid date string\u001b[0m');
+                done();
+            });
+        });
+
+        it('pinpoints an error in a stringified JSON object', (done) => {
+
+            const object = {
+                a: '{"c":"string"}'
+            };
+
+            const schema = {
+                a: Joi.object({
+                    b: Joi.string()
+                })
+            };
+
+            Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.annotate(true)).to.equal('{\n  \"a\" [1]: \"{\\\"c\\\":\\\"string\\\"}\"\n}\n\n[1] \"c\" is not allowed');
+                done();
+            });
+        });
+
+        it('pinpoints several errors in a stringified JSON object', (done) => {
+
+            const object = {
+                a: '{"b":-1.5}'
+            };
+
+            const schema = {
+                a: Joi.object({
+                    b: Joi.number().integer().positive()
+                })
+            };
+
+            Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.annotate(true)).to.equal('{\n  "a" [1, 2]: "{\\"b\\":-1.5}"\n}\n\n[1] "b" must be an integer\n[2] "b" must be a positive number');
+                done();
+            });
+        });
+
+        it('pinpoints an error in a stringified JSON object (deep)', (done) => {
+
+            const object = {
+                a: '{"b":{"c":{"d":1}}}'
+            };
+
+            const schema = Joi.object({
+                a: Joi.object({
+                    b: Joi.object({
+                        c: {
+                            d: Joi.string()
+                        }
+                    })
+                })
+            });
+
+            Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.annotate(true)).to.equal('{\n  "a" [1]: "{\\"b\\":{\\"c\\":{\\"d\\":1}}}"\n}\n\n[1] "d" must be a string');
                 done();
             });
         });

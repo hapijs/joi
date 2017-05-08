@@ -499,6 +499,39 @@ describe('object', () => {
             });
         });
 
+        it('strips keys after validation', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.string().strip(),
+                b: Joi.string().default(Joi.ref('a'))
+            });
+            schema.validate({ a: 'test' }, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.not.exist();
+                expect(value.b).to.equal('test');
+                done();
+            });
+        });
+
+        it('strips keys while preserving transformed values', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().strip(),
+                b: Joi.number().min(Joi.ref('a'))
+            });
+
+            const result = schema.validate({ a: '1', b: '2' });
+            expect(result.error).to.not.exist();
+            expect(result.value.a).to.not.exist();
+            expect(result.value.b).to.equal(2);
+
+            const result2 = schema.validate({ a: '1', b: '0' });
+            expect(result2.error).to.be.an.error('child "b" fails because ["b" must be larger than or equal to 1]');
+
+            done();
+        });
+
         it('does not alter the original object when stripping keys', (done) => {
 
             const schema = Joi.object({
@@ -543,6 +576,13 @@ describe('object', () => {
 
     describe('unknown()', () => {
 
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.object().unknown();
+            expect(schema.unknown()).to.shallow.equal(schema);
+            done();
+        });
+
         it('allows local unknown without applying to children', (done) => {
 
             const schema = Joi.object({
@@ -572,6 +612,26 @@ describe('object', () => {
                 [{ a: { b: 'x' } }, false, null, 'child "a" fails because [child "b" fails because ["b" must be a number]]'],
                 [{ a: { b: 5 }, c: 'ignore' }, false, null, '"c" is not allowed'],
                 [{ a: { b: 5, c: 'ignore' } }, true]
+            ], done);
+        });
+
+        it('overrides stripUnknown at a local level', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.object({
+                    b: Joi.number(),
+                    c: Joi.object({
+                        d: Joi.number()
+                    })
+                }).unknown()
+            }).options({ allowUnknown: false, stripUnknown: true });
+
+            Helper.validate(schema, [
+                [{ a: { b: 5 } }, true, null, { a: { b: 5 } }],
+                [{ a: { b: 'x' } }, false, null, 'child "a" fails because [child "b" fails because ["b" must be a number]]'],
+                [{ a: { b: 5 }, d: 'ignore' }, true, null, { a: { b: 5 } }],
+                [{ a: { b: 5, d: 'ignore' } }, true, null, { a: { b: 5, d: 'ignore' } }],
+                [{ a: { b: 5, c: { e: 'ignore' } } }, true, null, { a: { b: 5, c: {} } }]
             ], done);
         });
     });
@@ -1063,6 +1123,16 @@ describe('object', () => {
             ]);
             done();
         });
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).with('a', ['b']);
+            expect(schema.validate({ a: 1 }).error).to.be.an.error('"first" missing required peer "second"');
+            done();
+        });
     });
 
     describe('without()', () => {
@@ -1112,6 +1182,16 @@ describe('object', () => {
             ]);
             done();
         });
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).without('a', ['b']);
+            expect(schema.validate({ a: 1, b: 'b' }).error).to.be.an.error('"first" conflict with forbidden peer "second"');
+            done();
+        });
     });
 
     describe('xor()', () => {
@@ -1136,6 +1216,26 @@ describe('object', () => {
                 error = true;
             }
             expect(error).to.equal(true);
+            done();
+        });
+
+        it('should apply labels without any peer', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).xor('a', 'b');
+            expect(schema.validate({}).error).to.be.an.error('"value" must contain at least one of [first, second]');
+            done();
+        });
+
+        it('should apply labels with too many peers', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).xor('a', 'b');
+            expect(schema.validate({ a: 1, b: 'b' }).error).to.be.an.error('"value" contains a conflict between exclusive peers [first, second]');
             done();
         });
     });
@@ -1178,6 +1278,42 @@ describe('object', () => {
                 expect(err.message).to.equal('child "a" fails because [child "b" fails because ["value" must contain at least one of [x, y]]]');
                 done();
             });
+        });
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).or('a', 'b');
+            expect(schema.validate({}).error).to.be.an.error('"value" must contain at least one of [first, second]');
+            done();
+        });
+    });
+
+    describe('and()', () => {
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).and('a', 'b');
+            expect(schema.validate({ a: 1 }).error).to.be.an.error('"value" contains [first] without its required peers [second]');
+            done();
+        });
+    });
+
+    describe('nand()', () => {
+
+        it('should apply labels', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).nand('a', 'b');
+            expect(schema.validate({ a: 1, b: 'b' }).error).to.be.an.error('"first" must not exist simultaneously with [second]');
+            done();
         });
     });
 

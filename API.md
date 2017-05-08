@@ -1,5 +1,5 @@
 <!-- version -->
-# 10.0.6 API Reference
+# 10.4.1 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -21,6 +21,7 @@
     - [npm note](#npm-note)
     - [Examples](#examples)
   - [`any`](#any)
+    - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
     - [`any.allow(value)`](#anyallowvalue)
     - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
     - [`any.invalid(value)` - aliases: `disallow`, `not`](#anyinvalidvalue---aliases-disallow-not)
@@ -43,7 +44,7 @@
     - [`any.raw(isRaw)`](#anyrawisraw)
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
-  - [`array`](#array)
+  - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.sparse([enabled])`](#arraysparseenabled)
     - [`array.single([enabled])`](#arraysingleenabled)
     - [`array.items(type)`](#arrayitemstype)
@@ -52,26 +53,26 @@
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
     - [`array.unique([comparator])`](#arrayuniquecomparator)
-  - [`boolean`](#boolean)
+  - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
     - [`boolean.truthy(value)`](#booleantruthyvalue)
     - [`boolean.falsy(value)`](#booleanfalsyvalue)
     - [`boolean.insensitive([enabled])`](#booleaninsensitiveenabled)
-  - [`binary`](#binary)
+  - [`binary` - inherits from `Any`](#binary---inherits-from-any)
     - [`binary.encoding(encoding)`](#binaryencodingencoding)
     - [`binary.min(limit)`](#binaryminlimit)
     - [`binary.max(limit)`](#binarymaxlimit)
     - [`binary.length(limit)`](#binarylengthlimit)
-  - [`date`](#date)
+  - [`date` - inherits from `Any`](#date---inherits-from-any)
     - [`date.min(date)`](#datemindate)
     - [`date.max(date)`](#datemaxdate)
     - [`date.iso()`](#dateiso)
     - [`date.timestamp([type])`](#datetimestamptype)
-  - [`func`](#func)
+  - [`func` - inherits from `Any`](#func---inherits-from-any)
     - [`func.arity(n)`](#funcarityn)
     - [`func.minArity(n)`](#funcminarityn)
     - [`func.maxArity(n)`](#funcmaxarityn)
     - [`func.ref()`](#funcref)
-  - [`number`](#number)
+  - [`number` - inherits from `Any`](#number---inherits-from-any)
     - [`number.min(limit)`](#numberminlimit)
     - [`number.max(limit)`](#numbermaxlimit)
     - [`number.greater(limit)`](#numbergreaterlimit)
@@ -81,7 +82,7 @@
     - [`number.multiple(base)`](#numbermultiplebase)
     - [`number.positive()`](#numberpositive)
     - [`number.negative()`](#numbernegative)
-  - [`object`](#object)
+  - [`object` - inherits from `Any`](#object---inherits-from-any)
     - [`object.keys([schema])`](#objectkeysschema)
       - [`{} notation`](#-notation)
       - [`Joi.object([schema]) notation`](#joiobjectschema-notation)
@@ -103,7 +104,7 @@
     - [`object.schema()`](#objectschema)
     - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
     - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
-  - [`string`](#string)
+  - [`string` - inherits from `Any`](#string---inherits-from-any)
     - [`string.insensitive()`](#stringinsensitive)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
     - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
@@ -125,10 +126,10 @@
     - [`string.uppercase()`](#stringuppercase)
     - [`string.trim()`](#stringtrim)
     - [`string.isoDate()`](#stringisodate)
-  - [`alternatives`](#alternatives)
+  - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
-  - [`lazy(fn)`](#lazyfn)
+  - [`lazy(fn)` - inherits from `Any`](#lazyfn---inherits-from-any)
 - [Errors](#errors)
 
 <!-- tocstop -->
@@ -143,7 +144,7 @@ Property showing the current version of joi being used.
 
 Validates a value using the given schema and options where:
 - `value` - the value being validated.
-- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object.
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
 - `options` - an optional object with the following optional keys:
   - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
   - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
@@ -217,7 +218,7 @@ const schema = Joi.alternatives().try([
 
 Validates a value against a schema and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
-- `schema` - the schema object.
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
 
 ```js
@@ -228,7 +229,7 @@ Joi.assert('x', Joi.number());
 
 Validates a value against a schema, returns valid object, and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
-- `schema` - the schema object.
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
 
 ```js
@@ -279,7 +280,7 @@ Joi.isRef(ref); // returns true
 Get a sub-schema of an existing schema based on a path. Path separator is a dot (`.`).
 
 ```js
-const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }});
+const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
 const number = Joi.reach(schema, 'foo.bar');
 ```
 
@@ -301,7 +302,12 @@ The extension makes use of some common structures that need to be described prio
 
 #### Extension
 
-`extension` can be a single extension object or an array of extension objects using the following parameters :
+`extension` can be :
+- a single extension object
+- a factory function generating an extension object
+- or an array of those
+
+Extension objects use the following parameters :
 * `name` - name of the new type you are defining, this can be an existing type. **Required**.
 * `base` - an existing Joi schema to base your type upon. Defaults to `Joi.any()`.
 * `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `options`.
@@ -315,6 +321,8 @@ The extension makes use of some common structures that need to be described prio
   * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `options`. One of `setup` or `validate` **must** be provided.
   * `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
 
+Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended joi being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
+
 #### npm note
 
 If you publish your extension on npm, make sure to add `joi` and `extension` as keywords so that it's discoverable more easily.
@@ -323,8 +331,8 @@ If you publish your extension on npm, make sure to add `joi` and `extension` as 
 
 ```js
 const Joi = require('joi');
-const customJoi = Joi.extend({
-    base: Joi.number(),
+const customJoi = Joi.extend((joi) => ({
+    base: joi.number(),
     name: 'number',
     language: {
         round: 'needs to be a rounded number', // Used below as 'number.round'
@@ -371,7 +379,7 @@ const customJoi = Joi.extend({
             }
         }
     ]
-});
+}));
 
 const schema = customJoi.number().round().dividable(3);
 ```
@@ -383,6 +391,32 @@ Generates a schema object that matches any data type.
 ```js
 const any = Joi.any();
 any.validate('a', (err, value) => { });
+```
+
+#### `any.validate(value, [options], [callback])`
+
+Validates a value using the schema and options where:
+- `value` - the value being validated.
+- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+- `callback` - an optional synchronous callback method using the the same signature as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+
+```js
+const schema = Joi.object({
+    a: Joi.number()
+});
+
+const value = {
+    a: '123'
+};
+
+schema.validate(value, (err, value) => { });
+// err -> null
+// value.a -> 123 (number, not string)
+
+// or
+const result = schema.validate(value, schema);
+// result.error -> null
+// result.value -> { "a" : 123 }
 ```
 
 #### `any.allow(value)`
@@ -608,9 +642,11 @@ const ab = a.concat(b);
 Converts the type into an [`alternatives`](#alternatives) type where the conditions are merged into the type definition where:
 - `ref` - the key name or [reference](#refkey-options).
 - `options` - an object with:
-    - `is` - the required condition **joi** type.
+    - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted using [Joi.compile](#compileschema).
     - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
     - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
+
+Note: by default, the `is` condition schema allows for `undefined` values. Use `.required()` to override.
 
 ```js
 const schema = {
@@ -686,21 +722,64 @@ schema.validate(''); // returns { error: "value" is not allowed to be empty, val
 #### `any.error(err)`
 
 Overrides the default joi error with a custom error if the rule fails where:
-- `err` - the override error.
+- `err` can be:
+  - an instance of `Error` - the override error.
+  - a `function(errors)`, taking an array of errors as argument, where it must either:
+    - return a `string` - substitutes the error message with this text
+    - return a single `object` or an `Array` of it, where:
+      - `type` - optional parameter providing the type of the error (eg. `number.min`).
+      - `message` - optional parameter if `template` is provided, containing the text of the error.
+      - `template` - optional parameter if `message` is provided, containing a template string, using the same format as usual joi language errors.
+      - `context` - optional parameter, to provide context to your error if you are using the `template`.
+    - return an `Error` - same as when you directly provide an `Error`, but you can customize the error message based on the errors.
 
-Note that the provided error will be returned as-is, unmodified and undecorated with any of the
+Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any of the
 normal joi error properties. If validation fails and another error is found before the error
 override, that error will be returned and the override will be ignored (unless the `abortEarly`
 option has been set to `false`).
 
 ```js
 let schema = Joi.string().error(new Error('Was REALLY expecting a string'));
-schema.validate(3);     // returns err.message === 'Was REALLY expecting a string'
+schema.validate(3);     // returns error.message === 'Was REALLY expecting a string'
+
+let schema = Joi.object({
+    foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
+});
+schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" requires a positive number]'
+
+let schema = Joi.object({
+    foo: Joi.number().min(0).error((errors) => {
+        
+        return 'found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and ');
+    })
+});
+schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
+
+let schema = Joi.object({
+    foo: Joi.number().min(0).error((errors) => {
+        
+        return {
+            template: 'contains {{errors}} errors, here is the list : {{codes}}',
+            context: {
+                errors: errors.length,
+                codes: errors.map((err) => err.type)
+            }
+        };
+    })
+});
+schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" contains 1 errors, here is the list : [number.min]]'
 ```
 
-### `array`
+Note that if you want to intercept errors on nested structures such as objects and arrays, you will also get a nested structure to explore the children errors, going one level down through the `err.context.reason` property.
 
-Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by default but can be by using `sparse()`.
+If you want a full substitution of the error system, you can hook at the root and render that `errors` array with whatever templating system you want, just be aware that you will have to crawl the nested errors for the information you want to actually show.
+
+### `array` - inherits from `Any`
+
+Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by
+default but can be by using `sparse()`. If the validation `convert` option is on (enabled by default), a string will be
+converted to an `array` if specified via `JSON.parse()`. Also, if `convert` `array.single()` are both on, then when a
+single value is specified it will be converted to an `array`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -792,9 +871,11 @@ const schema = Joi.array().length(5);
 
 Requires the array values to be unique.
 
-You can provide a custom `comparator` function that takes 2 parameters to compare. This function should return whether the 2 parameters are equal or not, you are also **responsible** for this function not to fail, any `Error` would bubble out of Joi.
+You can provide a custom `comparator` that is either :
+- a function that takes 2 parameters to compare. This function should return whether the 2 parameters are equal or not, you are also **responsible** for this function not to fail, any `Error` would bubble out of Joi.
+- a string in dot notation representing the path of the element to do uniqueness check on. Any missing path will be considered undefined, and can as well only exist once.
 
-Note: remember that if you provide a custom comparator, different types can be passed as parameter depending on the rules you set on items.
+Note: remember that if you provide a custom comparator function, different types can be passed as parameter depending on the rules you set on items.
 
 Be aware that a deep equality is performed on elements of the array having a type of `object`, a performance penalty is to be expected for this kind of operation.
 
@@ -806,9 +887,14 @@ const schema = Joi.array().unique();
 const schema = Joi.array().unique((a, b) => a.property === b.property);
 ```
 
-### `boolean`
+```js
+const schema = Joi.array().unique('customer.id');
+```
 
-Generates a schema object that matches a boolean data type. Can also be called via `bool()`. It will also validate the strings `"true"` and `"false"` unless you set the schema in `strict()` mode.
+### `boolean` - inherits from `Any`
+
+Generates a schema object that matches a boolean data type. Can also be called via `bool()`. If the validation `convert`
+option is on (enabled by default), a string (either "true" or "false") will be converted to a `boolean` if specified.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -852,9 +938,10 @@ Parameters are:
 const schema = Joi.boolean().truthy('yes').falsy('no').insensitive(false);
 ```
 
-### `binary`
+### `binary` - inherits from `Any`
 
-Generates a schema object that matches a Buffer data type (as well as the strings which will be converted to Buffers).
+Generates a schema object that matches a Buffer data type. If the validation `convert` option is on (enabled by default), a string
+will be converted to a Buffer if specified.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -898,9 +985,10 @@ Specifies the exact length of the buffer:
 const schema = Joi.binary().length(5);
 ```
 
-### `date`
+### `date` - inherits from `Any`
 
-Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds).
+Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). If
+the validation `convert` option is on (enabled by default), a string or number will be converted to a Date if specified.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -977,7 +1065,7 @@ const schema = Joi.date().timestamp('javascript'); // also, for javascript times
 const schema = Joi.date().timestamp('unix'); // for unix timestamp (seconds)
 ```
 
-### `func`
+### `func` - inherits from `Any`
 
 Generates a schema object that matches a function type.
 
@@ -1025,9 +1113,11 @@ Requires the function to be a Joi reference.
 const schema = Joi.func().ref();
 ```
 
-### `number`
+### `number` - inherits from `Any`
 
-Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
+Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). If the
+validation `convert` option is on (enabled by default), a string will be converted to a `number` if specified. Also, if
+`convert` is on and `number.precision()` is used, the value will be converted to the specified `precision` as well.
 
 `Infinity` and `-Infinity` are invalid by default, you can change that behavior by calling `allow(Infinity, -Infinity)`.
 
@@ -1150,10 +1240,11 @@ Requires the number to be negative.
 const schema = Joi.number().negative();
 ```
 
-### `object`
+### `object` - inherits from `Any`
 
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
-to allowing any child key.
+to allowing any child key. If the validation `convert` option is on (enabled by default), a string will be converted to
+an `object` if specified via `JSON.parse()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -1283,7 +1374,7 @@ Specify validation rules for unknown keys matching a pattern where:
 - `regex` - a regular expression tested against the unknown key names.
 - `schema` - the schema object matching keys must validate against.
 
-```javascrip
+```js
 const schema = Joi.object({
     a: Joi.string()
 }).pattern(/\w\d/, Joi.boolean());
@@ -1464,9 +1555,15 @@ const optionalSchema = schema.optionalKeys('a.b', 'c.d');
 
 The behavior is exactly the same as `requiredKeys`.
 
-### `string`
+### `string` - inherits from `Any`
 
-Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with `allow('')`. However, if you want to specify a default value in case of empty string you have to use a different pattern: `Joi.string().empty('').default('default value')`. This tells joi that the empty string should be considered as an empty value (instead of invalid) and which value to use as default.
+Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must
+be enabled with `allow('')`. However, if you want to specify a default value in case of empty string you have to use a
+different pattern: `Joi.string().empty('').default('default value')`. This tells Joi that the empty string should be
+considered as an empty value (instead of invalid) and which value to use as default.
+
+If the validation `convert` option is on (enabled by default), a string will be converted using the specified modifiers
+for `string.lowercase()`, `string.uppercase()`, `string.trim()`, and each replacement specified with `string.replace()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -1745,7 +1842,7 @@ Requires the string value to be in valid ISO 8601 date format.
 const schema = Joi.string().isoDate();
 ```
 
-### `alternatives`
+### `alternatives` - inherits from `Any`
 
 Generates a type that will match one of the provided alternative schemas via the [`try()`](#alternativestryschemas)
 method. If no schemas are added, the type will not match any value except for `undefined`.
@@ -1810,7 +1907,7 @@ const schema = {
 };
 ```
 
-### `lazy(fn)`
+### `lazy(fn)` - inherits from `Any`
 
 Generates a placeholder schema for a schema that you would provide with the `fn`.
 

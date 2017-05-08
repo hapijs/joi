@@ -57,11 +57,16 @@ exports.validateOptions = function (schema, config, options, callback) {
                     expect(value).to.equal(expectedValueOrError);
                 }
                 else {
-                    if (expectedValueOrError instanceof RegExp) {
-                        expect(err.message).to.match(expectedValueOrError);
+                    const message = expectedValueOrError.message || expectedValueOrError;
+                    if (message instanceof RegExp) {
+                        expect(err.message).to.match(message);
                     }
                     else {
-                        expect(err.message).to.equal(expectedValueOrError);
+                        expect(err.message).to.equal(message);
+                    }
+
+                    if (expectedValueOrError.details) {
+                        expect(err.details).to.equal(expectedValueOrError.details);
                     }
                 }
             }

@@ -13,7 +13,7 @@ Remove those badges until they work properly on semver.
 
 -->
 [![NSP Status](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e/badge)](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e)
-[![Known Vulnerabilities](https://snyk.io/test/npm/joi/badge.svg)](https://snyk.io/test/npm/joi)
+[![Known Vulnerabilities](https://snyk.io/test/github/hapijs/joi/badge.svg)](https://snyk.io/test/github/hapijs/joi)
 
 [![Join the chat at https://gitter.im/hapijs/joi](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hapijs/joi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -21,7 +21,7 @@ Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
 # Introduction
 
-Imagine you run facebook and you want visitors to sign up on the website with real names and not something like `l337_p@nda` in the first name field. How would you define the limitations of what can be inputted and validate it against the set rules? 
+Imagine you run facebook and you want visitors to sign up on the website with real names and not something like `l337_p@nda` in the first name field. How would you define the limitations of what can be inputted and validate it against the set rules?
 
 This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object that stores information) to ensure *validation* of key information.
 
@@ -29,9 +29,9 @@ This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript o
 # Example
 
 ```javascript
-var Joi = require('joi');
+const Joi = require('joi');
 
-var schema = Joi.object().keys({
+const schema = Joi.object().keys({
     username: Joi.string().alphanum().min(3).max(30).required(),
     password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
     access_token: [Joi.string(), Joi.number()],
@@ -39,7 +39,13 @@ var schema = Joi.object().keys({
     email: Joi.string().email()
 }).with('username', 'birthyear').without('password', 'access_token');
 
+// Return result.
+const result = Joi.validate({ username: 'abc', birthyear: 1994 }, schema);
+// result.error === null -> valid
+
+// You can also pass a callback which will be called synchronously with the validation result.
 Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err, value) { });  // err === null -> valid
+
 ```
 
 The above schema defines the following constraints:
@@ -64,7 +70,7 @@ The above schema defines the following constraints:
 Usage is a two steps process. First, a schema is constructed using the provided types and constraints:
 
 ```javascript
-var schema = {
+const schema = {
     a: Joi.string()
 };
 ```
@@ -75,34 +81,51 @@ new schema object.
 Then the value is validated against the schema:
 
 ```javascript
+const {error, value} = Joi.validate({ a: 'a string' }, schema);
+
+// or
+
 Joi.validate({ a: 'a string' }, schema, function (err, value) { });
 ```
 
-If the value is valid, `null` is returned, otherwise an `Error` object.
+If the input is valid, then the error will be `null`, otherwise it will be an Error object.
 
 The schema can be a plain JavaScript object where every key is assigned a **joi** type, or it can be a **joi** type directly:
 
 ```javascript
-var schema = Joi.string().min(10);
+const schema = Joi.string().min(10);
 ```
 
 If the schema is a **joi** type, the `schema.validate(value, callback)` can be called directly on the type. When passing a non-type schema object,
 the module converts it internally to an object() type equivalent to:
 
 ```javascript
-var schema = Joi.object().keys({
+const schema = Joi.object().keys({
     a: Joi.string()
 });
 ```
 
 When validating a schema:
 
-* Keys are optional by default.
+* Values (or keys in case of objects) are optional by default.
+
+    ```javascript
+    Joi.validate(undefined, Joi.string()); // validates fine
+    ```
+
+    To disallow this behavior, you can either set the schema as `required()`, or set `presence` to `"required"` when passing `options`:
+
+    ```javascript
+    Joi.validate(undefined, Joi.string().required());
+    // or
+    Joi.validate(undefined, Joi.string(), /* options */ { presence: "required" });
+    ```
+
 * Strings are utf-8 encoded by default.
 * Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
 
 # API
-See the [API Reference](https://github.com/hapijs/joi/blob/v10.0.6/API.md).
+See the [API Reference](https://github.com/hapijs/joi/blob/v10.4.1/API.md).
 
 # Browsers
 

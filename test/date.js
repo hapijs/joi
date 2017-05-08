@@ -300,9 +300,21 @@ describe('date', () => {
 
         describe('iso()', () => {
 
+            it('avoids unnecessary cloning when called twice', (done) => {
+
+                const schema = Joi.date().iso();
+                expect(schema.iso()).to.shallow.equal(schema);
+                done();
+            });
+
             it('validates isoDate', (done) => {
 
                 Helper.validate(Joi.date().iso(), [
+                    ['+002013-06-07T14:21:46.295Z', true],
+                    ['-002013-06-07T14:21:46.295Z', true],
+                    ['002013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
+                    ['+2013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
+                    ['-2013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
                     ['2013-06-07T14:21:46.295Z', true],
                     ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                     ['2013-06-07T14:21:46.295+07:00', true],
@@ -322,6 +334,17 @@ describe('date', () => {
                     ['2013-06-07T14:21', true],
                     ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date']
                 ], done);
+            });
+
+            it('converts expanded isoDates', (done) => {
+
+                const schema = { item: Joi.date().iso() };
+                Joi.compile(schema).validate({ item: '-002013-06-07T14:21:46.295Z' }, (err, value) => {
+
+                    expect(err).to.not.exist();
+                    expect(value.item.toISOString()).to.be.equal('-002013-06-07T14:21:46.295Z');
+                    done();
+                });
             });
 
             it('validates isoDate with a friendly error message', (done) => {
@@ -346,6 +369,13 @@ describe('date', () => {
         });
 
         describe('timestamp()', () => {
+
+            it('avoids unnecessary cloning when called twice', (done) => {
+
+                const schema = Joi.date().timestamp('unix');
+                expect(schema.timestamp('unix')).to.shallow.equal(schema);
+                done();
+            });
 
             it('validates javascript timestamp', (done) => {
 

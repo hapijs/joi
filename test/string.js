@@ -52,6 +52,16 @@ describe('string', () => {
         ], done);
     });
 
+    describe('insensitive', () => {
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.string().insensitive();
+            expect(schema.insensitive()).to.shallow.equal(schema);
+            done();
+        });
+    });
+
     describe('valid()', () => {
 
         it('validates case sensitive values', (done) => {
@@ -1995,6 +2005,13 @@ describe('string', () => {
 
     describe('truncate()', () => {
 
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.string().truncate();
+            expect(schema.truncate()).to.shallow.equal(schema);
+            done();
+        });
+
         it('switches the truncate flag', (done) => {
 
             const schema = Joi.string().truncate();
@@ -2729,6 +2746,11 @@ describe('string', () => {
         it('validates isoDate', (done) => {
 
             Helper.validate(Joi.string().isoDate(), [
+                ['+002013-06-07T14:21:46.295Z', true],
+                ['-002013-06-07T14:21:46.295Z', true],
+                ['002013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
+                ['+2013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
+                ['-2013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295Z', true],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', true],
