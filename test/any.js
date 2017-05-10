@@ -1688,7 +1688,9 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{}, true],
                 [{ a: undefined }, true],
-                [{ a: undefined, b: undefined }, true]
+                [{ a: undefined, b: undefined }, true],
+                [{ a: 0 }, false, null, 'child "a" fails because ["a" is not allowed]'],
+                [{ b: 0 }, false, null, 'child "b" fails because ["b" is not allowed]']
             ], done);
         });
     });
