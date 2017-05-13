@@ -1919,7 +1919,7 @@ describe('any', () => {
                         message: '"c" must be a number',
                         path: 'b.c',
                         type: 'number.base',
-                        context: { key: 'c' }
+                        context: { key: 'c', label: 'c' }
                     }]);
                     done();
                 });
@@ -1947,13 +1947,13 @@ describe('any', () => {
                             message: '"c" must be larger than or equal to 0',
                             path: 'b.c',
                             type: 'number.min',
-                            context: { limit: 0, value: -1.5, key: 'c' }
+                            context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                         },
                         {
                             message: '"c" must be an integer',
                             path: 'b.c',
                             type: 'number.integer',
-                            context: { value: -1.5, key: 'c' }
+                            context: { value: -1.5, key: 'c', label: 'c' }
                         }
                     ]);
                     done();
@@ -1997,13 +1997,13 @@ describe('any', () => {
                             message: '"c" must be larger than or equal to 0',
                             path: 'b.c',
                             type: 'number.min',
-                            context: { limit: 0, value: -1.5, key: 'c' }
+                            context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                         },
                         {
                             message: '"c" must be an integer',
                             path: 'b.c',
                             type: 'number.integer',
-                            context: { value: -1.5, key: 'c' }
+                            context: { value: -1.5, key: 'c', label: 'c' }
                         }
                     ]);
                     done();
@@ -2049,13 +2049,13 @@ describe('any', () => {
                             message: '"c" must be larger than or equal to 0',
                             path: 'b.c',
                             type: 'number.min',
-                            context: { limit: 0, value: -1.5, key: 'c' }
+                            context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                         },
                         {
                             message: '"c" must be an integer',
                             path: 'b.c',
                             type: 'number.integer',
-                            context: { value: -1.5, key: 'c' }
+                            context: { value: -1.5, key: 'c', label: 'c' }
                         }
                     ]);
                     done();
@@ -2101,13 +2101,13 @@ describe('any', () => {
                             message: '"c" must be larger than or equal to 0',
                             path: 'b.c',
                             type: 'number.min',
-                            context: { limit: 0, value: -1.5, key: 'c' }
+                            context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                         },
                         {
                             message: '"c" must be an integer',
                             path: 'b.c',
                             type: 'number.integer',
-                            context: { value: -1.5, key: 'c' }
+                            context: { value: -1.5, key: 'c', label: 'c' }
                         }
                     ]);
                     done();
@@ -2201,7 +2201,7 @@ describe('any', () => {
                             message: '"c" oops, I received -1.5',
                             path: 'b.c',
                             type: 'override',
-                            context: { value: -1.5, key: 'c' }
+                            context: { value: -1.5, key: 'c', label: 'c' }
                         }
                     ]);
                     done();
@@ -2227,13 +2227,13 @@ describe('any', () => {
                             message: '"c" must be larger than or equal to 0',
                             path: 'b.c',
                             type: 'number.min',
-                            context: { limit: 0, value: -1.5, key: 'c' }
+                            context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                         },
                         {
                             message: '"c" must be an integer',
                             path: 'b.c',
                             type: 'number.integer',
-                            context: { value: -1.5, key: 'c' }
+                            context: { value: -1.5, key: 'c', label: 'c' }
                         }
                     ]);
                     done();

@@ -581,7 +581,8 @@ describe('array', () => {
                     path: '1',
                     type: 'array.sparse',
                     context: {
-                        key: 'value'
+                        key: 'value',
+                        label: 'value'
                     }
                 }, {
                     message: '"value" at position 2 contains an excluded value',
@@ -590,7 +591,8 @@ describe('array', () => {
                     context: {
                         pos: 2,
                         key: 'value',
-                        value: true
+                        value: true,
+                        label: 'value'
                     }
                 }, {
                     message: '"value" at position 3 does not match any of the allowed types',
@@ -599,7 +601,8 @@ describe('array', () => {
                     context: {
                         pos: 3,
                         key: 'value',
-                        value: 'a'
+                        value: 'a',
+                        label: 'value'
                     }
                 }]);
                 done();
@@ -700,7 +703,8 @@ describe('array', () => {
                         pos: 3,
                         value: 1,
                         dupePos: 0,
-                        dupeValue: 1
+                        dupeValue: 1,
+                        label: 'value'
                     },
                     message: '"value" position 3 contains a duplicate value',
                     path: '3',
@@ -717,7 +721,8 @@ describe('array', () => {
                         pos: 3,
                         value: 1,
                         dupePos: 0,
-                        dupeValue: 1
+                        dupeValue: 1,
+                        label: 'value'
                     },
                     message: '"value" position 3 contains a duplicate value',
                     path: '3',
@@ -734,7 +739,8 @@ describe('array', () => {
                         pos: 3,
                         value: 1,
                         dupePos: 0,
-                        dupeValue: 1
+                        dupeValue: 1,
+                        label: 'a'
                     },
                     message: '"a" position 3 contains a duplicate value',
                     path: 'a.3',
@@ -751,7 +757,8 @@ describe('array', () => {
                         pos: 3,
                         value: 1,
                         dupePos: 0,
-                        dupeValue: 1
+                        dupeValue: 1,
+                        label: 'a'
                     },
                     message: '"a" position 3 contains a duplicate value',
                     path: 'a.3',
@@ -848,7 +855,8 @@ describe('array', () => {
                             key: 'value',
                             path: 'id',
                             pos: 2,
-                            value: { id: 1 }
+                            value: { id: 1 },
+                            label: 'value'
                         },
                         message: '"value" position 2 contains a duplicate value',
                         path: '2',
@@ -864,7 +872,8 @@ describe('array', () => {
                             key: 'value',
                             path: 'id',
                             pos: 4,
-                            value: {}
+                            value: {},
+                            label: 'value'
                         },
                         message: '"value" position 4 contains a duplicate value',
                         path: '4',
@@ -887,7 +896,8 @@ describe('array', () => {
                             key: 'value',
                             path: 'nested.id',
                             pos: 2,
-                            value: { nested: { id: 1 } }
+                            value: { nested: { id: 1 } },
+                            label: 'value'
                         },
                         message: '"value" position 2 contains a duplicate value',
                         path: '2',
@@ -903,7 +913,8 @@ describe('array', () => {
                             key: 'value',
                             path: 'nested.id',
                             pos: 4,
-                            value: {}
+                            value: {},
+                            label: 'value'
                         },
                         message: '"value" position 4 contains a duplicate value',
                         path: '4',
@@ -926,7 +937,8 @@ describe('array', () => {
                             key: 'value',
                             path: 'nested',
                             pos: 2,
-                            value: { nested: { id: 1 } }
+                            value: { nested: { id: 1 } },
+                            label: 'value'
                         },
                         message: '"value" position 2 contains a duplicate value',
                         path: '2',
@@ -942,7 +954,8 @@ describe('array', () => {
                             key: 'value',
                             path: 'nested',
                             pos: 4,
-                            value: {}
+                            value: {},
+                            label: 'value'
                         },
                         message: '"value" position 4 contains a duplicate value',
                         path: '4',
