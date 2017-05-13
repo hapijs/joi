@@ -1742,6 +1742,20 @@ describe('any', () => {
             ], done);
         });
     });
+    describe('forbiddenKeys()', () => {
+
+        it('should set keys as forbidden', (done) => {
+
+            const schema = Joi.object({ a: Joi.number().required(), b: Joi.number().required() }).forbiddenKeys('a', 'b');
+            Helper.validate(schema, [
+                [{}, true],
+                [{ a: undefined }, true],
+                [{ a: undefined, b: undefined }, true],
+                [{ a: 0 }, false, null, 'child "a" fails because ["a" is not allowed]'],
+                [{ b: 0 }, false, null, 'child "b" fails because ["b" is not allowed]']
+            ], done);
+        });
+    });
 
     describe('empty()', () => {
 
