@@ -222,6 +222,24 @@ describe('alternatives', () => {
             ], done);
         });
 
+        it('validates "then" when a preceding "when" has only "otherwise"', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.number(),
+                c: Joi.number()
+                    .when('a', { is: 1, otherwise: Joi.number().min(1) })
+                    .when('b', { is: 1, then: Joi.number().min(1) })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 1, b: 1, c: 0 }, false, null, 'child "c" fails because ["c" must be larger than or equal to 1]'],
+                [{ a: 1, b: 1, c: 1 }, true],
+                [{ a: 0, b: 1, c: 1 }, true],
+                [{ a: 1, b: 0, c: 0 }, true]
+            ], done);
+        });
+
         it('validates when is is null', (done) => {
 
             const schema = {
