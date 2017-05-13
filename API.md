@@ -1555,6 +1555,18 @@ const optionalSchema = schema.optionalKeys('a.b', 'c.d');
 
 The behavior is exactly the same as `requiredKeys`.
 
+#### `object.forbiddenKeys(children)`
+
+Sets the specified children to forbidden.
+- `children` - can be a single string value, an array of string values, or each child provided as an argument.
+
+```js
+const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
+const optionalSchema = schema.forbiddenKeys('a.b', 'c.d');
+```
+
+The behavior is exactly the same as `requiredKeys`.
+
 ### `string` - inherits from `Any`
 
 Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must
