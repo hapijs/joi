@@ -149,6 +149,61 @@ describe('any', () => {
             }).to.not.throw();
             done();
         });
+
+        it('describes a schema with options', (done) => {
+
+            const schema = Joi.any().options({ abortEarly: false, convert: false });
+            const description = schema.describe();
+
+            expect(description).to.equal({ type: 'any', options: { abortEarly: false, convert: false } });
+            done();
+        });
+
+        it('describes an alternatives schema with options', (done) => {
+
+            const schema = Joi.number().min(10).when('a', { is: 5, then: Joi.number().max(20).required() }).options({ abortEarly: false, convert: false }).describe();
+            expect(schema).to.equal({
+                type: 'alternatives',
+                flags: {
+                    presence: 'ignore'
+                },
+                options: {
+                    abortEarly: false,
+                    convert: false
+                },
+                base: {
+                    type: 'number',
+                    invalids: [
+                        Infinity,
+                        -Infinity
+                    ],
+                    rules: [
+                        { arg: 10, name: 'min' }
+                    ]
+                },
+                alternatives: [{
+                    ref: 'ref:a',
+                    is: {
+                        type: 'number',
+                        flags: {
+                            allowOnly: true,
+                            presence: 'required'
+                        },
+                        valids: [5],
+                        invalids: [Infinity, -Infinity]
+                    },
+                    then: {
+                        type: 'number',
+                        flags: {
+                            presence: 'required'
+                        },
+                        invalids: [Infinity, -Infinity],
+                        rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
+                    }
+                }]
+            });
+            done();
+        });
     });
 
     describe('label()', () => {
@@ -1559,6 +1614,13 @@ describe('any', () => {
                 type: 'alternatives',
                 flags: {
                     presence: 'ignore'
+                },
+                base: {
+                    type: 'number',
+                    invalids: [Infinity, -Infinity],
+                    rules: [
+                        { arg: 10, name: 'min' }
+                    ]
                 },
                 alternatives: [{
                     ref: 'ref:a',
