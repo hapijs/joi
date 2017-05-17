@@ -2083,6 +2083,50 @@ describe('string', () => {
         });
     });
 
+    describe('separatedBy()', () => {
+
+        it('separates a string', (done) => {
+
+            const schema = Joi.string().separatedBy(',', Joi.string().regex(/^[A-Z]{2}$/));
+
+            Helper.validate(schema, [
+                ['VE,CA,ES', true, null, ['VE', 'CA', 'ES']],
+                ['VE', true, null, ['VE']]
+            ], done);
+        });
+
+        it('fails to separate a string because of the inner schema', (done) => {
+
+            const schema = Joi.string().separatedBy(',', Joi.string().regex(/^[A-Z]{2}$/));
+
+            Helper.validate(schema, [
+                ['VE,ca,ca', false, null, '"value" fails for the following items: { ca: "value" with value "ca" fails to match the required pattern: /^[A-Z]{2}$/ }']
+            ], done);
+        });
+
+        it('only accepts a valid Joi schema and a string or String object separator', (done) => {
+
+            expect(() => {
+
+                Joi.string().separatedBy(',', /^[A-Z]{2}$/);
+            }).to.throw(Error, '\"schema\" must be a Joi validator');
+
+            expect(() => {
+
+                Joi.string().separatedBy(2, Joi.string().regex(/^[A-Z]{2}$/));
+            }).to.throw(Error, '\"separator\" must be a string');
+
+            expect(() => {
+
+                // eslint-disable-next-line no-new-wrappers
+                Joi.string().separatedBy(new String(','), Joi.string().regex(/^[A-Z]{2}$/));
+            }).to.not.throw();
+
+            done();
+        });
+
+    });
+
     describe('validate()', () => {
 
         it('should, by default, allow undefined, deny empty string', (done) => {
