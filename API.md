@@ -1,5 +1,5 @@
 <!-- version -->
-# 10.4.2 API Reference
+# 10.5.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -104,6 +104,7 @@
     - [`object.schema()`](#objectschema)
     - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
     - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
+    - [`object.forbiddenKeys(children)`](#objectforbiddenkeyschildren)
   - [`string` - inherits from `Any`](#string---inherits-from-any)
     - [`string.insensitive()`](#stringinsensitive)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
