@@ -4,9 +4,9 @@
 
 const Lab = require('lab');
 const Code = require('code');
-const Joi = require('../lib');
-const Lazy = require('../lib/lazy');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Lazy = require('../../lib/types/lazy/index');
+const Helper = require('../helper');
 
 
 // Declare internals

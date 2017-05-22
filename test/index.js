@@ -1523,7 +1523,7 @@ describe('Joi', () => {
             defaultRef: Joi.string().default(defaultRef, 'not here'),
             defaultFn: Joi.string().default(defaultFn, 'not here'),
             defaultDescribedFn: Joi.string().default(defaultDescribedFn, 'described test')
-        }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
+        }).options({ abortEarly: false, convert: false }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
 
         const result = {
             type: 'object',
@@ -1660,7 +1660,11 @@ describe('Joi', () => {
                         override: false
                     }
                 }
-            ]
+            ],
+            options: {
+                abortEarly: false,
+                convert: false
+            }
         };
 
         it('describes schema (direct)', (done) => {
@@ -2806,7 +2810,7 @@ describe('Joi', () => {
                 name: 'myType'
             });
 
-            const Any = require('../lib/any');
+            const Any = require('../lib/types/any');
             expect(customJoi).to.be.an.instanceof(Any);
             done();
         });

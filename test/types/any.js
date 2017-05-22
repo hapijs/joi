@@ -4,8 +4,8 @@
 
 const Lab = require('lab');
 const Code = require('code');
-const Joi = require('../lib');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Helper = require('../helper');
 
 
 // Declare internals
@@ -147,6 +147,61 @@ describe('any', () => {
 
                 Joi.any().options({ presence: 'optional', raw: true });
             }).to.not.throw();
+            done();
+        });
+
+        it('describes a schema with options', (done) => {
+
+            const schema = Joi.any().options({ abortEarly: false, convert: false });
+            const description = schema.describe();
+
+            expect(description).to.equal({ type: 'any', options: { abortEarly: false, convert: false } });
+            done();
+        });
+
+        it('describes an alternatives schema with options', (done) => {
+
+            const schema = Joi.number().min(10).when('a', { is: 5, then: Joi.number().max(20).required() }).options({ abortEarly: false, convert: false }).describe();
+            expect(schema).to.equal({
+                type: 'alternatives',
+                flags: {
+                    presence: 'ignore'
+                },
+                options: {
+                    abortEarly: false,
+                    convert: false
+                },
+                base: {
+                    type: 'number',
+                    invalids: [
+                        Infinity,
+                        -Infinity
+                    ],
+                    rules: [
+                        { arg: 10, name: 'min' }
+                    ]
+                },
+                alternatives: [{
+                    ref: 'ref:a',
+                    is: {
+                        type: 'number',
+                        flags: {
+                            allowOnly: true,
+                            presence: 'required'
+                        },
+                        valids: [5],
+                        invalids: [Infinity, -Infinity]
+                    },
+                    then: {
+                        type: 'number',
+                        flags: {
+                            presence: 'required'
+                        },
+                        invalids: [Infinity, -Infinity],
+                        rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
+                    }
+                }]
+            });
             done();
         });
     });
@@ -1560,6 +1615,13 @@ describe('any', () => {
                 flags: {
                     presence: 'ignore'
                 },
+                base: {
+                    type: 'number',
+                    invalids: [Infinity, -Infinity],
+                    rules: [
+                        { arg: 10, name: 'min' }
+                    ]
+                },
                 alternatives: [{
                     ref: 'ref:a',
                     is: {
@@ -1582,102 +1644,6 @@ describe('any', () => {
                 }]
             });
             done();
-        });
-    });
-
-    describe('requiredKeys()', () => {
-
-        it('should set keys as required', (done) => {
-
-            const schema = Joi.object({ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: { h: 0 } })
-                .requiredKeys('a', 'b', 'c.d', 'c.e.f', 'g');
-            Helper.validate(schema, [
-                [{}, false, null, 'child "a" fails because ["a" is required]'],
-                [{ a: 0 }, false, null, 'child "b" fails because ["b" is required]'],
-                [{ a: 0, b: 0 }, false, null, 'child "g" fails because ["g" is required]'],
-                [{ a: 0, b: 0, g: {} }, true],
-                [{ a: 0, b: 0, c: {}, g: {} }, false, null, 'child "c" fails because [child "d" fails because ["d" is required]]'],
-                [{ a: 0, b: 0, c: { d: 0 }, g: {} }, true],
-                [{ a: 0, b: 0, c: { d: 0, e: {} }, g: {} }, false, null, 'child "c" fails because [child "e" fails because [child "f" fails because ["f" is required]]]'],
-                [{ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: {} }, true]
-            ], done);
-        });
-
-        it('should work on types other than objects', (done) => {
-
-            const schemas = [Joi.array(), Joi.binary(), Joi.boolean(), Joi.date(), Joi.func(), Joi.number(), Joi.string()];
-            schemas.forEach((schema) => {
-
-                expect(() => {
-
-                    schema.applyFunctionToChildren([''], 'required');
-                }).to.not.throw();
-
-                expect(() => {
-
-                    schema.applyFunctionToChildren(['', 'a'], 'required');
-                }).to.throw();
-
-                expect(() => {
-
-                    schema.applyFunctionToChildren(['a'], 'required');
-                }).to.throw();
-            });
-
-            done();
-        });
-
-        it('should throw on unknown key', (done) => {
-
-            expect(() => {
-
-                Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'c', 'b', 'd', 'd.e.f');
-            }).to.throw(Error, 'unknown key(s) c, d');
-
-            expect(() => {
-
-                Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'b', 'a.c.d');
-            }).to.throw(Error, 'unknown key(s) a.c.d');
-
-            done();
-        });
-
-        it('should throw on empty object', (done) => {
-
-            expect(() => {
-
-                Joi.object().requiredKeys('a', 'c', 'b', 'd');
-            }).to.throw(Error, 'unknown key(s) a, b, c, d');
-            done();
-        });
-
-        it('should not modify original object', (done) => {
-
-            const schema = Joi.object({ a: 0 });
-            const requiredSchema = schema.requiredKeys('a');
-            schema.validate({}, (err) => {
-
-                expect(err).to.not.exist();
-
-                requiredSchema.validate({}, (err) => {
-
-                    expect(err).to.exist();
-                    done();
-                });
-            });
-        });
-    });
-
-    describe('optionalKeys()', () => {
-
-        it('should set keys as optional', (done) => {
-
-            const schema = Joi.object({ a: Joi.number().required(), b: Joi.number().required() }).optionalKeys('a', 'b');
-            Helper.validate(schema, [
-                [{}, true],
-                [{ a: 0 }, true],
-                [{ a: 0, b: 0 }, true]
-            ], done);
         });
     });
 

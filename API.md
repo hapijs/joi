@@ -1,5 +1,5 @@
 <!-- version -->
-# 10.4.1 API Reference
+# 10.5.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -21,6 +21,7 @@
     - [npm note](#npm-note)
     - [Examples](#examples)
   - [`any`](#any)
+    - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
     - [`any.allow(value)`](#anyallowvalue)
     - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
     - [`any.invalid(value)` - aliases: `disallow`, `not`](#anyinvalidvalue---aliases-disallow-not)
@@ -103,6 +104,7 @@
     - [`object.schema()`](#objectschema)
     - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
     - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
+    - [`object.forbiddenKeys(children)`](#objectforbiddenkeyschildren)
   - [`string` - inherits from `Any`](#string---inherits-from-any)
     - [`string.insensitive()`](#stringinsensitive)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
@@ -316,8 +318,8 @@ Extension objects use the following parameters :
 * `rules` - an optional array of rules to add.
   * `name` - name of the new rule. **Required**.
   * `params` - an optional object containing Joi schemas of each parameter ordered. You can also pass a single Joi schema as long as it is a `Joi.object()`, of course some methods such as `pattern` or `rename` won't be useful or won't work at all in this given context.
-  * `setup` - an optional function that takes an object with the provided parameters. One of `setup` or `validate` **must** be provided.
-  * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `options`. One of `setup` or `validate` **must** be provided.
+  * `setup` - an optional function that takes an object with the provided parameters. At least one of `setup` or `validate` **must** be provided.
+  * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `options`. At least one of `setup` or `validate` **must** be provided.
   * `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
 
 Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended joi being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
@@ -390,6 +392,32 @@ Generates a schema object that matches any data type.
 ```js
 const any = Joi.any();
 any.validate('a', (err, value) => { });
+```
+
+#### `any.validate(value, [options], [callback])`
+
+Validates a value using the schema and options where:
+- `value` - the value being validated.
+- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+- `callback` - an optional synchronous callback method using the the same signature as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+
+```js
+const schema = Joi.object({
+    a: Joi.number()
+});
+
+const value = {
+    a: '123'
+};
+
+schema.validate(value, (err, value) => { });
+// err -> null
+// value.a -> 123 (number, not string)
+
+// or
+const result = schema.validate(value, schema);
+// result.error -> null
+// result.value -> { "a" : 123 }
 ```
 
 #### `any.allow(value)`
@@ -1347,7 +1375,7 @@ Specify validation rules for unknown keys matching a pattern where:
 - `regex` - a regular expression tested against the unknown key names.
 - `schema` - the schema object matching keys must validate against.
 
-```javascrip
+```js
 const schema = Joi.object({
     a: Joi.string()
 }).pattern(/\w\d/, Joi.boolean());
@@ -1524,6 +1552,18 @@ Sets the specified children to optional.
 ```js
 const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
 const optionalSchema = schema.optionalKeys('a.b', 'c.d');
+```
+
+The behavior is exactly the same as `requiredKeys`.
+
+#### `object.forbiddenKeys(children)`
+
+Sets the specified children to forbidden.
+- `children` - can be a single string value, an array of string values, or each child provided as an argument.
+
+```js
+const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
+const optionalSchema = schema.forbiddenKeys('a.b', 'c.d');
 ```
 
 The behavior is exactly the same as `requiredKeys`.

@@ -4,8 +4,8 @@
 
 const Code = require('code');
 const Lab = require('lab');
-const Joi = require('../lib');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Helper = require('../helper');
 
 
 // Declare internals
