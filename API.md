@@ -119,7 +119,7 @@
     - [`string.uri([options])`](#stringurioptions)
     - [`string.guid()` - aliases: `uuid`](#stringguid---aliases-uuid)
     - [`string.hex()`](#stringhex)
-    - [`string.base64([paddingRequired])`](#stringbase64)
+    - [`string.base64([options])`](#stringbase64options)
     - [`string.hostname()`](#stringhostname)
     - [`string.lowercase()`](#stringlowercase)
     - [`string.uppercase()`](#stringuppercase)
@@ -1764,23 +1764,27 @@ Requires the string value to be a valid hexadecimal string.
 const schema = Joi.string().hex();
 ```
 
-#### `string.base64([paddingRequired])`
+#### `string.base64([options])`
 
 Requires the string value to be a valid base64 string; does not check the decoded value.
 
-* paddingRequired - optional parameter defaulting to `true` which will require `=` padding if `true` or make padding optional (`false`).
+- `options` - optional settings:
+    - `paddingRequired` - optional parameter defaulting to `true` which will require `=` padding if `true` or make padding optional if `false`.
 
 Padding characters are not required for decoding, as the number of missing bytes can be inferred from the number of digits. With that said, try to use padding if at all possible.
 
 ```js
 const schema = Joi.string().base64();
+schema.validate('VE9PTUFOWVNFQ1JFVFM'); // ValidationError: "value" must be a valid base64 string
+schema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
 
-const paddingRequiredSchema = Joi.string().base64(true);
+const paddingRequiredSchema = Joi.string().base64({ paddingRequired: true });
 paddingRequiredSchema.validate('VE9PTUFOWVNFQ1JFVFM'); // ValidationError: "value" must be a valid base64 string
 paddingRequiredSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
 
-const paddingOptionalSchema = Joi.string().base64(false);
+const paddingOptionalSchema = Joi.string().base64({ paddingRequired: false });
 paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM'); // No Error
+paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
 #### `string.hostname()`
