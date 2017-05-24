@@ -1574,9 +1574,6 @@ be enabled with `allow('')`. However, if you want to specify a default value in 
 different pattern: `Joi.string().empty('').default('default value')`. This tells Joi that the empty string should be
 considered as an empty value (instead of invalid) and which value to use as default.
 
-If the validation `convert` option is on (enabled by default), a string will be converted using the specified modifiers
-for `string.lowercase()`, `string.uppercase()`, `string.trim()`, and each replacement specified with `string.replace()`.
-
 Supports the same methods of the [`any()`](#any) type.
 
 ```js
