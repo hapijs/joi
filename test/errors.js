@@ -590,5 +590,35 @@ describe('errors', () => {
                 done();
             });
         });
+
+        it('handles child to uncle relationship inside a child', (done) => {
+
+            const object = {
+                response: {
+                    options: {
+                        stripUnknown: true
+                    }
+                }
+            };
+
+            const schema = Joi.object({
+                response: Joi.object({
+                    modify: Joi.boolean(),
+                    options: Joi.object()
+                })
+                    .assert('options.stripUnknown', Joi.ref('modify'), 'meet requirement of having peer modify set to true')
+            });
+
+            Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(() => {
+
+                    err.annotate(true);
+                }).to.not.throw();
+
+                done();
+            });
+        });
     });
 });
