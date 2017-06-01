@@ -850,6 +850,15 @@ Specifies the minimum number of items in the array where:
 const schema = Joi.array().min(2);
 ```
 
+It can also be a reference to another field.
+
+```js
+const schema = Joi.object({
+  limit: Joi.number().integer().required(),
+  numbers: Joi.array().min(Joi.ref('limit')).required()
+});
+```
+
 #### `array.max(limit)`
 
 Specifies the maximum number of items in the array where:
@@ -859,6 +868,15 @@ Specifies the maximum number of items in the array where:
 const schema = Joi.array().max(10);
 ```
 
+It can also be a reference to another field.
+
+```js
+const schema = Joi.object({
+  limit: Joi.number().integer().required(),
+  numbers: Joi.array().max(Joi.ref('limit')).required()
+});
+```
+
 #### `array.length(limit)`
 
 Specifies the exact number of items in the array where:
@@ -866,6 +884,15 @@ Specifies the exact number of items in the array where:
 
 ```js
 const schema = Joi.array().length(5);
+```
+
+It can also be a reference to another field.
+
+```js
+const schema = Joi.object({
+  limit: Joi.number().integer().required(),
+  numbers: Joi.array().length(Joi.ref('limit')).required()
+});
 ```
 
 #### `array.unique([comparator])`
