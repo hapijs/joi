@@ -3164,17 +3164,72 @@ describe('string', () => {
             ], done);
         });
 
-        it('validates an base64 string', (done) => {
+        it('validates the base64 options', (done) => {
+
+            expect(() => {
+
+                Joi.string().base64('a');
+            }).to.throw('base64 options must be an object');
+
+            expect(() => {
+
+                Joi.string().base64({ paddingRequired: 'a' });
+            }).to.throw('paddingRequired must be boolean');
+            done();
+        });
+
+        it('validates a base64 string with no options', (done) => {
 
             const rule = Joi.string().base64();
             Helper.validate(rule, [
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
                 ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
                 ['Y=', false, null, '"value" must be a valid base64 string'],
                 ['Y===', false, null, '"value" must be a valid base64 string'],
                 ['YW', false, null, '"value" must be a valid base64 string'],
                 ['YW==', true],
                 ['YW5', false, null, '"value" must be a valid base64 string'],
+                ['YW5=', true],
+                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
+            ], done);
+        });
+
+        it('validates a base64 string with padding explicitly required', (done) => {
+
+            const rule = Joi.string().base64({ paddingRequired: true });
+            Helper.validate(rule, [
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['Y=', false, null, '"value" must be a valid base64 string'],
+                ['Y===', false, null, '"value" must be a valid base64 string'],
+                ['YW', false, null, '"value" must be a valid base64 string'],
+                ['YW==', true],
+                ['YW5', false, null, '"value" must be a valid base64 string'],
+                ['YW5=', true],
+                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
+            ], done);
+        });
+
+        it('validates a base64 string with padding not required', (done) => {
+
+            const rule = Joi.string().base64({ paddingRequired: false });
+            Helper.validate(rule, [
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', true],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IG==cm5hbCBwbGVhc3VyZS4=', false, null, '"value" must be a valid base64 string'],
+                ['Y$', false, null, '"value" must be a valid base64 string'],
+                ['Y', false, null, '"value" must be a valid base64 string'],
+                ['Y===', false, null, '"value" must be a valid base64 string'],
+                ['YW', true],
+                ['YW==', true],
+                ['YW5', true],
                 ['YW5=', true],
                 ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
             ], done);
