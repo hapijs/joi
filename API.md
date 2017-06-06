@@ -646,6 +646,7 @@ Converts the type into an [`alternatives`](#alternatives) type where the conditi
     - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted using [Joi.compile](#compileschema).
     - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
     - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
+    - `default` - default value used if referenced key is not present
 
 Note: by default, the `is` condition schema allows for `undefined` values. Use `.required()` to override.
 
