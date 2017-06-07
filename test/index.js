@@ -2145,7 +2145,7 @@ describe('Joi', () => {
             done();
         });
 
-        it('defines a custom type with a rule with setup', (done) => {
+        it('defines a custom type with a rule with setup which return undefined', (done) => {
 
             const customJoi = Joi.extend({
                 name: 'myType',
@@ -2172,6 +2172,69 @@ describe('Joi', () => {
             expect(schema.foo('bar').validate(null).value).to.equal({ first: 'bar', second: undefined });
             expect(schema.foo('bar', Joi.ref('a.b')).validate(null).value.first).to.equal('bar');
             expect(Joi.isRef(schema.foo('bar', Joi.ref('a.b')).validate(null).value.second)).to.be.true();
+            done();
+        });
+
+        it('defines a custom type with a rule with setup which return a Joi object', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                pre(value, state, options) {
+
+                    return 'baz';
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        setup(params) {
+
+                            return Joi.string();
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(schema.foo().validate('bar').value).to.equal('bar');
+            expect(schema.validate('baz').value).to.equal('baz');
+            done();
+        });
+
+        it('defines a custom type with a rule with setup which return other value will throw error', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                pre(value, state, options) {
+
+                    return Joi.number();
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        setup(params) {
+
+                            return 0;
+                        }
+                    }, {
+                        name: 'bar',
+                        setup(params) {
+
+                            return null;
+                        }
+                    }, {
+                        name: 'foobar',
+                        setup(params) {
+
+                            return { isJoi:true };
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(() => schema.foo()).to.throw('Joi.extend() rule with setup must be return undefined or Joi object');
+            expect(() => schema.bar()).to.throw('Joi.extend() rule with setup must be return undefined or Joi object');
+            expect(() => schema.foobar()).to.throw('Joi.extend() rule with setup must be return undefined or Joi object');
             done();
         });
 
