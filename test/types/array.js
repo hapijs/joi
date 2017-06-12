@@ -432,11 +432,11 @@ describe('array', () => {
                 [{
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
-                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a number]'],
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]'],
                 [{
                     limit: 'I like turtles',
                     arr: [1]
-                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a number]']
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]']
             ], done);
         });
 
@@ -528,11 +528,11 @@ describe('array', () => {
                 [{
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
-                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a number]'],
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]'],
                 [{
                     limit: 'I like turtles',
                     arr: [1]
-                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a number]']
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]']
             ], done);
         });
 
@@ -624,11 +624,11 @@ describe('array', () => {
                 [{
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
-                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a number]'],
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]'],
                 [{
                     limit: 'I like turtles',
                     arr: [1]
-                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a number]']
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]']
             ], done);
         });
     });
