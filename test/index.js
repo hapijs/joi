@@ -2232,9 +2232,9 @@ describe('Joi', () => {
             });
 
             const schema = customJoi.myType();
-            expect(() => schema.foo()).to.throw('Joi.extend() rule with setup must be return undefined or Joi object');
-            expect(() => schema.bar()).to.throw('Joi.extend() rule with setup must be return undefined or Joi object');
-            expect(() => schema.foobar()).to.throw('Joi.extend() rule with setup must be return undefined or Joi object');
+            expect(() => schema.foo()).to.throw('Setup of extension Joi.myType().foo() must return undefined or a Joi object');
+            expect(() => schema.bar()).to.throw('Setup of extension Joi.myType().bar() must return undefined or a Joi object');
+            expect(() => schema.foobar()).to.throw('Setup of extension Joi.myType().foobar() must return undefined or a Joi object');
             done();
         });
 
