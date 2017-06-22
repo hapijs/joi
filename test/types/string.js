@@ -510,6 +510,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['"joe"@example.com', true],
+                ['êjness@something.com', true],
                 ['@iaminvalid.com', false, null, '"value" must be a valid email'],
                 ['joe@[IPv6:2a00:1450:4001:c02::1b]', true],
                 ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false, null, '"value" must be a valid email'],
@@ -561,7 +562,8 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['joe@www.example.com', true],
-                ['joe@localhost', false, null, '"value" must be a valid email'],
+                ['joe@localhost', true],
+                ['joe@', false, null, '"value" must be a valid email'],
                 ['joe', false, null, '"value" must be a valid email']
             ], done);
         });
