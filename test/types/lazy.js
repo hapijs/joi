@@ -3,7 +3,6 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
 const Joi = require('../..');
 const Lazy = require('../../lib/types/lazy/index');
 const Helper = require('../helper');
@@ -19,7 +18,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('lazy', () => {

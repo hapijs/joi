@@ -3,7 +3,6 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
 const Joi = require('../..');
 const Helper = require('../helper');
 
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('alternatives', () => {
@@ -153,8 +152,9 @@ describe('alternatives', () => {
         it('validates conditional alternatives', (done) => {
 
             const schema = {
-                a: Joi.alternatives().when('b', { is: 5, then: 'x', otherwise: 'y' })
-                                     .try('z'),
+                a: Joi.alternatives()
+                    .when('b', { is: 5, then: 'x', otherwise: 'y' })
+                    .try('z'),
                 b: Joi.any()
             };
 
@@ -171,8 +171,9 @@ describe('alternatives', () => {
         it('validates conditional alternatives (empty key)', (done) => {
 
             const schema = {
-                a: Joi.alternatives().when('', { is: 5, then: 'x', otherwise: 'y' })
-                                     .try('z'),
+                a: Joi.alternatives()
+                    .when('', { is: 5, then: 'x', otherwise: 'y' })
+                    .try('z'),
                 '': Joi.any()
             };
 
@@ -189,8 +190,9 @@ describe('alternatives', () => {
         it('validates only then', (done) => {
 
             const schema = {
-                a: Joi.alternatives().when(Joi.ref('b'), { is: 5, then: 'x' })
-                                     .try('z'),
+                a: Joi.alternatives()
+                    .when(Joi.ref('b'), { is: 5, then: 'x' })
+                    .try('z'),
                 b: Joi.any()
             };
 
@@ -207,8 +209,9 @@ describe('alternatives', () => {
         it('validates only otherwise', (done) => {
 
             const schema = {
-                a: Joi.alternatives().when('b', { is: 5, otherwise: 'y' })
-                                     .try('z'),
+                a: Joi.alternatives()
+                    .when('b', { is: 5, otherwise: 'y' })
+                    .try('z'),
                 b: Joi.any()
             };
 
@@ -368,8 +371,9 @@ describe('alternatives', () => {
         it('describes when', (done) => {
 
             const schema = {
-                a: Joi.alternatives().when('b', { is: 5, then: 'x', otherwise: 'y' })
-                                     .try('z'),
+                a: Joi.alternatives()
+                    .when('b', { is: 5, then: 'x', otherwise: 'y' })
+                    .try('z'),
                 b: Joi.any()
             };
 
@@ -430,8 +434,9 @@ describe('alternatives', () => {
         it('describes when (only then)', (done) => {
 
             const schema = {
-                a: Joi.alternatives().when('b', { is: 5, then: 'x' })
-                                     .try('z'),
+                a: Joi.alternatives()
+                    .when('b', { is: 5, then: 'x' })
+                    .try('z'),
                 b: Joi.any()
             };
 
@@ -484,8 +489,9 @@ describe('alternatives', () => {
         it('describes when (only otherwise)', (done) => {
 
             const schema = {
-                a: Joi.alternatives().when('b', { is: 5, otherwise: 'y' })
-                                     .try('z'),
+                a: Joi.alternatives()
+                    .when('b', { is: 5, otherwise: 'y' })
+                    .try('z'),
                 b: Joi.any()
             };
 

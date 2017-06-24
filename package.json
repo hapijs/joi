@@ -20,9 +20,8 @@
     "topo": "2.x.x"
   },
   "devDependencies": {
-    "code": "4.x.x",
     "hapitoc": "1.x.x",
-    "lab": "13.x.x"
+    "lab": "14.x.x"
   },
   "scripts": {
     "test": "lab -t 100 -a code -L",
