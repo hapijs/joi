@@ -1891,7 +1891,7 @@ const schema = Joi.string().trim();
 
 #### `string.isoDate()`
 
-Requires the string value to be in valid ISO 8601 date format.
+Requires the string value to be in valid ISO 8601 date format. If the validation `convert` option is on (enabled by default), the string will be forced to simplified extended ISO format (ISO 8601).
 
 ```js
 const schema = Joi.string().isoDate();
