@@ -958,6 +958,9 @@ describe('string', () => {
                 '0.0.0.0/33',
                 '256.0.0.0/0',
                 '255.255.255.256/32',
+                '255.255.255.255/64',
+                '255.255.255.255/128',
+                '255.255.255.255/255',
                 '256.0.0.0',
                 '255.255.255.256'
             ])(false, message);
@@ -966,16 +969,20 @@ describe('string', () => {
         const invalidIPv6s = function (message) {
 
             return prepareIps([
-                '2001:db8::7/33',
-                '1080:0:0:0:8:800:200C:417G'
+                '1080:0:0:0:8:800:200C:417G/33',
+                '1080:0:0:0:8:800:200C:417G',
+                'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/129',
+                'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/255'
             ])(false, message);
         };
 
         const invalidIPvFutures = function (message) {
 
             return prepareIps([
-                'v1.09azAZ-._~!$&\'()*+,;=:/33',
-                'v1.09#'
+                'v1.09#/33',
+                'v1.09#',
+                'v1.09azAZ-._~!$&\'()*+,;=:/129',
+                'v1.09azAZ-._~!$&\'()*+,;=:/255'
             ])(false, message);
         };
 
@@ -1016,8 +1023,10 @@ describe('string', () => {
         const validIPv6sWithCidr = prepareIps([
             '2001:db8::7/32',
             'a:b:c:d:e::1.2.3.4/13',
+            'a:b:c:d:e::1.2.3.4/64',
             'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/0',
             'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/32',
+            'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/128',
             '1080:0:0:0:8:800:200C:417A/27'
         ]);
 
@@ -1065,7 +1074,7 @@ describe('string', () => {
             '7:6:5:4:3:2:1::'
         ]);
 
-        const validIPvFuturesWithCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:/32']);
+        const validIPvFuturesWithCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:/32','v1.09azAZ-._~!$&\'()*+,;=:/128']);
 
         const validIPvFuturesWithoutCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:']);
 
