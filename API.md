@@ -648,6 +648,7 @@ Converts the type into an [`alternatives`](#alternatives) type where the conditi
     - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
 
 Note: by default, the `is` condition schema allows for `undefined` values. Use `.required()` to override.
+For example, use `is: Joi.number().required()` to guarantee that a joi reference exists and is a number.
 
 ```js
 const schema = {
@@ -681,6 +682,19 @@ const schema = Joi.object().keys({
             is: true,
             then: Joi.object({ c: Joi.required() })		// b.c is required only when a is true
         })
+});
+```
+If you want to validate one key based on the existence of another key, you can do so like the following (notice the use of `required()`):
+```js
+const schema = Joi.object().keys({
+    min: Joi.number().when('max', {
+        is: Joi.number().required(),
+        then: Joi.number().less(Joi.ref('max')),
+    }),
+    max: Joi.number().when('min', {
+        is: Joi.number().required(),
+        then: Joi.number().greater(Joi.ref('min')),
+    }),
 });
 ```
 
