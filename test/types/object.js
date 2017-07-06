@@ -673,6 +673,21 @@ describe('object', () => {
             });
         });
 
+        it('renames using a regular expression', (done) => {
+
+            const regex = /foobar/i;
+
+            const schema = Joi.object({
+                fooBar: Joi.string()
+            }).rename(regex, 'fooBar');
+
+            Joi.compile(schema).validate({ FOOBAR: 'a' }, (err, value) => {
+
+                expect(err).to.not.exist();
+                done();
+            });
+        });
+
         it('aliases a key', (done) => {
 
             const schema = Joi.object({
