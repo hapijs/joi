@@ -3,9 +3,8 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
-const Joi = require('../lib');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Helper = require('../helper');
 
 
 // Declare internals
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('number', () => {
@@ -26,7 +25,7 @@ describe('number', () => {
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(
-          () => Joi.number('invalid argument.')
+            () => Joi.number('invalid argument.')
         ).to.throw('Joi.number() does not allow arguments.');
 
         done();
@@ -75,7 +74,8 @@ describe('number', () => {
                 [0, true],
                 [null, false, null, '"value" must be a number'],
                 [1.02, false, null, '"value" must be an integer'],
-                [0.01, false, null, '"value" must be an integer']
+                [0.01, false, null, '"value" must be an integer'],
+                ['90071992547409910.1', false, null, '"value" must be an integer']
             ], done);
         });
 
@@ -852,13 +852,13 @@ describe('number', () => {
 
             const rule = Joi.number().multiple(3);
             Helper.validate(rule, [
-                    [0, true], // 0 is a multiple of every integer
-                    [3, true],
-                    [4, false, null, '"value" must be a multiple of 3'],
-                    [9, true],
-                    ['a', false, null, '"value" must be a number'],
-                    [9.1, false, null, '"value" must be a multiple of 3'],
-                    [8.9, false, null, '"value" must be a multiple of 3']
+                [0, true], // 0 is a multiple of every integer
+                [3, true],
+                [4, false, null, '"value" must be a multiple of 3'],
+                [9, true],
+                ['a', false, null, '"value" must be a number'],
+                [9.1, false, null, '"value" must be a multiple of 3'],
+                [8.9, false, null, '"value" must be a multiple of 3']
             ], done);
         });
 
@@ -866,13 +866,13 @@ describe('number', () => {
 
             const schema = Joi.number().multiple(3.5);
             Helper.validate(schema, [
-                    [0, true], // 0 is a multiple of every integer
-                    [3.5, true],
-                    [3.6, false, null, '"value" must be a multiple of 3.5'],
-                    [10.5, true],
-                    ['a', false, null, '"value" must be a number'],
-                    [10.501, false, null, '"value" must be a multiple of 3.5'],
-                    [10.499, false, null, '"value" must be a multiple of 3.5']
+                [0, true], // 0 is a multiple of every integer
+                [3.5, true],
+                [3.6, false, null, '"value" must be a multiple of 3.5'],
+                [10.5, true],
+                ['a', false, null, '"value" must be a number'],
+                [10.501, false, null, '"value" must be a multiple of 3.5'],
+                [10.499, false, null, '"value" must be a multiple of 3.5']
             ], done);
         });
 

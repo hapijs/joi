@@ -3,9 +3,8 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
-const Joi = require('../lib');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Helper = require('../helper');
 
 
 // Declare internals
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('date', () => {
@@ -26,7 +25,7 @@ describe('date', () => {
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(
-          () => Joi.date('invalid argument.')
+            () => Joi.date('invalid argument.')
         ).to.throw('Joi.date() does not allow arguments.');
 
         done();
@@ -300,6 +299,13 @@ describe('date', () => {
 
         describe('iso()', () => {
 
+            it('avoids unnecessary cloning when called twice', (done) => {
+
+                const schema = Joi.date().iso();
+                expect(schema.iso()).to.shallow.equal(schema);
+                done();
+            });
+
             it('validates isoDate', (done) => {
 
                 Helper.validate(Joi.date().iso(), [
@@ -362,6 +368,13 @@ describe('date', () => {
         });
 
         describe('timestamp()', () => {
+
+            it('avoids unnecessary cloning when called twice', (done) => {
+
+                const schema = Joi.date().timestamp('unix');
+                expect(schema.timestamp('unix')).to.shallow.equal(schema);
+                done();
+            });
 
             it('validates javascript timestamp', (done) => {
 

@@ -3,9 +3,8 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
-const Joi = require('../lib');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Helper = require('../helper');
 
 
 // Declare internals
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('string', () => {
@@ -26,7 +25,7 @@ describe('string', () => {
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(
-          () => Joi.string('invalid argument.')
+            () => Joi.string('invalid argument.')
         ).to.throw('Joi.string() does not allow arguments.');
 
         done();
@@ -50,6 +49,16 @@ describe('string', () => {
             ['123', true],
             ['0', true]
         ], done);
+    });
+
+    describe('insensitive', () => {
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.string().insensitive();
+            expect(schema.insensitive()).to.shallow.equal(schema);
+            done();
+        });
     });
 
     describe('valid()', () => {
@@ -500,6 +509,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['"joe"@example.com', true],
+                ['êjness@something.com', true],
                 ['@iaminvalid.com', false, null, '"value" must be a valid email'],
                 ['joe@[IPv6:2a00:1450:4001:c02::1b]', true],
                 ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false, null, '"value" must be a valid email'],
@@ -551,7 +561,8 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['joe@www.example.com', true],
-                ['joe@localhost', false, null, '"value" must be a valid email'],
+                ['joe@localhost', true],
+                ['joe@', false, null, '"value" must be a valid email'],
                 ['joe', false, null, '"value" must be a valid email']
             ], done);
         });
@@ -947,6 +958,9 @@ describe('string', () => {
                 '0.0.0.0/33',
                 '256.0.0.0/0',
                 '255.255.255.256/32',
+                '255.255.255.255/64',
+                '255.255.255.255/128',
+                '255.255.255.255/255',
                 '256.0.0.0',
                 '255.255.255.256'
             ])(false, message);
@@ -955,16 +969,20 @@ describe('string', () => {
         const invalidIPv6s = function (message) {
 
             return prepareIps([
-                '2001:db8::7/33',
-                '1080:0:0:0:8:800:200C:417G'
+                '1080:0:0:0:8:800:200C:417G/33',
+                '1080:0:0:0:8:800:200C:417G',
+                'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/129',
+                'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/255'
             ])(false, message);
         };
 
         const invalidIPvFutures = function (message) {
 
             return prepareIps([
-                'v1.09azAZ-._~!$&\'()*+,;=:/33',
-                'v1.09#'
+                'v1.09#/33',
+                'v1.09#',
+                'v1.09azAZ-._~!$&\'()*+,;=:/129',
+                'v1.09azAZ-._~!$&\'()*+,;=:/255'
             ])(false, message);
         };
 
@@ -1005,8 +1023,10 @@ describe('string', () => {
         const validIPv6sWithCidr = prepareIps([
             '2001:db8::7/32',
             'a:b:c:d:e::1.2.3.4/13',
+            'a:b:c:d:e::1.2.3.4/64',
             'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/0',
             'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/32',
+            'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/128',
             '1080:0:0:0:8:800:200C:417A/27'
         ]);
 
@@ -1054,7 +1074,7 @@ describe('string', () => {
             '7:6:5:4:3:2:1::'
         ]);
 
-        const validIPvFuturesWithCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:/32']);
+        const validIPvFuturesWithCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:/32','v1.09azAZ-._~!$&\'()*+,;=:/128']);
 
         const validIPvFuturesWithoutCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:']);
 
@@ -1995,6 +2015,13 @@ describe('string', () => {
 
     describe('truncate()', () => {
 
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.string().truncate();
+            expect(schema.truncate()).to.shallow.equal(schema);
+            done();
+        });
+
         it('switches the truncate flag', (done) => {
 
             const schema = Joi.string().truncate();
@@ -2728,7 +2755,7 @@ describe('string', () => {
 
         it('validates isoDate', (done) => {
 
-            Helper.validate(Joi.string().isoDate(), [
+            Helper.validateOptions(Joi.string().isoDate(), [
                 ['+002013-06-07T14:21:46.295Z', true],
                 ['-002013-06-07T14:21:46.295Z', true],
                 ['002013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
@@ -2773,7 +2800,7 @@ describe('string', () => {
                 ['2013-W23-1T14:21:46-07:00', true],
                 ['2013-184', true],
                 ['2013-1841', false, null, '"value" must be a valid ISO 8601 date']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates isoDate with a friendly error message', (done) => {
@@ -2789,7 +2816,7 @@ describe('string', () => {
         it('validates combination of isoDate and min', (done) => {
 
             const rule = Joi.string().isoDate().min(23);
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', true],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -2810,13 +2837,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', false, null, '"value" is not allowed to be empty'],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min and max', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23);
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
@@ -2837,13 +2864,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', false, null, '"value" is not allowed to be empty'],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max and invalid', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).invalid('2013-06-07T14:21+07:00');
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
@@ -2864,13 +2891,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', false, null, '"value" is not allowed to be empty'],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max and allow', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00');
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -2891,13 +2918,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', false, null, '"value" is not allowed to be empty'],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max, allow and invalid', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21+07:00');
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -2918,13 +2945,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', false, null, '"value" is not allowed to be empty'],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max, allow, invalid and allow(\'\')', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21+07:00').allow('');
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -2945,13 +2972,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', true],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max, allow, invalid and allow(\'\')', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').allow('');
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -2972,13 +2999,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', true],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max, allow, invalid and regex', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21Z').regex(/Z$/);
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -2999,13 +3026,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', false, null, '"value" is not allowed to be empty'],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max, allow, invalid, regex and allow(\'\')', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21Z').regex(/Z$/).allow('');
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -3026,13 +3053,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', true],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max and allow(\'\')', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('');
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
@@ -3053,13 +3080,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', true],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max and regex', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/);
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
@@ -3080,13 +3107,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', false, null, '"value" is not allowed to be empty'],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max, regex and allow(\'\')', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).allow('');
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
@@ -3107,13 +3134,13 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', true],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
         });
 
         it('validates combination of isoDate, min, max, regex and required', (done) => {
 
             const rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).required();
-            Helper.validate(rule, [
+            Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
                 ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
                 ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
@@ -3134,7 +3161,28 @@ describe('string', () => {
                 ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
                 ['', false, null, '"value" is not allowed to be empty'],
                 [null, false, null, '"value" must be a string']
-            ], done);
+            ], { convert: false }, done);
+        });
+
+        it('validates and formats isoDate with convert set to true (default)', (done) => {
+
+            const rule = Joi.string().isoDate();
+            Helper.validateOptions(rule, [
+                ['+002013-06-07T14:21:46.295Z', true, null, '2013-06-07T14:21:46.295Z'],
+                ['-002013-06-07T14:21:46.295Z', true, null, '-002013-06-07T14:21:46.295Z'],
+                ['2013-06-07T14:21:46.295Z', true, null, '2013-06-07T14:21:46.295Z'],
+                ['2013-06-07T14:21:46.295+07:00', true, null, '2013-06-07T07:21:46.295Z'],
+                ['2013-06-07T14:21:46.295-07:00', true, null, '2013-06-07T21:21:46.295Z'],
+                ['2013-06-07T14:21:46Z', true, null, '2013-06-07T14:21:46.000Z'],
+                ['2013-06-07T14:21:46+07:00', true, null, '2013-06-07T07:21:46.000Z'],
+                ['2013-06-07T14:21:46-07:00', true, null, '2013-06-07T21:21:46.000Z'],
+                ['2013-06-07T14:21Z', true, null, '2013-06-07T14:21:00.000Z'],
+                ['2013-06-07T14:21+07:00', true, null, '2013-06-07T07:21:00.000Z'],
+                ['2013-06-07T14:21-07:00', true, null, '2013-06-07T21:21:00.000Z'],
+                ['2013-06-07', true, null, '2013-06-07T00:00:00.000Z'],
+                ['2013-06-07T14:21', true, null, '2013-06-07T14:21:00.000Z'],
+                ['2013-184', false, null, '"value" must be a valid ISO 8601 date']
+            ], { convert: true }, done);
         });
 
         it('validates an hexadecimal string', (done) => {
@@ -3147,17 +3195,72 @@ describe('string', () => {
             ], done);
         });
 
-        it('validates an base64 string', (done) => {
+        it('validates the base64 options', (done) => {
+
+            expect(() => {
+
+                Joi.string().base64('a');
+            }).to.throw('base64 options must be an object');
+
+            expect(() => {
+
+                Joi.string().base64({ paddingRequired: 'a' });
+            }).to.throw('paddingRequired must be boolean');
+            done();
+        });
+
+        it('validates a base64 string with no options', (done) => {
 
             const rule = Joi.string().base64();
             Helper.validate(rule, [
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
                 ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
                 ['Y=', false, null, '"value" must be a valid base64 string'],
                 ['Y===', false, null, '"value" must be a valid base64 string'],
                 ['YW', false, null, '"value" must be a valid base64 string'],
                 ['YW==', true],
                 ['YW5', false, null, '"value" must be a valid base64 string'],
+                ['YW5=', true],
+                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
+            ], done);
+        });
+
+        it('validates a base64 string with padding explicitly required', (done) => {
+
+            const rule = Joi.string().base64({ paddingRequired: true });
+            Helper.validate(rule, [
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['Y=', false, null, '"value" must be a valid base64 string'],
+                ['Y===', false, null, '"value" must be a valid base64 string'],
+                ['YW', false, null, '"value" must be a valid base64 string'],
+                ['YW==', true],
+                ['YW5', false, null, '"value" must be a valid base64 string'],
+                ['YW5=', true],
+                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
+            ], done);
+        });
+
+        it('validates a base64 string with padding not required', (done) => {
+
+            const rule = Joi.string().base64({ paddingRequired: false });
+            Helper.validate(rule, [
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', true],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IG==cm5hbCBwbGVhc3VyZS4=', false, null, '"value" must be a valid base64 string'],
+                ['Y$', false, null, '"value" must be a valid base64 string'],
+                ['Y', false, null, '"value" must be a valid base64 string'],
+                ['Y===', false, null, '"value" must be a valid base64 string'],
+                ['YW', true],
+                ['YW==', true],
+                ['YW5', true],
                 ['YW5=', true],
                 ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
             ], done);

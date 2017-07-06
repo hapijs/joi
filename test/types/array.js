@@ -3,9 +3,8 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
-const Joi = require('../lib');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Helper = require('../helper');
 
 
 // Declare internals
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('array', () => {
@@ -26,7 +25,7 @@ describe('array', () => {
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(
-          () => Joi.array('invalid argument.')
+            () => Joi.array('invalid argument.')
         ).to.throw('Joi.array() does not allow arguments.');
 
         done();
@@ -362,7 +361,7 @@ describe('array', () => {
             expect(() => {
 
                 Joi.array().min('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
 
@@ -371,9 +370,75 @@ describe('array', () => {
             expect(() => {
 
                 Joi.array().min(1.2);
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
+
+        it('throws when limit is negative', (done) => {
+
+            expect(() => {
+
+                Joi.array().min(-1);
+            }).to.throw('limit must be a positive integer or reference');
+            done();
+        });
+
+        it('validates array size when a reference', (done) => {
+
+            const schema = Joi.object().keys({
+                limit: Joi.any(),
+                arr: Joi.array().min(Joi.ref('limit'))
+            });
+            Helper.validate(schema, [
+                [{
+                    limit: 2,
+                    arr: [1, 2]
+                }, true],
+                [{
+                    limit: 2,
+                    arr: [1]
+                }, false, null, 'child "arr" fails because ["arr" must contain at least ref:limit items]']
+            ], done);
+        });
+
+        it('handles references within a when', (done) => {
+
+            const schema = Joi.object({
+                limit: Joi.any(),
+                arr: Joi.array(),
+                arr2: Joi.when('arr', {
+                    is: Joi.array().min(Joi.ref('limit')),
+                    then: Joi.array()
+                })
+            });
+
+            Helper.validate(schema, [
+                [{
+                    limit: 2,
+                    arr: [1, 2],
+                    arr2: [1, 2]
+                }, true]
+            ], done);
+        });
+
+        it('validates reference is a safe integer', (done) => {
+
+            const schema = Joi.object().keys({
+                limit: Joi.any(),
+                arr: Joi.array().min(Joi.ref('limit'))
+            });
+            Helper.validate(schema, [
+                [{
+                    limit: Math.pow(2, 53),
+                    arr: [1, 2]
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]'],
+                [{
+                    limit: 'I like turtles',
+                    arr: [1]
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]']
+            ], done);
+        });
+
     });
 
     describe('max()', () => {
@@ -392,7 +457,7 @@ describe('array', () => {
             expect(() => {
 
                 Joi.array().max('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
 
@@ -401,9 +466,75 @@ describe('array', () => {
             expect(() => {
 
                 Joi.array().max(1.2);
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
+
+        it('throws when limit is negative', (done) => {
+
+            expect(() => {
+
+                Joi.array().max(-1);
+            }).to.throw('limit must be a positive integer or reference');
+            done();
+        });
+
+        it('validates array size when a reference', (done) => {
+
+            const schema = Joi.object().keys({
+                limit: Joi.any(),
+                arr: Joi.array().max(Joi.ref('limit'))
+            });
+            Helper.validate(schema, [
+                [{
+                    limit: 2,
+                    arr: [1, 2]
+                }, true],
+                [{
+                    limit: 2,
+                    arr: [1, 2, 3]
+                }, false, null, 'child "arr" fails because ["arr" must contain less than or equal to ref:limit items]']
+            ], done);
+        });
+
+        it('handles references within a when', (done) => {
+
+            const schema = Joi.object({
+                limit: Joi.any(),
+                arr: Joi.array(),
+                arr2: Joi.when('arr', {
+                    is: Joi.array().max(Joi.ref('limit')),
+                    then: Joi.array()
+                })
+            });
+
+            Helper.validate(schema, [
+                [{
+                    limit: 2,
+                    arr: [1, 2],
+                    arr2: [1, 2]
+                }, true]
+            ], done);
+        });
+
+        it('validates reference is a safe integer', (done) => {
+
+            const schema = Joi.object().keys({
+                limit: Joi.any(),
+                arr: Joi.array().max(Joi.ref('limit'))
+            });
+            Helper.validate(schema, [
+                [{
+                    limit: Math.pow(2, 53),
+                    arr: [1, 2]
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]'],
+                [{
+                    limit: 'I like turtles',
+                    arr: [1]
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]']
+            ], done);
+        });
+
     });
 
     describe('length()', () => {
@@ -422,7 +553,7 @@ describe('array', () => {
             expect(() => {
 
                 Joi.array().length('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
             done();
         });
 
@@ -431,8 +562,73 @@ describe('array', () => {
             expect(() => {
 
                 Joi.array().length(1.2);
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
             done();
+        });
+
+        it('throws when limit is negative', (done) => {
+
+            expect(() => {
+
+                Joi.array().length(-1);
+            }).to.throw('limit must be a positive integer or reference');
+            done();
+        });
+
+        it('validates array size when a reference', (done) => {
+
+            const schema = Joi.object().keys({
+                limit: Joi.any(),
+                arr: Joi.array().length(Joi.ref('limit'))
+            });
+            Helper.validate(schema, [
+                [{
+                    limit: 2,
+                    arr: [1, 2]
+                }, true],
+                [{
+                    limit: 2,
+                    arr: [1]
+                }, false, null, 'child "arr" fails because ["arr" must contain ref:limit items]']
+            ], done);
+        });
+
+        it('handles references within a when', (done) => {
+
+            const schema = Joi.object({
+                limit: Joi.any(),
+                arr: Joi.array(),
+                arr2: Joi.when('arr', {
+                    is: Joi.array().length(Joi.ref('limit')),
+                    then: Joi.array()
+                })
+            });
+
+            Helper.validate(schema, [
+                [{
+                    limit: 2,
+                    arr: [1, 2],
+                    arr2: [1, 2]
+                }, true]
+            ], done);
+        });
+
+        it('validates reference is a safe integer', (done) => {
+
+            const schema = Joi.object().keys({
+                limit: Joi.any(),
+                arr: Joi.array().length(Joi.ref('limit'))
+            });
+            Helper.validate(schema, [
+                [{
+                    limit: Math.pow(2, 53),
+                    arr: [1, 2]
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]'],
+                [{
+                    limit: 'I like turtles',
+                    arr: [1]
+                }, false, null, 'child "arr" fails because ["arr" references "limit" which is not a positive integer]']
+            ], done);
         });
     });
 
@@ -1145,6 +1341,13 @@ describe('array', () => {
             });
             done();
         });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.array().sparse();
+            expect(schema.sparse()).to.shallow.equal(schema);
+            done();
+        });
     });
 
     describe('single()', () => {
@@ -1221,6 +1424,13 @@ describe('array', () => {
                 type: 'array',
                 flags: { sparse: false, single: false }
             });
+            done();
+        });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.array().single();
+            expect(schema.single()).to.shallow.equal(schema);
             done();
         });
     });

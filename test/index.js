@@ -3,7 +3,6 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
 const Joi = require('../lib');
 const Helper = require('./helper');
 
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('Joi', () => {
@@ -122,13 +121,13 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false, null, '"value" must be one of [key]. "value" must be a number. "value" must be an object'],
-            [6, false, null, '"value" must be a string. "value" must be one of [5]. "value" must be an object'],
-            [{ c: 5 }, false, null, '"value" must be a string. "value" must be a number. "c" is not allowed'],
+            ['other', false, null, '"value" must be one of [key], "value" must be a number, "value" must be an object'],
+            [6, false, null, '"value" must be a string, "value" must be one of [5], "value" must be an object'],
+            [{ c: 5 }, false, null, '"value" must be a string, "value" must be a number, "c" is not allowed'],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false, null, '"value" must be a string. "value" must be a number. child "a" fails because ["a" must be a boolean]']
+            [{ a: 5, b: 'a' }, false, null, '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]']
         ], done);
     });
 
@@ -138,13 +137,13 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false, null, '"value" must be one of [key]. "value" must be a number. "value" must be an object'],
-            [6, false, null, '"value" must be a string. "value" must be one of [5]. "value" must be an object'],
-            [{ c: 5 }, false, null, '"value" must be a string. "value" must be a number. "c" is not allowed'],
+            ['other', false, null, '"value" must be one of [key], "value" must be a number, "value" must be an object'],
+            [6, false, null, '"value" must be a string, "value" must be one of [5], "value" must be an object'],
+            [{ c: 5 }, false, null, '"value" must be a string, "value" must be a number, "c" is not allowed'],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false, null, '"value" must be a string. "value" must be a number. child "a" fails because ["a" must be a boolean]']
+            [{ a: 5, b: 'a' }, false, null, '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]']
         ], done);
     });
 
@@ -280,7 +279,7 @@ describe('Joi', () => {
         ], done);
     });
 
-    it('validates or', (done) => {
+    it('validates or()', (done) => {
 
         const schema = Joi.object({
             txt: Joi.string(),
@@ -317,7 +316,7 @@ describe('Joi', () => {
         });
     });
 
-    it('validates and', (done) => {
+    it('validates and()', (done) => {
 
         const schema = Joi.object({
             txt: Joi.string(),
@@ -1523,7 +1522,7 @@ describe('Joi', () => {
             defaultRef: Joi.string().default(defaultRef, 'not here'),
             defaultFn: Joi.string().default(defaultFn, 'not here'),
             defaultDescribedFn: Joi.string().default(defaultDescribedFn, 'described test')
-        }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
+        }).options({ abortEarly: false, convert: false }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
 
         const result = {
             type: 'object',
@@ -1666,7 +1665,11 @@ describe('Joi', () => {
                         override: false
                     }
                 }
-            ]
+            ],
+            options: {
+                abortEarly: false,
+                convert: false
+            }
         };
 
         it('describes schema (direct)', (done) => {
@@ -1764,6 +1767,42 @@ describe('Joi', () => {
 
                 Joi.attempt('x', Joi.number(), new Error('invalid value'));
             }).to.throw('invalid value');
+            done();
+        });
+
+        it('throws a validation error and not a TypeError when parameter is given as a json string with incorrect property', (done) => {
+
+            const schema = {
+                a: Joi.object({
+                    b: Joi.string()
+                })
+            };
+
+            const input = {
+                a: '{"c":"string"}'
+            };
+
+            expect(() => {
+
+                Joi.attempt(input, schema);
+            }).to.throw(/\"c\" is not allowed/);
+            done();
+        });
+
+        it('throws a custom error from the schema if provided', (done) => {
+
+            expect(() => {
+
+                Joi.attempt('x', Joi.number().error(new Error('Oh noes !')));
+            }).to.throw('Oh noes !');
+            done();
+        });
+
+        it('throws an error with combined messages', (done) => {
+
+            const schema = Joi.number().error(new Error('Oh noes !'));
+            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('Oh noes !');
+            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('Oh noes !');
             done();
         });
     });
@@ -1872,10 +1911,10 @@ describe('Joi', () => {
 
             it('must be an object or array of objects', (done) => {
 
-                expect(() => Joi.extend(true)).to.throw(/"0" must be an object/);
-                expect(() => Joi.extend(null)).to.throw(/"0" must be an object/);
-                expect(() => Joi.extend([{ name: 'foo' }, true])).to.throw(/"1" must be an object/);
-                expect(() => Joi.extend([{ name: 'foo' }, null])).to.throw(/"1" must be an object/);
+                expect(() => Joi.extend(true)).to.throw(/"value" at position 0 does not match any of the allowed types/);
+                expect(() => Joi.extend(null)).to.throw(/"value" at position 0 does not match any of the allowed types/);
+                expect(() => Joi.extend([{ name: 'foo' }, true])).to.throw(/"value" at position 1 does not match any of the allowed types/);
+                expect(() => Joi.extend([{ name: 'foo' }, null])).to.throw(/"value" at position 1 does not match any of the allowed types/);
                 expect(() => Joi.extend()).to.throw('You need to provide at least one extension');
                 done();
             });
@@ -2111,7 +2150,7 @@ describe('Joi', () => {
             done();
         });
 
-        it('defines a custom type with a rule with setup', (done) => {
+        it('defines a custom type with a rule with setup which return undefined', (done) => {
 
             const customJoi = Joi.extend({
                 name: 'myType',
@@ -2138,6 +2177,69 @@ describe('Joi', () => {
             expect(schema.foo('bar').validate(null).value).to.equal({ first: 'bar', second: undefined });
             expect(schema.foo('bar', Joi.ref('a.b')).validate(null).value.first).to.equal('bar');
             expect(Joi.isRef(schema.foo('bar', Joi.ref('a.b')).validate(null).value.second)).to.be.true();
+            done();
+        });
+
+        it('defines a custom type with a rule with setup which return a Joi object', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                pre(value, state, options) {
+
+                    return 'baz';
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        setup(params) {
+
+                            return Joi.string();
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(schema.foo().validate('bar').value).to.equal('bar');
+            expect(schema.validate('baz').value).to.equal('baz');
+            done();
+        });
+
+        it('defines a custom type with a rule with setup which return other value will throw error', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                pre(value, state, options) {
+
+                    return Joi.number();
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        setup(params) {
+
+                            return 0;
+                        }
+                    }, {
+                        name: 'bar',
+                        setup(params) {
+
+                            return null;
+                        }
+                    }, {
+                        name: 'foobar',
+                        setup(params) {
+
+                            return { isJoi:true };
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(() => schema.foo()).to.throw('Setup of extension Joi.myType().foo() must return undefined or a Joi object');
+            expect(() => schema.bar()).to.throw('Setup of extension Joi.myType().bar() must return undefined or a Joi object');
+            expect(() => schema.foobar()).to.throw('Setup of extension Joi.myType().foobar() must return undefined or a Joi object');
             done();
         });
 
@@ -2473,7 +2575,6 @@ describe('Joi', () => {
             done();
         });
 
-
         it('defines a custom type coercing and casting its input value', (done) => {
 
             const customJoi = Joi.extend({
@@ -2777,8 +2878,117 @@ describe('Joi', () => {
                 name: 'myType'
             });
 
-            const Any = require('../lib/any');
+            const Any = require('../lib/types/any');
             expect(customJoi).to.be.an.instanceof(Any);
+            done();
+        });
+
+        it('should return a custom Joi with types not inheriting root properties', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType'
+            });
+
+            const schema = customJoi.valid(true);
+            expect(schema.isRef).to.not.exist();
+            done();
+        });
+
+        it('should be able to define a type in a factory function', (done) => {
+
+            const customJoi = Joi.extend((joi) => ({
+                name: 'myType'
+            }));
+
+            expect(() => customJoi.myType()).to.not.throw();
+            done();
+        });
+
+        it('should be able to use types defined in the same extend call', (done) => {
+
+            const customJoi = Joi.extend([
+                {
+                    name: 'myType'
+                },
+                (joi) => ({
+                    name: 'mySecondType',
+                    base: joi.myType()
+                })
+            ]);
+
+            expect(() => customJoi.mySecondType()).to.not.throw();
+            done();
+        });
+
+        it('should be able to merge rules when type is defined several times in the same extend call', (done) => {
+
+            const customJoi = Joi.extend([
+                (joi) => ({
+                    name: 'myType',
+                    base: joi.myType ? joi.myType() : joi.number(), // Inherit an already existing implementation or number
+                    rules: [
+                        {
+                            name: 'foo',
+                            validate(params, value, state, options) {
+
+                                return 1;
+                            }
+                        }
+                    ]
+                }),
+                (joi) => ({
+                    name: 'myType',
+                    base: joi.myType ? joi.myType() : joi.number(),
+                    rules: [
+                        {
+                            name: 'bar',
+                            validate(params, value, state, options) {
+
+                                return 2;
+                            }
+                        }
+                    ]
+                })
+            ]);
+
+            expect(() => customJoi.myType().foo().bar()).to.not.throw();
+            expect(customJoi.attempt({ a: 123, b: 456 }, { a: customJoi.myType().foo(), b: customJoi.myType().bar() })).to.equal({ a: 1, b: 2 });
+            done();
+        });
+
+        it('should only keep last definition when type is defined several times with different bases', (done) => {
+
+            const customJoi = Joi.extend([
+                (joi) => ({
+                    name: 'myType',
+                    base: Joi.number(),
+                    rules: [
+                        {
+                            name: 'foo',
+                            validate(params, value, state, options) {
+
+                                return 1;
+                            }
+                        }
+                    ]
+                }),
+                (joi) => ({
+                    name: 'myType',
+                    base: Joi.string(),
+                    rules: [
+                        {
+                            name: 'bar',
+                            validate(params, value, state, options) {
+
+                                return 2;
+                            }
+                        }
+                    ]
+                })
+            ]);
+
+            expect(() => customJoi.myType().foo()).to.throw();
+            expect(() => customJoi.myType().bar()).to.not.throw();
             done();
         });
 

@@ -13,7 +13,7 @@ Remove those badges until they work properly on semver.
 
 -->
 [![NSP Status](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e/badge)](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e)
-[![Known Vulnerabilities](https://snyk.io/test/npm/joi/badge.svg)](https://snyk.io/test/npm/joi)
+[![Known Vulnerabilities](https://snyk.io/test/github/hapijs/joi/badge.svg)](https://snyk.io/test/github/hapijs/joi)
 
 [![Join the chat at https://gitter.im/hapijs/joi](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hapijs/joi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -125,7 +125,7 @@ When validating a schema:
 * Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
 
 # API
-See the [API Reference](https://github.com/hapijs/joi/blob/v10.2.2/API.md).
+See the [API Reference](https://github.com/hapijs/joi/blob/v10.6.0/API.md).
 
 # Browsers
 

@@ -3,9 +3,8 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
-const Joi = require('../lib');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Helper = require('../helper');
 
 
 // Declare internals
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('binary', () => {
@@ -26,7 +25,7 @@ describe('binary', () => {
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(
-          () => Joi.binary('invalid argument.')
+            () => Joi.binary('invalid argument.')
         ).to.throw('Joi.binary() does not allow arguments.');
 
         done();
@@ -103,6 +102,13 @@ describe('binary', () => {
 
                 Joi.binary().encoding('base6');
             }).to.throw('Invalid encoding: base6');
+            done();
+        });
+
+        it('avoids unnecessary cloning when called twice', (done) => {
+
+            const schema = Joi.binary().encoding('base64');
+            expect(schema.encoding('base64')).to.shallow.equal(schema);
             done();
         });
     });

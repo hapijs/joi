@@ -3,7 +3,6 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
 const Joi = require('../lib');
 const Helper = require('./helper');
 
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('ref', () => {
@@ -374,6 +373,15 @@ describe('ref', () => {
         expect(desc).to.equal({
             type: 'alternatives',
             flags: { presence: 'ignore' },
+            base: {
+                type: 'any',
+                flags: {
+                    allowOnly: true,
+                    default: 'ref:a.b'
+                },
+                invalids: ['context:b.c'],
+                valids: ['ref:a.b']
+            },
             alternatives: [{
                 ref: 'ref:a.b',
                 is: {

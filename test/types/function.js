@@ -2,10 +2,9 @@
 
 // Load modules
 
-const Code = require('code');
 const Lab = require('lab');
-const Joi = require('../lib');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Helper = require('../helper');
 
 
 // Declare internals
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('func', () => {
@@ -26,7 +25,7 @@ describe('func', () => {
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(
-          () => Joi.func('invalid argument.')
+            () => Joi.func('invalid argument.')
         ).to.throw('Joi.func() does not allow arguments.');
 
         done();

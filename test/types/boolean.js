@@ -3,9 +3,8 @@
 // Load modules
 
 const Lab = require('lab');
-const Code = require('code');
-const Joi = require('../lib');
-const Helper = require('./helper');
+const Joi = require('../..');
+const Helper = require('../helper');
 
 
 // Declare internals
@@ -18,7 +17,7 @@ const internals = {};
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-const expect = Code.expect;
+const expect = Lab.expect;
 
 
 describe('boolean', () => {
@@ -26,7 +25,7 @@ describe('boolean', () => {
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(
-          () => Joi.boolean('invalid argument.')
+            () => Joi.boolean('invalid argument.')
         ).to.throw('Joi.boolean() does not allow arguments.');
 
         done();
