@@ -688,6 +688,22 @@ describe('object', () => {
             });
         });
 
+        it('using regex and override enabled it should allow overwriting existing value', (done) => {
+
+            const regex = /foobar/i;
+
+            const schema = Joi.object({
+                fooBar: Joi.string()
+            }).rename(regex, 'fooBar', { override: true });
+
+            Joi.compile(schema).validate({ fooBar: 'a' }, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value.fooBar).to.equal('a');
+                done();
+            });
+        });
+
         it('aliases a key', (done) => {
 
             const schema = Joi.object({
