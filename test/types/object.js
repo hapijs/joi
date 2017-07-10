@@ -693,10 +693,11 @@ describe('object', () => {
             const regex = /foobar/i;
 
             const schema = Joi.object({
-                fooBar: Joi.string()
+                fooBar: Joi.string(),
+                fooBaz: Joi.string()
             }).rename(regex, 'fooBar', { override: true });
 
-            Joi.compile(schema).validate({ fooBar: 'a' }, (err, value) => {
+            Joi.compile(schema).validate({ fooBar: 'a', fooBaz: 'b' }, (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value.fooBar).to.equal('a');
