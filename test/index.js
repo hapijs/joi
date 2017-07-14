@@ -1625,14 +1625,20 @@ describe('Joi', () => {
                 defaultFn: {
                     type: 'string',
                     flags: {
-                        default: 'testing'
+                        default: {
+                            description: 'testing',
+                            function   : defaultFn
+                        }
                     },
                     invalids: ['']
                 },
                 defaultDescribedFn: {
                     type: 'string',
                     flags: {
-                        default: 'described test'
+                        default: {
+                            description: 'described test',
+                            function   : defaultDescribedFn
+                        }
                     },
                     invalids: ['']
                 }
@@ -1671,8 +1677,8 @@ describe('Joi', () => {
             const description = schema.describe();
             expect(description).to.equal(result);
             expect(description.children.defaultRef.flags.default).to.equal('ref:xor');
-            expect(description.children.defaultFn.flags.default).to.equal('testing');
-            expect(description.children.defaultDescribedFn.flags.default).to.equal('described test');
+            expect(description.children.defaultFn.flags.default.description).to.equal('testing');
+            expect(description.children.defaultDescribedFn.flags.default.description).to.equal('described test');
             done();
         });
 
