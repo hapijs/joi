@@ -285,6 +285,28 @@ const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
 const number = Joi.reach(schema, 'foo.bar');
 ```
 
+### `defaults(fn)`
+
+Creates a new Joi instance that will apply defaults onto newly created schemas through the use of the `fn` function that takes exactly one argument, the schema being created.
+
+The function must always return a schema, even if untransformed.
+
+```js
+const defaultJoi = Joi.defaults((schema) => {
+
+    switch (schema._type) {
+        case 'string':
+            return schema.allow('');
+        case 'object':
+            return schema.min(1);
+        default:
+            return schema;
+    }
+});
+
+const schema = defaultJoi.object(); // Equivalent to a Joi.object().min(1)
+```
+
 ### `extend(extension)`
 
 Creates a new Joi instance customized with the extension(s) you provide included.
