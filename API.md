@@ -1529,7 +1529,7 @@ object.validate({ b: 5 }, (err, value) => { });
 It can also rename keys using a regex
 
 ```js
-const regex = /foobar/i;
+const regex = /^foobar$/i;
 
 const schema = Joi.object().keys({
   fooBar: Joi.string()
