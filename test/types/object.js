@@ -688,23 +688,6 @@ describe('object', () => {
             });
         });
 
-        it('using regex and override enabled it should allow overwriting existing value', (done) => {
-
-            const regex = /foobar/i;
-
-            const schema = Joi.object({
-                fooBar: Joi.string(),
-                fooBaz: Joi.string()
-            }).rename(regex, 'fooBar', { override: true });
-
-            Joi.compile(schema).validate({ fooBar: 'a', fooBaz: 'b' }, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value.fooBar).to.equal('a');
-                done();
-            });
-        });
-
         it('aliases a key', (done) => {
 
             const schema = Joi.object({
@@ -723,6 +706,24 @@ describe('object', () => {
             });
         });
 
+        it('using regex it aliases a key', (done) => {
+
+            const regex = /^a$/i;
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.number()
+            }).rename(regex, 'b', { alias: true });
+
+            Joi.compile(schema).validate({ A: 100 }, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value.a).to.equal(100);
+                expect(value.b).to.equal(100);
+                done();
+            });
+        });
+
         it('with override disabled should not allow overwriting existing value', (done) => {
 
             const schema = Joi.object({
@@ -736,6 +737,20 @@ describe('object', () => {
             });
         });
 
+        it('using regex with override disabled it should not allow overwriting existing value', (done) => {
+
+            const regex = /^test1$/i;
+            const schema = Joi.object({
+                test1: Joi.string()
+            }).rename(regex, 'test1');
+
+            Joi.compile(schema).validate({ test: 'b', test1: 'a' }, (err, value) => {
+
+                expect(err.message).to.equal('"value" cannot rename child "/^test1$/i" because override is disabled and target "test1" exists');
+                done();
+            });
+        });
+
         it('with override enabled should allow overwriting existing value', (done) => {
 
             const schema = Joi.object({
@@ -743,6 +758,21 @@ describe('object', () => {
             }).rename('test', 'test1', { override: true });
 
             schema.validate({ test: 'b', test1: 'a' }, (err, value) => {
+
+                expect(err).to.not.exist();
+                done();
+            });
+        });
+
+        it('using regex with override enabled it should allow overwriting existing value', (done) => {
+
+            const regex = /^test$/i;
+
+            const schema = Joi.object({
+                test1: Joi.string()
+            }).rename(regex, 'test1', { override: true });
+
+            Joi.compile(schema).validate({ test: 'b', test1: 'a' }, (err, value) => {
 
                 expect(err).to.not.exist();
                 done();
