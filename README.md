@@ -25,6 +25,8 @@ Imagine you run facebook and you want visitors to sign up on the website with re
 
 This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object that stores information) to ensure *validation* of key information.
 
+# API
+See the detailed [API Reference](https://github.com/hapijs/joi/blob/v10.6.0/API.md).
 
 # Example
 
@@ -123,9 +125,6 @@ When validating a schema:
 
 * Strings are utf-8 encoded by default.
 * Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
-
-# API
-See the [API Reference](https://github.com/hapijs/joi/blob/v10.6.0/API.md).
 
 # Browsers
 
