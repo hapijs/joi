@@ -294,7 +294,7 @@ The function must always return a schema, even if untransformed.
 ```js
 const defaultJoi = Joi.defaults((schema) => {
 
-    switch (schema._type) {
+    switch (schema.type) {
         case 'string':
             return schema.allow('');
         case 'object':
@@ -414,6 +414,16 @@ Generates a schema object that matches any data type.
 ```js
 const any = Joi.any();
 any.validate('a', (err, value) => { });
+```
+
+#### `type`
+
+Gets the type of the schema.
+
+```js
+const schema = Joi.string();
+
+schema.type === 'string';   // === true
 ```
 
 #### `any.validate(value, [options], [callback])`
