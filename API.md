@@ -25,7 +25,7 @@
     - [`any.allow(value)`](#anyallowvalue)
     - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
     - [`any.invalid(value)` - aliases: `disallow`, `not`](#anyinvalidvalue---aliases-disallow-not)
-    - [`any.required()`](#anyrequired)
+    - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
     - [`any.optional()`](#anyoptional)
     - [`any.forbidden()`](#anyforbidden)
     - [`any.strip()`](#anystrip)
@@ -465,7 +465,7 @@ const schema = {
 };
 ```
 
-#### `any.required()`
+#### `any.required()` - aliases: `exist`
 
 Marks a key as required which will not allow `undefined` as value. All keys are optional by default.
 
@@ -652,7 +652,7 @@ For example, use `is: Joi.number().required()` to guarantee that a joi reference
 
 ```js
 const schema = {
-    a: Joi.any().valid('x').when('b', { is: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') }),
+    a: Joi.any().valid('x').when('b', { is: Joi.exist(), then: Joi.valid('y'), otherwise: Joi.valid('z') }),
     b: Joi.any()
 };
 ```
