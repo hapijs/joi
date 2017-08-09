@@ -1878,7 +1878,7 @@ describe('Joi', () => {
 
             const a = Joi.number();
             const schema = Joi.object().keys({ a });
-            expect(Joi.reach(schema, 'a')).to.equal(a);
+            expect(Joi.reach(schema, 'a')).to.shallow.equal(a);
             done();
         });
 
@@ -1893,7 +1893,7 @@ describe('Joi', () => {
 
             const bar = Joi.number();
             const schema = Joi.object({ foo: Joi.object({ bar }) });
-            expect(Joi.reach(schema, 'foo.bar')).to.equal(bar);
+            expect(Joi.reach(schema, 'foo.bar')).to.shallow.equal(bar);
             done();
         });
 
@@ -2992,5 +2992,219 @@ describe('Joi', () => {
             done();
         });
 
+    });
+
+    describe('defaults()', () => {
+
+        it('should apply defaults to joi itself', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = defaultJoi.optional();
+            expect(schema.describe()).to.equal({
+                type: 'any',
+                description: 'defaulted',
+                flags: {
+                    presence: 'optional'
+                }
+            });
+            done();
+        });
+
+        it('should apply defaults to standard types', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = defaultJoi.string();
+            expect(schema.describe()).to.equal({
+                type: 'string',
+                invalids: [''],
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                }
+            });
+            done();
+        });
+
+        it('should apply defaults to types with arguments', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = defaultJoi.object({ foo: 'bar' });
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                },
+                children: {
+                    foo: {
+                        type: 'string',
+                        description: 'defaulted',
+                        flags: {
+                            presence: 'required',
+                            allowOnly: true
+                        },
+                        invalids: [''],
+                        valids: ['bar']
+                    }
+                }
+            });
+            done();
+        });
+
+        it('should keep several defaults separated', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const defaultJoi2 = Joi.defaults((schema) => schema.required().description('defaulted2'));
+            const schema = defaultJoi.object({
+                foo: 'bar',
+                baz: defaultJoi2.object().keys({
+                    qux: 'zorg'
+                })
+            });
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                },
+                children: {
+                    foo: {
+                        type: 'string',
+                        description: 'defaulted',
+                        flags: {
+                            presence: 'required',
+                            allowOnly: true
+                        },
+                        invalids: [''],
+                        valids: ['bar']
+                    },
+                    baz: {
+                        children: {
+                            qux: {
+                                description: 'defaulted2',
+                                flags: {
+                                    allowOnly: true,
+                                    presence: 'required'
+                                },
+                                invalids: [''],
+                                type: 'string',
+                                valids: ['zorg']
+                            }
+                        },
+                        description: 'defaulted2',
+                        flags: {
+                            presence: 'required'
+                        },
+                        type: 'object'
+                    }
+
+                }
+            });
+            done();
+        });
+
+        it('should deal with inherited defaults', (done) => {
+
+            const defaultJoi = Joi
+                .defaults((schema) => schema.required().description('defaulted'))
+                .defaults((schema) => schema.raw());
+            const schema = defaultJoi.object({
+                foo: 'bar'
+            });
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required',
+                    raw: true
+                },
+                children: {
+                    foo: {
+                        type: 'string',
+                        description: 'defaulted',
+                        flags: {
+                            presence: 'required',
+                            allowOnly: true,
+                            raw: true
+                        },
+                        invalids: [''],
+                        valids: ['bar']
+                    }
+                }
+            });
+            done();
+        });
+
+        it('should keep defaults on an extended joi', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const extendedJoi = defaultJoi.extend({ name: 'foobar' });
+            const schema = extendedJoi.foobar();
+            expect(schema.describe()).to.equal({
+                type: 'foobar',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                }
+            });
+            done();
+        });
+
+        it('should apply defaults on an extended joi', (done) => {
+
+            const extendedJoi = Joi.extend({ name: 'foobar' });
+            const defaultJoi = extendedJoi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = defaultJoi.foobar();
+            expect(schema.describe()).to.equal({
+                type: 'foobar',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                }
+            });
+            done();
+        });
+
+        it('should fail on missing return for any', (done) => {
+
+            expect(() => {
+
+                return Joi.defaults((schema) => {
+
+                    switch (schema.type) {
+                        case 'bool':
+                            return schema.required();
+                    }
+                });
+            }).to.throw('defaults() must return a schema');
+            done();
+        });
+
+        it('should fail on missing return for a standard type', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => {
+
+                switch (schema.type) {
+                    case 'any':
+                        return schema.required();
+                }
+            });
+            expect(() => defaultJoi.string()).to.throw('defaults() must return a schema');
+            done();
+        });
+
+        it('should fail on missing return for a standard type on an inherited default', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => {
+
+                switch (schema.type) {
+                    case 'any':
+                        return schema.required();
+                }
+            });
+            const defaultJoi2 = defaultJoi.defaults((schema) => schema.required());
+            expect(() => defaultJoi2.string()).to.throw('defaults() must return a schema');
+            done();
+        });
     });
 });
