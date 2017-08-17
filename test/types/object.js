@@ -764,7 +764,7 @@ describe('object', () => {
             });
         });
 
-        it('using regex with override enabled it should allow overwriting existing value', (done) => {
+        it('with override enabled should allow overwriting existing value', (done) => {
 
             const regex = /^test$/i;
 
@@ -772,7 +772,7 @@ describe('object', () => {
                 test1: Joi.string()
             }).rename(regex, 'test1', { override: true });
 
-            Joi.compile(schema).validate({ test: 'b', test1: 'a' }, (err, value) => {
+            schema.validate({ test: 'b', test1: 'a' }, (err, value) => {
 
                 expect(err).to.not.exist();
                 done();
@@ -786,6 +786,27 @@ describe('object', () => {
                     one: Joi.string(),
                     two: Joi.string()
                 }).rename('uno', 'one').rename('dos', 'two'))
+            };
+
+            const data = { arr: [{ uno: '1', dos: '2' }] };
+            Joi.object(schema).validate(data, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value.arr[0].one).to.equal('1');
+                expect(value.arr[0].two).to.equal('2');
+                done();
+            });
+        });
+
+        it('using regex it renames when data is nested in an array via items', (done) => {
+
+            const regex = /^uno$/i;
+
+            const schema = {
+                arr: Joi.array().items(Joi.object({
+                    one: Joi.string(),
+                    two: Joi.string()
+                }).rename(regex, 'one').rename('dos', 'two'))
             };
 
             const data = { arr: [{ uno: '1', dos: '2' }] };
@@ -826,11 +847,60 @@ describe('object', () => {
             });
         });
 
+        it('using regex it applies rename and validation in the correct order regardless of key order', (done) => {
+
+            const regex = /^b$/i;
+
+            const schema1 = Joi.object({
+                a: Joi.number()
+            }).rename(regex, 'a');
+
+            const input1 = { b: '5' };
+
+            schema1.validate(input1, (err1, value1) => {
+
+                expect(err1).to.not.exist();
+                expect(value1.b).to.not.exist();
+                expect(value1.a).to.equal(5);
+
+                const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
+                const input2 = { b: '5' };
+
+                schema2.validate(input2, (err2, value2) => {
+
+                    expect(err2).to.not.exist();
+                    expect(value2.b).to.not.exist();
+                    expect(value2.a).to.equal(5);
+
+                    done();
+                });
+            });
+        });
+
         it('sets the default value after key is renamed', (done) => {
 
             const schema = Joi.object({
                 foo2: Joi.string().default('test')
             }).rename('foo', 'foo2');
+
+            const input = {};
+
+            Joi.validate(input, schema, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value.foo2).to.equal('test');
+
+                done();
+            });
+        });
+
+        it('using regex it sets the default value after key is renamed', (done) => {
+
+            const regex = /^foo$/i;
+
+            const schema = Joi.object({
+                foo2: Joi.string().default('test')
+            }).rename(regex, 'foo2');
 
             const input = {};
 
@@ -876,9 +946,46 @@ describe('object', () => {
             });
         });
 
+        it('using regex it should not create new keys when they key in question does not exist', (done) => {
+
+            const regex = /^b$/i;
+
+            const schema = Joi.object().rename(regex, '_b');
+
+            const input = {
+                a: 'something'
+            };
+
+            schema.validate(input, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(Object.keys(value)).to.include('a');
+                expect(value.a).to.equal('something');
+                done();
+            });
+        });
+
         it('should remove a key with override if from does not exist', (done) => {
 
             const schema = Joi.object().rename('b', 'a', { override: true });
+
+            const input = {
+                a: 'something'
+            };
+
+            schema.validate(input, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal({});
+                done();
+            });
+        });
+
+        it('using regex it should remove a key with override if from does not exist', (done) => {
+
+            const regex = /^b$/i;
+
+            const schema = Joi.object().rename(regex, 'a', { override: true });
 
             const input = {
                 a: 'something'
@@ -908,9 +1015,45 @@ describe('object', () => {
             });
         });
 
+        it('using regex it should ignore a key with ignoredUndefined if from does not exist', (done) => {
+
+            const regex = /^b$/i;
+
+            const schema = Joi.object().rename(regex, 'a', { ignoreUndefined: true });
+
+            const input = {
+                a: 'something'
+            };
+
+            schema.validate(input, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal({ a: 'something' });
+                done();
+            });
+        });
+
         it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', (done) => {
 
             const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true, override: true });
+
+            const input = {
+                a: 'something'
+            };
+
+            schema.validate(input, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal({ a: 'something' });
+                done();
+            });
+        });
+
+        it('using regex it shouldn\'t delete a key with override and ignoredUndefined if from does not exist', (done) => {
+
+            const regex = /^b$/i;
+
+            const schema = Joi.object().rename(regex, 'a', { ignoreUndefined: true, override: true });
 
             const input = {
                 a: 'something'
