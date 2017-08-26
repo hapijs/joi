@@ -52,9 +52,33 @@ describe('binary', () => {
             ['hello', true],
             [hello, true],
             [new Buffer('hello'), true],
-            ['goodbye', false, null, '"value" must be one of [hello]'],
-            [new Buffer('goodbye'), false, null, '"value" must be one of [hello]'],
-            [new Buffer('HELLO'), false, null, '"value" must be one of [hello]']
+            ['goodbye', false, null, {
+                message: '"value" must be one of [hello]',
+                details: [{
+                    message: '"value" must be one of [hello]',
+                    path: [],
+                    type: 'any.allowOnly',
+                    context: { valids: [hello], label: 'value', key: undefined }
+                }]
+            }],
+            [new Buffer('goodbye'), false, null, {
+                message: '"value" must be one of [hello]',
+                details: [{
+                    message: '"value" must be one of [hello]',
+                    path: [],
+                    type: 'any.allowOnly',
+                    context: { valids: [hello], label: 'value', key: undefined }
+                }]
+            }],
+            [new Buffer('HELLO'), false, null, {
+                message: '"value" must be one of [hello]',
+                details: [{
+                    message: '"value" must be one of [hello]',
+                    path: [],
+                    type: 'any.allowOnly',
+                    context: { valids: [hello], label: 'value', key: undefined }
+                }]
+            }]
         ], done);
     });
 
@@ -64,8 +88,13 @@ describe('binary', () => {
 
             Joi.binary().validate(5, (err, value) => {
 
-                expect(err).to.exist();
-                expect(err.message).to.equal('"value" must be a buffer or a string');
+                expect(err).to.be.an.error('"value" must be a buffer or a string');
+                expect(err.details).to.equal([{
+                    message: '"value" must be a buffer or a string',
+                    path: [],
+                    type: 'binary.base',
+                    context: { label: 'value', key: undefined }
+                }]);
                 done();
             });
         });
@@ -120,7 +149,15 @@ describe('binary', () => {
             const schema = Joi.binary().min(5);
             Helper.validate(schema, [
                 [new Buffer('testing'), true],
-                [new Buffer('test'), false, null, '"value" must be at least 5 bytes']
+                [new Buffer('test'), false, null, {
+                    message: '"value" must be at least 5 bytes',
+                    details: [{
+                        message: '"value" must be at least 5 bytes',
+                        path: [],
+                        type: 'binary.min',
+                        context: { limit: 5, value: new Buffer('test'), label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -149,7 +186,20 @@ describe('binary', () => {
 
             const schema = Joi.binary().max(5);
             Helper.validate(schema, [
-                [new Buffer('testing'), false, null, '"value" must be less than or equal to 5 bytes'],
+                [new Buffer('testing'), false, null, {
+                    message: '"value" must be less than or equal to 5 bytes',
+                    details: [{
+                        message: '"value" must be less than or equal to 5 bytes',
+                        path: [],
+                        type: 'binary.max',
+                        context: {
+                            limit: 5,
+                            value: new Buffer('testing'),
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 [new Buffer('test'), true]
             ], done);
         });
@@ -180,7 +230,20 @@ describe('binary', () => {
             const schema = Joi.binary().length(4);
             Helper.validate(schema, [
                 [new Buffer('test'), true],
-                [new Buffer('testing'), false, null, '"value" must be 4 bytes']
+                [new Buffer('testing'), false, null, {
+                    message: '"value" must be 4 bytes',
+                    details: [{
+                        message: '"value" must be 4 bytes',
+                        path: [],
+                        type: 'binary.length',
+                        context: {
+                            limit: 4,
+                            value: new Buffer('testing'),
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 

@@ -28,6 +28,17 @@ describe('alternatives', () => {
 
             expect(err).to.exist();
             expect(err.message).to.equal('"value" not matching any of the allowed alternatives');
+            expect(err.details).to.equal([
+                {
+                    context: {
+                        key: undefined,
+                        label: 'value'
+                    },
+                    message: '"value" not matching any of the allowed alternatives',
+                    path: [],
+                    type: 'alternatives.base'
+                }
+            ]);
             done();
         });
     });
@@ -110,9 +121,69 @@ describe('alternatives', () => {
                 p: Joi.alternatives().try(Joi.boolean(), Joi.string().valid('foo', 'bar'))
             }));
             Helper.validate(schema, [
-                [{ p: 1 }, false, null, '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be a string]'],
-                [{ p: '...' }, false, null, '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be one of [foo, bar]]'],
-                [1, false, null, '"value" must be a boolean, "value" must be an object']
+                [{ p: 1 }, false, null, {
+                    message: '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be a string]',
+                    details: [
+                        {
+                            message: '"value" must be a boolean',
+                            path: [],
+                            type: 'boolean.base',
+                            context: { label: 'value', key: undefined }
+                        },
+                        {
+                            message: '"p" must be a boolean',
+                            path: ['p'],
+                            type: 'boolean.base',
+                            context: { label: 'p', key: 'p' }
+                        },
+                        {
+                            message: '"p" must be a string',
+                            path: ['p'],
+                            type: 'string.base',
+                            context: { value: 1, label: 'p', key: 'p' }
+                        }
+                    ]
+                }],
+                [{ p: '...' }, false, null, {
+                    message: '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be one of [foo, bar]]',
+                    details: [
+                        {
+                            message: '"value" must be a boolean',
+                            path: [],
+                            type: 'boolean.base',
+                            context: { label: 'value', key: undefined }
+                        },
+                        {
+                            message: '"p" must be a boolean',
+                            path: ['p'],
+                            type: 'boolean.base',
+                            context: { label: 'p', key: 'p' }
+                        },
+                        {
+                            message: '"p" must be one of [foo, bar]',
+                            path: ['p'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['foo', 'bar'], label: 'p', key: 'p' }
+                        }
+                    ]
+                }],
+                [1, false, null, {
+                    message: '"value" must be a boolean, "value" must be an object',
+                    details: [
+                        {
+                            message: '"value" must be a boolean',
+                            path: [],
+                            type: 'boolean.base',
+                            context: { label: 'value', key: undefined }
+                        },
+                        {
+                            message: '"value" must be an object',
+                            path: [],
+                            type: 'object.base',
+                            context: { label: 'value', key: undefined }
+                        }
+                    ]
+                }]
             ], done);
         });
 
@@ -122,13 +193,73 @@ describe('alternatives', () => {
                 p: Joi.alternatives().try(Joi.boolean(), Joi.string().valid('foo', 'bar'))
             })).options({ language: { messages: { wrapArrays: false } } });
             Helper.validate(schema, [
-                [{ p: 1 }, false, null, '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be a string'],
-                [{ p: '...' }, false, null, '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be one of foo, bar'],
-                [1, false, null, '"value" must be a boolean, "value" must be an object']
+                [{ p: 1 }, false, null, {
+                    message: '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be a string',
+                    details: [
+                        {
+                            message: '"value" must be a boolean',
+                            path: [],
+                            type: 'boolean.base',
+                            context: { label: 'value', key: undefined }
+                        },
+                        {
+                            message: '"p" must be a boolean',
+                            path: ['p'],
+                            type: 'boolean.base',
+                            context: { label: 'p', key: 'p' }
+                        },
+                        {
+                            message: '"p" must be a string',
+                            path: ['p'],
+                            type: 'string.base',
+                            context: { value: 1, label: 'p', key: 'p' }
+                        }
+                    ]
+                }],
+                [{ p: '...' }, false, null, {
+                    message: '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be one of foo, bar',
+                    details: [
+                        {
+                            message: '"value" must be a boolean',
+                            path: [],
+                            type: 'boolean.base',
+                            context: { label: 'value', key: undefined }
+                        },
+                        {
+                            message: '"p" must be a boolean',
+                            path: ['p'],
+                            type: 'boolean.base',
+                            context: { label: 'p', key: 'p' }
+                        },
+                        {
+                            message: '"p" must be one of foo, bar',
+                            path: ['p'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['foo', 'bar'], label: 'p', key: 'p' }
+                        }
+                    ]
+                }],
+                [1, false, null, {
+                    message: '"value" must be a boolean, "value" must be an object',
+                    details: [
+                        {
+                            message: '"value" must be a boolean',
+                            path: [],
+                            type: 'boolean.base',
+                            context: { label: 'value', key: undefined }
+                        },
+                        {
+                            message: '"value" must be an object',
+                            path: [],
+                            type: 'object.base',
+                            context: { label: 'value', key: undefined }
+                        }
+                    ]
+                }]
             ], done);
         });
 
-        it('validates deep alternatives', (done) => {
+        it('validates deep alternatives (with custom error)', (done) => {
 
             const schema = Joi.alternatives().try(Joi.boolean(), Joi.object({
                 p: Joi.number()
@@ -160,11 +291,43 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 'x', b: 5 }, true],
-                [{ a: 'x', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]'],
-                [{ a: 'y', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
+                [{ a: 'x', b: 6 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [y]]',
+                    details: [{
+                        message: '"a" must be one of [y]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['y'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'y', b: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [x]]',
+                    details: [{
+                        message: '"a" must be one of [x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['x'], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ a: 'y', b: 6 }, true],
-                [{ a: 'z', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
-                [{ a: 'z', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]']
+                [{ a: 'z', b: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [x]]',
+                    details: [{
+                        message: '"a" must be one of [x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['x'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'z', b: 6 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [y]]',
+                    details: [{
+                        message: '"a" must be one of [y]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['y'], label: 'a', key: 'a' }
+                    }]
+                }]
             ], done);
         });
 
@@ -179,11 +342,43 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 'x', '': 5 }, true],
-                [{ a: 'x', '': 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]'],
-                [{ a: 'y', '': 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
+                [{ a: 'x', '': 6 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [y]]',
+                    details: [{
+                        message: '"a" must be one of [y]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['y'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'y', '': 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [x]]',
+                    details: [{
+                        message: '"a" must be one of [x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['x'], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ a: 'y', '': 6 }, true],
-                [{ a: 'z', '': 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
-                [{ a: 'z', '': 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]']
+                [{ a: 'z', '': 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [x]]',
+                    details: [{
+                        message: '"a" must be one of [x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['x'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'z', '': 6 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [y]]',
+                    details: [{
+                        message: '"a" must be one of [y]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['y'], label: 'a', key: 'a' }
+                    }]
+                }]
             ], done);
         });
 
@@ -198,10 +393,42 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 'x', b: 5 }, true],
-                [{ a: 'x', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [z]]'],
-                [{ a: 'y', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
-                [{ a: 'y', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [z]]'],
-                [{ a: 'z', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
+                [{ a: 'x', b: 6 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [z]]',
+                    details: [{
+                        message: '"a" must be one of [z]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['z'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'y', b: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [x]]',
+                    details: [{
+                        message: '"a" must be one of [x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['x'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'y', b: 6 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [z]]',
+                    details: [{
+                        message: '"a" must be one of [z]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['z'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'z', b: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [x]]',
+                    details: [{
+                        message: '"a" must be one of [x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['x'], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ a: 'z', b: 6 }, true]
             ], done);
         });
@@ -216,12 +443,44 @@ describe('alternatives', () => {
             };
 
             Helper.validate(schema, [
-                [{ a: 'x', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [z]]'],
-                [{ a: 'x', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]'],
-                [{ a: 'y', b: 5 }, false, null, 'child "a" fails because ["a" must be one of [z]]'],
+                [{ a: 'x', b: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [z]]',
+                    details: [{
+                        message: '"a" must be one of [z]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['z'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'x', b: 6 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [y]]',
+                    details: [{
+                        message: '"a" must be one of [y]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['y'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'y', b: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [z]]',
+                    details: [{
+                        message: '"a" must be one of [z]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['z'], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ a: 'y', b: 6 }, true],
                 [{ a: 'z', b: 5 }, true],
-                [{ a: 'z', b: 6 }, false, null, 'child "a" fails because ["a" must be one of [y]]']
+                [{ a: 'z', b: 6 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [y]]',
+                    details: [{
+                        message: '"a" must be one of [y]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['y'], label: 'a', key: 'a' }
+                    }]
+                }]
             ], done);
         });
 
@@ -236,7 +495,15 @@ describe('alternatives', () => {
             });
 
             Helper.validate(schema, [
-                [{ a: 1, b: 1, c: 0 }, false, null, 'child "c" fails because ["c" must be larger than or equal to 1]'],
+                [{ a: 1, b: 1, c: 0 }, false, null, {
+                    message: 'child "c" fails because ["c" must be larger than or equal to 1]',
+                    details: [{
+                        message: '"c" must be larger than or equal to 1',
+                        path: ['c'],
+                        type: 'number.min',
+                        context: { limit: 1, value: 0, label: 'c', key: 'c' }
+                    }]
+                }],
                 [{ a: 1, b: 1, c: 1 }, true],
                 [{ a: 0, b: 1, c: 1 }, true],
                 [{ a: 1, b: 0, c: 0 }, true]
@@ -252,10 +519,34 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 1 }, true],
-                [{ a: 'y' }, false, null, 'child "a" fails because ["a" must be a number]'],
+                [{ a: 'y' }, false, null, {
+                    message: 'child "a" fails because ["a" must be a number]',
+                    details: [{
+                        message: '"a" must be a number',
+                        path: ['a'],
+                        type: 'number.base',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ a: 'x', b: null }, true],
-                [{ a: 'y', b: null }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
-                [{ a: 1, b: null }, false, null, 'child "a" fails because ["a" must be a string]']
+                [{ a: 'y', b: null }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [x]]',
+                    details: [{
+                        message: '"a" must be one of [x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['x'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 1, b: null }, false, null, {
+                    message: 'child "a" fails because ["a" must be a string]',
+                    details: [{
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { value: 1, label: 'a', key: 'a' }
+                    }]
+                }]
             ], done);
         });
 
@@ -269,40 +560,106 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 'x', b: 5, c: '5' }, true],
-                [{ a: 'x', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" not matching any of the allowed alternatives]'],
-                [{ a: 'x', b: '5', c: '5' }, false, null, 'child "a" fails because ["a" not matching any of the allowed alternatives]'],
-                [{ a: 'y', b: 5, c: 5 }, false, null, 'child "a" fails because ["a" must be one of [x]]'],
-                [{ a: 'y' }, false, null, 'child "a" fails because ["a" must be one of [x]]']
+                [{ a: 'x', b: 5, c: '1' }, false, null, {
+                    message: 'child "a" fails because ["a" not matching any of the allowed alternatives]',
+                    details: [{
+                        message: '"a" not matching any of the allowed alternatives',
+                        path: ['a'],
+                        type: 'alternatives.base',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'x', b: '5', c: '5' }, false, null, {
+                    message: 'child "a" fails because ["a" not matching any of the allowed alternatives]',
+                    details: [{
+                        message: '"a" not matching any of the allowed alternatives',
+                        path: ['a'],
+                        type: 'alternatives.base',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'y', b: 5, c: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [x]]',
+                    details: [{
+                        message: '"a" must be one of [x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['x'], label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: 'y' }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [x]]',
+                    details: [{
+                        message: '"a" must be one of [x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['x'], label: 'a', key: 'a' }
+                    }]
+                }]
             ], done);
         });
 
         it('validates when then has ref', (done) => {
 
+            const ref = Joi.ref('c');
             const schema = {
-                a: Joi.alternatives().when('b', { is: 5, then: Joi.ref('c') }),
+                a: Joi.alternatives().when('b', { is: 5, then: ref }),
                 b: Joi.any(),
                 c: Joi.number()
             };
 
             Helper.validate(schema, [
-                [{ a: 'x', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" must be one of [ref:c]]'],
+                [{ a: 'x', b: 5, c: '1' }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                    details: [{
+                        message: '"a" must be one of [ref:c]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ a: 1, b: 5, c: '1' }, true],
-                [{ a: '1', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" must be one of [ref:c]]']
+                [{ a: '1', b: 5, c: '1' }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                    details: [{
+                        message: '"a" must be one of [ref:c]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref], label: 'a', key: 'a' }
+                    }]
+                }]
             ], done);
         });
 
         it('validates when otherwise has ref', (done) => {
 
+            const ref = Joi.ref('c');
             const schema = {
-                a: Joi.alternatives().when('b', { is: 6, otherwise: Joi.ref('c') }),
+                a: Joi.alternatives().when('b', { is: 6, otherwise: ref }),
                 b: Joi.any(),
                 c: Joi.number()
             };
 
             Helper.validate(schema, [
-                [{ a: 'x', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" must be one of [ref:c]]'],
+                [{ a: 'x', b: 5, c: '1' }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                    details: [{
+                        message: '"a" must be one of [ref:c]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ a: 1, b: 5, c: '1' }, true],
-                [{ a: '1', b: 5, c: '1' }, false, null, 'child "a" fails because ["a" must be one of [ref:c]]']
+                [{ a: '1', b: 5, c: '1' }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                    details: [{
+                        message: '"a" must be one of [ref:c]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref], label: 'a', key: 'a' }
+                    }]
+                }]
             ], done);
         });
 
@@ -328,11 +685,35 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 1 }, true],
-                [{}, false, null, 'child "a" fails because ["a" is required]'],
-                [{ b: 1 }, false, null, 'child "a" fails because ["a" is required]'],
+                [{}, false, null, {
+                    message: 'child "a" fails because ["a" is required]',
+                    details: [{
+                        message: '"a" is required',
+                        path: ['a'],
+                        type: 'any.required',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ b: 1 }, false, null, {
+                    message: 'child "a" fails because ["a" is required]',
+                    details: [{
+                        message: '"a" is required',
+                        path: ['a'],
+                        type: 'any.required',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ a: 1, b: 1 }, true],
                 [{ a: 1, b: 5 }, true],
-                [{ b: 5 }, false, null, 'child "a" fails because ["a" is required]']
+                [{ b: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" is required]',
+                    details: [{
+                        message: '"a" is required',
+                        path: ['a'],
+                        type: 'any.required',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }]
             ], done);
         });
 
@@ -360,8 +741,24 @@ describe('alternatives', () => {
                 [{ a: 0, b: 1, c: 456 }, true],
                 [{ a: 0, b: 0, c: 789 }, true],
                 [{ a: 123, b: 456, c: 456 }, true],
-                [{ a: 0, b: 0, c: 456 }, false, null, 'child "c" fails because ["c" must be one of [789]]'],
-                [{ a: 123, b: 456, c: 789 }, false, null, 'child "c" fails because ["c" must be one of [456]]']
+                [{ a: 0, b: 0, c: 456 }, false, null, {
+                    message: 'child "c" fails because ["c" must be one of [789]]',
+                    details: [{
+                        message: '"c" must be one of [789]',
+                        path: ['c'],
+                        type: 'any.allowOnly',
+                        context: { valids: [789], label: 'c', key: 'c' }
+                    }]
+                }],
+                [{ a: 123, b: 456, c: 789 }, false, null, {
+                    message: 'child "c" fails because ["c" must be one of [456]]',
+                    details: [{
+                        message: '"c" must be one of [456]',
+                        path: ['c'],
+                        type: 'any.allowOnly',
+                        context: { valids: [456], label: 'c', key: 'c' }
+                    }]
+                }]
             ], done);
         });
     });

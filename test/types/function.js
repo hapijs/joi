@@ -35,7 +35,15 @@ describe('func', () => {
 
         Helper.validate(Joi.func().required(), [
             [function () { }, true],
-            ['', false, null, '"value" must be a Function']
+            ['', false, null, {
+                message: '"value" must be a Function',
+                details: [{
+                    message: '"value" must be a Function',
+                    path: [],
+                    type: 'function.base',
+                    context: { label: 'value', key: undefined }
+                }]
+            }]
         ], done);
     });
 
@@ -43,23 +51,63 @@ describe('func', () => {
 
         Helper.validate(Joi.func().arity(2).required(), [
             [function (a,b) { }, true],
-            [function (a,b,c) { }, false, null, '"value" must have an arity of 2'],
-            [function (a) { }, false, null, '"value" must have an arity of 2'],
+            [function (a,b,c) { }, false, null, {
+                message: '"value" must have an arity of 2',
+                details: [{
+                    message: '"value" must have an arity of 2',
+                    path: [],
+                    type: 'function.arity',
+                    context: { n: 2, label: 'value', key: undefined }
+                }]
+            }],
+            [function (a) { }, false, null, {
+                message: '"value" must have an arity of 2',
+                details: [{
+                    message: '"value" must have an arity of 2',
+                    path: [],
+                    type: 'function.arity',
+                    context: { n: 2, label: 'value', key: undefined }
+                }]
+            }],
             [(a,b) => { }, true],
-            [(a,b,c) => { }, false, null, '"value" must have an arity of 2'],
-            [(a) => { }, false, null, '"value" must have an arity of 2'],
-            ['', false, null, '"value" must be a Function']
+            [(a,b,c) => { }, false, null, {
+                message: '"value" must have an arity of 2',
+                details: [{
+                    message: '"value" must have an arity of 2',
+                    path: [],
+                    type: 'function.arity',
+                    context: { n: 2, label: 'value', key: undefined }
+                }]
+            }],
+            [(a) => { }, false, null, {
+                message: '"value" must have an arity of 2',
+                details: [{
+                    message: '"value" must have an arity of 2',
+                    path: [],
+                    type: 'function.arity',
+                    context: { n: 2, label: 'value', key: undefined }
+                }]
+            }],
+            ['', false, null, {
+                message: '"value" must be a Function',
+                details: [{
+                    message: '"value" must be a Function',
+                    path: [],
+                    type: 'function.base',
+                    context: { label: 'value', key: undefined }
+                }]
+            }]
         ], done);
     });
 
     it('validates a function arity unless values are illegal', (done) => {
 
-        const schemaWithStringArity = function (){
+        const schemaWithStringArity = function () {
 
             return Joi.func().arity('deux');
         };
 
-        const schemaWithNegativeArity = function (){
+        const schemaWithNegativeArity = function () {
 
             return Joi.func().arity(-2);
         };
@@ -74,27 +122,51 @@ describe('func', () => {
         Helper.validate(Joi.func().minArity(2).required(), [
             [function (a,b) { }, true],
             [function (a,b,c) { }, true],
-            [function (a) { }, false, null, '"value" must have an arity greater or equal to 2'],
+            [function (a) { }, false, null, {
+                message: '"value" must have an arity greater or equal to 2',
+                details: [{
+                    message: '"value" must have an arity greater or equal to 2',
+                    path: [],
+                    type: 'function.minArity',
+                    context: { n: 2, label: 'value', key: undefined }
+                }]
+            }],
             [(a,b) => { }, true],
             [(a,b,c) => { }, true],
-            [(a) => { }, false, null, '"value" must have an arity greater or equal to 2'],
-            ['', false, null, '"value" must be a Function']
+            [(a) => { }, false, null, {
+                message: '"value" must have an arity greater or equal to 2',
+                details: [{
+                    message: '"value" must have an arity greater or equal to 2',
+                    path: [],
+                    type: 'function.minArity',
+                    context: { n: 2, label: 'value', key: undefined }
+                }]
+            }],
+            ['', false, null, {
+                message: '"value" must be a Function',
+                details: [{
+                    message: '"value" must be a Function',
+                    path: [],
+                    type: 'function.base',
+                    context: { label: 'value', key: undefined }
+                }]
+            }]
         ], done);
     });
 
     it('validates a function arity unless values are illegal', (done) => {
 
-        const schemaWithStringMinArity = function (){
+        const schemaWithStringMinArity = function () {
 
             return Joi.func().minArity('deux');
         };
 
-        const schemaWithNegativeMinArity = function (){
+        const schemaWithNegativeMinArity = function () {
 
             return Joi.func().minArity(-2);
         };
 
-        const schemaWithZeroArity = function (){
+        const schemaWithZeroArity = function () {
 
             return Joi.func().minArity(0);
         };
@@ -109,23 +181,47 @@ describe('func', () => {
 
         Helper.validate(Joi.func().maxArity(2).required(), [
             [function (a,b) { }, true],
-            [function (a,b,c) { }, false, null, '"value" must have an arity lesser or equal to 2'],
+            [function (a,b,c) { }, false, null, {
+                message: '"value" must have an arity lesser or equal to 2',
+                details: [{
+                    message: '"value" must have an arity lesser or equal to 2',
+                    path: [],
+                    type: 'function.maxArity',
+                    context: { n: 2, label: 'value', key: undefined }
+                }]
+            }],
             [function (a) { }, true],
             [(a,b) => { }, true],
-            [(a,b,c) => { }, false, null, '"value" must have an arity lesser or equal to 2'],
+            [(a,b,c) => { }, false, null, {
+                message: '"value" must have an arity lesser or equal to 2',
+                details: [{
+                    message: '"value" must have an arity lesser or equal to 2',
+                    path: [],
+                    type: 'function.maxArity',
+                    context: { n: 2, label: 'value', key: undefined }
+                }]
+            }],
             [(a) => { }, true],
-            ['', false, null, '"value" must be a Function']
+            ['', false, null, {
+                message: '"value" must be a Function',
+                details: [{
+                    message: '"value" must be a Function',
+                    path: [],
+                    type: 'function.base',
+                    context: { label: 'value', key: undefined }
+                }]
+            }]
         ], done);
     });
 
     it('validates a function arity unless values are illegal', (done) => {
 
-        const schemaWithStringMaxArity = function (){
+        const schemaWithStringMaxArity = function () {
 
             return Joi.func().maxArity('deux');
         };
 
-        const schemaWithNegativeMaxArity = function (){
+        const schemaWithNegativeMaxArity = function () {
 
             return Joi.func().maxArity(-2);
         };
@@ -143,10 +239,34 @@ describe('func', () => {
         b.a = 123;
 
         Helper.validate(Joi.func().keys({ a: Joi.string().required() }).required(), [
-            [function () { }, false, null, 'child "a" fails because ["a" is required]'],
+            [function () { }, false, null, {
+                message: 'child "a" fails because ["a" is required]',
+                details: [{
+                    message: '"a" is required',
+                    path: ['a'],
+                    type: 'any.required',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
             [a, true],
-            [b, false, null, 'child "a" fails because ["a" must be a string]'],
-            ['', false, null, '"value" must be a Function']
+            [b, false, null, {
+                message: 'child "a" fails because ["a" must be a string]',
+                details: [{
+                    message: '"a" must be a string',
+                    path: ['a'],
+                    type: 'string.base',
+                    context: { value: 123, label: 'a', key: 'a' }
+                }]
+            }],
+            ['', false, null, {
+                message: '"value" must be a Function',
+                details: [{
+                    message: '"value" must be a Function',
+                    path: [],
+                    type: 'function.base',
+                    context: { label: 'value', key: undefined }
+                }]
+            }]
         ], done);
     });
 
@@ -224,8 +344,24 @@ describe('func', () => {
         const schema = Joi.func().ref();
 
         Helper.validate(schema, [
-            [() => {}, false, null, '"value" must be a Joi reference'],
-            [{}, false, null, '"value" must be a Function'],
+            [() => {}, false, null, {
+                message: '"value" must be a Joi reference',
+                details: [{
+                    message: '"value" must be a Joi reference',
+                    path: [],
+                    type: 'function.ref',
+                    context: { label: 'value', key: undefined }
+                }]
+            }],
+            [{}, false, null, {
+                message: '"value" must be a Function',
+                details: [{
+                    message: '"value" must be a Function',
+                    path: [],
+                    type: 'function.base',
+                    context: { label: 'value', key: undefined }
+                }]
+            }],
             [Joi.ref('a.b'), true]
         ], done);
     });

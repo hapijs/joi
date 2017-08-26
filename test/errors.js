@@ -25,7 +25,7 @@ describe('errors', () => {
 
         Joi.validate('bar', Joi.valid('foo'), (err) => {
 
-            expect(err).to.exist();
+            expect(err).to.be.an.error();
             expect(err.isJoi).to.be.true();
             done();
         });
@@ -81,18 +81,105 @@ describe('errors', () => {
 
         Joi.validate(input, schema, { abortEarly: false, language: lang }, (err, value) => {
 
-            expect(err).to.exist();
+            expect(err).to.be.an.error('"value" 11. child "email" fails because ["email" 19]. child "date" fails because ["date" 18]. child "alphanum" fails because ["alphanum" 16]. child "min" fails because ["min" 14]. child "max" fails because ["max" 15]. child "notEmpty" fails because ["notEmpty" 3]. "required" 7. "xor" 7');
             expect(err.name).to.equal('ValidationError');
-            expect(err.message).to.equal('"value" 11. child "email" fails because ["email" 19]. child "date" fails because ["date" 18]. child "alphanum" fails because ["alphanum" 16]. child "min" fails because ["min" 14]. child "max" fails because ["max" 15]. child "notEmpty" fails because ["notEmpty" 3]. "required" 7. "xor" 7');
+            expect(err.details).to.equal([
+                {
+                    message: '"value" 11',
+                    path: [],
+                    type: 'object.rename.override',
+                    context: { from: 'renamed', to: 'required', label: 'value', key: undefined }
+                },
+                {
+                    message: '"email" 19',
+                    path: ['email'],
+                    type: 'string.email',
+                    context: { value: 'invalid-email', label: 'email', key: 'email' }
+                },
+                {
+                    message: '"date" 18',
+                    path: ['date'],
+                    type: 'date.base',
+                    context: { label: 'date', key: 'date' }
+                },
+                {
+                    message: '"alphanum" 16',
+                    path: ['alphanum'],
+                    type: 'string.alphanum',
+                    context: { value: '\b\n\f\r\t', label: 'alphanum', key: 'alphanum' }
+                },
+                {
+                    message: '"min" 14',
+                    path: ['min'],
+                    type: 'string.min',
+                    context: {
+                        limit: 3,
+                        value: 'ab',
+                        encoding: undefined,
+                        label: 'min',
+                        key: 'min'
+                    }
+                },
+                {
+                    message: '"max" 15',
+                    path: ['max'],
+                    type: 'string.max',
+                    context: {
+                        limit: 3,
+                        value: 'abcd',
+                        encoding: undefined,
+                        label: 'max',
+                        key: 'max'
+                    }
+                },
+                {
+                    message: '"notEmpty" 3',
+                    path: ['notEmpty'],
+                    type: 'any.empty',
+                    context: { label: 'notEmpty', key: 'notEmpty' }
+                },
+                {
+                    message: '"required" 7',
+                    path: ['required'],
+                    type: 'object.without',
+                    context: {
+                        main: 'required',
+                        mainWithLabel: 'required',
+                        peer: 'xor',
+                        peerWithLabel: 'xor',
+                        label: 'required',
+                        key: 'required'
+                    }
+                },
+                {
+                    message: '"xor" 7',
+                    path: ['xor'],
+                    type: 'object.without',
+                    context: {
+                        main: 'xor',
+                        mainWithLabel: 'xor',
+                        peer: 'required',
+                        peerWithLabel: 'required',
+                        label: 'xor',
+                        key: 'xor'
+                    }
+                }
+            ]);
             done();
         });
     });
 
     it('does not prefix with key when language uses context.key', (done) => {
 
-        Joi.valid('sad').options({ language: { any: { allowOnly: 'my hero "{{key}}" is not {{valids}}' } } }).validate(5, (err, value) => {
+        Joi.valid('sad').options({ language: { any: { allowOnly: 'my hero "{{label}}" is not {{valids}}' } } }).validate(5, (err, value) => {
 
-            expect(err.message).to.equal('my hero "value" is not [sad]');
+            expect(err).to.be.an.error('my hero "value" is not [sad]');
+            expect(err.details).to.equal([{
+                message: 'my hero "value" is not [sad]',
+                path: [],
+                type: 'any.allowOnly',
+                context: { valids: ['sad'], label: 'value', key: undefined }
+            }]);
             done();
         });
     });
@@ -105,11 +192,23 @@ describe('errors', () => {
 
         Joi.validate({ 'a()': 'x' }, schema, (err, value) => {
 
-            expect(err.message).to.equal('child "a&#x28;&#x29;" fails because ["a&#x28;&#x29;" must be a number]');
+            expect(err).to.be.an.error('child "a&#x28;&#x29;" fails because ["a&#x28;&#x29;" must be a number]');
+            expect(err.details).to.equal([{
+                message: '"a&#x28;&#x29;" must be a number',
+                path: ['a()'],
+                type: 'number.base',
+                context: { label: 'a()', key: 'a()' }
+            }]);
 
             Joi.validate({ 'b()': 'x' }, schema, (err2, value2) => {
 
-                expect(err2.message).to.equal('"b&#x28;&#x29;" is not allowed');
+                expect(err2).to.be.an.error('"b&#x28;&#x29;" is not allowed');
+                expect(err2.details).to.equal([{
+                    message: '"b&#x28;&#x29;" is not allowed',
+                    path: ['b()'],
+                    type: 'object.allowUnknown',
+                    context: { child: 'b()', label: 'b()', key: 'b()' }
+                }]);
                 done();
             });
         });
@@ -131,11 +230,27 @@ describe('errors', () => {
 
         Joi.validate(input, schema, { abortEarly: false }, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.details).to.have.length(3);
-            expect(err.details[0].type).to.equal('number.base');
-            expect(err.details[1].type).to.equal('string.base');
-            expect(err.details[2].type).to.equal('boolean.base');
+            expect(err).to.be.an.error('child "notNumber" fails because ["notNumber" must be a number]. child "notString" fails because ["notString" must be a string]. child "notBoolean" fails because ["notBoolean" must be a boolean]');
+            expect(err.details).to.equal([
+                {
+                    message: '"notNumber" must be a number',
+                    path: ['notNumber'],
+                    type: 'number.base',
+                    context: { label: 'notNumber', key: 'notNumber' }
+                },
+                {
+                    message: '"notString" must be a string',
+                    path: ['notString'],
+                    type: 'string.base',
+                    context: { value: true, label: 'notString', key: 'notString' }
+                },
+                {
+                    message: '"notBoolean" must be a boolean',
+                    path: ['notBoolean'],
+                    type: 'boolean.base',
+                    context: { label: 'notBoolean', key: 'notBoolean' }
+                }
+            ]);
             done();
         });
     });
@@ -150,8 +265,13 @@ describe('errors', () => {
 
         schema.validate(input, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.details[0].path).to.equal('1.1.x');
+            expect(err).to.be.an.error('"value" at position 1 fails because ["1" at position 1 fails because [child "x" fails because ["x" must be a number]]]');
+            expect(err.details).to.equal([{
+                message: '"x" must be a number',
+                path: [1, 1, 'x'],
+                type: 'number.base',
+                context: { label: 'x', key: 'x' }
+            }]);
             done();
         });
     });
@@ -166,8 +286,13 @@ describe('errors', () => {
 
         schema.validate(input, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.details[0].path).to.equal('1.1');
+            expect(err).to.be.an.error('"value" at position 1 fails because ["1" at position 1 contains an excluded value]');
+            expect(err.details).to.equal([{
+                message: '"1" at position 1 contains an excluded value',
+                path: [1, 1],
+                type: 'array.excludes',
+                context: { pos: 1, value: { x: 'a' }, label: 1, key: 1 }
+            }]);
             done();
         });
     });
@@ -184,8 +309,13 @@ describe('errors', () => {
 
         Joi.validate(input, schema, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.details[0].path).to.equal('x.1.x');
+            expect(err).to.be.an.error('child "x" fails because ["x" at position 1 fails because [child "x" fails because ["x" must be a number]]]');
+            expect(err.details).to.equal([{
+                message: '"x" must be a number',
+                path: ['x', 1, 'x'],
+                type: 'number.base',
+                context: { label: 'x', key: 'x' }
+            }]);
             done();
         });
     });
@@ -194,16 +324,28 @@ describe('errors', () => {
 
         Joi.string().options({ language: { root: 'blah' } }).validate(4, (err, value) => {
 
-            expect(err.message).to.equal('"blah" must be a string');
+            expect(err).to.be.an.error('"blah" must be a string');
+            expect(err.details).to.equal([{
+                message: '"blah" must be a string',
+                path: [],
+                type: 'string.base',
+                context: { value: 4, label: 'blah', key: undefined }
+            }]);
             done();
         });
     });
 
     it('overrides label key language', (done) => {
 
-        Joi.string().options({ language: { key: 'my own {{!key}} ' } }).validate(4, (err, value) => {
+        Joi.string().options({ language: { key: 'my own {{!label}} ' } }).validate(4, (err, value) => {
 
-            expect(err.message).to.equal('my own value must be a string');
+            expect(err).to.be.an.error('my own value must be a string');
+            expect(err.details).to.equal([{
+                message: 'my own value must be a string',
+                path: [],
+                type: 'string.base',
+                context: { value: 4, label: 'value', key: undefined }
+            }]);
             done();
         });
     });
@@ -212,7 +354,13 @@ describe('errors', () => {
 
         Joi.array().items(Joi.boolean()).options({ language: { messages: { wrapArrays: false } } }).validate([4], (err, value) => {
 
-            expect(err.message).to.equal('"value" at position 0 fails because "0" must be a boolean');
+            expect(err).to.be.an.error('"value" at position 0 fails because "0" must be a boolean');
+            expect(err.details).to.equal([{
+                message: '"0" must be a boolean',
+                path: [0],
+                type: 'boolean.base',
+                context: { label: 0, key: 0 }
+            }]);
             done();
         });
     });
@@ -221,7 +369,13 @@ describe('errors', () => {
 
         Joi.string().options({ language: { root: 'blah' } }).label('bleh').validate(4, (err, value) => {
 
-            expect(err.message).to.equal('"bleh" must be a string');
+            expect(err).to.be.an.error('"bleh" must be a string');
+            expect(err.details).to.equal([{
+                message: '"bleh" must be a string',
+                path: [],
+                type: 'string.base',
+                context: { value: 4, label: 'bleh', key: undefined }
+            }]);
             done();
         });
     });
@@ -232,11 +386,12 @@ describe('errors', () => {
 
             expect(err.details).to.equal([{
                 message: '"length" must be larger than or equal to 3',
-                path: 'length',
+                path: ['length'],
                 type: 'number.min',
                 context: {
                     limit: 3,
                     key: 'length',
+                    label: 'length',
                     value: 1
                 }
             }]);
@@ -306,7 +461,27 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "a" fails because ["a" must be one of [a, b, c, d]]. child "y" fails because [child "u" fails because ["u" is required], child "b" fails because ["b" must be a string]]');
+                expect(err.details).to.equal([
+                    {
+                        message: '"a" must be one of [a, b, c, d]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: ['a', 'b', 'c', 'd'], label: 'a', key: 'a' }
+                    },
+                    {
+                        message: '"u" is required',
+                        path: ['y', 'u'],
+                        type: 'any.required',
+                        context: { label: 'u', key: 'u' }
+                    },
+                    {
+                        message: '"b" must be a string',
+                        path: ['y', 'b'],
+                        type: 'string.base',
+                        context: { value: { c: 10 }, label: 'b', key: 'b' }
+                    }
+                ]);
                 expect(err.annotate()).to.equal('{\n  \"y\": {\n    \"b\" \u001b[31m[3]\u001b[0m: {\n      \"c\": 10\n    },\n    \u001b[41m\"u\"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  "a" \u001b[31m[1]\u001b[0m: \"m\"\n}\n\u001b[31m\n[1] "a" must be one of [a, b, c, d]\n[2] "u" is required\n[3] "b" must be a string\u001b[0m');
                 done();
             });
@@ -324,7 +499,13 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "a" fails because ["a" must be one of [a, b, c, d]]');
+                expect(err.details).to.equal([{
+                    message: '"a" must be one of [a, b, c, d]',
+                    path: ['a'],
+                    type: 'any.allowOnly',
+                    context: { valids: ['a', 'b', 'c', 'd'], label: 'a', key: 'a' }
+                }]);
                 expect(err.annotate(true)).to.equal('{\n  "a" [1]: \"m\"\n}\n\n[1] "a" must be one of [a, b, c, d]');
                 done();
             });
@@ -342,7 +523,27 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "a" fails because ["a" at position 2 fails because ["2" must be one of [1, 2]], "a" at position 3 fails because ["3" must be one of [1, 2]], "a" at position 5 fails because ["5" must be one of [1, 2]]]');
+                expect(err.details).to.equal([
+                    {
+                        message: '"2" must be one of [1, 2]',
+                        path: ['a', 2],
+                        type: 'any.allowOnly',
+                        context: { valids: [1, 2], label: 2, key: 2 }
+                    },
+                    {
+                        message: '"3" must be one of [1, 2]',
+                        path: ['a', 3],
+                        type: 'any.allowOnly',
+                        context: { valids: [1, 2], label: 3, key: 3 }
+                    },
+                    {
+                        message: '"5" must be one of [1, 2]',
+                        path: ['a', 5],
+                        type: 'any.allowOnly',
+                        context: { valids: [1, 2], label: 5, key: 5 }
+                    }
+                ]);
                 expect(err.annotate()).to.equal('{\n  \"a\": [\n    1,\n    2,\n    3, \u001b[31m[1]\u001b[0m\n    4, \u001b[31m[2]\u001b[0m\n    2,\n    5 \u001b[31m[3]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"2\" must be one of [1, 2]\n[2] \"3\" must be one of [1, 2]\n[3] \"5\" must be one of [1, 2]\u001b[0m');
                 done();
             });
@@ -360,7 +561,33 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "a" fails because ["a" at position 0 fails because ["0" must be larger than or equal to 4], "a" at position 1 fails because ["1" must be larger than or equal to 4, "1" must be less than or equal to 2], "a" at position 2 fails because ["2" must be less than or equal to 2]]');
+                expect(err.details).to.equal([
+                    {
+                        message: '"0" must be larger than or equal to 4',
+                        path: ['a', 0],
+                        type: 'number.min',
+                        context: { limit: 4, value: 2, label: 0, key: 0 }
+                    },
+                    {
+                        message: '"1" must be larger than or equal to 4',
+                        path: ['a', 1],
+                        type: 'number.min',
+                        context: { limit: 4, value: 3, label: 1, key: 1 }
+                    },
+                    {
+                        message: '"1" must be less than or equal to 2',
+                        path: ['a', 1],
+                        type: 'number.max',
+                        context: { limit: 2, value: 3, label: 1, key: 1 }
+                    },
+                    {
+                        message: '"2" must be less than or equal to 2',
+                        path: ['a', 2],
+                        type: 'number.max',
+                        context: { limit: 2, value: 4, label: 2, key: 2 }
+                    }
+                ]);
                 expect(err.annotate()).to.equal('{\n  \"a\": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"0\" must be larger than or equal to 4\n[2] \"1\" must be larger than or equal to 4\n[3] \"1\" must be less than or equal to 2\n[4] \"2\" must be less than or equal to 2\u001b[0m');
                 done();
             });
@@ -378,7 +605,13 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "a" fails because ["a" at position 0 fails because ["0" must be a number]]');
+                expect(err.details).to.equal([{
+                    message: '"0" must be a number',
+                    path: ['a', 0],
+                    type: 'number.base',
+                    context: { label: 0, key: 0 }
+                }]);
                 expect(err.annotate()).to.equal('{\n  \"a\": [\n    { \u001b[31m[1]\u001b[0m\n      \"b\": 2\n    }\n  ]\n}\n\u001b[31m\n[1] \"0\" must be a number\u001b[0m');
                 done();
             });
@@ -398,7 +631,57 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "a" fails because ["a" at position 0 fails because ["0" must be larger than or equal to 4], "a" at position 1 fails because ["1" must be larger than or equal to 4, "1" must be less than or equal to 2], "a" at position 2 fails because ["2" must be less than or equal to 2]]. child "b" fails because ["b" at position 0 fails because ["0" must be larger than or equal to 4], "b" at position 1 fails because ["1" must be larger than or equal to 4, "1" must be less than or equal to 2], "b" at position 2 fails because ["2" must be less than or equal to 2]]');
+                expect(err.details).to.equal([
+                    {
+                        message: '"0" must be larger than or equal to 4',
+                        path: ['a', 0],
+                        type: 'number.min',
+                        context: { limit: 4, value: 2, label: 0, key: 0 }
+                    },
+                    {
+                        message: '"1" must be larger than or equal to 4',
+                        path: ['a', 1],
+                        type: 'number.min',
+                        context: { limit: 4, value: 3, label: 1, key: 1 }
+                    },
+                    {
+                        message: '"1" must be less than or equal to 2',
+                        path: ['a', 1],
+                        type: 'number.max',
+                        context: { limit: 2, value: 3, label: 1, key: 1 }
+                    },
+                    {
+                        message: '"2" must be less than or equal to 2',
+                        path: ['a', 2],
+                        type: 'number.max',
+                        context: { limit: 2, value: 4, label: 2, key: 2 }
+                    },
+                    {
+                        message: '"0" must be larger than or equal to 4',
+                        path: ['b', 0],
+                        type: 'number.min',
+                        context: { limit: 4, value: 2, label: 0, key: 0 }
+                    },
+                    {
+                        message: '"1" must be larger than or equal to 4',
+                        path: ['b', 1],
+                        type: 'number.min',
+                        context: { limit: 4, value: 3, label: 1, key: 1 }
+                    },
+                    {
+                        message: '"1" must be less than or equal to 2',
+                        path: ['b', 1],
+                        type: 'number.max',
+                        context: { limit: 2, value: 3, label: 1, key: 1 }
+                    },
+                    {
+                        message: '"2" must be less than or equal to 2',
+                        path: ['b', 2],
+                        type: 'number.max',
+                        context: { limit: 2, value: 4, label: 2, key: 2 }
+                    }
+                ]);
                 expect(err.annotate()).to.equal('{\n  \"a\": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ],\n  \"b\": [\n    2, \u001b[31m[5]\u001b[0m\n    3, \u001b[31m[6, 7]\u001b[0m\n    4 \u001b[31m[8]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"0\" must be larger than or equal to 4\n[2] \"1\" must be larger than or equal to 4\n[3] \"1\" must be less than or equal to 2\n[4] \"2\" must be less than or equal to 2\n[5] \"0\" must be larger than or equal to 4\n[6] \"1\" must be larger than or equal to 4\n[7] \"1\" must be less than or equal to 2\n[8] \"2\" must be less than or equal to 2\u001b[0m');
                 done();
             });
@@ -416,7 +699,27 @@ describe('errors', () => {
 
             Joi.validate({ x: true }, schema, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "x" fails because ["x" must be a string, "x" must be a number, "x" must be a number of milliseconds or valid date string]');
+                expect(err.details).to.equal([
+                    {
+                        message: '"x" must be a string',
+                        path: ['x'],
+                        type: 'string.base',
+                        context: { value: true, label: 'x', key: 'x' }
+                    },
+                    {
+                        message: '"x" must be a number',
+                        path: ['x'],
+                        type: 'number.base',
+                        context: { label: 'x', key: 'x' }
+                    },
+                    {
+                        message: '"x" must be a number of milliseconds or valid date string',
+                        path: ['x'],
+                        type: 'date.base',
+                        context: { label: 'x', key: 'x' }
+                    }
+                ]);
                 expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be a string\n[2] "x" must be a number\n[3] "x" must be a number of milliseconds or valid date string\u001b[0m');
                 done();
             });
@@ -437,7 +740,13 @@ describe('errors', () => {
 
             Joi.validate(input, schema, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "x" fails because ["x" is not allowed]');
+                expect(err.details).to.equal([{
+                    message: '"x" is not allowed',
+                    path: ['x', 'x'],
+                    type: 'object.allowUnknown',
+                    context: { child: 'x', label: 'x', key: 'x' }
+                }]);
                 expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1]\u001b[0m: \"[Circular ~]\"\n}\n\u001b[31m\n[1] \"x\" is not allowed\u001b[0m');
                 done();
             });
@@ -458,7 +767,13 @@ describe('errors', () => {
 
             Joi.validate(input, schema, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "x" fails because [child "y" fails because [child "z" fails because ["z" must be a number]]]');
+                expect(err.details).to.equal([{
+                    message: '"z" must be a number',
+                    path: ['x', 'y', 'z'],
+                    type: 'number.base',
+                    context: { label: 'z', key: 'z' }
+                }]);
                 expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\": {\n      \"z\" \u001b[31m[1]\u001b[0m: \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"z\" must be a number\u001b[0m');
                 done();
             });
@@ -479,7 +794,13 @@ describe('errors', () => {
 
             Joi.validate(input, schema, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "x" fails because [child "y" fails because ["foo" is not allowed]]');
+                expect(err.details).to.equal([{
+                    message: '"foo" is not allowed',
+                    path: ['x', 'y', 'foo'],
+                    type: 'object.allowUnknown',
+                    context: { child: 'foo', label: 'foo', key: 'foo' }
+                }]);
                 expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\": {\n      \"z\": 1,\n      \"foo\" \u001b[31m[1]\u001b[0m: \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"foo\" is not allowed\u001b[0m');
                 done();
             });
@@ -520,7 +841,13 @@ describe('errors', () => {
 
             Joi.validate(input, schema, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "x" fails because [child "y" fails because ["y" must be a number of milliseconds or valid date string]]');
+                expect(err.details).to.equal([{
+                    message: '"y" must be a number of milliseconds or valid date string',
+                    path: ['x', 'y'],
+                    type: 'date.base',
+                    context: { label: 'y', key: 'y' }
+                }]);
                 expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"z\": Infinity,\n    \"u\": -Infinity,\n    \"g\": Symbol(foo),\n    \"h\": -Infinity,\n    \"i\": Infinity,\n    \"k\": (a) => a,\n    \"p\": Symbol(bar),\n    \"f\": function (x) {\\n\\n                        return [{ y: 2 }];\\n                    },\n    \"y\" \u001b[31m[1]\u001b[0m: NaN\n  }\n}\n\u001b[31m\n[1] \"y\" must be a number of milliseconds or valid date string\u001b[0m');
                 done();
             });
@@ -540,7 +867,13 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "a" fails because ["c" is not allowed]');
+                expect(err.details).to.equal([{
+                    message: '"c" is not allowed',
+                    path: ['a', 'c'],
+                    type: 'object.allowUnknown',
+                    context: { child: 'c', label: 'c', key: 'c' }
+                }]);
                 expect(err.annotate(true)).to.equal('{\n  \"a\" [1]: \"{\\\"c\\\":\\\"string\\\"}\"\n}\n\n[1] \"c\" is not allowed');
                 done();
             });
@@ -560,7 +893,21 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "a" fails because [child "b" fails because ["b" must be an integer, "b" must be a positive number]]');
+                expect(err.details).to.equal([
+                    {
+                        message: '"b" must be an integer',
+                        path: ['a', 'b'],
+                        type: 'number.integer',
+                        context: { value: -1.5, label: 'b', key: 'b' }
+                    },
+                    {
+                        message: '"b" must be a positive number',
+                        path: ['a', 'b'],
+                        type: 'number.positive',
+                        context: { value: -1.5, label: 'b', key: 'b' }
+                    }
+                ]);
                 expect(err.annotate(true)).to.equal('{\n  "a" [1, 2]: "{\\"b\\":-1.5}"\n}\n\n[1] "b" must be an integer\n[2] "b" must be a positive number');
                 done();
             });
@@ -584,7 +931,13 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "a" fails because [child "b" fails because [child "c" fails because [child "d" fails because ["d" must be a string]]]]');
+                expect(err.details).to.equal([{
+                    message: '"d" must be a string',
+                    path: ['a', 'b', 'c', 'd'],
+                    type: 'string.base',
+                    context: { value: 1, label: 'd', key: 'd' }
+                }]);
                 expect(err.annotate(true)).to.equal('{\n  "a" [1]: "{\\"b\\":{\\"c\\":{\\"d\\":1}}}"\n}\n\n[1] "d" must be a string');
                 done();
             });
@@ -610,7 +963,18 @@ describe('errors', () => {
 
             Joi.validate(object, schema, { abortEarly: false }, (err, value) => {
 
-                expect(err).to.exist();
+                expect(err).to.be.an.error('child "response" fails because ["options.stripUnknown" validation failed because "options.stripUnknown" failed to meet requirement of having peer modify set to true]');
+                expect(err.details).to.equal([{
+                    message: '"options.stripUnknown" validation failed because "options.stripUnknown" failed to meet requirement of having peer modify set to true',
+                    path: ['options', 'stripUnknown'],
+                    type: 'object.assert',
+                    context: {
+                        ref: 'options.stripUnknown',
+                        message: 'meet requirement of having peer modify set to true',
+                        label: 'stripUnknown',
+                        key: 'stripUnknown'
+                    }
+                }]);
                 expect(() => {
 
                     err.annotate(true);
