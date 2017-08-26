@@ -3171,7 +3171,7 @@ describe('Joi', () => {
 
                 return Joi.defaults((schema) => {
 
-                    switch (schema.type) {
+                    switch (schema.schemaType) {
                         case 'bool':
                             return schema.required();
                     }
@@ -3184,7 +3184,7 @@ describe('Joi', () => {
 
             const defaultJoi = Joi.defaults((schema) => {
 
-                switch (schema.type) {
+                switch (schema.schemaType) {
                     case 'any':
                         return schema.required();
                 }
@@ -3197,7 +3197,7 @@ describe('Joi', () => {
 
             const defaultJoi = Joi.defaults((schema) => {
 
-                switch (schema.type) {
+                switch (schema.schemaType) {
                     case 'any':
                         return schema.required();
                 }
