@@ -1030,6 +1030,209 @@ describe('string', () => {
         });
     });
 
+    describe('normalize()', () => {
+
+        // The characters chosen for the "original" string below are such that
+        // it and its four normalization forms are all different from each other
+        // See: http://www.unicode.org/faq/normalization.html#6
+        // and: http://www.unicode.org/reports/tr15/#Singletons_Figure
+
+        const normalizations = {
+            original: '\u03D3 \u212B',   // 'ϓ Å'
+            NFC: '\u03D3 \u00C5',        // 'ϓ Å'
+            NFD: '\u03D2\u0301 A\u030A', // 'ϓ Å'
+            NFKC: '\u038E \u00C5',       // 'Ύ Å'
+            NFKD: '\u03A5\u0301 A\u030A' // 'Ύ Å'
+        };
+
+        it('throws when normalization form is invalid', (done) => {
+
+            expect(() => {
+
+                Joi.string().normalize('NFCD');
+            }).to.throw('normalization form must be one of NFC, NFD, NFKC, NFKD');
+            done();
+        });
+
+        it('only allow strings that are in NFC form', (done) => {
+
+            const schema = Joi.string().normalize('NFC');
+            Helper.validateOptions(schema, [
+                [normalizations.original, false, null, '"value" must be unicode normalized in the NFC form'],
+                [normalizations.NFC, true]
+            ], { convert: false }, done);
+        });
+
+        it('only allow strings that are in NFD form', (done) => {
+
+            const schema = Joi.string().normalize('NFD');
+            Helper.validateOptions(schema, [
+                [normalizations.original, false, null, '"value" must be unicode normalized in the NFD form'],
+                [normalizations.NFD, true]
+            ], { convert: false }, done);
+        });
+
+        it('only allow strings that are in NFKC form', (done) => {
+
+            const schema = Joi.string().normalize('NFKC');
+            Helper.validateOptions(schema, [
+                [normalizations.original, false, null, '"value" must be unicode normalized in the NFKC form'],
+                [normalizations.NFKC, true]
+            ], { convert: false }, done);
+        });
+
+        it('only allow strings that are in NFKD form', (done) => {
+
+            const schema = Joi.string().normalize('NFKD');
+            Helper.validateOptions(schema, [
+                [normalizations.original, false, null, '"value" must be unicode normalized in the NFKD form'],
+                [normalizations.NFKD, true]
+            ], { convert: false }, done);
+        });
+
+        it('normalizes string before validation', (done) => {
+
+            Joi.string().normalize('NFC').validate(normalizations.original, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(normalizations.NFC);
+            });
+
+            Joi.string().normalize('NFD').validate(normalizations.original, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(normalizations.NFD);
+            });
+
+            Joi.string().normalize('NFKC').validate(normalizations.original, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(normalizations.NFKC);
+            });
+
+            Joi.string().normalize('NFKD').validate(normalizations.original, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(normalizations.NFKD);
+            });
+
+            done();
+        });
+
+        it('should default to NFC form', (done) => {
+
+            const schema = Joi.string().normalize();
+            schema.validate(normalizations.original, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal(normalizations.NFC);
+                done();
+            });
+        });
+
+        // The below tests use the composed and decomposed form
+        // of the 'ñ' character
+
+        it('should work in combination with min', (done) => {
+
+            const baseSchema = Joi.string().min(2);
+
+            baseSchema.normalize('NFC').validate('n\u0303', (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" length must be at least 2 characters long');
+            });
+
+            baseSchema.normalize('NFD').validate('\u00F1', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('n\u0303');
+            });
+
+            done();
+        });
+
+        it('should work in combination with max', (done) => {
+
+            const baseSchema = Joi.string().max(1);
+
+            baseSchema.normalize('NFC').validate('n\u0303', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('\u00F1');
+            });
+
+            baseSchema.normalize('NFD').validate('\u00F1', (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('"value" length must be less than or equal to 1 characters long');
+            });
+
+            done();
+        });
+
+        it('should work in combination with length', (done) => {
+
+            const baseSchema = Joi.string().length(2);
+
+            Helper.validateOptions(baseSchema.normalize('NFC'), [
+                ['\u00F1', false, null, '"value" length must be 2 characters long'],
+                ['n\u0303', false, null, '"value" length must be 2 characters long'],
+                ['\u00F1\u00F1', true],
+                ['\u00F1n\u0303', true],
+                ['n\u0303n\u0303', true]
+            ]);
+
+            Helper.validateOptions(baseSchema.normalize('NFD'), [
+                ['\u00F1\u00F1', false, null, '"value" length must be 2 characters long'],
+                ['\u00F1n\u0303', false, null, '"value" length must be 2 characters long'],
+                ['n\u0303n\u0303', false, null, '"value" length must be 2 characters long'],
+                ['\u00F1', true],
+                ['n\u0303', true]
+            ]);
+
+            done();
+        });
+
+        it('should work in combination with lowercase', (done) => {
+
+            const baseSchema = Joi.string().lowercase();
+
+            baseSchema.normalize('NFC').validate('N\u0303', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('\u00F1');
+            });
+
+            baseSchema.normalize('NFD').validate('\u00D1', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('n\u0303');
+            });
+
+            done();
+        });
+
+        it('should work in combination with uppercase', (done) => {
+
+            const baseSchema = Joi.string().uppercase();
+
+            baseSchema.normalize('NFC').validate('n\u0303', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('\u00D1');
+            });
+
+            baseSchema.normalize('NFD').validate('\u00F1', (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal('N\u0303');
+            });
+
+            done();
+        });
+    });
+
     describe('lowercase()', () => {
 
         it('only allows strings that are entirely lowercase', (done) => {
