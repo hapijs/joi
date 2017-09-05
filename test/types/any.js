@@ -2255,6 +2255,20 @@ describe('any', () => {
                     done();
                 });
             });
+
+            it('should ignore a value defined with required(false)', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.any().required(false),
+                    b: Joi.any()
+                });
+
+                Joi.validate({ b: 'abc' }, schema, { abortEarly: false }, (err) => {
+
+                    expect(err).to.be.null();
+                    done();
+                });
+            });
         });
     });
 });
