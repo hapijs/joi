@@ -505,6 +505,11 @@ Marks a key as required which will not allow `undefined` as value. All keys are 
 const schema = Joi.any().required();
 ```
 
+It is also possible to use required dynamically. If you pass false as argument the key is optional. 
+```js
+const schema = Joi.any().required(false);
+```
+
 #### `any.optional()`
 
 Marks a key as optional which will allow `undefined` as values. Used to annotate the schema for readability as all keys are optional by default.
