@@ -1641,4 +1641,88 @@ describe('object', () => {
             ], done);
         });
     });
+
+    describe('nested defaults', () => {
+
+        it('should allow deeply nested objects with nested defaults', (done) => {
+
+            const schema = Joi.object({
+                top: Joi.string().default('top default value'),
+                deeply: Joi.object({
+                    nested: Joi.object({
+                        field: Joi.string().default('nested default value'),
+                        noDefault: Joi.string()
+                    }).default({ noDefault: 'provided by object' })
+                }).default()
+            }).default();
+
+            expect(Joi.validate({ deeply: { nested: {} } }, schema)).to.equal({
+                error: null,
+                value: {
+                    top: 'top default value',
+                    deeply: {
+                        nested: {
+                            field: 'nested default value'
+                        }
+                    }
+                }
+            });
+
+            expect(Joi.validate({}, schema)).to.equal({
+                error: null,
+                value: {
+                    top: 'top default value',
+                    deeply: {
+                        nested: {
+                            field: 'nested default value',
+                            noDefault: 'provided by object'
+                        }
+                    }
+                }
+            });
+
+            done();
+        });
+
+        it('should allow empty objects when no nested defaults are present', (done) => {
+
+            const schema = Joi.object({
+                top: Joi.string().default('top default value'),
+                nested: Joi.object({
+                    field: Joi.string()
+                }).default()
+            });
+            const result = Joi.validate({}, schema);
+
+            expect(result).to.equal({
+                error: null,
+                value: {
+                    top: 'top default value',
+                    nested: {}
+                }
+            });
+
+            done();
+        });
+
+        it('objects with no nested default should not be present', (done) => {
+
+            const schema = Joi.object({
+                top: Joi.string().default('top default value'),
+                nested: Joi.object({
+                    field: Joi.string()
+                })
+            });
+            const result = Joi.validate({}, schema);
+
+            expect(result).to.equal({
+                error: null,
+                value: {
+                    top: 'top default value'
+                }
+            });
+
+            done();
+        });
+    });
 });
