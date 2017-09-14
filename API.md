@@ -1,5 +1,5 @@
 <!-- version -->
-# 10.6.0 API Reference
+# 11.0.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -15,12 +15,14 @@
   - [`ref(key, [options])`](#refkey-options)
   - [`isRef(ref)`](#isrefref)
   - [`reach(schema, path)`](#reachschema-path)
+  - [`defaults(fn)`](#defaultsfn)
   - [`extend(extension)`](#extendextension)
     - [Terms](#terms)
     - [Extension](#extension)
     - [npm note](#npm-note)
     - [Examples](#examples)
   - [`any`](#any)
+    - [`schemaType`](#schematype)
     - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
     - [`any.allow(value)`](#anyallowvalue)
     - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
