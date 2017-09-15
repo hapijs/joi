@@ -1057,8 +1057,22 @@ describe('string', () => {
         it('only allow strings that are in NFC form', (done) => {
 
             const schema = Joi.string().normalize('NFC');
+
             Helper.validateOptions(schema, [
-                [normalizations.original, false, null, '"value" must be unicode normalized in the NFC form'],
+                [normalizations.original, false, null, {
+                    message: '"value" must be unicode normalized in the NFC form',
+                    details: [{
+                        message: '"value" must be unicode normalized in the NFC form',
+                        path: [],
+                        type: 'string.normalize',
+                        context: {
+                            form: 'NFC',
+                            value: normalizations.original,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 [normalizations.NFC, true]
             ], { convert: false }, done);
         });
@@ -1066,8 +1080,22 @@ describe('string', () => {
         it('only allow strings that are in NFD form', (done) => {
 
             const schema = Joi.string().normalize('NFD');
+
             Helper.validateOptions(schema, [
-                [normalizations.original, false, null, '"value" must be unicode normalized in the NFD form'],
+                [normalizations.original, false, null, {
+                    message: '"value" must be unicode normalized in the NFD form',
+                    details: [{
+                        message: '"value" must be unicode normalized in the NFD form',
+                        path: [],
+                        type: 'string.normalize',
+                        context: {
+                            form: 'NFD',
+                            value: normalizations.original,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 [normalizations.NFD, true]
             ], { convert: false }, done);
         });
@@ -1075,8 +1103,22 @@ describe('string', () => {
         it('only allow strings that are in NFKC form', (done) => {
 
             const schema = Joi.string().normalize('NFKC');
+
             Helper.validateOptions(schema, [
-                [normalizations.original, false, null, '"value" must be unicode normalized in the NFKC form'],
+                [normalizations.original, false, null, {
+                    message: '"value" must be unicode normalized in the NFKC form',
+                    details: [{
+                        message: '"value" must be unicode normalized in the NFKC form',
+                        path: [],
+                        type: 'string.normalize',
+                        context: {
+                            form: 'NFKC',
+                            value: normalizations.original,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 [normalizations.NFKC, true]
             ], { convert: false }, done);
         });
@@ -1084,39 +1126,64 @@ describe('string', () => {
         it('only allow strings that are in NFKD form', (done) => {
 
             const schema = Joi.string().normalize('NFKD');
+
             Helper.validateOptions(schema, [
-                [normalizations.original, false, null, '"value" must be unicode normalized in the NFKD form'],
+                [normalizations.original, false, null, {
+                    message: '"value" must be unicode normalized in the NFKD form',
+                    details: [{
+                        message: '"value" must be unicode normalized in the NFKD form',
+                        path: [],
+                        type: 'string.normalize',
+                        context: {
+                            form: 'NFKD',
+                            value: normalizations.original,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 [normalizations.NFKD, true]
             ], { convert: false }, done);
         });
 
-        it('normalizes string before validation', (done) => {
+        it('normalizes string using NFC before validation', (done) => {
 
             Joi.string().normalize('NFC').validate(normalizations.original, (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal(normalizations.NFC);
+                done();
             });
+        });
+
+        it('normalizes string using NFD before validation', (done) => {
 
             Joi.string().normalize('NFD').validate(normalizations.original, (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal(normalizations.NFD);
+                done();
             });
+        });
+
+        it('normalizes string using NFKC before validation', (done) => {
 
             Joi.string().normalize('NFKC').validate(normalizations.original, (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal(normalizations.NFKC);
+                done();
             });
+        });
+
+        it('normalizes string using NFKD before validation', (done) => {
 
             Joi.string().normalize('NFKD').validate(normalizations.original, (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal(normalizations.NFKD);
+                done();
             });
-
-            done();
         });
 
         it('should default to NFC form', (done) => {
@@ -1137,19 +1204,30 @@ describe('string', () => {
 
             const baseSchema = Joi.string().min(2);
 
-            baseSchema.normalize('NFC').validate('n\u0303', (err, value) => {
-
-                expect(err).to.exist();
-                expect(err.message).to.equal('"value" length must be at least 2 characters long');
-            });
-
             baseSchema.normalize('NFD').validate('\u00F1', (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal('n\u0303');
-            });
 
-            done();
+                baseSchema.normalize('NFC').validate('n\u0303', (err2, value2) => {
+
+                    expect(err2).to.be.an.error('"value" length must be at least 2 characters long');
+                    expect(err2.details).to.equal([{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: '\u00F1',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]);
+
+                    done();
+                });
+            });
         });
 
         it('should work in combination with max', (done) => {
@@ -1160,38 +1238,122 @@ describe('string', () => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal('\u00F1');
+
+                baseSchema.normalize('NFD').validate('\u00F1', (err2, value2) => {
+
+                    expect(err2).to.be.an.error('"value" length must be less than or equal to 1 characters long');
+                    expect(err2.details).to.equal([{
+                        message: '"value" length must be less than or equal to 1 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 1,
+                            value: 'n\u0303',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]);
+
+                    done();
+                });
             });
-
-            baseSchema.normalize('NFD').validate('\u00F1', (err, value) => {
-
-                expect(err).to.exist();
-                expect(err.message).to.equal('"value" length must be less than or equal to 1 characters long');
-            });
-
-            done();
         });
 
-        it('should work in combination with length', (done) => {
+        it('composition should work in combination with length', (done) => {
 
-            const baseSchema = Joi.string().length(2);
+            const schema = Joi.string().length(2).normalize('NFC');
 
-            Helper.validateOptions(baseSchema.normalize('NFC'), [
-                ['\u00F1', false, null, '"value" length must be 2 characters long'],
-                ['n\u0303', false, null, '"value" length must be 2 characters long'],
+            Helper.validate(schema, [
+                ['\u00F1', false, null, {
+                    message: '"value" length must be 2 characters long',
+                    details: [{
+                        message: '"value" length must be 2 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 2,
+                            value: '\u00F1',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['n\u0303', false, null, {
+                    message: '"value" length must be 2 characters long',
+                    details: [{
+                        message: '"value" length must be 2 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 2,
+                            value: '\u00F1',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['\u00F1\u00F1', true],
                 ['\u00F1n\u0303', true],
                 ['n\u0303n\u0303', true]
-            ]);
+            ], done);
+        });
 
-            Helper.validateOptions(baseSchema.normalize('NFD'), [
-                ['\u00F1\u00F1', false, null, '"value" length must be 2 characters long'],
-                ['\u00F1n\u0303', false, null, '"value" length must be 2 characters long'],
-                ['n\u0303n\u0303', false, null, '"value" length must be 2 characters long'],
+        it('decomposition should work in combination with length', (done) => {
+
+            const schema = Joi.string().length(2).normalize('NFD');
+
+            Helper.validate(schema, [
+                ['\u00F1\u00F1', false, null, {
+                    message: '"value" length must be 2 characters long',
+                    details: [{
+                        message: '"value" length must be 2 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 2,
+                            value: 'n\u0303n\u0303',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['\u00F1n\u0303', false, null, {
+                    message: '"value" length must be 2 characters long',
+                    details: [{
+                        message: '"value" length must be 2 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 2,
+                            value: 'n\u0303n\u0303',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['n\u0303n\u0303', false, null, {
+                    message: '"value" length must be 2 characters long',
+                    details: [{
+                        message: '"value" length must be 2 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 2,
+                            value: 'n\u0303n\u0303',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['\u00F1', true],
                 ['n\u0303', true]
-            ]);
-
-            done();
+            ], done);
         });
 
         it('should work in combination with lowercase', (done) => {
@@ -1202,15 +1364,15 @@ describe('string', () => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal('\u00F1');
+
+                baseSchema.normalize('NFD').validate('\u00D1', (err2, value2) => {
+
+                    expect(err2).to.not.exist();
+                    expect(value2).to.equal('n\u0303');
+
+                    done();
+                });
             });
-
-            baseSchema.normalize('NFD').validate('\u00D1', (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal('n\u0303');
-            });
-
-            done();
         });
 
         it('should work in combination with uppercase', (done) => {
@@ -1221,15 +1383,15 @@ describe('string', () => {
 
                 expect(err).to.not.exist();
                 expect(value).to.equal('\u00D1');
+
+                baseSchema.normalize('NFD').validate('\u00F1', (err2, value2) => {
+
+                    expect(err2).to.not.exist();
+                    expect(value2).to.equal('N\u0303');
+
+                    done();
+                });
             });
-
-            baseSchema.normalize('NFD').validate('\u00F1', (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal('N\u0303');
-            });
-
-            done();
         });
     });
 
