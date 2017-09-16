@@ -2167,17 +2167,28 @@ describe('object', () => {
 
         it('should differentiate between ES6 classes and functions', (done) => {
 
-            const schema = Joi.object({
+            const classSchema = Joi.object({
                 _class: Joi.class()
             });
 
-            const testFunc = function() {};
+            const funcSchema = Joi.object({
+                _func: Joi.func()
+            });
 
-            schema.validate({ _class: testFunc }, (err, value) => {
+            const testFunc = function() {};
+            const testClass = class MyClass {};
+
+            classSchema.validate({ _class: testFunc }, (err, value) => {
 
                 expect(err).to.exist();
                 expect(err.message).to.equal('child "_class" fails because ["_class" must be an ES6 class]');
-                done();
+
+                funcSchema.validate({ _func: testClass }, (err, value) => {
+
+                    expect(err).to.exist();
+                    expect(err.message).to.equal('child "_func" fails because ["_func" must be a Function]');
+                    done();
+                });
             });
         });
 
