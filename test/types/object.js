@@ -2163,6 +2163,40 @@ describe('object', () => {
 
     });
 
+    describe('ES6 Classes', () => {
+
+        it('should differentiate between ES6 classes and functions', (done) => {
+
+            const schema = Joi.object({
+                _class: Joi.class()
+            });
+
+            const testFunc = function() {};
+
+            schema.validate({ _class: testFunc }, (err, value) => {
+
+                expect(err).to.exist();
+                expect(err.message).to.equal('child "_class" fails because ["_class" must be an ES6 class]');
+                done();
+            });
+        });
+
+        it('validates an ES6 class', (done) => {
+
+            const schema = Joi.object({
+                _class: Joi.class()
+            });
+
+            const testClass = class MyClass {};
+
+            schema.validate({ _class: testClass }, (err, value) => {
+
+                expect(err).to.not.exist();
+                done();
+            });
+        });
+    });
+
     describe('requiredKeys()', () => {
 
         it('should set keys as required', (done) => {
@@ -2223,7 +2257,7 @@ describe('object', () => {
 
         it('should work on types other than objects', (done) => {
 
-            const schemas = [Joi.array(), Joi.binary(), Joi.boolean(), Joi.date(), Joi.func(), Joi.number(), Joi.string()];
+            const schemas = [Joi.array(), Joi.binary(), Joi.boolean(), Joi.date(), Joi.func(), Joi.class(), Joi.number(), Joi.string()];
             schemas.forEach((schema) => {
 
                 expect(() => {
