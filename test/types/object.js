@@ -2222,15 +2222,17 @@ describe('object', () => {
 
                 expect(value._class.constructor).to.equal(defaultClass.constructor);
 
+                const valueClassInstance = new value._class();
+
                 expect(valueClassInstance.constructor.name).to.equal(defaultClassInstance.constructor.name);
 
                 schema.validate({ _class: class NewClass {} }, (err, _value) => {
 
                     expect(err).to.not.exist();
 
-                    const valueClassInstance = new _value._class();
+                    const _valueClassInstance = new _value._class();
 
-                    expect(valueClassInstance.constructor.name).to.not.equal(defaultClassInstance.constructor.name);
+                    expect(_valueClassInstance.constructor.name).to.not.equal(defaultClassInstance.constructor.name);
 
                     done();
                 });
