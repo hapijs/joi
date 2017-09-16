@@ -2183,7 +2183,7 @@ describe('object', () => {
                 expect(err).to.exist();
                 expect(err.message).to.equal('child "_class" fails because ["_class" must be an ES6 class]');
 
-                funcSchema.validate({ _func: testClass }, (err, value) => {
+                funcSchema.validate({ _func: testClass }, (err, _value) => {
 
                     expect(err).to.exist();
                     expect(err.message).to.equal('child "_func" fails because ["_func" must be a Function]');
