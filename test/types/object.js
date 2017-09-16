@@ -2206,6 +2206,38 @@ describe('object', () => {
                 done();
             });
         });
+
+        it('works with default', (done) => {
+
+            const defaultClass = class MyClass {};
+            const defaultClassInstance = new defaultClass();
+
+            const schema = Joi.object({
+                _class: Joi.class().default(defaultClass)
+            });
+
+            schema.validate({}, (err, value) => {
+
+                expect(err).to.not.exist();
+
+                expect(value._class.constructor).to.equal(defaultClass.constructor);
+
+                const valueClassInstance = new value._class();
+
+                expect(valueClassInstance.constructor.name).to.equal(defaultClassInstance.constructor.name);
+
+                schema.validate({ _class: class NewClass {} }, (err, value) => {
+
+                    expect(err).to.not.exist();
+
+                    const valueClassInstance = new value._class();
+
+                    expect(valueClassInstance.constructor.name).to.not.equal(defaultClassInstance.constructor.name);
+
+                    done();
+                });
+            });
+        });
     });
 
     describe('requiredKeys()', () => {
