@@ -64,6 +64,7 @@
     - [`binary.min(limit)`](#binaryminlimit)
     - [`binary.max(limit)`](#binarymaxlimit)
     - [`binary.length(limit)`](#binarylengthlimit)
+  - [`class` - inherits from `Any`](#class---inherits-from-any)
   - [`date` - inherits from `Any`](#date---inherits-from-any)
     - [`date.min(date)`](#datemindate)
     - [`date.max(date)`](#datemaxdate)
@@ -1059,6 +1060,15 @@ Specifies the exact length of the buffer:
 
 ```js
 const schema = Joi.binary().length(5);
+```
+
+### `class` - inherits from `Any`
+
+Generates a schema object that matches an ES6 class type.
+
+```js
+const _class = Joi.class();
+_class.validate(class MyClass {}, (err, value) => { });
 ```
 
 ### `date` - inherits from `Any`
