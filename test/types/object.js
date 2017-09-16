@@ -2175,7 +2175,7 @@ describe('object', () => {
                 _func: Joi.func()
             });
 
-            const testFunc = function() {};
+            const testFunc = function () {};
             const testClass = class MyClass {};
 
             classSchema.validate({ _class: testFunc }, (err, value) => {
@@ -2222,15 +2222,13 @@ describe('object', () => {
 
                 expect(value._class.constructor).to.equal(defaultClass.constructor);
 
-                const valueClassInstance = new value._class();
-
                 expect(valueClassInstance.constructor.name).to.equal(defaultClassInstance.constructor.name);
 
-                schema.validate({ _class: class NewClass {} }, (err, value) => {
+                schema.validate({ _class: class NewClass {} }, (err, _value) => {
 
                     expect(err).to.not.exist();
 
-                    const valueClassInstance = new value._class();
+                    const valueClassInstance = new _value._class();
 
                     expect(valueClassInstance.constructor.name).to.not.equal(defaultClassInstance.constructor.name);
 
