@@ -742,6 +742,31 @@ describe('date', () => {
                 done();
             });
 
+            it('fails on empty strings', (done) => {
+
+                const schema = Joi.date().timestamp();
+                Helper.validate(schema, [
+                    ['', false, null, {
+                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        details: [{
+                            message: '"value" must be a valid timestamp or number of milliseconds',
+                            path: [],
+                            type: 'date.timestamp.javascript',
+                            context: { key: undefined, label: 'value' }
+                        }]
+                    }],
+                    [' \t ', false, null, {
+                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        details: [{
+                            message: '"value" must be a valid timestamp or number of milliseconds',
+                            path: [],
+                            type: 'date.timestamp.javascript',
+                            context: { key: undefined, label: 'value' }
+                        }]
+                    }]
+                ], done);
+            });
+
             it('validates javascript timestamp', (done) => {
 
                 const now = new Date();
