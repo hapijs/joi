@@ -125,6 +125,7 @@
     - [`string.hex()`](#stringhex)
     - [`string.base64([options])`](#stringbase64options)
     - [`string.hostname()`](#stringhostname)
+    - [`string.normalize([form])`](#stringnormalizeform)
     - [`string.lowercase()`](#stringlowercase)
     - [`string.uppercase()`](#stringuppercase)
     - [`string.trim()`](#stringtrim)
@@ -1908,6 +1909,21 @@ Requires the string value to be a valid hostname as per [RFC1123](http://tools.i
 
 ```js
 const schema = Joi.string().hostname();
+```
+
+#### `string.normalize([form])`
+
+Requires the string value to be in a [unicode normalized](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize)
+form. If the validation `convert` option is on (enabled by default), the string will be normalized.
+
+- `form` - The unicode normalization form to use. Valid values: `NFC` [default], `NFD`, `NFKC`, `NFKD`
+
+```js
+const schema = Joi.string().normalize(); // defaults to NFC
+const schema = Joi.string().normalize('NFC'); // canonical composition
+const schema = Joi.string().normalize('NFD'); // canonical decomposition
+const schema = Joi.string().normalize('NFKC'); // compatibility composition
+const schema = Joi.string().normalize('NFKD'); // compatibility decomposition
 ```
 
 #### `string.lowercase()`
