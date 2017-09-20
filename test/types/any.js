@@ -2414,6 +2414,14 @@ describe('any', () => {
             ], done);
         });
 
+        it('should remove empty flag if only reset is used', (done) => {
+
+            const schema = Joi.string().empty('').empty();
+            expect(schema._flags.empty).to.not.exist();
+            expect(schema.describe().flags).to.not.exist();
+            done();
+        });
+
         it('should work with dependencies', (done) => {
 
             const schema = Joi.object({
