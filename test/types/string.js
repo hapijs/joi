@@ -35,8 +35,24 @@ describe('string', () => {
 
         const schema = Joi.string();
         Helper.validate(schema, [
-            [true, false, null, '"value" must be a string'],
-            [false, false, null, '"value" must be a string']
+            [true, false, null, {
+                message: '"value" must be a string',
+                details: [{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: true, label: 'value', key: undefined }
+                }]
+            }],
+            [false, false, null, {
+                message: '"value" must be a string',
+                details: [{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: false, label: 'value', key: undefined }
+                }]
+            }]
         ], done);
     });
 
@@ -44,8 +60,24 @@ describe('string', () => {
 
         const schema = Joi.string();
         Helper.validate(schema, [
-            [123, false, null, '"value" must be a string'],
-            [0, false, null, '"value" must be a string'],
+            [123, false, null, {
+                message: '"value" must be a string',
+                details: [{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 123, label: 'value', key: undefined }
+                }]
+            }],
+            [0, false, null, {
+                message: '"value" must be a string',
+                details: [{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 0, label: 'value', key: undefined }
+                }]
+            }],
             ['123', true],
             ['0', true]
         ], done);
@@ -68,8 +100,24 @@ describe('string', () => {
             Helper.validate(Joi.string().valid('a', 'b'), [
                 ['a', true],
                 ['b', true],
-                ['A', false, null, '"value" must be one of [a, b]'],
-                ['B', false, null, '"value" must be one of [a, b]']
+                ['A', false, null, {
+                    message: '"value" must be one of [a, b]',
+                    details: [{
+                        message: '"value" must be one of [a, b]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['a', 'b'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['B', false, null, {
+                    message: '"value" must be one of [a, b]',
+                    details: [{
+                        message: '"value" must be one of [a, b]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['a', 'b'], label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -80,7 +128,15 @@ describe('string', () => {
                 ['b', true],
                 ['A', true],
                 ['B', true],
-                [4, false, null, '"value" must be a string']
+                [4, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 4, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -91,7 +147,15 @@ describe('string', () => {
                 ['b', true],
                 ['A', true],
                 ['B', true],
-                [4, false, null, '"value" must be a string'],
+                [4, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 4, label: 'value', key: undefined }
+                    }]
+                }],
                 [5, true]
             ], done);
         });
@@ -102,8 +166,24 @@ describe('string', () => {
         it('inverts case sensitive values', (done) => {
 
             Helper.validate(Joi.string().invalid('a', 'b'), [
-                ['a', false, null, '"value" contains an invalid value'],
-                ['b', false, null, '"value" contains an invalid value'],
+                ['a', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['b', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
                 ['A', true],
                 ['B', true]
             ], done);
@@ -112,10 +192,42 @@ describe('string', () => {
         it('inverts case insensitive values', (done) => {
 
             Helper.validate(Joi.string().invalid('a', 'b').insensitive(), [
-                ['a', false, null, '"value" contains an invalid value'],
-                ['b', false, null, '"value" contains an invalid value'],
-                ['A', false, null, '"value" contains an invalid value'],
-                ['B', false, null, '"value" contains an invalid value']
+                ['a', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['b', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['A', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['B', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
     });
@@ -154,7 +266,21 @@ describe('string', () => {
             const schema = Joi.string().min(2, 'utf8');
             Helper.validate(schema, [
                 ['\u00bd', true],
-                ['a', false, null, '"value" length must be at least 2 characters long']
+                ['a', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'a',
+                            encoding: 'utf8',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -163,7 +289,21 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.number(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
-                [{ a: 2, b: 'a' }, false, null, 'child "b" fails because ["b" length must be at least 2 characters long]']
+                [{ a: 2, b: 'a' }, false, null, {
+                    message: 'child "b" fails because ["b" length must be at least 2 characters long]',
+                    details: [{
+                        message: '"b" length must be at least 2 characters long',
+                        path: ['b'],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'a',
+                            encoding: 'utf8',
+                            label: 'b',
+                            key: 'b'
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -181,7 +321,15 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: 4, c: 42 }, true],
                 [{ a: 'abc', b: 3, c: 0 }, true],
-                [{ a: 'abc', b: 3, c: 42 }, false, null, 'child "c" fails because ["c" must be one of [0]]']
+                [{ a: 'abc', b: 3, c: 42 }, false, null, {
+                    message: 'child "c" fails because ["c" must be one of [0]]',
+                    details: [{
+                        message: '"c" must be one of [0]',
+                        path: ['c'],
+                        type: 'any.allowOnly',
+                        context: { valids: [0], label: 'c', key: 'c' }
+                    }]
+                }]
             ], done);
         });
 
@@ -190,7 +338,21 @@ describe('string', () => {
             const schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
-                [{ b: 'a' }, false, { context: { a: 2 } }, 'child "b" fails because ["b" length must be at least 2 characters long]']
+                [{ b: 'a' }, false, { context: { a: 2 } }, {
+                    message: 'child "b" fails because ["b" length must be at least 2 characters long]',
+                    details: [{
+                        message: '"b" length must be at least 2 characters long',
+                        path: ['b'],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'a',
+                            encoding: 'utf8',
+                            label: 'b',
+                            key: 'b'
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -199,7 +361,15 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
 
             Helper.validate(schema, [
-                [{ a: 'Hi there', b: '\u00bd' }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+                [{ a: 'Hi there', b: '\u00bd' }, false, null, {
+                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    details: [{
+                        message: '"b" references "a" which is not a number',
+                        path: ['b'],
+                        type: 'string.ref',
+                        context: { ref: 'a', label: 'b', key: 'b' }
+                    }]
+                }]
             ], done);
         });
 
@@ -208,7 +378,15 @@ describe('string', () => {
             const schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
 
             Helper.validate(schema, [
-                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, 'child "b" fails because ["b" references "a" which is not a number]']
+                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
+                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    details: [{
+                        message: '"b" references "a" which is not a number',
+                        path: ['b'],
+                        type: 'string.ref',
+                        context: { ref: 'a', label: 'b', key: 'b' }
+                    }]
+                }]
             ], done);
         });
     });
@@ -246,7 +424,15 @@ describe('string', () => {
 
             const schema = Joi.string().max(1, 'utf8');
             Helper.validate(schema, [
-                ['\u00bd', false, null, '"value" length must be less than or equal to 1 characters long'],
+                ['\u00bd', false, null, {
+                    message: '"value" length must be less than or equal to 1 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 1 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: { limit: 1, value: '\u00bd', encoding: 'utf8', label: 'value', key: undefined }
+                    }]
+                }],
                 ['a', true]
             ], done);
         });
@@ -256,7 +442,21 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.number(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
-                [{ a: 2, b: 'three' }, false, null, 'child "b" fails because ["b" length must be less than or equal to 2 characters long]']
+                [{ a: 2, b: 'three' }, false, null, {
+                    message: 'child "b" fails because ["b" length must be less than or equal to 2 characters long]',
+                    details: [{
+                        message: '"b" length must be less than or equal to 2 characters long',
+                        path: ['b'],
+                        type: 'string.max',
+                        context: {
+                            limit: 2,
+                            value: 'three',
+                            encoding: 'utf8',
+                            label: 'b',
+                            key: 'b'
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -265,7 +465,21 @@ describe('string', () => {
             const schema = Joi.object({ b: Joi.string().max(Joi.ref('$a'), 'utf8') });
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
-                [{ b: 'three' }, false, { context: { a: 2 } }, 'child "b" fails because ["b" length must be less than or equal to 2 characters long]']
+                [{ b: 'three' }, false, { context: { a: 2 } }, {
+                    message: 'child "b" fails because ["b" length must be less than or equal to 2 characters long]',
+                    details: [{
+                        message: '"b" length must be less than or equal to 2 characters long',
+                        path: ['b'],
+                        type: 'string.max',
+                        context: {
+                            limit: 2,
+                            value: 'three',
+                            encoding: 'utf8',
+                            label: 'b',
+                            key: 'b'
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -274,7 +488,15 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
 
             Helper.validate(schema, [
-                [{ a: 'Hi there', b: '\u00bd' }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+                [{ a: 'Hi there', b: '\u00bd' }, false, null, {
+                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    details: [{
+                        message: '"b" references "a" which is not a number',
+                        path: ['b'],
+                        type: 'string.ref',
+                        context: { ref: 'a', label: 'b', key: 'b' }
+                    }]
+                }]
             ], done);
         });
 
@@ -283,7 +505,15 @@ describe('string', () => {
             const schema = Joi.object({ b: Joi.string().max(Joi.ref('$a'), 'utf8') });
 
             Helper.validate(schema, [
-                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, 'child "b" fails because ["b" references "a" which is not a number]']
+                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
+                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    details: [{
+                        message: '"b" references "a" which is not a number',
+                        path: ['b'],
+                        type: 'string.ref',
+                        context: { ref: 'a', label: 'b', key: 'b' }
+                    }]
+                }]
             ], done);
         });
     });
@@ -318,8 +548,24 @@ describe('string', () => {
                     ['4222222222222', true],    // visa
                     ['4012888888881881', true], // visa
                     ['4111111111111111', true], // visa
-                    ['4111111111111112', false, null, '"value" must be a credit card'],
-                    [null, false, null, '"value" must be a string']
+                    ['4111111111111112', false, null, {
+                        message: '"value" must be a credit card',
+                        details: [{
+                            message: '"value" must be a credit card',
+                            path: [],
+                            type: 'string.creditCard',
+                            context: { value: '4111111111111112', label: 'value', key: undefined }
+                        }]
+                    }],
+                    [null, false, null, {
+                        message: '"value" must be a string',
+                        details: [{
+                            message: '"value" must be a string',
+                            path: [],
+                            type: 'string.base',
+                            context: { value: null, label: 'value', key: undefined }
+                        }]
+                    }]
                 ], done);
             });
         });
@@ -359,7 +605,15 @@ describe('string', () => {
             const schema = Joi.string().length(2, 'utf8');
             Helper.validate(schema, [
                 ['\u00bd', true],
-                ['a', false, null, '"value" length must be 2 characters long']
+                ['a', false, null, {
+                    message: '"value" length must be 2 characters long',
+                    details: [{
+                        message: '"value" length must be 2 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: { limit: 2, value: 'a', encoding: 'utf8', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -368,7 +622,15 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.number(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
-                [{ a: 2, b: 'a' }, false, null, 'child "b" fails because ["b" length must be 2 characters long]']
+                [{ a: 2, b: 'a' }, false, null, {
+                    message: 'child "b" fails because ["b" length must be 2 characters long]',
+                    details: [{
+                        message: '"b" length must be 2 characters long',
+                        path: ['b'],
+                        type: 'string.length',
+                        context: { limit: 2, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
+                    }]
+                }]
             ], done);
         });
 
@@ -377,8 +639,24 @@ describe('string', () => {
             const schema = Joi.object({ b: Joi.string().length(Joi.ref('$a'), 'utf8') });
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
-                [{ b: 'a' }, false, { context: { a: 2 } }, 'child "b" fails because ["b" length must be 2 characters long]'],
-                [{ b: 'a' }, false, { context: { a: 2 } }, 'child "b" fails because ["b" length must be 2 characters long]', '']
+                [{ b: 'a' }, false, { context: { a: 2 } }, {
+                    message: 'child "b" fails because ["b" length must be 2 characters long]',
+                    details: [{
+                        message: '"b" length must be 2 characters long',
+                        path: ['b'],
+                        type: 'string.length',
+                        context: { limit: 2, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 'a' }, false, { context: { a: 2 } }, {
+                    message: 'child "b" fails because ["b" length must be 2 characters long]',
+                    details: [{
+                        message: '"b" length must be 2 characters long',
+                        path: ['b'],
+                        type: 'string.length',
+                        context: { limit: 2, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
+                    }]
+                }]
             ], done);
         });
 
@@ -387,7 +665,15 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
 
             Helper.validate(schema, [
-                [{ a: 'Hi there', b: '\u00bd' }, false, null, 'child "b" fails because ["b" references "a" which is not a number]']
+                [{ a: 'Hi there', b: '\u00bd' }, false, null, {
+                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    details: [{
+                        message: '"b" references "a" which is not a number',
+                        path: ['b'],
+                        type: 'string.ref',
+                        context: { ref: 'a', label: 'b', key: 'b' }
+                    }]
+                }]
             ], done);
         });
 
@@ -396,7 +682,15 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('$a'), 'utf8') });
 
             Helper.validate(schema, [
-                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, 'child "b" fails because ["b" references "a" which is not a number]']
+                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
+                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    details: [{
+                        message: '"b" references "a" which is not a number',
+                        path: ['b'],
+                        type: 'string.ref',
+                        context: { ref: 'a', label: 'b', key: 'b' }
+                    }]
+                }]
             ], done);
         });
     });
@@ -510,10 +804,34 @@ describe('string', () => {
                 ['joe@example.com', true],
                 ['"joe"@example.com', true],
                 ['êjness@something.com', true],
-                ['@iaminvalid.com', false, null, '"value" must be a valid email'],
+                ['@iaminvalid.com', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: '@iaminvalid.com', label: 'value', key: undefined }
+                    }]
+                }],
                 ['joe@[IPv6:2a00:1450:4001:c02::1b]', true],
-                ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false, null, '"value" must be a valid email'],
-                ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', false, null, '"value" must be a valid email']
+                ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: '12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', label: 'value', key: undefined }
+                    }]
+                }],
+                ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: '123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -523,7 +841,15 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['joe@example.org', true],
-                ['joe@example.edu', false, null, '"value" must be a valid email']
+                ['joe@example.edu', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe@example.edu', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -533,7 +859,15 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['joe@example.org', true],
-                ['joe@example.edu', false, null, '"value" must be a valid email']
+                ['joe@example.edu', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe@example.edu', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -541,8 +875,24 @@ describe('string', () => {
 
             const schema = Joi.string().email({ minDomainAtoms: 4 });
             Helper.validate(schema, [
-                ['joe@example.com', false, null, '"value" must be a valid email'],
-                ['joe@www.example.com', false, null, '"value" must be a valid email'],
+                ['joe@example.com', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe@example.com', label: 'value', key: undefined }
+                    }]
+                }],
+                ['joe@www.example.com', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe@www.example.com', label: 'value', key: undefined }
+                    }]
+                }],
                 ['joe@sub.www.example.com', true]
             ], done);
         });
@@ -554,7 +904,15 @@ describe('string', () => {
                 ['joe@example.com', true],
                 ['joe@www.example.com', true],
                 ['joe@localhost', true],
-                ['joe', false, null, '"value" must be a valid email']
+                ['joe', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe', label: 'value', key: undefined }
+                    }]
+                }]
             ]);
 
             schema = Joi.string().email({ errorLevel: true });
@@ -562,8 +920,24 @@ describe('string', () => {
                 ['joe@example.com', true],
                 ['joe@www.example.com', true],
                 ['joe@localhost', true],
-                ['joe@', false, null, '"value" must be a valid email'],
-                ['joe', false, null, '"value" must be a valid email']
+                ['joe@', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe@', label: 'value', key: undefined }
+                    }]
+                }],
+                ['joe', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -574,7 +948,15 @@ describe('string', () => {
                 ['joe@example.com', true],
                 ['joe@www.example.com', true],
                 ['joe@localhost', true],
-                ['joe', false, null, '"value" must be a valid email']
+                ['joe', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -583,7 +965,13 @@ describe('string', () => {
             const schema = { item: Joi.string().email() };
             Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
 
-                expect(err.message).to.contain('must be a valid email');
+                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid email]');
+                expect(err.details).to.equal([{
+                    message: '"item" must be a valid email',
+                    path: ['item'],
+                    type: 'string.email',
+                    context: { value: 'something', label: 'item', key: 'item' }
+                }]);
                 done();
             });
         });
@@ -599,13 +987,45 @@ describe('string', () => {
                 ['domain.local', true],
                 ['3domain.local', true],
                 ['hostname', true],
-                ['host:name', false, null, '"value" must be a valid hostname'],
-                ['-', false, null, '"value" must be a valid hostname'],
+                ['host:name', false, null, {
+                    message: '"value" must be a valid hostname',
+                    details: [{
+                        message: '"value" must be a valid hostname',
+                        path: [],
+                        type: 'string.hostname',
+                        context: { value: 'host:name', label: 'value', key: undefined }
+                    }]
+                }],
+                ['-', false, null, {
+                    message: '"value" must be a valid hostname',
+                    details: [{
+                        message: '"value" must be a valid hostname',
+                        path: [],
+                        type: 'string.hostname',
+                        context: { value: '-', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2387628', true],
-                ['01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', false, null, '"value" must be a valid hostname'],
+                ['01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', false, null, {
+                    message: '"value" must be a valid hostname',
+                    details: [{
+                        message: '"value" must be a valid hostname',
+                        path: [],
+                        type: 'string.hostname',
+                        context: { value: '01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', label: 'value', key: undefined }
+                    }]
+                }],
                 ['::1', true],
                 ['0:0:0:0:0:0:0:1', true],
-                ['0:?:0:0:0:0:0:1', false, null, '"value" must be a valid hostname']
+                ['0:?:0:0:0:0:0:1', false, null, {
+                    message: '"value" must be a valid hostname',
+                    details: [{
+                        message: '"value" must be a valid hostname',
+                        path: [],
+                        type: 'string.hostname',
+                        context: { value: '0:?:0:0:0:0:0:1', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
     });
@@ -619,9 +1039,33 @@ describe('string', () => {
                 ['this is all lowercase', true],
                 ['5', true],
                 ['lower\tcase', true],
-                ['Uppercase', false, null, '"value" must only contain lowercase characters'],
-                ['MixEd cAsE', false, null, '"value" must only contain lowercase characters'],
-                [1, false, null, '"value" must be a string']
+                ['Uppercase', false, null, {
+                    message: '"value" must only contain lowercase characters',
+                    details: [{
+                        message: '"value" must only contain lowercase characters',
+                        path: [],
+                        type: 'string.lowercase',
+                        context: { value: 'Uppercase', label: 'value', key: undefined }
+                    }]
+                }],
+                ['MixEd cAsE', false, null, {
+                    message: '"value" must only contain lowercase characters',
+                    details: [{
+                        message: '"value" must only contain lowercase characters',
+                        path: [],
+                        type: 'string.lowercase',
+                        context: { value: 'MixEd cAsE', label: 'value', key: undefined }
+                    }]
+                }],
+                [1, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 1, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -643,7 +1087,15 @@ describe('string', () => {
                 [' abc', true],
                 [' ABC', true],
                 ['ABC', true],
-                [1, false, null, '"value" must be a string']
+                [1, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 1, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -654,7 +1106,15 @@ describe('string', () => {
                 ['a\r b\n c', true, null, 'a b c'],
                 ['A\t B  C', true, null, 'a b c'],
                 ['ABC', true, null, 'abc'],
-                [1, false, null, '"value" must be a string']
+                [1, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 1, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
     });
@@ -668,9 +1128,33 @@ describe('string', () => {
                 ['THIS IS ALL UPPERCASE', true],
                 ['5', true],
                 ['UPPER\nCASE', true],
-                ['lOWERCASE', false, null, '"value" must only contain uppercase characters'],
-                ['MixEd cAsE', false, null, '"value" must only contain uppercase characters'],
-                [1, false, null, '"value" must be a string']
+                ['lOWERCASE', false, null, {
+                    message: '"value" must only contain uppercase characters',
+                    details: [{
+                        message: '"value" must only contain uppercase characters',
+                        path: [],
+                        type: 'string.uppercase',
+                        context: { value: 'lOWERCASE', label: 'value', key: undefined }
+                    }]
+                }],
+                ['MixEd cAsE', false, null, {
+                    message: '"value" must only contain uppercase characters',
+                    details: [{
+                        message: '"value" must only contain uppercase characters',
+                        path: [],
+                        type: 'string.uppercase',
+                        context: { value: 'MixEd cAsE', label: 'value', key: undefined }
+                    }]
+                }],
+                [1, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 1, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -692,7 +1176,15 @@ describe('string', () => {
                 [' abc', true],
                 [' ABC', true],
                 ['ABC', true],
-                [1, false, null, '"value" must be a string']
+                [1, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 1, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -703,7 +1195,15 @@ describe('string', () => {
                 ['a\r b\n c', true, null, 'A B C'],
                 ['A\t B  C', true, null, 'A B C'],
                 ['ABC', true, null, 'ABC'],
-                [1, false, null, '"value" must be a string']
+                [1, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 1, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
     });
@@ -714,9 +1214,33 @@ describe('string', () => {
 
             const schema = Joi.string().trim();
             Helper.validateOptions(schema, [
-                [' something', false, null, '"value" must not have leading or trailing whitespace'],
-                ['something ', false, null, '"value" must not have leading or trailing whitespace'],
-                ['something\n', false, null, '"value" must not have leading or trailing whitespace'],
+                [' something', false, null, {
+                    message: '"value" must not have leading or trailing whitespace',
+                    details: [{
+                        message: '"value" must not have leading or trailing whitespace',
+                        path: [],
+                        type: 'string.trim',
+                        context: { value: ' something', label: 'value', key: undefined }
+                    }]
+                }],
+                ['something ', false, null, {
+                    message: '"value" must not have leading or trailing whitespace',
+                    details: [{
+                        message: '"value" must not have leading or trailing whitespace',
+                        path: [],
+                        type: 'string.trim',
+                        context: { value: 'something ', label: 'value', key: undefined }
+                    }]
+                }],
+                ['something\n', false, null, {
+                    message: '"value" must not have leading or trailing whitespace',
+                    details: [{
+                        message: '"value" must not have leading or trailing whitespace',
+                        path: [],
+                        type: 'string.trim',
+                        context: { value: 'something\n', label: 'value', key: undefined }
+                    }]
+                }],
                 ['some thing', true],
                 ['something', true]
             ], { convert: false }, done);
@@ -748,8 +1272,36 @@ describe('string', () => {
 
             const schema = Joi.string().min(4).trim();
             Helper.validate(schema, [
-                [' a ', false, null, '"value" length must be at least 4 characters long'],
-                ['abc ', false, null, '"value" length must be at least 4 characters long'],
+                [' a ', false, null, {
+                    message: '"value" length must be at least 4 characters long',
+                    details: [{
+                        message: '"value" length must be at least 4 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 4,
+                            value: 'a',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['abc ', false, null, {
+                    message: '"value" length must be at least 4 characters long',
+                    details: [{
+                        message: '"value" length must be at least 4 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 4,
+                            value: 'abc',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['abcd ', true]
             ], done);
         });
@@ -758,7 +1310,21 @@ describe('string', () => {
 
             const schema = Joi.string().max(4).trim();
             Helper.validate(schema, [
-                [' abcde ', false, null, '"value" length must be less than or equal to 4 characters long'],
+                [' abcde ', false, null, {
+                    message: '"value" length must be less than or equal to 4 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 4 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 4,
+                            value: 'abcde',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['abc ', true],
                 ['abcd ', true]
             ], done);
@@ -768,8 +1334,36 @@ describe('string', () => {
 
             const schema = Joi.string().length(4).trim();
             Helper.validate(schema, [
-                [' ab ', false, null, '"value" length must be 4 characters long'],
-                ['abc ', false, null, '"value" length must be 4 characters long'],
+                [' ab ', false, null, {
+                    message: '"value" length must be 4 characters long',
+                    details: [{
+                        message: '"value" length must be 4 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 4,
+                            value: 'ab',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['abc ', false, null, {
+                    message: '"value" length must be 4 characters long',
+                    details: [{
+                        message: '"value" length must be 4 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 4,
+                            value: 'abc',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['abcd ', true]
             ], done);
         });
@@ -848,7 +1442,21 @@ describe('string', () => {
 
             const schema = Joi.string().min(4).replace(/\s+/g, ' ');
             Helper.validate(schema, [
-                ['   a   ', false, null, '"value" length must be at least 4 characters long'],
+                ['   a   ', false, null, {
+                    message: '"value" length must be at least 4 characters long',
+                    details: [{
+                        message: '"value" length must be at least 4 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 4,
+                            value: ' a ',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['abc    ', true, null, 'abc '],
                 ['a\t\rbc', true, null, 'a bc']
             ], done);
@@ -867,7 +1475,21 @@ describe('string', () => {
 
             const schema = Joi.string().length(5).replace(/\s+/g, ' ');
             Helper.validate(schema, [
-                ['a    bc', false, null, '"value" length must be 5 characters long'],
+                ['a    bc', false, null, {
+                    message: '"value" length must be 5 characters long',
+                    details: [{
+                        message: '"value" length must be 5 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 5,
+                            value: 'a bc',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['a\tb\nc', true, null, 'a b c']
             ], done);
         });
@@ -881,7 +1503,19 @@ describe('string', () => {
             const schema = Joi.string().regex(/[a-z]+/).regex(/[0-9]+/);
             schema.validate('abcd', (err, value) => {
 
-                expect(err.message).to.contain('required pattern');
+                expect(err).to.be.an.error('"value" with value "abcd" fails to match the required pattern: /[0-9]+/');
+                expect(err.details).to.equal([{
+                    message: '"value" with value "abcd" fails to match the required pattern: /[0-9]+/',
+                    path: [],
+                    type: 'string.regex.base',
+                    context: {
+                        name: undefined,
+                        pattern: /[0-9]+/,
+                        value: 'abcd',
+                        label: 'value',
+                        key: undefined
+                    }
+                }]);
                 done();
             });
         });
@@ -891,7 +1525,19 @@ describe('string', () => {
             const schema = Joi.string().regex(/[a-z]+/, 'letters').regex(/[0-9]+/, 'numbers');
             schema.validate('abcd', (err, value) => {
 
-                expect(err.message).to.contain('numbers pattern');
+                expect(err).to.be.an.error('"value" with value "abcd" fails to match the numbers pattern');
+                expect(err.details).to.equal([{
+                    message: '"value" with value "abcd" fails to match the numbers pattern',
+                    path: [],
+                    type: 'string.regex.name',
+                    context: {
+                        name: 'numbers',
+                        pattern: /[0-9]+/,
+                        value: 'abcd',
+                        label: 'value',
+                        key: undefined
+                    }
+                }]);
                 done();
             });
         });
@@ -901,7 +1547,19 @@ describe('string', () => {
             const schema = Joi.string().regex(/[a-z]+/, { name: 'letters' }).regex(/[0-9]+/, { name: 'numbers' });
             schema.validate('abcd', (err, value) => {
 
-                expect(err.message).to.contain('numbers pattern');
+                expect(err).to.be.an.error('"value" with value "abcd" fails to match the numbers pattern');
+                expect(err.details).to.equal([{
+                    message: '"value" with value "abcd" fails to match the numbers pattern',
+                    path: [],
+                    type: 'string.regex.name',
+                    context: {
+                        name: 'numbers',
+                        pattern: /[0-9]+/,
+                        value: 'abcd',
+                        label: 'value',
+                        key: undefined
+                    }
+                }]);
                 done();
             });
         });
@@ -911,7 +1569,21 @@ describe('string', () => {
             const schema = Joi.string().regex(/[a-z]/, { invert: true });
             Helper.validate(schema, [
                 ['0123456789', true],
-                ['abcdefg', false, null, '"value" with value "abcdefg" matches the inverted pattern: /[a-z]/']
+                ['abcdefg', false, null, {
+                    message: '"value" with value "abcdefg" matches the inverted pattern: /[a-z]/',
+                    details: [{
+                        message: '"value" with value "abcdefg" matches the inverted pattern: /[a-z]/',
+                        path: [],
+                        type: 'string.regex.invert.base',
+                        context: {
+                            name: undefined,
+                            pattern: /[a-z]/,
+                            value: 'abcdefg',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -923,7 +1595,21 @@ describe('string', () => {
             });
             Helper.validate(schema, [
                 ['0123456789', true],
-                ['abcdefg', false, null, '"value" with value "abcdefg" matches the inverted lowercase pattern']
+                ['abcdefg', false, null, {
+                    message: '"value" with value "abcdefg" matches the inverted lowercase pattern',
+                    details: [{
+                        message: '"value" with value "abcdefg" matches the inverted lowercase pattern',
+                        path: [],
+                        type: 'string.regex.invert.name',
+                        context: {
+                            name: 'lowercase',
+                            pattern: /[a-z]/,
+                            value: 'abcdefg',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
     });
@@ -932,14 +1618,38 @@ describe('string', () => {
 
         const prepareIps = function (ips) {
 
-            return function (success, message) {
+            return function (success, message, version) {
 
                 message = message || '';
-                return ips.map((ip) => [ip, success, null, !success && message ? message : ip]);
+                version = version || ['ipv4', 'ipv6'];
+
+                return ips.map((ip) => [ip, success, null, !success && message ? {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type:  /versions/.test(message) ? 'string.ipVersion' : 'string.ip',
+                        context: (() => {
+
+                            const context = {
+                                value: ip,
+                                cidr: /(\w+) CIDR/.exec(message)[1],
+                                label: 'value',
+                                key: undefined
+                            };
+
+                            if (/versions/.test(message)) {
+                                context.version = version;
+                            }
+
+                            return context;
+                        })()
+                    }]
+                } : ip]);
             };
         };
 
-        const invalidIPs = function (message) {
+        const invalidIPs = function (message, version) {
 
             return prepareIps([
                 'ASDF',
@@ -949,10 +1659,10 @@ describe('string', () => {
                 '127.0.0.1:8000',
                 'ftp://www.example.com',
                 'Bananas in pajamas are coming down the stairs'
-            ])(false, message);
+            ])(false, message, version);
         };
 
-        const invalidIPv4s = function (message) {
+        const invalidIPv4s = function (message, version) {
 
             return prepareIps([
                 '0.0.0.0/33',
@@ -963,27 +1673,27 @@ describe('string', () => {
                 '255.255.255.255/255',
                 '256.0.0.0',
                 '255.255.255.256'
-            ])(false, message);
+            ])(false, message, version);
         };
 
-        const invalidIPv6s = function (message) {
+        const invalidIPv6s = function (message, version) {
 
             return prepareIps([
                 '1080:0:0:0:8:800:200C:417G/33',
                 '1080:0:0:0:8:800:200C:417G',
                 'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/129',
                 'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210/255'
-            ])(false, message);
+            ])(false, message, version);
         };
 
-        const invalidIPvFutures = function (message) {
+        const invalidIPvFutures = function (message, version) {
 
             return prepareIps([
                 'v1.09#/33',
                 'v1.09#',
                 'v1.09azAZ-._~!$&\'()*+,;=:/129',
                 'v1.09azAZ-._~!$&\'()*+,;=:/255'
-            ])(false, message);
+            ])(false, message, version);
         };
 
         const validIPv4sWithCidr = prepareIps([
@@ -1205,7 +1915,18 @@ describe('string', () => {
             const schema = { item: Joi.string().ip() };
             Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
 
-                expect(err.message).to.contain('must be a valid ip address');
+                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address with a optional CIDR]');
+                expect(err.details).to.equal([{
+                    message: '"item" must be a valid ip address with a optional CIDR',
+                    path: ['item'],
+                    type: 'string.ip',
+                    context: {
+                        value: 'something',
+                        cidr: 'optional',
+                        label: 'item',
+                        key: 'item'
+                    }
+                }]);
                 done();
             });
         });
@@ -1215,7 +1936,18 @@ describe('string', () => {
             const schema = { item: Joi.string().ip({ cidr: 'required' }) };
             Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
 
-                expect(err.message).to.contain('must be a valid ip address with a required CIDR');
+                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address with a required CIDR]');
+                expect(err.details).to.equal([{
+                    message: '"item" must be a valid ip address with a required CIDR',
+                    path: ['item'],
+                    type: 'string.ip',
+                    context: {
+                        value: 'something',
+                        cidr: 'required',
+                        label: 'item',
+                        key: 'item'
+                    }
+                }]);
                 done();
             });
         });
@@ -1225,7 +1957,19 @@ describe('string', () => {
             const schema = { item: Joi.string().ip({ version: 'ipv4', cidr: 'required' }) };
             Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
 
-                expect(err.message).to.contain('child "item" fails because ["item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR]');
+                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR]');
+                expect(err.details).to.equal([{
+                    message: '"item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR',
+                    path: ['item'],
+                    type: 'string.ipVersion',
+                    context: {
+                        value: 'something',
+                        cidr: 'required',
+                        version: ['ipv4'],
+                        label: 'item',
+                        key: 'item'
+                    }
+                }]);
                 done();
             });
         });
@@ -1234,70 +1978,74 @@ describe('string', () => {
 
             it('should validate all ipv4 addresses with a default CIDR strategy', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipv4' });
+                const version = 'ipv4';
+                const schema = Joi.string().ip({ version });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv4] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
                     .concat(validIPv4sWithoutCidr(true))
-                    .concat(validIPv6sWithCidr(false, message))
-                    .concat(validIPv6sWithoutCidr(false, message))
-                    .concat(validIPvFuturesWithCidr(false, message))
-                    .concat(validIPvFuturesWithoutCidr(false, message))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(validIPv6sWithCidr(false, message, [version]))
+                    .concat(validIPv6sWithoutCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithoutCidr(false, message, [version]))
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
 
             it('should validate all ipv4 addresses with an optional CIDR', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipv4', cidr: 'optional' });
+                const version = 'ipv4';
+                const schema = Joi.string().ip({ version, cidr: 'optional' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv4] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
                     .concat(validIPv4sWithoutCidr(true))
-                    .concat(validIPv6sWithCidr(false, message))
-                    .concat(validIPv6sWithoutCidr(false, message))
-                    .concat(validIPvFuturesWithCidr(false, message))
-                    .concat(validIPvFuturesWithoutCidr(false, message))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(validIPv6sWithCidr(false, message, [version]))
+                    .concat(validIPv6sWithoutCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithoutCidr(false, message, [version]))
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
 
             it('should validate all ipv4 addresses with a required CIDR', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipv4', cidr: 'required' });
+                const version = 'ipv4';
+                const schema = Joi.string().ip({ version, cidr: 'required' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv4] with a required CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
-                    .concat(validIPv4sWithoutCidr(false, message))
-                    .concat(validIPv6sWithCidr(false, message))
-                    .concat(validIPv6sWithoutCidr(false, message))
-                    .concat(validIPvFuturesWithCidr(false, message))
-                    .concat(validIPvFuturesWithoutCidr(false, message))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(validIPv4sWithoutCidr(false, message, [version]))
+                    .concat(validIPv6sWithCidr(false, message, [version]))
+                    .concat(validIPv6sWithoutCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithoutCidr(false, message, [version]))
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
 
             it('should validate all ipv4 addresses with a forbidden CIDR', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipv4', cidr: 'forbidden' });
+                const version = 'ipv4';
+                const schema = Joi.string().ip({ version, cidr: 'forbidden' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv4] with a forbidden CIDR';
                 Helper.validate(schema, []
-                    .concat(validIPv4sWithCidr(false, message))
+                    .concat(validIPv4sWithCidr(false, message, [version]))
                     .concat(validIPv4sWithoutCidr(true))
-                    .concat(validIPv6sWithCidr(false, message))
-                    .concat(validIPv6sWithoutCidr(false, message))
-                    .concat(validIPvFuturesWithCidr(false, message))
-                    .concat(validIPvFuturesWithoutCidr(false, message))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(validIPv6sWithCidr(false, message, [version]))
+                    .concat(validIPv6sWithoutCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithoutCidr(false, message, [version]))
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
         });
 
@@ -1305,70 +2053,74 @@ describe('string', () => {
 
             it('should validate all ipv6 addresses with a default CIDR strategy', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipv6' });
+                const version = 'ipv6';
+                const schema = Joi.string().ip({ version });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv6] with a optional CIDR';
                 Helper.validate(schema, []
-                    .concat(validIPv4sWithCidr(false, message))
-                    .concat(validIPv4sWithoutCidr(false, message))
+                    .concat(validIPv4sWithCidr(false, message, [version]))
+                    .concat(validIPv4sWithoutCidr(false, message, [version]))
                     .concat(validIPv6sWithCidr(true))
                     .concat(validIPv6sWithoutCidr(true))
-                    .concat(validIPvFuturesWithCidr(false, message))
-                    .concat(validIPvFuturesWithoutCidr(false, message))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(validIPvFuturesWithCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithoutCidr(false, message, [version]))
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
 
             it('should validate all ipv6 addresses with an optional CIDR', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipv6', cidr: 'optional' });
+                const version = 'ipv6';
+                const schema = Joi.string().ip({ version, cidr: 'optional' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv6] with a optional CIDR';
                 Helper.validate(schema, []
-                    .concat(validIPv4sWithCidr(false, message))
-                    .concat(validIPv4sWithoutCidr(false, message))
+                    .concat(validIPv4sWithCidr(false, message, [version]))
+                    .concat(validIPv4sWithoutCidr(false, message, [version]))
                     .concat(validIPv6sWithCidr(true))
                     .concat(validIPv6sWithoutCidr(true))
-                    .concat(validIPvFuturesWithCidr(false, message))
-                    .concat(validIPvFuturesWithoutCidr(false, message))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(validIPvFuturesWithCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithoutCidr(false, message, [version]))
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
 
             it('should validate all ipv6 addresses with a required CIDR', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipv6', cidr: 'required' });
+                const version = 'ipv6';
+                const schema = Joi.string().ip({ version, cidr: 'required' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv6] with a required CIDR';
                 Helper.validate(schema, []
-                    .concat(validIPv4sWithCidr(false, message))
-                    .concat(validIPv4sWithoutCidr(false, message))
+                    .concat(validIPv4sWithCidr(false, message, [version]))
+                    .concat(validIPv4sWithoutCidr(false, message, [version]))
                     .concat(validIPv6sWithCidr(true))
-                    .concat(validIPv6sWithoutCidr(false, message))
-                    .concat(validIPvFuturesWithCidr(false, message))
-                    .concat(validIPvFuturesWithoutCidr(false, message))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(validIPv6sWithoutCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithoutCidr(false, message, [version]))
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
 
             it('should validate all ipv6 addresses with a forbidden CIDR', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipv6', cidr: 'forbidden' });
+                const version = 'ipv6';
+                const schema = Joi.string().ip({ version, cidr: 'forbidden' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv6] with a forbidden CIDR';
                 Helper.validate(schema, []
-                    .concat(validIPv4sWithCidr(false, message))
-                    .concat(validIPv4sWithoutCidr(false, message))
-                    .concat(validIPv6sWithCidr(false, message))
+                    .concat(validIPv4sWithCidr(false, message, [version]))
+                    .concat(validIPv4sWithoutCidr(false, message, [version]))
+                    .concat(validIPv6sWithCidr(false, message, [version]))
                     .concat(validIPv6sWithoutCidr(true))
-                    .concat(validIPvFuturesWithCidr(false, message))
-                    .concat(validIPvFuturesWithoutCidr(false, message))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(validIPvFuturesWithCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithoutCidr(false, message, [version]))
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
         });
 
@@ -1376,70 +2128,74 @@ describe('string', () => {
 
             it('should validate all ipvfuture addresses with a default CIDR strategy', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipvfuture' });
+                const version = 'ipvfuture';
+                const schema = Joi.string().ip({ version });
                 const message = '"value" must be a valid ip address of one of the following versions [ipvfuture] with a optional CIDR';
                 Helper.validate(schema, []
-                    .concat(validIPv4sWithCidr(false, message))
-                    .concat(validIPv4sWithoutCidr(false, message))
-                    .concat(validIPv6sWithCidr(false, message))
-                    .concat(validIPv6sWithoutCidr(false, message))
+                    .concat(validIPv4sWithCidr(false, message, [version]))
+                    .concat(validIPv4sWithoutCidr(false, message, [version]))
+                    .concat(validIPv6sWithCidr(false, message, [version]))
+                    .concat(validIPv6sWithoutCidr(false, message, [version]))
                     .concat(validIPvFuturesWithCidr(true))
                     .concat(validIPvFuturesWithoutCidr(true))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
 
             it('should validate all ipvfuture addresses with an optional CIDR', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipvfuture', cidr: 'optional' });
+                const version = 'ipvfuture';
+                const schema = Joi.string().ip({ version, cidr: 'optional' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipvfuture] with a optional CIDR';
                 Helper.validate(schema, []
-                    .concat(validIPv4sWithCidr(false, message))
-                    .concat(validIPv4sWithoutCidr(false, message))
-                    .concat(validIPv6sWithCidr(false, message))
-                    .concat(validIPv6sWithoutCidr(false, message))
+                    .concat(validIPv4sWithCidr(false, message, [version]))
+                    .concat(validIPv4sWithoutCidr(false, message, [version]))
+                    .concat(validIPv6sWithCidr(false, message, [version]))
+                    .concat(validIPv6sWithoutCidr(false, message, [version]))
                     .concat(validIPvFuturesWithCidr(true))
                     .concat(validIPvFuturesWithoutCidr(true))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
 
             it('should validate all ipvfuture addresses with a required CIDR', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipvfuture', cidr: 'required' });
+                const version = 'ipvfuture';
+                const schema = Joi.string().ip({ version, cidr: 'required' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipvfuture] with a required CIDR';
                 Helper.validate(schema, []
-                    .concat(validIPv4sWithCidr(false, message))
-                    .concat(validIPv4sWithoutCidr(false, message))
-                    .concat(validIPv6sWithCidr(false, message))
-                    .concat(validIPv6sWithoutCidr(false, message))
+                    .concat(validIPv4sWithCidr(false, message, [version]))
+                    .concat(validIPv4sWithoutCidr(false, message, [version]))
+                    .concat(validIPv6sWithCidr(false, message, [version]))
+                    .concat(validIPv6sWithoutCidr(false, message, [version]))
                     .concat(validIPvFuturesWithCidr(true))
-                    .concat(validIPvFuturesWithoutCidr(false, message))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(validIPvFuturesWithoutCidr(false, message, [version]))
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
 
             it('should validate all ipvfuture addresses with a forbidden CIDR', (done) => {
 
-                const schema = Joi.string().ip({ version: 'ipvfuture', cidr: 'forbidden' });
+                const version = 'ipvfuture';
+                const schema = Joi.string().ip({ version, cidr: 'forbidden' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipvfuture] with a forbidden CIDR';
                 Helper.validate(schema, []
-                    .concat(validIPv4sWithCidr(false, message))
-                    .concat(validIPv4sWithoutCidr(false, message))
-                    .concat(validIPv6sWithCidr(false, message))
-                    .concat(validIPv6sWithoutCidr(false, message))
-                    .concat(validIPvFuturesWithCidr(false, message))
+                    .concat(validIPv4sWithCidr(false, message, [version]))
+                    .concat(validIPv4sWithoutCidr(false, message, [version]))
+                    .concat(validIPv6sWithCidr(false, message, [version]))
+                    .concat(validIPv6sWithoutCidr(false, message, [version]))
+                    .concat(validIPvFuturesWithCidr(false, message, [version]))
                     .concat(validIPvFuturesWithoutCidr(true))
-                    .concat(invalidIPs(message))
-                    .concat(invalidIPv4s(message))
-                    .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(invalidIPs(message, [version]))
+                    .concat(invalidIPv4s(message, [version]))
+                    .concat(invalidIPv6s(message, [version]))
+                    .concat(invalidIPvFutures(message, [version])), done);
             });
         });
 
@@ -1529,7 +2285,15 @@ describe('string', () => {
                 ['ftp://ftp.is.co.za/rfc/rfc1808.txt', true],
                 ['http://www.ietf.org/rfc/rfc2396.txt', true],
                 ['ldap://[2001:db8::7]/c=GB?objectClass?one', true],
-                ['ldap://2001:db8::7/c=GB?objectClass?one', false, null, '"value" must be a valid uri'],
+                ['ldap://2001:db8::7/c=GB?objectClass?one', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'ldap://2001:db8::7/c=GB?objectClass?one', label: 'value', key: undefined }
+                    }]
+                }],
                 ['mailto:John.Doe@example.com', true],
                 ['news:comp.infosystems.www.servers.unix', true],
                 ['tel:+1-816-555-1212', true],
@@ -1543,9 +2307,33 @@ describe('string', () => {
                 ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', true],
                 ['http://[1080:0:0:0:8:800:200C:417A]', true],
                 ['http://v1.09azAZ-._~!$&\'()*+,;=:', true], // This doesn't look valid, but it is. The `v1.09azAZ-._~!$&\'()*+,;=` part is a valid registered name as it has no invalid characters
-                ['http://a:b:c:d:e::1.2.3.4', false, null, '"value" must be a valid uri'],
-                ['coap://FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', false, null, '"value" must be a valid uri'],
-                ['http://1080:0:0:0:8:800:200C:417A', false, null, '"value" must be a valid uri'],
+                ['http://a:b:c:d:e::1.2.3.4', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'http://a:b:c:d:e::1.2.3.4', label: 'value', key: undefined }
+                    }]
+                }],
+                ['coap://FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'coap://FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', label: 'value', key: undefined }
+                    }]
+                }],
+                ['http://1080:0:0:0:8:800:200C:417A', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'http://1080:0:0:0:8:800:200C:417A', label: 'value', key: undefined }
+                    }]
+                }],
                 ['http://127.0.0.1:8000/foo?bar', true],
                 ['http://asdf:qwer@localhost:8000', true],
                 ['http://user:pass%3A@localhost:80', true],
@@ -1575,10 +2363,26 @@ describe('string', () => {
                 ['http://_jabber._tcp.google.com:80/test', true],
                 ['http://user:pass@_jabber._tcp.google.com:80/test', true],
                 ['http://[fe80::1]/a/b?a=b#abc', true],
-                ['http://fe80::1/a/b?a=b#abc', false, null, '"value" must be a valid uri'],
+                ['http://fe80::1/a/b?a=b#abc', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'http://fe80::1/a/b?a=b#abc', label: 'value', key: undefined }
+                    }]
+                }],
                 ['http://user:password@[3ffe:2a00:100:7031::1]:8080', true],
                 ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', true],
-                ['coap://1080:0:0:0:8:800:200C:417A:61616/', false, null, '"value" must be a valid uri'],
+                ['coap://1080:0:0:0:8:800:200C:417A:61616/', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'coap://1080:0:0:0:8:800:200C:417A:61616/', label: 'value', key: undefined }
+                    }]
+                }],
                 ['git+http://github.com/joyent/node.git', true],
                 ['http://bucket_name.s3.amazonaws.com/image.jpg', true],
                 ['dot.test://foo/bar', true],
@@ -1618,16 +2422,96 @@ describe('string', () => {
                 ['http://a/g', true],
                 ['http://a/g', true],
                 ['file:/asda', true],
-                ['qwerty', false, null, '"value" must be a valid uri'],
-                ['invalid uri', false, null, '"value" must be a valid uri'],
-                ['1http://google.com', false, null, '"value" must be a valid uri'],
-                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, '"value" must be a valid uri'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                ['(╯°□°)╯︵ ┻━┻', false, null, '"value" must be a valid uri'],
-                ['one/two/three?value=abc&value2=123#david-rules', false, null, '"value" must be a valid uri'],
-                ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', false, null, '"value" must be a valid uri'],
-                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, '"value" must be a valid uri'],
-                ['/absolute', false, null, '"value" must be a valid uri']
+                ['qwerty', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'qwerty', label: 'value', key: undefined }
+                    }]
+                }],
+                ['invalid uri', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'invalid uri', label: 'value', key: undefined }
+                    }]
+                }],
+                ['1http://google.com', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: '1http://google.com', label: 'value', key: undefined }
+                    }]
+                }],
+                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['(╯°□°)╯︵ ┻━┻', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: '(╯°□°)╯︵ ┻━┻', label: 'value', key: undefined }
+                    }]
+                }],
+                ['one/two/three?value=abc&value2=123#david-rules', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'one/two/three?value=abc&value2=123#david-rules', label: 'value', key: undefined }
+                    }]
+                }],
+                ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: '//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', label: 'value', key: undefined }
+                    }]
+                }],
+                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f', label: 'value', key: undefined }
+                    }]
+                }],
+                ['/absolute', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: '/absolute', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -1639,10 +2523,62 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 ['http://google.com', true],
-                ['https://google.com', false, null, '"value" must be a valid uri with a scheme matching the http pattern'],
-                ['ftp://google.com', false, null, '"value" must be a valid uri with a scheme matching the http pattern'],
-                ['file:/asdf', false, null, '"value" must be a valid uri with a scheme matching the http pattern'],
-                ['/path?query=value#hash', false, null, '"value" must be a valid uri with a scheme matching the http pattern']
+                ['https://google.com', false, null, {
+                    message: '"value" must be a valid uri with a scheme matching the http pattern',
+                    details: [{
+                        message: '"value" must be a valid uri with a scheme matching the http pattern',
+                        path: [],
+                        type: 'string.uriCustomScheme',
+                        context: {
+                            scheme: 'http',
+                            value: 'https://google.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['ftp://google.com', false, null, {
+                    message: '"value" must be a valid uri with a scheme matching the http pattern',
+                    details: [{
+                        message: '"value" must be a valid uri with a scheme matching the http pattern',
+                        path: [],
+                        type: 'string.uriCustomScheme',
+                        context: {
+                            scheme: 'http',
+                            value: 'ftp://google.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['file:/asdf', false, null, {
+                    message: '"value" must be a valid uri with a scheme matching the http pattern',
+                    details: [{
+                        message: '"value" must be a valid uri with a scheme matching the http pattern',
+                        path: [],
+                        type: 'string.uriCustomScheme',
+                        context: {
+                            scheme: 'http',
+                            value: 'file:/asdf',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['/path?query=value#hash', false, null, {
+                    message: '"value" must be a valid uri with a scheme matching the http pattern',
+                    details: [{
+                        message: '"value" must be a valid uri with a scheme matching the http pattern',
+                        path: [],
+                        type: 'string.uriCustomScheme',
+                        context: {
+                            scheme: 'http',
+                            value: '/path?query=value#hash',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -1655,9 +2591,48 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['http://google.com', true],
                 ['https://google.com', true],
-                ['ftp://google.com', false, null, '"value" must be a valid uri with a scheme matching the https? pattern'],
-                ['file:/asdf', false, null, '"value" must be a valid uri with a scheme matching the https? pattern'],
-                ['/path?query=value#hash', false, null, '"value" must be a valid uri with a scheme matching the https? pattern']
+                ['ftp://google.com', false, null, {
+                    message: '"value" must be a valid uri with a scheme matching the https? pattern',
+                    details: [{
+                        message: '"value" must be a valid uri with a scheme matching the https? pattern',
+                        path: [],
+                        type: 'string.uriCustomScheme',
+                        context: {
+                            scheme: 'https?',
+                            value: 'ftp://google.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['file:/asdf', false, null, {
+                    message: '"value" must be a valid uri with a scheme matching the https? pattern',
+                    details: [{
+                        message: '"value" must be a valid uri with a scheme matching the https? pattern',
+                        path: [],
+                        type: 'string.uriCustomScheme',
+                        context: {
+                            scheme: 'https?',
+                            value: 'file:/asdf',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['/path?query=value#hash', false, null, {
+                    message: '"value" must be a valid uri with a scheme matching the https? pattern',
+                    details: [{
+                        message: '"value" must be a valid uri with a scheme matching the https? pattern',
+                        path: [],
+                        type: 'string.uriCustomScheme',
+                        context: {
+                            scheme: 'https?',
+                            value: '/path?query=value#hash',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -1673,7 +2648,20 @@ describe('string', () => {
                 ['ftp://google.com', true],
                 ['file:/asdf', true],
                 ['git+http://github.com/hapijs/joi', true],
-                ['/path?query=value#hash', false, null, '"value" must be a valid uri with a scheme matching the https?|ftp|file|git\\+http pattern']
+                ['/path?query=value#hash', false, null, {
+                    message: '"value" must be a valid uri with a scheme matching the https?|ftp|file|git\\+http pattern',
+                    details: [{
+                        message: '"value" must be a valid uri with a scheme matching the https?|ftp|file|git\\+http pattern',
+                        path: [],
+                        type: 'string.uriCustomScheme',
+                        context: {
+                            scheme: 'https?|ftp|file|git\\+http',
+                            value: '/path?query=value#hash',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -1896,14 +2884,62 @@ describe('string', () => {
                 ['http://a/g', true],
                 ['file:/asda', true],
                 ['qwerty', true],
-                ['invalid uri', false, null, '"value" must be a valid uri'],
-                ['1http://google.com', false, null, '"value" must be a valid uri'],
-                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, '"value" must be a valid uri'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                ['(╯°□°)╯︵ ┻━┻', false, null, '"value" must be a valid uri'],
+                ['invalid uri', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'invalid uri', label: 'value', key: undefined }
+                    }]
+                }],
+                ['1http://google.com', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: '1http://google.com', label: 'value', key: undefined }
+                    }]
+                }],
+                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['(╯°□°)╯︵ ┻━┻', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: '(╯°□°)╯︵ ┻━┻', label: 'value', key: undefined }
+                    }]
+                }],
                 ['one/two/three?value=abc&value2=123#david-rules', true],
                 ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', true],
-                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, '"value" must be a valid uri'],
+                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f', label: 'value', key: undefined }
+                    }]
+                }],
                 ['/absolute', true]
             ], done);
         });
@@ -1912,102 +2948,1214 @@ describe('string', () => {
 
             const schema = Joi.string().uri({ relativeOnly: true });
             Helper.validate(schema, [
-                ['foo://example.com:8042/over/there?name=ferret#nose', false, null, '"value" must be a valid relative uri'],
-                ['urn:example:animal:ferret:nose', false, null, '"value" must be a valid relative uri'],
-                ['ftp://ftp.is.co.za/rfc/rfc1808.txt', false, null, '"value" must be a valid relative uri'],
-                ['http://www.ietf.org/rfc/rfc2396.txt', false, null, '"value" must be a valid relative uri'],
-                ['ldap://[2001:db8::7]/c=GB?objectClass?one', false, null, '"value" must be a valid relative uri'],
-                ['mailto:John.Doe@example.com', false, null, '"value" must be a valid relative uri'],
-                ['news:comp.infosystems.www.servers.unix', false, null, '"value" must be a valid relative uri'],
-                ['tel:+1-816-555-1212', false, null, '"value" must be a valid relative uri'],
-                ['telnet://192.0.2.16:80/', false, null, '"value" must be a valid relative uri'],
-                ['urn:oasis:names:specification:docbook:dtd:xml:4.1.2', false, null, '"value" must be a valid relative uri'],
-                ['file:///example.txt', false, null, '"value" must be a valid relative uri'],
-                ['http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon', false, null, '"value" must be a valid relative uri'],
-                ['http://asdf@localhost:8000', false, null, '"value" must be a valid relative uri'],
-                ['http://[v1.09azAZ-._~!$&\'()*+,;=:]', false, null, '"value" must be a valid relative uri'],
-                ['http://[a:b:c:d:e::1.2.3.4]', false, null, '"value" must be a valid relative uri'],
-                ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', false, null, '"value" must be a valid relative uri'],
-                ['http://[1080:0:0:0:8:800:200C:417A]', false, null, '"value" must be a valid relative uri'],
-                ['http://127.0.0.1:8000/foo?bar', false, null, '"value" must be a valid relative uri'],
-                ['http://asdf:qwer@localhost:8000', false, null, '"value" must be a valid relative uri'],
-                ['http://user:pass%3A@localhost:80', false, null, '"value" must be a valid relative uri'],
-                ['http://localhost:123', false, null, '"value" must be a valid relative uri'],
-                ['https://localhost:123', false, null, '"value" must be a valid relative uri'],
-                ['file:///whatever', false, null, '"value" must be a valid relative uri'],
-                ['mailto:asdf@asdf.com', false, null, '"value" must be a valid relative uri'],
-                ['ftp://www.example.com', false, null, '"value" must be a valid relative uri'],
-                ['javascript:alert(\'hello\');', false, null, '"value" must be a valid relative uri'], // eslint-disable-line no-script-url
-                ['xmpp:isaacschlueter@jabber.org', false, null, '"value" must be a valid relative uri'],
-                ['f://some.host/path', false, null, '"value" must be a valid relative uri'],
-                ['http://localhost:18/asdf', false, null, '"value" must be a valid relative uri'],
-                ['http://localhost:42/asdf?qwer=zxcv', false, null, '"value" must be a valid relative uri'],
-                ['HTTP://www.example.com/', false, null, '"value" must be a valid relative uri'],
-                ['HTTP://www.example.com', false, null, '"value" must be a valid relative uri'],
-                ['http://www.ExAmPlE.com/', false, null, '"value" must be a valid relative uri'],
-                ['http://user:pw@www.ExAmPlE.com/', false, null, '"value" must be a valid relative uri'],
-                ['http://USER:PW@www.ExAmPlE.com/', false, null, '"value" must be a valid relative uri'],
-                ['http://user@www.example.com/', false, null, '"value" must be a valid relative uri'],
-                ['http://user%3Apw@www.example.com/', false, null, '"value" must be a valid relative uri'],
-                ['http://x.com/path?that%27s#all,%20folks', false, null, '"value" must be a valid relative uri'],
-                ['HTTP://X.COM/Y', false, null, '"value" must be a valid relative uri'],
-                ['http://www.narwhaljs.org/blog/categories?id=news', false, null, '"value" must be a valid relative uri'],
-                ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', false, null, '"value" must be a valid relative uri'],
-                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', false, null, '"value" must be a valid relative uri'],
-                ['http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', false, null, '"value" must be a valid relative uri'],
-                ['http://_jabber._tcp.google.com:80/test', false, null, '"value" must be a valid relative uri'],
-                ['http://user:pass@_jabber._tcp.google.com:80/test', false, null, '"value" must be a valid relative uri'],
-                ['http://[fe80::1]/a/b?a=b#abc', false, null, '"value" must be a valid relative uri'],
-                ['http://user:password@[3ffe:2a00:100:7031::1]:8080', false, null, '"value" must be a valid relative uri'],
-                ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', false, null, '"value" must be a valid relative uri'],
-                ['git+http://github.com/joyent/node.git', false, null, '"value" must be a valid relative uri'],
-                ['http://bucket_name.s3.amazonaws.com/image.jpg', false, null, '"value" must be a valid relative uri'],
-                ['dot.test://foo/bar', false, null, '"value" must be a valid relative uri'],
-                ['svn+ssh://foo/bar', false, null, '"value" must be a valid relative uri'],
-                ['dash-test://foo/bar', false, null, '"value" must be a valid relative uri'],
-                ['xmpp:isaacschlueter@jabber.org', false, null, '"value" must be a valid relative uri'],
-                ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', false, null, '"value" must be a valid relative uri'],
-                ['javascript:alert(\'hello\');', false, null, '"value" must be a valid relative uri'], // eslint-disable-line no-script-url
-                ['file://localhost/etc/node/', false, null, '"value" must be a valid relative uri'],
-                ['file:///etc/node/', false, null, '"value" must be a valid relative uri'],
-                ['http://USER:PW@www.ExAmPlE.com/', false, null, '"value" must be a valid relative uri'],
-                ['mailto:local1@domain1?query1', false, null, '"value" must be a valid relative uri'],
-                ['http://example/a/b?c/../d', false, null, '"value" must be a valid relative uri'],
-                ['http://example/x%2Fabc', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/d;p=1/g;x=1/y', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/g#s/../x', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/.foo', false, null, '"value" must be a valid relative uri'],
-                ['http://example.com/b//c//d;p?q#blarg', false, null, '"value" must be a valid relative uri'],
-                ['g:h', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/g', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/g/', false, null, '"value" must be a valid relative uri'],
-                ['http://a/g', false, null, '"value" must be a valid relative uri'],
-                ['http://g', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/d;p?y', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/g?y', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/d;p?q#s', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/g#s', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/g?y#s', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/;x', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/g;x', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/g;x?y#s', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/d;p?q', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/c/', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/', false, null, '"value" must be a valid relative uri'],
-                ['http://a/b/g', false, null, '"value" must be a valid relative uri'],
-                ['http://a/', false, null, '"value" must be a valid relative uri'],
-                ['http://a/g', false, null, '"value" must be a valid relative uri'],
-                ['http://a/g', false, null, '"value" must be a valid relative uri'],
-                ['file:/asda', false, null, '"value" must be a valid relative uri'],
+                ['foo://example.com:8042/over/there?name=ferret#nose', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'foo://example.com:8042/over/there?name=ferret#nose',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['urn:example:animal:ferret:nose', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'urn:example:animal:ferret:nose',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['ftp://ftp.is.co.za/rfc/rfc1808.txt', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'ftp://ftp.is.co.za/rfc/rfc1808.txt',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://www.ietf.org/rfc/rfc2396.txt', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://www.ietf.org/rfc/rfc2396.txt',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['ldap://[2001:db8::7]/c=GB?objectClass?one', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'ldap://[2001:db8::7]/c=GB?objectClass?one',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['mailto:John.Doe@example.com', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'mailto:John.Doe@example.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['news:comp.infosystems.www.servers.unix', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'news:comp.infosystems.www.servers.unix',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['tel:+1-816-555-1212', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'tel:+1-816-555-1212',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['telnet://192.0.2.16:80/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'telnet://192.0.2.16:80/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['urn:oasis:names:specification:docbook:dtd:xml:4.1.2', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'urn:oasis:names:specification:docbook:dtd:xml:4.1.2',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['file:///example.txt', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'file:///example.txt',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://asdf@localhost:8000', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://asdf@localhost:8000',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://[v1.09azAZ-._~!$&\'()*+,;=:]', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://[v1.09azAZ-._~!$&\'()*+,;=:]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://[a:b:c:d:e::1.2.3.4]', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://[a:b:c:d:e::1.2.3.4]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://[1080:0:0:0:8:800:200C:417A]', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://[1080:0:0:0:8:800:200C:417A]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://127.0.0.1:8000/foo?bar', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://127.0.0.1:8000/foo?bar',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://asdf:qwer@localhost:8000', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://asdf:qwer@localhost:8000',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://user:pass%3A@localhost:80', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://user:pass%3A@localhost:80',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://localhost:123', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://localhost:123',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['https://localhost:123', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'https://localhost:123',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['file:///whatever', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'file:///whatever',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['mailto:asdf@asdf.com', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'mailto:asdf@asdf.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['ftp://www.example.com', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'ftp://www.example.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['javascript:alert(\'hello\');', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'javascript:alert(\'hello\');',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }], // eslint-disable-line no-script-url
+                ['xmpp:isaacschlueter@jabber.org', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'xmpp:isaacschlueter@jabber.org',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['f://some.host/path', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'f://some.host/path',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://localhost:18/asdf', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://localhost:18/asdf',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://localhost:42/asdf?qwer=zxcv', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://localhost:42/asdf?qwer=zxcv',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['HTTP://www.example.com/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'HTTP://www.example.com/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['HTTP://www.example.com', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'HTTP://www.example.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://www.ExAmPlE.com/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://www.ExAmPlE.com/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://user:pw@www.ExAmPlE.com/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://user:pw@www.ExAmPlE.com/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://USER:PW@www.ExAmPlE.com/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://USER:PW@www.ExAmPlE.com/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://user@www.example.com/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://user@www.example.com/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://user%3Apw@www.example.com/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://user%3Apw@www.example.com/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://x.com/path?that%27s#all,%20folks', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://x.com/path?that%27s#all,%20folks',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['HTTP://X.COM/Y', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'HTTP://X.COM/Y',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://www.narwhaljs.org/blog/categories?id=news', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://www.narwhaljs.org/blog/categories?id=news',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://_jabber._tcp.google.com:80/test', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://_jabber._tcp.google.com:80/test',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://user:pass@_jabber._tcp.google.com:80/test', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://user:pass@_jabber._tcp.google.com:80/test',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://[fe80::1]/a/b?a=b#abc', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://[fe80::1]/a/b?a=b#abc',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://user:password@[3ffe:2a00:100:7031::1]:8080', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://user:password@[3ffe:2a00:100:7031::1]:8080',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'coap://[1080:0:0:0:8:800:200C:417A]:61616/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['git+http://github.com/joyent/node.git', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'git+http://github.com/joyent/node.git',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://bucket_name.s3.amazonaws.com/image.jpg', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://bucket_name.s3.amazonaws.com/image.jpg',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['dot.test://foo/bar', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'dot.test://foo/bar',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['svn+ssh://foo/bar', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'svn+ssh://foo/bar',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['dash-test://foo/bar', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'dash-test://foo/bar',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['xmpp:isaacschlueter@jabber.org', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'xmpp:isaacschlueter@jabber.org',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['javascript:alert(\'hello\');', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'javascript:alert(\'hello\');',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }], // eslint-disable-line no-script-url
+                ['file://localhost/etc/node/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'file://localhost/etc/node/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['file:///etc/node/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'file:///etc/node/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://USER:PW@www.ExAmPlE.com/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://USER:PW@www.ExAmPlE.com/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['mailto:local1@domain1?query1', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'mailto:local1@domain1?query1',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://example/a/b?c/../d', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://example/a/b?c/../d',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://example/x%2Fabc', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://example/x%2Fabc',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/d;p=1/g;x=1/y', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/d;p=1/g;x=1/y',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/g#s/../x', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/g#s/../x',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/.foo', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/.foo',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://example.com/b//c//d;p?q#blarg', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://example.com/b//c//d;p?q#blarg',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['g:h', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'g:h',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/g', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/g',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/g/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/g/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/g', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/g',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://g', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://g',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/d;p?y', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/d;p?y',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/g?y', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/g?y',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/d;p?q#s', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/d;p?q#s',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/g#s', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/g#s',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/g?y#s', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/g?y#s',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/;x', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/;x',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/g;x', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/g;x',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/g;x?y#s', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/g;x?y#s',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/d;p?q', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/d;p?q',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/c/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/c/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/b/g', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/b/g',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/g', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/g',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://a/g', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a/g',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['file:/asda', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'file:/asda',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['qwerty', true],
-                ['invalid uri', false, null, '"value" must be a valid relative uri'],
-                ['1http://google.com', false, null, '"value" must be a valid relative uri'],
-                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, '"value" must be a valid relative uri'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                ['(╯°□°)╯︵ ┻━┻', false, null, '"value" must be a valid relative uri'],
+                ['invalid uri', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'invalid uri',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1http://google.com', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: '1http://google.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['(╯°□°)╯︵ ┻━┻', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: '(╯°□°)╯︵ ┻━┻',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['one/two/three?value=abc&value2=123#david-rules', true],
                 ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', true],
-                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, '"value" must be a valid relative uri'],
+                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, {
+                    message: '"value" must be a valid relative uri',
+                    details: [{
+                        message: '"value" must be a valid relative uri',
+                        path: [],
+                        type: 'string.uriRelativeOnly',
+                        context: {
+                            value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['/absolute', true]
             ], done);
         });
@@ -2099,15 +4247,39 @@ describe('string', () => {
 
             Helper.validate(Joi.string(), [
                 [undefined, true],
-                ['', false, null, '"value" is not allowed to be empty']
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
         it('should, when .required(), deny undefined, deny empty string', (done) => {
 
             Helper.validate(Joi.string().required(), [
-                [undefined, false, null, '"value" is required'],
-                ['', false, null, '"value" is not allowed to be empty']
+                [undefined, false, null, {
+                    message: '"value" is required',
+                    details: [{
+                        message: '"value" is required',
+                        path: [],
+                        type: 'any.required',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2116,7 +4288,13 @@ describe('string', () => {
             const schema = Joi.string().required();
             Joi.compile(schema).validate('', (err, value) => {
 
-                expect(err.message).to.contain('be empty');
+                expect(err).to.be.an.error('"value" is not allowed to be empty');
+                expect(err.details).to.equal([{
+                    message: '"value" is not allowed to be empty',
+                    path: [],
+                    type: 'any.empty',
+                    context: { label: 'value', key: undefined }
+                }]);
                 done();
             });
         });
@@ -2127,7 +4305,13 @@ describe('string', () => {
 
             Joi.compile(schema).validate('    ', (err) => {
 
-                expect(err.message).to.contain('be empty');
+                expect(err).to.be.an.error('"value" is not allowed to be empty');
+                expect(err.details).to.equal([{
+                    message: '"value" is not allowed to be empty',
+                    path: [],
+                    type: 'any.empty',
+                    context: { label: 'value', key: undefined }
+                }]);
                 done();
             });
         });
@@ -2138,7 +4322,15 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['test', true],
                 ['0', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2147,8 +4339,24 @@ describe('string', () => {
             const schema = Joi.string().invalid('a', 'b', 'c');
             Helper.validate(schema, [
                 ['x', true],
-                ['a', false, null, '"value" contains an invalid value'],
-                ['c', false, null, '"value" contains an invalid value']
+                ['a', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['c', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2156,7 +4364,15 @@ describe('string', () => {
 
             const schema = Joi.string().valid('a', 'b', 'c');
             Helper.validate(schema, [
-                ['x', false, null, '"value" must be one of [a, b, c]'],
+                ['x', false, null, {
+                    message: '"value" must be one of [a, b, c]',
+                    details: [{
+                        message: '"value" must be one of [a, b, c]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['a', 'b', 'c'], label: 'value', key: undefined }
+                    }]
+                }],
                 ['a', true],
                 ['c', true]
             ], done);
@@ -2166,7 +4382,15 @@ describe('string', () => {
 
             const schema = Joi.string().valid(['a', 'b', 'c']);
             Helper.validate(schema, [
-                ['x', false, null, '"value" must be one of [a, b, c]'],
+                ['x', false, null, {
+                    message: '"value" must be one of [a, b, c]',
+                    details: [{
+                        message: '"value" must be one of [a, b, c]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['a', 'b', 'c'], label: 'value', key: undefined }
+                    }]
+                }],
                 ['a', true],
                 ['c', true]
             ], done);
@@ -2177,8 +4401,30 @@ describe('string', () => {
             const schema = Joi.string().min(3);
             Helper.validate(schema, [
                 ['test', true],
-                ['0', false, null, '"value" length must be at least 3 characters long'],
-                [null, false, null, '"value" must be a string']
+                ['0', false, null, {
+                    message: '"value" length must be at least 3 characters long',
+                    details: [{
+                        message: '"value" length must be at least 3 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 3,
+                            value: '0',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2187,8 +4433,24 @@ describe('string', () => {
             const schema = Joi.string().min(0).required();
             Helper.validate(schema, [
                 ['0', true],
-                [null, false, null, '"value" must be a string'],
-                [undefined, false, null, '"value" is required']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }],
+                [undefined, false, null, {
+                    message: '"value" is required',
+                    details: [{
+                        message: '"value" is required',
+                        path: [],
+                        type: 'any.required',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2196,7 +4458,15 @@ describe('string', () => {
 
             const schema = Joi.string().min(3);
             Helper.validate(schema, [
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2212,9 +4482,31 @@ describe('string', () => {
 
             const schema = Joi.string().max(3);
             Helper.validate(schema, [
-                ['test', false, null, '"value" length must be less than or equal to 3 characters long'],
+                ['test', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'test',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['0', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2230,9 +4522,45 @@ describe('string', () => {
 
             const schema = Joi.string().length(3);
             Helper.validate(schema, [
-                ['test', false, null, '"value" length must be 3 characters long'],
-                ['0', false, null, '"value" length must be 3 characters long'],
-                [null, false, null, '"value" must be a string'],
+                ['test', false, null, {
+                    message: '"value" length must be 3 characters long',
+                    details: [{
+                        message: '"value" length must be 3 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 3,
+                            value: 'test',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['0', false, null, {
+                    message: '"value" length must be 3 characters long',
+                    details: [{
+                        message: '"value" length must be 3 characters long',
+                        path: [],
+                        type: 'string.length',
+                        context: {
+                            limit: 3,
+                            value: '0',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }],
                 ['abc', true]
             ], done);
         });
@@ -2241,7 +4569,21 @@ describe('string', () => {
 
             const schema = Joi.string().regex(/^[0-9][-][a-z]+$/);
             Helper.validate(schema, [
-                ['van', false, null, '"value" with value "van" fails to match the required pattern: /^[0-9][-][a-z]+$/'],
+                ['van', false, null, {
+                    message: '"value" with value "van" fails to match the required pattern: /^[0-9][-][a-z]+$/',
+                    details: [{
+                        message: '"value" with value "van" fails to match the required pattern: /^[0-9][-][a-z]+$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^[0-9][-][a-z]+$/,
+                            value: 'van',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['0-www', true]
             ], done);
         });
@@ -2260,8 +4602,24 @@ describe('string', () => {
             const schema = Joi.string().token();
             Helper.validate(schema, [
                 ['w0rld_of_w4lm4rtl4bs', true],
-                ['w0rld of_w4lm4rtl4bs', false, null, '"value" must only contain alpha-numeric and underscore characters'],
-                ['abcd#f?h1j orly?', false, null, '"value" must only contain alpha-numeric and underscore characters']
+                ['w0rld of_w4lm4rtl4bs', false, null, {
+                    message: '"value" must only contain alpha-numeric and underscore characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric and underscore characters',
+                        path: [],
+                        type: 'string.token',
+                        context: { value: 'w0rld of_w4lm4rtl4bs', label: 'value', key: undefined }
+                    }]
+                }],
+                ['abcd#f?h1j orly?', false, null, {
+                    message: '"value" must only contain alpha-numeric and underscore characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric and underscore characters',
+                        path: [],
+                        type: 'string.token',
+                        context: { value: 'abcd#f?h1j orly?', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2269,9 +4627,25 @@ describe('string', () => {
 
             const schema = Joi.string().alphanum();
             Helper.validate(schema, [
-                ['w0rld of w4lm4rtl4bs', false, null, '"value" must only contain alpha-numeric characters'],
+                ['w0rld of w4lm4rtl4bs', false, null, {
+                    message: '"value" must only contain alpha-numeric characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric characters',
+                        path: [],
+                        type: 'string.alphanum',
+                        context: { value: 'w0rld of w4lm4rtl4bs', label: 'value', key: undefined }
+                    }]
+                }],
                 ['w0rldofw4lm4rtl4bs', true],
-                ['abcd#f?h1j orly?', false, null, '"value" must only contain alpha-numeric characters']
+                ['abcd#f?h1j orly?', false, null, {
+                    message: '"value" must only contain alpha-numeric characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric characters',
+                        path: [],
+                        type: 'string.alphanum',
+                        context: { value: 'abcd#f?h1j orly?', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2339,10 +4713,40 @@ describe('string', () => {
 
             const rule = Joi.string().required().min(3);
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 3 characters long'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 3 characters long',
+                    details: [{
+                        message: '"value" length must be at least 3 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 3,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123', true],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2352,9 +4756,39 @@ describe('string', () => {
             Helper.validate(rule, [
                 ['x', true],
                 ['123', true],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2362,11 +4796,33 @@ describe('string', () => {
 
             const rule = Joi.string().allow('').min(3);
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 3 characters long'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 3 characters long',
+                    details: [{
+                        message: '"value" length must be at least 3 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 3,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123', true],
                 ['1234', true],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2376,9 +4832,31 @@ describe('string', () => {
             Helper.validate(rule, [
                 ['x', true],
                 ['123', true],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2388,8 +4866,30 @@ describe('string', () => {
             Helper.validate(rule, [
                 ['x', true],
                 ['123', true],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
                 [null, true]
             ], done);
         });
@@ -2398,12 +4898,56 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3);
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123', true],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['12', true],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2411,12 +4955,48 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).allow('');
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123', true],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['12', true],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2424,12 +5004,56 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).required();
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123', true],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['12', true],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2437,15 +5061,101 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).regex(/^a/);
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
-                ['123', false, null, '"value" with value "123" fails to match the required pattern: /^a/'],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['12', false, null, '"value" with value "12" fails to match the required pattern: /^a/'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123', false, null, {
+                    message: '"value" with value "123" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "123" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '123',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['12', false, null, {
+                    message: '"value" with value "12" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "12" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '12',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['abcd', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'abcd',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2453,15 +5163,93 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).regex(/^a/).allow('');
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
-                ['123', false, null, '"value" with value "123" fails to match the required pattern: /^a/'],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['12', false, null, '"value" with value "12" fails to match the required pattern: /^a/'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123', false, null, {
+                    message: '"value" with value "123" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "123" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '123',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['12', false, null, {
+                    message: '"value" with value "12" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "12" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '12',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, '"value" length must be less than or equal to 3 characters long'],
+                ['abcd', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'abcd',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2469,15 +5257,101 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).regex(/^a/).required();
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
-                ['123', false, null, '"value" with value "123" fails to match the required pattern: /^a/'],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['12', false, null, '"value" with value "12" fails to match the required pattern: /^a/'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123', false, null, {
+                    message: '"value" with value "123" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "123" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '123',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['12', false, null, {
+                    message: '"value" with value "12" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "12" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '12',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['abcd', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'abcd',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2485,16 +5359,82 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum();
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123', true],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['12', true],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['*ab', false, null, '"value" must only contain alpha-numeric characters'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['abcd', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'abcd',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['*ab', false, null, {
+                    message: '"value" must only contain alpha-numeric characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric characters',
+                        path: [],
+                        type: 'string.alphanum',
+                        context: { value: '*ab', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2502,16 +5442,74 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().allow('');
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123', true],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['12', true],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['*ab', false, null, '"value" must only contain alpha-numeric characters'],
+                ['abcd', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'abcd',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['*ab', false, null, {
+                    message: '"value" must only contain alpha-numeric characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric characters',
+                        path: [],
+                        type: 'string.alphanum',
+                        context: { value: '*ab', label: 'value', key: undefined }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2519,16 +5517,82 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().required();
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123', true],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['12', true],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['*ab', false, null, '"value" must only contain alpha-numeric characters'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['abcd', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'abcd',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['*ab', false, null, {
+                    message: '"value" must only contain alpha-numeric characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric characters',
+                        path: [],
+                        type: 'string.alphanum',
+                        context: { value: '*ab', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2536,17 +5600,111 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().regex(/^a/);
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
-                ['123', false, null, '"value" with value "123" fails to match the required pattern: /^a/'],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['12', false, null, '"value" with value "12" fails to match the required pattern: /^a/'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123', false, null, {
+                    message: '"value" with value "123" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "123" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '123',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['12', false, null, {
+                    message: '"value" with value "12" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "12" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '12',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['ab', true],
                 ['abc', true],
                 ['a2c', true],
-                ['abcd', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['*ab', false, null, '"value" must only contain alpha-numeric characters'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['abcd', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'abcd',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['*ab', false, null, {
+                    message: '"value" must only contain alpha-numeric characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric characters',
+                        path: [],
+                        type: 'string.alphanum',
+                        context: { value: '*ab', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2554,17 +5712,111 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().required().regex(/^a/);
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
-                ['123', false, null, '"value" with value "123" fails to match the required pattern: /^a/'],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['12', false, null, '"value" with value "12" fails to match the required pattern: /^a/'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123', false, null, {
+                    message: '"value" with value "123" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "123" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '123',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['12', false, null, {
+                    message: '"value" with value "12" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "12" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '12',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['ab', true],
                 ['abc', true],
                 ['a2c', true],
-                ['abcd', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['*ab', false, null, '"value" must only contain alpha-numeric characters'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['abcd', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'abcd',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['*ab', false, null, {
+                    message: '"value" must only contain alpha-numeric characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric characters',
+                        path: [],
+                        type: 'string.alphanum',
+                        context: { value: '*ab', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2572,17 +5824,103 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().allow('').regex(/^a/);
             Helper.validate(rule, [
-                ['x', false, null, '"value" length must be at least 2 characters long'],
-                ['123', false, null, '"value" with value "123" fails to match the required pattern: /^a/'],
-                ['1234', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['12', false, null, '"value" with value "12" fails to match the required pattern: /^a/'],
+                ['x', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'x',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123', false, null, {
+                    message: '"value" with value "123" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "123" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '123',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1234', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: '1234',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['12', false, null, {
+                    message: '"value" with value "12" fails to match the required pattern: /^a/',
+                    details: [{
+                        message: '"value" with value "12" fails to match the required pattern: /^a/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^a/,
+                            value: '12',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['ab', true],
                 ['abc', true],
                 ['a2c', true],
-                ['abcd', false, null, '"value" length must be less than or equal to 3 characters long'],
-                ['*ab', false, null, '"value" must only contain alpha-numeric characters'],
+                ['abcd', false, null, {
+                    message: '"value" length must be less than or equal to 3 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 3 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 3,
+                            value: 'abcd',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['*ab', false, null, {
+                    message: '"value" must only contain alpha-numeric characters',
+                    details: [{
+                        message: '"value" must only contain alpha-numeric characters',
+                        path: [],
+                        type: 'string.alphanum',
+                        context: { value: '*ab', label: 'value', key: undefined }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2590,10 +5928,40 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8);
             Helper.validate(rule, [
-                ['x@x.com', false, null, '"value" length must be at least 8 characters long'],
+                ['x@x.com', false, null, {
+                    message: '"value" length must be at least 8 characters long',
+                    details: [{
+                        message: '"value" length must be at least 8 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 8,
+                            value: 'x@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123@x.com', true],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2601,12 +5969,56 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10);
             Helper.validate(rule, [
-                ['x@x.com', false, null, '"value" length must be at least 8 characters long'],
+                ['x@x.com', false, null, {
+                    message: '"value" length must be at least 8 characters long',
+                    details: [{
+                        message: '"value" length must be at least 8 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 8,
+                            value: 'x@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123@x.com', true],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2614,12 +6026,64 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).invalid('123@x.com');
             Helper.validate(rule, [
-                ['x@x.com', false, null, '"value" length must be at least 8 characters long'],
-                ['123@x.com', false, null, '"value" contains an invalid value'],
+                ['x@x.com', false, null, {
+                    message: '"value" length must be at least 8 characters long',
+                    details: [{
+                        message: '"value" length must be at least 8 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 8,
+                            value: 'x@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123@x.com', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2630,9 +6094,39 @@ describe('string', () => {
                 ['x@x.com', true],
                 ['123@x.com', true],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2641,11 +6135,49 @@ describe('string', () => {
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com');
             Helper.validate(rule, [
                 ['x@x.com', true],
-                ['123@x.com', false, null, '"value" contains an invalid value'],
+                ['123@x.com', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2654,11 +6186,41 @@ describe('string', () => {
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com').allow('');
             Helper.validate(rule, [
                 ['x@x.com', true],
-                ['123@x.com', false, null, '"value" contains an invalid value'],
+                ['123@x.com', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2669,9 +6231,31 @@ describe('string', () => {
                 ['x@x.com', true],
                 ['123@x.com', true],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2680,11 +6264,49 @@ describe('string', () => {
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com').regex(/^1/);
             Helper.validate(rule, [
                 ['x@x.com', true],
-                ['123@x.com', false, null, '"value" contains an invalid value'],
+                ['123@x.com', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2693,11 +6315,41 @@ describe('string', () => {
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com').regex(/^1/).allow('');
             Helper.validate(rule, [
                 ['x@x.com', true],
-                ['123@x.com', false, null, '"value" contains an invalid value'],
+                ['123@x.com', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2705,12 +6357,48 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).allow('');
             Helper.validate(rule, [
-                ['x@x.com', false, null, '"value" length must be at least 8 characters long'],
+                ['x@x.com', false, null, {
+                    message: '"value" length must be at least 8 characters long',
+                    details: [{
+                        message: '"value" length must be at least 8 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 8,
+                            value: 'x@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['123@x.com', true],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2718,12 +6406,70 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).regex(/^1234/);
             Helper.validate(rule, [
-                ['x@x.com', false, null, '"value" length must be at least 8 characters long'],
-                ['123@x.com', false, null, '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/'],
+                ['x@x.com', false, null, {
+                    message: '"value" length must be at least 8 characters long',
+                    details: [{
+                        message: '"value" length must be at least 8 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 8,
+                            value: 'x@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123@x.com', false, null, {
+                    message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                    details: [{
+                        message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^1234/,
+                            value: '123@x.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2731,12 +6477,62 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).regex(/^1234/).allow('');
             Helper.validate(rule, [
-                ['x@x.com', false, null, '"value" length must be at least 8 characters long'],
-                ['123@x.com', false, null, '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/'],
+                ['x@x.com', false, null, {
+                    message: '"value" length must be at least 8 characters long',
+                    details: [{
+                        message: '"value" length must be at least 8 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 8,
+                            value: 'x@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123@x.com', false, null, {
+                    message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                    details: [{
+                        message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^1234/,
+                            value: '123@x.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2744,12 +6540,70 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).regex(/^1234/).required();
             Helper.validate(rule, [
-                ['x@x.com', false, null, '"value" length must be at least 8 characters long'],
-                ['123@x.com', false, null, '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/'],
+                ['x@x.com', false, null, {
+                    message: '"value" length must be at least 8 characters long',
+                    details: [{
+                        message: '"value" length must be at least 8 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 8,
+                            value: 'x@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['123@x.com', false, null, {
+                    message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                    details: [{
+                        message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^1234/,
+                            value: '123@x.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, '"value" length must be less than or equal to 10 characters long'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['12345@x.com', false, null, {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 10,
+                            value: '12345@x.com',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -2758,48 +6612,208 @@ describe('string', () => {
             Helper.validateOptions(Joi.string().isoDate(), [
                 ['+002013-06-07T14:21:46.295Z', true],
                 ['-002013-06-07T14:21:46.295Z', true],
-                ['002013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
-                ['+2013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
-                ['-2013-06-07T14:21:46.295Z', false, null, '"value" must be a valid ISO 8601 date'],
+                ['002013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '002013-06-07T14:21:46.295Z', label: 'value', key: undefined }
+                    }]
+                }],
+                ['+2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '+2013-06-07T14:21:46.295Z', label: 'value', key: undefined }
+                    }]
+                }],
+                ['-2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '-2013-06-07T14:21:46.295Z', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295Z', true],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295-07:00', true],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46+07:00', true],
-                ['2013-06-07T14:21:46+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46-07:00', true],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07', true],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21', true],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14.2334,4', true],
-                ['2013-06-07T14,23:34', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T24', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14,23:34', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14,23:34', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T24', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T24', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T24:00', true],
-                ['2013-06-07T24:21', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T24:21', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T24:21', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07 142146.295', true],
-                ['2013-06-07 146946.295', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07 146946.295', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07 146946.295', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07 1421,44', true],
                 ['2013-W23', true],
                 ['2013-W23-1', true],
-                ['2013-W2311', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-W2311', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-W2311', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-W231', true],
-                ['2013-M231', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-M231', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-M231', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-W23-1T14:21', true],
-                ['2013-W23-1T14:21:', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-W23-1T14:21:', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-W23-1T14:21:', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-W23-1T14:21:46+07:00', true],
-                ['2013-W23-1T14:21:46+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-W23-1T14:21:46+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-W23-1T14:21:46+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-W23-1T14:21:46-07:00', true],
                 ['2013-184', true],
-                ['2013-1841', false, null, '"value" must be a valid ISO 8601 date']
+                ['2013-1841', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-1841', label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -2818,25 +6832,181 @@ describe('string', () => {
             const rule = Joi.string().isoDate().min(23);
             Helper.validateOptions(rule, [
                 ['2013-06-07T14:21:46.295Z', true],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295-07:00', true],
-                ['2013-06-07T14:21:46Z', false, null, '"value" length must be at least 23 characters long'],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46Z', false, null, {
+                    message: '"value" length must be at least 23 characters long',
+                    details: [{
+                        message: '"value" length must be at least 23 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46+07:00', true],
                 ['2013-06-07T14:21:46-07:00', true],
-                ['2013-06-07T14:21Z', false, null, '"value" length must be at least 23 characters long'],
-                ['2013-06-07T14:21+07:00', false, null, '"value" length must be at least 23 characters long'],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21-07:00', false, null, '"value" length must be at least 23 characters long'],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 23 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 23 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['2013-06-07T14:21Z', false, null, {
+                    message: '"value" length must be at least 23 characters long',
+                    details: [{
+                        message: '"value" length must be at least 23 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:00', false, null, {
+                    message: '"value" length must be at least 23 characters long',
+                    details: [{
+                        message: '"value" length must be at least 23 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21-07:00', false, null, {
+                    message: '"value" length must be at least 23 characters long',
+                    details: [{
+                        message: '"value" length must be at least 23 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 23 characters long',
+                    details: [{
+                        message: '"value" length must be at least 23 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 23 characters long',
+                    details: [{
+                        message: '"value" length must be at least 23 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -2844,26 +7014,196 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23);
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -2871,26 +7211,204 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).invalid('2013-06-07T14:21+07:00');
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
-                ['2013-06-07T14:21+07:00', false, null, '"value" contains an invalid value'],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21+07:00', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -2898,26 +7416,182 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00');
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -2925,26 +7599,190 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21+07:00');
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
-                ['2013-06-07T14:21+07:00', false, null, '"value" contains an invalid value'],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21+07:00', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -2952,26 +7790,182 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21+07:00').allow('');
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
-                ['2013-06-07T14:21+07:00', false, null, '"value" contains an invalid value'],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21+07:00', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -2979,26 +7973,174 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').allow('');
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -3006,26 +8148,218 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21Z').regex(/Z$/);
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21Z', false, null, '"value" contains an invalid value'],
-                ['2013-06-07T14:21+07:00', false, null, '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21-07:00', false, null, '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21Z', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21+07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21-07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21-07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -3033,26 +8367,210 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21Z').regex(/Z$/).allow('');
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21Z', false, null, '"value" contains an invalid value'],
-                ['2013-06-07T14:21+07:00', false, null, '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21-07:00', false, null, '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21Z', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21+07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21-07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21-07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -3060,26 +8578,188 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('');
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -3087,26 +8767,224 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/);
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
-                ['2013-06-07T14:21+07:00', false, null, '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21-07:00', false, null, '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['2013-06-07T14:21+07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21+07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21-07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21-07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -3114,26 +8992,216 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).allow('');
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
-                ['2013-06-07T14:21+07:00', false, null, '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21-07:00', false, null, '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
+                ['2013-06-07T14:21+07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21+07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21-07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21-07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -3141,26 +9209,224 @@ describe('string', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).required();
             Helper.validateOptions(rule, [
-                ['2013-06-07T14:21:46.295Z', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46.295+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46.295-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295Z',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46.295-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21:46+07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
-                ['2013-06-07T14:21:46-07:00', false, null, '"value" length must be less than or equal to 23 characters long'],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46+07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21:46-07:00', false, null, {
+                    message: '"value" length must be less than or equal to 23 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 23 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 23,
+                            value: '2013-06-07T14:21:46-07:00',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['2013-06-07T14:21Z', true],
-                ['2013-06-07T14:21+07:00', false, null, '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21+07:000', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21-07:00', false, null, '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/'],
-                ['2013-06-07T14:21Z+7:00', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07', false, null, '"value" length must be at least 17 characters long'],
-                ['2013-06-07T', false, null, '"value" must be a valid ISO 8601 date'],
-                ['2013-06-07T14:21', false, null, '"value" length must be at least 17 characters long'],
-                ['1-1-2013', false, null, '"value" must be a valid ISO 8601 date'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['2013-06-07T14:21+07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21+07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21-07:00', false, null, {
+                    message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                    details: [{
+                        message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /Z$/,
+                            value: '2013-06-07T14:21-07:00',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2013-06-07T14:21', false, null, {
+                    message: '"value" length must be at least 17 characters long',
+                    details: [{
+                        message: '"value" length must be at least 17 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 17,
+                            value: '2013-06-07T14:21',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: false }, done);
         });
 
@@ -3181,7 +9447,15 @@ describe('string', () => {
                 ['2013-06-07T14:21-07:00', true, null, '2013-06-07T21:21:00.000Z'],
                 ['2013-06-07', true, null, '2013-06-07T00:00:00.000Z'],
                 ['2013-06-07T14:21', true, null, '2013-06-07T14:21:00.000Z'],
-                ['2013-184', false, null, '"value" must be a valid ISO 8601 date']
+                ['2013-184', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'string.isoDate',
+                        context: { value: '2013-184', label: 'value', key: undefined }
+                    }]
+                }]
             ], { convert: true }, done);
         });
 
@@ -3191,7 +9465,15 @@ describe('string', () => {
             Helper.validate(rule, [
                 ['123456789abcdef', true],
                 ['123456789AbCdEf', true],
-                ['123afg', false, null, '"value" must only contain hexadecimal characters']
+                ['123afg', false, null, {
+                    message: '"value" must only contain hexadecimal characters',
+                    details: [{
+                        message: '"value" must only contain hexadecimal characters',
+                        path: [],
+                        type: 'string.hex',
+                        context: { value: '123afg', label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3214,16 +9496,112 @@ describe('string', () => {
             const rule = Joi.string().base64();
             Helper.validate(rule, [
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
-                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
-                ['Y=', false, null, '"value" must be a valid base64 string'],
-                ['Y===', false, null, '"value" must be a valid base64 string'],
-                ['YW', false, null, '"value" must be a valid base64 string'],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: '=YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['Y=', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'Y=',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['Y===', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'Y===',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['YW==', true],
-                ['YW5', false, null, '"value" must be a valid base64 string'],
+                ['YW5', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW5',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['YW5=', true],
-                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
+                ['$#%#$^$^)(*&^%', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: '$#%#$^$^)(*&^%',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3232,16 +9610,112 @@ describe('string', () => {
             const rule = Joi.string().base64({ paddingRequired: true });
             Helper.validate(rule, [
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
-                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
-                ['Y=', false, null, '"value" must be a valid base64 string'],
-                ['Y===', false, null, '"value" must be a valid base64 string'],
-                ['YW', false, null, '"value" must be a valid base64 string'],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: '=YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['Y=', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'Y=',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['Y===', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'Y===',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['YW==', true],
-                ['YW5', false, null, '"value" must be a valid base64 string'],
+                ['YW5', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW5',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['YW5=', true],
-                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
+                ['$#%#$^$^)(*&^%', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: '$#%#$^$^)(*&^%',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3250,19 +9724,115 @@ describe('string', () => {
             const rule = Joi.string().base64({ paddingRequired: false });
             Helper.validate(rule, [
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4', true],
-                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, '"value" must be a valid base64 string'],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, '"value" must be a valid base64 string'],
-                ['YW55IG==cm5hbCBwbGVhc3VyZS4=', false, null, '"value" must be a valid base64 string'],
-                ['Y$', false, null, '"value" must be a valid base64 string'],
-                ['Y', false, null, '"value" must be a valid base64 string'],
-                ['Y===', false, null, '"value" must be a valid base64 string'],
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: '=YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW55IG==cm5hbCBwbGVhc3VyZS4=', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IG==cm5hbCBwbGVhc3VyZS4=',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['Y$', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'Y$',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['Y', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'Y',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['Y===', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'Y===',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['YW', true],
                 ['YW==', true],
                 ['YW5', true],
                 ['YW5=', true],
-                ['$#%#$^$^)(*&^%', false, null, '"value" must be a valid base64 string']
+                ['$#%#$^$^)(*&^%', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: '$#%#$^$^)(*&^%',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3270,22 +9840,118 @@ describe('string', () => {
 
             const rule = Joi.string().uppercase().min(2).max(3).alphanum().valid('AB', 'BC');
             Helper.validate(rule, [
-                ['x', false, null, '"value" must be one of [AB, BC]'],
-                ['123', false, null, '"value" must be one of [AB, BC]'],
-                ['1234', false, null, '"value" must be one of [AB, BC]'],
-                ['12', false, null, '"value" must be one of [AB, BC]'],
+                ['x', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['123', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['1234', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['12', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
                 ['ab', true],
-                ['abc', false, null, '"value" must be one of [AB, BC]'],
-                ['a2c', false, null, '"value" must be one of [AB, BC]'],
-                ['abcd', false, null, '"value" must be one of [AB, BC]'],
-                ['*ab', false, null, '"value" must be one of [AB, BC]'],
-                ['', false, null, '"value" is not allowed to be empty'],
+                ['abc', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['a2c', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['abcd', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['*ab', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
                 ['bc', true],
                 ['BC', true],
-                ['de', false, null, '"value" must be one of [AB, BC]'],
-                ['ABc', false, null, '"value" must be one of [AB, BC]'],
+                ['de', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['ABc', false, null, {
+                    message: '"value" must be one of [AB, BC]',
+                    details: [{
+                        message: '"value" must be one of [AB, BC]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['AB', 'BC'], label: 'value', key: undefined }
+                    }]
+                }],
                 ['AB', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
     });
@@ -3322,14 +9988,110 @@ describe('string', () => {
                 ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
                 ['{D1A5279D-B27D-0CD4-005E-EFDD53D08E8D}', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3344,16 +10106,136 @@ describe('string', () => {
                 ['{7e9081b59a6d1cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-1c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6241e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-1CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{283B67B2-430F-1E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D:B27D-1CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D:1CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-1CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-1CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-1CD4-C05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-1CD4-C05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-1E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-1E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D]', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D:B27D-1CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D:B27D-1CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D:1CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D:1CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-1CD4:A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-1CD4:A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-1CD4-A05E:EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-1CD4-A05E:EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3368,16 +10250,136 @@ describe('string', () => {
                 ['{7e9081b59a6d2cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-2c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6242e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-2CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{283B67B2-430F-2E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D:B27D-2CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D:2CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-2CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-2CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-2CD4-C05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-2CD4-C05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-2E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-2E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D]', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D:B27D-2CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D:B27D-2CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D:2CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D:2CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-2CD4:A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-2CD4:A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-2CD4-A05E:EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-2CD4-A05E:EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3392,16 +10394,136 @@ describe('string', () => {
                 ['{7e9081b59a6d3cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-3c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6243e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-3CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{283B67B2-430F-3E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D:B27D-3CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D:3CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-3CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-3CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-3CD4-C05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-3CD4-C05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-3E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-3E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D]', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D:B27D-3CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D:B27D-3CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D:3CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D:3CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-3CD4:A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-3CD4:A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-3CD4-A05E:EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-3CD4-A05E:EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3416,16 +10538,136 @@ describe('string', () => {
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-C05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-C05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3440,16 +10682,136 @@ describe('string', () => {
                 ['{7e9081b59a6d5cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-5c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6245e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-5E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3466,16 +10828,136 @@ describe('string', () => {
                 ['{7e9081b59a6d5cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-5c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6245e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, null, '"value" must be a valid GUID']
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-5E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
 
@@ -3484,7 +10966,13 @@ describe('string', () => {
             const schema = { item: Joi.string().guid() };
             Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
 
-                expect(err.message).to.contain('must be a valid GUID');
+                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid GUID]');
+                expect(err.details).to.equal([{
+                    message: '"item" must be a valid GUID',
+                    path: ['item'],
+                    type: 'string.guid',
+                    context: { value: 'something', label: 'item', key: 'item' }
+                }]);
                 done();
             });
         });
@@ -3494,18 +10982,126 @@ describe('string', () => {
             const rule = Joi.string().guid().min(36);
             Helper.validate(rule, [
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', true],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, '"value" length must be at least 36 characters long'],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                    message: '"value" length must be at least 36 characters long',
+                    details: [{
+                        message: '"value" length must be at least 36 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 36,
+                            value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['69593D62-71EA-4548-85E4-04FC71357423', true],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, '"value" length must be at least 36 characters long'],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                    message: '"value" length must be at least 36 characters long',
+                    details: [{
+                        message: '"value" length must be at least 36 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 36,
+                            value: '677E2553DD4D43B09DA77414DB1EB8EA',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', true],
-                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', false, null, '"value" length must be at least 36 characters long'],
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', false, null, {
+                    message: '"value" length must be at least 36 characters long',
+                    details: [{
+                        message: '"value" length must be at least 36 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 36,
+                            value: '{7e9081b59a6d4cc1a8c347f69fb4198d}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, '"value" length must be at least 36 characters long'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                    message: '"value" length must be at least 36 characters long',
+                    details: [{
+                        message: '"value" length must be at least 36 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 36,
+                            value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3513,19 +11109,127 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34);
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3533,19 +11237,135 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).invalid('b4b2fb69c6244e5eb0698e0c6ec66618');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, '"value" contains an invalid value'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3553,19 +11373,115 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3573,19 +11489,123 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').invalid('b4b2fb69c6244e5eb0698e0c6ec66618');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, '"value" contains an invalid value'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3593,19 +11613,115 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').invalid('b4b2fb69c6244e5eb0698e0c6ec66618').allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, '"value" contains an invalid value'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3613,19 +11729,107 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3633,19 +11837,151 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08').invalid('b4b2fb69c6244e5eb0698e0c6ec66618').regex(/^{7e908/);
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/'],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/'],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/',
+                    details: [{
+                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e908/,
+                            value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                    message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
+                    details: [{
+                        message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e908/,
+                            value: '677E2553DD4D43B09DA77414DB1EB8EA',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, '"value" contains an invalid value'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3653,19 +11989,143 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08').invalid('b4b2fb69c6244e5eb0698e0c6ec66618').regex(/^{7e908/).allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/'],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/'],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/',
+                    details: [{
+                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e908/,
+                            value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                    message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
+                    details: [{
+                        message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e908/,
+                            value: '677E2553DD4D43B09DA77414DB1EB8EA',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, '"value" contains an invalid value'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                    message: '"value" contains an invalid value',
+                    details: [{
+                        message: '"value" contains an invalid value',
+                        path: [],
+                        type: 'any.invalid',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3673,19 +12133,119 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3693,19 +12253,169 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i);
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i'],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i'],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                    details: [{
+                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e9081/i,
+                            value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                    message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
+                    details: [{
+                        message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e9081/i,
+                            value: '677E2553DD4D43B09DA77414DB1EB8EA',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                    message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
+                    details: [{
+                        message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e9081/i,
+                            value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3713,19 +12423,161 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i).allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i'],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i'],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                    details: [{
+                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e9081/i,
+                            value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                    message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
+                    details: [{
+                        message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e9081/i,
+                            value: '677E2553DD4D43B09DA77414DB1EB8EA',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                    message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
+                    details: [{
+                        message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e9081/i,
+                            value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['', true],
-                [null, false, null, '"value" must be a string']
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -3733,19 +12585,169 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i).required();
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i'],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i'],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, '"value" length must be less than or equal to 34 characters long'],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                    details: [{
+                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e9081/i,
+                            value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '69593D62-71EA-4548-85E4-04FC71357423',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                    message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
+                    details: [{
+                        message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e9081/i,
+                            value: '677E2553DD4D43B09DA77414DB1EB8EA',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, '"value" length must be less than or equal to 34 characters long'],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i'],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, '"value" must be a valid GUID'],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, '"value" must be a valid GUID'],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, '"value" must be a valid GUID'],
-                ['', false, null, '"value" is not allowed to be empty'],
-                [null, false, null, '"value" must be a string']
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                    message: '"value" length must be less than or equal to 34 characters long',
+                    details: [{
+                        message: '"value" length must be less than or equal to 34 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            limit: 34,
+                            value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                    message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
+                    details: [{
+                        message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
+                        path: [],
+                        type: 'string.regex.base',
+                        context: {
+                            name: undefined,
+                            pattern: /^{7e9081/i,
+                            value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                    message: '"value" must be a valid GUID',
+                    details: [{
+                        message: '"value" must be a valid GUID',
+                        path: [],
+                        type: 'string.guid',
+                        context: {
+                            value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
     });

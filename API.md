@@ -1,5 +1,5 @@
 <!-- version -->
-# 10.6.0 API Reference
+# 11.0.2 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -15,12 +15,14 @@
   - [`ref(key, [options])`](#refkey-options)
   - [`isRef(ref)`](#isrefref)
   - [`reach(schema, path)`](#reachschema-path)
+  - [`defaults(fn)`](#defaultsfn)
   - [`extend(extension)`](#extendextension)
     - [Terms](#terms)
     - [Extension](#extension)
     - [npm note](#npm-note)
     - [Examples](#examples)
   - [`any`](#any)
+    - [`schemaType`](#schematype)
     - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
     - [`any.allow(value)`](#anyallowvalue)
     - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
@@ -285,6 +287,28 @@ const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
 const number = Joi.reach(schema, 'foo.bar');
 ```
 
+### `defaults(fn)`
+
+Creates a new Joi instance that will apply defaults onto newly created schemas through the use of the `fn` function that takes exactly one argument, the schema being created.
+
+The function must always return a schema, even if untransformed.
+
+```js
+const defaultJoi = Joi.defaults((schema) => {
+
+    switch (schema.schemaType) {
+        case 'string':
+            return schema.allow('');
+        case 'object':
+            return schema.min(1);
+        default:
+            return schema;
+    }
+});
+
+const schema = defaultJoi.object(); // Equivalent to a Joi.object().min(1)
+```
+
 ### `extend(extension)`
 
 Creates a new Joi instance customized with the extension(s) you provide included.
@@ -394,6 +418,16 @@ const any = Joi.any();
 any.validate('a', (err, value) => { });
 ```
 
+#### `schemaType`
+
+Gets the type of the schema.
+
+```js
+const schema = Joi.string();
+
+schema.schemaType === 'string';   // === true
+```
+
 #### `any.validate(value, [options], [callback])`
 
 Validates a value using the schema and options where:
@@ -415,7 +449,7 @@ schema.validate(value, (err, value) => { });
 // value.a -> 123 (number, not string)
 
 // or
-const result = schema.validate(value, schema);
+const result = schema.validate(value);
 // result.error -> null
 // result.value -> { "a" : 123 }
 ```
@@ -1999,8 +2033,10 @@ Joi throws classical javascript `Error`s containing :
 - `isJoi` - `true`.
 - `details` - an array of errors :
     - `message` - string with a description of the error.
-    - `path` - dotted path to the key where the error happened.
+    - `path` - ordered array where each element is the accessor to the value where the error happened.
     - `type` - type of the error.
-    - `context` - object providing context of the error.
+    - `context` - object providing context of the error containing at least:
+        - `key` - key of the value that errored, equivalent to the last element of `details.path`.
+        - `label` - label of the value that errored, or the `key` if any, or the default `language.root`.
 - `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occurred. Takes an optional parameter that, if truthy, will strip the colors out of the output.
 - `_object` - the original object to validate.

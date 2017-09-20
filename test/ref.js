@@ -30,18 +30,32 @@ describe('ref', () => {
 
     it('uses ref as a valid value', (done) => {
 
+        const ref = Joi.ref('b');
         const schema = Joi.object({
-            a: Joi.ref('b'),
+            a: ref,
             b: Joi.any()
         });
 
         schema.validate({ a: 5, b: 6 }, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.message).to.equal('child "a" fails because ["a" must be one of [ref:b]]');
+            expect(err).to.be.an.error('child "a" fails because ["a" must be one of [ref:b]]');
+            expect(err.details).to.equal([{
+                message: '"a" must be one of [ref:b]',
+                path: ['a'],
+                type: 'any.allowOnly',
+                context: { valids: [ref], label: 'a', key: 'a' }
+            }]);
 
             Helper.validate(schema, [
-                [{ a: 5 }, false, null, 'child "a" fails because ["a" must be one of [ref:b]]'],
+                [{ a: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [ref:b]]',
+                    details: [{
+                        message: '"a" must be one of [ref:b]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ b: 5 }, true],
                 [{ a: 5, b: 5 }, true],
                 [{ a: '5', b: '5' }, true]
@@ -51,18 +65,32 @@ describe('ref', () => {
 
     it('uses ref as a valid value (empty key)', (done) => {
 
+        const ref = Joi.ref('');
         const schema = Joi.object({
-            a: Joi.ref(''),
+            a: ref,
             '': Joi.any()
         });
 
         schema.validate({ a: 5, '': 6 }, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.message).to.equal('child "a" fails because ["a" must be one of [ref:]]');
+            expect(err).to.be.an.error('child "a" fails because ["a" must be one of [ref:]]');
+            expect(err.details).to.equal([{
+                message: '"a" must be one of [ref:]',
+                path: ['a'],
+                type: 'any.allowOnly',
+                context: { valids: [ref], label: 'a', key: 'a' }
+            }]);
 
             Helper.validate(schema, [
-                [{ a: 5 }, false, null, 'child "a" fails because ["a" must be one of [ref:]]'],
+                [{ a: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [ref:]]',
+                    details: [{
+                        message: '"a" must be one of [ref:]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ '': 5 }, true],
                 [{ a: 5, '': 5 }, true],
                 [{ a: '5', '': '5' }, true]
@@ -72,8 +100,9 @@ describe('ref', () => {
 
     it('uses ref with nested keys as a valid value', (done) => {
 
+        const ref = Joi.ref('b.c');
         const schema = Joi.object({
-            a: Joi.ref('b.c'),
+            a: ref,
             b: {
                 c: Joi.any()
             }
@@ -81,13 +110,34 @@ describe('ref', () => {
 
         schema.validate({ a: 5, b: { c: 6 } }, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.message).to.equal('child "a" fails because ["a" must be one of [ref:b.c]]');
+            expect(err).to.be.an.error('child "a" fails because ["a" must be one of [ref:b.c]]');
+            expect(err.details).to.equal([{
+                message: '"a" must be one of [ref:b.c]',
+                path: ['a'],
+                type: 'any.allowOnly',
+                context: { valids: [ref], label: 'a', key: 'a' }
+            }]);
 
             Helper.validate(schema, [
-                [{ a: 5 }, false, null, 'child "a" fails because ["a" must be one of [ref:b.c]]'],
+                [{ a: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [ref:b.c]]',
+                    details: [{
+                        message: '"a" must be one of [ref:b.c]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ b: { c: 5 } }, true],
-                [{ a: 5, b: 5 }, false, null, 'child "b" fails because ["b" must be an object]'],
+                [{ a: 5, b: 5 }, false, null, {
+                    message: 'child "b" fails because ["b" must be an object]',
+                    details: [{
+                        message: '"b" must be an object',
+                        path: ['b'],
+                        type: 'object.base',
+                        context: { label: 'b', key: 'b' }
+                    }]
+                }],
                 [{ a: '5', b: { c: '5' } }, true]
             ], done);
         });
@@ -212,50 +262,148 @@ describe('ref', () => {
 
     it('ignores the order in which keys are defined with alternatives', (done) => {
 
+        const ref1 = Joi.ref('a.c');
+        const ref2 = Joi.ref('c');
         const a = { c: Joi.number() };
-        const b = [Joi.ref('a.c'), Joi.ref('c')];
+        const b = [ref1, ref2];
         const c = Joi.number();
 
         Helper.validate({ a, b, c }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]']
+            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
+                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                details: [
+                    {
+                        message: '"b" must be one of [ref:a.c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref1], label: 'b', key: 'b' }
+                    },
+                    {
+                        message: '"b" must be one of [ref:c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref2], label: 'b', key: 'b' }
+                    }
+                ]
+            }]
         ]);
 
         Helper.validate({ b, a, c }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]']
+            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
+                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                details: [
+                    {
+                        message: '"b" must be one of [ref:a.c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref1], label: 'b', key: 'b' }
+                    },
+                    {
+                        message: '"b" must be one of [ref:c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref2], label: 'b', key: 'b' }
+                    }
+                ]
+            }]
         ]);
 
         Helper.validate({ b, c, a }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]']
+            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
+                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                details: [
+                    {
+                        message: '"b" must be one of [ref:a.c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref1], label: 'b', key: 'b' }
+                    },
+                    {
+                        message: '"b" must be one of [ref:c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref2], label: 'b', key: 'b' }
+                    }
+                ]
+            }]
         ]);
 
         Helper.validate({ a, c, b }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]']
+            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
+                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                details: [
+                    {
+                        message: '"b" must be one of [ref:a.c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref1], label: 'b', key: 'b' }
+                    },
+                    {
+                        message: '"b" must be one of [ref:c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref2], label: 'b', key: 'b' }
+                    }
+                ]
+            }]
         ]);
 
         Helper.validate({ c, a, b }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]']
+            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
+                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                details: [
+                    {
+                        message: '"b" must be one of [ref:a.c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref1], label: 'b', key: 'b' }
+                    },
+                    {
+                        message: '"b" must be one of [ref:c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref2], label: 'b', key: 'b' }
+                    }
+                ]
+            }]
         ]);
 
         Helper.validate({ c, b, a }, [
             [{ a: {} }, true],
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]']
+            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
+                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                details: [
+                    {
+                        message: '"b" must be one of [ref:a.c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref1], label: 'b', key: 'b' }
+                    },
+                    {
+                        message: '"b" must be one of [ref:c]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref2], label: 'b', key: 'b' }
+                    }
+                ]
+            }]
         ], done);
     });
 
@@ -291,22 +439,44 @@ describe('ref', () => {
 
     it('uses context as a valid value', (done) => {
 
+        const ref = Joi.ref('$x');
         const schema = Joi.object({
-            a: Joi.ref('$x'),
+            a: ref,
             b: Joi.any()
         });
 
         Joi.validate({ a: 5, b: 6 }, schema, { context: { x: 22 } }, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.message).to.equal('child "a" fails because ["a" must be one of [context:x]]');
+            expect(err).to.be.an.error('child "a" fails because ["a" must be one of [context:x]]');
+            expect(err.details).to.equal([{
+                message: '"a" must be one of [context:x]',
+                path: ['a'],
+                type: 'any.allowOnly',
+                context: { valids: [ref], label: 'a', key: 'a' }
+            }]);
 
             Helper.validateOptions(schema, [
-                [{ a: 5 }, false, null, 'child "a" fails because ["a" must be one of [context:x]]'],
+                [{ a: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [context:x]]',
+                    details: [{
+                        message: '"a" must be one of [context:x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref], label: 'a', key: 'a' }
+                    }]
+                }],
                 [{ a: 22 }, true],
                 [{ b: 5 }, true],
                 [{ a: 22, b: 5 }, true],
-                [{ a: '22', b: '5' }, false, null, 'child "a" fails because ["a" must be one of [context:x]]']
+                [{ a: '22', b: '5' }, false, null, {
+                    message: 'child "a" fails because ["a" must be one of [context:x]]',
+                    details: [{
+                        message: '"a" must be one of [context:x]',
+                        path: ['a'],
+                        type: 'any.allowOnly',
+                        context: { valids: [ref], label: 'a', key: 'a' }
+                    }]
+                }]
             ], { context: { x: 22 } }, done);
         });
     });
@@ -319,13 +489,53 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{}, true],
-            [{ a: 'x' }, false, null, 'child "a" fails because ["a" is not allowed]'],
-            [{ a: true }, false, null, 'child "a" fails because ["a" is not allowed]'],
+            [{ a: 'x' }, false, null, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
+            [{ a: true }, false, null, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
             [{}, true, { context: {} }],
-            [{ a: 'x' }, false, { context: {} }, 'child "a" fails because ["a" is not allowed]'],
-            [{ a: true }, false, { context: {} }, 'child "a" fails because ["a" is not allowed]'],
+            [{ a: 'x' }, false, { context: {} }, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
+            [{ a: true }, false, { context: {} }, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
             [{}, true, { context: { x: 1 } }],
-            [{ a: 'x' }, false, { context: { x: 1 } }, 'child "a" fails because ["a" must be a boolean]'],
+            [{ a: 'x' }, false, { context: { x: 1 } }, {
+                message: 'child "a" fails because ["a" must be a boolean]',
+                details: [{
+                    message: '"a" must be a boolean',
+                    path: ['a'],
+                    type: 'boolean.base',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
             [{ a: true }, true, { context: { x: 1 } }]
         ], done);
     });
@@ -338,19 +548,91 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{}, true],
-            [{ a: 'x' }, false, null, 'child "a" fails because ["a" is not allowed]'],
-            [{ a: true }, false, null, 'child "a" fails because ["a" is not allowed]'],
+            [{ a: 'x' }, false, null, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
+            [{ a: true }, false, null, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
             [{}, true, { context: {} }],
-            [{ a: 'x' }, false, { context: {} }, 'child "a" fails because ["a" is not allowed]'],
-            [{ a: true }, false, { context: {} }, 'child "a" fails because ["a" is not allowed]'],
+            [{ a: 'x' }, false, { context: {} }, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
+            [{ a: true }, false, { context: {} }, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
             [{}, true, { context: { x: 1 } }],
-            [{ a: 'x' }, false, { context: { x: 1 } }, 'child "a" fails because ["a" is not allowed]'],
-            [{ a: true }, false, { context: { x: 1 } }, 'child "a" fails because ["a" is not allowed]'],
+            [{ a: 'x' }, false, { context: { x: 1 } }, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
+            [{ a: true }, false, { context: { x: 1 } }, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
             [{}, true, { context: { x: {} } }],
-            [{ a: 'x' }, false, { context: { x: {} } }, 'child "a" fails because ["a" is not allowed]'],
-            [{ a: true }, false, { context: { x: {} } }, 'child "a" fails because ["a" is not allowed]'],
+            [{ a: 'x' }, false, { context: { x: {} } }, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
+            [{ a: true }, false, { context: { x: {} } }, {
+                message: 'child "a" fails because ["a" is not allowed]',
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'any.unknown',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
             [{}, true, { context: { x: { y: 1 } } }],
-            [{ a: 'x' }, false, { context: { x: { y: 1 } } }, 'child "a" fails because ["a" must be a boolean]'],
+            [{ a: 'x' }, false, { context: { x: { y: 1 } } }, {
+                message: 'child "a" fails because ["a" must be a boolean]',
+                details: [{
+                    message: '"a" must be a boolean',
+                    path: ['a'],
+                    type: 'boolean.base',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
             [{ a: true }, true, { context: { x: { y: 1 } } }]
         ], done);
     });

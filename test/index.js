@@ -51,13 +51,37 @@ describe('Joi', () => {
         Helper.validate(a, [
             ['a', true],
             ['b', true],
-            [5, false, null, '"value" must be a string']
+            [5, false, null, {
+                message: '"value" must be a string',
+                details: [{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 5, label: 'value', key: undefined }
+                }]
+            }]
         ], () => {
 
             Helper.validate(b, [
-                ['a', false, null, '"value" must be one of [b]'],
+                ['a', false, null, {
+                    message: '"value" must be one of [b]',
+                    details: [{
+                        message: '"value" must be one of [b]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['b'], label: 'value', key: undefined }
+                    }]
+                }],
                 ['b', true],
-                [5, false, null, '"value" must be a string']
+                [5, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 5, label: 'value', key: undefined }
+                    }]
+                }]
             ], done);
         });
 
@@ -67,7 +91,13 @@ describe('Joi', () => {
 
         Joi.string().validate(null, (err, value) => {
 
-            expect(err).to.exist();
+            expect(err).to.be.an.error('"value" must be a string');
+            expect(err.details).to.equal([{
+                message: '"value" must be a string',
+                path: [],
+                type: 'string.base',
+                context: { value: null, label: 'value', key: undefined }
+            }]);
             expect(err.annotate()).to.equal('{\n  \u001b[41m\"value\"\u001b[0m\u001b[31m [1]: -- missing --\u001b[0m\n}\n\u001b[31m\n[1] "value" must be a string\u001b[0m');
             done();
         });
@@ -76,7 +106,15 @@ describe('Joi', () => {
     it('validates null schema', (done) => {
 
         Helper.validate(null, [
-            ['a', false, null, '"value" must be one of [null]'],
+            ['a', false, null, {
+                message: '"value" must be one of [null]',
+                details: [{
+                    message: '"value" must be one of [null]',
+                    path: [],
+                    type: 'any.allowOnly',
+                    context: { valids: [null], label: 'value', key: undefined }
+                }]
+            }],
             [null, true]
         ], done);
     });
@@ -84,7 +122,15 @@ describe('Joi', () => {
     it('validates number literal', (done) => {
 
         Helper.validate(5, [
-            [6, false, null, '"value" must be one of [5]'],
+            [6, false, null, {
+                message: '"value" must be one of [5]',
+                details: [{
+                    message: '"value" must be one of [5]',
+                    path: [],
+                    type: 'any.allowOnly',
+                    context: { valids: [5], label: 'value', key: undefined }
+                }]
+            }],
             [5, true]
         ], done);
     });
@@ -92,7 +138,15 @@ describe('Joi', () => {
     it('validates string literal', (done) => {
 
         Helper.validate('5', [
-            ['6', false, null, '"value" must be one of [5]'],
+            ['6', false, null, {
+                message: '"value" must be one of [5]',
+                details: [{
+                    message: '"value" must be one of [5]',
+                    path: [],
+                    type: 'any.allowOnly',
+                    context: { valids: ['5'], label: 'value', key: undefined }
+                }]
+            }],
             ['5', true]
         ], done);
     });
@@ -100,7 +154,15 @@ describe('Joi', () => {
     it('validates boolean literal', (done) => {
 
         Helper.validate(true, [
-            [false, false, null, '"value" must be one of [true]'],
+            [false, false, null, {
+                message: '"value" must be one of [true]',
+                details: [{
+                    message: '"value" must be one of [true]',
+                    path: [],
+                    type: 'any.allowOnly',
+                    context: { valids: [true], label: 'value', key: undefined }
+                }]
+            }],
             [true, true]
         ], done);
     });
@@ -108,10 +170,19 @@ describe('Joi', () => {
     it('validates date literal', (done) => {
 
         const now = Date.now();
-        Helper.validate(new Date(now), [
+        const dnow = new Date(now);
+        Helper.validate(dnow, [
             [new Date(now), true],
             [now, true],
-            [now * 2, false, null, /^"value" must be one of \[.*\]$/]
+            [now * 2, false, null, {
+                message: `"value" must be one of [${dnow}]`,
+                details: [{
+                    message: `"value" must be one of [${dnow}]`,
+                    path: [],
+                    type: 'any.allowOnly',
+                    context: { valids: [dnow], label: 'value', key: undefined }
+                }]
+            }]
         ], done);
     });
 
@@ -121,13 +192,101 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false, null, '"value" must be one of [key], "value" must be a number, "value" must be an object'],
-            [6, false, null, '"value" must be a string, "value" must be one of [5], "value" must be an object'],
-            [{ c: 5 }, false, null, '"value" must be a string, "value" must be a number, "c" is not allowed'],
+            ['other', false, null, {
+                message: '"value" must be one of [key], "value" must be a number, "value" must be an object',
+                details: [
+                    {
+                        message: '"value" must be one of [key]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['key'], label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be an object',
+                        path: [],
+                        type: 'object.base',
+                        context: { label: 'value', key: undefined }
+                    }
+                ]
+            }],
+            [6, false, null, {
+                message: '"value" must be a string, "value" must be one of [5], "value" must be an object',
+                details: [
+                    {
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 6, label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be one of [5]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: [5], label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be an object',
+                        path: [],
+                        type: 'object.base',
+                        context: { label: 'value', key: undefined }
+                    }
+                ]
+            }],
+            [{ c: 5 }, false, null, {
+                message: '"value" must be a string, "value" must be a number, "c" is not allowed',
+                details: [
+                    {
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: { c: 5 }, label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"c" is not allowed',
+                        path: ['c'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'c', label: 'c', key: 'c' }
+                    }
+                ]
+            }],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false, null, '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]']
+            [{ a: 5, b: 'a' }, false, null, {
+                message: '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]',
+                details: [
+                    {
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: { a: 5, b: 'a' }, label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"a" must be a boolean',
+                        path: ['a'],
+                        type: 'boolean.base',
+                        context: { label: 'a', key: 'a' }
+                    }
+                ]
+            }]
         ], done);
     });
 
@@ -137,13 +296,101 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false, null, '"value" must be one of [key], "value" must be a number, "value" must be an object'],
-            [6, false, null, '"value" must be a string, "value" must be one of [5], "value" must be an object'],
-            [{ c: 5 }, false, null, '"value" must be a string, "value" must be a number, "c" is not allowed'],
+            ['other', false, null, {
+                message: '"value" must be one of [key], "value" must be a number, "value" must be an object',
+                details: [
+                    {
+                        message: '"value" must be one of [key]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: ['key'], label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be an object',
+                        path: [],
+                        type: 'object.base',
+                        context: { label: 'value', key: undefined }
+                    }
+                ]
+            }],
+            [6, false, null, {
+                message: '"value" must be a string, "value" must be one of [5], "value" must be an object',
+                details: [
+                    {
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 6, label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be one of [5]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { valids: [5], label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be an object',
+                        path: [],
+                        type: 'object.base',
+                        context: { label: 'value', key: undefined }
+                    }
+                ]
+            }],
+            [{ c: 5 }, false, null, {
+                message: '"value" must be a string, "value" must be a number, "c" is not allowed',
+                details: [
+                    {
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: { c: 5 }, label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"c" is not allowed',
+                        path: ['c'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'c', label: 'c', key: 'c' }
+                    }
+                ]
+            }],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false, null, '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]']
+            [{ a: 5, b: 'a' }, false, null, {
+                message: '"value" must be a string, "value" must be a number, child "a" fails because ["a" must be a boolean]',
+                details: [
+                    {
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: { a: 5, b: 'a' }, label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', key: undefined }
+                    },
+                    {
+                        message: '"a" must be a boolean',
+                        path: ['a'],
+                        type: 'boolean.base',
+                        context: { label: 'a', key: 'a' }
+                    }
+                ]
+            }]
         ], done);
     });
 
@@ -154,7 +401,19 @@ describe('Joi', () => {
             expect(err).to.not.exist();
             Joi.compile(/.{2}/).validate('6', (err2, value2) => {
 
-                expect(err2).to.exist();
+                expect(err2).to.be.an.error('"value" with value "6" fails to match the required pattern: /.{2}/');
+                expect(err2.details).to.equal([{
+                    message: '"value" with value "6" fails to match the required pattern: /.{2}/',
+                    path: [],
+                    type: 'string.regex.base',
+                    context: {
+                        name: undefined,
+                        pattern: /.{2}/,
+                        value: '6',
+                        label: 'value',
+                        key: undefined
+                    }
+                }]);
                 done();
             });
         });
@@ -169,14 +428,73 @@ describe('Joi', () => {
 
         Joi.validate({ txt: 'a' }, schema, { abortEarly: false }, (err, value) => {
 
-            expect(err.message).to.equal('"txt" missing required peer "upc"');
+            expect(err).to.be.an.error('"txt" missing required peer "upc"');
+            expect(err.details).to.equal([{
+                message: '"txt" missing required peer "upc"',
+                path: ['txt'],
+                type: 'object.with',
+                context: {
+                    main: 'txt',
+                    mainWithLabel: 'txt',
+                    peer: 'upc',
+                    peerWithLabel: 'upc',
+                    label: 'txt',
+                    key: 'txt'
+                }
+            }]);
 
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
-                [{ txt: 'test' }, false, null, '"txt" missing required peer "upc"'],
-                [{ txt: 'test', upc: null }, false, null, 'child "upc" fails because ["upc" must be a string]'],
-                [{ txt: 'test', upc: '' }, false, null, 'child "upc" fails because ["upc" is not allowed to be empty]'],
-                [{ txt: 'test', upc: undefined }, false, null, '"txt" missing required peer "upc"'],
+                [{ txt: 'test' }, false, null, {
+                    message: '"txt" missing required peer "upc"',
+                    details: [{
+                        message: '"txt" missing required peer "upc"',
+                        path: ['txt'],
+                        type: 'object.with',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peer: 'upc',
+                            peerWithLabel: 'upc',
+                            label: 'txt',
+                            key: 'txt'
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: 'child "upc" fails because ["upc" must be a string]',
+                    details: [{
+                        message: '"upc" must be a string',
+                        path: ['upc'],
+                        type: 'string.base',
+                        context: { value: null, label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: 'child "upc" fails because ["upc" is not allowed to be empty]',
+                    details: [{
+                        message: '"upc" is not allowed to be empty',
+                        path: ['upc'],
+                        type: 'any.empty',
+                        context: { label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: 'test', upc: undefined }, false, null, {
+                    message: '"txt" missing required peer "upc"',
+                    details: [{
+                        message: '"txt" missing required peer "upc"',
+                        path: ['txt'],
+                        type: 'object.with',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peer: 'upc',
+                            peerWithLabel: 'upc',
+                            label: 'txt',
+                            key: 'txt'
+                        }
+                    }]
+                }],
                 [{ txt: 'test', upc: 'test' }, true]
             ], done);
         });
@@ -191,15 +509,59 @@ describe('Joi', () => {
 
         Joi.validate({ txt: 'a', upc: 'b' }, schema, { abortEarly: false }, (err, value) => {
 
-            expect(err.message).to.equal('"txt" conflict with forbidden peer "upc"');
+            expect(err).to.be.an.error('"txt" conflict with forbidden peer "upc"');
+            expect(err.details).to.equal([{
+                message: '"txt" conflict with forbidden peer "upc"',
+                path: ['txt'],
+                type: 'object.without',
+                context: {
+                    main: 'txt',
+                    mainWithLabel: 'txt',
+                    peer: 'upc',
+                    peerWithLabel: 'upc',
+                    label: 'txt',
+                    key: 'txt'
+                }
+            }]);
 
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
                 [{ txt: 'test' }, true],
-                [{ txt: 'test', upc: null }, false, null, 'child "upc" fails because ["upc" must be a string]'],
-                [{ txt: 'test', upc: '' }, false, null, 'child "upc" fails because ["upc" is not allowed to be empty]'],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: 'child "upc" fails because ["upc" must be a string]',
+                    details: [{
+                        message: '"upc" must be a string',
+                        path: ['upc'],
+                        type: 'string.base',
+                        context: { value: null, label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: 'child "upc" fails because ["upc" is not allowed to be empty]',
+                    details: [{
+                        message: '"upc" is not allowed to be empty',
+                        path: ['upc'],
+                        type: 'any.empty',
+                        context: { label: 'upc', key: 'upc' }
+                    }]
+                }],
                 [{ txt: 'test', upc: undefined }, true],
-                [{ txt: 'test', upc: 'test' }, false, null, '"txt" conflict with forbidden peer "upc"']
+                [{ txt: 'test', upc: 'test' }, false, null, {
+                    message: '"txt" conflict with forbidden peer "upc"',
+                    details: [{
+                        message: '"txt" conflict with forbidden peer "upc"',
+                        path: ['txt'],
+                        type: 'object.without',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peer: 'upc',
+                            peerWithLabel: 'upc',
+                            label: 'txt',
+                            key: 'txt'
+                        }
+                    }]
+                }]
             ], done);
         });
     });
@@ -213,22 +575,110 @@ describe('Joi', () => {
 
         Joi.validate({}, schema, { abortEarly: false }, (err, value) => {
 
-            expect(err.message).to.equal('"value" must contain at least one of [txt, upc]');
+            expect(err).to.be.an.error('"value" must contain at least one of [txt, upc]');
+            expect(err.details).to.equal([{
+                message: '"value" must contain at least one of [txt, upc]',
+                path: [],
+                type: 'object.missing',
+                context: {
+                    peers: ['txt', 'upc'],
+                    peersWithLabels: ['txt', 'upc'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
 
             Helper.validate(schema, [
-                [{ upc: null }, false, null, 'child "upc" fails because ["upc" must be a string]'],
+                [{ upc: null }, false, null, {
+                    message: 'child "upc" fails because ["upc" must be a string]',
+                    details: [{
+                        message: '"upc" must be a string',
+                        path: ['upc'],
+                        type: 'string.base',
+                        context: { value: null, label: 'upc', key: 'upc' }
+                    }]
+                }],
                 [{ upc: 'test' }, true],
-                [{ txt: null }, false, null, 'child "txt" fails because ["txt" must be a string]'],
+                [{ txt: null }, false, null, {
+                    message: 'child "txt" fails because ["txt" must be a string]',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
                 [{ txt: 'test' }, true],
-                [{ txt: 'test', upc: null }, false, null, 'child "upc" fails because ["upc" must be a string]'],
-                [{ txt: 'test', upc: '' }, false, null, 'child "upc" fails because ["upc" is not allowed to be empty]'],
-                [{ txt: '', upc: 'test' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: null, upc: 'test' }, false, null, 'child "txt" fails because ["txt" must be a string]'],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: 'child "upc" fails because ["upc" must be a string]',
+                    details: [{
+                        message: '"upc" must be a string',
+                        path: ['upc'],
+                        type: 'string.base',
+                        context: { value: null, label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: 'child "upc" fails because ["upc" is not allowed to be empty]',
+                    details: [{
+                        message: '"upc" is not allowed to be empty',
+                        path: ['upc'],
+                        type: 'any.empty',
+                        context: { label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: '', upc: 'test' }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: null, upc: 'test' }, false, null, {
+                    message: 'child "txt" fails because ["txt" must be a string]',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
                 [{ txt: undefined, upc: 'test' }, true],
                 [{ txt: 'test', upc: undefined }, true],
-                [{ txt: '', upc: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: '', upc: '' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: 'test', upc: 'test' }, false, null, '"value" contains a conflict between exclusive peers [txt, upc]']
+                [{ txt: '', upc: undefined }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: '' }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: 'test', upc: 'test' }, false, null, {
+                    message: '"value" contains a conflict between exclusive peers [txt, upc]',
+                    details: [{
+                        message: '"value" contains a conflict between exclusive peers [txt, upc]',
+                        path: [],
+                        type: 'object.xor',
+                        context: {
+                            peers: ['txt', 'upc'],
+                            peersWithLabels: ['txt', 'upc'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
     });
@@ -244,7 +694,20 @@ describe('Joi', () => {
         Helper.validate(schema, [
             [{ upc: 'test' }, true],
             [{ txt: 'test' }, true],
-            [{}, false, null, '"value" must contain at least one of [txt, upc, code]']
+            [{}, false, null, {
+                message: '"value" must contain at least one of [txt, upc, code]',
+                details: [{
+                    message: '"value" must contain at least one of [txt, upc, code]',
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['txt', 'upc', 'code'],
+                        peersWithLabels: ['txt', 'upc', 'code'],
+                        label: 'value',
+                        key: undefined
+                    }
+                }]
+            }]
         ], done);
     });
 
@@ -258,8 +721,34 @@ describe('Joi', () => {
         Helper.validate(schema, [
             [{ upc: 123 }, true],
             [{ code: 456 }, true],
-            [{ code: 456, upc: 123 }, false, null, '"value" contains a conflict between exclusive peers [code, upc]'],
-            [{}, false, null, '"value" must contain at least one of [code, upc]']
+            [{ code: 456, upc: 123 }, false, null, {
+                message: '"value" contains a conflict between exclusive peers [code, upc]',
+                details: [{
+                    message: '"value" contains a conflict between exclusive peers [code, upc]',
+                    path: [],
+                    type: 'object.xor',
+                    context: {
+                        peers: ['code', 'upc'],
+                        peersWithLabels: ['code', 'upc'],
+                        label: 'value',
+                        key: undefined
+                    }
+                }]
+            }],
+            [{}, false, null, {
+                message: '"value" must contain at least one of [code, upc]',
+                details: [{
+                    message: '"value" must contain at least one of [code, upc]',
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['code', 'upc'],
+                        peersWithLabels: ['code', 'upc'],
+                        label: 'value',
+                        key: undefined
+                    }
+                }]
+            }]
         ], done);
     });
 
@@ -274,8 +763,34 @@ describe('Joi', () => {
             [{ upc: '' }, true],
             [{ upc: '123' }, true],
             [{ code: '456' }, true],
-            [{ code: '456', upc: '' }, false, null, '"value" contains a conflict between exclusive peers [code, upc]'],
-            [{}, false, null, '"value" must contain at least one of [code, upc]']
+            [{ code: '456', upc: '' }, false, null, {
+                message: '"value" contains a conflict between exclusive peers [code, upc]',
+                details: [{
+                    message: '"value" contains a conflict between exclusive peers [code, upc]',
+                    path: [],
+                    type: 'object.xor',
+                    context: {
+                        peers: ['code', 'upc'],
+                        peersWithLabels: ['code', 'upc'],
+                        label: 'value',
+                        key: undefined
+                    }
+                }]
+            }],
+            [{}, false, null, {
+                message: '"value" must contain at least one of [code, upc]',
+                details: [{
+                    message: '"value" must contain at least one of [code, upc]',
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['code', 'upc'],
+                        peersWithLabels: ['code', 'upc'],
+                        label: 'value',
+                        key: undefined
+                    }
+                }]
+            }]
         ], done);
     });
 
@@ -289,27 +804,102 @@ describe('Joi', () => {
 
         Joi.validate({}, schema, { abortEarly: false }, (err, value) => {
 
-            expect(err.message).to.equal('"value" must contain at least one of [txt, upc, code]');
+            expect(err).to.be.an.error('"value" must contain at least one of [txt, upc, code]');
+            expect(err.details).to.equal([{
+                message: '"value" must contain at least one of [txt, upc, code]',
+                path: [],
+                type: 'object.missing',
+                context: {
+                    peers: ['txt', 'upc', 'code'],
+                    peersWithLabels: ['txt', 'upc', 'code'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
 
             Helper.validate(schema, [
                 [{ upc: null }, true],
                 [{ upc: 'test' }, true],
-                [{ txt: null }, false, null, 'child "txt" fails because ["txt" must be a string]'],
+                [{ txt: null }, false, null, {
+                    message: 'child "txt" fails because ["txt" must be a string]',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
                 [{ txt: 'test' }, true],
-                [{ code: null }, false, null, 'child "code" fails because ["code" must be a number]'],
+                [{ code: null }, false, null, {
+                    message: 'child "code" fails because ["code" must be a number]',
+                    details: [{
+                        message: '"code" must be a number',
+                        path: ['code'],
+                        type: 'number.base',
+                        context: { label: 'code', key: 'code' }
+                    }]
+                }],
                 [{ code: 123 }, true],
                 [{ txt: 'test', upc: null }, true],
                 [{ txt: 'test', upc: '' }, true],
-                [{ txt: '', upc: 'test' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: null, upc: 'test' }, false, null, 'child "txt" fails because ["txt" must be a string]'],
+                [{ txt: '', upc: 'test' }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: null, upc: 'test' }, false, null, {
+                    message: 'child "txt" fails because ["txt" must be a string]',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
                 [{ txt: undefined, upc: 'test' }, true],
                 [{ txt: 'test', upc: undefined }, true],
                 [{ txt: 'test', upc: '' }, true],
                 [{ txt: 'test', upc: null }, true],
-                [{ txt: '', upc: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: '', upc: undefined, code: 999 }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: '', upc: undefined, code: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: '', upc: '' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
+                [{ txt: '', upc: undefined }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: undefined, code: 999 }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: undefined, code: undefined }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: '' }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
                 [{ txt: 'test', upc: 'test' }, true],
                 [{ txt: 'test', upc: 'test', code: 322 }, true]
             ], done);
@@ -326,29 +916,271 @@ describe('Joi', () => {
 
         Joi.validate({ txt: 'x' }, schema, { abortEarly: false }, (err, value) => {
 
-            expect(err.message).to.equal('"value" contains [txt] without its required peers [upc, code]');
+            expect(err).to.be.an.error('"value" contains [txt] without its required peers [upc, code]');
+            expect(err.details).to.equal([{
+                message: '"value" contains [txt] without its required peers [upc, code]',
+                path: [],
+                type: 'object.and',
+                context: {
+                    present: ['txt'],
+                    presentWithLabels: ['txt'],
+                    missing: ['upc', 'code'],
+                    missingWithLabels: ['upc', 'code'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
 
             Helper.validate(schema, [
                 [{}, true],
-                [{ upc: null }, false, null, '"value" contains [upc] without its required peers [txt, code]'],
-                [{ upc: 'test' }, false, null, '"value" contains [upc] without its required peers [txt, code]'],
-                [{ txt: null }, false, null, 'child "txt" fails because ["txt" must be a string]'],
-                [{ txt: 'test' }, false, null, '"value" contains [txt] without its required peers [upc, code]'],
-                [{ code: null }, false, null, 'child "code" fails because ["code" must be a number]'],
-                [{ code: 123 }, false, null, '"value" contains [code] without its required peers [txt, upc]'],
-                [{ txt: 'test', upc: null }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
-                [{ txt: 'test', upc: '' }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
-                [{ txt: '', upc: 'test' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: null, upc: 'test' }, false, null, 'child "txt" fails because ["txt" must be a string]'],
-                [{ txt: undefined, upc: 'test' }, false, null, '"value" contains [upc] without its required peers [txt, code]'],
-                [{ txt: 'test', upc: undefined }, false, null, '"value" contains [txt] without its required peers [upc, code]'],
-                [{ txt: 'test', upc: '' }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
-                [{ txt: 'test', upc: null }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
-                [{ txt: '', upc: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: '', upc: undefined, code: 999 }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: '', upc: undefined, code: undefined }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: '', upc: '' }, false, null, 'child "txt" fails because ["txt" is not allowed to be empty]'],
-                [{ txt: 'test', upc: 'test' }, false, null, '"value" contains [txt, upc] without its required peers [code]'],
+                [{ upc: null }, false, null, {
+                    message: '"value" contains [upc] without its required peers [txt, code]',
+                    details: [{
+                        message: '"value" contains [upc] without its required peers [txt, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['upc'],
+                            presentWithLabels: ['upc'],
+                            missing: ['txt', 'code'],
+                            missingWithLabels: ['txt', 'code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ upc: 'test' }, false, null, {
+                    message: '"value" contains [upc] without its required peers [txt, code]',
+                    details: [{
+                        message: '"value" contains [upc] without its required peers [txt, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['upc'],
+                            presentWithLabels: ['upc'],
+                            missing: ['txt', 'code'],
+                            missingWithLabels: ['txt', 'code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ txt: null }, false, null, {
+                    message: 'child "txt" fails because ["txt" must be a string]',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: 'test' }, false, null, {
+                    message: '"value" contains [txt] without its required peers [upc, code]',
+                    details: [{
+                        message: '"value" contains [txt] without its required peers [upc, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt'],
+                            presentWithLabels: ['txt'],
+                            missing: ['upc', 'code'],
+                            missingWithLabels: ['upc', 'code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ code: null }, false, null, {
+                    message: 'child "code" fails because ["code" must be a number]',
+                    details: [{
+                        message: '"code" must be a number',
+                        path: ['code'],
+                        type: 'number.base',
+                        context: { label: 'code', key: 'code' }
+                    }]
+                }],
+                [{ code: 123 }, false, null, {
+                    message: '"value" contains [code] without its required peers [txt, upc]',
+                    details: [{
+                        message: '"value" contains [code] without its required peers [txt, upc]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['code'],
+                            presentWithLabels: ['code'],
+                            missing: ['txt', 'upc'],
+                            missingWithLabels: ['txt', 'upc'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ txt: '', upc: 'test' }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: null, upc: 'test' }, false, null, {
+                    message: 'child "txt" fails because ["txt" must be a string]',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: undefined, upc: 'test' }, false, null, {
+                    message: '"value" contains [upc] without its required peers [txt, code]',
+                    details: [{
+                        message: '"value" contains [upc] without its required peers [txt, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['upc'],
+                            presentWithLabels: ['upc'],
+                            missing: ['txt', 'code'],
+                            missingWithLabels: ['txt', 'code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: undefined }, false, null, {
+                    message: '"value" contains [txt] without its required peers [upc, code]',
+                    details: [{
+                        message: '"value" contains [txt] without its required peers [upc, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt'],
+                            presentWithLabels: ['txt'],
+                            missing: ['upc', 'code'],
+                            missingWithLabels: ['upc', 'code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ txt: '', upc: undefined }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: undefined, code: 999 }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: undefined, code: undefined }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: '' }, false, null, {
+                    message: 'child "txt" fails because ["txt" is not allowed to be empty]',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'any.empty',
+                        context: { label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: 'test', upc: 'test' }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 [{ txt: 'test', upc: 'test', code: 322 }, true],
                 [{ txt: 'test', upc: null, code: 322 }, true]
             ], done);
@@ -365,7 +1197,20 @@ describe('Joi', () => {
 
         Joi.validate({ txt: 'x', upc: 'y', code: 123 }, schema, { abortEarly: false }, (err, value) => {
 
-            expect(err.message).to.equal('"txt" must not exist simultaneously with [upc, code]');
+            expect(err).to.be.an.error('"txt" must not exist simultaneously with [upc, code]');
+            expect(err.details).to.equal([{
+                message: '"txt" must not exist simultaneously with [upc, code]',
+                path: [],
+                type: 'object.nand',
+                context: {
+                    main: 'txt',
+                    mainWithLabel: 'txt',
+                    peers: ['upc', 'code'],
+                    peersWithLabels: ['upc', 'code'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
 
             Helper.validate(schema, [
                 [{}, true],
@@ -381,8 +1226,38 @@ describe('Joi', () => {
                 [{ txt: 'test', upc: null }, true],
                 [{ txt: 'test', upc: undefined, code: 999 }, true],
                 [{ txt: 'test', upc: 'test' }, true],
-                [{ txt: 'test', upc: 'test', code: 322 }, false, null, '"txt" must not exist simultaneously with [upc, code]'],
-                [{ txt: 'test', upc: null, code: 322 }, false, null, '"txt" must not exist simultaneously with [upc, code]']
+                [{ txt: 'test', upc: 'test', code: 322 }, false, null, {
+                    message: '"txt" must not exist simultaneously with [upc, code]',
+                    details: [{
+                        message: '"txt" must not exist simultaneously with [upc, code]',
+                        path: [],
+                        type: 'object.nand',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peers: ['upc', 'code'],
+                            peersWithLabels: ['upc', 'code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: null, code: 322 }, false, null, {
+                    message: '"txt" must not exist simultaneously with [upc, code]',
+                    details: [{
+                        message: '"txt" must not exist simultaneously with [upc, code]',
+                        path: [],
+                        type: 'object.nand',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peers: ['upc', 'code'],
+                            peersWithLabels: ['upc', 'code'],
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
             ], done);
         });
     });
@@ -401,18 +1276,89 @@ describe('Joi', () => {
 
         schema.validate({ auth: { mode: 'none' } }, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.message).to.equal('child "auth" fails because [child "mode" fails because ["mode" must be one of [required, optional, try, null]], "auth" must be a string, "auth" must be a boolean]');
+            expect(err).to.be.an.error('child "auth" fails because [child "mode" fails because ["mode" must be one of [required, optional, try, null]], "auth" must be a string, "auth" must be a boolean]');
+            expect(err.details).to.equal([
+                {
+                    message: '"mode" must be one of [required, optional, try, null]',
+                    path: ['auth', 'mode'],
+                    type: 'any.allowOnly',
+                    context: { valids: ['required', 'optional', 'try', null], label: 'mode', key: 'mode' }
+                },
+                {
+                    message: '"auth" must be a string',
+                    path: ['auth'],
+                    type: 'string.base',
+                    context: { value: { mode: 'none' }, label: 'auth', key: 'auth' }
+                },
+                {
+                    message: '"auth" must be a boolean',
+                    path: ['auth'],
+                    type: 'boolean.base',
+                    context: { label: 'auth', key: 'auth' }
+                }
+            ]);
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
-                [{ something: undefined }, false, null, '"something" is not allowed'],
-                [{ auth: { something: undefined } }, false, null, 'child "auth" fails because ["something" is not allowed, "auth" must be a string, "auth" must be a boolean]'],
+                [{ something: undefined }, false, null, {
+                    message: '"something" is not allowed',
+                    details: [{
+                        message: '"something" is not allowed',
+                        path: ['something'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'something', label: 'something', key: 'something' }
+                    }]
+                }],
+                [{ auth: { something: undefined } }, false, null, {
+                    message: 'child "auth" fails because ["something" is not allowed, "auth" must be a string, "auth" must be a boolean]',
+                    details: [
+                        {
+                            message: '"something" is not allowed',
+                            path: ['auth', 'something'],
+                            type: 'object.allowUnknown',
+                            context: { child: 'something', label: 'something', key: 'something' }
+                        },
+                        {
+                            message: '"auth" must be a string',
+                            path: ['auth'],
+                            type: 'string.base',
+                            context: { value: { something: undefined }, label: 'auth', key: 'auth' }
+                        },
+                        {
+                            message: '"auth" must be a boolean',
+                            path: ['auth'],
+                            type: 'boolean.base',
+                            context: { label: 'auth', key: 'auth' }
+                        }
+                    ]
+                }],
                 [{ auth: null }, true],
                 [{ auth: undefined }, true],
                 [{}, true],
                 [{ auth: true }, true],
-                [{ auth: 123 }, false, null, 'child "auth" fails because ["auth" must be an object, "auth" must be a string, "auth" must be a boolean]']
+                [{ auth: 123 }, false, null, {
+                    message: 'child "auth" fails because ["auth" must be an object, "auth" must be a string, "auth" must be a boolean]',
+                    details: [
+                        {
+                            message: '"auth" must be an object',
+                            path: ['auth'],
+                            type: 'object.base',
+                            context: { label: 'auth', key: 'auth' }
+                        },
+                        {
+                            message: '"auth" must be a string',
+                            path: ['auth'],
+                            type: 'string.base',
+                            context: { value: 123, label: 'auth', key: 'auth' }
+                        },
+                        {
+                            message: '"auth" must be a boolean',
+                            path: ['auth'],
+                            type: 'boolean.base',
+                            context: { label: 'auth', key: 'auth' }
+                        }
+                    ]
+                }]
             ], done);
         });
     });
@@ -431,18 +1377,89 @@ describe('Joi', () => {
 
         schema.validate({ auth: { mode: 'none' } }, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.message).to.equal('child "auth" fails because [child "mode" fails because ["mode" must be one of [required, optional, try, null]], "auth" must be a string, "auth" must be a boolean]');
+            expect(err).to.be.an.error('child "auth" fails because [child "mode" fails because ["mode" must be one of [required, optional, try, null]], "auth" must be a string, "auth" must be a boolean]');
+            expect(err.details).to.equal([
+                {
+                    message: '"mode" must be one of [required, optional, try, null]',
+                    path: ['auth', 'mode'],
+                    type: 'any.allowOnly',
+                    context: { valids: ['required', 'optional', 'try', null], label: 'mode', key: 'mode' }
+                },
+                {
+                    message: '"auth" must be a string',
+                    path: ['auth'],
+                    type: 'string.base',
+                    context: { value: { mode: 'none' }, label: 'auth', key: 'auth' }
+                },
+                {
+                    message: '"auth" must be a boolean',
+                    path: ['auth'],
+                    type: 'boolean.base',
+                    context: { label: 'auth', key: 'auth' }
+                }
+            ]);
 
             Helper.validate(schema, [
                 [{ auth: { mode: 'try' } }, true],
-                [{ something: undefined }, false, null, '"something" is not allowed'],
-                [{ auth: { something: undefined } }, false, null, 'child "auth" fails because ["something" is not allowed, "auth" must be a string, "auth" must be a boolean]'],
+                [{ something: undefined }, false, null, {
+                    message: '"something" is not allowed',
+                    details: [{
+                        message: '"something" is not allowed',
+                        path: ['something'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'something', label: 'something', key: 'something' }
+                    }]
+                }],
+                [{ auth: { something: undefined } }, false, null, {
+                    message: 'child "auth" fails because ["something" is not allowed, "auth" must be a string, "auth" must be a boolean]',
+                    details: [
+                        {
+                            message: '"something" is not allowed',
+                            path: ['auth', 'something'],
+                            type: 'object.allowUnknown',
+                            context: { child: 'something', label: 'something', key: 'something' }
+                        },
+                        {
+                            message: '"auth" must be a string',
+                            path: ['auth'],
+                            type: 'string.base',
+                            context: { value: { something: undefined }, label: 'auth', key: 'auth' }
+                        },
+                        {
+                            message: '"auth" must be a boolean',
+                            path: ['auth'],
+                            type: 'boolean.base',
+                            context: { label: 'auth', key: 'auth' }
+                        }
+                    ]
+                }],
                 [{ auth: null }, true],
                 [{ auth: undefined }, true],
                 [{}, true],
                 [{ auth: true }, true],
-                [{ auth: 123 }, false, null, 'child "auth" fails because ["auth" must be an object, "auth" must be a string, "auth" must be a boolean]']
+                [{ auth: 123 }, false, null, {
+                    message: 'child "auth" fails because ["auth" must be an object, "auth" must be a string, "auth" must be a boolean]',
+                    details: [
+                        {
+                            message: '"auth" must be an object',
+                            path: ['auth'],
+                            type: 'object.base',
+                            context: { label: 'auth', key: 'auth' }
+                        },
+                        {
+                            message: '"auth" must be a string',
+                            path: ['auth'],
+                            type: 'string.base',
+                            context: { value: 123, label: 'auth', key: 'auth' }
+                        },
+                        {
+                            message: '"auth" must be a boolean',
+                            path: ['auth'],
+                            type: 'boolean.base',
+                            context: { label: 'auth', key: 'auth' }
+                        }
+                    ]
+                }]
             ], done);
         });
     });
@@ -457,14 +1474,70 @@ describe('Joi', () => {
         };
 
         Helper.validate(schema, [
-            [{ a: null }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
+            [{ a: null }, false, null, {
+                message: 'child "a" fails because ["a" must be a string, "a" must be a boolean]',
+                details: [
+                    {
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { value: null, label: 'a', key: 'a' }
+                    },
+                    {
+                        message: '"a" must be a boolean',
+                        path: ['a'],
+                        type: 'boolean.base',
+                        context: { label: 'a', key: 'a' }
+                    }
+                ]
+            }],
             [{ a: undefined }, true],
             [{}, true],
             [{ a: true }, true],
             [{ a: 'true' }, true],
-            [{ a: 123 }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
-            [{ a: { c: 1 } }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
-            [{ b: undefined }, false, null, '"b" is not allowed']
+            [{ a: 123 }, false, null, {
+                message: 'child "a" fails because ["a" must be a string, "a" must be a boolean]',
+                details: [
+                    {
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { value: 123, label: 'a', key: 'a' }
+                    },
+                    {
+                        message: '"a" must be a boolean',
+                        path: ['a'],
+                        type: 'boolean.base',
+                        context: { label: 'a', key: 'a' }
+                    }
+                ]
+            }],
+            [{ a: { c: 1 } }, false, null, {
+                message: 'child "a" fails because ["a" must be a string, "a" must be a boolean]',
+                details: [
+                    {
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { value: { c: 1 }, label: 'a', key: 'a' }
+                    },
+                    {
+                        message: '"a" must be a boolean',
+                        path: ['a'],
+                        type: 'boolean.base',
+                        context: { label: 'a', key: 'a' }
+                    }
+                ]
+            }],
+            [{ b: undefined }, false, null, {
+                message: '"b" is not allowed',
+                details: [{
+                    message: '"b" is not allowed',
+                    path: ['b'],
+                    type: 'object.allowUnknown',
+                    context: { child: 'b', label: 'b', key: 'b' }
+                }]
+            }]
         ], done);
     });
 
@@ -478,14 +1551,70 @@ describe('Joi', () => {
         };
 
         Helper.validate(schema, [
-            [{ a: null }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
+            [{ a: null }, false, null, {
+                message: 'child "a" fails because ["a" must be a string, "a" must be a boolean]',
+                details: [
+                    {
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { value: null, label: 'a', key: 'a' }
+                    },
+                    {
+                        message: '"a" must be a boolean',
+                        path: ['a'],
+                        type: 'boolean.base',
+                        context: { label: 'a', key: 'a' }
+                    }
+                ]
+            }],
             [{ a: undefined }, true],
             [{}, true],
             [{ a: true }, true],
             [{ a: 'true' }, true],
-            [{ a: 123 }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
-            [{ a: { c: 1 } }, false, null, 'child "a" fails because ["a" must be a string, "a" must be a boolean]'],
-            [{ b: undefined }, false, null, '"b" is not allowed']
+            [{ a: 123 }, false, null, {
+                message: 'child "a" fails because ["a" must be a string, "a" must be a boolean]',
+                details: [
+                    {
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { value: 123, label: 'a', key: 'a' }
+                    },
+                    {
+                        message: '"a" must be a boolean',
+                        path: ['a'],
+                        type: 'boolean.base',
+                        context: { label: 'a', key: 'a' }
+                    }
+                ]
+            }],
+            [{ a: { c: 1 } }, false, null, {
+                message: 'child "a" fails because ["a" must be a string, "a" must be a boolean]',
+                details: [
+                    {
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { value: { c: 1 }, label: 'a', key: 'a' }
+                    },
+                    {
+                        message: '"a" must be a boolean',
+                        path: ['a'],
+                        type: 'boolean.base',
+                        context: { label: 'a', key: 'a' }
+                    }
+                ]
+            }],
+            [{ b: undefined }, false, null, {
+                message: '"b" is not allowed',
+                details: [{
+                    message: '"b" is not allowed',
+                    path: ['b'],
+                    type: 'object.allowUnknown',
+                    context: { child: 'b', label: 'b', key: 'b' }
+                }]
+            }]
         ], done);
     });
 
@@ -497,7 +1626,15 @@ describe('Joi', () => {
 
         Helper.validate(schema, [
             [{ brand: ['amex'] }, true],
-            [{ brand: ['visa', 'mc'] }, false, null, 'child "brand" fails because ["brand" at position 1 fails because ["1" must be one of [amex, visa]]]']
+            [{ brand: ['visa', 'mc'] }, false, null, {
+                message: 'child "brand" fails because ["brand" at position 1 fails because ["1" must be one of [amex, visa]]]',
+                details: [{
+                    message: '"1" must be one of [amex, visa]',
+                    path: ['brand', 1],
+                    type: 'any.allowOnly',
+                    context: { valids: ['amex', 'visa'], label: 1, key: 1 }
+                }]
+            }]
         ], done);
     });
 
@@ -550,8 +1687,24 @@ describe('Joi', () => {
         const schema = Joi.number().invalid(5);
 
         Helper.validate(schema, [
-            [5, false, null, '"value" contains an invalid value'],
-            ['5', false, null, '"value" contains an invalid value']
+            [5, false, null, {
+                message: '"value" contains an invalid value',
+                details: [{
+                    message: '"value" contains an invalid value',
+                    path: [],
+                    type: 'any.invalid',
+                    context: { label: 'value', key: undefined }
+                }]
+            }],
+            ['5', false, null, {
+                message: '"value" contains an invalid value',
+                details: [{
+                    message: '"value" contains an invalid value',
+                    path: [],
+                    type: 'any.invalid',
+                    context: { label: 'value', key: undefined }
+                }]
+            }]
         ], done);
     });
 
@@ -630,8 +1783,13 @@ describe('Joi', () => {
 
         Joi.object({}).validate({ foo: 'bar' }, (err, value) => {
 
-            expect(err).to.exist();
-            expect(err.message).to.equal('"foo" is not allowed');
+            expect(err).to.be.an.error('"foo" is not allowed');
+            expect(err.details).to.equal([{
+                message: '"foo" is not allowed',
+                path: ['foo'],
+                type: 'object.allowUnknown',
+                context: { child: 'foo', label: 'foo', key: 'foo' }
+            }]);
 
             Joi.compile({}).validate({ foo: 'bar' }, (err2, value2) => {
 
@@ -1107,7 +2265,20 @@ describe('Joi', () => {
         Joi.validate(obj, schema, { stripUnknown: true }, (err, value) => {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"value" contains [a] without its required peers [b]');
+            expect(err).to.be.an.error('"value" contains [a] without its required peers [b]');
+            expect(err.details).to.equal([{
+                message: '"value" contains [a] without its required peers [b]',
+                path: [],
+                type: 'object.and',
+                context: {
+                    present: ['a'],
+                    presentWithLabels: ['a'],
+                    missing: ['b'],
+                    missingWithLabels: ['b'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
             done();
         });
     });
@@ -1127,7 +2298,20 @@ describe('Joi', () => {
         Joi.validate(obj, schema, { stripUnknown: { arrays: false, objects: true } }, (err, value) => {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('"value" contains [a] without its required peers [b]');
+            expect(err).to.be.an.error('"value" contains [a] without its required peers [b]');
+            expect(err.details).to.equal([{
+                message: '"value" contains [a] without its required peers [b]',
+                path: [],
+                type: 'object.and',
+                context: {
+                    present: ['a'],
+                    presentWithLabels: ['a'],
+                    missing: ['b'],
+                    missingWithLabels: ['b'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
             done();
         });
     });
@@ -1386,34 +2570,34 @@ describe('Joi', () => {
             expect(err.details).to.have.length(6);
             expect(err.details).to.equal([{
                 message: '"foo" length must be less than or equal to 3 characters long',
-                path: 'test.0.foo',
+                path: ['test', 0, 'foo'],
                 type: 'string.max',
-                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
+                context: { limit: 3, value: 'test1', key: 'foo', label: 'foo', encoding: undefined }
             }, {
                 message: '"bar" length must be less than or equal to 5 characters long',
-                path: 'test.0.bar',
+                path: ['test', 0, 'bar'],
                 type: 'string.max',
-                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined }
+                context: { limit: 5, value: 'testfailed', key: 'bar', label: 'bar', encoding: undefined }
             }, {
                 message: '"foo" length must be less than or equal to 3 characters long',
-                path: 'test2.test3.1.foo',
+                path: ['test2', 'test3', 1, 'foo'],
                 type: 'string.max',
-                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
+                context: { limit: 3, value: 'test1', key: 'foo', label: 'foo', encoding: undefined }
             }, {
                 message: '"bar" length must be less than or equal to 5 characters long',
-                path: 'test2.test3.1.bar',
+                path: ['test2', 'test3', 1, 'bar'],
                 type: 'string.max',
-                context: { limit: 5, value: 'testfailed', key: 'bar', encoding: undefined }
+                context: { limit: 5, value: 'testfailed', key: 'bar', label: 'bar', encoding: undefined }
             }, {
                 message: '"foo" length must be less than or equal to 3 characters long',
-                path: 'test2.test3.2.baz.test4.0.foo',
+                path: ['test2', 'test3', 2, 'baz', 'test4', 0, 'foo'],
                 type: 'string.max',
-                context: { limit: 3, value: 'test1', key: 'foo', encoding: undefined }
+                context: { limit: 3, value: 'test1', key: 'foo', label: 'foo', encoding: undefined }
             }, {
                 message: '"baz" is not allowed',
-                path: 'test2.test3.2.baz.test4.0.baz',
+                path: ['test2', 'test3', 2, 'baz', 'test4', 0, 'baz'],
                 type: 'object.allowUnknown',
-                context: { key: 'baz', child: 'baz' }
+                context: { key: 'baz', label: 'baz', child: 'baz' }
             }]);
             done();
         });
@@ -1878,7 +3062,7 @@ describe('Joi', () => {
 
             const a = Joi.number();
             const schema = Joi.object().keys({ a });
-            expect(Joi.reach(schema, 'a')).to.equal(a);
+            expect(Joi.reach(schema, 'a')).to.shallow.equal(a);
             done();
         });
 
@@ -1893,7 +3077,7 @@ describe('Joi', () => {
 
             const bar = Joi.number();
             const schema = Joi.object({ foo: Joi.object({ bar }) });
-            expect(Joi.reach(schema, 'foo.bar')).to.equal(bar);
+            expect(Joi.reach(schema, 'foo.bar')).to.shallow.equal(bar);
             done();
         });
 
@@ -2080,8 +3264,30 @@ describe('Joi', () => {
 
             const schema = customJoi.myType();
             Helper.validate(schema, [
-                [123, false, null, '"value" must be a string'],
-                ['a', false, null, '"value" length must be at least 2 characters long'],
+                [123, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 123, label: 'value', key: undefined }
+                    }]
+                }],
+                ['a', false, null, {
+                    message: '"value" length must be at least 2 characters long',
+                    details: [{
+                        message: '"value" length must be at least 2 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            limit: 2,
+                            value: 'a',
+                            encoding: undefined,
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
                 ['abc', true]
             ], done);
         });
@@ -2992,5 +4198,219 @@ describe('Joi', () => {
             done();
         });
 
+    });
+
+    describe('defaults()', () => {
+
+        it('should apply defaults to joi itself', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = defaultJoi.optional();
+            expect(schema.describe()).to.equal({
+                type: 'any',
+                description: 'defaulted',
+                flags: {
+                    presence: 'optional'
+                }
+            });
+            done();
+        });
+
+        it('should apply defaults to standard types', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = defaultJoi.string();
+            expect(schema.describe()).to.equal({
+                type: 'string',
+                invalids: [''],
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                }
+            });
+            done();
+        });
+
+        it('should apply defaults to types with arguments', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = defaultJoi.object({ foo: 'bar' });
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                },
+                children: {
+                    foo: {
+                        type: 'string',
+                        description: 'defaulted',
+                        flags: {
+                            presence: 'required',
+                            allowOnly: true
+                        },
+                        invalids: [''],
+                        valids: ['bar']
+                    }
+                }
+            });
+            done();
+        });
+
+        it('should keep several defaults separated', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const defaultJoi2 = Joi.defaults((schema) => schema.required().description('defaulted2'));
+            const schema = defaultJoi.object({
+                foo: 'bar',
+                baz: defaultJoi2.object().keys({
+                    qux: 'zorg'
+                })
+            });
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                },
+                children: {
+                    foo: {
+                        type: 'string',
+                        description: 'defaulted',
+                        flags: {
+                            presence: 'required',
+                            allowOnly: true
+                        },
+                        invalids: [''],
+                        valids: ['bar']
+                    },
+                    baz: {
+                        children: {
+                            qux: {
+                                description: 'defaulted2',
+                                flags: {
+                                    allowOnly: true,
+                                    presence: 'required'
+                                },
+                                invalids: [''],
+                                type: 'string',
+                                valids: ['zorg']
+                            }
+                        },
+                        description: 'defaulted2',
+                        flags: {
+                            presence: 'required'
+                        },
+                        type: 'object'
+                    }
+
+                }
+            });
+            done();
+        });
+
+        it('should deal with inherited defaults', (done) => {
+
+            const defaultJoi = Joi
+                .defaults((schema) => schema.required().description('defaulted'))
+                .defaults((schema) => schema.raw());
+            const schema = defaultJoi.object({
+                foo: 'bar'
+            });
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required',
+                    raw: true
+                },
+                children: {
+                    foo: {
+                        type: 'string',
+                        description: 'defaulted',
+                        flags: {
+                            presence: 'required',
+                            allowOnly: true,
+                            raw: true
+                        },
+                        invalids: [''],
+                        valids: ['bar']
+                    }
+                }
+            });
+            done();
+        });
+
+        it('should keep defaults on an extended joi', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const extendedJoi = defaultJoi.extend({ name: 'foobar' });
+            const schema = extendedJoi.foobar();
+            expect(schema.describe()).to.equal({
+                type: 'foobar',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                }
+            });
+            done();
+        });
+
+        it('should apply defaults on an extended joi', (done) => {
+
+            const extendedJoi = Joi.extend({ name: 'foobar' });
+            const defaultJoi = extendedJoi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = defaultJoi.foobar();
+            expect(schema.describe()).to.equal({
+                type: 'foobar',
+                description: 'defaulted',
+                flags: {
+                    presence: 'required'
+                }
+            });
+            done();
+        });
+
+        it('should fail on missing return for any', (done) => {
+
+            expect(() => {
+
+                return Joi.defaults((schema) => {
+
+                    switch (schema.schemaType) {
+                        case 'bool':
+                            return schema.required();
+                    }
+                });
+            }).to.throw('defaults() must return a schema');
+            done();
+        });
+
+        it('should fail on missing return for a standard type', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => {
+
+                switch (schema.schemaType) {
+                    case 'any':
+                        return schema.required();
+                }
+            });
+            expect(() => defaultJoi.string()).to.throw('defaults() must return a schema');
+            done();
+        });
+
+        it('should fail on missing return for a standard type on an inherited default', (done) => {
+
+            const defaultJoi = Joi.defaults((schema) => {
+
+                switch (schema.schemaType) {
+                    case 'any':
+                        return schema.required();
+                }
+            });
+            const defaultJoi2 = defaultJoi.defaults((schema) => schema.required());
+            expect(() => defaultJoi2.string()).to.throw('defaults() must return a schema');
+            done();
+        });
     });
 });

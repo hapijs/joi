@@ -38,6 +38,12 @@ describe('lazy', () => {
             schema.validate('bar', (err, value) => {
 
                 expect(err).to.be.an.error('schema error: lazy schema must be set');
+                expect(err.details).to.equal([{
+                    message: 'schema error: lazy schema must be set',
+                    path: [],
+                    type: 'lazy.base',
+                    context: { label: 'value', key: undefined }
+                }]);
                 done();
             });
         });
@@ -48,6 +54,12 @@ describe('lazy', () => {
             schema.validate('bar', (err, value) => {
 
                 expect(err).to.be.an.error('schema error: lazy schema function must return a schema');
+                expect(err.details).to.equal([{
+                    message: 'schema error: lazy schema function must return a schema',
+                    path: [],
+                    type: 'lazy.schema',
+                    context: { label: 'value', key: undefined }
+                }]);
                 done();
             });
         });
@@ -69,7 +81,15 @@ describe('lazy', () => {
                 [{ name: 'foo', children: [{ name: 'bar' }] }, true],
                 [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz' }] }] }, true],
                 [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 'qux' }] }] }] }, true],
-                [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 42 }] }] }] }, false, null, 'child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "name" fails because ["name" must be a string]]]]]]]']
+                [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 42 }] }] }] }, false, null, {
+                    message: 'child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "name" fails because ["name" must be a string]]]]]]]',
+                    details: [{
+                        message: '"name" must be a string',
+                        path: ['children', 0, 'children', 0, 'children', 0, 'name'],
+                        type: 'string.base',
+                        context: { value: 42, label: 'name', key: 'name' }
+                    }]
+                }]
             ], done);
         });
 
