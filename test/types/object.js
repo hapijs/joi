@@ -812,6 +812,43 @@ describe('object', () => {
                 });
             });
 
+            it('should ignore a key with ignoredUndefined if from does not exist', (done) => {
+
+                const regex = /^b$/i;
+
+                const schema = Joi.object().rename(regex, 'a', { ignoreUndefined: true });
+
+                const input = {
+                    a: 'something'
+                };
+
+                schema.validate(input, (err, value) => {
+
+                    expect(err).to.not.exist();
+                    expect(value).to.equal({ a: 'something' });
+                    done();
+                });
+            });
+
+            it('should rename a key with ignoredUndefined if from does exist', (done) => {
+
+                const regex = /^b$/i;
+
+                const schema = Joi.object().rename(regex, 'a', { ignoreUndefined: true });
+
+                const input = {
+                    c: 'something else',
+                    b: 'something'
+                };
+
+                schema.validate(input, (err, value) => {
+
+                    expect(err).to.not.exist();
+                    expect(value).to.equal({ a: 'something', c: 'something else' });
+                    done();
+                });
+            });
+
             it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', (done) => {
 
                 const regex = /^b$/i;
@@ -952,7 +989,6 @@ describe('object', () => {
                 done();
             });
         });
-
 
         it('errors multiple times when abortEarly is false', (done) => {
 
@@ -1124,24 +1160,6 @@ describe('object', () => {
         it('should ignore a key with ignoredUndefined if from does not exist', (done) => {
 
             const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true });
-
-            const input = {
-                a: 'something'
-            };
-
-            schema.validate(input, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal({ a: 'something' });
-                done();
-            });
-        });
-
-        it('using regex it should ignore a key with ignoredUndefined if from does not exist', (done) => {
-
-            const regex = /^b$/i;
-
-            const schema = Joi.object().rename(regex, 'a', { ignoreUndefined: true });
 
             const input = {
                 a: 'something'
