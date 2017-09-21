@@ -3091,6 +3091,16 @@ describe('Joi', () => {
 
     describe('extend()', () => {
 
+        it('should fail when called without object', (done) => {
+
+            expect(() => {
+
+                const extend = Joi.extend;
+                return extend();
+            }).to.throw('extend() must be called on a Joi instance');
+            done();
+        });
+
         describe('parameters', () => {
 
             it('must be an object or array of objects', (done) => {
@@ -4383,6 +4393,16 @@ describe('Joi', () => {
                     }
                 });
             }).to.throw('defaults() must return a schema');
+            done();
+        });
+
+        it('should fail when called without object', (done) => {
+
+            expect(() => {
+
+                const defaults = Joi.defaults;
+                return defaults((schema) => schema);
+            }).to.throw('defaults() must be called on a Joi instance');
             done();
         });
 

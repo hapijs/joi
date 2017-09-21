@@ -31,6 +31,14 @@ describe('any', () => {
         done();
     });
 
+    it('handles being called on a null object.', (done) => {
+
+        const any = Joi.any;
+        expect(any()).to.be.instanceOf(Joi.constructor);
+
+        done();
+    });
+
     describe('equal()', () => {
 
         it('validates valid values', (done) => {
