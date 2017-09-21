@@ -31,10 +31,13 @@ describe('any', () => {
         done();
     });
 
-    it('handles being called on a null object.', (done) => {
+    it('throws an exception if called on a null object.', (done) => {
 
         const any = Joi.any;
-        expect(any()).to.be.instanceOf(Joi.constructor);
+
+        expect(
+            () => any()
+        ).to.throw('Must be invoked on a Joi instance.');
 
         done();
     });
