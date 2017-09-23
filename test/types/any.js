@@ -1368,7 +1368,7 @@ describe('any', () => {
 
             const schema = Joi.number();
             const result = schema.validate('2');
-            expect(result).to.equal({ value: 2, error: null });
+            expect(result).to.contain({ value: 2, error: null });
             done();
         });
 
