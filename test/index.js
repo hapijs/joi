@@ -3504,8 +3504,8 @@ describe('Joi', () => {
             const original = Joi.number();
             expect(original.double).to.not.exist();
 
-            expect(customJoi.number().multiply(2).validate(3)).to.equal({ error: null, value: 6 });
-            expect(customJoi.number().multiply(5, '$').validate(7)).to.equal({ error: null, value: '$35' });
+            expect(customJoi.number().multiply(2).validate(3)).to.contain({ error: null, value: 6 });
+            expect(customJoi.number().multiply(5, '$').validate(7)).to.contain({ error: null, value: '$35' });
             expect(() => customJoi.number().multiply(5, 5)).to.throw(/"currency" must be a string/);
             expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
 
@@ -3536,8 +3536,8 @@ describe('Joi', () => {
             const original = Joi.number();
             expect(original.double).to.not.exist();
 
-            expect(customJoi.number().multiply(2).validate(3)).to.equal({ error: null, value: 6 });
-            expect(customJoi.number().multiply(5, '$').validate(7)).to.equal({ error: null, value: '$35' });
+            expect(customJoi.number().multiply(2).validate(3)).to.contain({ error: null, value: 6 });
+            expect(customJoi.number().multiply(5, '$').validate(7)).to.contain({ error: null, value: '$35' });
             expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
 
             done();
@@ -3600,7 +3600,7 @@ describe('Joi', () => {
             const original = Joi.number();
             expect(original.double).to.not.exist();
 
-            expect(customJoi.number().multiply(5).validate(7)).to.equal({ error: null, value: '$35' });
+            expect(customJoi.number().multiply(5).validate(7)).to.contain({ error: null, value: '$35' });
             expect(() => customJoi.number().multiply(5, 5)).to.throw(/"currency" must be a string/);
 
             done();
@@ -3626,7 +3626,7 @@ describe('Joi', () => {
             expect(original.double).to.not.exist();
 
             const schema = customJoi.number().double();
-            expect(schema.validate(3)).to.equal({ error: null, value: 6 });
+            expect(schema.validate(3)).to.contain({ error: null, value: 6 });
 
             done();
         });
@@ -4412,5 +4412,171 @@ describe('Joi', () => {
             expect(() => defaultJoi2.string()).to.throw('defaults() must return a schema');
             done();
         });
+    });
+
+    describe('validate()', () => {
+
+        it('should work with a successful promise', (done) => {
+
+            const schema = Joi.string();
+
+            const promise = Joi.validate('foo', schema);
+
+            promise.then((value) => {
+
+                expect(value).to.equal('foo');
+                done();
+            }, () => {
+
+                throw new Error('Should not go here');
+            });
+        });
+
+        it('should work with a successful promise and a catch in between', (done) => {
+
+            const schema = Joi.string();
+
+            const promise = Joi.validate('foo', schema);
+
+            promise
+                .catch(() => {
+
+                    throw new Error('Should not go here');
+                })
+                .then((value) => {
+
+                    expect(value).to.equal('foo');
+                    done();
+                }, () => {
+
+                    throw new Error('Should not go here');
+                });
+        });
+
+        it('should work with a failing promise', (done) => {
+
+            const schema = Joi.string();
+
+            const promise = Joi.validate(0, schema);
+
+            promise.then((value) => {
+
+                throw new Error('Should not go here');
+            }, (err) => {
+
+                expect(err).to.be.an.error('"value" must be a string');
+                expect(err.details).to.equal([{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 0, key: undefined, label: 'value' }
+                }]);
+                done();
+            });
+        });
+
+        it('should work with a failing promise and a then in between', (done) => {
+
+            const schema = Joi.string();
+
+            const promise = Joi.validate(0, schema);
+
+            promise
+                .then((value) => {
+
+                    throw new Error('Should not go here');
+                })
+                .catch((err) => {
+
+                    expect(err).to.be.an.error('"value" must be a string');
+                    expect(err.details).to.equal([{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 0, key: undefined, label: 'value' }
+                    }]);
+                    done();
+                });
+        });
+
+        it('should work with a failing promise (with catch)', (done) => {
+
+            const schema = Joi.string();
+
+            const promise = Joi.validate(0, schema);
+
+            promise.catch((err) => {
+
+                expect(err).to.be.an.error('"value" must be a string');
+                expect(err.details).to.equal([{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 0, key: undefined, label: 'value' }
+                }]);
+                done();
+            });
+        });
+
+        it('should catch errors in a successful promise callback', (done) => {
+
+            const schema = Joi.string();
+
+            const promise = Joi.validate('foo', schema);
+
+            promise.then((value) => {
+
+                throw new Error('oops');
+            }).then(() => {
+
+                throw new Error('Should not go here');
+            }, (err) => {
+
+                expect(err).to.be.an.error('oops');
+                done();
+            });
+        });
+
+        it('should catch errors in a failing promise callback', (done) => {
+
+            const schema = Joi.string();
+
+            const promise = Joi.validate(0, schema);
+
+            promise.then((value) => {
+
+                throw new Error('Should not go here');
+            }, () => {
+
+                throw new Error('oops');
+            }).then(() => {
+
+                throw new Error('Should not go here');
+            }, (err) => {
+
+                expect(err).to.be.an.error('oops');
+                done();
+            });
+        });
+
+        it('should catch errors in a failing promise callback (with catch)', (done) => {
+
+            const schema = Joi.string();
+
+            const promise = Joi.validate(0, schema);
+
+            promise.catch(() => {
+
+                throw new Error('oops');
+            }).then(() => {
+
+                throw new Error('Should not go here');
+            }, (err) => {
+
+                expect(err).to.be.an.error('oops');
+                done();
+            });
+        });
+
     });
 });

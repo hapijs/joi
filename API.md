@@ -175,6 +175,8 @@ Validates a value using the given schema and options where:
     incomplete if validation failed and `abortEarly` is `true`. If callback is not provided, then returns an object with [error](#errors)
     and value properties.
 
+When used without a callback, this function returns a Promise-like object that can be used as a promise, or as a simple object like in the below examples.
+
 ```js
 const schema = {
     a: Joi.number()
@@ -192,6 +194,12 @@ Joi.validate(value, schema, (err, value) => { });
 const result = Joi.validate(value, schema);
 // result.error -> null
 // result.value -> { "a" : 123 }
+
+// or
+const promise = Joi.validate(value, schema);
+promise.then((value /* { "a" : 123 } */) => {
+    
+});
 ```
 
 ### `compile(schema)`
@@ -453,6 +461,9 @@ schema.validate(value, (err, value) => { });
 const result = schema.validate(value);
 // result.error -> null
 // result.value -> { "a" : 123 }
+
+// or
+const promise = schema.validate(value);
 ```
 
 #### `any.allow(value)`
