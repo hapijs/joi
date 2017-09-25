@@ -197,8 +197,8 @@ const result = Joi.validate(value, schema);
 
 // or
 const promise = Joi.validate(value, schema);
-promise.then((value /* { "a" : 123 } */) => {
-    
+promise.then((value) => {
+    // value -> { "a" : 123 }
 });
 ```
 
