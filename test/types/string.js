@@ -20,6 +20,9 @@ const it = lab.it;
 const expect = Lab.expect;
 
 
+process.env.TZ = 'utc'; // Needed for timezone sensitive tests
+
+
 describe('string', () => {
 
     it('should throw an exception if arguments were passed.', (done) => {
