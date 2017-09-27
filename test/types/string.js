@@ -14,10 +14,7 @@ const internals = {};
 
 // Test shortcuts
 
-const lab = exports.lab = Lab.script();
-const describe = lab.describe;
-const it = lab.it;
-const expect = Lab.expect;
+const { describe, it, expect } = exports.lab = Lab.script();
 
 
 process.env.TZ = 'utc'; // Needed for timezone sensitive tests
@@ -1993,10 +1990,7 @@ describe('string', () => {
 
         const prepareIps = function (ips) {
 
-            return function (success, message, version) {
-
-                message = message || '';
-                version = version || ['ipv4', 'ipv6'];
+            return function (success, message = '', version = ['ipv4', 'ipv6']) {
 
                 return ips.map((ip) => [ip, success, null, !success && message ? {
                     message,

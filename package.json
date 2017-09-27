@@ -11,12 +11,12 @@
     "validation"
   ],
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=8.3.0"
   },
   "dependencies": {
-    "hoek": "4.x.x",
+    "hoek": "5.x.x",
     "isemail": "3.x.x",
-    "topo": "2.x.x"
+    "topo": "3.x.x"
   },
   "devDependencies": {
     "hapitoc": "1.x.x",

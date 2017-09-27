@@ -93,7 +93,7 @@ exports.validateOptions = function (schema, config, options, callback) {
 internals.thrownAt = function () {
 
     const error = new Error();
-    const frame = error.stack.replace(error.toString(), '').split('\n').slice(1).filter((line) => line.indexOf(__filename) === -1)[0];
+    const frame = error.stack.replace(error.toString(), '').split('\n').slice(1).filter((line) => !line.includes(__filename))[0];
     const at = frame.match(/^\s*at \(?(.+)\:(\d+)\:(\d+)\)?$/);
     return {
         filename: at[1],
