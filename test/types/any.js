@@ -31,6 +31,17 @@ describe('any', () => {
         done();
     });
 
+    it('throws an exception if called on a null object.', (done) => {
+
+        const any = Joi.any;
+
+        expect(
+            () => any()
+        ).to.throw('Must be invoked on a Joi instance.');
+
+        done();
+    });
+
     describe('equal()', () => {
 
         it('validates valid values', (done) => {
