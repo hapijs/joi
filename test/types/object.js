@@ -812,43 +812,6 @@ describe('object', () => {
                 });
             });
 
-            it('should ignore a key with ignoredUndefined if from does not exist', (done) => {
-
-                const regex = /^b$/i;
-
-                const schema = Joi.object().rename(regex, 'a', { ignoreUndefined: true });
-
-                const input = {
-                    a: 'something'
-                };
-
-                schema.validate(input, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value).to.equal({ a: 'something' });
-                    done();
-                });
-            });
-
-            it('should rename a key with ignoredUndefined if from does exist', (done) => {
-
-                const regex = /^b$/i;
-
-                const schema = Joi.object().rename(regex, 'a', { ignoreUndefined: true });
-
-                const input = {
-                    c: 'something else',
-                    b: 'something'
-                };
-
-                schema.validate(input, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value).to.equal({ a: 'something', c: 'something else' });
-                    done();
-                });
-            });
-
             it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', (done) => {
 
                 const regex = /^b$/i;
@@ -938,27 +901,21 @@ describe('object', () => {
 
                 const schema = Joi.object({
                     fooBar: Joi.string()
-                }).rename(regex, 'fooBar');
+                }).rename(regex, 'fooBar').rename(/foobar/i, 'fooBar');
 
                 Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' }, (err, value) => {
 
-                    expect(err.message).to.equal('"value" cannot rename child "[FOOBAR, FooBar]" because multiple renames are disabled and another key was already renamed to "fooBar"');
+                    expect(err.message).to.equal('"value" cannot rename child "[fooBar]" because multiple renames are disabled and another key was already renamed to "fooBar"');
                     done();
                 });
             });
 
             it('errors multiple times when abortEarly is false', (done) => {
 
-                const regex = /foobar/i;
-
-                const schema = Joi.object({
-                    fooBar: Joi.string()
-                }).options({ abortEarly: false }).rename(regex, 'fooBar').rename('FooBar', 'fooBar');
-
-                Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' }, (err, value) => {
+                Joi.object().keys({ z: Joi.string() }).rename(/a/i, 'b').rename(/c/i, 'b').rename(/z/i, 'z').options({ abortEarly: false }).validate({ a: 1, c: 1, d: 1, z: 1 }, (err, value) => {
 
                     expect(err).to.exist();
-                    expect(err.message).to.equal('"value" cannot rename child "[FOOBAR, FooBar]" because multiple renames are disabled and another key was already renamed to "fooBar". "value" cannot rename child "FooBar" because multiple renames are disabled and another key was already renamed to "fooBar"');
+                    expect(err.message).to.equal('"value" cannot rename child "[c]" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename child "/z/i" because override is disabled and target "z" exists. "d" is not allowed. "b" is not allowed');
                     done();
                 });
             });
@@ -1160,6 +1117,24 @@ describe('object', () => {
         it('should ignore a key with ignoredUndefined if from does not exist', (done) => {
 
             const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true });
+
+            const input = {
+                a: 'something'
+            };
+
+            schema.validate(input, (err, value) => {
+
+                expect(err).to.not.exist();
+                expect(value).to.equal({ a: 'something' });
+                done();
+            });
+        });
+
+        it('using regex it should ignore a key with ignoredUndefined if from does not exist', (done) => {
+
+            const regex = /^b$/i;
+
+            const schema = Joi.object().rename(regex, 'a', { ignoreUndefined: true });
 
             const input = {
                 a: 'something'
