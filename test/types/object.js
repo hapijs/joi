@@ -2111,7 +2111,7 @@ describe('object', () => {
             expect(() => {
 
                 Joi.object().type('');
-            }).to.throw('type must be a constructor function');
+            }).to.throw('type must be a constructor');
             done();
         });
 
