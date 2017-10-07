@@ -366,3 +366,57 @@ describe('func', () => {
         ], done);
     });
 });
+
+describe('func().class()', () => {
+
+    it('should differentiate between classes and functions', (done) => {
+
+        const classSchema = Joi.object({
+            _class: Joi.func().class()
+        });
+
+        const testFunc = function () {};
+        const testClass = class MyClass {};
+
+        Helper.validate(classSchema, [
+            [{ _class: testClass }, true],
+            [{ _class: testFunc }, false, null, {
+                message: 'child "_class" fails because ["_class" must be a class]',
+                details: [{
+                    message: '"_class" must be a class',
+                    path: ['_class'],
+                    type: 'function.class',
+                    context: { key: '_class', label: '_class' }
+                }]
+            }]
+        ], done);
+    });
+
+    it('refuses class look-alikes and bad values', (done) => {
+
+        const classSchema = Joi.object({
+            _class: Joi.func().class()
+        });
+
+        Helper.validate(classSchema, [
+            [{ _class: ['class '] }, false, null, {
+                message: 'child "_class" fails because ["_class" must be a Function]',
+                details: [{
+                    message: '"_class" must be a Function',
+                    path: ['_class'],
+                    type: 'function.base',
+                    context: { key: '_class', label: '_class' }
+                }]
+            }],
+            [{ _class: null }, false, null, {
+                message: 'child "_class" fails because ["_class" must be a Function]',
+                details: [{
+                    message: '"_class" must be a Function',
+                    path: ['_class'],
+                    type: 'function.base',
+                    context: { key: '_class', label: '_class' }
+                }]
+            }]
+        ], done);
+    });
+});
