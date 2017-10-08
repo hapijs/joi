@@ -1098,7 +1098,13 @@ describe('object', () => {
 
                 Joi.compile(schema).validate({ test: 'b', test1: 'a' }, (err, value) => {
 
-                    expect(err.message).to.equal('"value" cannot rename child "/^test1$/i" because override is disabled and target "test1" exists');
+                    expect(err.message).to.equal('"value" cannot rename children [test1] because override is disabled and target "test1" exists');
+                    expect(err.details).to.equal([{
+                        message: '"value" cannot rename children [test1] because override is disabled and target "test1" exists',
+                        path: [],
+                        type: 'object.rename.regex.override',
+                        context: { from: ['test1'], to: 'test1', key: undefined, label: 'value' }
+                    }]);
                     done();
                 });
             });
@@ -1319,7 +1325,13 @@ describe('object', () => {
 
                 Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' }, (err, value) => {
 
-                    expect(err.message).to.equal('"value" cannot rename child "[fooBar]" because multiple renames are disabled and another key was already renamed to "fooBar"');
+                    expect(err.message).to.equal('"value" cannot rename children [fooBar] because multiple renames are disabled and another key was already renamed to "fooBar"');
+                    expect(err.details).to.equal([{
+                        message: '"value" cannot rename children [fooBar] because multiple renames are disabled and another key was already renamed to "fooBar"',
+                        path: [],
+                        type: 'object.rename.regex.multiple',
+                        context: { from: ['fooBar'], to: 'fooBar', key: undefined, label: 'value' }
+                    }]);
                     done();
                 });
             });
@@ -1329,7 +1341,33 @@ describe('object', () => {
                 Joi.object().keys({ z: Joi.string() }).rename(/a/i, 'b').rename(/c/i, 'b').rename(/z/i, 'z').options({ abortEarly: false }).validate({ a: 1, c: 1, d: 1, z: 1 }, (err, value) => {
 
                     expect(err).to.exist();
-                    expect(err.message).to.equal('"value" cannot rename child "[c]" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename child "/z/i" because override is disabled and target "z" exists. "d" is not allowed. "b" is not allowed');
+                    expect(err.message).to.equal('"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename children [z] because override is disabled and target "z" exists. "d" is not allowed. "b" is not allowed');
+                    expect(err.details).to.equal([
+                        {
+                            message: '"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b"',
+                            path: [],
+                            type: 'object.rename.regex.multiple',
+                            context: { from: ['c'], to: 'b', key: undefined, label: 'value' }
+                        },
+                        {
+                            message: '"value" cannot rename children [z] because override is disabled and target "z" exists',
+                            path: [],
+                            type: 'object.rename.regex.override',
+                            context: { from: ['z'], to: 'z', key: undefined, label: 'value' }
+                        },
+                        {
+                            message: '"d" is not allowed',
+                            path: ['d'],
+                            type: 'object.allowUnknown',
+                            context: { child: 'd', key: 'd', label: 'd' }
+                        },
+                        {
+                            message: '"b" is not allowed',
+                            path: ['b'],
+                            type: 'object.allowUnknown',
+                            context: { child: 'b', key: 'b', label: 'b' }
+                        }
+                    ]);
                     done();
                 });
             });
