@@ -1572,6 +1572,18 @@ const object = Joi.object().keys({
 object.validate({ b: 5 }, (err, value) => { });
 ```
 
+It can also rename keys using a regex
+
+```js
+const regex = /^foobar$/i;
+
+const schema = Joi.object().keys({
+  fooBar: Joi.string()
+}).rename(regex, 'fooBar');
+
+schema.validate({ FooBar: 'a'}, (err, value) => {});
+```
+
 #### `object.assert(ref, schema, [message])`
 
 Verifies an assertion where:

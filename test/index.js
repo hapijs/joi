@@ -2843,6 +2843,7 @@ describe('Joi', () => {
                 {
                     from: 'renamed',
                     to: 'required',
+                    isRegExp: false,
                     options: {
                         alias: false,
                         multiple: false,
