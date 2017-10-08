@@ -1193,6 +1193,14 @@ Specifies the maximal arity of the function where:
 const schema = Joi.func().maxArity(3);
 ```
 
+#### `func.class()`
+
+Requires the function to be a class.
+
+```js
+const schema = Joi.func().class();
+```
+
 #### `func.ref()`
 
 Requires the function to be a Joi reference.
