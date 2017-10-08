@@ -1,5 +1,5 @@
 <!-- version -->
-# 11.2.0 API Reference
+# 11.3.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -73,6 +73,7 @@
     - [`func.arity(n)`](#funcarityn)
     - [`func.minArity(n)`](#funcminarityn)
     - [`func.maxArity(n)`](#funcmaxarityn)
+    - [`func.class()`](#funcclass)
     - [`func.ref()`](#funcref)
   - [`number` - inherits from `Any`](#number---inherits-from-any)
     - [`number.min(limit)`](#numberminlimit)
