@@ -1554,7 +1554,7 @@ const schema = Joi.object().keys({
 #### `object.rename(from, to, [options])`
 
 Renames a key to another name (deletes the renamed key) where:
-- `from` - the original key name.
+- `from` - the original key name or a regular expression matching keys.
 - `to` - the new key name.
 - `options` - an optional object with the following optional keys:
     - `alias` - if `true`, does not delete the old key name, keeping both the new and old keys in place. Defaults to `false`.
@@ -1572,7 +1572,7 @@ const object = Joi.object().keys({
 object.validate({ b: 5 }, (err, value) => { });
 ```
 
-It can also rename keys using a regex
+It can also rename keys using a regular expression:
 
 ```js
 const regex = /^foobar$/i;
