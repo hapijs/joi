@@ -22,6 +22,13 @@ const expect = Lab.expect;
 
 describe('any', () => {
 
+    it('can be called on its own', (done) => {
+
+        const any = Joi.any;
+        expect(() => any()).not.to.throw();
+        done();
+    });
+
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(

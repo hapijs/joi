@@ -22,6 +22,13 @@ const expect = Lab.expect;
 
 describe('binary', () => {
 
+    it('can be called on its own', (done) => {
+
+        const binary = Joi.binary;
+        expect(() => binary()).not.to.throw();
+        done();
+    });
+
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(

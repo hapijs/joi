@@ -22,6 +22,13 @@ const expect = Lab.expect;
 
 describe('alternatives', () => {
 
+    it('can be called on its own', (done) => {
+
+        const alternatives = Joi.alternatives;
+        expect(() => alternatives()).not.to.throw();
+        done();
+    });
+
     it('fails when no alternatives are provided', (done) => {
 
         Joi.alternatives().validate('a', (err, value) => {

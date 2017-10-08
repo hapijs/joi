@@ -25,6 +25,13 @@ process.env.TZ = 'utc'; // Needed for timezone sensitive tests
 
 describe('string', () => {
 
+    it('can be called on its own', (done) => {
+
+        const string = Joi.string;
+        expect(() => string()).not.to.throw();
+        done();
+    });
+
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(

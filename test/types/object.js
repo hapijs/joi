@@ -22,6 +22,13 @@ const expect = Lab.expect;
 
 describe('object', () => {
 
+    it('can be called on its own', (done) => {
+
+        const object = Joi.object;
+        expect(() => object()).not.to.throw();
+        done();
+    });
+
     it('converts a json string to an object', (done) => {
 
         Joi.object().validate('{"hi":true}', (err, value) => {

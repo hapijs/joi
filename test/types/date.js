@@ -46,6 +46,13 @@ describe('date', () => {
         done();
     });
 
+    it('can be called on its own', (done) => {
+
+        const date = Joi.date;
+        expect(() => date()).not.to.throw();
+        done();
+    });
+
     it('should throw an exception if arguments were passed.', (done) => {
 
         expect(

@@ -3237,6 +3237,24 @@ describe('Joi', () => {
             });
         });
 
+        it('can be called on its own', (done) => {
+
+            const extend = Joi.extend;
+            const customJoi = extend({
+                name: 'myType'
+            });
+
+            expect(Joi.myType).to.not.exist();
+            expect(customJoi.myType).to.be.a.function();
+
+            const myType = customJoi.myType;
+            const schema = myType();
+            expect(schema._type).to.equal('myType');
+            expect(schema.isJoi).to.be.true();
+
+            done();
+        });
+
         it('defines a custom type with a default base', (done) => {
 
             const customJoi = Joi.extend({
