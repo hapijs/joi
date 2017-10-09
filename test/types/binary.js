@@ -25,7 +25,7 @@ describe('binary', () => {
     it('can be called on its own', (done) => {
 
         const binary = Joi.binary;
-        expect(() => binary()).not.to.throw();
+        expect(() => binary()).to.throw('Must be invoked on a Joi instance.');
         done();
     });
 

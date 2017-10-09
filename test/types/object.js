@@ -25,7 +25,7 @@ describe('object', () => {
     it('can be called on its own', (done) => {
 
         const object = Joi.object;
-        expect(() => object()).not.to.throw();
+        expect(() => object()).to.throw('Must be invoked on a Joi instance.');
         done();
     });
 

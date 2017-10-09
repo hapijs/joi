@@ -23,13 +23,6 @@ const expect = Lab.expect;
 
 describe('lazy', () => {
 
-    it('can be called on its own', (done) => {
-
-        const lazy = Joi.lazy;
-        expect(() => lazy(() => {})).not.to.throw();
-        done();
-    });
-
     describe('set()', () => {
 
         it('should require a function', (done) => {

@@ -25,7 +25,7 @@ describe('boolean', () => {
     it('can be called on its own', (done) => {
 
         const boolean = Joi.boolean;
-        expect(() => boolean()).not.to.throw();
+        expect(() => boolean()).to.throw('Must be invoked on a Joi instance.');
         done();
     });
 

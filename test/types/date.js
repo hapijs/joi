@@ -49,7 +49,7 @@ describe('date', () => {
     it('can be called on its own', (done) => {
 
         const date = Joi.date;
-        expect(() => date()).not.to.throw();
+        expect(() => date()).to.throw('Must be invoked on a Joi instance.');
         done();
     });
 

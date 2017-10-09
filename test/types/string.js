@@ -28,7 +28,7 @@ describe('string', () => {
     it('can be called on its own', (done) => {
 
         const string = Joi.string;
-        expect(() => string()).not.to.throw();
+        expect(() => string()).to.throw('Must be invoked on a Joi instance.');
         done();
     });
 
