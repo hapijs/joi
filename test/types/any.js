@@ -2211,7 +2211,7 @@ describe('any', () => {
             ], done);
         });
 
-        it('forks type into alternatives (with a schema)', (done) => {
+        it('forks type into alternatives (with is as a schema)', (done) => {
 
             const schema = {
                 a: Joi.any(),
@@ -2265,6 +2265,75 @@ describe('any', () => {
                         path: ['b'],
                         type: 'any.allowOnly',
                         context: { valids: ['x'], label: 'b', key: 'b' }
+                    }]
+                }]
+            ], done);
+        });
+
+        it('forks type into alternatives (with a schema as condition)', (done) => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.number(),
+                c: Joi.boolean()
+            })
+                .when(Joi.object({ a: Joi.string().min(2).required() }).unknown(), {
+                    then: Joi.object({ b: Joi.required() })
+                })
+                .when(Joi.object({ b: Joi.number().required().min(5), c: Joi.only(true).required() }).unknown(), {
+                    then: Joi.object({ a: Joi.string().required().min(3) })
+                });
+
+            Helper.validate(schema, [
+                [{ a: 0 }, false, null, {
+                    message: 'child "a" fails because ["a" must be a string]',
+                    details: [{
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { value: 0, key: 'a', label: 'a' }
+                    }]
+                }],
+                [{ a: 'a' }, true],
+                [{ a: 'a', b: 'b' }, false, null, {
+                    message: 'child "b" fails because ["b" must be a number]',
+                    details: [{
+                        message: '"b" must be a number',
+                        path: ['b'],
+                        type: 'number.base',
+                        context: { key: 'b', label: 'b' }
+                    }]
+                }],
+                [{ a: 'a', b: 0 }, true],
+                [{ a: 'a', b: 0, c: true }, true],
+                [{ a: 'a', b: 0, c: 'c' }, false, null, {
+                    message: 'child "c" fails because ["c" must be a boolean]',
+                    details: [{
+                        message: '"c" must be a boolean',
+                        path: ['c'],
+                        type: 'boolean.base',
+                        context: { key: 'c', label: 'c' }
+                    }]
+                }],
+                [{ a: 'aa' }, false, null, {
+                    message: 'child "b" fails because ["b" is required]',
+                    details: [{
+                        message: '"b" is required',
+                        path: ['b'],
+                        type: 'any.required',
+                        context: { key: 'b', label: 'b' }
+                    }]
+                }],
+                [{ a: 'aa', b: 0 }, true],
+                [{ a: 'aa', b: 10 }, true],
+                [{ a: 'a', b: 10 }, true],
+                [{ a: 'a', b: 10, c: true }, false, null, {
+                    message: 'child "a" fails because ["a" length must be at least 3 characters long]',
+                    details: [{
+                        message: '"a" length must be at least 3 characters long',
+                        path: ['a'],
+                        type: 'string.min',
+                        context: { encoding: undefined, limit: 3, value: 'a', key: 'a', label: 'a' }
                     }]
                 }]
             ], done);
@@ -2324,6 +2393,34 @@ describe('any', () => {
                         flags: {
                             presence: 'required'
                         },
+                        invalids: [Infinity, -Infinity],
+                        rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
+                    }
+                }]
+            });
+            done();
+        });
+
+        it('can describe as the original object (with a schema as a condition)', (done) => {
+
+            const schema = Joi.number().min(10).when(Joi.number().min(5), { then: Joi.number().max(20).required() }).describe();
+            expect(schema).to.equal({
+                type: 'alternatives',
+                flags: { presence: 'ignore' },
+                base: {
+                    type: 'number',
+                    invalids: [Infinity, -Infinity],
+                    rules: [{ arg: 10, name: 'min' }]
+                },
+                alternatives: [{
+                    peek: {
+                        type: 'number',
+                        invalids: [Infinity, -Infinity],
+                        rules: [{ name: 'min', arg: 5 }]
+                    },
+                    then: {
+                        type: 'number',
+                        flags: { presence: 'required' },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
                     }

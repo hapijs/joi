@@ -283,490 +283,546 @@ describe('alternatives', () => {
             expect(() => {
 
                 Joi.alternatives().when(5, { is: 6, then: Joi.number() });
-            }).to.throw('Invalid reference: 5');
+            }).to.throw('Invalid condition: 5');
             done();
         });
 
-        it('validates conditional alternatives', (done) => {
+        describe('with ref', () => {
 
-            const schema = {
-                a: Joi.alternatives()
-                    .when('b', { is: 5, then: 'x', otherwise: 'y' })
-                    .try('z'),
-                b: Joi.any()
-            };
+            it('validates conditional alternatives', (done) => {
 
-            Helper.validate(schema, [
-                [{ a: 'x', b: 5 }, true],
-                [{ a: 'x', b: 6 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [y]]',
-                    details: [{
-                        message: '"a" must be one of [y]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['y'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'y', b: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [x]]',
-                    details: [{
-                        message: '"a" must be one of [x]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'y', b: 6 }, true],
-                [{ a: 'z', b: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [x]]',
-                    details: [{
-                        message: '"a" must be one of [x]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'z', b: 6 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [y]]',
-                    details: [{
-                        message: '"a" must be one of [y]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['y'], label: 'a', key: 'a' }
-                    }]
-                }]
-            ], done);
-        });
+                const schema = {
+                    a: Joi.alternatives()
+                        .when('b', { is: 5, then: 'x', otherwise: 'y' })
+                        .try('z'),
+                    b: Joi.any()
+                };
 
-        it('validates conditional alternatives (empty key)', (done) => {
-
-            const schema = {
-                a: Joi.alternatives()
-                    .when('', { is: 5, then: 'x', otherwise: 'y' })
-                    .try('z'),
-                '': Joi.any()
-            };
-
-            Helper.validate(schema, [
-                [{ a: 'x', '': 5 }, true],
-                [{ a: 'x', '': 6 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [y]]',
-                    details: [{
-                        message: '"a" must be one of [y]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['y'], label: 'a', key: 'a' }
+                Helper.validate(schema, [
+                    [{ a: 'x', b: 5 }, true],
+                    [{ a: 'x', b: 6 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        details: [{
+                            message: '"a" must be one of [y]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['y'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y', b: 5 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y', b: 6 }, true],
+                    [{ a: 'z', b: 5 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'z', b: 6 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        details: [{
+                            message: '"a" must be one of [y]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['y'], label: 'a', key: 'a' }
+                        }]
                     }]
-                }],
-                [{ a: 'y', '': 5 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [x]]',
-                    details: [{
-                        message: '"a" must be one of [x]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'y', '': 6 }, true],
-                [{ a: 'z', '': 5 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [x]]',
-                    details: [{
-                        message: '"a" must be one of [x]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'z', '': 6 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [y]]',
-                    details: [{
-                        message: '"a" must be one of [y]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['y'], label: 'a', key: 'a' }
-                    }]
-                }]
-            ], done);
-        });
-
-        it('validates only then', (done) => {
-
-            const schema = {
-                a: Joi.alternatives()
-                    .when(Joi.ref('b'), { is: 5, then: 'x' })
-                    .try('z'),
-                b: Joi.any()
-            };
-
-            Helper.validate(schema, [
-                [{ a: 'x', b: 5 }, true],
-                [{ a: 'x', b: 6 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [z]]',
-                    details: [{
-                        message: '"a" must be one of [z]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['z'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'y', b: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [x]]',
-                    details: [{
-                        message: '"a" must be one of [x]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'y', b: 6 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [z]]',
-                    details: [{
-                        message: '"a" must be one of [z]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['z'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'z', b: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [x]]',
-                    details: [{
-                        message: '"a" must be one of [x]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'z', b: 6 }, true]
-            ], done);
-        });
-
-        it('validates only otherwise', (done) => {
-
-            const schema = {
-                a: Joi.alternatives()
-                    .when('b', { is: 5, otherwise: 'y' })
-                    .try('z'),
-                b: Joi.any()
-            };
-
-            Helper.validate(schema, [
-                [{ a: 'x', b: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [z]]',
-                    details: [{
-                        message: '"a" must be one of [z]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['z'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'x', b: 6 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [y]]',
-                    details: [{
-                        message: '"a" must be one of [y]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['y'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'y', b: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [z]]',
-                    details: [{
-                        message: '"a" must be one of [z]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['z'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'y', b: 6 }, true],
-                [{ a: 'z', b: 5 }, true],
-                [{ a: 'z', b: 6 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [y]]',
-                    details: [{
-                        message: '"a" must be one of [y]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['y'], label: 'a', key: 'a' }
-                    }]
-                }]
-            ], done);
-        });
-
-        it('validates "then" when a preceding "when" has only "otherwise"', (done) => {
-
-            const schema = Joi.object({
-                a: Joi.number(),
-                b: Joi.number(),
-                c: Joi.number()
-                    .when('a', { is: 1, otherwise: Joi.number().min(1) })
-                    .when('b', { is: 1, then: Joi.number().min(1) })
+                ], done);
             });
 
-            Helper.validate(schema, [
-                [{ a: 1, b: 1, c: 0 }, false, null, {
-                    message: 'child "c" fails because ["c" must be larger than or equal to 1]',
-                    details: [{
-                        message: '"c" must be larger than or equal to 1',
-                        path: ['c'],
-                        type: 'number.min',
-                        context: { limit: 1, value: 0, label: 'c', key: 'c' }
+            it('validates conditional alternatives (empty key)', (done) => {
+
+                const schema = {
+                    a: Joi.alternatives()
+                        .when('', { is: 5, then: 'x', otherwise: 'y' })
+                        .try('z'),
+                    '': Joi.any()
+                };
+
+                Helper.validate(schema, [
+                    [{ a: 'x', '': 5 }, true],
+                    [{ a: 'x', '': 6 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        details: [{
+                            message: '"a" must be one of [y]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['y'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y', '': 5 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y', '': 6 }, true],
+                    [{ a: 'z', '': 5 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'z', '': 6 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        details: [{
+                            message: '"a" must be one of [y]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['y'], label: 'a', key: 'a' }
+                        }]
                     }]
-                }],
-                [{ a: 1, b: 1, c: 1 }, true],
-                [{ a: 0, b: 1, c: 1 }, true],
-                [{ a: 1, b: 0, c: 0 }, true]
-            ], done);
-        });
-
-        it('validates when is is null', (done) => {
-
-            const schema = {
-                a: Joi.alternatives().when('b', { is: null, then: 'x', otherwise: Joi.number() }),
-                b: Joi.any()
-            };
-
-            Helper.validate(schema, [
-                [{ a: 1 }, true],
-                [{ a: 'y' }, false, null, {
-                    message: 'child "a" fails because ["a" must be a number]',
-                    details: [{
-                        message: '"a" must be a number',
-                        path: ['a'],
-                        type: 'number.base',
-                        context: { label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'x', b: null }, true],
-                [{ a: 'y', b: null }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [x]]',
-                    details: [{
-                        message: '"a" must be one of [x]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 1, b: null }, false, null, {
-                    message: 'child "a" fails because ["a" must be a string]',
-                    details: [{
-                        message: '"a" must be a string',
-                        path: ['a'],
-                        type: 'string.base',
-                        context: { value: 1, label: 'a', key: 'a' }
-                    }]
-                }]
-            ], done);
-        });
-
-        it('validates when is has ref', (done) => {
-
-            const schema = {
-                a: Joi.alternatives().when('b', { is: Joi.ref('c'), then: 'x' }),
-                b: Joi.any(),
-                c: Joi.number()
-            };
-
-            Helper.validate(schema, [
-                [{ a: 'x', b: 5, c: '5' }, true],
-                [{ a: 'x', b: 5, c: '1' }, false, null, {
-                    message: 'child "a" fails because ["a" not matching any of the allowed alternatives]',
-                    details: [{
-                        message: '"a" not matching any of the allowed alternatives',
-                        path: ['a'],
-                        type: 'alternatives.base',
-                        context: { label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'x', b: '5', c: '5' }, false, null, {
-                    message: 'child "a" fails because ["a" not matching any of the allowed alternatives]',
-                    details: [{
-                        message: '"a" not matching any of the allowed alternatives',
-                        path: ['a'],
-                        type: 'alternatives.base',
-                        context: { label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'y', b: 5, c: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [x]]',
-                    details: [{
-                        message: '"a" must be one of [x]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 'y' }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [x]]',
-                    details: [{
-                        message: '"a" must be one of [x]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'a', key: 'a' }
-                    }]
-                }]
-            ], done);
-        });
-
-        it('validates when then has ref', (done) => {
-
-            const ref = Joi.ref('c');
-            const schema = {
-                a: Joi.alternatives().when('b', { is: 5, then: ref }),
-                b: Joi.any(),
-                c: Joi.number()
-            };
-
-            Helper.validate(schema, [
-                [{ a: 'x', b: 5, c: '1' }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [ref:c]]',
-                    details: [{
-                        message: '"a" must be one of [ref:c]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: [ref], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 1, b: 5, c: '1' }, true],
-                [{ a: '1', b: 5, c: '1' }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [ref:c]]',
-                    details: [{
-                        message: '"a" must be one of [ref:c]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: [ref], label: 'a', key: 'a' }
-                    }]
-                }]
-            ], done);
-        });
-
-        it('validates when otherwise has ref', (done) => {
-
-            const ref = Joi.ref('c');
-            const schema = {
-                a: Joi.alternatives().when('b', { is: 6, otherwise: ref }),
-                b: Joi.any(),
-                c: Joi.number()
-            };
-
-            Helper.validate(schema, [
-                [{ a: 'x', b: 5, c: '1' }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [ref:c]]',
-                    details: [{
-                        message: '"a" must be one of [ref:c]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: [ref], label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 1, b: 5, c: '1' }, true],
-                [{ a: '1', b: 5, c: '1' }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [ref:c]]',
-                    details: [{
-                        message: '"a" must be one of [ref:c]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { valids: [ref], label: 'a', key: 'a' }
-                    }]
-                }]
-            ], done);
-        });
-
-        it('validates when empty value', (done) => {
-
-            const schema = {
-                a: Joi.alternatives().when('b', { is: true, then: Joi.required() }),
-                b: Joi.boolean().default(false)
-            };
-
-            Helper.validate(schema, [
-                [{ b: false }, true],
-                [{ b: true }, true]           // true because required() only applies to the one alternative
-            ], done);
-        });
-
-        it('validates when missing value', (done) => {
-
-            const schema = Joi.object({
-                a: Joi.alternatives().when('b', { is: 5, then: Joi.optional(), otherwise: Joi.required() }).required(),
-                b: Joi.number()
+                ], done);
             });
 
-            Helper.validate(schema, [
-                [{ a: 1 }, true],
-                [{}, false, null, {
-                    message: 'child "a" fails because ["a" is required]',
-                    details: [{
-                        message: '"a" is required',
-                        path: ['a'],
-                        type: 'any.required',
-                        context: { label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ b: 1 }, false, null, {
-                    message: 'child "a" fails because ["a" is required]',
-                    details: [{
-                        message: '"a" is required',
-                        path: ['a'],
-                        type: 'any.required',
-                        context: { label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 1, b: 1 }, true],
-                [{ a: 1, b: 5 }, true],
-                [{ b: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" is required]',
-                    details: [{
-                        message: '"a" is required',
-                        path: ['a'],
-                        type: 'any.required',
-                        context: { label: 'a', key: 'a' }
-                    }]
-                }]
-            ], done);
-        });
+            it('validates only then', (done) => {
 
-        it('validates with nested whens', (done) => {
+                const schema = {
+                    a: Joi.alternatives()
+                        .when(Joi.ref('b'), { is: 5, then: 'x' })
+                        .try('z'),
+                    b: Joi.any()
+                };
 
-            // If ((b === 0 && a === 123) ||
-            //     (b !== 0 && a === anything))
-            // then c === 456
-            // else c === 789
-            const schema = Joi.object({
-                a: Joi.number().required(),
-                b: Joi.number().required(),
-                c: Joi.when('a', {
-                    is: Joi.when('b', {
-                        is: Joi.valid(0),
-                        then: Joi.valid(123)
-                    }),
-                    then: Joi.valid(456),
-                    otherwise: Joi.valid(789)
-                })
+                Helper.validate(schema, [
+                    [{ a: 'x', b: 5 }, true],
+                    [{ a: 'x', b: 6 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [z]]',
+                        details: [{
+                            message: '"a" must be one of [z]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['z'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y', b: 5 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y', b: 6 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [z]]',
+                        details: [{
+                            message: '"a" must be one of [z]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['z'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'z', b: 5 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'z', b: 6 }, true]
+                ], done);
             });
 
-            Helper.validate(schema, [
-                [{ a: 123, b: 0, c: 456 }, true],
-                [{ a: 0, b: 1, c: 456 }, true],
-                [{ a: 0, b: 0, c: 789 }, true],
-                [{ a: 123, b: 456, c: 456 }, true],
-                [{ a: 0, b: 0, c: 456 }, false, null, {
-                    message: 'child "c" fails because ["c" must be one of [789]]',
-                    details: [{
-                        message: '"c" must be one of [789]',
-                        path: ['c'],
-                        type: 'any.allowOnly',
-                        context: { valids: [789], label: 'c', key: 'c' }
+            it('validates only otherwise', (done) => {
+
+                const schema = {
+                    a: Joi.alternatives()
+                        .when('b', { is: 5, otherwise: 'y' })
+                        .try('z'),
+                    b: Joi.any()
+                };
+
+                Helper.validate(schema, [
+                    [{ a: 'x', b: 5 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [z]]',
+                        details: [{
+                            message: '"a" must be one of [z]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['z'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'x', b: 6 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        details: [{
+                            message: '"a" must be one of [y]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['y'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y', b: 5 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [z]]',
+                        details: [{
+                            message: '"a" must be one of [z]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['z'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y', b: 6 }, true],
+                    [{ a: 'z', b: 5 }, true],
+                    [{ a: 'z', b: 6 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        details: [{
+                            message: '"a" must be one of [y]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['y'], label: 'a', key: 'a' }
+                        }]
                     }]
-                }],
-                [{ a: 123, b: 456, c: 789 }, false, null, {
-                    message: 'child "c" fails because ["c" must be one of [456]]',
-                    details: [{
-                        message: '"c" must be one of [456]',
-                        path: ['c'],
-                        type: 'any.allowOnly',
-                        context: { valids: [456], label: 'c', key: 'c' }
+                ], done);
+            });
+
+            it('validates "then" when a preceding "when" has only "otherwise"', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.number(),
+                    c: Joi.number()
+                        .when('a', { is: 1, otherwise: Joi.number().min(1) })
+                        .when('b', { is: 1, then: Joi.number().min(1) })
+                });
+
+                Helper.validate(schema, [
+                    [{ a: 1, b: 1, c: 0 }, false, null, {
+                        message: 'child "c" fails because ["c" must be larger than or equal to 1]',
+                        details: [{
+                            message: '"c" must be larger than or equal to 1',
+                            path: ['c'],
+                            type: 'number.min',
+                            context: { limit: 1, value: 0, label: 'c', key: 'c' }
+                        }]
+                    }],
+                    [{ a: 1, b: 1, c: 1 }, true],
+                    [{ a: 0, b: 1, c: 1 }, true],
+                    [{ a: 1, b: 0, c: 0 }, true]
+                ], done);
+            });
+
+            it('validates when is is null', (done) => {
+
+                const schema = {
+                    a: Joi.alternatives().when('b', { is: null, then: 'x', otherwise: Joi.number() }),
+                    b: Joi.any()
+                };
+
+                Helper.validate(schema, [
+                    [{ a: 1 }, true],
+                    [{ a: 'y' }, false, null, {
+                        message: 'child "a" fails because ["a" must be a number]',
+                        details: [{
+                            message: '"a" must be a number',
+                            path: ['a'],
+                            type: 'number.base',
+                            context: { label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'x', b: null }, true],
+                    [{ a: 'y', b: null }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 1, b: null }, false, null, {
+                        message: 'child "a" fails because ["a" must be a string]',
+                        details: [{
+                            message: '"a" must be a string',
+                            path: ['a'],
+                            type: 'string.base',
+                            context: { value: 1, label: 'a', key: 'a' }
+                        }]
                     }]
-                }]
-            ], done);
+                ], done);
+            });
+
+            it('validates when is has ref', (done) => {
+
+                const schema = {
+                    a: Joi.alternatives().when('b', { is: Joi.ref('c'), then: 'x' }),
+                    b: Joi.any(),
+                    c: Joi.number()
+                };
+
+                Helper.validate(schema, [
+                    [{ a: 'x', b: 5, c: '5' }, true],
+                    [{ a: 'x', b: 5, c: '1' }, false, null, {
+                        message: 'child "a" fails because ["a" not matching any of the allowed alternatives]',
+                        details: [{
+                            message: '"a" not matching any of the allowed alternatives',
+                            path: ['a'],
+                            type: 'alternatives.base',
+                            context: { label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'x', b: '5', c: '5' }, false, null, {
+                        message: 'child "a" fails because ["a" not matching any of the allowed alternatives]',
+                        details: [{
+                            message: '"a" not matching any of the allowed alternatives',
+                            path: ['a'],
+                            type: 'alternatives.base',
+                            context: { label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y', b: 5, c: 5 }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y' }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }]
+                ], done);
+            });
+
+            it('validates when then has ref', (done) => {
+
+                const ref = Joi.ref('c');
+                const schema = {
+                    a: Joi.alternatives().when('b', { is: 5, then: ref }),
+                    b: Joi.any(),
+                    c: Joi.number()
+                };
+
+                Helper.validate(schema, [
+                    [{ a: 'x', b: 5, c: '1' }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                        details: [{
+                            message: '"a" must be one of [ref:c]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: [ref], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 1, b: 5, c: '1' }, true],
+                    [{ a: '1', b: 5, c: '1' }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                        details: [{
+                            message: '"a" must be one of [ref:c]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: [ref], label: 'a', key: 'a' }
+                        }]
+                    }]
+                ], done);
+            });
+
+            it('validates when otherwise has ref', (done) => {
+
+                const ref = Joi.ref('c');
+                const schema = {
+                    a: Joi.alternatives().when('b', { is: 6, otherwise: ref }),
+                    b: Joi.any(),
+                    c: Joi.number()
+                };
+
+                Helper.validate(schema, [
+                    [{ a: 'x', b: 5, c: '1' }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                        details: [{
+                            message: '"a" must be one of [ref:c]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: [ref], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 1, b: 5, c: '1' }, true],
+                    [{ a: '1', b: 5, c: '1' }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                        details: [{
+                            message: '"a" must be one of [ref:c]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { valids: [ref], label: 'a', key: 'a' }
+                        }]
+                    }]
+                ], done);
+            });
+
+            it('validates when empty value', (done) => {
+
+                const schema = {
+                    a: Joi.alternatives().when('b', { is: true, then: Joi.required() }),
+                    b: Joi.boolean().default(false)
+                };
+
+                Helper.validate(schema, [
+                    [{ b: false }, true],
+                    [{ b: true }, true]           // true because required() only applies to the one alternative
+                ], done);
+            });
+
+            it('validates when missing value', (done) => {
+
+                const schema = Joi.object({
+                    a: Joi.alternatives().when('b', {
+                        is: 5,
+                        then: Joi.optional(),
+                        otherwise: Joi.required()
+                    }).required(),
+                    b: Joi.number()
+                });
+
+                Helper.validate(schema, [
+                    [{ a: 1 }, true],
+                    [{}, false, null, {
+                        message: 'child "a" fails because ["a" is required]',
+                        details: [{
+                            message: '"a" is required',
+                            path: ['a'],
+                            type: 'any.required',
+                            context: { label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ b: 1 }, false, null, {
+                        message: 'child "a" fails because ["a" is required]',
+                        details: [{
+                            message: '"a" is required',
+                            path: ['a'],
+                            type: 'any.required',
+                            context: { label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 1, b: 1 }, true],
+                    [{ a: 1, b: 5 }, true],
+                    [{ b: 5 }, false, null, {
+                        message: 'child "a" fails because ["a" is required]',
+                        details: [{
+                            message: '"a" is required',
+                            path: ['a'],
+                            type: 'any.required',
+                            context: { label: 'a', key: 'a' }
+                        }]
+                    }]
+                ], done);
+            });
+
+            it('validates with nested whens', (done) => {
+
+                // If ((b === 0 && a === 123) ||
+                //     (b !== 0 && a === anything))
+                // then c === 456
+                // else c === 789
+                const schema = Joi.object({
+                    a: Joi.number().required(),
+                    b: Joi.number().required(),
+                    c: Joi.when('a', {
+                        is: Joi.when('b', {
+                            is: Joi.valid(0),
+                            then: Joi.valid(123)
+                        }),
+                        then: Joi.valid(456),
+                        otherwise: Joi.valid(789)
+                    })
+                });
+
+                Helper.validate(schema, [
+                    [{ a: 123, b: 0, c: 456 }, true],
+                    [{ a: 0, b: 1, c: 456 }, true],
+                    [{ a: 0, b: 0, c: 789 }, true],
+                    [{ a: 123, b: 456, c: 456 }, true],
+                    [{ a: 0, b: 0, c: 456 }, false, null, {
+                        message: 'child "c" fails because ["c" must be one of [789]]',
+                        details: [{
+                            message: '"c" must be one of [789]',
+                            path: ['c'],
+                            type: 'any.allowOnly',
+                            context: { valids: [789], label: 'c', key: 'c' }
+                        }]
+                    }],
+                    [{ a: 123, b: 456, c: 789 }, false, null, {
+                        message: 'child "c" fails because ["c" must be one of [456]]',
+                        details: [{
+                            message: '"c" must be one of [456]',
+                            path: ['c'],
+                            type: 'any.allowOnly',
+                            context: { valids: [456], label: 'c', key: 'c' }
+                        }]
+                    }]
+                ], done);
+            });
+        });
+
+        describe('with schema', () => {
+
+            it('should peek inside a simple value', (done) => {
+
+                const schema = Joi.number().when(Joi.number().min(0), { then: Joi.number().min(10) });
+                Helper.validate(schema, [
+                    [-1, true, null, -1],
+                    [1, false, null, {
+                        message: '"value" must be larger than or equal to 10',
+                        details: [{
+                            message: '"value" must be larger than or equal to 10',
+                            path: [],
+                            type: 'number.min',
+                            context: { limit: 10, value: 1, key: undefined, label: 'value' }
+                        }]
+                    }],
+                    [10, true, null, 10]
+                ], done);
+            });
+
+            it('should peek inside an object', (done) => {
+
+                const schema = Joi.object().keys({
+                    foo: Joi.string(),
+                    bar: Joi.number()
+                }).when(Joi.object().keys({
+                    foo: Joi.only('hasBar').required()
+                }).unknown(), {
+                    then: Joi.object().keys({
+                        bar: Joi.required()
+                    })
+                });
+                Helper.validate(schema, [
+                    [{ foo: 'whatever' }, true, null, { foo: 'whatever' }],
+                    [{ foo: 'hasBar' }, false, null, {
+                        message: 'child "bar" fails because ["bar" is required]',
+                        details: [{
+                            message: '"bar" is required',
+                            path: ['bar'],
+                            type: 'any.required',
+                            context: { key: 'bar', label: 'bar' }
+                        }]
+                    }],
+                    [{ foo: 'hasBar', bar: 42 }, true, null, { foo: 'hasBar', bar: 42 }],
+                    [{}, true, null, {}]
+                ], done);
+            });
         });
     });
 
@@ -939,6 +995,42 @@ describe('alternatives', () => {
                         ]
                     }
                 }
+            };
+
+            expect(Joi.describe(schema)).to.equal(outcome);
+            done();
+        });
+
+        it('describes when (with schema)', (done) => {
+
+            const schema = Joi.alternatives()
+                .when(Joi.string().label('foo'), {
+                    then: Joi.string().required().min(1),
+                    otherwise: Joi.boolean()
+                });
+
+            const outcome = {
+                type: 'alternatives',
+                alternatives: [{
+                    peek: {
+                        type: 'string',
+                        flags: {},
+                        label: 'foo',
+                        invalids: ['']
+                    },
+                    then: {
+                        type: 'string',
+                        flags: { presence: 'required' },
+                        invalids: [''],
+                        rules: [{ arg: 1, name: 'min' }]
+                    },
+                    otherwise: {
+                        type: 'boolean',
+                        flags: { insensitive: true },
+                        truthy: [true],
+                        falsy: [false]
+                    }
+                }]
             };
 
             expect(Joi.describe(schema)).to.equal(outcome);

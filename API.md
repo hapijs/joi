@@ -685,12 +685,12 @@ const b = Joi.string().valid('b');
 const ab = a.concat(b);
 ```
 
-#### `any.when(ref, options)`
+#### `any.when(condition, options)`
 
 Converts the type into an [`alternatives`](#alternatives) type where the conditions are merged into the type definition where:
-- `ref` - the key name or [reference](#refkey-options).
+- `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
-    - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted using [Joi.compile](#compileschema).
+    - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted using [Joi.compile](#compileschema). Forbidden when `condition` is a schema.
     - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
     - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
 
@@ -703,6 +703,23 @@ const schema = {
     b: Joi.any()
 };
 ```
+
+Or with a schema:
+```js
+const schema = Joi.object({
+    a: Joi.any().valid('x'),
+    b: Joi.any()
+}).when(Joi.object({ b: Joi.exist() }).unknown(), {
+    then: Joi.object({
+        a: Joi.valid('y')
+    }),
+    otherwise: Joi.object({
+        a: Joi.valid('z')
+    }) 
+});
+```
+
+Note that this style is much more useful when your whole schema depends on the value of one of its property, or if you find yourself repeating the check for many keys of an object.
 
 Alternatively, if you want to specify a specific type such as `string`, `array`, etc, you can do so like this:
 
@@ -2018,12 +2035,13 @@ const alt = Joi.alternatives().try(Joi.number(), Joi.string());
 alt.validate('a', (err, value) => { });
 ```
 
-#### `alternatives.when(ref, options)`
+#### `alternatives.when(condition, options)`
 
-Adds a conditional alternative schema type based on another key (not the same as `any.when()`) value where:
-- `ref` - the key name or [reference](#refkey-options).
+Adds a conditional alternative schema type, either based on another key (not the same as `any.when()`) value, or a
+schema peeking into the current value, where:
+- `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
-    - `is` - the required condition **joi** type.
+    - `is` - the required condition **joi** type. Forbidden when `condition` is a schema.
     - `then` - the alternative schema type to **try** if the condition is true. Required if `otherwise` is missing.
     - `otherwise` - the alternative schema type to **try** if the condition is false. Required if `then` is missing.
 
@@ -2032,6 +2050,19 @@ const schema = {
     a: Joi.alternatives().when('b', { is: 5, then: Joi.string(), otherwise: Joi.number() }),
     b: Joi.any()
 };
+```
+
+```js
+const schema = Joi.alternatives().when(Joi.object({ b: 5 }).unknown(), {
+    then: Joi.object({
+        a: Joi.string(),
+        b: Joi.any()
+    }),
+    otherwise: Joi.object({
+        a: Joi.number(),
+        b: Joi.any()
+    })
+});
 ```
 
 Note that `when()` only adds additional alternatives to try and does not impact the overall type. Setting
