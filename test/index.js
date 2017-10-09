@@ -4199,6 +4199,30 @@ describe('Joi', () => {
             done();
         });
 
+        it('returns a generic error when using an undefined language', (done) => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                rules: [{
+                    name: 'foo',
+                    validate(params, value, state, options) {
+
+                        return this.createError('myType.foo', null, state, options);
+                    }
+                }]
+            });
+
+            const result = customJoi.myType().foo().validate({});
+            expect(result.error).to.be.an.error('Error code "myType.foo" is not defined, your custom type is missing the correct language definition');
+            expect(result.error.details).to.equal([{
+                message: 'Error code "myType.foo" is not defined, your custom type is missing the correct language definition',
+                path: [],
+                type: 'myType.foo',
+                context: { key: undefined, label: 'value' }
+            }]);
+            done();
+        });
+
     });
 
     describe('defaults()', () => {
