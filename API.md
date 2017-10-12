@@ -641,7 +641,7 @@ Sets a default value if the original value is undefined where:
 - `value` - the value.
   - `value` supports [references](#refkey-options).
   - `value` may also be a function which returns the default value. If `value` is specified as a function that accepts a single parameter, that parameter will be a context object that can be used to derive the resulting value.
-    - Use a function when setting a dynamic value, such as the current time. Ex: `default(() => new Date(), 'time of creation')`
+    - Use a function when setting a dynamic value, such as the current time. Ex: `default(Date.now, 'time of creation')`
     - **Caution: this clones the object**, which incurs some overhead so if you don't need access to the context define your method so that it does not accept any parameters.
   - without any `value`, `default` has no effect, except for `object` that will then create nested defaults (applying inner defaults of that object).
 
@@ -661,7 +661,7 @@ const schema = {
     username: Joi.string().default(generateUsername),
     firstname: Joi.string(),
     lastname: Joi.string(),
-    created: Joi.date().default(() => new Date(), 'time of creation'),
+    created: Joi.date().default(Date.now, 'time of creation'),
     status: Joi.string().default('registered')
 };
 
