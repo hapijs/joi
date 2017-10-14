@@ -1,5 +1,5 @@
 <!-- version -->
-# 11.3.4 API Reference
+# 11.4.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -41,7 +41,7 @@
     - [`any.strict(isStrict)`](#anystrictisstrict)
     - [`any.default([value, [description]])`](#anydefaultvalue-description)
     - [`any.concat(schema)`](#anyconcatschema)
-    - [`any.when(ref, options)`](#anywhenref-options)
+    - [`any.when(condition, options)`](#anywhencondition-options)
     - [`any.label(name)`](#anylabelname)
     - [`any.raw(isRaw)`](#anyrawisraw)
     - [`any.empty(schema)`](#anyemptyschema)
@@ -133,7 +133,7 @@
     - [`string.isoDate()`](#stringisodate)
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
-    - [`alternatives.when(ref, options)`](#alternativeswhenref-options)
+    - [`alternatives.when(condition, options)`](#alternativeswhencondition-options)
   - [`lazy(fn)` - inherits from `Any`](#lazyfn---inherits-from-any)
 - [Errors](#errors)
 
