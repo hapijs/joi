@@ -6797,9 +6797,9 @@ describe('string', () => {
                     }]
                 }],
                 ['123@x.com', false, null, {
-                    message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                    message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                     details: [{
-                        message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                        message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -6868,9 +6868,9 @@ describe('string', () => {
                     }]
                 }],
                 ['123@x.com', false, null, {
-                    message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                    message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                     details: [{
-                        message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                        message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -6931,9 +6931,9 @@ describe('string', () => {
                     }]
                 }],
                 ['123@x.com', false, null, {
-                    message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                    message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                     details: [{
-                        message: '"value" with value "123&#x40;x.com" fails to match the required pattern: /^1234/',
+                        message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -8622,9 +8622,9 @@ describe('string', () => {
                     }]
                 }],
                 ['2013-06-07T14:21+07:00', false, null, {
-                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                     details: [{
-                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -8841,9 +8841,9 @@ describe('string', () => {
                     }]
                 }],
                 ['2013-06-07T14:21+07:00', false, null, {
-                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                     details: [{
-                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -9247,9 +9247,9 @@ describe('string', () => {
                 }],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', false, null, {
-                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                     details: [{
-                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -9472,9 +9472,9 @@ describe('string', () => {
                 }],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', false, null, {
-                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                     details: [{
-                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -9689,9 +9689,9 @@ describe('string', () => {
                 }],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', false, null, {
-                    message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                    message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                     details: [{
-                        message: '"value" with value "2013-06-07T14:21&#x2b;07:00" fails to match the required pattern: /Z$/',
+                        message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -12228,9 +12228,9 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
-                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/',
+                    message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
                     details: [{
-                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/',
+                        message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -12380,9 +12380,9 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
-                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/',
+                    message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
                     details: [{
-                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e908/',
+                        message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -12644,9 +12644,9 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
-                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                    message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                     details: [{
-                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                        message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -12814,9 +12814,9 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
-                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                    message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                     details: [{
-                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                        message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                         path: [],
                         type: 'string.regex.base',
                         context: {
@@ -12976,9 +12976,9 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
-                    message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                    message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                     details: [{
-                        message: '"value" with value "&#x7b;B59511BD6A5F4DF09ECF562A108D8A2E&#x7d;" fails to match the required pattern: /^{7e9081/i',
+                        message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                         path: [],
                         type: 'string.regex.base',
                         context: {

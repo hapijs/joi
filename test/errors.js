@@ -190,7 +190,7 @@ describe('errors', () => {
             'a()': Joi.number()
         };
 
-        Joi.validate({ 'a()': 'x' }, schema, (err, value) => {
+        Joi.validate({ 'a()': 'x' }, schema, { escapeHtml: true }, (err, value) => {
 
             expect(err).to.be.an.error('child "a&#x28;&#x29;" fails because ["a&#x28;&#x29;" must be a number]');
             expect(err.details).to.equal([{
@@ -200,11 +200,41 @@ describe('errors', () => {
                 context: { label: 'a()', key: 'a()' }
             }]);
 
-            Joi.validate({ 'b()': 'x' }, schema, (err2, value2) => {
+            Joi.validate({ 'b()': 'x' }, schema, { escapeHtml: true }, (err2, value2) => {
 
                 expect(err2).to.be.an.error('"b&#x28;&#x29;" is not allowed');
                 expect(err2.details).to.equal([{
                     message: '"b&#x28;&#x29;" is not allowed',
+                    path: ['b()'],
+                    type: 'object.allowUnknown',
+                    context: { child: 'b()', label: 'b()', key: 'b()' }
+                }]);
+                done();
+            });
+        });
+    });
+
+    it('does not escape unsafe keys by default', (done) => {
+
+        const schema = {
+            'a()': Joi.number()
+        };
+
+        Joi.validate({ 'a()': 'x' }, schema, (err, value) => {
+
+            expect(err).to.be.an.error('child "a()" fails because ["a()" must be a number]');
+            expect(err.details).to.equal([{
+                message: '"a()" must be a number',
+                path: ['a()'],
+                type: 'number.base',
+                context: { label: 'a()', key: 'a()' }
+            }]);
+
+            Joi.validate({ 'b()': 'x' }, schema, (err2, value2) => {
+
+                expect(err2).to.be.an.error('"b()" is not allowed');
+                expect(err2.details).to.equal([{
+                    message: '"b()" is not allowed',
                     path: ['b()'],
                     type: 'object.allowUnknown',
                     context: { child: 'b()', label: 'b()', key: 'b()' }

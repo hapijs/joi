@@ -161,7 +161,7 @@ Validates a value using the given schema and options where:
       - `arrays` - set to `true` to remove unknown items from arrays.
       - `objects` - set to `true` to remove unknown keys from objects.
   - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
-    - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped
+    - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped if the option `escapeHtml` is also set to `true`
     - strings are always preceeded by the key name, unless a `{{key}}` is found elsewhere or if the string is prefixed by a `!!`
     - when `'label'` is set, it overrides the key name in the error message
     - to better understand the structure of the language, it's advised to have a look at the existing messages you want to override [here](lib/language.js)
@@ -170,6 +170,7 @@ Validates a value using the given schema and options where:
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
     `validate()` and not using `any.options()`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
+  - `escapeHtml` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
 - `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
