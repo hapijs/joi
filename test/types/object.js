@@ -1730,7 +1730,9 @@ describe('object', () => {
                             truthy: [true],
                             falsy: [false],
                             flags: {
-                                insensitive: true
+                                insensitive: true,
+                                trueValue: true,
+                                falseValue: false
                             }
                         }
                     }

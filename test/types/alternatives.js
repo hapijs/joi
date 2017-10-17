@@ -1023,7 +1023,7 @@ describe('alternatives', () => {
                     },
                     otherwise: {
                         type: 'boolean',
-                        flags: { insensitive: true },
+                        flags: { insensitive: true, trueValue: true, falseValue: false },
                         truthy: [true],
                         falsy: [false]
                     }

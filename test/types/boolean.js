@@ -644,12 +644,49 @@ describe('boolean', () => {
                 type: 'boolean',
                 flags: {
                     presence: 'required',
-                    insensitive: true
+                    insensitive: true,
+                    trueValue: true,
+                    falseValue: false
                 },
                 truthy: [true, 'yes'],
                 falsy: [false, 'no']
             });
             done();
+        });
+
+        it('should convert to trueValue & falseValue', (done) => {
+
+            const noTrueFalseValue = Joi.boolean().trueValue(true).falseValue(false);
+            const setTrueFalseValueToTinyInt = Joi.boolean().truthy('yes').falsy('no').trueValue(1).falseValue(0);
+            const setTrueFalseValueToString = Joi.boolean().trueValue('yeap').falseValue('none');
+            expect(setTrueFalseValueToString.describe()).to.equal({
+                type: 'boolean',
+                flags: {
+                    insensitive: true,
+                    trueValue: 'yeap',
+                    falseValue: 'none'
+                },
+                truthy: [true],
+                falsy: [false]
+            });
+            Helper.validate(noTrueFalseValue, [
+                ['true', true, null, true],
+                ['false', true, null, false],
+                [true, true, null, true],
+                [false, true, null, false]
+            ]);
+            Helper.validate(setTrueFalseValueToTinyInt, [
+                ['yes', true, null, 1],
+                ['no', true, null, 0],
+                [true, true, null, 1],
+                [false, true, null, 0]
+            ]);
+            Helper.validate(setTrueFalseValueToString, [
+                ['true', true, null, 'yeap'],
+                ['false', true, null, 'none'],
+                [true, true, null, 'yeap'],
+                [false, true, null, 'none']
+            ], done);
         });
     });
 });
