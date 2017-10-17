@@ -1111,7 +1111,7 @@ describe('array', () => {
                 items: [
                     { type: 'number', invalids: [Infinity, -Infinity] },
                     { type: 'string', invalids: [''] },
-                    { type: 'boolean', flags: { presence: 'forbidden', insensitive: true }, truthy: [true], falsy: [false] }
+                    { type: 'boolean', flags: { presence: 'forbidden', insensitive: true, trueValue: true, falseValue: false }, truthy: [true], falsy: [false] }
                 ]
             });
 
