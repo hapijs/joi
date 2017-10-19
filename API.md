@@ -754,10 +754,7 @@ const schema = Joi.object().keys({
 If you want to validate one key based on the existence of another key, you can do so like the following (notice the use of `required()`):
 ```js
 const schema = Joi.object().keys({
-    min: Joi.number().when('max', {
-        is: Joi.number().required(),
-        then: Joi.number().less(Joi.ref('max')),
-    }),
+    min: Joi.number(),
     max: Joi.number().when('min', {
         is: Joi.number().required(),
         then: Joi.number().greater(Joi.ref('min')),
