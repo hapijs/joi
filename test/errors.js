@@ -181,6 +181,21 @@ describe('errors', () => {
         });
     });
 
+    it('accepts an empty key', (done) => {
+
+        Joi.valid('sad').options({ language: { key: '' } }).validate(5, (err, value) => {
+
+            expect(err).to.be.an.error('must be one of [sad]');
+            expect(err.details).to.equal([{
+                message: 'must be one of [sad]',
+                path: [],
+                type: 'any.allowOnly',
+                context: { valids: ['sad'], label: 'value', key: undefined }
+            }]);
+            done();
+        });
+    });
+
     it('escapes unsafe keys', (done) => {
 
         const schema = {
