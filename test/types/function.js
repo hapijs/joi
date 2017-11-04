@@ -19,23 +19,20 @@ const { describe, it, expect } = exports.lab = Lab.script();
 
 describe('func', () => {
 
-    it('can be called on its own', (done) => {
+    it('can be called on its own', () => {
 
         const func = Joi.func;
         expect(() => func()).to.throw('Must be invoked on a Joi instance.');
-        done();
     });
 
-    it('should throw an exception if arguments were passed.', (done) => {
+    it('should throw an exception if arguments were passed.', () => {
 
         expect(
             () => Joi.func('invalid argument.')
         ).to.throw('Joi.func() does not allow arguments.');
-
-        done();
     });
 
-    it('validates a function', (done) => {
+    it('validates a function', () => {
 
         Helper.validate(Joi.func().required(), [
             [function () { }, true],
@@ -48,10 +45,10 @@ describe('func', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('validates a function arity', (done) => {
+    it('validates a function arity', () => {
 
         Helper.validate(Joi.func().arity(2).required(), [
             [function (a,b) { }, true],
@@ -101,10 +98,10 @@ describe('func', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('validates a function arity unless values are illegal', (done) => {
+    it('validates a function arity unless values are illegal', () => {
 
         const schemaWithStringArity = function () {
 
@@ -118,10 +115,9 @@ describe('func', () => {
 
         expect(schemaWithStringArity).to.throw(Error, 'n must be a positive integer');
         expect(schemaWithNegativeArity).to.throw(Error, 'n must be a positive integer');
-        done();
     });
 
-    it('validates a function min arity', (done) => {
+    it('validates a function min arity', () => {
 
         Helper.validate(Joi.func().minArity(2).required(), [
             [function (a,b) { }, true],
@@ -155,10 +151,10 @@ describe('func', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('validates a function arity unless values are illegal', (done) => {
+    it('validates a function arity unless values are illegal', () => {
 
         const schemaWithStringMinArity = function () {
 
@@ -178,10 +174,9 @@ describe('func', () => {
         expect(schemaWithStringMinArity).to.throw(Error, 'n must be a strict positive integer');
         expect(schemaWithNegativeMinArity).to.throw(Error, 'n must be a strict positive integer');
         expect(schemaWithZeroArity).to.throw(Error, 'n must be a strict positive integer');
-        done();
     });
 
-    it('validates a function max arity', (done) => {
+    it('validates a function max arity', () => {
 
         Helper.validate(Joi.func().maxArity(2).required(), [
             [function (a,b) { }, true],
@@ -215,10 +210,10 @@ describe('func', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('validates a function arity unless values are illegal', (done) => {
+    it('validates a function arity unless values are illegal', () => {
 
         const schemaWithStringMaxArity = function () {
 
@@ -231,10 +226,9 @@ describe('func', () => {
         };
         expect(schemaWithStringMaxArity).to.throw('n must be a positive integer');
         expect(schemaWithNegativeMaxArity).to.throw('n must be a positive integer');
-        done();
     });
 
-    it('validates a function with keys', (done) => {
+    it('validates a function with keys', () => {
 
         const a = function () { };
         a.a = 'abc';
@@ -271,10 +265,10 @@ describe('func', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('keeps validated value as a function', (done) => {
+    it('keeps validated value as a function', async () => {
 
         const schema = Joi.func().keys({ a: Joi.number() });
 
@@ -286,17 +280,13 @@ describe('func', () => {
 
         value.a = '123';
 
-        schema.validate(value, (err, validated) => {
-
-            expect(err).not.to.exist();
-            expect(validated).to.be.a.function();
-            expect(validated()).to.equal('abc');
-            expect(validated).to.not.equal(value);
-            done();
-        });
+        const validated = await schema.validate(value);
+        expect(validated).to.be.a.function();
+        expect(validated()).to.equal('abc');
+        expect(validated).to.not.equal(value);
     });
 
-    it('retains validated value prototype', (done) => {
+    it('retains validated value prototype', async () => {
 
         const schema = Joi.func().keys({ a: Joi.number() });
 
@@ -310,18 +300,14 @@ describe('func', () => {
             return this.x;
         };
 
-        schema.validate(value, (err, validated) => {
-
-            expect(err).not.to.exist();
-            expect(validated).to.be.a.function();
-            const p = new validated();
-            expect(p.get()).to.equal('o');
-            expect(validated).to.not.equal(value);
-            done();
-        });
+        const validated = await schema.validate(value);
+        expect(validated).to.be.a.function();
+        const p = new validated();
+        expect(p.get()).to.equal('o');
+        expect(validated).to.not.equal(value);
     });
 
-    it('keeps validated value as a function (no clone)', (done) => {
+    it('keeps validated value as a function (no clone)', async () => {
 
         const schema = Joi.func();
 
@@ -333,17 +319,13 @@ describe('func', () => {
 
         value.a = '123';
 
-        schema.validate(value, (err, validated) => {
-
-            expect(err).not.to.exist();
-            expect(validated).to.be.a.function();
-            expect(validated()).to.equal('abc');
-            expect(validated).to.equal(value);
-            done();
-        });
+        const validated = await schema.validate(value);
+        expect(validated).to.be.a.function();
+        expect(validated()).to.equal('abc');
+        expect(validated).to.equal(value);
     });
 
-    it('validates references', (done) => {
+    it('validates references', () => {
 
         const schema = Joi.func().ref();
 
@@ -367,13 +349,13 @@ describe('func', () => {
                 }]
             }],
             [Joi.ref('a.b'), true]
-        ], done);
+        ]);
     });
 });
 
 describe('func().class()', () => {
 
-    it('should differentiate between classes and functions', (done) => {
+    it('should differentiate between classes and functions', () => {
 
         const classSchema = Joi.object({
             _class: Joi.func().class()
@@ -393,10 +375,10 @@ describe('func().class()', () => {
                     context: { key: '_class', label: '_class' }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('refuses class look-alikes and bad values', (done) => {
+    it('refuses class look-alikes and bad values', () => {
 
         const classSchema = Joi.object({
             _class: Joi.func().class()
@@ -421,6 +403,6 @@ describe('func().class()', () => {
                     context: { key: '_class', label: '_class' }
                 }]
             }]
-        ], done);
+        ]);
     });
 });

@@ -19,35 +19,28 @@ const { describe, it, expect } = exports.lab = Lab.script();
 
 describe('binary', () => {
 
-    it('can be called on its own', (done) => {
+    it('can be called on its own', () => {
 
         const binary = Joi.binary;
         expect(() => binary()).to.throw('Must be invoked on a Joi instance.');
-        done();
     });
 
-    it('should throw an exception if arguments were passed.', (done) => {
+    it('should throw an exception if arguments were passed.', () => {
 
         expect(
             () => Joi.binary('invalid argument.')
         ).to.throw('Joi.binary() does not allow arguments.');
-
-        done();
     });
 
-    it('converts a string to a buffer', (done) => {
+    it('converts a string to a buffer', async () => {
 
-        Joi.binary().validate('test', (err, value) => {
-
-            expect(err).to.not.exist();
-            expect(value instanceof Buffer).to.equal(true);
-            expect(value.length).to.equal(4);
-            expect(value.toString('utf8')).to.equal('test');
-            done();
-        });
+        const value = await Joi.binary().validate('test');
+        expect(value instanceof Buffer).to.equal(true);
+        expect(value.length).to.equal(4);
+        expect(value.toString('utf8')).to.equal('test');
     });
 
-    it('validates allowed buffer content', (done) => {
+    it('validates allowed buffer content', () => {
 
         const hello = new Buffer('hello');
         const schema = Joi.binary().valid(hello);
@@ -83,72 +76,58 @@ describe('binary', () => {
                     context: { valids: [hello], label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
     describe('validate()', () => {
 
-        it('returns an error when a non-buffer or non-string is used', (done) => {
+        it('returns an error when a non-buffer or non-string is used', async () => {
 
-            Joi.binary().validate(5, (err, value) => {
-
-                expect(err).to.be.an.error('"value" must be a buffer or a string');
-                expect(err.details).to.equal([{
-                    message: '"value" must be a buffer or a string',
-                    path: [],
-                    type: 'binary.base',
-                    context: { label: 'value', key: undefined }
-                }]);
-                done();
-            });
+            const err = await expect(Joi.binary().validate(5)).to.reject('"value" must be a buffer or a string');
+            expect(err.details).to.equal([{
+                message: '"value" must be a buffer or a string',
+                path: [],
+                type: 'binary.base',
+                context: { label: 'value', key: undefined }
+            }]);
         });
 
-        it('accepts a buffer object', (done) => {
+        it('accepts a buffer object', async () => {
 
-            Joi.binary().validate(new Buffer('hello world'), (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value.toString('utf8')).to.equal('hello world');
-                done();
-            });
+            const value = await Joi.binary().validate(new Buffer('hello world'));
+            expect(value.toString('utf8')).to.equal('hello world');
         });
     });
 
     describe('encoding()', () => {
 
-        it('applies encoding', (done) => {
+        it('applies encoding', async () => {
 
             const schema = Joi.binary().encoding('base64');
             const input = new Buffer('abcdef');
-            schema.validate(input.toString('base64'), (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value instanceof Buffer).to.equal(true);
-                expect(value.toString()).to.equal('abcdef');
-                done();
-            });
+            const value = await schema.validate(input.toString('base64'));
+            expect(value instanceof Buffer).to.equal(true);
+            expect(value.toString()).to.equal('abcdef');
         });
 
-        it('throws when encoding is invalid', (done) => {
+        it('throws when encoding is invalid', () => {
 
             expect(() => {
 
                 Joi.binary().encoding('base6');
             }).to.throw('Invalid encoding: base6');
-            done();
         });
 
-        it('avoids unnecessary cloning when called twice', (done) => {
+        it('avoids unnecessary cloning when called twice', () => {
 
             const schema = Joi.binary().encoding('base64');
             expect(schema.encoding('base64')).to.shallow.equal(schema);
-            done();
         });
     });
 
     describe('min()', () => {
 
-        it('validates buffer size', (done) => {
+        it('validates buffer size', () => {
 
             const schema = Joi.binary().min(5);
             Helper.validate(schema, [
@@ -162,31 +141,29 @@ describe('binary', () => {
                         context: { limit: 5, value: new Buffer('test'), label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('throws when min is not a number', (done) => {
+        it('throws when min is not a number', () => {
 
             expect(() => {
 
                 Joi.binary().min('a');
             }).to.throw('limit must be a positive integer');
-            done();
         });
 
-        it('throws when min is not an integer', (done) => {
+        it('throws when min is not an integer', () => {
 
             expect(() => {
 
                 Joi.binary().min(1.2);
             }).to.throw('limit must be a positive integer');
-            done();
         });
     });
 
     describe('max()', () => {
 
-        it('validates buffer size', (done) => {
+        it('validates buffer size', () => {
 
             const schema = Joi.binary().max(5);
             Helper.validate(schema, [
@@ -205,31 +182,29 @@ describe('binary', () => {
                     }]
                 }],
                 [new Buffer('test'), true]
-            ], done);
+            ]);
         });
 
-        it('throws when max is not a number', (done) => {
+        it('throws when max is not a number', () => {
 
             expect(() => {
 
                 Joi.binary().max('a');
             }).to.throw('limit must be a positive integer');
-            done();
         });
 
-        it('throws when max is not an integer', (done) => {
+        it('throws when max is not an integer', () => {
 
             expect(() => {
 
                 Joi.binary().max(1.2);
             }).to.throw('limit must be a positive integer');
-            done();
         });
     });
 
     describe('length()', () => {
 
-        it('validates buffer size', (done) => {
+        it('validates buffer size', () => {
 
             const schema = Joi.binary().length(4);
             Helper.validate(schema, [
@@ -248,25 +223,23 @@ describe('binary', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('throws when length is not a number', (done) => {
+        it('throws when length is not a number', () => {
 
             expect(() => {
 
                 Joi.binary().length('a');
             }).to.throw('limit must be a positive integer');
-            done();
         });
 
-        it('throws when length is not an integer', (done) => {
+        it('throws when length is not an integer', () => {
 
             expect(() => {
 
                 Joi.binary().length(1.2);
             }).to.throw('limit must be a positive integer');
-            done();
         });
     });
 });

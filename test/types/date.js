@@ -19,7 +19,7 @@ const { describe, it, before, after, expect } = exports.lab = Lab.script();
 
 describe('date', () => {
 
-    before((done) => {
+    before(() => {
 
         // Mock Date.now so we don't have to deal with sub-second differences in the tests
 
@@ -32,32 +32,27 @@ describe('date', () => {
 
             Date.now = original;
         };
-        done();
     });
 
-    after((done) => {
+    after(() => {
 
         Date.now.restore();
-        done();
     });
 
-    it('can be called on its own', (done) => {
+    it('can be called on its own', () => {
 
         const date = Joi.date;
         expect(() => date()).to.throw('Must be invoked on a Joi instance.');
-        done();
     });
 
-    it('should throw an exception if arguments were passed.', (done) => {
+    it('should throw an exception if arguments were passed.', () => {
 
         expect(
             () => Joi.date('invalid argument.')
         ).to.throw('Joi.date() does not allow arguments.');
-
-        done();
     });
 
-    it('fails on boolean', (done) => {
+    it('fails on boolean', () => {
 
         const schema = Joi.date();
         Helper.validate(schema, [
@@ -79,10 +74,10 @@ describe('date', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('fails on non-finite numbers', (done) => {
+    it('fails on non-finite numbers', () => {
 
         const schema = Joi.date();
         Helper.validate(schema, [
@@ -113,61 +108,46 @@ describe('date', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('matches specific date', (done) => {
+    it('matches specific date', async () => {
 
         const now = Date.now();
-        Joi.date().valid(new Date(now)).validate(new Date(now), (err, value) => {
-
-            expect(err).to.not.exist();
-            done();
-        });
+        await Joi.date().valid(new Date(now)).validate(new Date(now));
     });
 
-    it('errors on invalid input and convert disabled', (done) => {
+    it('errors on invalid input and convert disabled', async () => {
 
-        Joi.date().options({ convert: false }).validate('1-1-2013 UTC', (err, value) => {
-
-            expect(err).to.be.an.error('"value" must be a valid date');
-            expect(err.details).to.equal([{
-                message: '"value" must be a valid date',
-                path: [],
-                type: 'date.strict',
-                context: { label: 'value', key: undefined }
-            }]);
-            done();
-        });
+        const err = await expect(Joi.date().options({ convert: false }).validate('1-1-2013 UTC')).to.reject();
+        expect(err).to.be.an.error('"value" must be a valid date');
+        expect(err.details).to.equal([{
+            message: '"value" must be a valid date',
+            path: [],
+            type: 'date.strict',
+            context: { label: 'value', key: undefined }
+        }]);
     });
 
-    it('validates date', (done) => {
+    it('validates date', async () => {
 
-        Joi.date().validate(new Date(), (err, value) => {
-
-            expect(err).to.not.exist();
-            done();
-        });
+        await Joi.date().validate(new Date());
     });
 
-    it('validates millisecond date as a string', (done) => {
+    it('validates millisecond date as a string', async () => {
 
         const now = new Date();
         const mili = now.getTime();
 
-        Joi.date().validate(mili.toString(), (err, value) => {
-
-            expect(err).to.not.exist();
-            expect(value).to.equal(now);
-            done();
-        });
+        const value = await Joi.date().validate(mili.toString());
+        expect(value).to.equal(now);
     });
 
     describe('validate()', () => {
 
         describe('min', () => {
 
-            it('validates min', (done) => {
+            it('validates min', () => {
 
                 const d = new Date('1-1-2000 UTC');
                 const message = `"value" must be larger than or equal to "${d}"`;
@@ -210,42 +190,34 @@ describe('date', () => {
                             context: { limit: d, label: 'value', key: undefined }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('accepts "now" as the min date', (done) => {
+            it('accepts "now" as the min date', async () => {
 
                 const future = new Date(Date.now() + 1000000);
-
-                Joi.date().min('now').validate(future, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value).to.equal(future);
-                    done();
-                });
+                const value = await Joi.date().min('now').validate(future);
+                expect(value).to.equal(future);
             });
 
-            it('errors if .min("now") is used with a past date', (done) => {
+            it('errors if .min("now") is used with a past date', async () => {
 
                 const now = Date.now();
                 const dnow = new Date(now);
                 const past = new Date(now - 1000000);
 
-                Joi.date().min('now').validate(past, (err, value) => {
-
-                    const message = `"value" must be larger than or equal to "${dnow}"`;
-                    expect(err).to.be.an.error(message);
-                    expect(err.details).to.equal([{
-                        message: `"value" must be larger than or equal to "${dnow}"`,
-                        path: [],
-                        type: 'date.min',
-                        context: { limit: dnow, label: 'value', key: undefined }
-                    }]);
-                    done();
-                });
+                const err = await expect(Joi.date().min('now').validate(past)).to.reject();
+                const message = `"value" must be larger than or equal to "${dnow}"`;
+                expect(err).to.be.an.error(message);
+                expect(err.details).to.equal([{
+                    message: `"value" must be larger than or equal to "${dnow}"`,
+                    path: [],
+                    type: 'date.min',
+                    context: { limit: dnow, label: 'value', key: undefined }
+                }]);
             });
 
-            it('accepts references as min date', (done) => {
+            it('accepts references as min date', () => {
 
                 const ref = Joi.ref('a');
                 const schema = Joi.object({ a: Joi.date(), b: Joi.date().min(ref) });
@@ -263,10 +235,10 @@ describe('date', () => {
                             context: { limit: new Date(now), label: 'b', key: 'b' }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('accepts references as min date within a when', (done) => {
+            it('accepts references as min date within a when', () => {
 
                 const ref = Joi.ref('b');
                 const schema = Joi.object({
@@ -300,10 +272,10 @@ describe('date', () => {
                             context: { valids: [0], label: 'c', key: 'c' }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('accepts context references as min date', (done) => {
+            it('accepts context references as min date', () => {
 
                 const ref = Joi.ref('$a');
                 const schema = Joi.object({ b: Joi.date().min(ref) });
@@ -322,10 +294,10 @@ describe('date', () => {
                             context: { limit: dnow, label: 'b', key: 'b' }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('errors if reference is not a date', (done) => {
+            it('errors if reference is not a date', () => {
 
                 const schema = Joi.object({ a: Joi.string(), b: Joi.date().min(Joi.ref('a')) });
                 const now = Date.now();
@@ -350,10 +322,10 @@ describe('date', () => {
                             context: { limit: new Date(now + 1e3), label: 'b', key: 'b' }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('errors if context reference is not a date', (done) => {
+            it('errors if context reference is not a date', () => {
 
                 const schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });
                 const now = Date.now();
@@ -377,13 +349,13 @@ describe('date', () => {
                             context: { limit: new Date(now + 1e3), label: 'b', key: 'b' }
                         }]
                     }]
-                ], done);
+                ]);
             });
         });
 
         describe('max', () => {
 
-            it('validates max', (done) => {
+            it('validates max', () => {
 
                 const d = new Date('1-1-1970 UTC');
                 const message = `"value" must be less than or equal to "${d}"`;
@@ -419,42 +391,35 @@ describe('date', () => {
                             context: { limit: d, label: 'value', key: undefined }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('accepts "now" as the max date', (done) => {
+            it('accepts "now" as the max date', async () => {
 
                 const past = new Date(Date.now() - 1000000);
 
-                Joi.date().max('now').validate(past, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value).to.equal(past);
-                    done();
-                });
+                const value = await Joi.date().max('now').validate(past);
+                expect(value).to.equal(past);
             });
 
-            it('errors if .max("now") is used with a future date', (done) => {
+            it('errors if .max("now") is used with a future date', async () => {
 
                 const now = Date.now();
                 const dnow = new Date(now);
                 const future = new Date(now + 1000000);
 
-                Joi.date().max('now').validate(future, (err, value) => {
-
-                    const message = `"value" must be less than or equal to "${dnow}"`;
-                    expect(err).to.be.an.error(message);
-                    expect(err.details).to.equal([{
-                        message: `"value" must be less than or equal to "${dnow}"`,
-                        path: [],
-                        type: 'date.max',
-                        context: { limit: dnow, label: 'value', key: undefined }
-                    }]);
-                    done();
-                });
+                const err = await expect(Joi.date().max('now').validate(future)).to.reject();
+                const message = `"value" must be less than or equal to "${dnow}"`;
+                expect(err).to.be.an.error(message);
+                expect(err.details).to.equal([{
+                    message: `"value" must be less than or equal to "${dnow}"`,
+                    path: [],
+                    type: 'date.max',
+                    context: { limit: dnow, label: 'value', key: undefined }
+                }]);
             });
 
-            it('accepts references as max date', (done) => {
+            it('accepts references as max date', () => {
 
                 const ref = Joi.ref('a');
                 const schema = Joi.object({ a: Joi.date(), b: Joi.date().max(ref) });
@@ -472,10 +437,10 @@ describe('date', () => {
                         }]
                     }],
                     [{ a: now, b: now - 1e3 }, true]
-                ], done);
+                ]);
             });
 
-            it('accepts references as max date', (done) => {
+            it('accepts references as max date', () => {
 
                 const schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
                 const now = Date.now();
@@ -492,10 +457,10 @@ describe('date', () => {
                         }]
                     }],
                     [{ b: now - 1e3 }, true, { context: { a: now } }]
-                ], done);
+                ]);
             });
 
-            it('errors if reference is not a date', (done) => {
+            it('errors if reference is not a date', () => {
 
                 const schema = Joi.object({ a: Joi.string(), b: Joi.date().max(Joi.ref('a')) });
                 const now = Date.now();
@@ -520,10 +485,10 @@ describe('date', () => {
                             context: { limit: new Date(now - 1e3), label: 'b', key: 'b' }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('errors if context reference is not a date', (done) => {
+            it('errors if context reference is not a date', () => {
 
                 const schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
                 const now = Date.now();
@@ -548,11 +513,11 @@ describe('date', () => {
                             context: { limit: new Date(now - 1e3), label: 'b', key: 'b' }
                         }]
                     }]
-                ], done);
+                ]);
             });
         });
 
-        it('validates only valid dates', (done) => {
+        it('validates only valid dates', () => {
 
             Helper.validate(Joi.date(), [
                 ['1-1-2013 UTC', true],
@@ -576,19 +541,18 @@ describe('date', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
         describe('iso()', () => {
 
-            it('avoids unnecessary cloning when called twice', (done) => {
+            it('avoids unnecessary cloning when called twice', () => {
 
                 const schema = Joi.date().iso();
                 expect(schema.iso()).to.shallow.equal(schema);
-                done();
             });
 
-            it('validates isoDate', (done) => {
+            it('validates isoDate', () => {
 
                 Helper.validate(Joi.date().iso(), [
                     ['+002013-06-07T14:21:46.295Z', true],
@@ -694,57 +658,45 @@ describe('date', () => {
                             context: { label: 'value', key: undefined }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('converts expanded isoDates', (done) => {
+            it('converts expanded isoDates', async () => {
 
                 const schema = { item: Joi.date().iso() };
-                Joi.compile(schema).validate({ item: '-002013-06-07T14:21:46.295Z' }, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value.item.toISOString()).to.be.equal('-002013-06-07T14:21:46.295Z');
-                    done();
-                });
+                const value = await Joi.compile(schema).validate({ item: '-002013-06-07T14:21:46.295Z' });
+                expect(value.item.toISOString()).to.be.equal('-002013-06-07T14:21:46.295Z');
             });
 
-            it('validates isoDate with a friendly error message', (done) => {
+            it('validates isoDate with a friendly error message', async () => {
 
                 const schema = { item: Joi.date().iso() };
-                Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
-
-                    expect(err.message).to.equal('child "item" fails because ["item" must be a valid ISO 8601 date]');
-                    expect(err.details).to.equal([{
-                        message: '"item" must be a valid ISO 8601 date',
-                        path: ['item'],
-                        type: 'date.isoDate',
-                        context: { label: 'item', key: 'item' }
-                    }]);
-                    done();
-                });
+                const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+                expect(err.message).to.equal('child "item" fails because ["item" must be a valid ISO 8601 date]');
+                expect(err.details).to.equal([{
+                    message: '"item" must be a valid ISO 8601 date',
+                    path: ['item'],
+                    type: 'date.isoDate',
+                    context: { label: 'item', key: 'item' }
+                }]);
             });
 
-            it('validates isoDate after clone', (done) => {
+            it('validates isoDate after clone', async () => {
 
                 const schema = { item: Joi.date().iso().clone() };
-                Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' }, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    done();
-                });
+                await Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' });
             });
         });
 
         describe('timestamp()', () => {
 
-            it('avoids unnecessary cloning when called twice', (done) => {
+            it('avoids unnecessary cloning when called twice', () => {
 
                 const schema = Joi.date().timestamp('unix');
                 expect(schema.timestamp('unix')).to.shallow.equal(schema);
-                done();
             });
 
-            it('fails on empty strings', (done) => {
+            it('fails on empty strings', () => {
 
                 const schema = Joi.date().timestamp();
                 Helper.validate(schema, [
@@ -766,56 +718,40 @@ describe('date', () => {
                             context: { key: undefined, label: 'value' }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('validates javascript timestamp', (done) => {
+            it('validates javascript timestamp', async () => {
 
                 const now = new Date();
                 const milliseconds = now.getTime();
 
-                Joi.date().timestamp().validate(milliseconds, (err, value) => {
+                const value = await Joi.date().timestamp().validate(milliseconds);
+                expect(value).to.equal(now);
 
-                    expect(err).to.not.exist();
-                    expect(value).to.equal(now);
-                });
-                Joi.date().timestamp('javascript').validate(milliseconds, (err, value) => {
+                const value2 = await Joi.date().timestamp('javascript').validate(milliseconds);
+                expect(value2).to.equal(now);
 
-                    expect(err).to.not.exist();
-                    expect(value).to.equal(now);
-                });
-                Joi.date().timestamp('unix').timestamp('javascript').validate(milliseconds, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value).to.equal(now);
-                });
-                done();
+                const value3 = await Joi.date().timestamp('unix').timestamp('javascript').validate(milliseconds);
+                expect(value3).to.equal(now);
             });
 
-            it('validates unix timestamp', (done) => {
+            it('validates unix timestamp', async () => {
 
                 const now = new Date();
                 const seconds = now.getTime() / 1000;
 
-                Joi.date().timestamp('unix').validate(seconds, (err, value) => {
+                const value = await Joi.date().timestamp('unix').validate(seconds);
+                expect(value).to.equal(now);
 
-                    expect(err).to.not.exist();
-                    expect(value).to.equal(now);
-                });
-                Joi.date().timestamp().timestamp('unix').validate(seconds, (err, value) => {
+                const value2 = await Joi.date().timestamp().timestamp('unix').validate(seconds);
+                expect(value2).to.equal(now);
 
-                    expect(err).to.not.exist();
-                    expect(value).to.equal(now);
-                });
-                Joi.date().timestamp('javascript').timestamp('unix').validate(seconds, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value).to.equal(now);
-                });
-                done();
+                const value3 = await Joi.date().timestamp('javascript').timestamp('unix').validate(seconds);
+                expect(value3).to.equal(now);
             });
 
-            it('validates timestamps with decimals', (done) => {
+            it('validates timestamps with decimals', () => {
 
                 Helper.validate(Joi.date().timestamp(), [
                     [new Date().getTime().toFixed(4), true]
@@ -826,10 +762,9 @@ describe('date', () => {
                 Helper.validate(Joi.date().timestamp('unix'), [
                     [(new Date().getTime() / 1000).toFixed(4), true]
                 ]);
-                done();
             });
 
-            it('validates only valid timestamps and returns a friendly error message', (done) => {
+            it('validates only valid timestamps and returns a friendly error message', () => {
 
                 Helper.validate(Joi.date().timestamp(), [
                     [new Date().getTime(), true],
@@ -883,16 +818,15 @@ describe('date', () => {
                             context: { label: 'value', key: undefined }
                         }]
                     }]
-                ], done);
+                ]);
             });
 
-            it('fails with not allowed type', (done) => {
+            it('fails with not allowed type', () => {
 
                 expect(() => {
 
                     Joi.date().timestamp('not allowed');
                 }).to.throw(Error, /"type" must be one of/);
-                done();
             });
         });
     });

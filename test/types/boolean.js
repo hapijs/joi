@@ -19,33 +19,30 @@ const { describe, it, expect } = exports.lab = Lab.script();
 
 describe('boolean', () => {
 
-    it('can be called on its own', (done) => {
+    it('can be called on its own', () => {
 
         const boolean = Joi.boolean;
         expect(() => boolean()).to.throw('Must be invoked on a Joi instance.');
-        done();
     });
 
-    it('should throw an exception if arguments were passed.', (done) => {
+    it('should throw an exception if arguments were passed.', () => {
 
         expect(
             () => Joi.boolean('invalid argument.')
         ).to.throw('Joi.boolean() does not allow arguments.');
-
-        done();
     });
 
-    it('converts boolean string to a boolean', (done) => {
+    it('converts boolean string to a boolean', () => {
 
         Helper.validate(Joi.boolean(), [
             ['true', true, null, true],
             ['false', true, null, false],
             ['TrUe', true, null, true],
             ['FalSe', true, null, false]
-        ], done);
+        ]);
     });
 
-    it('does not convert boolean string to a boolean in strict mode', (done) => {
+    it('does not convert boolean string to a boolean in strict mode', () => {
 
         Helper.validate(Joi.boolean().strict(), [
             ['true', false, null, {
@@ -84,10 +81,10 @@ describe('boolean', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('errors on a number', (done) => {
+    it('errors on a number', () => {
 
         Helper.validate(Joi.boolean(), [
             [1, false, null, {
@@ -117,26 +114,24 @@ describe('boolean', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
     describe('insensitive()', () => {
 
-        it('should default to case insensitive', (done) => {
+        it('should default to case insensitive', () => {
 
             const schema = Joi.boolean().truthy('Y');
             expect(schema.validate('y').error).not.to.exist();
-            done();
         });
 
-        it('should stick to case insensitive if called', (done) => {
+        it('should stick to case insensitive if called', () => {
 
             const schema = Joi.boolean().truthy('Y').insensitive();
             expect(schema.validate('y').error).not.to.exist();
-            done();
         });
 
-        it('should be able to do strict comparison', (done) => {
+        it('should be able to do strict comparison', () => {
 
             const schema = Joi.boolean().truthy('Y').insensitive(false);
             const error = schema.validate('y').error;
@@ -147,10 +142,9 @@ describe('boolean', () => {
                 type: 'boolean.base',
                 context: { label: 'value', key: undefined }
             }]);
-            done();
         });
 
-        it('should return the same instance if nothing changed', (done) => {
+        it('should return the same instance if nothing changed', () => {
 
             const insensitiveSchema = Joi.boolean();
             expect(insensitiveSchema.insensitive()).to.shallow.equal(insensitiveSchema);
@@ -159,11 +153,9 @@ describe('boolean', () => {
             const sensitiveSchema = Joi.boolean().insensitive(false);
             expect(sensitiveSchema.insensitive(false)).to.shallow.equal(sensitiveSchema);
             expect(sensitiveSchema.insensitive()).to.not.shallow.equal(sensitiveSchema);
-
-            done();
         });
 
-        it('converts boolean string to a boolean with a sensitive case', (done) => {
+        it('converts boolean string to a boolean with a sensitive case', () => {
 
             Helper.validate(Joi.boolean().insensitive(false), [
                 ['true', true, null, true],
@@ -186,14 +178,14 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
     });
 
     describe('validate()', () => {
 
-        it('does not convert string values and validates', (done) => {
+        it('does not convert string values and validates', () => {
 
             const rule = Joi.boolean();
             Helper.validate(rule, [
@@ -271,10 +263,10 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should handle work with required', (done) => {
+        it('should handle work with required', () => {
 
             const rule = Joi.boolean().required();
             Helper.validate(rule, [
@@ -298,10 +290,10 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should handle work with allow', (done) => {
+        it('should handle work with allow', () => {
 
             const rule = Joi.boolean().allow(false);
             Helper.validate(rule, [
@@ -324,10 +316,10 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should handle work with invalid', (done) => {
+        it('should handle work with invalid', () => {
 
             const rule = Joi.boolean().invalid(false);
             Helper.validate(rule, [
@@ -359,10 +351,10 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should handle work with invalid and null allowed', (done) => {
+        it('should handle work with invalid and null allowed', () => {
 
             const rule = Joi.boolean().invalid(false).allow(null);
             Helper.validate(rule, [
@@ -386,10 +378,10 @@ describe('boolean', () => {
                 }],
                 [true, true],
                 [null, true]
-            ], done);
+            ]);
         });
 
-        it('should handle work with allow and invalid', (done) => {
+        it('should handle work with allow and invalid', () => {
 
             const rule = Joi.boolean().invalid(true).allow(false);
             Helper.validate(rule, [
@@ -421,10 +413,10 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should handle work with allow, invalid, and null allowed', (done) => {
+        it('should handle work with allow, invalid, and null allowed', () => {
 
             const rule = Joi.boolean().invalid(true).allow(false).allow(null);
             Helper.validate(rule, [
@@ -448,10 +440,10 @@ describe('boolean', () => {
                     }]
                 }],
                 [null, true]
-            ], done);
+            ]);
         });
 
-        it('should handle work with additional truthy value', (done) => {
+        it('should handle work with additional truthy value', () => {
 
             const rule = Joi.boolean().truthy('Y');
             Helper.validate(rule, [
@@ -476,10 +468,10 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should handle work with additional truthy array', (done) => {
+        it('should handle work with additional truthy array', () => {
 
             const rule = Joi.boolean().truthy(['Y', 'Si']);
             Helper.validate(rule, [
@@ -505,10 +497,10 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should handle work with additional falsy value', (done) => {
+        it('should handle work with additional falsy value', () => {
 
             const rule = Joi.boolean().falsy('N');
             Helper.validate(rule, [
@@ -533,10 +525,10 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should handle work with additional falsy array', (done) => {
+        it('should handle work with additional falsy array', () => {
 
             const rule = Joi.boolean().falsy(['N', 'Never']);
             Helper.validate(rule, [
@@ -562,10 +554,10 @@ describe('boolean', () => {
                 }],
                 [true, true],
                 [false, true]
-            ], done);
+            ]);
         });
 
-        it('should handle work with required, null allowed, and both additional truthy and falsy values', (done) => {
+        it('should handle work with required, null allowed, and both additional truthy and falsy values', () => {
 
             const rule = Joi.boolean().truthy(['Y', 'Si', 1]).falsy(['N', 'Never', 0]).allow(null).required();
             Helper.validate(rule, [
@@ -597,10 +589,10 @@ describe('boolean', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should handle concatenated schema', (done) => {
+        it('should handle concatenated schema', () => {
 
             const a = Joi.boolean().truthy('yes');
             const b = Joi.boolean().falsy('no');
@@ -634,10 +626,10 @@ describe('boolean', () => {
             Helper.validate(a.concat(b), [
                 ['yes', true],
                 ['no', true]
-            ], done);
+            ]);
         });
 
-        it('should describe truthy and falsy values', (done) => {
+        it('should describe truthy and falsy values', () => {
 
             const schema = Joi.boolean().truthy('yes').falsy('no').required().describe();
             expect(schema).to.equal({
@@ -649,7 +641,6 @@ describe('boolean', () => {
                 truthy: [true, 'yes'],
                 falsy: [false, 'no']
             });
-            done();
         });
     });
 });

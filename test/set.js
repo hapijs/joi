@@ -20,23 +20,21 @@ describe('Set', () => {
 
     describe('has()', () => {
 
-        it('compares date to null', (done) => {
+        it('compares date to null', () => {
 
             const set = new Set();
             set.add(null);
             expect(set.has(new Date())).to.be.false();
-            done();
         });
 
-        it('compares buffer to null', (done) => {
+        it('compares buffer to null', () => {
 
             const set = new Set();
             set.add(null);
             expect(set.has(new Buffer(''))).to.be.false();
-            done();
         });
 
-        it('compares different types of values', (done) => {
+        it('compares different types of values', () => {
 
             let set = new Set();
             set.add(1);
@@ -78,35 +76,31 @@ describe('Set', () => {
             set.add(b);
             expect(set.has(b)).to.be.true();
             expect(set.has(new Buffer('foobar'))).to.be.false();
-
-            done();
         });
     });
 
     describe('values()', () => {
 
-        it('returns array', (done) => {
+        it('returns array', () => {
 
             const set = new Set();
             set.add('x');
             set.add('y');
             expect(set.values()).to.equal(['x', 'y']);
-            done();
         });
 
-        it('strips undefined', (done) => {
+        it('strips undefined', () => {
 
             const set = new Set();
             set.add(undefined);
             set.add('x');
             expect(set.values({ stripUndefined: true })).to.not.include(undefined).and.to.equal(['x']);
-            done();
         });
     });
 
     describe('add()', () => {
 
-        it('allows valid values to be set', (done) => {
+        it('allows valid values to be set', () => {
 
             expect(() => {
 
@@ -117,14 +111,13 @@ describe('Set', () => {
                 set.add(new Date());
                 set.add(Symbol('foo'));
             }).not.to.throw();
-            done();
         });
 
     });
 
     describe('slice', () => {
 
-        it('returns a new Set', (done) => {
+        it('returns a new Set', () => {
 
             const set = new Set();
             set.add(null);
@@ -134,13 +127,12 @@ describe('Set', () => {
             expect(otherValids.has(null)).to.equal(true);
             expect(set.has('null')).to.equal(false);
             expect(otherValids.has('null')).to.equal(true);
-            done();
         });
     });
 
     describe('concat', () => {
 
-        it('merges _set into a new Set', (done) => {
+        it('merges _set into a new Set', () => {
 
             const set = new Set();
             const otherValids = set.slice();
@@ -153,7 +145,6 @@ describe('Set', () => {
             expect(otherValids.has('null')).to.equal(true);
             expect(thirdSet.has(null)).to.equal(true);
             expect(thirdSet.has('null')).to.equal(true);
-            done();
         });
     });
 });

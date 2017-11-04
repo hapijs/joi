@@ -22,50 +22,41 @@ describe('lazy', () => {
 
     describe('set()', () => {
 
-        it('should require a function', (done) => {
+        it('should require a function', () => {
 
             expect(() => Joi.lazy()).to.throw('You must provide a function as first argument');
             expect(() => Joi.lazy(true)).to.throw('You must provide a function as first argument');
-            done();
         });
 
-        it('should validate a schema is set', (done) => {
+        it('should validate a schema is set', async () => {
 
             const schema = Lazy;
-            schema.validate('bar', (err, value) => {
-
-                expect(err).to.be.an.error('schema error: lazy schema must be set');
-                expect(err.details).to.equal([{
-                    message: 'schema error: lazy schema must be set',
-                    path: [],
-                    type: 'lazy.base',
-                    context: { label: 'value', key: undefined }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate('bar')).to.reject('schema error: lazy schema must be set');
+            expect(err.details).to.equal([{
+                message: 'schema error: lazy schema must be set',
+                path: [],
+                type: 'lazy.base',
+                context: { label: 'value', key: undefined }
+            }]);
         });
 
-        it('should validate a schema is returned', (done) => {
+        it('should validate a schema is returned', async () => {
 
             const schema = Joi.lazy(() => true, 'foo');
-            schema.validate('bar', (err, value) => {
-
-                expect(err).to.be.an.error('schema error: lazy schema function must return a schema');
-                expect(err.details).to.equal([{
-                    message: 'schema error: lazy schema function must return a schema',
-                    path: [],
-                    type: 'lazy.schema',
-                    context: { label: 'value', key: undefined }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate('bar')).to.reject('schema error: lazy schema function must return a schema');
+            expect(err.details).to.equal([{
+                message: 'schema error: lazy schema function must return a schema',
+                path: [],
+                type: 'lazy.schema',
+                context: { label: 'value', key: undefined }
+            }]);
         });
 
     });
 
     describe('validate()', () => {
 
-        it('should validate a recursive schema', (done) => {
+        it('should validate a recursive schema', () => {
 
             const schema = Joi.object({
                 name: Joi.string().required(),
@@ -87,14 +78,13 @@ describe('lazy', () => {
                         context: { value: 42, label: 'name', key: 'name' }
                     }]
                 }]
-            ], done);
+            ]);
         });
-
     });
 
     describe('describe()', () => {
 
-        it('should be able to describe with description', (done) => {
+        it('should be able to describe with description', () => {
 
             const schema = Joi.object({
                 name: Joi.string().required(),
@@ -124,8 +114,6 @@ describe('lazy', () => {
                     }
                 }
             });
-
-            done();
         });
 
     });

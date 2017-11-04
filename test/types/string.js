@@ -22,23 +22,20 @@ process.env.TZ = 'utc'; // Needed for timezone sensitive tests
 
 describe('string', () => {
 
-    it('can be called on its own', (done) => {
+    it('can be called on its own', () => {
 
         const string = Joi.string;
         expect(() => string()).to.throw('Must be invoked on a Joi instance.');
-        done();
     });
 
-    it('should throw an exception if arguments were passed.', (done) => {
+    it('should throw an exception if arguments were passed.', () => {
 
         expect(
             () => Joi.string('invalid argument.')
         ).to.throw('Joi.string() does not allow arguments.');
-
-        done();
     });
 
-    it('fails on boolean', (done) => {
+    it('fails on boolean', () => {
 
         const schema = Joi.string();
         Helper.validate(schema, [
@@ -60,10 +57,10 @@ describe('string', () => {
                     context: { value: false, label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('fails on integer', (done) => {
+    it('fails on integer', () => {
 
         const schema = Joi.string();
         Helper.validate(schema, [
@@ -87,22 +84,21 @@ describe('string', () => {
             }],
             ['123', true],
             ['0', true]
-        ], done);
+        ]);
     });
 
     describe('insensitive', () => {
 
-        it('avoids unnecessary cloning when called twice', (done) => {
+        it('avoids unnecessary cloning when called twice', () => {
 
             const schema = Joi.string().insensitive();
             expect(schema.insensitive()).to.shallow.equal(schema);
-            done();
         });
     });
 
     describe('valid()', () => {
 
-        it('validates case sensitive values', (done) => {
+        it('validates case sensitive values', () => {
 
             Helper.validate(Joi.string().valid('a', 'b'), [
                 ['a', true],
@@ -125,10 +121,10 @@ describe('string', () => {
                         context: { valids: ['a', 'b'], label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates case insensitive values', (done) => {
+        it('validates case insensitive values', () => {
 
             Helper.validate(Joi.string().valid('a', 'b').insensitive(), [
                 ['a', true],
@@ -144,10 +140,10 @@ describe('string', () => {
                         context: { value: 4, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates case insensitive values with non-strings', (done) => {
+        it('validates case insensitive values with non-strings', () => {
 
             Helper.validate(Joi.string().valid('a', 'b', 5).insensitive(), [
                 ['a', true],
@@ -164,13 +160,13 @@ describe('string', () => {
                     }]
                 }],
                 [5, true]
-            ], done);
+            ]);
         });
     });
 
     describe('invalid()', () => {
 
-        it('inverts case sensitive values', (done) => {
+        it('inverts case sensitive values', () => {
 
             Helper.validate(Joi.string().invalid('a', 'b'), [
                 ['a', false, null, {
@@ -193,10 +189,10 @@ describe('string', () => {
                 }],
                 ['A', true],
                 ['B', true]
-            ], done);
+            ]);
         });
 
-        it('inverts case insensitive values', (done) => {
+        it('inverts case insensitive values', () => {
 
             Helper.validate(Joi.string().invalid('a', 'b').insensitive(), [
                 ['a', false, null, {
@@ -235,40 +231,37 @@ describe('string', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
     describe('min()', () => {
 
-        it('throws when limit is not a number', (done) => {
+        it('throws when limit is not a number', () => {
 
             expect(() => {
 
                 Joi.string().min('a');
             }).to.throw('limit must be a positive integer or reference');
-            done();
         });
 
-        it('throws when limit is not an integer', (done) => {
+        it('throws when limit is not an integer', () => {
 
             expect(() => {
 
                 Joi.string().min(1.2);
             }).to.throw('limit must be a positive integer or reference');
-            done();
         });
 
-        it('throws when limit is not a positive integer', (done) => {
+        it('throws when limit is not a positive integer', () => {
 
             expect(() => {
 
                 Joi.string().min(-1);
             }).to.throw('limit must be a positive integer or reference');
-            done();
         });
 
-        it('enforces a limit using byte count', (done) => {
+        it('enforces a limit using byte count', () => {
 
             const schema = Joi.string().min(2, 'utf8');
             Helper.validate(schema, [
@@ -288,10 +281,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('accepts references as min length', (done) => {
+        it('accepts references as min length', () => {
 
             const schema = Joi.object({ a: Joi.number(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
             Helper.validate(schema, [
@@ -311,10 +304,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('accepts references as min length within a when', (done) => {
+        it('accepts references as min length within a when', () => {
 
             const schema = Joi.object({
                 a: Joi.string().required(),
@@ -337,10 +330,10 @@ describe('string', () => {
                         context: { valids: [0], label: 'c', key: 'c' }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('accepts context references as min length', (done) => {
+        it('accepts context references as min length', () => {
 
             const schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
             Helper.validate(schema, [
@@ -360,10 +353,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('errors if reference is not a number', (done) => {
+        it('errors if reference is not a number', () => {
 
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
 
@@ -377,10 +370,10 @@ describe('string', () => {
                         context: { ref: 'a', label: 'b', key: 'b' }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('errors if context reference is not a number', (done) => {
+        it('errors if context reference is not a number', () => {
 
             const schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
 
@@ -394,40 +387,37 @@ describe('string', () => {
                         context: { ref: 'a', label: 'b', key: 'b' }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
     describe('max()', () => {
 
-        it('throws when limit is not a number', (done) => {
+        it('throws when limit is not a number', () => {
 
             expect(() => {
 
                 Joi.string().max('a');
             }).to.throw('limit must be a positive integer or reference');
-            done();
         });
 
-        it('throws when limit is not an integer', (done) => {
+        it('throws when limit is not an integer', () => {
 
             expect(() => {
 
                 Joi.string().max(1.2);
             }).to.throw('limit must be a positive integer or reference');
-            done();
         });
 
-        it('throws when limit is not a positive integer', (done) => {
+        it('throws when limit is not a positive integer', () => {
 
             expect(() => {
 
                 Joi.string().max(-1);
             }).to.throw('limit must be a positive integer or reference');
-            done();
         });
 
-        it('enforces a limit using byte count', (done) => {
+        it('enforces a limit using byte count', () => {
 
             const schema = Joi.string().max(1, 'utf8');
             Helper.validate(schema, [
@@ -441,10 +431,10 @@ describe('string', () => {
                     }]
                 }],
                 ['a', true]
-            ], done);
+            ]);
         });
 
-        it('accepts references as min length', (done) => {
+        it('accepts references as min length', () => {
 
             const schema = Joi.object({ a: Joi.number(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
             Helper.validate(schema, [
@@ -464,10 +454,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('accepts context references as min length', (done) => {
+        it('accepts context references as min length', () => {
 
             const schema = Joi.object({ b: Joi.string().max(Joi.ref('$a'), 'utf8') });
             Helper.validate(schema, [
@@ -487,10 +477,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('errors if reference is not a number', (done) => {
+        it('errors if reference is not a number', () => {
 
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
 
@@ -504,10 +494,10 @@ describe('string', () => {
                         context: { ref: 'a', label: 'b', key: 'b' }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('errors if context reference is not a number', (done) => {
+        it('errors if context reference is not a number', () => {
 
             const schema = Joi.object({ b: Joi.string().max(Joi.ref('$a'), 'utf8') });
 
@@ -521,93 +511,87 @@ describe('string', () => {
                         context: { ref: 'a', label: 'b', key: 'b' }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
     describe('creditCard()', () => {
 
-        it('should validate credit card', (done) => {
+        it('should validate credit card', async () => {
 
             const t = Joi.string().creditCard();
-            t.validate('4111111111111112', (err, value) => {
+            await expect(t.validate('4111111111111112')).to.reject('"value" must be a credit card');
 
-                expect(err.message).to.equal('"value" must be a credit card');
-
-                Helper.validate(t, [
-                    ['378734493671000', true],  // american express
-                    ['371449635398431', true],  // american express
-                    ['378282246310005', true],  // american express
-                    ['341111111111111', true],  // american express
-                    ['5610591081018250', true], // australian bank
-                    ['5019717010103742', true], // dankort pbs
-                    ['38520000023237', true],   // diners club
-                    ['30569309025904', true],   // diners club
-                    ['6011000990139424', true], // discover
-                    ['6011111111111117', true], // discover
-                    ['6011601160116611', true], // discover
-                    ['3566002020360505', true], // jbc
-                    ['3530111333300000', true], // jbc
-                    ['5105105105105100', true], // mastercard
-                    ['5555555555554444', true], // mastercard
-                    ['5431111111111111', true], // mastercard
-                    ['6331101999990016', true], // switch/solo paymentech
-                    ['4222222222222', true],    // visa
-                    ['4012888888881881', true], // visa
-                    ['4111111111111111', true], // visa
-                    ['4111111111111112', false, null, {
+            Helper.validate(t, [
+                ['378734493671000', true],  // american express
+                ['371449635398431', true],  // american express
+                ['378282246310005', true],  // american express
+                ['341111111111111', true],  // american express
+                ['5610591081018250', true], // australian bank
+                ['5019717010103742', true], // dankort pbs
+                ['38520000023237', true],   // diners club
+                ['30569309025904', true],   // diners club
+                ['6011000990139424', true], // discover
+                ['6011111111111117', true], // discover
+                ['6011601160116611', true], // discover
+                ['3566002020360505', true], // jbc
+                ['3530111333300000', true], // jbc
+                ['5105105105105100', true], // mastercard
+                ['5555555555554444', true], // mastercard
+                ['5431111111111111', true], // mastercard
+                ['6331101999990016', true], // switch/solo paymentech
+                ['4222222222222', true],    // visa
+                ['4012888888881881', true], // visa
+                ['4111111111111111', true], // visa
+                ['4111111111111112', false, null, {
+                    message: '"value" must be a credit card',
+                    details: [{
                         message: '"value" must be a credit card',
-                        details: [{
-                            message: '"value" must be a credit card',
-                            path: [],
-                            type: 'string.creditCard',
-                            context: { value: '4111111111111112', label: 'value', key: undefined }
-                        }]
-                    }],
-                    [null, false, null, {
-                        message: '"value" must be a string',
-                        details: [{
-                            message: '"value" must be a string',
-                            path: [],
-                            type: 'string.base',
-                            context: { value: null, label: 'value', key: undefined }
-                        }]
+                        path: [],
+                        type: 'string.creditCard',
+                        context: { value: '4111111111111112', label: 'value', key: undefined }
                     }]
-                ], done);
-            });
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
         });
     });
 
     describe('length()', () => {
 
-        it('throws when limit is not a number', (done) => {
+        it('throws when limit is not a number', () => {
 
             expect(() => {
 
                 Joi.string().length('a');
             }).to.throw('limit must be a positive integer or reference');
-            done();
         });
 
-        it('throws when limit is not an integer', (done) => {
+        it('throws when limit is not an integer', () => {
 
             expect(() => {
 
                 Joi.string().length(1.2);
             }).to.throw('limit must be a positive integer or reference');
-            done();
         });
 
-        it('throws when limit is not a positive integer', (done) => {
+        it('throws when limit is not a positive integer', () => {
 
             expect(() => {
 
                 Joi.string().length(-42);
             }).to.throw('limit must be a positive integer or reference');
-            done();
         });
 
-        it('enforces a limit using byte count', (done) => {
+        it('enforces a limit using byte count', () => {
 
             const schema = Joi.string().length(2, 'utf8');
             Helper.validate(schema, [
@@ -621,10 +605,10 @@ describe('string', () => {
                         context: { limit: 2, value: 'a', encoding: 'utf8', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('accepts references as length', (done) => {
+        it('accepts references as length', () => {
 
             const schema = Joi.object({ a: Joi.number(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
             Helper.validate(schema, [
@@ -638,10 +622,10 @@ describe('string', () => {
                         context: { limit: 2, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('accepts context references as length', (done) => {
+        it('accepts context references as length', () => {
 
             const schema = Joi.object({ b: Joi.string().length(Joi.ref('$a'), 'utf8') });
             Helper.validate(schema, [
@@ -664,10 +648,10 @@ describe('string', () => {
                         context: { limit: 2, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('errors if reference is not a number', (done) => {
+        it('errors if reference is not a number', () => {
 
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
 
@@ -681,10 +665,10 @@ describe('string', () => {
                         context: { ref: 'a', label: 'b', key: 'b' }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('errors if context reference is not a number', (done) => {
+        it('errors if context reference is not a number', () => {
 
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('$a'), 'utf8') });
 
@@ -698,113 +682,103 @@ describe('string', () => {
                         context: { ref: 'a', label: 'b', key: 'b' }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
     describe('email()', () => {
 
-        it('throws when options are not an object', (done) => {
+        it('throws when options are not an object', () => {
 
             expect(() => {
 
                 const emailOptions = true;
                 Joi.string().email(emailOptions);
             }).to.throw('email options must be an object');
-            done();
         });
 
-        it('throws when checkDNS option is enabled', (done) => {
+        it('throws when checkDNS option is enabled', () => {
 
             expect(() => {
 
                 const emailOptions = { checkDNS: true };
                 Joi.string().email(emailOptions);
             }).to.throw('checkDNS option is not supported');
-            done();
         });
 
-        it('throws when tldWhitelist is not an array or object', (done) => {
+        it('throws when tldWhitelist is not an array or object', () => {
 
             expect(() => {
 
                 const emailOptions = { tldWhitelist: 'domain.tld' };
                 Joi.string().email(emailOptions);
             }).to.throw('tldWhitelist must be an array or object');
-            done();
         });
 
-        it('throws when minDomainAtoms is not a number', (done) => {
+        it('throws when minDomainAtoms is not a number', () => {
 
             expect(() => {
 
                 const emailOptions = { minDomainAtoms: '1' };
                 Joi.string().email(emailOptions);
             }).to.throw('minDomainAtoms must be a positive integer');
-            done();
         });
 
-        it('throws when minDomainAtoms is not an integer', (done) => {
+        it('throws when minDomainAtoms is not an integer', () => {
 
             expect(() => {
 
                 const emailOptions = { minDomainAtoms: 1.2 };
                 Joi.string().email(emailOptions);
             }).to.throw('minDomainAtoms must be a positive integer');
-            done();
         });
 
-        it('throws when minDomainAtoms is not positive', (done) => {
+        it('throws when minDomainAtoms is not positive', () => {
 
             expect(() => {
 
                 const emailOptions = { minDomainAtoms: 0 };
                 Joi.string().email(emailOptions);
             }).to.throw('minDomainAtoms must be a positive integer');
-            done();
         });
 
-        it('does not throw when minDomainAtoms is a positive integer', (done) => {
+        it('does not throw when minDomainAtoms is a positive integer', () => {
 
             expect(() => {
 
                 const emailOptions = { minDomainAtoms: 1 };
                 Joi.string().email(emailOptions);
             }).to.not.throw();
-            done();
         });
 
-        it('throws when errorLevel is not an integer or boolean', (done) => {
+        it('throws when errorLevel is not an integer or boolean', () => {
 
             expect(() => {
 
                 const emailOptions = { errorLevel: 1.2 };
                 Joi.string().email(emailOptions);
             }).to.throw('errorLevel must be a non-negative integer or boolean');
-            done();
         });
 
-        it('throws when errorLevel is negative', (done) => {
+        it('throws when errorLevel is negative', () => {
 
             expect(() => {
 
                 const emailOptions = { errorLevel: -1 };
                 Joi.string().email(emailOptions);
             }).to.throw('errorLevel must be a non-negative integer or boolean');
-            done();
         });
 
-        it('does not throw when errorLevel is 0', (done) => {
+        it('does not throw when errorLevel is 0', () => {
 
             expect(() => {
 
                 const emailOptions = { errorLevel: 0 };
                 Joi.string().email(emailOptions);
             }).to.not.throw();
-            done();
         });
 
-        it('validates email', (done) => {
+        it('validates email', () => {
 
             const schema = Joi.string().email();
             Helper.validate(schema, [
@@ -839,10 +813,10 @@ describe('string', () => {
                         context: { value: '123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates email with tldWhitelist as array', (done) => {
+        it('validates email with tldWhitelist as array', () => {
 
             const schema = Joi.string().email({ tldWhitelist: ['com', 'org'] });
             Helper.validate(schema, [
@@ -857,10 +831,10 @@ describe('string', () => {
                         context: { value: 'joe@example.edu', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates email with tldWhitelist as object', (done) => {
+        it('validates email with tldWhitelist as object', () => {
 
             const schema = Joi.string().email({ tldWhitelist: { com: true, org: true } });
             Helper.validate(schema, [
@@ -875,10 +849,10 @@ describe('string', () => {
                         context: { value: 'joe@example.edu', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates email with minDomainAtoms', (done) => {
+        it('validates email with minDomainAtoms', () => {
 
             const schema = Joi.string().email({ minDomainAtoms: 4 });
             Helper.validate(schema, [
@@ -901,10 +875,10 @@ describe('string', () => {
                     }]
                 }],
                 ['joe@sub.www.example.com', true]
-            ], done);
+            ]);
         });
 
-        it('validates email with errorLevel as boolean', (done) => {
+        it('validates email with errorLevel as boolean', () => {
 
             let schema = Joi.string().email({ errorLevel: false });
             Helper.validate(schema, [
@@ -945,10 +919,10 @@ describe('string', () => {
                         context: { value: 'joe', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates email with errorLevel as integer', (done) => {
+        it('validates email with errorLevel as integer', () => {
 
             const schema = Joi.string().email({ errorLevel: 10 });
             Helper.validate(schema, [
@@ -964,29 +938,26 @@ describe('string', () => {
                         context: { value: 'joe', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates email with a friendly error message', (done) => {
+        it('validates email with a friendly error message', async () => {
 
             const schema = { item: Joi.string().email() };
-            Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
-
-                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid email]');
-                expect(err.details).to.equal([{
-                    message: '"item" must be a valid email',
-                    path: ['item'],
-                    type: 'string.email',
-                    context: { value: 'something', label: 'item', key: 'item' }
-                }]);
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid email]');
+            expect(err.details).to.equal([{
+                message: '"item" must be a valid email',
+                path: ['item'],
+                type: 'string.email',
+                context: { value: 'something', label: 'item', key: 'item' }
+            }]);
         });
     });
 
     describe('hostname()', () => {
 
-        it('validates hostnames', (done) => {
+        it('validates hostnames', () => {
 
             const schema = Joi.string().hostname();
             Helper.validate(schema, [
@@ -1033,7 +1004,7 @@ describe('string', () => {
                         context: { value: '0:?:0:0:0:0:0:1', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
@@ -1052,16 +1023,15 @@ describe('string', () => {
             NFKD: '\u03A5\u0301 A\u030A' // 'Ύ Å'
         };
 
-        it('throws when normalization form is invalid', (done) => {
+        it('throws when normalization form is invalid', () => {
 
             expect(() => {
 
                 Joi.string().normalize('NFCD');
             }).to.throw('normalization form must be one of NFC, NFD, NFKC, NFKD');
-            done();
         });
 
-        it('only allow strings that are in NFC form', (done) => {
+        it('only allow strings that are in NFC form', () => {
 
             const schema = Joi.string().normalize('NFC');
 
@@ -1081,10 +1051,10 @@ describe('string', () => {
                     }]
                 }],
                 [normalizations.NFC, true]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('only allow strings that are in NFD form', (done) => {
+        it('only allow strings that are in NFD form', () => {
 
             const schema = Joi.string().normalize('NFD');
 
@@ -1104,10 +1074,10 @@ describe('string', () => {
                     }]
                 }],
                 [normalizations.NFD, true]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('only allow strings that are in NFKC form', (done) => {
+        it('only allow strings that are in NFKC form', () => {
 
             const schema = Joi.string().normalize('NFKC');
 
@@ -1127,10 +1097,10 @@ describe('string', () => {
                     }]
                 }],
                 [normalizations.NFKC, true]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('only allow strings that are in NFKD form', (done) => {
+        it('only allow strings that are in NFKD form', () => {
 
             const schema = Joi.string().normalize('NFKD');
 
@@ -1150,124 +1120,90 @@ describe('string', () => {
                     }]
                 }],
                 [normalizations.NFKD, true]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('normalizes string using NFC before validation', (done) => {
+        it('normalizes string using NFC before validation', async () => {
 
-            Joi.string().normalize('NFC').validate(normalizations.original, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal(normalizations.NFC);
-                done();
-            });
+            const value = await Joi.string().normalize('NFC').validate(normalizations.original);
+            expect(value).to.equal(normalizations.NFC);
         });
 
-        it('normalizes string using NFD before validation', (done) => {
+        it('normalizes string using NFD before validation', async () => {
 
-            Joi.string().normalize('NFD').validate(normalizations.original, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal(normalizations.NFD);
-                done();
-            });
+            const value = await Joi.string().normalize('NFD').validate(normalizations.original);
+            expect(value).to.equal(normalizations.NFD);
         });
 
-        it('normalizes string using NFKC before validation', (done) => {
+        it('normalizes string using NFKC before validation', async () => {
 
-            Joi.string().normalize('NFKC').validate(normalizations.original, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal(normalizations.NFKC);
-                done();
-            });
+            const value = await Joi.string().normalize('NFKC').validate(normalizations.original);
+            expect(value).to.equal(normalizations.NFKC);
         });
 
-        it('normalizes string using NFKD before validation', (done) => {
+        it('normalizes string using NFKD before validation', async () => {
 
-            Joi.string().normalize('NFKD').validate(normalizations.original, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal(normalizations.NFKD);
-                done();
-            });
+            const value = await Joi.string().normalize('NFKD').validate(normalizations.original);
+            expect(value).to.equal(normalizations.NFKD);
         });
 
-        it('should default to NFC form', (done) => {
+        it('should default to NFC form', async () => {
 
-            const schema = Joi.string().normalize();
-            schema.validate(normalizations.original, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal(normalizations.NFC);
-                done();
-            });
+            const value = await Joi.string().normalize().validate(normalizations.original);
+            expect(value).to.equal(normalizations.NFC);
         });
 
         // The below tests use the composed and decomposed form
         // of the 'ñ' character
 
-        it('should work in combination with min', (done) => {
+        it('should work in combination with min', async () => {
 
             const baseSchema = Joi.string().min(2);
 
-            baseSchema.normalize('NFD').validate('\u00F1', (err, value) => {
+            const value = await baseSchema.normalize('NFD').validate('\u00F1');
+            expect(value).to.equal('n\u0303');
 
-                expect(err).to.not.exist();
-                expect(value).to.equal('n\u0303');
+            const err = await expect(baseSchema.normalize('NFC').validate('n\u0303')).to.reject();
 
-                baseSchema.normalize('NFC').validate('n\u0303', (err2, value2) => {
-
-                    expect(err2).to.be.an.error('"value" length must be at least 2 characters long');
-                    expect(err2.details).to.equal([{
-                        message: '"value" length must be at least 2 characters long',
-                        path: [],
-                        type: 'string.min',
-                        context: {
-                            limit: 2,
-                            value: '\u00F1',
-                            encoding: undefined,
-                            label: 'value',
-                            key: undefined
-                        }
-                    }]);
-
-                    done();
-                });
-            });
+            expect(err).to.be.an.error('"value" length must be at least 2 characters long');
+            expect(err.details).to.equal([{
+                message: '"value" length must be at least 2 characters long',
+                path: [],
+                type: 'string.min',
+                context: {
+                    limit: 2,
+                    value: '\u00F1',
+                    encoding: undefined,
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
         });
 
-        it('should work in combination with max', (done) => {
+        it('should work in combination with max', async () => {
 
             const baseSchema = Joi.string().max(1);
 
-            baseSchema.normalize('NFC').validate('n\u0303', (err, value) => {
+            const value = await baseSchema.normalize('NFC').validate('n\u0303');
+            expect(value).to.equal('\u00F1');
 
-                expect(err).to.not.exist();
-                expect(value).to.equal('\u00F1');
-
-                baseSchema.normalize('NFD').validate('\u00F1', (err2, value2) => {
-
-                    expect(err2).to.be.an.error('"value" length must be less than or equal to 1 characters long');
-                    expect(err2.details).to.equal([{
-                        message: '"value" length must be less than or equal to 1 characters long',
-                        path: [],
-                        type: 'string.max',
-                        context: {
-                            limit: 1,
-                            value: 'n\u0303',
-                            encoding: undefined,
-                            label: 'value',
-                            key: undefined
-                        }
-                    }]);
-
-                    done();
-                });
-            });
+            const err = await expect(baseSchema.normalize('NFD').validate('\u00F1')).to.reject();
+            expect(err).to.be.an.error('"value" length must be less than or equal to 1 characters long');
+            expect(err.details).to.equal([{
+                message: '"value" length must be less than or equal to 1 characters long',
+                path: [],
+                type: 'string.max',
+                context: {
+                    limit: 1,
+                    value: 'n\u0303',
+                    encoding: undefined,
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
         });
 
-        it('composition should work in combination with length', (done) => {
+        it('composition should work in combination with length', () => {
 
             const schema = Joi.string().length(2).normalize('NFC');
 
@@ -1305,10 +1241,10 @@ describe('string', () => {
                 ['\u00F1\u00F1', true],
                 ['\u00F1n\u0303', true],
                 ['n\u0303n\u0303', true]
-            ], done);
+            ]);
         });
 
-        it('decomposition should work in combination with length', (done) => {
+        it('decomposition should work in combination with length', () => {
 
             const schema = Joi.string().length(2).normalize('NFD');
 
@@ -1360,51 +1296,35 @@ describe('string', () => {
                 }],
                 ['\u00F1', true],
                 ['n\u0303', true]
-            ], done);
+            ]);
         });
 
-        it('should work in combination with lowercase', (done) => {
+        it('should work in combination with lowercase', async () => {
 
             const baseSchema = Joi.string().lowercase();
 
-            baseSchema.normalize('NFC').validate('N\u0303', (err, value) => {
+            const value = await baseSchema.normalize('NFC').validate('N\u0303');
+            expect(value).to.equal('\u00F1');
 
-                expect(err).to.not.exist();
-                expect(value).to.equal('\u00F1');
-
-                baseSchema.normalize('NFD').validate('\u00D1', (err2, value2) => {
-
-                    expect(err2).to.not.exist();
-                    expect(value2).to.equal('n\u0303');
-
-                    done();
-                });
-            });
+            const value2 = await baseSchema.normalize('NFD').validate('\u00D1');
+            expect(value2).to.equal('n\u0303');
         });
 
-        it('should work in combination with uppercase', (done) => {
+        it('should work in combination with uppercase', async () => {
 
             const baseSchema = Joi.string().uppercase();
 
-            baseSchema.normalize('NFC').validate('n\u0303', (err, value) => {
+            const value = await baseSchema.normalize('NFC').validate('n\u0303');
+            expect(value).to.equal('\u00D1');
 
-                expect(err).to.not.exist();
-                expect(value).to.equal('\u00D1');
-
-                baseSchema.normalize('NFD').validate('\u00F1', (err2, value2) => {
-
-                    expect(err2).to.not.exist();
-                    expect(value2).to.equal('N\u0303');
-
-                    done();
-                });
-            });
+            const value2 = await baseSchema.normalize('NFD').validate('\u00F1');
+            expect(value2).to.equal('N\u0303');
         });
     });
 
     describe('lowercase()', () => {
 
-        it('only allows strings that are entirely lowercase', (done) => {
+        it('only allows strings that are entirely lowercase', () => {
 
             const schema = Joi.string().lowercase();
             Helper.validateOptions(schema, [
@@ -1438,21 +1358,17 @@ describe('string', () => {
                         context: { value: 1, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('coerce string to lowercase before validation', (done) => {
+        it('coerce string to lowercase before validation', async () => {
 
             const schema = Joi.string().lowercase();
-            schema.validate('UPPER TO LOWER', (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal('upper to lower');
-                done();
-            });
+            const value = await schema.validate('UPPER TO LOWER');
+            expect(value).to.equal('upper to lower');
         });
 
-        it('should work in combination with a trim', (done) => {
+        it('should work in combination with a trim', () => {
 
             const schema = Joi.string().lowercase().trim();
             Helper.validate(schema, [
@@ -1468,10 +1384,10 @@ describe('string', () => {
                         context: { value: 1, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should work in combination with a replacement', (done) => {
+        it('should work in combination with a replacement', () => {
 
             const schema = Joi.string().lowercase().replace(/\s+/g, ' ');
             Helper.validate(schema, [
@@ -1487,13 +1403,13 @@ describe('string', () => {
                         context: { value: 1, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
     describe('uppercase()', () => {
 
-        it('only allow strings that are entirely uppercase', (done) => {
+        it('only allow strings that are entirely uppercase', () => {
 
             const schema = Joi.string().uppercase();
             Helper.validateOptions(schema, [
@@ -1527,21 +1443,17 @@ describe('string', () => {
                         context: { value: 1, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('coerce string to uppercase before validation', (done) => {
+        it('coerce string to uppercase before validation', async () => {
 
             const schema = Joi.string().uppercase();
-            schema.validate('lower to upper', (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal('LOWER TO UPPER');
-                done();
-            });
+            const value = await schema.validate('lower to upper');
+            expect(value).to.equal('LOWER TO UPPER');
         });
 
-        it('works in combination with a forced trim', (done) => {
+        it('works in combination with a forced trim', () => {
 
             const schema = Joi.string().uppercase().trim();
             Helper.validate(schema, [
@@ -1557,10 +1469,10 @@ describe('string', () => {
                         context: { value: 1, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('works in combination with a forced replacement', (done) => {
+        it('works in combination with a forced replacement', () => {
 
             const schema = Joi.string().uppercase().replace(/\s+/g, ' ');
             Helper.validate(schema, [
@@ -1576,13 +1488,13 @@ describe('string', () => {
                         context: { value: 1, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
     describe('trim()', () => {
 
-        it('only allow strings that have no leading or trailing whitespace', (done) => {
+        it('only allow strings that have no leading or trailing whitespace', () => {
 
             const schema = Joi.string().trim();
             Helper.validateOptions(schema, [
@@ -1615,32 +1527,24 @@ describe('string', () => {
                 }],
                 ['some thing', true],
                 ['something', true]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('removes leading and trailing whitespace before validation', (done) => {
+        it('removes leading and trailing whitespace before validation', async () => {
 
             const schema = Joi.string().trim();
-            schema.validate(' trim this ', (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal('trim this');
-                done();
-            });
+            const value = await schema.validate(' trim this ');
+            expect(value).to.equal('trim this');
         });
 
-        it('removes leading and trailing whitespace before validation', (done) => {
+        it('removes leading and trailing whitespace before validation', async () => {
 
             const schema = Joi.string().trim().allow('');
-            schema.validate('     ', (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal('');
-                done();
-            });
+            const value = await schema.validate('     ');
+            expect(value).to.equal('');
         });
 
-        it('should work in combination with min', (done) => {
+        it('should work in combination with min', () => {
 
             const schema = Joi.string().min(4).trim();
             Helper.validate(schema, [
@@ -1675,10 +1579,10 @@ describe('string', () => {
                     }]
                 }],
                 ['abcd ', true]
-            ], done);
+            ]);
         });
 
-        it('should work in combination with max', (done) => {
+        it('should work in combination with max', () => {
 
             const schema = Joi.string().max(4).trim();
             Helper.validate(schema, [
@@ -1699,10 +1603,10 @@ describe('string', () => {
                 }],
                 ['abc ', true],
                 ['abcd ', true]
-            ], done);
+            ]);
         });
 
-        it('should work in combination with length', (done) => {
+        it('should work in combination with length', () => {
 
             const schema = Joi.string().length(4).trim();
             Helper.validate(schema, [
@@ -1737,23 +1641,23 @@ describe('string', () => {
                     }]
                 }],
                 ['abcd ', true]
-            ], done);
+            ]);
         });
 
-        it('should work in combination with a case change', (done) => {
+        it('should work in combination with a case change', () => {
 
             const schema = Joi.string().trim().lowercase();
             Helper.validate(schema, [
                 [' abc', true],
                 [' ABC', true],
                 ['ABC', true]
-            ], done);
+            ]);
         });
     });
 
     describe('replace()', () => {
 
-        it('successfully replaces the first occurrence of the expression', (done) => {
+        it('successfully replaces the first occurrence of the expression', () => {
 
             const schema = Joi.string().replace(/\s+/, ''); // no "g" flag
             Helper.validateOptions(schema, [
@@ -1762,10 +1666,10 @@ describe('string', () => {
                 ['something  ', true, null, 'something'],
                 ['some  thing', true, null, 'something'],
                 ['so me thing', true, null, 'some thing'] // first occurrence!
-            ], { convert: true }, done);
+            ], { convert: true });
         });
 
-        it('successfully replaces all occurrences of the expression', (done) => {
+        it('successfully replaces all occurrences of the expression', () => {
 
             const schema = Joi.string().replace(/\s+/g, ''); // has "g" flag
             Helper.validateOptions(schema, [
@@ -1774,43 +1678,35 @@ describe('string', () => {
                 ['something  ', true, null, 'something'],
                 ['some  thing', true, null, 'something'],
                 ['so me thing', true, null, 'something']
-            ], { convert: true }, done);
+            ], { convert: true });
         });
 
-        it('successfully replaces all occurrences of a string pattern', (done) => {
+        it('successfully replaces all occurrences of a string pattern', () => {
 
             const schema = Joi.string().replace('foo', 'X'); // has "g" flag
             Helper.validateOptions(schema, [
                 ['foobarfoobazfoo', true, null, 'XbarXbazX']
-            ], { convert: true }, done);
+            ], { convert: true });
         });
 
-        it('successfully replaces multiple times', (done) => {
+        it('successfully replaces multiple times', async () => {
 
             const schema = Joi.string().replace(/a/g, 'b').replace(/b/g, 'c');
-            schema.validate('a quick brown fox', (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal('c quick crown fox');
-                done();
-            });
+            const value = await schema.validate('a quick brown fox');
+            expect(value).to.equal('c quick crown fox');
         });
 
-        it('should work in combination with trim', (done) => {
+        it('should work in combination with trim', async () => {
 
             // The string below is the name "Yamada Tarou" separated by a
             // carriage return, a "full width" ideographic space and a newline
 
             const schema = Joi.string().trim().replace(/\s+/g, ' ');
-            schema.validate(' \u5C71\u7530\r\u3000\n\u592A\u90CE ', (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal('\u5C71\u7530 \u592A\u90CE');
-                done();
-            });
+            const value = await schema.validate(' \u5C71\u7530\r\u3000\n\u592A\u90CE ');
+            expect(value).to.equal('\u5C71\u7530 \u592A\u90CE');
         });
 
-        it('should work in combination with min', (done) => {
+        it('should work in combination with min', () => {
 
             const schema = Joi.string().min(4).replace(/\s+/g, ' ');
             Helper.validate(schema, [
@@ -1831,19 +1727,19 @@ describe('string', () => {
                 }],
                 ['abc    ', true, null, 'abc '],
                 ['a\t\rbc', true, null, 'a bc']
-            ], done);
+            ]);
         });
 
-        it('should work in combination with max', (done) => {
+        it('should work in combination with max', () => {
 
             const schema = Joi.string().max(5).replace(/ CHANGE ME /g, '-b-');
             Helper.validate(schema, [
                 ['a CHANGE ME c', true, null, 'a-b-c'],
                 ['a-b-c', true, null, 'a-b-c'] // nothing changes here!
-            ], done);
+            ]);
         });
 
-        it('should work in combination with length', (done) => {
+        it('should work in combination with length', () => {
 
             const schema = Joi.string().length(5).replace(/\s+/g, ' ');
             Helper.validate(schema, [
@@ -1863,80 +1759,71 @@ describe('string', () => {
                     }]
                 }],
                 ['a\tb\nc', true, null, 'a b c']
-            ], done);
+            ]);
         });
 
     });
 
     describe('regex()', () => {
 
-        it('should not include a pattern name by default', (done) => {
+        it('should not include a pattern name by default', async () => {
 
             const schema = Joi.string().regex(/[a-z]+/).regex(/[0-9]+/);
-            schema.validate('abcd', (err, value) => {
-
-                expect(err).to.be.an.error('"value" with value "abcd" fails to match the required pattern: /[0-9]+/');
-                expect(err.details).to.equal([{
-                    message: '"value" with value "abcd" fails to match the required pattern: /[0-9]+/',
-                    path: [],
-                    type: 'string.regex.base',
-                    context: {
-                        name: undefined,
-                        pattern: /[0-9]+/,
-                        value: 'abcd',
-                        label: 'value',
-                        key: undefined
-                    }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate('abcd')).to.reject();
+            expect(err).to.be.an.error('"value" with value "abcd" fails to match the required pattern: /[0-9]+/');
+            expect(err.details).to.equal([{
+                message: '"value" with value "abcd" fails to match the required pattern: /[0-9]+/',
+                path: [],
+                type: 'string.regex.base',
+                context: {
+                    name: undefined,
+                    pattern: /[0-9]+/,
+                    value: 'abcd',
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
         });
 
-        it('should include a pattern name if specified', (done) => {
+        it('should include a pattern name if specified', async () => {
 
             const schema = Joi.string().regex(/[a-z]+/, 'letters').regex(/[0-9]+/, 'numbers');
-            schema.validate('abcd', (err, value) => {
-
-                expect(err).to.be.an.error('"value" with value "abcd" fails to match the numbers pattern');
-                expect(err.details).to.equal([{
-                    message: '"value" with value "abcd" fails to match the numbers pattern',
-                    path: [],
-                    type: 'string.regex.name',
-                    context: {
-                        name: 'numbers',
-                        pattern: /[0-9]+/,
-                        value: 'abcd',
-                        label: 'value',
-                        key: undefined
-                    }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate('abcd')).to.reject();
+            expect(err).to.be.an.error('"value" with value "abcd" fails to match the numbers pattern');
+            expect(err.details).to.equal([{
+                message: '"value" with value "abcd" fails to match the numbers pattern',
+                path: [],
+                type: 'string.regex.name',
+                context: {
+                    name: 'numbers',
+                    pattern: /[0-9]+/,
+                    value: 'abcd',
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
         });
 
-        it('should include a pattern name in options object', (done) => {
+        it('should include a pattern name in options object', async () => {
 
             const schema = Joi.string().regex(/[a-z]+/, { name: 'letters' }).regex(/[0-9]+/, { name: 'numbers' });
-            schema.validate('abcd', (err, value) => {
-
-                expect(err).to.be.an.error('"value" with value "abcd" fails to match the numbers pattern');
-                expect(err.details).to.equal([{
-                    message: '"value" with value "abcd" fails to match the numbers pattern',
-                    path: [],
-                    type: 'string.regex.name',
-                    context: {
-                        name: 'numbers',
-                        pattern: /[0-9]+/,
-                        value: 'abcd',
-                        label: 'value',
-                        key: undefined
-                    }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate('abcd')).to.reject();
+            expect(err).to.be.an.error('"value" with value "abcd" fails to match the numbers pattern');
+            expect(err.details).to.equal([{
+                message: '"value" with value "abcd" fails to match the numbers pattern',
+                path: [],
+                type: 'string.regex.name',
+                context: {
+                    name: 'numbers',
+                    pattern: /[0-9]+/,
+                    value: 'abcd',
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
         });
 
-        it('should "invert" regex pattern if specified in options object', (done) => {
+        it('should "invert" regex pattern if specified in options object', () => {
 
             const schema = Joi.string().regex(/[a-z]/, { invert: true });
             Helper.validate(schema, [
@@ -1956,10 +1843,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should include inverted pattern name if specified', (done) => {
+        it('should include inverted pattern name if specified', () => {
 
             const schema = Joi.string().regex(/[a-z]/, {
                 name  : 'lowercase',
@@ -1982,7 +1869,7 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
@@ -2157,7 +2044,7 @@ describe('string', () => {
 
         const validIPvFuturesWithoutCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:']);
 
-        it('should validate all ip addresses with optional CIDR by default', (done) => {
+        it('should validate all ip addresses with optional CIDR by default', () => {
 
             const schema = Joi.string().ip();
             const message = '"value" must be a valid ip address with a optional CIDR';
@@ -2171,10 +2058,10 @@ describe('string', () => {
                 .concat(invalidIPs(message))
                 .concat(invalidIPv4s(message))
                 .concat(invalidIPv6s(message))
-                .concat(invalidIPvFutures(message)), done);
+                .concat(invalidIPvFutures(message)));
         });
 
-        it('should validate all ip addresses with an optional CIDR', (done) => {
+        it('should validate all ip addresses with an optional CIDR', () => {
 
             const schema = Joi.string().ip({ cidr: 'optional' });
             const message = '"value" must be a valid ip address with a optional CIDR';
@@ -2188,10 +2075,10 @@ describe('string', () => {
                 .concat(invalidIPs(message))
                 .concat(invalidIPv4s(message))
                 .concat(invalidIPv6s(message))
-                .concat(invalidIPvFutures(message)), done);
+                .concat(invalidIPvFutures(message)));
         });
 
-        it('should validate all ip addresses with a required CIDR', (done) => {
+        it('should validate all ip addresses with a required CIDR', () => {
 
             const schema = Joi.string().ip({ cidr: 'required' });
             const message = '"value" must be a valid ip address with a required CIDR';
@@ -2205,10 +2092,10 @@ describe('string', () => {
                 .concat(invalidIPs(message))
                 .concat(invalidIPv4s(message))
                 .concat(invalidIPv6s(message))
-                .concat(invalidIPvFutures(message)), done);
+                .concat(invalidIPvFutures(message)));
         });
 
-        it('should validate all ip addresses with a forbidden CIDR', (done) => {
+        it('should validate all ip addresses with a forbidden CIDR', () => {
 
             const schema = Joi.string().ip({ cidr: 'forbidden' });
             const message = '"value" must be a valid ip address with a forbidden CIDR';
@@ -2222,130 +2109,115 @@ describe('string', () => {
                 .concat(invalidIPs(message))
                 .concat(invalidIPv4s(message))
                 .concat(invalidIPv6s(message))
-                .concat(invalidIPvFutures(message)), done);
+                .concat(invalidIPvFutures(message)));
         });
 
-        it('throws when options is not an object', (done) => {
+        it('throws when options is not an object', () => {
 
             expect(() => {
 
                 Joi.string().ip(42);
             }).to.throw('options must be an object');
-            done();
         });
 
-        it('throws when options.cidr is not a string', (done) => {
+        it('throws when options.cidr is not a string', () => {
 
             expect(() => {
 
                 Joi.string().ip({ cidr: 42 });
             }).to.throw('cidr must be a string');
-            done();
         });
 
-        it('throws when options.cidr is not a valid value', (done) => {
+        it('throws when options.cidr is not a valid value', () => {
 
             expect(() => {
 
                 Joi.string().ip({ cidr: '42' });
             }).to.throw('cidr must be one of required, optional, forbidden');
-            done();
         });
 
-        it('throws when options.version is an empty array', (done) => {
+        it('throws when options.version is an empty array', () => {
 
             expect(() => {
 
                 Joi.string().ip({ version: [] });
             }).to.throw('version must have at least 1 version specified');
-            done();
         });
 
-        it('throws when options.version is not a string', (done) => {
+        it('throws when options.version is not a string', () => {
 
             expect(() => {
 
                 Joi.string().ip({ version: 42 });
             }).to.throw('version at position 0 must be a string');
-            done();
         });
 
-        it('throws when options.version is not a valid value', (done) => {
+        it('throws when options.version is not a valid value', () => {
 
             expect(() => {
 
                 Joi.string().ip({ version: '42' });
             }).to.throw('version at position 0 must be one of ipv4, ipv6, ipvfuture');
-            done();
         });
 
-        it('validates ip with a friendly error message', (done) => {
+        it('validates ip with a friendly error message', async () => {
 
             const schema = { item: Joi.string().ip() };
-            Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
-
-                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address with a optional CIDR]');
-                expect(err.details).to.equal([{
-                    message: '"item" must be a valid ip address with a optional CIDR',
-                    path: ['item'],
-                    type: 'string.ip',
-                    context: {
-                        value: 'something',
-                        cidr: 'optional',
-                        label: 'item',
-                        key: 'item'
-                    }
-                }]);
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address with a optional CIDR]');
+            expect(err.details).to.equal([{
+                message: '"item" must be a valid ip address with a optional CIDR',
+                path: ['item'],
+                type: 'string.ip',
+                context: {
+                    value: 'something',
+                    cidr: 'optional',
+                    label: 'item',
+                    key: 'item'
+                }
+            }]);
         });
 
-        it('validates ip and cidr presence with a friendly error message', (done) => {
+        it('validates ip and cidr presence with a friendly error message', async () => {
 
             const schema = { item: Joi.string().ip({ cidr: 'required' }) };
-            Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
-
-                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address with a required CIDR]');
-                expect(err.details).to.equal([{
-                    message: '"item" must be a valid ip address with a required CIDR',
-                    path: ['item'],
-                    type: 'string.ip',
-                    context: {
-                        value: 'something',
-                        cidr: 'required',
-                        label: 'item',
-                        key: 'item'
-                    }
-                }]);
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address with a required CIDR]');
+            expect(err.details).to.equal([{
+                message: '"item" must be a valid ip address with a required CIDR',
+                path: ['item'],
+                type: 'string.ip',
+                context: {
+                    value: 'something',
+                    cidr: 'required',
+                    label: 'item',
+                    key: 'item'
+                }
+            }]);
         });
 
-        it('validates custom ip version and cidr presence with a friendly error message', (done) => {
+        it('validates custom ip version and cidr presence with a friendly error message', async () => {
 
             const schema = { item: Joi.string().ip({ version: 'ipv4', cidr: 'required' }) };
-            Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
-
-                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR]');
-                expect(err.details).to.equal([{
-                    message: '"item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR',
-                    path: ['item'],
-                    type: 'string.ipVersion',
-                    context: {
-                        value: 'something',
-                        cidr: 'required',
-                        version: ['ipv4'],
-                        label: 'item',
-                        key: 'item'
-                    }
-                }]);
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR]');
+            expect(err.details).to.equal([{
+                message: '"item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR',
+                path: ['item'],
+                type: 'string.ipVersion',
+                context: {
+                    value: 'something',
+                    cidr: 'required',
+                    version: ['ipv4'],
+                    label: 'item',
+                    key: 'item'
+                }
+            }]);
         });
 
         describe('ip({ version: "ipv4" })', () => {
 
-            it('should validate all ipv4 addresses with a default CIDR strategy', (done) => {
+            it('should validate all ipv4 addresses with a default CIDR strategy', () => {
 
                 const version = 'ipv4';
                 const schema = Joi.string().ip({ version });
@@ -2360,10 +2232,10 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
 
-            it('should validate all ipv4 addresses with an optional CIDR', (done) => {
+            it('should validate all ipv4 addresses with an optional CIDR', () => {
 
                 const version = 'ipv4';
                 const schema = Joi.string().ip({ version, cidr: 'optional' });
@@ -2378,10 +2250,10 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
 
-            it('should validate all ipv4 addresses with a required CIDR', (done) => {
+            it('should validate all ipv4 addresses with a required CIDR', () => {
 
                 const version = 'ipv4';
                 const schema = Joi.string().ip({ version, cidr: 'required' });
@@ -2396,10 +2268,10 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
 
-            it('should validate all ipv4 addresses with a forbidden CIDR', (done) => {
+            it('should validate all ipv4 addresses with a forbidden CIDR', () => {
 
                 const version = 'ipv4';
                 const schema = Joi.string().ip({ version, cidr: 'forbidden' });
@@ -2414,13 +2286,13 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
         });
 
         describe('ip({ version: "ipv6" })', () => {
 
-            it('should validate all ipv6 addresses with a default CIDR strategy', (done) => {
+            it('should validate all ipv6 addresses with a default CIDR strategy', () => {
 
                 const version = 'ipv6';
                 const schema = Joi.string().ip({ version });
@@ -2435,10 +2307,10 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
 
-            it('should validate all ipv6 addresses with an optional CIDR', (done) => {
+            it('should validate all ipv6 addresses with an optional CIDR', () => {
 
                 const version = 'ipv6';
                 const schema = Joi.string().ip({ version, cidr: 'optional' });
@@ -2453,10 +2325,10 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
 
-            it('should validate all ipv6 addresses with a required CIDR', (done) => {
+            it('should validate all ipv6 addresses with a required CIDR', () => {
 
                 const version = 'ipv6';
                 const schema = Joi.string().ip({ version, cidr: 'required' });
@@ -2471,10 +2343,10 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
 
-            it('should validate all ipv6 addresses with a forbidden CIDR', (done) => {
+            it('should validate all ipv6 addresses with a forbidden CIDR', () => {
 
                 const version = 'ipv6';
                 const schema = Joi.string().ip({ version, cidr: 'forbidden' });
@@ -2489,13 +2361,13 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
         });
 
         describe('ip({ version: "ipvfuture" })', () => {
 
-            it('should validate all ipvfuture addresses with a default CIDR strategy', (done) => {
+            it('should validate all ipvfuture addresses with a default CIDR strategy', () => {
 
                 const version = 'ipvfuture';
                 const schema = Joi.string().ip({ version });
@@ -2510,10 +2382,10 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
 
-            it('should validate all ipvfuture addresses with an optional CIDR', (done) => {
+            it('should validate all ipvfuture addresses with an optional CIDR', () => {
 
                 const version = 'ipvfuture';
                 const schema = Joi.string().ip({ version, cidr: 'optional' });
@@ -2528,10 +2400,10 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
 
-            it('should validate all ipvfuture addresses with a required CIDR', (done) => {
+            it('should validate all ipvfuture addresses with a required CIDR', () => {
 
                 const version = 'ipvfuture';
                 const schema = Joi.string().ip({ version, cidr: 'required' });
@@ -2546,10 +2418,10 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
 
-            it('should validate all ipvfuture addresses with a forbidden CIDR', (done) => {
+            it('should validate all ipvfuture addresses with a forbidden CIDR', () => {
 
                 const version = 'ipvfuture';
                 const schema = Joi.string().ip({ version, cidr: 'forbidden' });
@@ -2564,13 +2436,13 @@ describe('string', () => {
                     .concat(invalidIPs(message, [version]))
                     .concat(invalidIPv4s(message, [version]))
                     .concat(invalidIPv6s(message, [version]))
-                    .concat(invalidIPvFutures(message, [version])), done);
+                    .concat(invalidIPvFutures(message, [version])));
             });
         });
 
         describe('ip({ version: [ "ipv4", "ipv6" ] })', () => {
 
-            it('should validate all ipv4 and ipv6 addresses with a default CIDR strategy', (done) => {
+            it('should validate all ipv4 and ipv6 addresses with a default CIDR strategy', () => {
 
                 const schema = Joi.string().ip({ version: ['ipv4', 'ipv6'] });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv4, ipv6] with a optional CIDR';
@@ -2584,10 +2456,10 @@ describe('string', () => {
                     .concat(invalidIPs(message))
                     .concat(invalidIPv4s(message))
                     .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(invalidIPvFutures(message)));
             });
 
-            it('should validate all ipv4 and ipv6 addresses with an optional CIDR', (done) => {
+            it('should validate all ipv4 and ipv6 addresses with an optional CIDR', () => {
 
                 const schema = Joi.string().ip({ version: ['ipv4', 'ipv6'], cidr: 'optional' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv4, ipv6] with a optional CIDR';
@@ -2601,10 +2473,10 @@ describe('string', () => {
                     .concat(invalidIPs(message))
                     .concat(invalidIPv4s(message))
                     .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(invalidIPvFutures(message)));
             });
 
-            it('should validate all ipv4 and ipv6 addresses with a required CIDR', (done) => {
+            it('should validate all ipv4 and ipv6 addresses with a required CIDR', () => {
 
                 const schema = Joi.string().ip({ version: ['ipv4', 'ipv6'], cidr: 'required' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv4, ipv6] with a required CIDR';
@@ -2618,10 +2490,10 @@ describe('string', () => {
                     .concat(invalidIPs(message))
                     .concat(invalidIPv4s(message))
                     .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(invalidIPvFutures(message)));
             });
 
-            it('should validate all ipv4 and ipv6 addresses with a forbidden CIDR', (done) => {
+            it('should validate all ipv4 and ipv6 addresses with a forbidden CIDR', () => {
 
                 const schema = Joi.string().ip({ version: ['ipv4', 'ipv6'], cidr: 'forbidden' });
                 const message = '"value" must be a valid ip address of one of the following versions [ipv4, ipv6] with a forbidden CIDR';
@@ -2635,14 +2507,14 @@ describe('string', () => {
                     .concat(invalidIPs(message))
                     .concat(invalidIPv4s(message))
                     .concat(invalidIPv6s(message))
-                    .concat(invalidIPvFutures(message)), done);
+                    .concat(invalidIPvFutures(message)));
             });
         });
     });
 
     describe('uri()', () => {
 
-        it('validates uri', (done) => {
+        it('validates uri', () => {
 
             // Handful of tests taken from Node: https://github.com/joyent/node/blob/cfcb1de130867197cbc9c6012b7e84e08e53d032/test/simple/test-url.js
             // Also includes examples from RFC 8936: http://tools.ietf.org/html/rfc3986#page-7
@@ -2881,10 +2753,10 @@ describe('string', () => {
                         context: { value: '/absolute', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates uri with a single scheme provided', (done) => {
+        it('validates uri with a single scheme provided', () => {
 
             const schema = Joi.string().uri({
                 scheme: 'http'
@@ -2948,10 +2820,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates uri with a single regex scheme provided', (done) => {
+        it('validates uri with a single regex scheme provided', () => {
 
             const schema = Joi.string().uri({
                 scheme: /https?/
@@ -3002,10 +2874,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates uri with multiple schemes provided', (done) => {
+        it('validates uri with multiple schemes provided', () => {
 
             const schema = Joi.string().uri({
                 scheme: [/https?/, 'ftp', 'file', 'git+http']
@@ -3031,21 +2903,18 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates uri with a friendly error message', (done) => {
+        it('validates uri with a friendly error message', async () => {
 
             const schema = { item: Joi.string().uri() };
 
-            Joi.compile(schema).validate({ item: 'something invalid' }, (err, value) => {
-
-                expect(err.message).to.contain('must be a valid uri');
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate({ item: 'something invalid' })).to.reject();
+            expect(err.message).to.contain('must be a valid uri');
         });
 
-        it('validates uri with a custom scheme with a friendly error message', (done) => {
+        it('validates uri with a custom scheme with a friendly error message', async () => {
 
             const schema = {
                 item: Joi.string().uri({
@@ -3053,14 +2922,11 @@ describe('string', () => {
                 })
             };
 
-            Joi.compile(schema).validate({ item: 'something invalid' }, (err, value) => {
-
-                expect(err.message).to.contain('must be a valid uri with a scheme matching the http pattern');
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate({ item: 'something invalid' })).to.reject();
+            expect(err.message).to.contain('must be a valid uri with a scheme matching the http pattern');
         });
 
-        it('validates uri with a custom array of schemes with a friendly error message', (done) => {
+        it('validates uri with a custom array of schemes with a friendly error message', async () => {
 
             const schema = {
                 item: Joi.string().uri({
@@ -3068,34 +2934,27 @@ describe('string', () => {
                 })
             };
 
-            Joi.compile(schema).validate({ item: 'something invalid' }, (err, value) => {
-
-                expect(err.message).to.contain('must be a valid uri with a scheme matching the http|https? pattern');
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate({ item: 'something invalid' })).to.reject();
+            expect(err.message).to.contain('must be a valid uri with a scheme matching the http|https? pattern');
         });
 
-        it('validates uri treats scheme as optional', (done) => {
+        it('validates uri treats scheme as optional', () => {
 
             expect(() => {
 
                 Joi.string().uri({});
             }).to.not.throw();
-
-            done();
         });
 
-        it('validates uri requires uriOptions as an object with a friendly error message', (done) => {
+        it('validates uri requires uriOptions as an object with a friendly error message', () => {
 
             expect(() => {
 
                 Joi.string().uri('http');
             }).to.throw(Error, 'options must be an object');
-
-            done();
         });
 
-        it('validates uri requires scheme to be a RegExp, String, or Array with a friendly error message', (done) => {
+        it('validates uri requires scheme to be a RegExp, String, or Array with a friendly error message', () => {
 
             expect(() => {
 
@@ -3103,11 +2962,9 @@ describe('string', () => {
                     scheme: {}
                 });
             }).to.throw(Error, 'scheme must be a RegExp, String, or Array');
-
-            done();
         });
 
-        it('validates uri requires scheme to not be an empty array', (done) => {
+        it('validates uri requires scheme to not be an empty array', () => {
 
             expect(() => {
 
@@ -3115,11 +2972,9 @@ describe('string', () => {
                     scheme: []
                 });
             }).to.throw(Error, 'scheme must have at least 1 scheme specified');
-
-            done();
         });
 
-        it('validates uri requires scheme to be an Array of schemes to all be valid schemes with a friendly error message', (done) => {
+        it('validates uri requires scheme to be an Array of schemes to all be valid schemes with a friendly error message', () => {
 
             expect(() => {
 
@@ -3130,11 +2985,9 @@ describe('string', () => {
                     ]
                 });
             }).to.throw(Error, 'scheme at position 1 must be a valid scheme');
-
-            done();
         });
 
-        it('validates uri requires scheme to be an Array of schemes to be strings or RegExp', (done) => {
+        it('validates uri requires scheme to be an Array of schemes to be strings or RegExp', () => {
 
             expect(() => {
 
@@ -3145,11 +2998,9 @@ describe('string', () => {
                     ]
                 });
             }).to.throw(Error, 'scheme at position 1 must be a RegExp or String');
-
-            done();
         });
 
-        it('validates uri requires scheme to be a valid String scheme with a friendly error message', (done) => {
+        it('validates uri requires scheme to be a valid String scheme with a friendly error message', () => {
 
             expect(() => {
 
@@ -3157,11 +3008,9 @@ describe('string', () => {
                     scheme: '~!@#$%^&*()_'
                 });
             }).to.throw(Error, 'scheme at position 0 must be a valid scheme');
-
-            done();
         });
 
-        it('validates relative uri', (done) => {
+        it('validates relative uri', () => {
 
             const schema = Joi.string().uri({ allowRelative: true });
             Helper.validate(schema, [
@@ -3310,10 +3159,10 @@ describe('string', () => {
                     }]
                 }],
                 ['/absolute', true]
-            ], done);
+            ]);
         });
 
-        it('validates relative only uri', (done) => {
+        it('validates relative only uri', () => {
 
             const schema = Joi.string().uri({ relativeOnly: true });
             Helper.validate(schema, [
@@ -4526,20 +4375,19 @@ describe('string', () => {
                     }]
                 }],
                 ['/absolute', true]
-            ], done);
+            ]);
         });
     });
 
     describe('truncate()', () => {
 
-        it('avoids unnecessary cloning when called twice', (done) => {
+        it('avoids unnecessary cloning when called twice', () => {
 
             const schema = Joi.string().truncate();
             expect(schema.truncate()).to.shallow.equal(schema);
-            done();
         });
 
-        it('switches the truncate flag', (done) => {
+        it('switches the truncate flag', () => {
 
             const schema = Joi.string().truncate();
             const desc = schema.describe();
@@ -4548,10 +4396,9 @@ describe('string', () => {
                 invalids: [''],
                 flags: { truncate: true }
             });
-            done();
         });
 
-        it('switches the truncate flag with explicit value', (done) => {
+        it('switches the truncate flag with explicit value', () => {
 
             const schema = Joi.string().truncate(true);
             const desc = schema.describe();
@@ -4560,10 +4407,9 @@ describe('string', () => {
                 invalids: [''],
                 flags: { truncate: true }
             });
-            done();
         });
 
-        it('switches the truncate flag back', (done) => {
+        it('switches the truncate flag back', () => {
 
             const schema = Joi.string().truncate().truncate(false);
             const desc = schema.describe();
@@ -4572,21 +4418,16 @@ describe('string', () => {
                 invalids: [''],
                 flags: { truncate: false }
             });
-            done();
         });
 
-        it('does not change anything when used without max', (done) => {
+        it('does not change anything when used without max', async () => {
 
             const schema = Joi.string().min(2).truncate();
-            schema.validate('fooooooooooooooooooo', (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal('fooooooooooooooooooo');
-                done();
-            });
+            const value = await schema.validate('fooooooooooooooooooo');
+            expect(value).to.equal('fooooooooooooooooooo');
         });
 
-        it('truncates a string when used with max', (done) => {
+        it('truncates a string when used with max', () => {
 
             const schema = Joi.string().max(5).truncate();
 
@@ -4594,10 +4435,10 @@ describe('string', () => {
                 ['abc', true, null, 'abc'],
                 ['abcde', true, null, 'abcde'],
                 ['abcdef', true, null, 'abcde']
-            ], done);
+            ]);
         });
 
-        it('truncates a string after transformations', (done) => {
+        it('truncates a string after transformations', () => {
 
             const schema = Joi.string().max(5).truncate().trim().replace(/a/g, 'aa');
 
@@ -4606,13 +4447,13 @@ describe('string', () => {
                 ['abcde', true, null, 'aabcd'],
                 ['abcdef', true, null, 'aabcd'],
                 ['  abcdef  ', true, null, 'aabcd']
-            ], done);
+            ]);
         });
     });
 
     describe('validate()', () => {
 
-        it('should, by default, allow undefined, deny empty string', (done) => {
+        it('should, by default, allow undefined, deny empty string', () => {
 
             Helper.validate(Joi.string(), [
                 [undefined, true],
@@ -4625,10 +4466,10 @@ describe('string', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should, when .required(), deny undefined, deny empty string', (done) => {
+        it('should, when .required(), deny undefined, deny empty string', () => {
 
             Helper.validate(Joi.string().required(), [
                 [undefined, false, null, {
@@ -4649,43 +4490,35 @@ describe('string', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should, when .required(), print a friend error message for an empty string', (done) => {
+        it('should, when .required(), print a friend error message for an empty string', async () => {
 
             const schema = Joi.string().required();
-            Joi.compile(schema).validate('', (err, value) => {
-
-                expect(err).to.be.an.error('"value" is not allowed to be empty');
-                expect(err.details).to.equal([{
-                    message: '"value" is not allowed to be empty',
-                    path: [],
-                    type: 'any.empty',
-                    context: { label: 'value', key: undefined }
-                }]);
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate('')).to.reject('"value" is not allowed to be empty');
+            expect(err.details).to.equal([{
+                message: '"value" is not allowed to be empty',
+                path: [],
+                type: 'any.empty',
+                context: { label: 'value', key: undefined }
+            }]);
         });
 
-        it('should, when .required(), print a friendly error message for trimmed whitespace', (done) => {
+        it('should, when .required(), print a friendly error message for trimmed whitespace', async () => {
 
             const schema = Joi.string().trim().required();
 
-            Joi.compile(schema).validate('    ', (err) => {
-
-                expect(err).to.be.an.error('"value" is not allowed to be empty');
-                expect(err.details).to.equal([{
-                    message: '"value" is not allowed to be empty',
-                    path: [],
-                    type: 'any.empty',
-                    context: { label: 'value', key: undefined }
-                }]);
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate('    ')).to.reject('"value" is not allowed to be empty');
+            expect(err.details).to.equal([{
+                message: '"value" is not allowed to be empty',
+                path: [],
+                type: 'any.empty',
+                context: { label: 'value', key: undefined }
+            }]);
         });
 
-        it('should, when .required(), validate non-empty strings', (done) => {
+        it('should, when .required(), validate non-empty strings', () => {
 
             const schema = Joi.string().required();
             Helper.validate(schema, [
@@ -4700,10 +4533,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates invalid values', (done) => {
+        it('validates invalid values', () => {
 
             const schema = Joi.string().invalid('a', 'b', 'c');
             Helper.validate(schema, [
@@ -4726,10 +4559,10 @@ describe('string', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should invert invalid values', (done) => {
+        it('should invert invalid values', () => {
 
             const schema = Joi.string().valid('a', 'b', 'c');
             Helper.validate(schema, [
@@ -4744,10 +4577,10 @@ describe('string', () => {
                 }],
                 ['a', true],
                 ['c', true]
-            ], done);
+            ]);
         });
 
-        it('validates array arguments correctly', (done) => {
+        it('validates array arguments correctly', () => {
 
             const schema = Joi.string().valid(['a', 'b', 'c']);
             Helper.validate(schema, [
@@ -4762,10 +4595,10 @@ describe('string', () => {
                 }],
                 ['a', true],
                 ['c', true]
-            ], done);
+            ]);
         });
 
-        it('validates minimum length when min is used', (done) => {
+        it('validates minimum length when min is used', () => {
 
             const schema = Joi.string().min(3);
             Helper.validate(schema, [
@@ -4794,10 +4627,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates minimum length when min is 0', (done) => {
+        it('validates minimum length when min is 0', () => {
 
             const schema = Joi.string().min(0).required();
             Helper.validate(schema, [
@@ -4820,10 +4653,10 @@ describe('string', () => {
                         context: { label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should return false with minimum length and a null value passed in', (done) => {
+        it('should return false with minimum length and a null value passed in', () => {
 
             const schema = Joi.string().min(3);
             Helper.validate(schema, [
@@ -4836,18 +4669,18 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('null allowed overrides min length requirement', (done) => {
+        it('null allowed overrides min length requirement', () => {
 
             const schema = Joi.string().min(3).allow(null);
             Helper.validate(schema, [
                 [null, true]
-            ], done);
+            ]);
         });
 
-        it('validates maximum length when max is used', (done) => {
+        it('validates maximum length when max is used', () => {
 
             const schema = Joi.string().max(3);
             Helper.validate(schema, [
@@ -4876,18 +4709,18 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should return true with max and not required when value is undefined', (done) => {
+        it('should return true with max and not required when value is undefined', () => {
 
             const schema = Joi.string().max(3);
             Helper.validate(schema, [
                 [undefined, true]
-            ], done);
+            ]);
         });
 
-        it('validates length requirements', (done) => {
+        it('validates length requirements', () => {
 
             const schema = Joi.string().length(3);
             Helper.validate(schema, [
@@ -4931,10 +4764,10 @@ describe('string', () => {
                     }]
                 }],
                 ['abc', true]
-            ], done);
+            ]);
         });
 
-        it('validates regex', (done) => {
+        it('validates regex', () => {
 
             const schema = Joi.string().regex(/^[0-9][-][a-z]+$/);
             Helper.validate(schema, [
@@ -4954,19 +4787,19 @@ describe('string', () => {
                     }]
                 }],
                 ['0-www', true]
-            ], done);
+            ]);
         });
 
-        it('validates regex (ignoring global flag)', (done) => {
+        it('validates regex (ignoring global flag)', () => {
 
             const schema = Joi.string().regex(/a/g);
             Helper.validate(schema, [
                 ['ab', true],
                 ['ac', true]
-            ], done);
+            ]);
         });
 
-        it('validates token', (done) => {
+        it('validates token', () => {
 
             const schema = Joi.string().token();
             Helper.validate(schema, [
@@ -4989,10 +4822,10 @@ describe('string', () => {
                         context: { value: 'abcd#f?h1j orly?', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates alphanum', (done) => {
+        it('validates alphanum', () => {
 
             const schema = Joi.string().alphanum();
             Helper.validate(schema, [
@@ -5015,70 +4848,50 @@ describe('string', () => {
                         context: { value: 'abcd#f?h1j orly?', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('should return false for denied value', (done) => {
+        it('should return false for denied value', async () => {
 
             const text = Joi.string().invalid('joi');
-            text.validate('joi', (err, value) => {
-
-                expect(err).to.exist();
-                done();
-            });
+            await expect(text.validate('joi')).to.reject();
         });
 
-        it('should return true for allowed value', (done) => {
+        it('should return true for allowed value', async () => {
 
             const text = Joi.string().allow('hapi');
-            text.validate('result', (err, value) => {
-
-                expect(err).to.not.exist();
-                done();
-            });
+            await text.validate('result');
         });
 
-        it('validates with one validator (min)', (done) => {
+        it('validates with one validator (min)', async () => {
 
             const text = Joi.string().min(3);
-            text.validate('joi', (err, value) => {
-
-                expect(err).to.not.exist();
-                done();
-            });
+            await text.validate('joi');
         });
 
-        it('validates with two validators (min, required)', (done) => {
+        it('validates with two validators (min, required)', async () => {
 
             const text = Joi.string().min(3).required();
-            text.validate('joi', (err, value) => {
-
-                expect(err).to.not.exist();
-
-                text.validate('', (err2, value2) => {
-
-                    expect(err2).to.exist();
-                    done();
-                });
-            });
+            await text.validate('joi');
+            await expect(text.validate('')).to.reject();
         });
 
-        it('validates null with allow(null)', (done) => {
+        it('validates null with allow(null)', () => {
 
             Helper.validate(Joi.string().allow(null), [
                 [null, true]
-            ], done);
+            ]);
         });
 
-        it('validates "" (empty string) with allow(\'\')', (done) => {
+        it('validates "" (empty string) with allow(\'\')', () => {
 
             Helper.validate(Joi.string().allow(''), [
                 ['', true],
                 ['', true]
-            ], done);
+            ]);
         });
 
-        it('validates combination of required and min', (done) => {
+        it('validates combination of required and min', () => {
 
             const rule = Joi.string().required().min(3);
             Helper.validate(rule, [
@@ -5116,10 +4929,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of required and max', (done) => {
+        it('validates combination of required and max', () => {
 
             const rule = Joi.string().required().max(3);
             Helper.validate(rule, [
@@ -5158,10 +4971,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of allow(\'\') and min', (done) => {
+        it('validates combination of allow(\'\') and min', () => {
 
             const rule = Joi.string().allow('').min(3);
             Helper.validate(rule, [
@@ -5192,10 +5005,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of allow(\'\') and max', (done) => {
+        it('validates combination of allow(\'\') and max', () => {
 
             const rule = Joi.string().allow('').max(3);
             Helper.validate(rule, [
@@ -5226,10 +5039,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of null allowed and max', (done) => {
+        it('validates combination of null allowed and max', () => {
 
             const rule = Joi.string().allow(null).max(3);
             Helper.validate(rule, [
@@ -5260,10 +5073,10 @@ describe('string', () => {
                     }]
                 }],
                 [null, true]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min and max', (done) => {
+        it('validates combination of min and max', () => {
 
             const rule = Joi.string().min(2).max(3);
             Helper.validate(rule, [
@@ -5317,10 +5130,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, and allow(\'\')', (done) => {
+        it('validates combination of min, max, and allow(\'\')', () => {
 
             const rule = Joi.string().min(2).max(3).allow('');
             Helper.validate(rule, [
@@ -5366,10 +5179,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, and required', (done) => {
+        it('validates combination of min, max, and required', () => {
 
             const rule = Joi.string().min(2).max(3).required();
             Helper.validate(rule, [
@@ -5423,10 +5236,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, and regex', (done) => {
+        it('validates combination of min, max, and regex', () => {
 
             const rule = Joi.string().min(2).max(3).regex(/^a/);
             Helper.validate(rule, [
@@ -5525,10 +5338,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, regex, and allow(\'\')', (done) => {
+        it('validates combination of min, max, regex, and allow(\'\')', () => {
 
             const rule = Joi.string().min(2).max(3).regex(/^a/).allow('');
             Helper.validate(rule, [
@@ -5619,10 +5432,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, regex, and required', (done) => {
+        it('validates combination of min, max, regex, and required', () => {
 
             const rule = Joi.string().min(2).max(3).regex(/^a/).required();
             Helper.validate(rule, [
@@ -5721,10 +5534,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, and alphanum', (done) => {
+        it('validates combination of min, max, and alphanum', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum();
             Helper.validate(rule, [
@@ -5804,10 +5617,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, alphanum, and allow(\'\')', (done) => {
+        it('validates combination of min, max, alphanum, and allow(\'\')', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().allow('');
             Helper.validate(rule, [
@@ -5879,10 +5692,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, alphanum, and required', (done) => {
+        it('validates combination of min, max, alphanum, and required', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().required();
             Helper.validate(rule, [
@@ -5962,10 +5775,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, alphanum, and regex', (done) => {
+        it('validates combination of min, max, alphanum, and regex', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().regex(/^a/);
             Helper.validate(rule, [
@@ -6074,10 +5887,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, alphanum, required, and regex', (done) => {
+        it('validates combination of min, max, alphanum, required, and regex', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().required().regex(/^a/);
             Helper.validate(rule, [
@@ -6186,10 +5999,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of min, max, alphanum, allow(\'\'), and regex', (done) => {
+        it('validates combination of min, max, alphanum, allow(\'\'), and regex', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().allow('').regex(/^a/);
             Helper.validate(rule, [
@@ -6290,10 +6103,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email and min', (done) => {
+        it('validates combination of email and min', () => {
 
             const rule = Joi.string().email().min(8);
             Helper.validate(rule, [
@@ -6331,10 +6144,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, and max', (done) => {
+        it('validates combination of email, min, and max', () => {
 
             const rule = Joi.string().email().min(8).max(10);
             Helper.validate(rule, [
@@ -6388,10 +6201,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, and invalid', (done) => {
+        it('validates combination of email, min, max, and invalid', () => {
 
             const rule = Joi.string().email().min(8).max(10).invalid('123@x.com');
             Helper.validate(rule, [
@@ -6453,10 +6266,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, and allow', (done) => {
+        it('validates combination of email, min, max, and allow', () => {
 
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com');
             Helper.validate(rule, [
@@ -6496,10 +6309,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, allow, and invalid', (done) => {
+        it('validates combination of email, min, max, allow, and invalid', () => {
 
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com');
             Helper.validate(rule, [
@@ -6547,10 +6360,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, allow, invalid, and allow(\'\')', (done) => {
+        it('validates combination of email, min, max, allow, invalid, and allow(\'\')', () => {
 
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com').allow('');
             Helper.validate(rule, [
@@ -6590,10 +6403,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, allow, and allow(\'\')', (done) => {
+        it('validates combination of email, min, max, allow, and allow(\'\')', () => {
 
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').allow('');
             Helper.validate(rule, [
@@ -6625,10 +6438,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, allow, invalid, and regex', (done) => {
+        it('validates combination of email, min, max, allow, invalid, and regex', () => {
 
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com').regex(/^1/);
             Helper.validate(rule, [
@@ -6676,10 +6489,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, allow, invalid, regex, and allow(\'\')', (done) => {
+        it('validates combination of email, min, max, allow, invalid, regex, and allow(\'\')', () => {
 
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com').regex(/^1/).allow('');
             Helper.validate(rule, [
@@ -6719,10 +6532,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, and allow(\'\')', (done) => {
+        it('validates combination of email, min, max, and allow(\'\')', () => {
 
             const rule = Joi.string().email().min(8).max(10).allow('');
             Helper.validate(rule, [
@@ -6768,10 +6581,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, and regex', (done) => {
+        it('validates combination of email, min, max, and regex', () => {
 
             const rule = Joi.string().email().min(8).max(10).regex(/^1234/);
             Helper.validate(rule, [
@@ -6839,10 +6652,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, regex, and allow(\'\')', (done) => {
+        it('validates combination of email, min, max, regex, and allow(\'\')', () => {
 
             const rule = Joi.string().email().min(8).max(10).regex(/^1234/).allow('');
             Helper.validate(rule, [
@@ -6902,10 +6715,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of email, min, max, regex, and required', (done) => {
+        it('validates combination of email, min, max, regex, and required', () => {
 
             const rule = Joi.string().email().min(8).max(10).regex(/^1234/).required();
             Helper.validate(rule, [
@@ -6973,10 +6786,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates isoDate', (done) => {
+        it('validates isoDate', () => {
 
             Helper.validateOptions(Joi.string().isoDate(), [
                 ['+002013-06-07T14:21:46.295Z', true],
@@ -7183,20 +6996,17 @@ describe('string', () => {
                         context: { value: '2013-1841', label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates isoDate with a friendly error message', (done) => {
+        it('validates isoDate with a friendly error message', async () => {
 
             const schema = { item: Joi.string().isoDate() };
-            Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
-
-                expect(err.message).to.contain('must be a valid ISO 8601 date');
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            expect(err.message).to.contain('must be a valid ISO 8601 date');
         });
 
-        it('validates combination of isoDate and min', (done) => {
+        it('validates combination of isoDate and min', () => {
 
             const rule = Joi.string().isoDate().min(23);
             Helper.validateOptions(rule, [
@@ -7376,10 +7186,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min and max', (done) => {
+        it('validates combination of isoDate, min and max', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23);
             Helper.validateOptions(rule, [
@@ -7573,10 +7383,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max and invalid', (done) => {
+        it('validates combination of isoDate, min, max and invalid', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).invalid('2013-06-07T14:21+07:00');
             Helper.validateOptions(rule, [
@@ -7778,10 +7588,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max and allow', (done) => {
+        it('validates combination of isoDate, min, max and allow', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00');
             Helper.validateOptions(rule, [
@@ -7961,10 +7771,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max, allow and invalid', (done) => {
+        it('validates combination of isoDate, min, max, allow and invalid', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21+07:00');
             Helper.validateOptions(rule, [
@@ -8152,10 +7962,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max, allow, invalid and allow(\'\')', (done) => {
+        it('validates combination of isoDate, min, max, allow, invalid and allow(\'\')', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21+07:00').allow('');
             Helper.validateOptions(rule, [
@@ -8335,10 +8145,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max, allow, invalid and allow(\'\')', (done) => {
+        it('validates combination of isoDate, min, max, allow, invalid and allow(\'\')', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').allow('');
             Helper.validateOptions(rule, [
@@ -8510,10 +8320,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max, allow, invalid and regex', (done) => {
+        it('validates combination of isoDate, min, max, allow, invalid and regex', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21Z').regex(/Z$/);
             Helper.validateOptions(rule, [
@@ -8729,10 +8539,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max, allow, invalid, regex and allow(\'\')', (done) => {
+        it('validates combination of isoDate, min, max, allow, invalid, regex and allow(\'\')', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('2013-06-07T14:21:46.295+07:00').invalid('2013-06-07T14:21Z').regex(/Z$/).allow('');
             Helper.validateOptions(rule, [
@@ -8940,10 +8750,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max and allow(\'\')', (done) => {
+        it('validates combination of isoDate, min, max and allow(\'\')', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).allow('');
             Helper.validateOptions(rule, [
@@ -9129,10 +8939,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max and regex', (done) => {
+        it('validates combination of isoDate, min, max and regex', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/);
             Helper.validateOptions(rule, [
@@ -9354,10 +9164,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max, regex and allow(\'\')', (done) => {
+        it('validates combination of isoDate, min, max, regex and allow(\'\')', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).allow('');
             Helper.validateOptions(rule, [
@@ -9571,10 +9381,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates combination of isoDate, min, max, regex and required', (done) => {
+        it('validates combination of isoDate, min, max, regex and required', () => {
 
             const rule = Joi.string().isoDate().min(17).max(23).regex(/Z$/).required();
             Helper.validateOptions(rule, [
@@ -9796,10 +9606,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: false }, done);
+            ], { convert: false });
         });
 
-        it('validates and formats isoDate with convert set to true (default)', (done) => {
+        it('validates and formats isoDate with convert set to true (default)', () => {
 
             const rule = Joi.string().isoDate();
             Helper.validateOptions(rule, [
@@ -9825,10 +9635,10 @@ describe('string', () => {
                         context: { value: '2013-184', label: 'value', key: undefined }
                     }]
                 }]
-            ], { convert: true }, done);
+            ], { convert: true });
         });
 
-        it('validates an hexadecimal string', (done) => {
+        it('validates an hexadecimal string', () => {
 
             const rule = Joi.string().hex();
             Helper.validate(rule, [
@@ -9843,10 +9653,10 @@ describe('string', () => {
                         context: { value: '123afg', label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates the base64 options', (done) => {
+        it('validates the base64 options', () => {
 
             expect(() => {
 
@@ -9857,10 +9667,9 @@ describe('string', () => {
 
                 Joi.string().base64({ paddingRequired: 'a' });
             }).to.throw('paddingRequired must be boolean');
-            done();
         });
 
-        it('validates a base64 string with no options', (done) => {
+        it('validates a base64 string with no options', () => {
 
             const rule = Joi.string().base64();
             Helper.validate(rule, [
@@ -9971,10 +9780,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates a base64 string with padding explicitly required', (done) => {
+        it('validates a base64 string with padding explicitly required', () => {
 
             const rule = Joi.string().base64({ paddingRequired: true });
             Helper.validate(rule, [
@@ -10085,10 +9894,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates a base64 string with padding not required', (done) => {
+        it('validates a base64 string with padding not required', () => {
 
             const rule = Joi.string().base64({ paddingRequired: false });
             Helper.validate(rule, [
@@ -10202,10 +10011,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of uppercase, min, max, alphanum and valid', (done) => {
+        it('validates combination of uppercase, min, max, alphanum and valid', () => {
 
             const rule = Joi.string().uppercase().min(2).max(3).alphanum().valid('AB', 'BC');
             Helper.validate(rule, [
@@ -10321,31 +10130,29 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
     describe('guid()', () => {
 
-        it('throws when options.version is not a string', (done) => {
+        it('throws when options.version is not a string', () => {
 
             expect(() => {
 
                 Joi.string().guid({ version: 42 });
             }).to.throw('version at position 0 must be a string');
-            done();
         });
 
-        it('throws when options.version is not a valid value', (done) => {
+        it('throws when options.version is not a valid value', () => {
 
             expect(() => {
 
                 Joi.string().guid({ version: '42' });
             }).to.throw('version at position 0 must be one of uuidv1, uuidv2, uuidv3, uuidv4, uuidv5');
-            done();
         });
 
-        it('validates guid', (done) => {
+        it('validates guid', () => {
 
             Helper.validate(Joi.string().guid(), [
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', true],
@@ -10461,10 +10268,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates uuidv1', (done) => {
+        it('validates uuidv1', () => {
 
             Helper.validate(Joi.string().guid({ version: ['uuidv1'] }), [
                 ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D}', true],
@@ -10605,10 +10412,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates uuidv2', (done) => {
+        it('validates uuidv2', () => {
 
             Helper.validate(Joi.string().guid({ version: ['uuidv2'] }), [
                 ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D}', true],
@@ -10749,10 +10556,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates uuidv3', (done) => {
+        it('validates uuidv3', () => {
 
             Helper.validate(Joi.string().guid({ version: ['uuidv3'] }), [
                 ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D}', true],
@@ -10893,10 +10700,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates uuidv4', (done) => {
+        it('validates uuidv4', () => {
 
             Helper.validate(Joi.string().guid({ version: ['uuidv4'] }), [
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', true],
@@ -11037,10 +10844,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates uuidv5', (done) => {
+        it('validates uuidv5', () => {
 
             Helper.validate(Joi.string().guid({ version: ['uuidv5'] }), [
                 ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', true],
@@ -11181,10 +10988,10 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates multiple uuid versions (1,3,5)', (done) => {
+        it('validates multiple uuid versions (1,3,5)', () => {
 
             Helper.validate(Joi.string().guid({ version: ['uuidv1', 'uuidv3', 'uuidv5'] }), [
                 ['{D1A5279D-B27D-1CD4-805E-EFDD53D08E8D}', true],
@@ -11327,26 +11134,23 @@ describe('string', () => {
                         }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates guid with a friendly error message', (done) => {
+        it('validates guid with a friendly error message', async () => {
 
             const schema = { item: Joi.string().guid() };
-            Joi.compile(schema).validate({ item: 'something' }, (err, value) => {
-
-                expect(err).to.be.an.error('child "item" fails because ["item" must be a valid GUID]');
-                expect(err.details).to.equal([{
-                    message: '"item" must be a valid GUID',
-                    path: ['item'],
-                    type: 'string.guid',
-                    context: { value: 'something', label: 'item', key: 'item' }
-                }]);
-                done();
-            });
+            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid GUID]');
+            expect(err.details).to.equal([{
+                message: '"item" must be a valid GUID',
+                path: ['item'],
+                type: 'string.guid',
+                context: { value: 'something', label: 'item', key: 'item' }
+            }]);
         });
 
-        it('validates combination of guid and min', (done) => {
+        it('validates combination of guid and min', () => {
 
             const rule = Joi.string().guid().min(36);
             Helper.validate(rule, [
@@ -11471,10 +11275,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min and max', (done) => {
+        it('validates combination of guid, min and max', () => {
 
             const rule = Joi.string().guid().min(32).max(34);
             Helper.validate(rule, [
@@ -11599,10 +11403,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max and invalid', (done) => {
+        it('validates combination of guid, min, max and invalid', () => {
 
             const rule = Joi.string().guid().min(32).max(34).invalid('b4b2fb69c6244e5eb0698e0c6ec66618');
             Helper.validate(rule, [
@@ -11735,10 +11539,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max and allow', (done) => {
+        it('validates combination of guid, min, max and allow', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D');
             Helper.validate(rule, [
@@ -11851,10 +11655,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max, allow and invalid', (done) => {
+        it('validates combination of guid, min, max, allow and invalid', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').invalid('b4b2fb69c6244e5eb0698e0c6ec66618');
             Helper.validate(rule, [
@@ -11975,10 +11779,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max, allow, invalid and allow(\'\')', (done) => {
+        it('validates combination of guid, min, max, allow, invalid and allow(\'\')', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').invalid('b4b2fb69c6244e5eb0698e0c6ec66618').allow('');
             Helper.validate(rule, [
@@ -12091,10 +11895,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max, allow and allow(\'\')', (done) => {
+        it('validates combination of guid, min, max, allow and allow(\'\')', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').allow('');
             Helper.validate(rule, [
@@ -12199,10 +12003,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max, allow, invalid and regex', (done) => {
+        it('validates combination of guid, min, max, allow, invalid and regex', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08').invalid('b4b2fb69c6244e5eb0698e0c6ec66618').regex(/^{7e908/);
             Helper.validate(rule, [
@@ -12351,10 +12155,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max, allow, invalid, regex and allow(\'\')', (done) => {
+        it('validates combination of guid, min, max, allow, invalid, regex and allow(\'\')', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08').invalid('b4b2fb69c6244e5eb0698e0c6ec66618').regex(/^{7e908/).allow('');
             Helper.validate(rule, [
@@ -12495,10 +12299,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max and allow(\'\')', (done) => {
+        it('validates combination of guid, min, max and allow(\'\')', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('');
             Helper.validate(rule, [
@@ -12615,10 +12419,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max and regex', (done) => {
+        it('validates combination of guid, min, max and regex', () => {
 
             const rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i);
             Helper.validate(rule, [
@@ -12785,10 +12589,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max, regex and allow(\'\')', (done) => {
+        it('validates combination of guid, min, max, regex and allow(\'\')', () => {
 
             const rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i).allow('');
             Helper.validate(rule, [
@@ -12947,10 +12751,10 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('validates combination of guid, min, max, regex and required', (done) => {
+        it('validates combination of guid, min, max, regex and required', () => {
 
             const rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i).required();
             Helper.validate(rule, [
@@ -13117,13 +12921,13 @@ describe('string', () => {
                         context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 
     describe('describe()', () => {
 
-        it('describes various versions of a guid', (done) => {
+        it('describes various versions of a guid', () => {
 
             const schema = Joi.string().guid({ version: ['uuidv1', 'uuidv3', 'uuidv5'] });
             const description = schema.describe();
@@ -13145,10 +12949,9 @@ describe('string', () => {
                 ],
                 type: 'string'
             });
-            done();
         });
 
-        it('describes invert regex pattern', (done) => {
+        it('describes invert regex pattern', () => {
 
             const schema = Joi.string().regex(/[a-z]/, {
                 invert: true
@@ -13167,7 +12970,6 @@ describe('string', () => {
                     }
                 ]
             });
-            done();
         });
     });
 });

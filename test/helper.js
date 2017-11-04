@@ -2,8 +2,8 @@
 
 // Load modules
 
+const { expect } = require('code');
 const Joi = require('../');
-const Lab = require('lab');
 
 
 // Declare internals
@@ -11,14 +11,9 @@ const Lab = require('lab');
 const internals = {};
 
 
-// Test shortcuts
+exports.validate = function (schema, config) {
 
-const expect = Lab.expect;
-
-
-exports.validate = function (schema, config, callback) {
-
-    return exports.validateOptions(schema, config, null, callback);
+    return exports.validateOptions(schema, config, null);
 };
 
 
@@ -81,10 +76,6 @@ exports.validateOptions = function (schema, config, options, callback) {
         // Reframe the error location, we don't care about the helper
         err.at = internals.thrownAt();
         throw err;
-    }
-
-    if (callback) {
-        callback();
     }
 };
 

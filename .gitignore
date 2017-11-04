@@ -13,6 +13,7 @@ config.json
 */._*
 */*/._*
 coverage.*
+sandbox.js
 .settings
 package-lock.json
 

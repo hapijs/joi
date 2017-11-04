@@ -19,40 +19,30 @@ const { describe, it, expect } = exports.lab = Lab.script();
 
 describe('object', () => {
 
-    it('can be called on its own', (done) => {
+    it('can be called on its own', () => {
 
         const object = Joi.object;
         expect(() => object()).to.throw('Must be invoked on a Joi instance.');
-        done();
     });
 
-    it('converts a json string to an object', (done) => {
+    it('converts a json string to an object', async () => {
 
-        Joi.object().validate('{"hi":true}', (err, value) => {
-
-            expect(err).to.not.exist();
-            expect(value.hi).to.equal(true);
-            done();
-        });
+        const value = await Joi.object().validate('{"hi":true}');
+        expect(value.hi).to.equal(true);
     });
 
-    it('errors on non-object string', (done) => {
+    it('errors on non-object string', async () => {
 
-        Joi.object().validate('a string', (err, value) => {
-
-            expect(err).to.be.an.error('"value" must be an object');
-            expect(err.details).to.equal([{
-                message: '"value" must be an object',
-                path: [],
-                type: 'object.base',
-                context: { label: 'value', key: undefined }
-            }]);
-            expect(value).to.equal('a string');
-            done();
-        });
+        const err = await expect(Joi.object().validate('a string')).to.reject('"value" must be an object');
+        expect(err.details).to.equal([{
+            message: '"value" must be an object',
+            path: [],
+            type: 'object.base',
+            context: { label: 'value', key: undefined }
+        }]);
     });
 
-    it('validates an object', (done) => {
+    it('validates an object', () => {
 
         const schema = Joi.object().required();
         Helper.validate(schema, [
@@ -67,114 +57,80 @@ describe('object', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('return object reference when no rules specified', (done) => {
+    it('return object reference when no rules specified', async () => {
 
         const schema = Joi.object({
             a: Joi.object()
         });
 
         const item = { x: 5 };
-        schema.validate({ a: item }, (err, value) => {
-
-            expect(err).not.to.exist();
-            expect(value.a).to.equal(item);
-            done();
-        });
+        const value = await schema.validate({ a: item });
+        expect(value.a).to.equal(item);
     });
 
-    it('retains ignored values', (done) => {
+    it('retains ignored values', async () => {
 
         const schema = Joi.object();
-        schema.validate({ a: 5 }, (err, value) => {
-
-            expect(err).not.to.exist();
-            expect(value.a).to.equal(5);
-            done();
-        });
+        const value = await schema.validate({ a: 5 });
+        expect(value.a).to.equal(5);
     });
 
-    it('retains skipped values', (done) => {
+    it('retains skipped values', async () => {
 
         const schema = Joi.object({ b: 5 }).unknown(true);
-        schema.validate({ b: '5', a: 5 }, (err, value) => {
-
-            expect(err).not.to.exist();
-            expect(value.a).to.equal(5);
-            expect(value.b).to.equal(5);
-            done();
-        });
+        const value = await schema.validate({ b: '5', a: 5 });
+        expect(value.a).to.equal(5);
+        expect(value.b).to.equal(5);
     });
 
-    it('allows any key when schema is undefined', (done) => {
+    it('allows any key when schema is undefined', async () => {
 
-        Joi.object().validate({ a: 4 }, (err, value) => {
-
-            expect(err).to.not.exist();
-
-            Joi.object(undefined).validate({ a: 4 }, (err2, value2) => {
-
-                expect(err2).to.not.exist();
-                done();
-            });
-        });
+        await Joi.object().validate({ a: 4 });
+        await Joi.object(undefined).validate({ a: 4 });
     });
 
-    it('allows any key when schema is null', (done) => {
+    it('allows any key when schema is null', async () => {
 
-        Joi.object(null).validate({ a: 4 }, (err, value) => {
-
-            expect(err).to.not.exist();
-            done();
-        });
+        await Joi.object(null).validate({ a: 4 });
     });
 
-    it('throws on invalid object schema', (done) => {
+    it('throws on invalid object schema', () => {
 
         expect(() => {
 
             Joi.object(4);
         }).to.throw('Object schema must be a valid object');
-        done();
     });
 
-    it('throws on joi object schema', (done) => {
+    it('throws on joi object schema', () => {
 
         expect(() => {
 
             Joi.object(Joi.object());
         }).to.throw('Object schema cannot be a joi schema');
-        done();
     });
 
-    it('skips conversion when value is undefined', (done) => {
+    it('skips conversion when value is undefined', async () => {
 
-        Joi.object({ a: Joi.object() }).validate(undefined, (err, value) => {
-
-            expect(err).to.not.exist();
-            expect(value).to.not.exist();
-            done();
-        });
+        const value = await Joi.object({ a: Joi.object() }).validate(undefined);
+        expect(value).to.not.exist();
     });
 
-    it('errors on array', (done) => {
+    it('errors on array', async () => {
 
-        Joi.object().validate([1, 2, 3], (err, value) => {
-
-            expect(err).to.be.an.error('"value" must be an object');
-            expect(err.details).to.equal([{
-                message: '"value" must be an object',
-                path: [],
-                type: 'object.base',
-                context: { label: 'value', key: undefined }
-            }]);
-            done();
-        });
+        const err = await expect(Joi.object().validate([1, 2, 3])).to.reject('"value" must be an object');
+        expect(err.details).to.equal([{
+            message: '"value" must be an object',
+            path: [],
+            type: 'object.base',
+            context: { label: 'value', key: undefined }
+        }]);
     });
 
-    it('should prevent extra keys from existing by default', (done) => {
+    it('should prevent extra keys from existing by default', () => {
 
         const schema = Joi.object({ item: Joi.string().required() }).required();
         Helper.validate(schema, [
@@ -197,10 +153,10 @@ describe('object', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('should validate count when min is set', (done) => {
+    it('should validate count when min is set', () => {
 
         const schema = Joi.object().min(3);
         Helper.validate(schema, [
@@ -232,10 +188,10 @@ describe('object', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('should validate count when max is set', (done) => {
+    it('should validate count when max is set', () => {
 
         const schema = Joi.object().max(2);
         Helper.validate(schema, [
@@ -259,10 +215,10 @@ describe('object', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('should validate count when min and max is set', (done) => {
+    it('should validate count when min and max is set', () => {
 
         const schema = Joi.object().max(3).min(2);
         Helper.validate(schema, [
@@ -295,10 +251,10 @@ describe('object', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('should validate count when length is set', (done) => {
+    it('should validate count when length is set', () => {
 
         const schema = Joi.object().length(2);
         Helper.validate(schema, [
@@ -330,10 +286,10 @@ describe('object', () => {
                     context: { label: 'value', key: undefined }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('should validate constructor when type is set', (done) => {
+    it('should validate constructor when type is set', () => {
 
         const schema = Joi.object().type(RegExp);
         Helper.validate(schema, [
@@ -366,10 +322,10 @@ describe('object', () => {
             }],
             [/abcd/, true],
             [new RegExp(), true]
-        ], done);
+        ]);
     });
 
-    it('should traverse an object and validate all properties in the top level', (done) => {
+    it('should traverse an object and validate all properties in the top level', () => {
 
         const schema = Joi.object({
             num: Joi.number()
@@ -386,10 +342,10 @@ describe('object', () => {
                     context: { label: 'num', key: 'num' }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('should traverse an object and child objects and validate all properties', (done) => {
+    it('should traverse an object and child objects and validate all properties', () => {
 
         const schema = Joi.object({
             num: Joi.number(),
@@ -419,10 +375,10 @@ describe('object', () => {
                     context: { value: 123, label: 'item', key: 'item' }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('should traverse an object several levels', (done) => {
+    it('should traverse an object several levels', () => {
 
         const schema = Joi.object({
             obj: Joi.object({
@@ -457,10 +413,10 @@ describe('object', () => {
                     context: { label: 'item', key: 'item' }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('should traverse an object several levels with required levels', (done) => {
+    it('should traverse an object several levels with required levels', () => {
 
         const schema = Joi.object({
             obj: Joi.object({
@@ -505,10 +461,10 @@ describe('object', () => {
                     context: { label: 'item', key: 'item' }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('should traverse an object several levels with required levels (without Joi.obj())', (done) => {
+    it('should traverse an object several levels with required levels (without Joi.obj())', () => {
 
         const schema = {
             obj: {
@@ -553,27 +509,23 @@ describe('object', () => {
                     context: { label: 'item', key: 'item' }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('errors on unknown keys when functions allows', (done) => {
+    it('errors on unknown keys when functions allows', async () => {
 
         const schema = Joi.object({ a: Joi.number() }).options({ skipFunctions: true });
         const obj = { a: 5, b: 'value' };
-        schema.validate(obj, (err, value) => {
-
-            expect(err).to.be.an.error('"b" is not allowed');
-            expect(err.details).to.equal([{
-                message: '"b" is not allowed',
-                path: ['b'],
-                type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
-            }]);
-            done();
-        });
+        const err = await expect(schema.validate(obj)).to.reject('"b" is not allowed');
+        expect(err.details).to.equal([{
+            message: '"b" is not allowed',
+            path: ['b'],
+            type: 'object.allowUnknown',
+            context: { child: 'b', label: 'b', key: 'b' }
+        }]);
     });
 
-    it('validates both valid() and with()', (done) => {
+    it('validates both valid() and with()', () => {
 
         const schema = Joi.object({
             first: Joi.valid('value'),
@@ -597,10 +549,10 @@ describe('object', () => {
                     }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('validates referenced arrays in valid()', (done) => {
+    it('validates referenced arrays in valid()', () => {
 
         const ref = Joi.ref('$x');
         const schema = Joi.object({
@@ -637,44 +589,36 @@ describe('object', () => {
                     context: { valids: [ref], label: 'foo', key: 'foo' }
                 }]
             }]
-        ], done);
+        ]);
     });
 
-    it('errors on unknown nested keys with the correct path', (done) => {
+    it('errors on unknown nested keys with the correct path', async () => {
 
         const schema = Joi.object({ a: Joi.object().keys({}) });
         const obj = { a: { b: 'value' } };
-        schema.validate(obj, (err, value) => {
-
-            expect(err).to.be.an.error('child "a" fails because ["b" is not allowed]');
-            expect(err.details).to.equal([{
-                message: '"b" is not allowed',
-                path: ['a', 'b'],
-                type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
-            }]);
-            done();
-        });
+        const err = await expect(schema.validate(obj)).to.reject('child "a" fails because ["b" is not allowed]');
+        expect(err.details).to.equal([{
+            message: '"b" is not allowed',
+            path: ['a', 'b'],
+            type: 'object.allowUnknown',
+            context: { child: 'b', label: 'b', key: 'b' }
+        }]);
     });
 
-    it('errors on unknown nested keys with the correct path at the root level', (done) => {
+    it('errors on unknown nested keys with the correct path at the root level', async () => {
 
         const schema = Joi.object({ a: Joi.object().keys({}) });
         const obj = { c: 'hello' };
-        schema.validate(obj, (err, value) => {
-
-            expect(err).to.be.an.error('"c" is not allowed');
-            expect(err.details).to.equal([{
-                message: '"c" is not allowed',
-                path: ['c'],
-                type: 'object.allowUnknown',
-                context: { child: 'c', label: 'c', key: 'c' }
-            }]);
-            done();
-        });
+        const err = await expect(schema.validate(obj)).to.reject('"c" is not allowed');
+        expect(err.details).to.equal([{
+            message: '"c" is not allowed',
+            path: ['c'],
+            type: 'object.allowUnknown',
+            context: { child: 'c', label: 'c', key: 'c' }
+        }]);
     });
 
-    it('should work on prototype-less objects', (done) => {
+    it('should work on prototype-less objects', async () => {
 
         const input = Object.create(null);
         const schema = Joi.object().keys({
@@ -683,138 +627,107 @@ describe('object', () => {
 
         input.a = 1337;
 
-        Joi.validate(input, schema, (err) => {
-
-            expect(err).to.not.exist();
-            done();
-        });
+        await Joi.validate(input, schema);
     });
 
-    it('should be able to use rename safely with a fake hasOwnProperty', (done) => {
+    it('should be able to use rename safely with a fake hasOwnProperty', async () => {
 
         const input = { a: 1, hasOwnProperty: 'foo' };
         const schema = Joi.object().rename('b', 'a');
 
-        Joi.validate(input, schema, (err) => {
-
-            expect(err).to.be.an.error('"value" cannot rename child "b" because override is disabled and target "a" exists');
-            expect(err.details).to.equal([{
-                message: '"value" cannot rename child "b" because override is disabled and target "a" exists',
-                path: [],
-                type: 'object.rename.override',
-                context: { from: 'b', to: 'a', label: 'value', key: undefined }
-            }]);
-            done();
-        });
+        const err = await expect(Joi.validate(input, schema)).to.reject();
+        expect(err).to.be.an.error('"value" cannot rename child "b" because override is disabled and target "a" exists');
+        expect(err.details).to.equal([{
+            message: '"value" cannot rename child "b" because override is disabled and target "a" exists',
+            path: [],
+            type: 'object.rename.override',
+            context: { from: 'b', to: 'a', label: 'value', key: undefined }
+        }]);
     });
 
-    it('should be able to use object.with() safely with a fake hasOwnProperty', (done) => {
+    it('should be able to use object.with() safely with a fake hasOwnProperty', async () => {
 
         const input = { a: 1, hasOwnProperty: 'foo' };
         const schema = Joi.object({ a: 1 }).with('a', 'b');
 
-        Joi.validate(input, schema, (err) => {
-
-            expect(err).to.be.an.error('"hasOwnProperty" is not allowed. "a" missing required peer "b"');
-            expect(err.details).to.equal([
-                {
-                    message: '"hasOwnProperty" is not allowed',
-                    path: ['hasOwnProperty'],
-                    type: 'object.allowUnknown',
-                    context:
-                        {
-                            child: 'hasOwnProperty',
-                            label: 'hasOwnProperty',
-                            key: 'hasOwnProperty'
-                        }
-                },
-                {
-                    message: '"a" missing required peer "b"',
-                    path: ['a'],
-                    type: 'object.with',
-                    context:
-                        {
-                            main: 'a',
-                            mainWithLabel: 'a',
-                            peer: 'b',
-                            peerWithLabel: 'b',
-                            label: 'a',
-                            key: 'a'
-                        }
-                }
-            ]);
-            done();
-        });
+        const err = await expect(Joi.validate(input, schema)).to.reject();
+        expect(err).to.be.an.error('"hasOwnProperty" is not allowed. "a" missing required peer "b"');
+        expect(err.details).to.equal([
+            {
+                message: '"hasOwnProperty" is not allowed',
+                path: ['hasOwnProperty'],
+                type: 'object.allowUnknown',
+                context:
+                    {
+                        child: 'hasOwnProperty',
+                        label: 'hasOwnProperty',
+                        key: 'hasOwnProperty'
+                    }
+            },
+            {
+                message: '"a" missing required peer "b"',
+                path: ['a'],
+                type: 'object.with',
+                context:
+                    {
+                        main: 'a',
+                        mainWithLabel: 'a',
+                        peer: 'b',
+                        peerWithLabel: 'b',
+                        label: 'a',
+                        key: 'a'
+                    }
+            }
+        ]);
     });
 
     describe('keys()', () => {
 
-        it('allows any key', (done) => {
+        it('allows any key', async () => {
 
             const a = Joi.object({ a: 4 });
             const b = a.keys();
-            a.validate({ b: 3 }, (err, value) => {
+            const err = await expect(a.validate({ b: 3 })).to.reject('"b" is not allowed');
+            expect(err.details).to.equal([{
+                message: '"b" is not allowed',
+                path: ['b'],
+                type: 'object.allowUnknown',
+                context: { child: 'b', label: 'b', key: 'b' }
+            }]);
 
-                expect(err).to.be.an.error('"b" is not allowed');
-                expect(err.details).to.equal([{
-                    message: '"b" is not allowed',
-                    path: ['b'],
-                    type: 'object.allowUnknown',
-                    context: { child: 'b', label: 'b', key: 'b' }
-                }]);
-
-                b.validate({ b: 3 }, (err2, value2) => {
-
-                    expect(err2).to.not.exist();
-                    done();
-                });
-            });
+            await b.validate({ b: 3 });
         });
 
-        it('forbids all keys', (done) => {
+        it('forbids all keys', async () => {
 
             const a = Joi.object();
             const b = a.keys({});
-            a.validate({ b: 3 }, (err, value) => {
-
-                expect(err).to.not.exist();
-                b.validate({ b: 3 }, (err2, value2) => {
-
-                    expect(err2).to.be.an.error('"b" is not allowed');
-                    expect(err2.details).to.equal([{
-                        message: '"b" is not allowed',
-                        path: ['b'],
-                        type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
-                    }]);
-                    done();
-                });
-            });
+            await a.validate({ b: 3 });
+            const err = await expect(b.validate({ b: 3 })).to.reject('"b" is not allowed');
+            expect(err.details).to.equal([{
+                message: '"b" is not allowed',
+                path: ['b'],
+                type: 'object.allowUnknown',
+                context: { child: 'b', label: 'b', key: 'b' }
+            }]);
         });
 
-        it('adds to existing keys', (done) => {
+        it('adds to existing keys', async () => {
 
             const a = Joi.object({ a: 1 });
             const b = a.keys({ b: 2 });
-            a.validate({ a: 1, b: 2 }, (err, value) => {
+            const err = await expect(a.validate({ a: 1, b: 2 })).to.reject('"b" is not allowed');
+            expect(err.details).to.equal([{
+                message: '"b" is not allowed',
+                path: ['b'],
+                type: 'object.allowUnknown',
+                context: { child: 'b', label: 'b', key: 'b' }
+            }]);
 
-                expect(err).to.be.an.error('"b" is not allowed');
-                expect(err.details).to.equal([{
-                    message: '"b" is not allowed',
-                    path: ['b'],
-                    type: 'object.allowUnknown',
-                    context: { child: 'b', label: 'b', key: 'b' }
-                }]);
-
-                b.validate({ a: 1, b: 2 }, (err2, value2) => {
-
-                    expect(err2).to.not.exist();
-                    done();
-                });
-            });
+            await b.validate({ a: 1, b: 2 });
         });
 
-        it('overrides existing keys', (done) => {
+        it('overrides existing keys', () => {
 
             const a = Joi.object({ a: 1 });
             const b = a.keys({ a: Joi.string() });
@@ -831,54 +744,45 @@ describe('object', () => {
                         context: { valids: [1], label: 'a', key: 'a' }
                     }]
                 }]
-            ], () => {
+            ]);
 
-                Helper.validate(b, [
-                    [{ a: 1 }, false, null, {
-                        message: 'child "a" fails because ["a" must be a string]',
-                        details: [{
-                            message: '"a" must be a string',
-                            path: ['a'],
-                            type: 'string.base',
-                            context: { value: 1, label: 'a', key: 'a' }
-                        }]
-                    }],
-                    [{ a: '1' }, true, null, { a: '1' }]
-                ], done);
-            });
+            Helper.validate(b, [
+                [{ a: 1 }, false, null, {
+                    message: 'child "a" fails because ["a" must be a string]',
+                    details: [{
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { value: 1, label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ a: '1' }, true, null, { a: '1' }]
+            ]);
         });
 
-        it('strips keys flagged with strip', (done) => {
+        it('strips keys flagged with strip', async () => {
 
             const schema = Joi.object({
                 a: Joi.string().strip(),
                 b: Joi.string()
             });
-            schema.validate({ a: 'test', b: 'test' }, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value.a).to.not.exist();
-                expect(value.b).to.equal('test');
-                done();
-            });
+            const value = await schema.validate({ a: 'test', b: 'test' });
+            expect(value.a).to.not.exist();
+            expect(value.b).to.equal('test');
         });
 
-        it('strips keys after validation', (done) => {
+        it('strips keys after validation', async () => {
 
             const schema = Joi.object({
                 a: Joi.string().strip(),
                 b: Joi.string().default(Joi.ref('a'))
             });
-            schema.validate({ a: 'test' }, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value.a).to.not.exist();
-                expect(value.b).to.equal('test');
-                done();
-            });
+            const value = await schema.validate({ a: 'test' });
+            expect(value.a).to.not.exist();
+            expect(value.b).to.equal('test');
         });
 
-        it('strips keys while preserving transformed values', (done) => {
+        it('strips keys while preserving transformed values', () => {
 
             const schema = Joi.object({
                 a: Joi.number().strip(),
@@ -898,11 +802,9 @@ describe('object', () => {
                 type: 'number.min',
                 context: { limit: 1, value: 0, label: 'b', key: 'b' }
             }]);
-
-            done();
         });
 
-        it('does not alter the original object when stripping keys', (done) => {
+        it('does not alter the original object when stripping keys', async () => {
 
             const schema = Joi.object({
                 a: Joi.string().strip(),
@@ -914,18 +816,14 @@ describe('object', () => {
                 b: 'test'
             };
 
-            schema.validate(valid, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value.a).to.not.exist();
-                expect(valid.a).to.equal('test');
-                expect(value.b).to.equal('test');
-                expect(valid.b).to.equal('test');
-                done();
-            });
+            const value = await schema.validate(valid);
+            expect(value.a).to.not.exist();
+            expect(valid.a).to.equal('test');
+            expect(value.b).to.equal('test');
+            expect(valid.b).to.equal('test');
         });
 
-        it('should strip from an alternative', (done) => {
+        it('should strip from an alternative', async () => {
 
             const schema = Joi.object({
                 a: [Joi.boolean().strip()]
@@ -935,25 +833,20 @@ describe('object', () => {
                 a: true
             };
 
-            schema.validate(valid, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal({});
-                done();
-            });
+            const value = await schema.validate(valid);
+            expect(value).to.equal({});
         });
     });
 
     describe('unknown()', () => {
 
-        it('avoids unnecessary cloning when called twice', (done) => {
+        it('avoids unnecessary cloning when called twice', () => {
 
             const schema = Joi.object().unknown();
             expect(schema.unknown()).to.shallow.equal(schema);
-            done();
         });
 
-        it('allows local unknown without applying to children', (done) => {
+        it('allows local unknown without applying to children', () => {
 
             const schema = Joi.object({
                 a: {
@@ -982,10 +875,10 @@ describe('object', () => {
                         context: { child: 'c', label: 'c', key: 'c' }
                     }]
                 }]
-            ], done);
+            ]);
         });
 
-        it('forbids local unknown without applying to children', (done) => {
+        it('forbids local unknown without applying to children', () => {
 
             const schema = Joi.object({
                 a: Joi.object({
@@ -1014,10 +907,10 @@ describe('object', () => {
                     }]
                 }],
                 [{ a: { b: 5, c: 'ignore' } }, true]
-            ], done);
+            ]);
         });
 
-        it('overrides stripUnknown at a local level', (done) => {
+        it('overrides stripUnknown at a local level', () => {
 
             const schema = Joi.object({
                 a: Joi.object({
@@ -1042,7 +935,7 @@ describe('object', () => {
                 [{ a: { b: 5 }, d: 'ignore' }, true, null, { a: { b: 5 } }],
                 [{ a: { b: 5, d: 'ignore' } }, true, null, { a: { b: 5, d: 'ignore' } }],
                 [{ a: { b: 5, c: { e: 'ignore' } } }, true, null, { a: { b: 5, c: {} } }]
-            ], done);
+            ]);
         });
     });
 
@@ -1050,7 +943,7 @@ describe('object', () => {
 
         describe('using regex', () => {
 
-            it('renames using a regular expression', (done) => {
+            it('renames using a regular expression', async () => {
 
                 const regex = /foobar/i;
 
@@ -1058,14 +951,10 @@ describe('object', () => {
                     fooBar: Joi.string()
                 }).rename(regex, 'fooBar');
 
-                Joi.compile(schema).validate({ FOOBAR: 'a' }, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    done();
-                });
+                await Joi.compile(schema).validate({ FOOBAR: 'a' });
             });
 
-            it('aliases a key', (done) => {
+            it('aliases a key', async () => {
 
                 const regex = /^a$/i;
 
@@ -1076,37 +965,30 @@ describe('object', () => {
                     c: Joi.number()
                 }).rename(regex, 'b', { alias: true });
 
-                Joi.compile(schema).validate({ other: 'here', A: 100, c: 50 }, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value.A).to.equal(100);
-                    expect(value.b).to.equal(100);
-                    expect(value.c).to.equal(50);
-                    done();
-                });
+                const value = await Joi.compile(schema).validate({ other: 'here', A: 100, c: 50 });
+                expect(value.A).to.equal(100);
+                expect(value.b).to.equal(100);
+                expect(value.c).to.equal(50);
             });
 
-            it('with override disabled it should not allow overwriting existing value', (done) => {
+            it('with override disabled it should not allow overwriting existing value', async () => {
 
                 const regex = /^test1$/i;
                 const schema = Joi.object({
                     test1: Joi.string()
                 }).rename(regex, 'test1');
 
-                Joi.compile(schema).validate({ test: 'b', test1: 'a' }, (err, value) => {
-
-                    expect(err.message).to.equal('"value" cannot rename children [test1] because override is disabled and target "test1" exists');
-                    expect(err.details).to.equal([{
-                        message: '"value" cannot rename children [test1] because override is disabled and target "test1" exists',
-                        path: [],
-                        type: 'object.rename.regex.override',
-                        context: { from: ['test1'], to: 'test1', key: undefined, label: 'value' }
-                    }]);
-                    done();
-                });
+                const err = await expect(Joi.compile(schema).validate({ test: 'b', test1: 'a' })).to.reject();
+                expect(err.message).to.equal('"value" cannot rename children [test1] because override is disabled and target "test1" exists');
+                expect(err.details).to.equal([{
+                    message: '"value" cannot rename children [test1] because override is disabled and target "test1" exists',
+                    path: [],
+                    type: 'object.rename.regex.override',
+                    context: { from: ['test1'], to: 'test1', key: undefined, label: 'value' }
+                }]);
             });
 
-            it('with override enabled should allow overwriting existing value', (done) => {
+            it('with override enabled should allow overwriting existing value', async () => {
 
                 const regex = /^test$/i;
 
@@ -1114,14 +996,10 @@ describe('object', () => {
                     test1: Joi.string()
                 }).rename(regex, 'test1', { override: true });
 
-                schema.validate({ test: 'b', test1: 'a' }, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    done();
-                });
+                await schema.validate({ test: 'b', test1: 'a' });
             });
 
-            it('renames when data is nested in an array via items', (done) => {
+            it('renames when data is nested in an array via items', async () => {
 
                 const regex1 = /^uno$/i;
                 const regex2 = /^dos$/i;
@@ -1134,16 +1012,12 @@ describe('object', () => {
                 };
 
                 const data = { arr: [{ uno: '1', dos: '2' }] };
-                Joi.object(schema).validate(data, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value.arr[0].one).to.equal('1');
-                    expect(value.arr[0].two).to.equal('2');
-                    done();
-                });
+                const value = await Joi.object(schema).validate(data);
+                expect(value.arr[0].one).to.equal('1');
+                expect(value.arr[0].two).to.equal('2');
             });
 
-            it('applies rename and validation in the correct order regardless of key order', (done) => {
+            it('applies rename and validation in the correct order regardless of key order', async () => {
 
                 const regex = /^b$/i;
 
@@ -1153,27 +1027,19 @@ describe('object', () => {
 
                 const input1 = { b: '5' };
 
-                schema1.validate(input1, (err1, value1) => {
+                const value1 = await schema1.validate(input1);
+                expect(value1.b).to.not.exist();
+                expect(value1.a).to.equal(5);
 
-                    expect(err1).to.not.exist();
-                    expect(value1.b).to.not.exist();
-                    expect(value1.a).to.equal(5);
+                const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
+                const input2 = { b: '5' };
 
-                    const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
-                    const input2 = { b: '5' };
-
-                    schema2.validate(input2, (err2, value2) => {
-
-                        expect(err2).to.not.exist();
-                        expect(value2.b).to.not.exist();
-                        expect(value2.a).to.equal(5);
-
-                        done();
-                    });
-                });
+                const value2 = await schema2.validate(input2);
+                expect(value2.b).to.not.exist();
+                expect(value2.a).to.equal(5);
             });
 
-            it('sets the default value after key is renamed', (done) => {
+            it('sets the default value after key is renamed', async () => {
 
                 const regex = /^foo$/i;
 
@@ -1183,16 +1049,11 @@ describe('object', () => {
 
                 const input = {};
 
-                Joi.validate(input, schema, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value.foo2).to.equal('test');
-
-                    done();
-                });
+                const value = await Joi.validate(input, schema);
+                expect(value.foo2).to.equal('test');
             });
 
-            it('should not create new keys when they key in question does not exist', (done) => {
+            it('should not create new keys when they key in question does not exist', async () => {
 
                 const regex = /^b$/i;
 
@@ -1202,16 +1063,12 @@ describe('object', () => {
                     a: 'something'
                 };
 
-                schema.validate(input, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(Object.keys(value)).to.include('a');
-                    expect(value.a).to.equal('something');
-                    done();
-                });
+                const value = await schema.validate(input);
+                expect(Object.keys(value)).to.include('a');
+                expect(value.a).to.equal('something');
             });
 
-            it('should remove a key with override if from does not exist', (done) => {
+            it('should remove a key with override if from does not exist', async () => {
 
                 const regex = /^b$/i;
 
@@ -1221,15 +1078,11 @@ describe('object', () => {
                     a: 'something'
                 };
 
-                schema.validate(input, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value).to.equal({});
-                    done();
-                });
+                const value = await schema.validate(input);
+                expect(value).to.equal({});
             });
 
-            it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', (done) => {
+            it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', async () => {
 
                 const regex = /^b$/i;
 
@@ -1242,15 +1095,11 @@ describe('object', () => {
                     a: 'something'
                 };
 
-                schema.validate(input, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value).to.equal({ a: 'something' });
-                    done();
-                });
+                const value = await schema.validate(input);
+                expect(value).to.equal({ a: 'something' });
             });
 
-            it('should fulfill describe() with non-defaults', (done) => {
+            it('should fulfill describe() with non-defaults', () => {
 
                 const regex = /^b$/i;
 
@@ -1270,10 +1119,9 @@ describe('object', () => {
                         }
                     }]
                 });
-                done();
             });
 
-            it('should fulfill describe() with defaults', (done) => {
+            it('should fulfill describe() with defaults', () => {
 
                 const regex = /^b$/i;
 
@@ -1293,10 +1141,9 @@ describe('object', () => {
                         }
                     }]
                 });
-                done();
             });
 
-            it('allows renaming multiple times with multiple enabled', (done) => {
+            it('allows renaming multiple times with multiple enabled', async () => {
 
                 const regex = /foobar/i;
 
@@ -1304,15 +1151,11 @@ describe('object', () => {
                     fooBar: Joi.string()
                 }).rename(regex, 'fooBar', { multiple: true });
 
-                Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' }, (err, value) => {
-
-                    expect(err).to.not.exist();
-                    expect(value.fooBar).to.equal('b');
-                    done();
-                });
+                const value = await Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' });
+                expect(value.fooBar).to.equal('b');
             });
 
-            it('errors renaming multiple times with multiple disabled', (done) => {
+            it('errors renaming multiple times with multiple disabled', async () => {
 
                 const regex = /foobar/i;
 
@@ -1320,112 +1163,97 @@ describe('object', () => {
                     fooBar: Joi.string()
                 }).rename(regex, 'fooBar').rename(/foobar/i, 'fooBar');
 
-                Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' }, (err, value) => {
-
-                    expect(err.message).to.equal('"value" cannot rename children [fooBar] because multiple renames are disabled and another key was already renamed to "fooBar"');
-                    expect(err.details).to.equal([{
-                        message: '"value" cannot rename children [fooBar] because multiple renames are disabled and another key was already renamed to "fooBar"',
-                        path: [],
-                        type: 'object.rename.regex.multiple',
-                        context: { from: ['fooBar'], to: 'fooBar', key: undefined, label: 'value' }
-                    }]);
-                    done();
-                });
+                const err = await expect(Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' })).to.reject();
+                expect(err.message).to.equal('"value" cannot rename children [fooBar] because multiple renames are disabled and another key was already renamed to "fooBar"');
+                expect(err.details).to.equal([{
+                    message: '"value" cannot rename children [fooBar] because multiple renames are disabled and another key was already renamed to "fooBar"',
+                    path: [],
+                    type: 'object.rename.regex.multiple',
+                    context: { from: ['fooBar'], to: 'fooBar', key: undefined, label: 'value' }
+                }]);
             });
 
-            it('errors multiple times when abortEarly is false', (done) => {
+            it('errors multiple times when abortEarly is false', async () => {
 
-                Joi.object().keys({ z: Joi.string() }).rename(/a/i, 'b').rename(/c/i, 'b').rename(/z/i, 'z').options({ abortEarly: false }).validate({ a: 1, c: 1, d: 1, z: 1 }, (err, value) => {
-
-                    expect(err).to.exist();
-                    expect(err.message).to.equal('"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename children [z] because override is disabled and target "z" exists. "d" is not allowed. "b" is not allowed');
-                    expect(err.details).to.equal([
-                        {
-                            message: '"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b"',
-                            path: [],
-                            type: 'object.rename.regex.multiple',
-                            context: { from: ['c'], to: 'b', key: undefined, label: 'value' }
-                        },
-                        {
-                            message: '"value" cannot rename children [z] because override is disabled and target "z" exists',
-                            path: [],
-                            type: 'object.rename.regex.override',
-                            context: { from: ['z'], to: 'z', key: undefined, label: 'value' }
-                        },
-                        {
-                            message: '"d" is not allowed',
-                            path: ['d'],
-                            type: 'object.allowUnknown',
-                            context: { child: 'd', key: 'd', label: 'd' }
-                        },
-                        {
-                            message: '"b" is not allowed',
-                            path: ['b'],
-                            type: 'object.allowUnknown',
-                            context: { child: 'b', key: 'b', label: 'b' }
-                        }
-                    ]);
-                    done();
-                });
+                const schema = Joi.object().keys({ z: Joi.string() }).rename(/a/i, 'b').rename(/c/i, 'b').rename(/z/i, 'z').options({ abortEarly: false });
+                const err = await expect(schema.validate({ a: 1, c: 1, d: 1, z: 1 })).to.reject();
+                expect(err.message).to.equal('"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename children [z] because override is disabled and target "z" exists. "d" is not allowed. "b" is not allowed');
+                expect(err.details).to.equal([
+                    {
+                        message: '"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b"',
+                        path: [],
+                        type: 'object.rename.regex.multiple',
+                        context: { from: ['c'], to: 'b', key: undefined, label: 'value' }
+                    },
+                    {
+                        message: '"value" cannot rename children [z] because override is disabled and target "z" exists',
+                        path: [],
+                        type: 'object.rename.regex.override',
+                        context: { from: ['z'], to: 'z', key: undefined, label: 'value' }
+                    },
+                    {
+                        message: '"d" is not allowed',
+                        path: ['d'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'd', key: 'd', label: 'd' }
+                    },
+                    {
+                        message: '"b" is not allowed',
+                        path: ['b'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'b', key: 'b', label: 'b' }
+                    }
+                ]);
             });
         });
 
-        it('allows renaming multiple times with multiple enabled', (done) => {
+        it('allows renaming multiple times with multiple enabled', async () => {
 
             const schema = Joi.object({
                 test: Joi.string()
             }).rename('test1', 'test').rename('test2', 'test', { multiple: true });
 
-            Joi.compile(schema).validate({ test1: 'a', test2: 'b' }, (err, value) => {
-
-                expect(err).to.not.exist();
-                done();
-            });
+            await Joi.compile(schema).validate({ test1: 'a', test2: 'b' });
         });
 
-        it('errors renaming multiple times with multiple disabled', (done) => {
+        it('errors renaming multiple times with multiple disabled', async () => {
 
             const schema = Joi.object({
                 test: Joi.string()
             }).rename('test1', 'test').rename('test2', 'test');
 
-            Joi.compile(schema).validate({ test1: 'a', test2: 'b' }, (err, value) => {
+            const err = await expect(Joi.compile(schema).validate({ test1: 'a', test2: 'b' })).to.reject();
+            expect(err).to.be.an.error('"value" cannot rename child "test2" because multiple renames are disabled and another key was already renamed to "test"');
+            expect(err.details).to.equal([{
+                message: '"value" cannot rename child "test2" because multiple renames are disabled and another key was already renamed to "test"',
+                path: [],
+                type: 'object.rename.multiple',
+                context: { from: 'test2', to: 'test', label: 'value', key: undefined }
+            }]);
+        });
 
-                expect(err).to.be.an.error('"value" cannot rename child "test2" because multiple renames are disabled and another key was already renamed to "test"');
-                expect(err.details).to.equal([{
-                    message: '"value" cannot rename child "test2" because multiple renames are disabled and another key was already renamed to "test"',
+        it('errors multiple times when abortEarly is false', async () => {
+
+            const schema = Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').options({ abortEarly: false });
+            const err = await expect(schema.validate({ a: 1, c: 1, d: 1 })).to.reject();
+            expect(err).to.be.an.error('"value" cannot rename child "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename child "d" because multiple renames are disabled and another key was already renamed to "b"');
+            expect(err.details).to.equal([
+                {
+                    message: '"value" cannot rename child "c" because multiple renames are disabled and another key was already renamed to "b"',
                     path: [],
                     type: 'object.rename.multiple',
-                    context: { from: 'test2', to: 'test', label: 'value', key: undefined }
-                }]);
-                done();
-            });
+                    context: { from: 'c', to: 'b', label: 'value', key: undefined }
+                },
+                {
+                    message: '"value" cannot rename child "d" because multiple renames are disabled and another key was already renamed to "b"',
+                    path: [],
+                    type: 'object.rename.multiple',
+                    context: { from: 'd', to: 'b', label: 'value', key: undefined }
+                }
+            ]);
         });
 
-        it('errors multiple times when abortEarly is false', (done) => {
-
-            Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').options({ abortEarly: false }).validate({ a: 1, c: 1, d: 1 }, (err, value) => {
-
-                expect(err).to.be.an.error('"value" cannot rename child "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename child "d" because multiple renames are disabled and another key was already renamed to "b"');
-                expect(err.details).to.equal([
-                    {
-                        message: '"value" cannot rename child "c" because multiple renames are disabled and another key was already renamed to "b"',
-                        path: [],
-                        type: 'object.rename.multiple',
-                        context: { from: 'c', to: 'b', label: 'value', key: undefined }
-                    },
-                    {
-                        message: '"value" cannot rename child "d" because multiple renames are disabled and another key was already renamed to "b"',
-                        path: [],
-                        type: 'object.rename.multiple',
-                        context: { from: 'd', to: 'b', label: 'value', key: undefined }
-                    }
-                ]);
-                done();
-            });
-        });
-
-        it('aliases a key', (done) => {
+        it('aliases a key', async () => {
 
             const schema = Joi.object({
                 a: Joi.number(),
@@ -1434,48 +1262,37 @@ describe('object', () => {
 
             const obj = { a: 10 };
 
-            Joi.compile(schema).validate(obj, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value.a).to.equal(10);
-                expect(value.b).to.equal(10);
-                done();
-            });
+            const value = await Joi.compile(schema).validate(obj);
+            expect(value.a).to.equal(10);
+            expect(value.b).to.equal(10);
         });
 
-        it('with override disabled should not allow overwriting existing value', (done) => {
+        it('with override disabled should not allow overwriting existing value', async () => {
 
             const schema = Joi.object({
                 test1: Joi.string()
             }).rename('test', 'test1');
 
-            schema.validate({ test: 'b', test1: 'a' }, (err, value) => {
-
-                expect(err).to.be.an.error('"value" cannot rename child "test" because override is disabled and target "test1" exists');
-                expect(err.details).to.equal([{
-                    message: '"value" cannot rename child "test" because override is disabled and target "test1" exists',
-                    path: [],
-                    type: 'object.rename.override',
-                    context: { from: 'test', to: 'test1', label: 'value', key: undefined }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate({ test: 'b', test1: 'a' })).to.reject();
+            expect(err).to.be.an.error('"value" cannot rename child "test" because override is disabled and target "test1" exists');
+            expect(err.details).to.equal([{
+                message: '"value" cannot rename child "test" because override is disabled and target "test1" exists',
+                path: [],
+                type: 'object.rename.override',
+                context: { from: 'test', to: 'test1', label: 'value', key: undefined }
+            }]);
         });
 
-        it('with override enabled should allow overwriting existing value', (done) => {
+        it('with override enabled should allow overwriting existing value', async () => {
 
             const schema = Joi.object({
                 test1: Joi.string()
             }).rename('test', 'test1', { override: true });
 
-            schema.validate({ test: 'b', test1: 'a' }, (err, value) => {
-
-                expect(err).to.not.exist();
-                done();
-            });
+            await schema.validate({ test: 'b', test1: 'a' });
         });
 
-        it('renames when data is nested in an array via items', (done) => {
+        it('renames when data is nested in an array via items', async () => {
 
             const schema = {
                 arr: Joi.array().items(Joi.object({
@@ -1485,16 +1302,12 @@ describe('object', () => {
             };
 
             const data = { arr: [{ uno: '1', dos: '2' }] };
-            Joi.object(schema).validate(data, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value.arr[0].one).to.equal('1');
-                expect(value.arr[0].two).to.equal('2');
-                done();
-            });
+            const value = await Joi.object(schema).validate(data);
+            expect(value.arr[0].one).to.equal('1');
+            expect(value.arr[0].two).to.equal('2');
         });
 
-        it('applies rename and validation in the correct order regardless of key order', (done) => {
+        it('applies rename and validation in the correct order regardless of key order', async () => {
 
             const schema1 = Joi.object({
                 a: Joi.number()
@@ -1502,27 +1315,19 @@ describe('object', () => {
 
             const input1 = { b: '5' };
 
-            schema1.validate(input1, (err1, value1) => {
+            const value1 = await schema1.validate(input1);
+            expect(value1.b).to.not.exist();
+            expect(value1.a).to.equal(5);
 
-                expect(err1).to.not.exist();
-                expect(value1.b).to.not.exist();
-                expect(value1.a).to.equal(5);
+            const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
+            const input2 = { b: '5' };
 
-                const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
-                const input2 = { b: '5' };
-
-                schema2.validate(input2, (err2, value2) => {
-
-                    expect(err2).to.not.exist();
-                    expect(value2.b).to.not.exist();
-                    expect(value2.a).to.equal(5);
-
-                    done();
-                });
-            });
+            const value2 = await schema2.validate(input2);
+            expect(value2.b).to.not.exist();
+            expect(value2.a).to.equal(5);
         });
 
-        it('sets the default value after key is renamed', (done) => {
+        it('sets the default value after key is renamed', async () => {
 
             const schema = Joi.object({
                 foo2: Joi.string().default('test')
@@ -1530,32 +1335,23 @@ describe('object', () => {
 
             const input = {};
 
-            Joi.validate(input, schema, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value.foo2).to.equal('test');
-
-                done();
-            });
+            const value = await Joi.validate(input, schema);
+            expect(value.foo2).to.equal('test');
         });
 
-        it('should be able to rename keys that are empty strings', (done) => {
+        it('should be able to rename keys that are empty strings', async () => {
 
             const schema = Joi.object().rename('', 'notEmpty');
             const input = {
                 '': 'something'
             };
 
-            schema.validate(input, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value['']).to.not.exist();
-                expect(value.notEmpty).to.equal('something');
-                done();
-            });
+            const value = await schema.validate(input);
+            expect(value['']).to.not.exist();
+            expect(value.notEmpty).to.equal('something');
         });
 
-        it('should not create new keys when they key in question does not exist', (done) => {
+        it('should not create new keys when they key in question does not exist', async () => {
 
             const schema = Joi.object().rename('b', '_b');
 
@@ -1563,16 +1359,12 @@ describe('object', () => {
                 a: 'something'
             };
 
-            schema.validate(input, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(Object.keys(value)).to.include('a');
-                expect(value.a).to.equal('something');
-                done();
-            });
+            const value = await schema.validate(input);
+            expect(Object.keys(value)).to.include('a');
+            expect(value.a).to.equal('something');
         });
 
-        it('should remove a key with override if from does not exist', (done) => {
+        it('should remove a key with override if from does not exist', async () => {
 
             const schema = Joi.object().rename('b', 'a', { override: true });
 
@@ -1580,15 +1372,11 @@ describe('object', () => {
                 a: 'something'
             };
 
-            schema.validate(input, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal({});
-                done();
-            });
+            const value = await schema.validate(input);
+            expect(value).to.equal({});
         });
 
-        it('should ignore a key with ignoredUndefined if from does not exist', (done) => {
+        it('should ignore a key with ignoredUndefined if from does not exist', async () => {
 
             const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true });
 
@@ -1596,15 +1384,11 @@ describe('object', () => {
                 a: 'something'
             };
 
-            schema.validate(input, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal({ a: 'something' });
-                done();
-            });
+            const value = await schema.validate(input);
+            expect(value).to.equal({ a: 'something' });
         });
 
-        it('using regex it should ignore a key with ignoredUndefined if from does not exist', (done) => {
+        it('using regex it should ignore a key with ignoredUndefined if from does not exist', async () => {
 
             const regex = /^b$/i;
 
@@ -1614,15 +1398,11 @@ describe('object', () => {
                 a: 'something'
             };
 
-            schema.validate(input, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal({ a: 'something' });
-                done();
-            });
+            const value = await schema.validate(input);
+            expect(value).to.equal({ a: 'something' });
         });
 
-        it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', (done) => {
+        it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', async () => {
 
             const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true, override: true });
 
@@ -1630,15 +1410,11 @@ describe('object', () => {
                 a: 'something'
             };
 
-            schema.validate(input, (err, value) => {
-
-                expect(err).to.not.exist();
-                expect(value).to.equal({ a: 'something' });
-                done();
-            });
+            const value = await schema.validate(input);
+            expect(value).to.equal({ a: 'something' });
         });
 
-        it('should fulfill describe() with defaults', (done) => {
+        it('should fulfill describe() with defaults', () => {
 
             const schema = Joi.object().rename('b', 'a');
             const desc = schema.describe();
@@ -1656,10 +1432,9 @@ describe('object', () => {
                     }
                 }]
             });
-            done();
         });
 
-        it('should fulfill describe() with non-defaults', (done) => {
+        it('should fulfill describe() with non-defaults', () => {
 
             const schema = Joi.object().rename('b', 'a', { alias: true, multiple: true, override: true });
             const desc = schema.describe();
@@ -1677,23 +1452,21 @@ describe('object', () => {
                     }
                 }]
             });
-            done();
         });
     });
 
     describe('describe()', () => {
 
-        it('return empty description when no schema defined', (done) => {
+        it('return empty description when no schema defined', () => {
 
             const schema = Joi.object();
             const desc = schema.describe();
             expect(desc).to.equal({
                 type: 'object'
             });
-            done();
         });
 
-        it('respects the shallow parameter', (done) => {
+        it('respects the shallow parameter', () => {
 
             const schema = Joi.object({
                 name: Joi.string(),
@@ -1705,10 +1478,9 @@ describe('object', () => {
             expect(Object.keys(schema.describe(true))).to.not.include('children');
             expect(Object.keys(schema.describe())).to.include('children');
 
-            done();
         });
 
-        it('describes patterns', (done) => {
+        it('describes patterns', () => {
 
             const schema = Joi.object({
                 a: Joi.string()
@@ -1736,50 +1508,45 @@ describe('object', () => {
                     }
                 ]
             });
-
-            done();
         });
     });
 
     describe('length()', () => {
 
-        it('throws when length is not a number', (done) => {
+        it('throws when length is not a number', () => {
 
             expect(() => {
 
                 Joi.object().length('a');
             }).to.throw('limit must be a positive integer');
-            done();
         });
     });
 
     describe('min()', () => {
 
-        it('throws when limit is not a number', (done) => {
+        it('throws when limit is not a number', () => {
 
             expect(() => {
 
                 Joi.object().min('a');
             }).to.throw('limit must be a positive integer');
-            done();
         });
     });
 
     describe('max()', () => {
 
-        it('throws when limit is not a number', (done) => {
+        it('throws when limit is not a number', () => {
 
             expect(() => {
 
                 Joi.object().max('a');
             }).to.throw('limit must be a positive integer');
-            done();
         });
     });
 
     describe('pattern()', () => {
 
-        it('shows path to errors in schema', (done) => {
+        it('shows path to errors in schema', () => {
 
             expect(() => {
 
@@ -1801,70 +1568,67 @@ describe('object', () => {
                 });
             }).to.throw(Error, 'Invalid schema content: ');
 
-            done();
         });
 
-        it('validates unknown keys using a pattern', (done) => {
+        it('validates unknown keys using a pattern', async () => {
 
             const schema = Joi.object({
                 a: Joi.number()
             }).pattern(/\d+/, Joi.boolean()).pattern(/\w\w+/, 'x');
 
-            Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false }, (err, value) => {
+            const err = await expect(Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false })).to.reject();
+            expect(err).to.be.an.error('child "5" fails because ["5" must be a boolean]. child "bb" fails because ["bb" must be one of [x]]');
+            expect(err.details).to.equal([
+                {
+                    message: '"5" must be a boolean',
+                    path: ['5'],
+                    type: 'boolean.base',
+                    context: { label: '5', key: '5' }
+                },
+                {
+                    message: '"bb" must be one of [x]',
+                    path: ['bb'],
+                    type: 'any.allowOnly',
+                    context: { valids: ['x'], label: 'bb', key: 'bb' }
+                }
+            ]);
 
-                expect(err).to.be.an.error('child "5" fails because ["5" must be a boolean]. child "bb" fails because ["bb" must be one of [x]]');
-                expect(err.details).to.equal([
-                    {
+            Helper.validate(schema, [
+                [{ a: 5 }, true],
+                [{ a: 'x' }, false, null, {
+                    message: 'child "a" fails because ["a" must be a number]',
+                    details: [{
+                        message: '"a" must be a number',
+                        path: ['a'],
+                        type: 'number.base',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ b: 'x' }, false, null, {
+                    message: '"b" is not allowed',
+                    details: [{
+                        message: '"b" is not allowed',
+                        path: ['b'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'b', label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ bb: 'x' }, true],
+                [{ 5: 'x' }, false, null, {
+                    message: 'child "5" fails because ["5" must be a boolean]',
+                    details: [{
                         message: '"5" must be a boolean',
                         path: ['5'],
                         type: 'boolean.base',
                         context: { label: '5', key: '5' }
-                    },
-                    {
-                        message: '"bb" must be one of [x]',
-                        path: ['bb'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'bb', key: 'bb' }
-                    }
-                ]);
-
-                Helper.validate(schema, [
-                    [{ a: 5 }, true],
-                    [{ a: 'x' }, false, null, {
-                        message: 'child "a" fails because ["a" must be a number]',
-                        details: [{
-                            message: '"a" must be a number',
-                            path: ['a'],
-                            type: 'number.base',
-                            context: { label: 'a', key: 'a' }
-                        }]
-                    }],
-                    [{ b: 'x' }, false, null, {
-                        message: '"b" is not allowed',
-                        details: [{
-                            message: '"b" is not allowed',
-                            path: ['b'],
-                            type: 'object.allowUnknown',
-                            context: { child: 'b', label: 'b', key: 'b' }
-                        }]
-                    }],
-                    [{ bb: 'x' }, true],
-                    [{ 5: 'x' }, false, null, {
-                        message: 'child "5" fails because ["5" must be a boolean]',
-                        details: [{
-                            message: '"5" must be a boolean',
-                            path: ['5'],
-                            type: 'boolean.base',
-                            context: { label: '5', key: '5' }
-                        }]
-                    }],
-                    [{ 5: false }, true],
-                    [{ 5: undefined }, true]
-                ], done);
-            });
+                    }]
+                }],
+                [{ 5: false }, true],
+                [{ 5: undefined }, true]
+            ]);
         });
 
-        it('validates unknown keys using a pattern (nested)', (done) => {
+        it('validates unknown keys using a pattern (nested)', async () => {
 
             const schema = {
                 x: Joi.object({
@@ -1872,59 +1636,47 @@ describe('object', () => {
                 }).pattern(/\d+/, Joi.boolean()).pattern(/\w\w+/, 'x')
             };
 
-            Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false }, (err, value) => {
-
-                expect(err).to.be.an.error('child "x" fails because [child "5" fails because ["5" must be a boolean], child "bb" fails because ["bb" must be one of [x]]]');
-                expect(err.details).to.equal([
-                    {
-                        message: '"5" must be a boolean',
-                        path: ['x', '5'],
-                        type: 'boolean.base',
-                        context: { label: '5', key: '5' }
-                    },
-                    {
-                        message: '"bb" must be one of [x]',
-                        path: ['x', 'bb'],
-                        type: 'any.allowOnly',
-                        context: { valids: ['x'], label: 'bb', key: 'bb' }
-                    }
-                ]);
-                done();
-            });
+            const err = await expect(Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false })).to.reject();
+            expect(err).to.be.an.error('child "x" fails because [child "5" fails because ["5" must be a boolean], child "bb" fails because ["bb" must be one of [x]]]');
+            expect(err.details).to.equal([
+                {
+                    message: '"5" must be a boolean',
+                    path: ['x', '5'],
+                    type: 'boolean.base',
+                    context: { label: '5', key: '5' }
+                },
+                {
+                    message: '"bb" must be one of [x]',
+                    path: ['x', 'bb'],
+                    type: 'any.allowOnly',
+                    context: { valids: ['x'], label: 'bb', key: 'bb' }
+                }
+            ]);
         });
 
-        it('errors when using a pattern on empty schema with unknown(false) and pattern mismatch', (done) => {
+        it('errors when using a pattern on empty schema with unknown(false) and pattern mismatch', async () => {
 
             const schema = Joi.object().pattern(/\d/, Joi.number()).unknown(false);
 
-            Joi.validate({ a: 5 }, schema, { abortEarly: false }, (err, value) => {
-
-                expect(err).to.be.an.error('"a" is not allowed');
-                expect(err.details).to.equal([{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'object.allowUnknown',
-                    context: { child: 'a', label: 'a', key: 'a' }
-                }]);
-                done();
-            });
+            const err = await expect(Joi.validate({ a: 5 }, schema, { abortEarly: false })).to.reject('"a" is not allowed');
+            expect(err.details).to.equal([{
+                message: '"a" is not allowed',
+                path: ['a'],
+                type: 'object.allowUnknown',
+                context: { child: 'a', label: 'a', key: 'a' }
+            }]);
         });
 
-        it('removes global flag from patterns', (done) => {
+        it('removes global flag from patterns', async () => {
 
             const schema = Joi.object().pattern(/a/g, Joi.number());
-
-            Joi.validate({ a1: 5, a2: 6 }, schema, (err, value) => {
-
-                expect(err).to.not.exist();
-                done();
-            });
+            await Joi.validate({ a1: 5, a2: 6 }, schema);
         });
     });
 
     describe('with()', () => {
 
-        it('should throw an error when a parameter is not a string', (done) => {
+        it('should throw an error when a parameter is not a string', () => {
 
             let error;
             try {
@@ -1944,19 +1696,17 @@ describe('object', () => {
                 error = true;
             }
             expect(error).to.equal(true);
-            done();
         });
 
-        it('should validate correctly when key is an empty string', (done) => {
+        it('should validate correctly when key is an empty string', () => {
 
             const schema = Joi.object().with('', 'b');
             Helper.validate(schema, [
                 [{ c: 'hi', d: 'there' }, true]
             ]);
-            done();
         });
 
-        it('should apply labels', (done) => {
+        it('should apply labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -1977,13 +1727,12 @@ describe('object', () => {
                     key: 'a'
                 }
             }]);
-            done();
         });
     });
 
     describe('without()', () => {
 
-        it('should throw an error when a parameter is not a string', (done) => {
+        it('should throw an error when a parameter is not a string', () => {
 
             let error;
             try {
@@ -2005,19 +1754,17 @@ describe('object', () => {
             expect(error).to.equal(true);
 
 
-            done();
         });
 
-        it('should validate correctly when key is an empty string', (done) => {
+        it('should validate correctly when key is an empty string', () => {
 
             const schema = Joi.object().without('', 'b');
             Helper.validate(schema, [
                 [{ a: 'hi', b: 'there' }, true]
             ]);
-            done();
         });
 
-        it('should validate correctly when key is stripped', (done) => {
+        it('should validate correctly when key is stripped', () => {
 
             const schema = Joi.object({
                 a: Joi.any().strip(),
@@ -2026,10 +1773,9 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{ a: 'hi', b: 'there' }, true]
             ]);
-            done();
         });
 
-        it('should apply labels', (done) => {
+        it('should apply labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2050,13 +1796,12 @@ describe('object', () => {
                     key: 'a'
                 }
             }]);
-            done();
         });
     });
 
     describe('xor()', () => {
 
-        it('should throw an error when a parameter is not a string', (done) => {
+        it('should throw an error when a parameter is not a string', () => {
 
             let error;
             try {
@@ -2076,10 +1821,9 @@ describe('object', () => {
                 error = true;
             }
             expect(error).to.equal(true);
-            done();
         });
 
-        it('should apply labels without any peer', (done) => {
+        it('should apply labels without any peer', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2098,10 +1842,9 @@ describe('object', () => {
                     key: undefined
                 }
             }] );
-            done();
         });
 
-        it('should apply labels with too many peers', (done) => {
+        it('should apply labels with too many peers', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2120,13 +1863,12 @@ describe('object', () => {
                     key: undefined
                 }
             }]);
-            done();
         });
     });
 
     describe('or()', () => {
 
-        it('should throw an error when a parameter is not a string', (done) => {
+        it('should throw an error when a parameter is not a string', () => {
 
             let error;
             try {
@@ -2146,34 +1888,31 @@ describe('object', () => {
                 error = true;
             }
             expect(error).to.equal(true);
-            done();
         });
 
-        it('errors multiple levels deep', (done) => {
+        it('errors multiple levels deep', async () => {
 
-            Joi.object({
+            const schema = Joi.object({
                 a: {
                     b: Joi.object().or('x', 'y')
                 }
-            }).validate({ a: { b: { c: 1 } } }, (err, value) => {
-
-                expect(err).to.be.an.error('child "a" fails because [child "b" fails because ["value" must contain at least one of [x, y]]]');
-                expect(err.details).to.equal([{
-                    message: '"value" must contain at least one of [x, y]',
-                    path: ['a', 'b'],
-                    type: 'object.missing',
-                    context: {
-                        peers: ['x', 'y'],
-                        peersWithLabels: ['x', 'y'],
-                        label: 'value',
-                        key: 'b'
-                    }
-                }]);
-                done();
             });
+            const err = await expect(schema.validate({ a: { b: { c: 1 } } })).to.reject();
+            expect(err).to.be.an.error('child "a" fails because [child "b" fails because ["value" must contain at least one of [x, y]]]');
+            expect(err.details).to.equal([{
+                message: '"value" must contain at least one of [x, y]',
+                path: ['a', 'b'],
+                type: 'object.missing',
+                context: {
+                    peers: ['x', 'y'],
+                    peersWithLabels: ['x', 'y'],
+                    label: 'value',
+                    key: 'b'
+                }
+            }]);
         });
 
-        it('should apply labels', (done) => {
+        it('should apply labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2193,13 +1932,12 @@ describe('object', () => {
                         key: undefined
                     }
             }]);
-            done();
         });
     });
 
     describe('and()', () => {
 
-        it('should apply labels', (done) => {
+        it('should apply labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2221,13 +1959,12 @@ describe('object', () => {
                         key: undefined
                     }
             }]);
-            done();
         });
     });
 
     describe('nand()', () => {
 
-        it('should apply labels', (done) => {
+        it('should apply labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2248,13 +1985,12 @@ describe('object', () => {
                     key: undefined
                 }
             }]);
-            done();
         });
     });
 
     describe('assert()', () => {
 
-        it('shows path to errors in schema', (done) => {
+        it('shows path to errors in schema', () => {
 
             expect(() => {
 
@@ -2268,19 +2004,17 @@ describe('object', () => {
                     }
                 });
             }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
-            done();
         });
 
-        it('shows errors in schema', (done) => {
+        it('shows errors in schema', () => {
 
             expect(() => {
 
                 Joi.object().assert('a.b', undefined);
             }).to.throw(Error, 'Invalid schema content: ');
-            done();
         });
 
-        it('validates upwards reference', (done) => {
+        it('validates upwards reference', async () => {
 
             const schema = Joi.object({
                 a: {
@@ -2292,18 +2026,15 @@ describe('object', () => {
                 }
             }).assert(Joi.ref('d/e', { separator: '/' }), Joi.ref('a.c'), 'equal to a.c');
 
-            schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, (err, value) => {
+            const err = await expect(schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } })).to.reject();
+            expect(err.message).to.equal('"d.e" validation failed because "d.e" failed to equal to a.c');
 
-                expect(err).to.exist();
-                expect(err.message).to.equal('"d.e" validation failed because "d.e" failed to equal to a.c');
-
-                Helper.validate(schema, [
-                    [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
-                ], done);
-            });
+            Helper.validate(schema, [
+                [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
+            ]);
         });
 
-        it('validates upwards reference with implicit context', (done) => {
+        it('validates upwards reference with implicit context', async () => {
 
             const schema = Joi.object({
                 a: {
@@ -2315,23 +2046,21 @@ describe('object', () => {
                 }
             }).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
 
-            schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }, (err, value) => {
+            const err = await expect(schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } })).to.reject();
+            expect(err).to.be.an.error('"d.e" validation failed because "d.e" failed to equal to a.c');
+            expect(err.details).to.equal([{
+                message: '"d.e" validation failed because "d.e" failed to equal to a.c',
+                path: ['d', 'e'],
+                type: 'object.assert',
+                context: { ref: 'd.e', message: 'equal to a.c', label: 'e', key: 'e' }
+            }]);
 
-                expect(err).to.be.an.error('"d.e" validation failed because "d.e" failed to equal to a.c');
-                expect(err.details).to.equal([{
-                    message: '"d.e" validation failed because "d.e" failed to equal to a.c',
-                    path: ['d', 'e'],
-                    type: 'object.assert',
-                    context: { ref: 'd.e', message: 'equal to a.c', label: 'e', key: 'e' }
-                }]);
-
-                Helper.validate(schema, [
-                    [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
-                ], done);
-            });
+            Helper.validate(schema, [
+                [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
+            ]);
         });
 
-        it('throws when context is at root level', (done) => {
+        it('throws when context is at root level', () => {
 
             expect(() => {
 
@@ -2345,10 +2074,9 @@ describe('object', () => {
                     }
                 }).assert('a', Joi.ref('d.e'), 'equal to d.e');
             }).to.throw('Cannot use assertions for root level references - use direct key rules instead');
-            done();
         });
 
-        it('allows root level context ref', (done) => {
+        it('allows root level context ref', () => {
 
             expect(() => {
 
@@ -2362,10 +2090,9 @@ describe('object', () => {
                     }
                 }).assert('$a', Joi.ref('d.e'), 'equal to d.e');
             }).to.not.throw();
-            done();
         });
 
-        it('provides a default message for failed assertions', (done) => {
+        it('provides a default message for failed assertions', async () => {
 
             const schema = Joi.object({
                 a: {
@@ -2377,111 +2104,93 @@ describe('object', () => {
                 }
             }).assert('d.e', Joi.boolean());
 
-            schema.validate({ d: { e: [] } }, (err) => {
-
-                expect(err).to.be.an.error('"d.e" validation failed because "d.e" failed to pass the assertion test');
-                expect(err.details).to.equal([{
-                    message: '"d.e" validation failed because "d.e" failed to pass the assertion test',
-                    path: ['d', 'e'],
-                    type: 'object.assert',
-                    context: {
-                        ref: 'd.e',
-                        message: 'pass the assertion test',
-                        label: 'e',
-                        key: 'e'
-                    }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate({ d: { e: [] } })).to.reject();
+            expect(err).to.be.an.error('"d.e" validation failed because "d.e" failed to pass the assertion test');
+            expect(err.details).to.equal([{
+                message: '"d.e" validation failed because "d.e" failed to pass the assertion test',
+                path: ['d', 'e'],
+                type: 'object.assert',
+                context: {
+                    ref: 'd.e',
+                    message: 'pass the assertion test',
+                    label: 'e',
+                    key: 'e'
+                }
+            }]);
         });
     });
 
     describe('type()', () => {
 
-        it('uses constructor name for default type name', (done) => {
+        it('uses constructor name for default type name', async () => {
 
             const Foo = function Foo() { };
 
             const schema = Joi.object().type(Foo);
-            schema.validate({}, (err) => {
-
-                expect(err).to.be.an.error('"value" must be an instance of "Foo"');
-                expect(err.details).to.equal([{
-                    message: '"value" must be an instance of "Foo"',
-                    path: [],
-                    type: 'object.type',
-                    context: { type: 'Foo', label: 'value', key: undefined }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate({})).to.reject('"value" must be an instance of "Foo"');
+            expect(err.details).to.equal([{
+                message: '"value" must be an instance of "Foo"',
+                path: [],
+                type: 'object.type',
+                context: { type: 'Foo', label: 'value', key: undefined }
+            }]);
         });
 
-        it('uses custom type name if supplied', (done) => {
+        it('uses custom type name if supplied', async () => {
 
             const Foo = function () { };
 
             const schema = Joi.object().type(Foo, 'Bar');
-            schema.validate({}, (err) => {
-
-                expect(err).to.be.an.error('"value" must be an instance of "Bar"');
-                expect(err.details).to.equal([{
-                    message: '"value" must be an instance of "Bar"',
-                    path: [],
-                    type: 'object.type',
-                    context: { type: 'Bar', label: 'value', key: undefined }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate({})).to.reject('"value" must be an instance of "Bar"');
+            expect(err.details).to.equal([{
+                message: '"value" must be an instance of "Bar"',
+                path: [],
+                type: 'object.type',
+                context: { type: 'Bar', label: 'value', key: undefined }
+            }]);
         });
 
-        it('overrides constructor name with custom name', (done) => {
+        it('overrides constructor name with custom name', async () => {
 
             const Foo = function Foo() { };
 
             const schema = Joi.object().type(Foo, 'Bar');
-            schema.validate({}, (err) => {
-
-                expect(err).to.be.an.error('"value" must be an instance of "Bar"');
-                expect(err.details).to.equal([{
-                    message: '"value" must be an instance of "Bar"',
-                    path: [],
-                    type: 'object.type',
-                    context: { type: 'Bar', label: 'value', key: undefined }
-                }]);
-                done();
-            });
+            const err = await expect(schema.validate({})).to.reject('"value" must be an instance of "Bar"');
+            expect(err.details).to.equal([{
+                message: '"value" must be an instance of "Bar"',
+                path: [],
+                type: 'object.type',
+                context: { type: 'Bar', label: 'value', key: undefined }
+            }]);
         });
 
-        it('throws when constructor is not a function', (done) => {
+        it('throws when constructor is not a function', () => {
 
             expect(() => {
 
                 Joi.object().type('');
             }).to.throw('type must be a constructor function');
-            done();
         });
 
-        it('uses the constructor name in the schema description', (done) => {
+        it('uses the constructor name in the schema description', () => {
 
             const description = Joi.object().type(RegExp).describe();
 
             expect(description.rules).to.include({ name: 'type', arg: { name: 'RegExp', ctor: RegExp } });
-            done();
         });
 
-        it('uses the constructor reference in the schema description', (done) => {
+        it('uses the constructor reference in the schema description', () => {
 
             const Foo = function Foo() { };
             const description = Joi.object().type(Foo).describe();
 
             expect(new Foo()).to.be.an.instanceof(description.rules[0].arg.ctor);
-            done();
         });
     });
 
     describe('schema()', () => {
 
-        it('should detect joi instances', (done) => {
+        it('should detect joi instances', () => {
 
             const schema = Joi.object().schema();
             Helper.validate(schema, [
@@ -2504,14 +2213,14 @@ describe('object', () => {
                     }]
                 }],
                 [Joi.number().max(2), true]
-            ], done);
+            ]);
         });
 
     });
 
     describe('requiredKeys()', () => {
 
-        it('should set keys as required', (done) => {
+        it('should set keys as required', () => {
 
             const schema = Joi.object({ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: { h: 0 } })
                 .requiredKeys('a', 'b', 'c.d', 'c.e.f', 'g');
@@ -2564,10 +2273,10 @@ describe('object', () => {
                     }]
                 }],
                 [{ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: {} }, true]
-            ], done);
+            ]);
         });
 
-        it('should work on types other than objects', (done) => {
+        it('should work on types other than objects', () => {
 
             const schemas = [Joi.array(), Joi.binary(), Joi.boolean(), Joi.date(), Joi.func(), Joi.number(), Joi.string()];
             schemas.forEach((schema) => {
@@ -2588,10 +2297,9 @@ describe('object', () => {
                 }).to.throw();
             });
 
-            done();
         });
 
-        it('should throw on unknown key', (done) => {
+        it('should throw on unknown key', () => {
 
             expect(() => {
 
@@ -2603,57 +2311,48 @@ describe('object', () => {
                 Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'b', 'a.c.d');
             }).to.throw(Error, 'unknown key(s) a.c.d');
 
-            done();
         });
 
-        it('should throw on empty object', (done) => {
+        it('should throw on empty object', () => {
 
             expect(() => {
 
                 Joi.object().requiredKeys('a', 'c', 'b', 'd');
             }).to.throw(Error, 'unknown key(s) a, b, c, d');
-            done();
         });
 
-        it('should not modify original object', (done) => {
+        it('should not modify original object', async () => {
 
             const schema = Joi.object({ a: 0 });
             const requiredSchema = schema.requiredKeys('a');
-            schema.validate({}, (err) => {
+            await schema.validate({});
 
-                expect(err).to.not.exist();
-
-                requiredSchema.validate({}, (err) => {
-
-                    expect(err).to.be.an.error('child "a" fails because ["a" is required]');
-                    expect(err.details).to.equal([{
-                        message: '"a" is required',
-                        path: ['a'],
-                        type: 'any.required',
-                        context: { label: 'a', key: 'a' }
-                    }]);
-                    done();
-                });
-            });
+            const err = await expect(requiredSchema.validate({})).to.reject('child "a" fails because ["a" is required]');
+            expect(err.details).to.equal([{
+                message: '"a" is required',
+                path: ['a'],
+                type: 'any.required',
+                context: { label: 'a', key: 'a' }
+            }]);
         });
     });
 
     describe('optionalKeys()', () => {
 
-        it('should set keys as optional', (done) => {
+        it('should set keys as optional', () => {
 
             const schema = Joi.object({ a: Joi.number().required(), b: Joi.number().required() }).optionalKeys('a', 'b');
             Helper.validate(schema, [
                 [{}, true],
                 [{ a: 0 }, true],
                 [{ a: 0, b: 0 }, true]
-            ], done);
+            ]);
         });
     });
 
     describe('forbiddenKeys()', () => {
 
-        it('should set keys as forbidden', (done) => {
+        it('should set keys as forbidden', () => {
 
             const schema = Joi.object({ a: Joi.number().required(), b: Joi.number().required() }).forbiddenKeys('a', 'b');
             Helper.validate(schema, [
@@ -2678,7 +2377,7 @@ describe('object', () => {
                         context: { label: 'b', key: 'b' }
                     }]
                 }]
-            ], done);
+            ]);
         });
     });
 });
