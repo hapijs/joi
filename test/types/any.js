@@ -1178,12 +1178,11 @@ describe('any', () => {
             }).to.throw('Missing example');
         });
 
-        it('throws when example fails own rules', () => {
+        it('does not throw when example fails own rules', () => {
 
-            expect(() => {
-
-                Joi.valid(5, 6, 7).example(4);
-            }).to.throw('Bad example: "value" must be one of [5, 6, 7]');
+            const schema = Joi.valid(5, 6, 7).example(4);
+            expect(schema._examples).to.equal([4]);
+            expect(schema.describe().examples).to.equal([4]);
         });
     });
 
