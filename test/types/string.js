@@ -957,7 +957,7 @@ describe('string', () => {
 
     describe('hostname()', () => {
 
-        it('validates hostnames', () => {
+        it('validates host', () => {
 
             const schema = Joi.string().hostname();
             Helper.validate(schema, [
@@ -1001,6 +1001,59 @@ describe('string', () => {
                         message: '"value" must be a valid hostname',
                         path: [],
                         type: 'string.hostname',
+                        context: { value: '0:?:0:0:0:0:0:1', label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe.only('host()', () => {
+
+        it('validates host', () => {
+
+            const schema = Joi.string().host();
+            Helper.validate(schema, [
+                ['www.example.com', true],
+                ['domain.local', true],
+                ['3domain.local', true],
+                ['host', true],
+                ['host:name', false, null, {
+                    message: '"value" must be a valid host',
+                    details: [{
+                        message: '"value" must be a valid host',
+                        path: [],
+                        type: 'string.host',
+                        context: { value: 'host:name', label: 'value', key: undefined }
+                    }]
+                }],
+                ['-', false, null, {
+                    message: '"value" must be a valid host',
+                    details: [{
+                        message: '"value" must be a valid host',
+                        path: [],
+                        type: 'string.host',
+                        context: { value: '-', label: 'value', key: undefined }
+                    }]
+                }],
+                ['2387628', true],
+                ['01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', false, null, {
+                    message: '"value" must be a valid host',
+                    details: [{
+                        message: '"value" must be a valid host',
+                        path: [],
+                        type: 'string.host',
+                        context: { value: '01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', label: 'value', key: undefined }
+                    }]
+                }],
+                ['::1', true],
+                ['0:0:0:0:0:0:0:1', true],
+                ['0:?:0:0:0:0:0:1', false, null, {
+                    message: '"value" must be a valid host',
+                    details: [{
+                        message: '"value" must be a valid host',
+                        path: [],
+                        type: 'string.host',
                         context: { value: '0:?:0:0:0:0:0:1', label: 'value', key: undefined }
                     }]
                 }]
