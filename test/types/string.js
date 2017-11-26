@@ -957,7 +957,7 @@ describe('string', () => {
 
     describe('hostname()', () => {
 
-        it('validates hostnames', () => {
+        it('validates hostname', () => {
 
             const schema = Joi.string().hostname();
             Helper.validate(schema, [
@@ -1002,6 +1002,46 @@ describe('string', () => {
                         path: [],
                         type: 'string.hostname',
                         context: { value: '0:?:0:0:0:0:0:1', label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('host()', () => {
+
+        it('validates host', () => {
+
+            const schema = Joi.string().host();
+            Helper.validate(schema, [
+                ['0.0.0.0', true],
+                ['validHostname', true],
+                ['[0000:0000:0000:0000:0000:0000:0000:0000]', true],
+                ['0000:0000:0000:0000:0000:0000:0000:0000', false, null, {
+                    message: '"value" must be a valid host',
+                    details: [{
+                        message: '"value" must be a valid host',
+                        path: [],
+                        type: 'string.host',
+                        context: { value: '0000:0000:0000:0000:0000:0000:0000:0000', label: 'value', key: undefined }
+                    }]
+                }],
+                ['locahost:8080',false, null, {
+                    message: '"value" must be a valid host',
+                    details: [{
+                        message: '"value" must be a valid host',
+                        path: [],
+                        type: 'string.host',
+                        context: { value: 'locahost:8080', label: 'value', key: undefined }
+                    }]
+                }],
+                ['something:here', false, null, {
+                    message: '"value" must be a valid host',
+                    details: [{
+                        message: '"value" must be a valid host',
+                        path: [],
+                        type: 'string.host',
+                        context: { value: 'something:here', label: 'value', key: undefined }
                     }]
                 }]
             ]);
