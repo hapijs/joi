@@ -1672,6 +1672,14 @@ describe('object', () => {
             const schema = Joi.object().pattern(/a/g, Joi.number());
             await Joi.validate({ a1: 5, a2: 6 }, schema);
         });
+
+        it('allows using empty() on values', async () => {
+
+            const schema = Joi.object().pattern(/a/g, Joi.any().empty(null));
+
+            const value = await Joi.validate({ a1: undefined, a2: null, a3: 'test' }, schema);
+            expect(value).to.equal({ a1: undefined, a2: undefined, a3: 'test' });
+        });
     });
 
     describe('with()', () => {
