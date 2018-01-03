@@ -1722,7 +1722,7 @@ const schema = Joi.string().valid('a').insensitive();
 
 Specifies the minimum number string characters where:
 - `limit` - the minimum number of string characters required.
-- `encoding` - is specified, the string length is calculated in bytes using the provided encoding.
+- `encoding` - if specified, the string length is calculated in bytes using the provided encoding.
 
 ```js
 const schema = Joi.string().min(2);
@@ -1780,7 +1780,7 @@ const schema = Joi.string().creditCard();
 
 Specifies the exact string length required where:
 - `limit` - the required string length.
-- `encoding` - is specified, the string length is calculated in bytes using the provided encoding.
+- `encoding` - if specified, the string length is calculated in bytes using the provided encoding.
 
 ```js
 const schema = Joi.string().length(5);
