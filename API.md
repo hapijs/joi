@@ -1552,7 +1552,8 @@ const schema = Joi.object().keys({
 
 Requires the presence of other keys whenever the specified key is present where:
 - `key` - the reference key.
-- `peers` - the required peer key names that must appear together with `key`. `peers` can be a single string value or an array of string values.
+- `peers` - the required peer key names that must appear together with `key`. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
 
 Note that unlike [`object.and()`](#objectandpeers), `with()` creates a dependency only between the `key` and each of the `peers`, not
 between the `peers` themselves.
@@ -1568,7 +1569,8 @@ const schema = Joi.object().keys({
 
 Forbids the presence of other keys whenever the specified is present where:
 - `key` - the reference key.
-- `peers` - the forbidden peer key names that must not appear together with `key`. `peers` can be a single string value or an array of string values.
+- `peers` - the forbidden peer key names that must not appear together with `key`. `peers` can be a single string value, an
+  array of string values, or each peer provided as an argument.
 
 ```js
 const schema = Joi.object().keys({
