@@ -1706,6 +1706,37 @@ describe('object', () => {
             expect(error).to.equal(true);
         });
 
+        it('should throw an error unless 2 parameters are passed', () => {
+
+            let error;
+            try {
+                Joi.object().with();
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().with('a');
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().with('a', 'b', 'c');
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+        });
+
         it('should validate correctly when key is an empty string', () => {
 
             const schema = Joi.object().with('', 'b');
@@ -1762,6 +1793,37 @@ describe('object', () => {
             expect(error).to.equal(true);
 
 
+        });
+
+        it('should throw an error unless 2 parameters are passed', () => {
+
+            let error;
+            try {
+                Joi.object().with();
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().with('a');
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().with('a', 'b', 'c');
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
         });
 
         it('should validate correctly when key is an empty string', () => {
