@@ -1708,33 +1708,13 @@ describe('object', () => {
 
         it('should throw an error unless 2 parameters are passed', () => {
 
-            let error;
-            try {
-                Joi.object().with();
-                error = false;
-            }
-            catch (e) {
-                error = true;
-            }
-            expect(error).to.equal(true);
+            const message = 'Invalid number of arguments, expected 2.';
 
-            try {
-                Joi.object().with('a');
-                error = false;
-            }
-            catch (e) {
-                error = true;
-            }
-            expect(error).to.equal(true);
+            expect(() => Joi.object().with()).to.throw(message);
+            expect(() => Joi.object().with('a')).to.throw(message);
+            expect(() => Joi.object().with('a', 'b', 'c')).to.throw(message);
 
-            try {
-                Joi.object().with('a', 'b', 'c');
-                error = false;
-            }
-            catch (e) {
-                error = true;
-            }
-            expect(error).to.equal(true);
+            expect(Joi.object().with('a', 'b')).to.be.an.object().and.contain({ isJoi: true });
         });
 
         it('should validate correctly when key is an empty string', () => {
@@ -1797,33 +1777,13 @@ describe('object', () => {
 
         it('should throw an error unless 2 parameters are passed', () => {
 
-            let error;
-            try {
-                Joi.object().with();
-                error = false;
-            }
-            catch (e) {
-                error = true;
-            }
-            expect(error).to.equal(true);
+            const message = 'Invalid number of arguments, expected 2.';
 
-            try {
-                Joi.object().with('a');
-                error = false;
-            }
-            catch (e) {
-                error = true;
-            }
-            expect(error).to.equal(true);
+            expect(() => Joi.object().without()).to.throw(message);
+            expect(() => Joi.object().without('a')).to.throw(message);
+            expect(() => Joi.object().without('a', 'b', 'c')).to.throw(message);
 
-            try {
-                Joi.object().with('a', 'b', 'c');
-                error = false;
-            }
-            catch (e) {
-                error = true;
-            }
-            expect(error).to.equal(true);
+            expect(Joi.object().without('a', 'b')).to.be.an.object().and.contain({ isJoi: true });
         });
 
         it('should validate correctly when key is an empty string', () => {
