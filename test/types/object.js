@@ -1706,6 +1706,17 @@ describe('object', () => {
             expect(error).to.equal(true);
         });
 
+        it('should throw an error unless 2 parameters are passed', () => {
+
+            const message = 'Invalid number of arguments, expected 2.';
+
+            expect(() => Joi.object().with()).to.throw(message);
+            expect(() => Joi.object().with('a')).to.throw(message);
+            expect(() => Joi.object().with('a', 'b', 'c')).to.throw(message);
+
+            expect(Joi.object().with('a', 'b')).to.be.an.object().and.contain({ isJoi: true });
+        });
+
         it('should validate correctly when key is an empty string', () => {
 
             const schema = Joi.object().with('', 'b');
@@ -1762,6 +1773,17 @@ describe('object', () => {
             expect(error).to.equal(true);
 
 
+        });
+
+        it('should throw an error unless 2 parameters are passed', () => {
+
+            const message = 'Invalid number of arguments, expected 2.';
+
+            expect(() => Joi.object().without()).to.throw(message);
+            expect(() => Joi.object().without('a')).to.throw(message);
+            expect(() => Joi.object().without('a', 'b', 'c')).to.throw(message);
+
+            expect(Joi.object().without('a', 'b')).to.be.an.object().and.contain({ isJoi: true });
         });
 
         it('should validate correctly when key is an empty string', () => {
