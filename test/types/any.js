@@ -2493,6 +2493,13 @@ describe('any', () => {
             }]);
 
         });
+
+        it('preserves passed value when cloned', () => {
+
+            const o = {};
+            expect(Joi.valid(o).clone().validate(o).error).to.be.null();
+            expect(Joi.valid(o).clone().validate({}).error).to.be.an.error('"value" must be one of [[object Object]]');
+        });
     });
 
     describe('invalid()', () => {
@@ -2511,6 +2518,13 @@ describe('any', () => {
 
                 Joi.any().invalid(undefined);
             }).to.throw('Cannot call allow/valid/invalid with undefined');
+        });
+
+        it('preserves passed value when cloned', () => {
+
+            const o = {};
+            expect(Joi.object().invalid(o).clone().validate(o).error).to.be.an.error('"value" contains an invalid value');
+            expect(Joi.object().invalid(o).clone().validate({}).error).to.be.null();
         });
     });
 
