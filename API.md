@@ -1769,7 +1769,7 @@ const schema = Joi.string().max(5).truncate();
 
 #### `string.creditCard()`
 
-Requires the number to be a credit card number (Using [Lunh
+Requires the number to be a credit card number (Using [Luhn
 Algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)).
 
 ```js
