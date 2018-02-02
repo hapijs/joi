@@ -2218,6 +2218,124 @@ describe('array', () => {
             ]);
         });
 
+        it('errors on sparse arrays and continues when abortEarly is set to false', () => {
+
+            const schema = Joi.array().ordered(
+                Joi.number().min(0),
+                Joi.string().min(2),
+                Joi.number().max(0),
+                Joi.string().max(3)
+            ).options({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[0, 'ab', 0, 'ab'], true],
+                [[undefined, 'foo', 2, 'bar'], false, null, {
+                    message: '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be less than or equal to 0]',
+                    details: [{
+                        message: '"value" must not be a sparse array',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: 'value' }
+                    }, {
+                        message: '"2" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                    }]
+                }],
+                [[undefined, 'foo', 2, undefined], false, null, {
+                    message: '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be less than or equal to 0]. "value" must not be a sparse array',
+                    details: [{
+                        message: '"value" must not be a sparse array',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: 'value' }
+                    }, {
+                        message: '"2" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                    }, {
+                        message: '"value" must not be a sparse array',
+                        path: [3],
+                        type: 'array.sparse',
+                        context: { key: 3, label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on forbidden items and continues when abortEarly is set to false', () => {
+
+            const schema = Joi.array().items(Joi.bool().forbidden()).ordered(
+                Joi.number().min(0),
+                Joi.string().min(2),
+                Joi.number().max(0),
+                Joi.string().max(3)
+            ).options({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[0, 'ab', 0, 'ab'], true],
+                [[undefined, 'foo', 2, 'bar'], false, null, {
+                    message: '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be less than or equal to 0]',
+                    details: [{
+                        message: '"value" must not be a sparse array',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: 'value' }
+                    }, {
+                        message: '"2" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                    }]
+                }],
+                [[undefined, 'foo', 2, undefined], false, null, {
+                    message: '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be less than or equal to 0]. "value" must not be a sparse array',
+                    details: [{
+                        message: '"value" must not be a sparse array',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: 'value' }
+                    }, {
+                        message: '"2" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                    }, {
+                        message: '"value" must not be a sparse array',
+                        path: [3],
+                        type: 'array.sparse',
+                        context: { key: 3, label: 'value' }
+                    }]
+                }],
+                [[undefined, false, 2, undefined], false, null, {
+                    message: '"value" must not be a sparse array. "value" at position 1 contains an excluded value. "value" at position 2 fails because ["2" must be less than or equal to 0]. "value" must not be a sparse array',
+                    details: [{
+                        message: '"value" must not be a sparse array',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: 'value' }
+                    }, {
+                        message: '"value" at position 1 contains an excluded value',
+                        path: [1],
+                        type: 'array.excludes',
+                        context: { key: 1, label: 'value', pos: 1, value: false }
+                    }, {
+                        message: '"2" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                    }, {
+                        message: '"value" must not be a sparse array',
+                        path: [3],
+                        type: 'array.sparse',
+                        context: { key: 3, label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
         it('strips item', async () => {
 
             const schema = Joi.array().ordered([Joi.string().required(), Joi.number().strip(), Joi.number().required()]);
