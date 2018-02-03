@@ -2205,4 +2205,25 @@ describe('number', () => {
             ]);
         });
     });
+
+    describe('port()', () => {
+
+        it('accepts references as min value', () => {
+
+            const schema = Joi.object({ port: Joi.number().port() });
+
+            Helper.validate(schema, [
+                [{ port: 42 }, true],
+                [{ port: -1 }, false, null, {
+                    message: 'child "port" fails because ["port" must be larger than or equal to 0]',
+                    details: [{
+                        message: '"port" must be larger than or equal to 0',
+                        path: ['port'],
+                        type: 'number.min',
+                        context: { limit:0,label: 'port', key:'port',value: -1 }
+                    }]
+                }]
+            ]);
+        });
+    });
 });
