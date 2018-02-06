@@ -204,6 +204,18 @@ describe('ref', () => {
         expect(value).to.equal({ a: 6, b: 6 });
     });
 
+    it('uses ref mixed with normal values', async () => {
+
+        const schema = Joi.object({
+            a: Joi.number().valid(1, Joi.ref('b')),
+            b: Joi.any()
+        });
+
+        expect(await schema.validate({ a: 6, b: 6 })).to.equal({ a: 6, b: 6 });
+        expect(await schema.validate({ a: 1, b: 6 })).to.equal({ a: 1, b: 6 });
+        await expect(schema.validate({ a: 6, b: 1 })).to.reject();
+    });
+
     it('uses ref as default value regardless of order', async () => {
 
         const ab = Joi.object({
