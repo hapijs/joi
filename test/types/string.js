@@ -9638,7 +9638,20 @@ describe('string', () => {
             ], { convert: true });
         });
 
-        it('validates an hexadecimal string', () => {
+        it('validates the hexadecimal options', () => {
+
+            expect(() => {
+
+                Joi.string().hex('a');
+            }).to.throw('hex options must be an object');
+
+            expect(() => {
+
+                Joi.string().hex({ byteAligned: 'a' });
+            }).to.throw('byteAligned must be boolean');
+        });
+
+        it('validates an hexadecimal string with no options', () => {
 
             const rule = Joi.string().hex();
             Helper.validate(rule, [
@@ -9651,6 +9664,32 @@ describe('string', () => {
                         path: [],
                         type: 'string.hex',
                         context: { value: '123afg', label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates an hexadecimal string with byte align explicitly required', () => {
+
+            const rule = Joi.string().hex({ byteAligned: true });
+            Helper.validate(rule, [
+                ['0123456789abcdef', true],
+                ['123456789abcdef', false, null, {
+                    message: '"value" hex decoded representation must be byte aligned',
+                    details: [{
+                        message: '"value" hex decoded representation must be byte aligned',
+                        path: [],
+                        type: 'string.hexAlign',
+                        context: { value: '123456789abcdef', label: 'value', key: undefined }
+                    }]
+                }],
+                ['0123afg', false, null, {
+                    message: '"value" must only contain hexadecimal characters',
+                    details: [{
+                        message: '"value" must only contain hexadecimal characters',
+                        path: [],
+                        type: 'string.hex',
+                        context: { value: '0123afg', label: 'value', key: undefined }
                     }]
                 }]
             ]);
