@@ -14,7 +14,7 @@
   - [`attempt(value, schema, [message])`](#attemptvalue-schema-message)
   - [`ref(key, [options])`](#refkey-options)
   - [`isRef(ref)`](#isrefref)
-  - [`reach(schema, path)`](#reachschema-path)
+  - [`reach(schema, path, [separator])`](#reachschema-path)
   - [`defaults(fn)`](#defaultsfn)
   - [`extend(extension)`](#extendextension)
     - [Terms](#terms)
@@ -289,9 +289,9 @@ const ref = Joi.ref('a');
 Joi.isRef(ref); // returns true
 ```
 
-### `reach(schema, path)`
+### `reach(schema, path, [separator])`
 
-Get a sub-schema of an existing schema based on a path. Path separator is a dot (`.`).
+Get a sub-schema of an existing schema based on a path. The default value for the path separator is a dot (`.`).
 
 ```js
 const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
