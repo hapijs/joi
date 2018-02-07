@@ -2756,6 +2756,13 @@ describe('Joi', () => {
             expect(() => Joi.reach(schema)).to.throw('path must be a string');
             expect(() => Joi.reach(schema, true)).to.throw('path must be a string');
         });
+    
+        it('should fail without a proper separator', () => {
+        
+            const schema = Joi.object();
+            expect(() => Joi.reach(schema, 'a', true)).to.throw('separator must be a string');
+            expect(() => Joi.reach(schema, 'a', 1)).to.throw('separator must be a string');
+        });
 
         it('should return undefined when no keys are defined', () => {
 
