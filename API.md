@@ -291,11 +291,11 @@ Joi.isRef(ref); // returns true
 
 ### `reach(schema, path)`
 
-Get a sub-schema of an existing schema based on a path. Path separator is a dot (`.`).
+Get a sub-schema of an existing schema based on a path.
 
 ```js
 const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
-const number = Joi.reach(schema, 'foo.bar');
+const number = Joi.reach(schema, ['foo', 'bar']);
 ```
 
 ### `defaults(fn)`
