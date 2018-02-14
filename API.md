@@ -718,7 +718,7 @@ const schema = Joi.object({
     }),
     otherwise: Joi.object({
         a: Joi.valid('z')
-    }) 
+    })
 });
 ```
 
@@ -1454,6 +1454,21 @@ This is basically the same as `Joi.object([schema])`, but using `Joi.object().ke
 
 Some people like to use `keys()` to make the code more explicit (this is style only).
 
+#### `object.append([schema])`
+
+Appends the allowed object keys where:
+- `schema` - optional object where each key is assigned a **joi** type object. If `schema` is `null`,`undefined` or `{}` no changes will be applied. Uses object.keys([schema]) to append keys.
+
+```js
+// Validate key a
+const base = Joi.object().keys({
+    a: Joi.number()
+});
+// Validate keys a, b.
+const extended = base.append({
+    b: Joi.string()
+});
+```
 
 #### `object.min(limit)`
 
