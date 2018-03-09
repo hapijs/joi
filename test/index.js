@@ -3353,6 +3353,9 @@ describe('Joi', () => {
                 ]
             });
 
+            // Checks for a language leak in the base
+            expect(base._settings.language.myType.foo).to.equal('original');
+
             const schema = customJoi.myType().foo();
             const result = schema.validate({});
             expect(result.error).to.be.an.instanceof(Error);
