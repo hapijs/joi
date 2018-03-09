@@ -838,6 +838,45 @@ describe('object', () => {
         });
     });
 
+    describe('append()', () => {
+
+        it('should append schema', async () => {
+
+            const schema = Joi.object()
+                .keys({ a: Joi.string() })
+                .append({ b: Joi.string() });
+
+            await schema.validate({ a: 'x', b: 'y' });
+        });
+
+        it('should not change schema if it is null', async () => {
+
+            const schema = Joi.object()
+                .keys({ a: Joi.string() })
+                .append(null);
+
+            await schema.validate({ a: 'x' });
+        });
+
+        it('should not change schema if it is undefined', async () => {
+
+            const schema = Joi.object()
+                .keys({ a: Joi.string() })
+                .append(undefined);
+
+            await schema.validate({ a: 'x' });
+        });
+
+        it('should not change schema if it is empty-object', async () => {
+
+            const schema = Joi.object()
+                .keys({ a: Joi.string() })
+                .append({});
+
+            await schema.validate({ a: 'x' });
+        });
+    });
+
     describe('unknown()', () => {
 
         it('avoids unnecessary cloning when called twice', () => {
