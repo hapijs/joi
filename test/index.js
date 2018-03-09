@@ -2753,8 +2753,8 @@ describe('Joi', () => {
         it('should fail without a proper path', () => {
 
             const schema = Joi.object();
-            expect(() => Joi.reach(schema)).to.throw('path must be a string');
-            expect(() => Joi.reach(schema, true)).to.throw('path must be a string');
+            expect(() => Joi.reach(schema)).to.throw('path must be a string or an array of strings');
+            expect(() => Joi.reach(schema, true)).to.throw('path must be a string or an array of strings');
         });
 
         it('should return undefined when no keys are defined', () => {
@@ -2776,6 +2776,13 @@ describe('Joi', () => {
             expect(Joi.reach(schema, 'a')).to.shallow.equal(a);
         });
 
+        it('should return a schema when key as array is found', () => {
+
+            const a = Joi.number();
+            const schema = Joi.object().keys({ a });
+            expect(Joi.reach(schema, ['a'])).to.shallow.equal(a);
+        });
+
         it('should return undefined on a schema that does not support reach', () => {
 
             const schema = Joi.number();
@@ -2787,6 +2794,13 @@ describe('Joi', () => {
             const bar = Joi.number();
             const schema = Joi.object({ foo: Joi.object({ bar }) });
             expect(Joi.reach(schema, 'foo.bar')).to.shallow.equal(bar);
+        });
+
+        it('should return a schema when deep key is found', () => {
+
+            const bar = Joi.number();
+            const schema = Joi.object({ foo: Joi.object({ bar }) });
+            expect(Joi.reach(schema, ['foo','bar'])).to.shallow.equal(bar);
         });
 
         it('should return undefined when deep key is not found', () => {
