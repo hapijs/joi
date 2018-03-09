@@ -10,6 +10,7 @@
   - [`version`](#version)
   - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
   - [`compile(schema)`](#compileschema)
+  - [`describe(schema)`](#describeschema)
   - [`assert(value, schema, [message])`](#assertvalue-schema-message)
   - [`attempt(value, schema, [message])`](#attemptvalue-schema-message)
   - [`ref(key, [options])`](#refkey-options)
@@ -46,6 +47,7 @@
     - [`any.raw(isRaw)`](#anyrawisraw)
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
+    - [`any.describe()`](#anydescribe)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.sparse([enabled])`](#arraysparseenabled)
     - [`array.single([enabled])`](#arraysingleenabled)
@@ -226,6 +228,26 @@ const schema = Joi.alternatives().try([
         ])
     })
 ]);
+```
+
+### `describe(schema)`
+
+Returns an object that represents the internal configuration of a **joi** schema. Useful for debugging and exposing a schema's configuration to other systems, like valid values in a user interface.
+
+- `schema` - the schema to describe.
+
+```js
+const schema = Joi.any().valid([ 'foo', 'bar' ]);
+
+console.log(Joi.describe(schema));
+```
+
+Results in:
+
+```
+{ type: 'any',
+  flags: { allowOnly: true },
+  valids: [ 'foo', 'bar' ] }
 ```
 
 ### `assert(value, schema, [message])`
@@ -855,6 +877,24 @@ schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails
 Note that if you want to intercept errors on nested structures such as objects and arrays, you will also get a nested structure to explore the children errors, going one level down through the `err.context.reason` property.
 
 If you want a full substitution of the error system, you can hook at the root and render that `errors` array with whatever templating system you want, just be aware that you will have to crawl the nested errors for the information you want to actually show.
+
+#### `any.describe()`
+
+Behaves the same as [`describe(schema)`](#describeschema) and returns an object that represents the internal configuration of the **joi** schema.
+
+```js
+const schema = Joi.any().valid([ 'foo', 'bar' ]);
+
+console.log(schema.describe());
+```
+
+Results in:
+
+```
+{ type: 'any',
+  flags: { allowOnly: true },
+  valids: [ 'foo', 'bar' ] }
+```
 
 ### `array` - inherits from `Any`
 
