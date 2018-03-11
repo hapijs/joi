@@ -2205,4 +2205,43 @@ describe('number', () => {
             ]);
         });
     });
+
+    describe('port()', () => {
+
+        it('should validate correctly', () => {
+
+            const schema = Joi.object({ port: Joi.number().port() });
+
+            Helper.validate(schema, [
+                [{ port: 1337 }, true],
+                [{ port: -1 }, false, null, {
+                    message: 'child "port" fails because ["port" must be a valid port]',
+                    details: [{
+                        message: '"port" must be a valid port',
+                        path: ['port'],
+                        type: 'number.port',
+                        context: { value: -1, label: 'port', key: 'port' }
+                    }]
+                }],
+                [{ port: 65536 }, false, null, {
+                    message: 'child "port" fails because ["port" must be a valid port]',
+                    details: [{
+                        message: '"port" must be a valid port',
+                        path: ['port'],
+                        type: 'number.port',
+                        context: { value: 65536, label: 'port', key: 'port' }
+                    }]
+                }],
+                [{ port: 8.88 }, false, null, {
+                    message: 'child "port" fails because ["port" must be a valid port]',
+                    details: [{
+                        message: '"port" must be a valid port',
+                        path: ['port'],
+                        type: 'number.port',
+                        context: { value: 8.88, label: 'port', key: 'port' }
+                    }]
+                }]
+            ]);
+        });
+    });
 });
