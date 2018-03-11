@@ -1397,6 +1397,14 @@ Requires the number to be negative.
 const schema = Joi.number().negative();
 ```
 
+#### `number.port()`
+
+Requires the number to be a TCP port, so between 0 and 65535.
+
+```js
+const schema = Joi.number().port();
+```
+
 ### `object` - inherits from `Any`
 
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
