@@ -31,7 +31,7 @@ describe('Set', () => {
 
             const set = new Set();
             set.add(null);
-            expect(set.has(new Buffer(''))).to.be.false();
+            expect(set.has(Buffer.from(''))).to.be.false();
         });
 
         it('compares different types of values', () => {
@@ -71,11 +71,11 @@ describe('Set', () => {
             expect(set.has(f)).to.be.true();
             expect(set.has(() => {})).to.be.false();
 
-            const b = new Buffer('foo');
+            const b = Buffer.from('foo');
             set = new Set();
             set.add(b);
             expect(set.has(b)).to.be.true();
-            expect(set.has(new Buffer('foobar'))).to.be.false();
+            expect(set.has(Buffer.from('foobar'))).to.be.false();
         });
     });
 

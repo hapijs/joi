@@ -1003,7 +1003,7 @@ describe('array', () => {
 
         it('errors if duplicate numbers, strings, objects, binaries, functions, dates and booleans', () => {
 
-            const buffer = new Buffer('hello world');
+            const buffer = Buffer.from('hello world');
             const func = function () {};
             const now = new Date();
             const schema = Joi.array().sparse().unique();
@@ -1234,8 +1234,8 @@ describe('array', () => {
 
         it('validates without duplicates', () => {
 
-            const buffer = new Buffer('hello world');
-            const buffer2 = new Buffer('Hello world');
+            const buffer = Buffer.from('hello world');
+            const buffer2 = Buffer.from('Hello world');
             const func = function () {};
             const func2 = function () {};
             const now = new Date();

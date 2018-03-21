@@ -2482,10 +2482,10 @@ describe('any', () => {
                 context: { valids: [f], label: 'value', key: undefined }
             }]);
 
-            const b = new Buffer('foo');
+            const b = Buffer.from('foo');
             expect(Joi.valid(b).validate(b).error).to.be.null();
-            expect(Joi.valid(b).validate(new Buffer('foobar')).error).to.be.an.error('"value" must be one of [foo]');
-            expect(Joi.valid(b).validate(new Buffer('foobar')).error.details).to.equal([{
+            expect(Joi.valid(b).validate(Buffer.from('foobar')).error).to.be.an.error('"value" must be one of [foo]');
+            expect(Joi.valid(b).validate(Buffer.from('foobar')).error.details).to.equal([{
                 message: '"value" must be one of [foo]',
                 path: [],
                 type: 'any.allowOnly',
