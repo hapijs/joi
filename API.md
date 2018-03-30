@@ -925,6 +925,8 @@ Allows single values to be checked against rules as if it were provided as an ar
 
 `enabled` can be used with a falsy value to go back to the default behavior.
 
+Note: `convert` option must be enabled.
+
 ```js
 const schema = Joi.array().items(Joi.number()).single();
 schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
