@@ -1,5 +1,5 @@
 <!-- version -->
-# 13.1.2 API Reference
+# 13.1.3 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -87,11 +87,13 @@
     - [`number.multiple(base)`](#numbermultiplebase)
     - [`number.positive()`](#numberpositive)
     - [`number.negative()`](#numbernegative)
+    - [`number.port()`](#numberport)
   - [`object` - inherits from `Any`](#object---inherits-from-any)
     - [`object.keys([schema])`](#objectkeysschema)
       - [`{} notation`](#-notation)
       - [`Joi.object([schema]) notation`](#joiobjectschema-notation)
       - [`Joi.object().keys([schema]) notation`](#joiobjectkeysschema-notation)
+    - [`object.append([schema])`](#objectappendschema)
     - [`object.min(limit)`](#objectminlimit)
     - [`object.max(limit)`](#objectmaxlimit)
     - [`object.length(limit)`](#objectlengthlimit)
