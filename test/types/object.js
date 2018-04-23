@@ -33,12 +33,12 @@ describe('object', () => {
 
     it('errors on non-object string', async () => {
 
-        const err = await expect(Joi.object().validate('a string')).to.reject('"value" must be an object');
+        const err = await expect(Joi.object().validate('a string')).to.reject('"a string" must be an object');
         expect(err.details).to.equal([{
-            message: '"value" must be an object',
+            message: '"a string" must be an object',
             path: [],
             type: 'object.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: 'a string' }
         }]);
     });
 
@@ -49,12 +49,12 @@ describe('object', () => {
             [{}, true],
             [{ hi: true }, true],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"" must be an object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -121,12 +121,12 @@ describe('object', () => {
 
     it('errors on array', async () => {
 
-        const err = await expect(Joi.object().validate([1, 2, 3])).to.reject('"value" must be an object');
+        const err = await expect(Joi.object().validate([1, 2, 3])).to.reject('"[1, 2, 3]" must be an object');
         expect(err.details).to.equal([{
-            message: '"value" must be an object',
+            message: '"[1, 2, 3]" must be an object',
             path: [],
             type: 'object.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: [1, 2, 3] }
         }]);
     });
 
@@ -145,12 +145,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"" must be an object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -180,12 +180,12 @@ describe('object', () => {
             }],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"" must be an object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -207,12 +207,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"" must be an object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -243,12 +243,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"" must be an object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -278,12 +278,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"" must be an object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -303,12 +303,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"" must be an object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }],
             [new Date(), false, null, {
@@ -339,7 +339,7 @@ describe('object', () => {
                     message: '"num" must be a number',
                     path: ['num'],
                     type: 'number.base',
-                    context: { label: 'num', key: 'num' }
+                    context: { label: 'num', key: 'num', value: [1, 2, 3] }
                 }]
             }]
         ]);
@@ -362,7 +362,7 @@ describe('object', () => {
                     message: '"num" must be a number',
                     path: ['num'],
                     type: 'number.base',
-                    context: { label: 'num', key: 'num' }
+                    context: { label: 'num', key: 'num', value: [1, 2, 3] }
                 }]
             }],
             [{ num: 1, obj: { item: 'something' } }, true],
@@ -410,7 +410,7 @@ describe('object', () => {
                     message: '"item" must be a boolean',
                     path: ['obj', 'obj', 'obj', 'item'],
                     type: 'boolean.base',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 10 }
                 }]
             }]
         ]);
@@ -430,12 +430,12 @@ describe('object', () => {
 
         Helper.validate(schema, [
             [null, false, null, {
-                message: '"value" must be an object',
+                message: '"null" must be an object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"null" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: null }
                 }]
             }],
             [undefined, true],
@@ -458,7 +458,7 @@ describe('object', () => {
                     message: '"item" must be a boolean',
                     path: ['obj', 'obj', 'obj', 'item'],
                     type: 'boolean.base',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 10 }
                 }]
             }]
         ]);
@@ -478,12 +478,12 @@ describe('object', () => {
 
         Helper.validate(schema, [
             [null, false, null, {
-                message: '"value" must be an object',
+                message: '"null" must be an object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"null" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: null }
                 }]
             }],
             [undefined, true],
@@ -506,7 +506,7 @@ describe('object', () => {
                     message: '"item" must be a boolean',
                     path: ['obj', 'obj', 'obj', 'item'],
                     type: 'boolean.base',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 10 }
                 }]
             }]
         ]);
@@ -568,7 +568,7 @@ describe('object', () => {
                     message: '"foo" must be one of [context:x]',
                     path: ['foo'],
                     type: 'any.allowOnly',
-                    context: { valids: [ref], label: 'foo', key: 'foo' }
+                    context: { valids: [ref], label: 'foo', key: 'foo', value: 'bar' }
                 }]
             }],
             [{ foo: 'bar' }, false, { context: { x: ['baz', 'qux'] } }, {
@@ -577,7 +577,7 @@ describe('object', () => {
                     message: '"foo" must be one of [context:x]',
                     path: ['foo'],
                     type: 'any.allowOnly',
-                    context: { valids: [ref], label: 'foo', key: 'foo' }
+                    context: { valids: [ref], label: 'foo', key: 'foo', value: 'bar' }
                 }]
             }],
             [{ foo: 'bar' }, false, null, {
@@ -586,7 +586,7 @@ describe('object', () => {
                     message: '"foo" must be one of [context:x]',
                     path: ['foo'],
                     type: 'any.allowOnly',
-                    context: { valids: [ref], label: 'foo', key: 'foo' }
+                    context: { valids: [ref], label: 'foo', key: 'foo', value: 'bar' }
                 }]
             }]
         ]);
@@ -741,7 +741,7 @@ describe('object', () => {
                         message: '"a" must be one of [1]',
                         path: ['a'],
                         type: 'any.allowOnly',
-                        context: { valids: [1], label: 'a', key: 'a' }
+                        context: { valids: [1], label: 'a', key: 'a', value: 2 }
                     }]
                 }]
             ]);
@@ -901,7 +901,7 @@ describe('object', () => {
                         message: '"b" must be a number',
                         path: ['a', 'b'],
                         type: 'number.base',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ a: { b: 5 }, c: 'ignore' }, true],
@@ -933,7 +933,7 @@ describe('object', () => {
                         message: '"b" must be a number',
                         path: ['a', 'b'],
                         type: 'number.base',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ a: { b: 5 }, c: 'ignore' }, false, null, {
@@ -968,7 +968,7 @@ describe('object', () => {
                         message: '"b" must be a number',
                         path: ['a', 'b'],
                         type: 'number.base',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ a: { b: 5 }, d: 'ignore' }, true, null, { a: { b: 5 } }],
@@ -1622,13 +1622,13 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
                     path: ['bb'],
                     type: 'any.allowOnly',
-                    context: { valids: ['x'], label: 'bb', key: 'bb' }
+                    context: { valids: ['x'], label: 'bb', key: 'bb', value: 'y' }
                 }
             ]);
 
@@ -1640,7 +1640,7 @@ describe('object', () => {
                         message: '"a" must be a number',
                         path: ['a'],
                         type: 'number.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: 'x' }
                     }]
                 }],
                 [{ b: 'x' }, false, null, {
@@ -1659,7 +1659,7 @@ describe('object', () => {
                         message: '"5" must be a boolean',
                         path: ['5'],
                         type: 'boolean.base',
-                        context: { label: '5', key: '5' }
+                        context: { label: '5', key: '5', value: 'x' }
                     }]
                 }],
                 [{ 5: false }, true],
@@ -1682,13 +1682,13 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['x', '5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
                     path: ['x', 'bb'],
                     type: 'any.allowOnly',
-                    context: { valids: ['x'], label: 'bb', key: 'bb' }
+                    context: { valids: ['x'], label: 'bb', key: 'bb', value: 'y' }
                 }
             ]);
         });

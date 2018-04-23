@@ -39,7 +39,7 @@ describe('ref', () => {
             message: '"a" must be one of [ref:b]',
             path: ['a'],
             type: 'any.allowOnly',
-            context: { valids: [ref], label: 'a', key: 'a' }
+            context: { valids: [ref], label: 'a', key: 'a', value: 5 }
         }]);
 
         Helper.validate(schema, [
@@ -49,7 +49,7 @@ describe('ref', () => {
                     message: '"a" must be one of [ref:b]',
                     path: ['a'],
                     type: 'any.allowOnly',
-                    context: { valids: [ref], label: 'a', key: 'a' }
+                    context: { valids: [ref], label: 'a', key: 'a', value: 5 }
                 }]
             }],
             [{ b: 5 }, true],
@@ -72,7 +72,7 @@ describe('ref', () => {
             message: '"a" must be one of [ref:]',
             path: ['a'],
             type: 'any.allowOnly',
-            context: { valids: [ref], label: 'a', key: 'a' }
+            context: { valids: [ref], label: 'a', key: 'a', value: 5 }
         }]);
 
         Helper.validate(schema, [
@@ -82,7 +82,7 @@ describe('ref', () => {
                     message: '"a" must be one of [ref:]',
                     path: ['a'],
                     type: 'any.allowOnly',
-                    context: { valids: [ref], label: 'a', key: 'a' }
+                    context: { valids: [ref], label: 'a', key: 'a', value: 5 }
                 }]
             }],
             [{ '': 5 }, true],
@@ -108,7 +108,7 @@ describe('ref', () => {
             message: '"a" must be one of [ref:b.c]',
             path: ['a'],
             type: 'any.allowOnly',
-            context: { valids: [ref], label: 'a', key: 'a' }
+            context: { valids: [ref], label: 'a', key: 'a', value: 5 }
         }]);
 
         Helper.validate(schema, [
@@ -118,7 +118,7 @@ describe('ref', () => {
                     message: '"a" must be one of [ref:b.c]',
                     path: ['a'],
                     type: 'any.allowOnly',
-                    context: { valids: [ref], label: 'a', key: 'a' }
+                    context: { valids: [ref], label: 'a', key: 'a', value: 5 }
                 }]
             }],
             [{ b: { c: 5 } }, true],
@@ -128,7 +128,7 @@ describe('ref', () => {
                     message: '"b" must be an object',
                     path: ['b'],
                     type: 'object.base',
-                    context: { label: 'b', key: 'b' }
+                    context: { label: 'b', key: 'b', value: 5 }
                 }]
             }],
             [{ a: '5', b: { c: '5' } }, true]
@@ -242,13 +242,13 @@ describe('ref', () => {
                         message: '"b" must be one of [ref:a.c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref1], label: 'b', key: 'b' }
+                        context: { valids: [ref1], label: 'b', key: 'b', value: 7 }
                     },
                     {
                         message: '"b" must be one of [ref:c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref2], label: 'b', key: 'b' }
+                        context: { valids: [ref2], label: 'b', key: 'b', value: 7 }
                     }
                 ]
             }]
@@ -265,13 +265,13 @@ describe('ref', () => {
                         message: '"b" must be one of [ref:a.c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref1], label: 'b', key: 'b' }
+                        context: { valids: [ref1], label: 'b', key: 'b', value: 7 }
                     },
                     {
                         message: '"b" must be one of [ref:c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref2], label: 'b', key: 'b' }
+                        context: { valids: [ref2], label: 'b', key: 'b', value: 7 }
                     }
                 ]
             }]
@@ -288,13 +288,13 @@ describe('ref', () => {
                         message: '"b" must be one of [ref:a.c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref1], label: 'b', key: 'b' }
+                        context: { valids: [ref1], label: 'b', key: 'b', value: 7 }
                     },
                     {
                         message: '"b" must be one of [ref:c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref2], label: 'b', key: 'b' }
+                        context: { valids: [ref2], label: 'b', key: 'b', value: 7 }
                     }
                 ]
             }]
@@ -311,13 +311,13 @@ describe('ref', () => {
                         message: '"b" must be one of [ref:a.c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref1], label: 'b', key: 'b' }
+                        context: { valids: [ref1], label: 'b', key: 'b', value: 7 }
                     },
                     {
                         message: '"b" must be one of [ref:c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref2], label: 'b', key: 'b' }
+                        context: { valids: [ref2], label: 'b', key: 'b', value: 7 }
                     }
                 ]
             }]
@@ -334,13 +334,13 @@ describe('ref', () => {
                         message: '"b" must be one of [ref:a.c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref1], label: 'b', key: 'b' }
+                        context: { valids: [ref1], label: 'b', key: 'b', value: 7 }
                     },
                     {
                         message: '"b" must be one of [ref:c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref2], label: 'b', key: 'b' }
+                        context: { valids: [ref2], label: 'b', key: 'b', value: 7 }
                     }
                 ]
             }]
@@ -357,13 +357,13 @@ describe('ref', () => {
                         message: '"b" must be one of [ref:a.c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref1], label: 'b', key: 'b' }
+                        context: { valids: [ref1], label: 'b', key: 'b', value: 7 }
                     },
                     {
                         message: '"b" must be one of [ref:c]',
                         path: ['b'],
                         type: 'any.allowOnly',
-                        context: { valids: [ref2], label: 'b', key: 'b' }
+                        context: { valids: [ref2], label: 'b', key: 'b', value: 7 }
                     }
                 ]
             }]
@@ -406,7 +406,7 @@ describe('ref', () => {
             message: '"a" must be one of [context:x]',
             path: ['a'],
             type: 'any.allowOnly',
-            context: { valids: [ref], label: 'a', key: 'a' }
+            context: { valids: [ref], label: 'a', key: 'a', value: 5 }
         }]);
 
         Helper.validateOptions(schema, [
@@ -416,7 +416,7 @@ describe('ref', () => {
                     message: '"a" must be one of [context:x]',
                     path: ['a'],
                     type: 'any.allowOnly',
-                    context: { valids: [ref], label: 'a', key: 'a' }
+                    context: { valids: [ref], label: 'a', key: 'a', value: 5 }
                 }]
             }],
             [{ a: 22 }, true],
@@ -428,7 +428,7 @@ describe('ref', () => {
                     message: '"a" must be one of [context:x]',
                     path: ['a'],
                     type: 'any.allowOnly',
-                    context: { valids: [ref], label: 'a', key: 'a' }
+                    context: { valids: [ref], label: 'a', key: 'a', value: '22' }
                 }]
             }]
         ], { context: { x: 22 } });
@@ -486,7 +486,7 @@ describe('ref', () => {
                     message: '"a" must be a boolean',
                     path: ['a'],
                     type: 'boolean.base',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, true, { context: { x: 1 } }]
@@ -583,7 +583,7 @@ describe('ref', () => {
                     message: '"a" must be a boolean',
                     path: ['a'],
                     type: 'boolean.base',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, true, { context: { x: { y: 1 } } }]

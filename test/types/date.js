@@ -57,21 +57,21 @@ describe('date', () => {
         const schema = Joi.date();
         Helper.validate(schema, [
             [true, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"true" must be a number of milliseconds or valid date string',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"true" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: true }
                 }]
             }],
             [false, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"false" must be a number of milliseconds or valid date string',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"false" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: false }
                 }]
             }]
         ]);
@@ -82,30 +82,30 @@ describe('date', () => {
         const schema = Joi.date();
         Helper.validate(schema, [
             [Infinity, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"Infinity" must be a number of milliseconds or valid date string',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"Infinity" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: Infinity }
                 }]
             }],
             [-Infinity, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"-Infinity" must be a number of milliseconds or valid date string',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"-Infinity" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: -Infinity }
                 }]
             }],
             [NaN, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"NaN" must be a number of milliseconds or valid date string',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"NaN" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: NaN }
                 }]
             }]
         ]);
@@ -120,6 +120,18 @@ describe('date', () => {
     it('errors on invalid input and convert disabled', async () => {
 
         const err = await expect(Joi.date().options({ convert: false }).validate('1-1-2013 UTC')).to.reject();
+        expect(err).to.be.an.error('"1-1-2013 UTC" must be a valid date');
+        expect(err.details).to.equal([{
+            message: '"1-1-2013 UTC" must be a valid date',
+            path: [],
+            type: 'date.strict',
+            context: { label: 'value', key: undefined, value: '1-1-2013 UTC' }
+        }]);
+    });
+
+    it('errors on invalid date and convert disabled', async () => {
+
+        const err = await expect(Joi.date().options({ convert: false }).validate(new Date('not a valid date'))).to.reject();
         expect(err).to.be.an.error('"value" must be a valid date');
         expect(err.details).to.equal([{
             message: '"value" must be a valid date',
@@ -150,44 +162,44 @@ describe('date', () => {
             it('validates min', () => {
 
                 const d = new Date('1-1-2000 UTC');
-                const message = `"value" must be larger than or equal to "${d}"`;
+                const me = `must be larger than or equal to "${d}"`;
                 Helper.validate(Joi.date().min('1-1-2000 UTC'), [
                     ['1-1-2001 UTC', true],
                     ['1-1-2000 UTC', true],
                     [0, false, null, {
-                        message,
+                        message: `"${new Date(0)}" ${me}`,
                         details: [{
-                            message,
+                            message: `"${new Date(0)}" ${me}`,
                             path: [],
                             type: 'date.min',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(0) }
                         }]
                     }],
                     ['0', false, null, {
-                        message,
+                        message: `"${new Date(0)}" ${me}`,
                         details: [{
-                            message,
+                            message: `"${new Date(0)}" ${me}`,
                             path: [],
                             type: 'date.min',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(0) }
                         }]
                     }],
                     ['-1', false, null, {
-                        message,
+                        message: `"${new Date(-1)}" ${me}`,
                         details: [{
-                            message,
+                            message: `"${new Date(-1)}" ${me}`,
                             path: [],
                             type: 'date.min',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(-1) }
                         }]
                     }],
                     ['1-1-1999 UTC', false, null, {
-                        message,
+                        message: `"${new Date('1-1-1999 UTC')}" ${me}`,
                         details: [{
-                            message,
+                            message: `"${new Date('1-1-1999 UTC')}" ${me}`,
                             path: [],
                             type: 'date.min',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-1999 UTC') }
                         }]
                     }]
                 ]);
@@ -207,13 +219,13 @@ describe('date', () => {
                 const past = new Date(now - 1000000);
 
                 const err = await expect(Joi.date().min('now').validate(past)).to.reject();
-                const message = `"value" must be larger than or equal to "${dnow}"`;
+                const message = `"${past}" must be larger than or equal to "${dnow}"`;
                 expect(err).to.be.an.error(message);
                 expect(err.details).to.equal([{
-                    message: `"value" must be larger than or equal to "${dnow}"`,
+                    message: `"${past}" must be larger than or equal to "${dnow}"`,
                     path: [],
                     type: 'date.min',
-                    context: { limit: dnow, label: 'value', key: undefined }
+                    context: { limit: dnow, label: 'value', key: undefined, value: past }
                 }]);
             });
 
@@ -232,7 +244,7 @@ describe('date', () => {
                             message: `"b" must be larger than or equal to "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -260,7 +272,7 @@ describe('date', () => {
                             message: '"c" must be one of [0]',
                             path: ['c'],
                             type: 'any.allowOnly',
-                            context: { valids: [0], label: 'c', key: 'c' }
+                            context: { valids: [0], label: 'c', key: 'c', value: 42 }
                         }]
                     }],
                     [{ a: 456, b: 123, c: 42 }, false, null, {
@@ -269,7 +281,7 @@ describe('date', () => {
                             message: '"c" must be one of [0]',
                             path: ['c'],
                             type: 'any.allowOnly',
-                            context: { valids: [0], label: 'c', key: 'c' }
+                            context: { valids: [0], label: 'c', key: 'c', value: 42 }
                         }]
                     }]
                 ]);
@@ -291,7 +303,7 @@ describe('date', () => {
                             message: `"b" must be larger than or equal to "${dnow}"`,
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: dnow, label: 'b', key: 'b' }
+                            context: { limit: dnow, label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -319,7 +331,7 @@ describe('date', () => {
                             message: `"b" must be larger than or equal to "${new Date(now + 1e3)}"`,
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -346,7 +358,7 @@ describe('date', () => {
                             message: `"b" must be larger than or equal to "${new Date(now + 1e3)}"`,
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -358,37 +370,37 @@ describe('date', () => {
             it('validates max', () => {
 
                 const d = new Date('1-1-1970 UTC');
-                const message = `"value" must be less than or equal to "${d}"`;
+                const me = `must be less than or equal to "${d}"`;
                 Helper.validate(Joi.date().max('1-1-1970 UTC'), [
                     ['1-1-1971 UTC', false, null, {
-                        message,
+                        message: `"${new Date('1-1-1971 UTC')}" ${me}`,
                         details: [{
-                            message,
+                            message: `"${new Date('1-1-1971 UTC')}" ${me}`,
                             path: [],
                             type: 'date.max',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-1971 UTC') }
                         }]
                     }],
                     ['1-1-1970 UTC', true],
                     [0, true],
                     [1, false, null, {
-                        message,
+                        message: `"${new Date(1)}" ${me}`,
                         details: [{
-                            message,
+                            message: `"${new Date(1)}" ${me}`,
                             path: [],
                             type: 'date.max',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(1) }
                         }]
                     }],
                     ['0', true],
                     ['-1', true],
                     ['1-1-2014 UTC', false, null, {
-                        message,
+                        message: `"${new Date('1-1-2014 UTC')}" ${me}`,
                         details: [{
-                            message,
+                            message: `"${new Date('1-1-2014 UTC')}" ${me}`,
                             path: [],
                             type: 'date.max',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-2014 UTC') }
                         }]
                     }]
                 ]);
@@ -409,13 +421,13 @@ describe('date', () => {
                 const future = new Date(now + 1000000);
 
                 const err = await expect(Joi.date().max('now').validate(future)).to.reject();
-                const message = `"value" must be less than or equal to "${dnow}"`;
+                const message = `"${future}" must be less than or equal to "${dnow}"`;
                 expect(err).to.be.an.error(message);
                 expect(err.details).to.equal([{
-                    message: `"value" must be less than or equal to "${dnow}"`,
+                    message: `"${future}" must be less than or equal to "${dnow}"`,
                     path: [],
                     type: 'date.max',
-                    context: { limit: dnow, label: 'value', key: undefined }
+                    context: { limit: dnow, label: 'value', key: undefined, value: future }
                 }]);
             });
 
@@ -433,7 +445,7 @@ describe('date', () => {
                             message: `"b" must be less than or equal to "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ a: now, b: now - 1e3 }, true]
@@ -453,7 +465,7 @@ describe('date', () => {
                             message: `"b" must be less than or equal to "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ b: now - 1e3 }, true, { context: { a: now } }]
@@ -482,7 +494,7 @@ describe('date', () => {
                             message: `"b" must be less than or equal to "${new Date(now - 1e3)}"`,
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -510,7 +522,7 @@ describe('date', () => {
                             message: `"b" must be less than or equal to "${new Date(now - 1e3)}"`,
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -524,12 +536,12 @@ describe('date', () => {
                 [new Date().getTime(), true],
                 [new Date().getTime().toFixed(4), true],
                 ['not a valid date', false, null, {
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"not a valid date" must be a number of milliseconds or valid date string',
                     details: [{
-                        message: '"value" must be a number of milliseconds or valid date string',
+                        message: '"not a valid date" must be a number of milliseconds or valid date string',
                         path: [],
                         type: 'date.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'not a valid date' }
                     }]
                 }],
                 [new Date('not a valid date'), false, null, {
@@ -558,61 +570,61 @@ describe('date', () => {
                     ['+002013-06-07T14:21:46.295Z', true],
                     ['-002013-06-07T14:21:46.295Z', true],
                     ['002013-06-07T14:21:46.295Z', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"002013-06-07T14:21:46.295Z" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"002013-06-07T14:21:46.295Z" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '002013-06-07T14:21:46.295Z' }
                         }]
                     }],
                     ['+2013-06-07T14:21:46.295Z', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"+2013-06-07T14:21:46.295Z" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"+2013-06-07T14:21:46.295Z" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '+2013-06-07T14:21:46.295Z' }
                         }]
                     }],
                     ['-2013-06-07T14:21:46.295Z', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"-2013-06-07T14:21:46.295Z" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"-2013-06-07T14:21:46.295Z" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '-2013-06-07T14:21:46.295Z' }
                         }]
                     }],
                     ['2013-06-07T14:21:46.295Z', true],
                     ['2013-06-07T14:21:46.295Z0', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"2013-06-07T14:21:46.295Z0" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"2013-06-07T14:21:46.295Z0" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21:46.295Z0' }
                         }]
                     }],
                     ['2013-06-07T14:21:46.295+07:00', true],
                     ['2013-06-07T14:21:46.295+07:000', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"2013-06-07T14:21:46.295+07:000" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"2013-06-07T14:21:46.295+07:000" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21:46.295+07:000' }
                         }]
                     }],
                     ['2013-06-07T14:21:46.295-07:00', true],
                     ['2013-06-07T14:21:46Z', true],
                     ['2013-06-07T14:21:46Z0', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"2013-06-07T14:21:46Z0" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"2013-06-07T14:21:46Z0" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21:46Z0' }
                         }]
                     }],
                     ['2013-06-07T14:21:46+07:00', true],
@@ -620,42 +632,42 @@ describe('date', () => {
                     ['2013-06-07T14:21Z', true],
                     ['2013-06-07T14:21+07:00', true],
                     ['2013-06-07T14:21+07:000', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"2013-06-07T14:21+07:000" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"2013-06-07T14:21+07:000" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21+07:000' }
                         }]
                     }],
                     ['2013-06-07T14:21-07:00', true],
                     ['2013-06-07T14:21Z+7:00', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"2013-06-07T14:21Z+7:00" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"2013-06-07T14:21Z+7:00" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21Z+7:00' }
                         }]
                     }],
                     ['2013-06-07', true],
                     ['2013-06-07T', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"2013-06-07T" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"2013-06-07T" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T' }
                         }]
                     }],
                     ['2013-06-07T14:21', true],
                     ['1-1-2013', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"1-1-2013" must be a valid ISO 8601 date',
                         details: [{
-                            message: '"value" must be a valid ISO 8601 date',
+                            message: '"1-1-2013" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '1-1-2013' }
                         }]
                     }]
                 ]);
@@ -677,7 +689,7 @@ describe('date', () => {
                     message: '"item" must be a valid ISO 8601 date',
                     path: ['item'],
                     type: 'date.isoDate',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 'something' }
                 }]);
             });
 
@@ -701,21 +713,21 @@ describe('date', () => {
                 const schema = Joi.date().timestamp();
                 Helper.validate(schema, [
                     ['', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"" must be a valid timestamp or number of milliseconds',
                         details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
+                            message: '"" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { key: undefined, label: 'value' }
+                            context: { key: undefined, label: 'value', value: '' }
                         }]
                     }],
                     [' \t ', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '" \t " must be a valid timestamp or number of milliseconds',
                         details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
+                            message: '" \t " must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { key: undefined, label: 'value' }
+                            context: { key: undefined, label: 'value', value: ' \t ' }
                         }]
                     }]
                 ]);
@@ -774,39 +786,39 @@ describe('date', () => {
                     [1E3, true],
                     ['1E3', true],
                     [',', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"," must be a valid timestamp or number of milliseconds',
                         details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
+                            message: '"," must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: ',' }
                         }]
                     }],
                     ['123A,0xA', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"123A,0xA" must be a valid timestamp or number of milliseconds',
                         details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
+                            message: '"123A,0xA" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '123A,0xA' }
                         }]
                     }],
                     ['1-1-2013 UTC', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"1-1-2013 UTC" must be a valid timestamp or number of milliseconds',
                         details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
+                            message: '"1-1-2013 UTC" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '1-1-2013 UTC' }
                         }]
                     }],
                     ['not a valid timestamp', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"not a valid timestamp" must be a valid timestamp or number of milliseconds',
                         details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
+                            message: '"not a valid timestamp" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 'not a valid timestamp' }
                         }]
                     }],
                     [new Date('not a valid date'), false, null, {

@@ -28,14 +28,15 @@ describe('alternatives', () => {
     it('fails when no alternatives are provided', async () => {
 
         const err = await expect(Joi.alternatives().validate('a')).to.reject();
-        expect(err.message).to.equal('"value" not matching any of the allowed alternatives');
+        expect(err.message).to.equal('"a" not matching any of the allowed alternatives');
         expect(err.details).to.equal([
             {
                 context: {
                     key: undefined,
-                    label: 'value'
+                    label: 'value',
+                    value: 'a'
                 },
-                message: '"value" not matching any of the allowed alternatives',
+                message: '"a" not matching any of the allowed alternatives',
                 path: [],
                 type: 'alternatives.base'
             }
@@ -104,19 +105,19 @@ describe('alternatives', () => {
             }));
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be a string]',
+                    message: '"[object Object]" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be a string]',
                     details: [
                         {
-                            message: '"value" must be a boolean',
+                            message: '"[object Object]" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: { p: 1 } }
                         },
                         {
                             message: '"p" must be a boolean',
                             path: ['p'],
                             type: 'boolean.base',
-                            context: { label: 'p', key: 'p' }
+                            context: { label: 'p', key: 'p', value: 1 }
                         },
                         {
                             message: '"p" must be a string',
@@ -127,42 +128,42 @@ describe('alternatives', () => {
                     ]
                 }],
                 [{ p: '...' }, false, null, {
-                    message: '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be one of [foo, bar]]',
+                    message: '"[object Object]" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be one of [foo, bar]]',
                     details: [
                         {
-                            message: '"value" must be a boolean',
+                            message: '"[object Object]" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: { p: '...' } }
                         },
                         {
                             message: '"p" must be a boolean',
                             path: ['p'],
                             type: 'boolean.base',
-                            context: { label: 'p', key: 'p' }
+                            context: { label: 'p', key: 'p', value: '...' }
                         },
                         {
                             message: '"p" must be one of [foo, bar]',
                             path: ['p'],
                             type: 'any.allowOnly',
-                            context: { valids: ['foo', 'bar'], label: 'p', key: 'p' }
+                            context: { valids: ['foo', 'bar'], label: 'p', key: 'p', value: '...' }
                         }
                     ]
                 }],
                 [1, false, null, {
-                    message: '"value" must be a boolean, "value" must be an object',
+                    message: '"1" must be a boolean, "1" must be an object',
                     details: [
                         {
-                            message: '"value" must be a boolean',
+                            message: '"1" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 1 }
                         },
                         {
-                            message: '"value" must be an object',
+                            message: '"1" must be an object',
                             path: [],
                             type: 'object.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 1 }
                         }
                     ]
                 }]
@@ -176,65 +177,65 @@ describe('alternatives', () => {
             })).options({ language: { messages: { wrapArrays: false } } });
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be a string',
+                    message: '"[object Object]" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be a string',
                     details: [
                         {
-                            message: '"value" must be a boolean',
+                            message: '"[object Object]" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: { p: 1 } }
                         },
                         {
                             message: '"p" must be a boolean',
                             path: ['p'],
                             type: 'boolean.base',
-                            context: { label: 'p', key: 'p' }
+                            context: { label: 'p', key: 'p', value: 1 }
                         },
                         {
                             message: '"p" must be a string',
                             path: ['p'],
                             type: 'string.base',
-                            context: { value: 1, label: 'p', key: 'p' }
+                            context: { value: 1, label: 'p', key: 'p', value: 1 }
                         }
                     ]
                 }],
                 [{ p: '...' }, false, null, {
-                    message: '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be one of foo, bar',
+                    message: '"[object Object]" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be one of foo, bar',
                     details: [
                         {
-                            message: '"value" must be a boolean',
+                            message: '"[object Object]" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: { p: '...' } }
                         },
                         {
                             message: '"p" must be a boolean',
                             path: ['p'],
                             type: 'boolean.base',
-                            context: { label: 'p', key: 'p' }
+                            context: { label: 'p', key: 'p', value: '...' }
                         },
                         {
                             message: '"p" must be one of foo, bar',
                             path: ['p'],
                             type: 'any.allowOnly',
-                            context: { valids: ['foo', 'bar'], label: 'p', key: 'p' }
+                            context: { valids: ['foo', 'bar'], label: 'p', key: 'p', value: '...' }
                         }
                     ]
                 }],
                 [1, false, null, {
-                    message: '"value" must be a boolean, "value" must be an object',
+                    message: '"1" must be a boolean, "1" must be an object',
                     details: [
                         {
-                            message: '"value" must be a boolean',
+                            message: '"1" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 1 }
                         },
                         {
-                            message: '"value" must be an object',
+                            message: '"1" must be an object',
                             path: [],
                             type: 'object.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 1 }
                         }
                     ]
                 }]
@@ -279,7 +280,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { valids: ['y'], label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'y', b: 5 }, false, null, {
@@ -288,7 +289,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { valids: ['x'], label: 'a', key: 'a', value: 'y' }
                         }]
                     }],
                     [{ a: 'y', b: 6 }, true],
@@ -298,7 +299,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { valids: ['x'], label: 'a', key: 'a', value: 'z' }
                         }]
                     }],
                     [{ a: 'z', b: 6 }, false, null, {
@@ -307,7 +308,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { valids: ['y'], label: 'a', key: 'a', value: 'z' }
                         }]
                     }]
                 ]);
@@ -330,7 +331,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { valids: ['y'], label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'y', '': 5 }, false, null, {
@@ -339,7 +340,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { valids: ['x'], label: 'a', key: 'a', value: 'y' }
                         }]
                     }],
                     [{ a: 'y', '': 6 }, true],
@@ -349,7 +350,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { valids: ['x'], label: 'a', key: 'a', value: 'z' }
                         }]
                     }],
                     [{ a: 'z', '': 6 }, false, null, {
@@ -358,7 +359,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { valids: ['y'], label: 'a', key: 'a', value: 'z' }
                         }]
                     }]
                 ]);
@@ -381,7 +382,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [z]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['z'], label: 'a', key: 'a' }
+                            context: { valids: ['z'], label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'y', b: 5 }, false, null, {
@@ -390,7 +391,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { valids: ['x'], label: 'a', key: 'a', value: 'y' }
                         }]
                     }],
                     [{ a: 'y', b: 6 }, false, null, {
@@ -399,7 +400,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [z]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['z'], label: 'a', key: 'a' }
+                            context: { valids: ['z'], label: 'a', key: 'a', value: 'y' }
                         }]
                     }],
                     [{ a: 'z', b: 5 }, false, null, {
@@ -408,7 +409,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { valids: ['x'], label: 'a', key: 'a', value: 'z' }
                         }]
                     }],
                     [{ a: 'z', b: 6 }, true]
@@ -431,7 +432,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [z]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['z'], label: 'a', key: 'a' }
+                            context: { valids: ['z'], label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'x', b: 6 }, false, null, {
@@ -440,7 +441,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { valids: ['y'], label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'y', b: 5 }, false, null, {
@@ -449,7 +450,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [z]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['z'], label: 'a', key: 'a' }
+                            context: { valids: ['z'], label: 'a', key: 'a', value: 'y' }
                         }]
                     }],
                     [{ a: 'y', b: 6 }, true],
@@ -460,7 +461,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { valids: ['y'], label: 'a', key: 'a', value: 'z' }
                         }]
                     }]
                 ]);
@@ -507,7 +508,7 @@ describe('alternatives', () => {
                             message: '"a" must be a number',
                             path: ['a'],
                             type: 'number.base',
-                            context: { label: 'a', key: 'a' }
+                            context: { label: 'a', key: 'a', value: 'y' }
                         }]
                     }],
                     [{ a: 'x', b: null }, true],
@@ -517,7 +518,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { valids: ['x'], label: 'a', key: 'a', value: 'y' }
                         }]
                     }],
                     [{ a: 1, b: null }, false, null, {
@@ -526,7 +527,7 @@ describe('alternatives', () => {
                             message: '"a" must be a string',
                             path: ['a'],
                             type: 'string.base',
-                            context: { value: 1, label: 'a', key: 'a' }
+                            context: { value: 1, label: 'a', key: 'a', value: 1 }
                         }]
                     }]
                 ]);
@@ -548,7 +549,7 @@ describe('alternatives', () => {
                             message: '"a" not matching any of the allowed alternatives',
                             path: ['a'],
                             type: 'alternatives.base',
-                            context: { label: 'a', key: 'a' }
+                            context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'x', b: '5', c: '5' }, false, null, {
@@ -557,7 +558,7 @@ describe('alternatives', () => {
                             message: '"a" not matching any of the allowed alternatives',
                             path: ['a'],
                             type: 'alternatives.base',
-                            context: { label: 'a', key: 'a' }
+                            context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'y', b: 5, c: 5 }, false, null, {
@@ -566,7 +567,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { valids: ['x'], label: 'a', key: 'a', value: 'y' }
                         }]
                     }],
                     [{ a: 'y' }, false, null, {
@@ -575,7 +576,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { valids: ['x'], label: 'a', key: 'a', value: 'y' }
                         }]
                     }]
                 ]);
@@ -597,7 +598,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: [ref], label: 'a', key: 'a' }
+                            context: { valids: [ref], label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 1, b: 5, c: '1' }, true],
@@ -607,7 +608,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: [ref], label: 'a', key: 'a' }
+                            context: { valids: [ref], label: 'a', key: 'a', value: '1' }
                         }]
                     }]
                 ]);
@@ -629,7 +630,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: [ref], label: 'a', key: 'a' }
+                            context: { valids: [ref], label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 1, b: 5, c: '1' }, true],
@@ -639,7 +640,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: [ref], label: 'a', key: 'a' }
+                            context: { valids: [ref], label: 'a', key: 'a', value: '1' }
                         }]
                     }]
                 ]);
@@ -733,7 +734,7 @@ describe('alternatives', () => {
                             message: '"c" must be one of [789]',
                             path: ['c'],
                             type: 'any.allowOnly',
-                            context: { valids: [789], label: 'c', key: 'c' }
+                            context: { valids: [789], label: 'c', key: 'c', value: 456 }
                         }]
                     }],
                     [{ a: 123, b: 456, c: 789 }, false, null, {
@@ -742,7 +743,7 @@ describe('alternatives', () => {
                             message: '"c" must be one of [456]',
                             path: ['c'],
                             type: 'any.allowOnly',
-                            context: { valids: [456], label: 'c', key: 'c' }
+                            context: { valids: [456], label: 'c', key: 'c', value: 789 }
                         }]
                     }]
                 ]);
@@ -757,9 +758,9 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [-1, true, null, -1],
                     [1, false, null, {
-                        message: '"value" must be larger than or equal to 10',
+                        message: '"1" must be larger than or equal to 10',
                         details: [{
-                            message: '"value" must be larger than or equal to 10',
+                            message: '"1" must be larger than or equal to 10',
                             path: [],
                             type: 'number.min',
                             context: { limit: 10, value: 1, key: undefined, label: 'value' }

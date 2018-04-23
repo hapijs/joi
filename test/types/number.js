@@ -37,21 +37,21 @@ describe('number', () => {
         const schema = Joi.number();
         Helper.validate(schema, [
             [true, false, null, {
-                message: '"value" must be a number',
+                message: '"true" must be a number',
                 details: [{
-                    message: '"value" must be a number',
+                    message: '"true" must be a number',
                     path: [],
                     type: 'number.base',
-                    context: { label: 'value', key: undefined }
+                    context: { value: true, label: 'value', key: undefined }
                 }]
             }],
             [false, false, null, {
-                message: '"value" must be a number',
+                message: '"false" must be a number',
                 details: [{
-                    message: '"value" must be a number',
+                    message: '"false" must be a number',
                     path: [],
                     type: 'number.base',
-                    context: { label: 'value', key: undefined }
+                    context: { value: false, label: 'value', key: undefined }
                 }]
             }]
         ]);
@@ -84,12 +84,12 @@ describe('number', () => {
         it('should return false for denied value', async () => {
 
             const text = Joi.number().invalid(50);
-            const err = await expect(text.validate(50)).to.reject('"value" contains an invalid value');
+            const err = await expect(text.validate(50)).to.reject('"50" is an invalid value');
             expect(err.details).to.equal([{
-                message: '"value" contains an invalid value',
+                message: '"50" is an invalid value',
                 path: [],
                 type: 'any.invalid',
-                context: { label: 'value', key: undefined }
+                context: { value: 50, label: 'value', key: undefined }
             }]);
         });
 
@@ -100,39 +100,39 @@ describe('number', () => {
                 [100, true],
                 [0, true],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }],
                 [1.02, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"1.02" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"1.02" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 1.02, label: 'value', key: undefined }
                     }]
                 }],
                 [0.01, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"0.01" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"0.01" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 0.01, label: 'value', key: undefined }
                     }]
                 }],
                 ['90071992547409910.1', false, null, {
-                    message: '"value" must be an integer',
+                    message: '"90071992547409900" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"90071992547409900" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 90071992547409910.1, label: 'value', key: undefined }
+                        context: { value: 90071992547409900, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -143,21 +143,21 @@ describe('number', () => {
             const t = Joi.number();
             Helper.validate(t, [
                 [Infinity, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"Infinity" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"Infinity" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: Infinity, label: 'value', key: undefined }
                     }]
                 }],
                 [-Infinity, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"-Infinity" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"-Infinity" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: -Infinity, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -180,42 +180,42 @@ describe('number', () => {
                 ['100', true],
                 ['1e3', true],
                 ['1 some text', false, null, {
-                    message: '"value" must be a number',
+                    message: '"1 some text" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"1 some text" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: '1 some text', label: 'value', key: undefined }
                     }]
                 }],
                 ['\t\r', false, null, {
-                    message: '"value" must be a number',
+                    message: '"\t\r" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"\t\r" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: '\t\r', label: 'value', key: undefined }
                     }]
                 }],
                 [' ', false, null, {
-                    message: '"value" must be a number',
+                    message: '" " must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '" " must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: ' ', label: 'value', key: undefined }
                     }]
                 }],
                 [' 2', true],
                 ['\t\r43', true],
                 ['43 ', true],
                 ['', false, null, {
-                    message: '"value" must be a number',
+                    message: '"" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: '', label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -226,12 +226,12 @@ describe('number', () => {
             const t = Joi.number().required();
             Helper.validate(t, [
                 [NaN, false, null, {
-                    message: '"value" must be a number',
+                    message: '"NaN" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"NaN" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: NaN, label: 'value', key: undefined }
                     }]
                 }],
                 ['100', true]
@@ -255,12 +255,12 @@ describe('number', () => {
 
         it('errors on null', async () => {
 
-            const err = await expect(Joi.number().validate(null)).to.reject('"value" must be a number');
+            const err = await expect(Joi.number().validate(null)).to.reject('"null" must be a number');
             expect(err.details).to.equal([{
-                message: '"value" must be a number',
+                message: '"null" must be a number',
                 path: [],
                 type: 'number.base',
-                context: { label: 'value', key: undefined }
+                context: { value: null, label: 'value', key: undefined }
             }]);
         });
 
@@ -269,18 +269,18 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10);
             Helper.validate(rule, [
                 [1, false, null, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"1" must be larger than or equal to 8',
                     details: [{
-                        message: '"value" must be larger than or equal to 8',
+                        message: '"1" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
                         context: { limit: 8, value: 1, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
@@ -289,12 +289,12 @@ describe('number', () => {
                 [8, true],
                 [9, true],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -305,18 +305,18 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).allow(null);
             Helper.validate(rule, [
                 [1, false, null, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"1" must be larger than or equal to 8',
                     details: [{
-                        message: '"value" must be larger than or equal to 8',
+                        message: '"1" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
                         context: { limit: 8, value: 1, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
@@ -334,9 +334,9 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, true],
                 [-2, false, null, {
-                    message: '"value" must be a positive number',
+                    message: '"-2" must be a positive number',
                     details: [{
-                        message: '"value" must be a positive number',
+                        message: '"-2" must be a positive number',
                         path: [],
                         type: 'number.positive',
                         context: { value: -2, label: 'value', key: undefined }
@@ -344,12 +344,12 @@ describe('number', () => {
                 }],
                 [8, true],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -361,30 +361,30 @@ describe('number', () => {
             Helper.validate(rule, [
                 [4, true],
                 [-2, false, null, {
-                    message: '"value" must be a positive number',
+                    message: '"-2" must be a positive number',
                     details: [{
-                        message: '"value" must be a positive number',
+                        message: '"-2" must be a positive number',
                         path: [],
                         type: 'number.positive',
                         context: { value: -2, label: 'value', key: undefined }
                     }]
                 }],
                 [8, false, null, {
-                    message: '"value" must be less than or equal to 5',
+                    message: '"8" must be less than or equal to 5',
                     details: [{
-                        message: '"value" must be less than or equal to 5',
+                        message: '"8" must be less than or equal to 5',
                         path: [],
                         type: 'number.max',
                         context: { limit: 5, value: 8, label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -395,9 +395,9 @@ describe('number', () => {
             const rule = Joi.number().min(-3).negative();
             Helper.validate(rule, [
                 [4, false, null, {
-                    message: '"value" must be a negative number',
+                    message: '"4" must be a negative number',
                     details: [{
-                        message: '"value" must be a negative number',
+                        message: '"4" must be a negative number',
                         path: [],
                         type: 'number.negative',
                         context: { value: 4, label: 'value', key: undefined }
@@ -405,21 +405,21 @@ describe('number', () => {
                 }],
                 [-2, true],
                 [-4, false, null, {
-                    message: '"value" must be larger than or equal to -3',
+                    message: '"-4" must be larger than or equal to -3',
                     details: [{
-                        message: '"value" must be larger than or equal to -3',
+                        message: '"-4" must be larger than or equal to -3',
                         path: [],
                         type: 'number.min',
                         context: { limit: -3, value: -4, label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -430,39 +430,39 @@ describe('number', () => {
             const rule = Joi.number().negative().positive();
             Helper.validate(rule, [
                 [4, false, null, {
-                    message: '"value" must be a negative number',
+                    message: '"4" must be a negative number',
                     details: [{
-                        message: '"value" must be a negative number',
+                        message: '"4" must be a negative number',
                         path: [],
                         type: 'number.negative',
                         context: { value: 4, label: 'value', key: undefined }
                     }]
                 }],
                 [-2, false, null, {
-                    message: '"value" must be a positive number',
+                    message: '"-2" must be a positive number',
                     details: [{
-                        message: '"value" must be a positive number',
+                        message: '"-2" must be a positive number',
                         path: [],
                         type: 'number.positive',
                         context: { value: -2, label: 'value', key: undefined }
                     }]
                 }],
                 [0, false, null, {
-                    message: '"value" must be a negative number',
+                    message: '"0" must be a negative number',
                     details: [{
-                        message: '"value" must be a negative number',
+                        message: '"0" must be a negative number',
                         path: [],
                         type: 'number.negative',
                         context: { value: 0, label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -475,30 +475,30 @@ describe('number', () => {
                 [1, true],
                 [-10, true],
                 [8, false, null, {
-                    message: '"value" must be a negative number',
+                    message: '"8" must be a negative number',
                     details: [{
-                        message: '"value" must be a negative number',
+                        message: '"8" must be a negative number',
                         path: [],
                         type: 'number.negative',
                         context: { value: 8, label: 'value', key: undefined }
                     }]
                 }],
                 [0, false, null, {
-                    message: '"value" must be a negative number',
+                    message: '"0" must be a negative number',
                     details: [{
-                        message: '"value" must be a negative number',
+                        message: '"0" must be a negative number',
                         path: [],
                         type: 'number.negative',
                         context: { value: 0, label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -512,21 +512,21 @@ describe('number', () => {
                 [-1, true],
                 [8, true],
                 [-10, false, null, {
-                    message: '"value" must be a positive number',
+                    message: '"-10" must be a positive number',
                     details: [{
-                        message: '"value" must be a positive number',
+                        message: '"-10" must be a positive number',
                         path: [],
                         type: 'number.positive',
                         context: { value: -10, label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -540,9 +540,9 @@ describe('number', () => {
                 [-1, true],
                 [8, true],
                 [-10, false, null, {
-                    message: '"value" must be a positive number',
+                    message: '"-10" must be a positive number',
                     details: [{
-                        message: '"value" must be a positive number',
+                        message: '"-10" must be a positive number',
                         path: [],
                         type: 'number.positive',
                         context: { value: -10, label: 'value', key: undefined }
@@ -559,18 +559,18 @@ describe('number', () => {
                 [1, true],
                 [-10, true],
                 [8, false, null, {
-                    message: '"value" must be a negative number',
+                    message: '"8" must be a negative number',
                     details: [{
-                        message: '"value" must be a negative number',
+                        message: '"8" must be a negative number',
                         path: [],
                         type: 'number.negative',
                         context: { value: 8, label: 'value', key: undefined }
                     }]
                 }],
                 [0, false, null, {
-                    message: '"value" must be a negative number',
+                    message: '"0" must be a negative number',
                     details: [{
-                        message: '"value" must be a negative number',
+                        message: '"0" must be a negative number',
                         path: [],
                         type: 'number.negative',
                         context: { value: 0, label: 'value', key: undefined }
@@ -585,20 +585,20 @@ describe('number', () => {
             const rule = Joi.number().positive().allow(-1).allow(null).invalid(1);
             Helper.validate(rule, [
                 [1, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"1" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"1" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 1, label: 'value', key: undefined }
                     }]
                 }],
                 [-1, true],
                 [8, true],
                 [-10, false, null, {
-                    message: '"value" must be a positive number',
+                    message: '"-10" must be a positive number',
                     details: [{
-                        message: '"value" must be a positive number',
+                        message: '"-10" must be a positive number',
                         path: [],
                         type: 'number.positive',
                         context: { value: -10, label: 'value', key: undefined }
@@ -615,27 +615,27 @@ describe('number', () => {
                 [1, true],
                 [-10, true],
                 [-5, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"-5" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"-5" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: -5, label: 'value', key: undefined }
                     }]
                 }],
                 [8, false, null, {
-                    message: '"value" must be a negative number',
+                    message: '"8" must be a negative number',
                     details: [{
-                        message: '"value" must be a negative number',
+                        message: '"8" must be a negative number',
                         path: [],
                         type: 'number.negative',
                         context: { value: 8, label: 'value', key: undefined }
                     }]
                 }],
                 [0, false, null, {
-                    message: '"value" must be a negative number',
+                    message: '"0" must be a negative number',
                     details: [{
-                        message: '"value" must be a negative number',
+                        message: '"0" must be a negative number',
                         path: [],
                         type: 'number.negative',
                         context: { value: 0, label: 'value', key: undefined }
@@ -651,9 +651,9 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, true],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
@@ -662,12 +662,12 @@ describe('number', () => {
                 [8, true],
                 [9, true],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -679,9 +679,9 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, true],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
@@ -699,9 +699,9 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, true],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
@@ -709,21 +709,21 @@ describe('number', () => {
                 }],
                 [8, true],
                 [9, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"9" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"9" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 9, label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -735,9 +735,9 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, true],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
@@ -745,12 +745,12 @@ describe('number', () => {
                 }],
                 [8, true],
                 [9, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"9" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"9" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 9, label: 'value', key: undefined }
                     }]
                 }],
                 [null, true]
@@ -762,18 +762,18 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer();
             Helper.validate(rule, [
                 [1, false, null, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"1" must be larger than or equal to 8',
                     details: [{
-                        message: '"value" must be larger than or equal to 8',
+                        message: '"1" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
                         context: { limit: 8, value: 1, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
@@ -782,21 +782,21 @@ describe('number', () => {
                 [8, true],
                 [9, true],
                 [9.1, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"9.1" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"9.1" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 9.1, label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -807,18 +807,18 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer().allow(9.1);
             Helper.validate(rule, [
                 [1, false, null, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"1" must be larger than or equal to 8',
                     details: [{
-                        message: '"value" must be larger than or equal to 8',
+                        message: '"1" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
                         context: { limit: 8, value: 1, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
@@ -828,21 +828,21 @@ describe('number', () => {
                 [9, true],
                 [9.1, true],
                 [9.2, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"9.2" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"9.2" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 9.2, label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -853,50 +853,50 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8);
             Helper.validate(rule, [
                 [1, false, null, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"1" must be larger than or equal to 8',
                     details: [{
-                        message: '"value" must be larger than or equal to 8',
+                        message: '"1" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
                         context: { limit: 8, value: 1, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
                     }]
                 }],
                 [8, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"8" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"8" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 8, label: 'value', key: undefined }
                     }]
                 }],
                 [9, true],
                 [9.1, true],
                 [9.2, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"9.2" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"9.2" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 9.2, label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -907,38 +907,38 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null);
             Helper.validate(rule, [
                 [1, false, null, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"1" must be larger than or equal to 8',
                     details: [{
-                        message: '"value" must be larger than or equal to 8',
+                        message: '"1" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
                         context: { limit: 8, value: 1, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
                     }]
                 }],
                 [8, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"8" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"8" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 8, label: 'value', key: undefined }
                     }]
                 }],
                 [9, true],
                 [9.1, true],
                 [9.2, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"9.2" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"9.2" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 9.2, label: 'value', key: undefined }
@@ -955,18 +955,18 @@ describe('number', () => {
                 [1, true],
                 [9.1, true],
                 [9.21, false, null, {
-                    message: '"value" must have no more than 1 decimal places',
+                    message: '"9.21" must have no more than 1 decimal places',
                     details: [{
-                        message: '"value" must have no more than 1 decimal places',
+                        message: '"9.21" must have no more than 1 decimal places',
                         path: [],
                         type: 'number.precision',
                         context: { limit: 1, value: 9.21, label: 'value', key: undefined }
                     }]
                 }],
                 [9.9999, false, null, {
-                    message: '"value" must have no more than 1 decimal places',
+                    message: '"9.9999" must have no more than 1 decimal places',
                     details: [{
-                        message: '"value" must have no more than 1 decimal places',
+                        message: '"9.9999" must have no more than 1 decimal places',
                         path: [],
                         type: 'number.precision',
                         context: { limit: 1, value: 9.9999, label: 'value', key: undefined }
@@ -974,9 +974,9 @@ describe('number', () => {
                 }],
                 [9.999e99, true],
                 [9.9e-99, false, null, {
-                    message: '"value" must have no more than 1 decimal places',
+                    message: '"9.9e-99" must have no more than 1 decimal places',
                     details: [{
-                        message: '"value" must have no more than 1 decimal places',
+                        message: '"9.9e-99" must have no more than 1 decimal places',
                         path: [],
                         type: 'number.precision',
                         context: { limit: 1, value: 9.9e-99, label: 'value', key: undefined }
@@ -984,12 +984,12 @@ describe('number', () => {
                 }],
                 [9.9e3, true],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -1000,56 +1000,56 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1).options({ convert: false });
             Helper.validate(rule, [
                 [1, false, null, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"1" must be larger than or equal to 8',
                     details: [{
-                        message: '"value" must be larger than or equal to 8',
+                        message: '"1" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
                         context: { limit: 8, value: 1, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than or equal to 10',
+                    message: '"11" must be less than or equal to 10',
                     details: [{
-                        message: '"value" must be less than or equal to 10',
+                        message: '"11" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
                     }]
                 }],
                 [8, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"8" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"8" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 8, label: 'value', key: undefined }
                     }]
                 }],
                 [9, true],
                 [9.1, true],
                 [9.11, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"9.11" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"9.11" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 9.11, label: 'value', key: undefined }
                     }]
                 }],
                 [9.2, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"9.2" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"9.2" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 9.2, label: 'value', key: undefined }
                     }]
                 }],
                 [9.22, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"9.22" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"9.22" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 9.22, label: 'value', key: undefined }
@@ -1064,36 +1064,36 @@ describe('number', () => {
             const rule = Joi.number().greater(5).less(10);
             Helper.validate(rule, [
                 [0, false, null, {
-                    message: '"value" must be greater than 5',
+                    message: '"0" must be greater than 5',
                     details: [{
-                        message: '"value" must be greater than 5',
+                        message: '"0" must be greater than 5',
                         path: [],
                         type: 'number.greater',
                         context: { limit: 5, value: 0, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than 10',
+                    message: '"11" must be less than 10',
                     details: [{
-                        message: '"value" must be less than 10',
+                        message: '"11" must be less than 10',
                         path: [],
                         type: 'number.less',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
                     }]
                 }],
                 [5, false, null, {
-                    message: '"value" must be greater than 5',
+                    message: '"5" must be greater than 5',
                     details: [{
-                        message: '"value" must be greater than 5',
+                        message: '"5" must be greater than 5',
                         path: [],
                         type: 'number.greater',
                         context: { limit: 5, value: 5, label: 'value', key: undefined }
                     }]
                 }],
                 [10, false, null, {
-                    message: '"value" must be less than 10',
+                    message: '"10" must be less than 10',
                     details: [{
-                        message: '"value" must be less than 10',
+                        message: '"10" must be less than 10',
                         path: [],
                         type: 'number.less',
                         context: { limit: 10, value: 10, label: 'value', key: undefined }
@@ -1103,12 +1103,12 @@ describe('number', () => {
                 [5.01, true],
                 [9.99, true],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -1119,36 +1119,36 @@ describe('number', () => {
             const rule = Joi.number().integer().greater(5).less(10);
             Helper.validate(rule, [
                 [0, false, null, {
-                    message: '"value" must be greater than 5',
+                    message: '"0" must be greater than 5',
                     details: [{
-                        message: '"value" must be greater than 5',
+                        message: '"0" must be greater than 5',
                         path: [],
                         type: 'number.greater',
                         context: { limit: 5, value: 0, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than 10',
+                    message: '"11" must be less than 10',
                     details: [{
-                        message: '"value" must be less than 10',
+                        message: '"11" must be less than 10',
                         path: [],
                         type: 'number.less',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
                     }]
                 }],
                 [5, false, null, {
-                    message: '"value" must be greater than 5',
+                    message: '"5" must be greater than 5',
                     details: [{
-                        message: '"value" must be greater than 5',
+                        message: '"5" must be greater than 5',
                         path: [],
                         type: 'number.greater',
                         context: { limit: 5, value: 5, label: 'value', key: undefined }
                     }]
                 }],
                 [10, false, null, {
-                    message: '"value" must be less than 10',
+                    message: '"10" must be less than 10',
                     details: [{
-                        message: '"value" must be less than 10',
+                        message: '"10" must be less than 10',
                         path: [],
                         type: 'number.less',
                         context: { limit: 10, value: 10, label: 'value', key: undefined }
@@ -1157,18 +1157,18 @@ describe('number', () => {
                 [6, true],
                 [9, true],
                 [5.01, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"5.01" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"5.01" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 5.01, label: 'value', key: undefined }
                     }]
                 }],
                 [9.99, false, null, {
-                    message: '"value" must be an integer',
+                    message: '"9.99" must be an integer',
                     details: [{
-                        message: '"value" must be an integer',
+                        message: '"9.99" must be an integer',
                         path: [],
                         type: 'number.integer',
                         context: { value: 9.99, label: 'value', key: undefined }
@@ -1182,36 +1182,36 @@ describe('number', () => {
             const rule = Joi.number().greater(5).less(10).allow(null);
             Helper.validate(rule, [
                 [0, false, null, {
-                    message: '"value" must be greater than 5',
+                    message: '"0" must be greater than 5',
                     details: [{
-                        message: '"value" must be greater than 5',
+                        message: '"0" must be greater than 5',
                         path: [],
                         type: 'number.greater',
                         context: { limit: 5, value: 0, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than 10',
+                    message: '"11" must be less than 10',
                     details: [{
-                        message: '"value" must be less than 10',
+                        message: '"11" must be less than 10',
                         path: [],
                         type: 'number.less',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
                     }]
                 }],
                 [5, false, null, {
-                    message: '"value" must be greater than 5',
+                    message: '"5" must be greater than 5',
                     details: [{
-                        message: '"value" must be greater than 5',
+                        message: '"5" must be greater than 5',
                         path: [],
                         type: 'number.greater',
                         context: { limit: 5, value: 5, label: 'value', key: undefined }
                     }]
                 }],
                 [10, false, null, {
-                    message: '"value" must be less than 10',
+                    message: '"10" must be less than 10',
                     details: [{
-                        message: '"value" must be less than 10',
+                        message: '"10" must be less than 10',
                         path: [],
                         type: 'number.less',
                         context: { limit: 10, value: 10, label: 'value', key: undefined }
@@ -1229,48 +1229,48 @@ describe('number', () => {
             const rule = Joi.number().greater(5).less(10).invalid(6).allow(-3);
             Helper.validate(rule, [
                 [0, false, null, {
-                    message: '"value" must be greater than 5',
+                    message: '"0" must be greater than 5',
                     details: [{
-                        message: '"value" must be greater than 5',
+                        message: '"0" must be greater than 5',
                         path: [],
                         type: 'number.greater',
                         context: { limit: 5, value: 0, label: 'value', key: undefined }
                     }]
                 }],
                 [11, false, null, {
-                    message: '"value" must be less than 10',
+                    message: '"11" must be less than 10',
                     details: [{
-                        message: '"value" must be less than 10',
+                        message: '"11" must be less than 10',
                         path: [],
                         type: 'number.less',
                         context: { limit: 10, value: 11, label: 'value', key: undefined }
                     }]
                 }],
                 [5, false, null, {
-                    message: '"value" must be greater than 5',
+                    message: '"5" must be greater than 5',
                     details: [{
-                        message: '"value" must be greater than 5',
+                        message: '"5" must be greater than 5',
                         path: [],
                         type: 'number.greater',
                         context: { limit: 5, value: 5, label: 'value', key: undefined }
                     }]
                 }],
                 [10, false, null, {
-                    message: '"value" must be less than 10',
+                    message: '"10" must be less than 10',
                     details: [{
-                        message: '"value" must be less than 10',
+                        message: '"10" must be less than 10',
                         path: [],
                         type: 'number.less',
                         context: { limit: 10, value: 10, label: 'value', key: undefined }
                     }]
                 }],
                 [6, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"6" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"6" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 6, label: 'value', key: undefined }
                     }]
                 }],
                 [8, true],
@@ -1278,12 +1278,12 @@ describe('number', () => {
                 [9.99, true],
                 [-3, true],
                 [null, false, null, {
-                    message: '"value" must be a number',
+                    message: '"null" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"null" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: null, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -1401,7 +1401,7 @@ describe('number', () => {
                         message: '"c" must be one of [0]',
                         path: ['c'],
                         type: 'any.allowOnly',
-                        context: { valids: [0], label: 'c', key: 'c' }
+                        context: { valids: [0], label: 'c', key: 'c', value: 42 }
                     }]
                 }],
                 [{ a: 2, b: 1, c: 42 }, false, null, {
@@ -1410,7 +1410,7 @@ describe('number', () => {
                         message: '"c" must be one of [0]',
                         path: ['c'],
                         type: 'any.allowOnly',
-                        context: { valids: [0], label: 'c', key: 'c' }
+                        context: { valids: [0], label: 'c', key: 'c', value: 42 }
                     }]
                 }]
             ]);
@@ -1894,21 +1894,21 @@ describe('number', () => {
                 [123456.123456, true, null, 123456.1235],
                 ['123456.123456', true, null, 123456.1235],
                 ['abc', false, null, {
-                    message: '"value" must be a number',
+                    message: '"abc" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"abc" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 'abc', label: 'value', key: undefined }
                     }]
                 }],
                 [NaN, false, null, {
-                    message: '"value" must be a number',
+                    message: '"NaN" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"NaN" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: NaN, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -1958,9 +1958,9 @@ describe('number', () => {
                 [0, true], // 0 is a multiple of every integer
                 [3, true],
                 [4, false, null, {
-                    message: '"value" must be a multiple of 3',
+                    message: '"4" must be a multiple of 3',
                     details: [{
-                        message: '"value" must be a multiple of 3',
+                        message: '"4" must be a multiple of 3',
                         path: [],
                         type: 'number.multiple',
                         context: { multiple: 3, value: 4, label: 'value', key: undefined }
@@ -1968,27 +1968,27 @@ describe('number', () => {
                 }],
                 [9, true],
                 ['a', false, null, {
-                    message: '"value" must be a number',
+                    message: '"a" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"a" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 'a', label: 'value', key: undefined }
                     }]
                 }],
                 [9.1, false, null, {
-                    message: '"value" must be a multiple of 3',
+                    message: '"9.1" must be a multiple of 3',
                     details: [{
-                        message: '"value" must be a multiple of 3',
+                        message: '"9.1" must be a multiple of 3',
                         path: [],
                         type: 'number.multiple',
                         context: { multiple: 3, value: 9.1, label: 'value', key: undefined }
                     }]
                 }],
                 [8.9, false, null, {
-                    message: '"value" must be a multiple of 3',
+                    message: '"8.9" must be a multiple of 3',
                     details: [{
-                        message: '"value" must be a multiple of 3',
+                        message: '"8.9" must be a multiple of 3',
                         path: [],
                         type: 'number.multiple',
                         context: { multiple: 3, value: 8.9, label: 'value', key: undefined }
@@ -2004,9 +2004,9 @@ describe('number', () => {
                 [0, true], // 0 is a multiple of every integer
                 [3.5, true],
                 [3.6, false, null, {
-                    message: '"value" must be a multiple of 3.5',
+                    message: '"3.6" must be a multiple of 3.5',
                     details: [{
-                        message: '"value" must be a multiple of 3.5',
+                        message: '"3.6" must be a multiple of 3.5',
                         path: [],
                         type: 'number.multiple',
                         context: { multiple: 3.5, value: 3.6, label: 'value', key: undefined }
@@ -2014,27 +2014,27 @@ describe('number', () => {
                 }],
                 [10.5, true],
                 ['a', false, null, {
-                    message: '"value" must be a number',
+                    message: '"a" must be a number',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"a" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { value: 'a', label: 'value', key: undefined }
                     }]
                 }],
                 [10.501, false, null, {
-                    message: '"value" must be a multiple of 3.5',
+                    message: '"10.501" must be a multiple of 3.5',
                     details: [{
-                        message: '"value" must be a multiple of 3.5',
+                        message: '"10.501" must be a multiple of 3.5',
                         path: [],
                         type: 'number.multiple',
                         context: { multiple: 3.5, value: 10.501, label: 'value', key: undefined }
                     }]
                 }],
                 [10.499, false, null, {
-                    message: '"value" must be a multiple of 3.5',
+                    message: '"10.499" must be a multiple of 3.5',
                     details: [{
-                        message: '"value" must be a multiple of 3.5',
+                        message: '"10.499" must be a multiple of 3.5',
                         path: [],
                         type: 'number.multiple',
                         context: { multiple: 3.5, value: 10.499, label: 'value', key: undefined }
@@ -2101,7 +2101,7 @@ describe('number', () => {
                         message: '"c" must be one of [0]',
                         path: ['c'],
                         type: 'any.allowOnly',
-                        context: { valids: [0], label: 'c', key: 'c' }
+                        context: { valids: [0], label: 'c', key: 'c', value: 42 }
                     }]
                 }]
             ]);
@@ -2135,7 +2135,7 @@ describe('number', () => {
                         message: '"b" must be a number',
                         path: ['b'],
                         type: 'number.base',
-                        context: { label: 'b', key: 'b' }
+                        context: { value: NaN, label: 'b', key: 'b' }
                     }]
                 }]
             ]);

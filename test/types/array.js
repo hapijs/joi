@@ -40,45 +40,45 @@ describe('array', () => {
 
     it('errors on non-array string', async () => {
 
-        const err = await expect(Joi.array().validate('{ "something": false }')).to.reject('"value" must be an array');
+        const err = await expect(Joi.array().validate('{ "something": false }')).to.reject('"{ "something": false }" must be an array');
         expect(err.details).to.equal([{
-            message: '"value" must be an array',
+            message: '"{ "something": false }" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: '{ "something": false }' }
         }]);
     });
 
     it('errors on number', async () => {
 
-        const err = await expect(Joi.array().validate(3)).to.reject('"value" must be an array');
+        const err = await expect(Joi.array().validate(3)).to.reject('"3" must be an array');
         expect(err.details).to.equal([{
-            message: '"value" must be an array',
+            message: '"3" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: 3 }
         }]);
     });
 
     it('converts a non-array string with number type', async () => {
 
-        const err = await expect(Joi.array().validate('3')).to.reject('"value" must be an array');
+        const err = await expect(Joi.array().validate('3')).to.reject('"3" must be an array');
         expect(err.details).to.equal([{
-            message: '"value" must be an array',
+            message: '"3" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: '3' }
         }]);
     });
 
     it('errors on a non-array string', async () => {
 
-        const err = await expect(Joi.array().validate('asdf')).to.reject('"value" must be an array');
+        const err = await expect(Joi.array().validate('asdf')).to.reject('"asdf" must be an array');
         expect(err.details).to.equal([{
-            message: '"value" must be an array',
+            message: '"asdf" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: 'asdf' }
         }]);
     });
 
@@ -345,9 +345,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[1, 2], true],
                 [[1], false, null, {
-                    message: '"value" must contain at least 2 items',
+                    message: '"[1]" must contain at least 2 items',
                     details: [{
-                        message: '"value" must contain at least 2 items',
+                        message: '"[1]" must contain at least 2 items',
                         path: [],
                         type: 'array.min',
                         context: { limit: 2, value: [1], label: 'value', key: undefined }
@@ -469,9 +469,9 @@ describe('array', () => {
             const schema = Joi.array().max(1);
             Helper.validate(schema, [
                 [[1, 2], false, null, {
-                    message: '"value" must contain less than or equal to 1 items',
+                    message: '"[1, 2]" must contain less than or equal to 1 items',
                     details: [{
-                        message: '"value" must contain less than or equal to 1 items',
+                        message: '"[1, 2]" must contain less than or equal to 1 items',
                         path: [],
                         type: 'array.max',
                         context: { limit: 1, value: [1, 2], label: 'value', key: undefined }
@@ -596,9 +596,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[1, 2], true],
                 [[1], false, null, {
-                    message: '"value" must contain 2 items',
+                    message: '"[1]" must contain 2 items',
                     details: [{
-                        message: '"value" must contain 2 items',
+                        message: '"[1]" must contain 2 items',
                         path: [],
                         type: 'array.length',
                         context: { limit: 2, value: [1], label: 'value', key: undefined }
@@ -799,7 +799,7 @@ describe('array', () => {
                         message: '"0" must be a number',
                         path: [0],
                         type: 'number.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 'a' }
                     }]
                 }],
                 [['1', '2', 4], true]
@@ -835,7 +835,7 @@ describe('array', () => {
                         message: '"0" must be an object',
                         path: [0],
                         type: 'object.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 1 }
                     }]
                 }]
             ]);
@@ -851,7 +851,7 @@ describe('array', () => {
                         message: '"2" must be a number',
                         path: [2],
                         type: 'number.base',
-                        context: { label: 2, key: 2 }
+                        context: { label: 2, key: 2, value: [1] }
                     }]
                 }]
             ]);
@@ -1551,7 +1551,7 @@ describe('array', () => {
                             message: '"2" must be an object',
                             path: [2],
                             type: 'object.base',
-                            context: { label: 2, key: 2 }
+                            context: { label: 2, key: 2, value: 3 }
                         }
                     ]
                 }]
@@ -1661,7 +1661,7 @@ describe('array', () => {
                             message: '"1" must be an object',
                             path: [1],
                             type: 'object.base',
-                            context: { label: 1, key: 1 }
+                            context: { label: 1, key: 1, value: 3 }
                         },
                         {
                             message: '"value" does not contain 1 required value(s)',
@@ -1813,16 +1813,16 @@ describe('array', () => {
                         message: '"0" must be a number',
                         path: [0],
                         type: 'number.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 'a' }
                     }]
                 }],
                 ['a', false, null, {
-                    message: 'single value of "value" fails because ["value" must be a number]',
+                    message: 'single value of "value" fails because ["a" must be a number]',
                     details: [{
-                        message: '"value" must be a number',
+                        message: '"a" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'a' }
                     }]
                 }],
                 [true, false, null, {
@@ -1871,7 +1871,7 @@ describe('array', () => {
                         message: '"0" must be a number',
                         path: [0, 0],
                         type: 'number.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 'a' }
                     }]
                 }],
                 [['a'], false, null, {
@@ -1880,34 +1880,34 @@ describe('array', () => {
                         message: '"0" must be an array',
                         path: [0],
                         type: 'array.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 'a' }
                     }]
                 }],
                 ['a', false, null, {
-                    message: 'single value of "value" fails because ["value" must be an array]',
+                    message: 'single value of "value" fails because ["a" must be an array]',
                     details: [{
-                        message: '"value" must be an array',
+                        message: '"a" must be an array',
                         path: [],
                         type: 'array.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'a' }
                     }]
                 }],
                 [1, false, null, {
-                    message: 'single value of "value" fails because ["value" must be an array]',
+                    message: 'single value of "value" fails because ["1" must be an array]',
                     details: [{
-                        message: '"value" must be an array',
+                        message: '"1" must be an array',
                         path: [],
                         type: 'array.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 1 }
                     }]
                 }],
                 [true, false, null, {
-                    message: 'single value of "value" fails because ["value" must be an array]',
+                    message: 'single value of "value" fails because ["true" must be an array]',
                     details: [{
-                        message: '"value" must be an array',
+                        message: '"true" must be an array',
                         path: [],
                         type: 'array.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: true }
                     }]
                 }]
             ]);
@@ -1935,7 +1935,7 @@ describe('array', () => {
                         message: '"0" must be an array',
                         path: [0],
                         type: 'array.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 1 }
                     }]
                 }]
             ]);
@@ -2069,7 +2069,7 @@ describe('array', () => {
                 message: '"0" must be a number',
                 path: [0],
                 type: 'number.base',
-                context: { label: 0, key: 0 }
+                context: { label: 0, key: 0, value: 's1' }
             }]);
         });
 
@@ -2143,7 +2143,7 @@ describe('array', () => {
                 message: '"4" must be a number',
                 path: [4],
                 type: 'number.base',
-                context: { label: 4, key: 4 }
+                context: { label: 4, key: 4, value: 's5' }
             }]);
         });
 
@@ -2156,7 +2156,7 @@ describe('array', () => {
                 message: '"0" must be a string',
                 path: [0],
                 type: 'string.base',
-                context: { value: 1, label: 0, key: 0 }
+                context: { value: 1, label: 0, key: 0, value: 1 }
             }]);
         });
 
@@ -2172,25 +2172,25 @@ describe('array', () => {
                     message: '"0" must be a string',
                     path: [0],
                     type: 'string.base',
-                    context: { value: 1, label: 0, key: 0 }
+                    context: { value: 1, label: 0, key: 0, value: 1 }
                 },
                 {
                     message: '"2" must be a string',
                     path: [2],
                     type: 'string.base',
-                    context: { value: 3, label: 2, key: 2 }
+                    context: { value: 3, label: 2, key: 2, value: 3 }
                 },
                 {
                     message: '"3" must be a string',
                     path: [3],
                     type: 'string.base',
-                    context: { value: 4, label: 3, key: 3 }
+                    context: { value: 4, label: 3, key: 3, value: 4 }
                 },
                 {
                     message: '"4" must be a string',
                     path: [4],
                     type: 'string.base',
-                    context: { value: 5, label: 4, key: 4 }
+                    context: { value: 5, label: 4, key: 4, value: 5 }
                 }
             ]);
         });
@@ -2207,13 +2207,13 @@ describe('array', () => {
                     message: '"0" must be a number',
                     path: [0],
                     type: 'number.base',
-                    context: { label: 0, key: 0 }
+                    context: { label: 0, key: 0, value: 's1' }
                 },
                 {
                     message: '"1" must be a string',
                     path: [1],
                     type: 'string.base',
-                    context: { value: 2, label: 1, key: 1 }
+                    context: { value: 2, label: 1, key: 1, value: 2 }
                 }
             ]);
         });
