@@ -9672,7 +9672,7 @@ describe('string', () => {
 
         it('validates an hexadecimal string with byte align explicitly required', () => {
 
-            const rule = Joi.string().hex({ byteAligned: true });
+            const rule = Joi.string().hex({ byteAligned: true }).strict();
             Helper.validate(rule, [
                 ['0123456789abcdef', true],
                 ['123456789abcdef', false, null, {
@@ -9691,6 +9691,33 @@ describe('string', () => {
                         path: [],
                         type: 'string.hex',
                         context: { value: '0123afg', label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('converts an hexadecimal string with byte align explicitly required', () => {
+
+            const rule = Joi.string().hex({ byteAligned: true });
+            Helper.validate(rule, [
+                ['0123456789abcdef', true, null, '0123456789abcdef'],
+                ['123456789abcdef', true, null, '0123456789abcdef'],
+                ['0123afg', false, null, {
+                    message: '"value" must only contain hexadecimal characters',
+                    details: [{
+                        message: '"value" must only contain hexadecimal characters',
+                        path: [],
+                        type: 'string.hex',
+                        context: { value: '00123afg', label: 'value', key: undefined }
+                    }]
+                }],
+                ['00123afg', false, null, {
+                    message: '"value" must only contain hexadecimal characters',
+                    details: [{
+                        message: '"value" must only contain hexadecimal characters',
+                        path: [],
+                        type: 'string.hex',
+                        context: { value: '00123afg', label: 'value', key: undefined }
                     }]
                 }]
             ]);

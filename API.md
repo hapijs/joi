@@ -1991,10 +1991,12 @@ const schema = Joi.string().guid({
 });
 ```
 
-#### `string.hex()`
+#### `string.hex([options])`
 
 Requires the string value to be a valid hexadecimal string.
 
+- `options` - optional settings:
+  - `byteAligned` - Boolean specifying whether you want to check that the hexadecimal string is byte aligned. If `convert` is `true`, a `0` will be added in front of the string in case it needs to be aligned. Defaults to `false`.
 ```js
 const schema = Joi.string().hex();
 ```
