@@ -145,7 +145,7 @@ describe('string', () => {
 
         it('validates case insensitive values with non-strings', () => {
 
-            Helper.validate(Joi.string().valid('a', 'b', 5).insensitive(), [
+            Helper.validate(Joi.string().valid('a', 'b', 5, Buffer.from('c')).insensitive(), [
                 ['a', true],
                 ['b', true],
                 ['A', true],
@@ -159,7 +159,8 @@ describe('string', () => {
                         context: { value: 4, label: 'value', key: undefined }
                     }]
                 }],
-                [5, true]
+                [5, true],
+                [Buffer.from('c'), true]
             ]);
         });
     });

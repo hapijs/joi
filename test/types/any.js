@@ -2441,6 +2441,10 @@ describe('any', () => {
                 type: 'any.allowOnly',
                 context: { valids: [d], label: 'value', key: undefined }
             }]);
+            expect(Joi.valid(Joi.ref('$a')).validate(d, { context: { a: new Date(d.getTime()) } }).error).to.be.null();
+            expect(Joi.object({ a: Joi.date(), b: Joi.valid(Joi.ref('a')) }).validate({ a: d, b: d }).error).to.be.null();
+            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.ref('a')) }).validate({ a: d, b: d }).error).to.be.null();
+            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.ref('a')) }).validate({ a: new Date(0), b: d }).error).to.be.an.error(`child "b" fails because ["b" must be one of [ref:a]]`);
 
             const str = 'foo';
             expect(Joi.valid(str).validate(str).error).to.be.null();
