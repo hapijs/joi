@@ -37,12 +37,12 @@ describe('func', () => {
         Helper.validate(Joi.func().required(), [
             [function () { }, true],
             ['', false, null, {
-                message: '"value" must be a Function',
+                message: '"" must be a Function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -90,12 +90,12 @@ describe('func', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be a Function',
+                message: '"" must be a Function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -143,12 +143,12 @@ describe('func', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be a Function',
+                message: '"" must be a Function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -202,12 +202,12 @@ describe('func', () => {
             }],
             [(a) => { }, true],
             ['', false, null, {
-                message: '"value" must be a Function',
+                message: '"" must be a Function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -257,12 +257,12 @@ describe('func', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be a Function',
+                message: '"" must be a Function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -340,12 +340,12 @@ describe('func', () => {
                 }]
             }],
             [{}, false, null, {
-                message: '"value" must be a Function',
+                message: '"[object Object]" must be a Function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"[object Object]" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '', value: {} }
                 }]
             }],
             [Joi.ref('a.b'), true]
@@ -391,7 +391,7 @@ describe('func().class()', () => {
                     message: '"_class" must be a Function',
                     path: ['_class'],
                     type: 'function.base',
-                    context: { key: '_class', label: '_class' }
+                    context: { key: '_class', label: '_class', value: ['class '] }
                 }]
             }],
             [{ _class: null }, false, null, {
@@ -400,7 +400,7 @@ describe('func().class()', () => {
                     message: '"_class" must be a Function',
                     path: ['_class'],
                     type: 'function.base',
-                    context: { key: '_class', label: '_class' }
+                    context: { key: '_class', label: '_class', value: null }
                 }]
             }]
         ]);

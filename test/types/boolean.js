@@ -46,39 +46,39 @@ describe('boolean', () => {
 
         Helper.validate(Joi.boolean().strict(), [
             ['true', false, null, {
-                message: '"value" must be a boolean',
+                message: '"true" must be a boolean',
                 details: [{
-                    message: '"value" must be a boolean',
+                    message: '"true" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: 'true' }
                 }]
             }],
             ['false', false, null, {
-                message: '"value" must be a boolean',
+                message: '"false" must be a boolean',
                 details: [{
-                    message: '"value" must be a boolean',
+                    message: '"false" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: 'false' }
                 }]
             }],
             ['TrUe', false, null, {
-                message: '"value" must be a boolean',
+                message: '"TrUe" must be a boolean',
                 details: [{
-                    message: '"value" must be a boolean',
+                    message: '"TrUe" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: 'TrUe' }
                 }]
             }],
             ['FalSe', false, null, {
-                message: '"value" must be a boolean',
+                message: '"FalSe" must be a boolean',
                 details: [{
-                    message: '"value" must be a boolean',
+                    message: '"FalSe" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: 'FalSe' }
                 }]
             }]
         ]);
@@ -88,30 +88,30 @@ describe('boolean', () => {
 
         Helper.validate(Joi.boolean(), [
             [1, false, null, {
-                message: '"value" must be a boolean',
+                message: '"1" must be a boolean',
                 details: [{
-                    message: '"value" must be a boolean',
+                    message: '"1" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: 1 }
                 }]
             }],
             [0, false, null, {
-                message: '"value" must be a boolean',
+                message: '"0" must be a boolean',
                 details: [{
-                    message: '"value" must be a boolean',
+                    message: '"0" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: 0 }
                 }]
             }],
             [2, false, null, {
-                message: '"value" must be a boolean',
+                message: '"2" must be a boolean',
                 details: [{
-                    message: '"value" must be a boolean',
+                    message: '"2" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: 2 }
                 }]
             }]
         ]);
@@ -135,12 +135,12 @@ describe('boolean', () => {
 
             const schema = Joi.boolean().truthy('Y').insensitive(false);
             const error = schema.validate('y').error;
-            expect(error).to.be.an.error('"value" must be a boolean');
+            expect(error).to.be.an.error('"y" must be a boolean');
             expect(error.details).to.equal([{
-                message: '"value" must be a boolean',
+                message: '"y" must be a boolean',
                 path: [],
                 type: 'boolean.base',
-                context: { label: 'value', key: undefined }
+                context: { label: 'value', key: undefined, value: 'y' }
             }]);
         });
 
@@ -161,21 +161,21 @@ describe('boolean', () => {
                 ['true', true, null, true],
                 ['false', true, null, false],
                 ['TrUe', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"TrUe" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"TrUe" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'TrUe' }
                     }]
                 }],
                 ['FalSe', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"FalSe" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"FalSe" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'FalSe' }
                     }]
                 }]
             ]);
@@ -190,77 +190,77 @@ describe('boolean', () => {
             const rule = Joi.boolean();
             Helper.validate(rule, [
                 ['1234', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"1234" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"1234" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '1234' }
                     }]
                 }],
                 [false, true],
                 [true, true],
                 [null, false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"null" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"null" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }],
                 ['on', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"on" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"on" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'on' }
                     }]
                 }],
                 ['off', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"off" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"off" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'off' }
                     }]
                 }],
                 ['yes', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"yes" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"yes" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'yes' }
                     }]
                 }],
                 ['no', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"no" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"no" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'no' }
                     }]
                 }],
                 ['1', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"1" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"1" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '1' }
                     }]
                 }],
                 ['0', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"0" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"0" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '0' }
                     }]
                 }]
             ]);
@@ -271,23 +271,23 @@ describe('boolean', () => {
             const rule = Joi.boolean().required();
             Helper.validate(rule, [
                 ['1234', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"1234" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"1234" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '1234' }
                     }]
                 }],
                 [false, true],
                 [true, true],
                 [null, false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"null" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"null" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -298,22 +298,22 @@ describe('boolean', () => {
             const rule = Joi.boolean().allow(false);
             Helper.validate(rule, [
                 ['1234', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"1234" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"1234" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '1234' }
                     }]
                 }],
                 [false, true],
                 [null, false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"null" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"null" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -324,31 +324,31 @@ describe('boolean', () => {
             const rule = Joi.boolean().invalid(false);
             Helper.validate(rule, [
                 ['1234', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"1234" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"1234" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '1234' }
                     }]
                 }],
                 [false, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"false" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"false" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: false }
                     }]
                 }],
                 [true, true],
                 [null, false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"null" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"null" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -359,21 +359,21 @@ describe('boolean', () => {
             const rule = Joi.boolean().invalid(false).allow(null);
             Helper.validate(rule, [
                 ['1234', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"1234" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"1234" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '1234' }
                     }]
                 }],
                 [false, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"false" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"false" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: false }
                     }]
                 }],
                 [true, true],
@@ -386,31 +386,31 @@ describe('boolean', () => {
             const rule = Joi.boolean().invalid(true).allow(false);
             Helper.validate(rule, [
                 ['1234', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"1234" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"1234" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '1234' }
                     }]
                 }],
                 [false, true],
                 [true, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"true" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"true" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: true }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"null" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"null" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -421,22 +421,22 @@ describe('boolean', () => {
             const rule = Joi.boolean().invalid(true).allow(false).allow(null);
             Helper.validate(rule, [
                 ['1234', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"1234" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"1234" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '1234' }
                     }]
                 }],
                 [false, true],
                 [true, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"true" is an invalid value',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"true" is an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: true }
                     }]
                 }],
                 [null, true]
@@ -451,21 +451,21 @@ describe('boolean', () => {
                 [true, true],
                 [false, true],
                 ['N', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"N" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"N" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'N' }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"null" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"null" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -480,21 +480,21 @@ describe('boolean', () => {
                 [true, true],
                 [false, true],
                 ['N', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"N" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"N" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'N' }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"null" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"null" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -506,23 +506,23 @@ describe('boolean', () => {
             Helper.validate(rule, [
                 ['N', true],
                 ['Y', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"Y" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"Y" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'Y' }
                     }]
                 }],
                 [true, true],
                 [false, true],
                 [null, false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"null" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"null" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -535,21 +535,21 @@ describe('boolean', () => {
                 ['N', true],
                 ['Never', true],
                 ['Y', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"Y" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"Y" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'Y' }
                     }]
                 }],
                 [null, false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"null" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"null" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }],
                 [true, true],
@@ -572,21 +572,21 @@ describe('boolean', () => {
                 [0, true],
                 [null, true],
                 ['M', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"M" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"M" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'M' }
                     }]
                 }],
                 ['Yes', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"Yes" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"Yes" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'Yes' }
                     }]
                 }]
             ]);
@@ -600,12 +600,12 @@ describe('boolean', () => {
             Helper.validate(a, [
                 ['yes', true],
                 ['no', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"no" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"no" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'no' }
                     }]
                 }]
             ]);
@@ -613,12 +613,12 @@ describe('boolean', () => {
             Helper.validate(b, [
                 ['no', true],
                 ['yes', false, null, {
-                    message: '"value" must be a boolean',
+                    message: '"yes" must be a boolean',
                     details: [{
-                        message: '"value" must be a boolean',
+                        message: '"yes" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'yes' }
                     }]
                 }]
             ]);
