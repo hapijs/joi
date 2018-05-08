@@ -338,7 +338,7 @@ describe('boolean', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: false, invalids: [false], label: 'value', key: undefined }
                     }]
                 }],
                 [true, true],
@@ -373,7 +373,7 @@ describe('boolean', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: false, invalids: [false], label: 'value', key: undefined }
                     }]
                 }],
                 [true, true],
@@ -401,7 +401,7 @@ describe('boolean', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: true, invalids: [true], label: 'value', key: undefined }
                     }]
                 }],
                 [null, false, null, {
@@ -436,7 +436,7 @@ describe('boolean', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { label: 'value', key: undefined }
+                        context: { value: true, invalids: [true], label: 'value', key: undefined }
                     }]
                 }],
                 [null, true]

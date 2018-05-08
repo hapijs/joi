@@ -129,7 +129,7 @@ describe('errors', () => {
                 message: '"notEmpty" 3',
                 path: ['notEmpty'],
                 type: 'any.empty',
-                context: { label: 'notEmpty', key: 'notEmpty' }
+                context: { value: '', invalids: [''], label: 'notEmpty', key: 'notEmpty' }
             },
             {
                 message: '"required" 7',
@@ -169,7 +169,7 @@ describe('errors', () => {
             message: 'my hero "value" is not [sad]',
             path: [],
             type: 'any.allowOnly',
-            context: { valids: ['sad'], label: 'value', key: undefined }
+            context: { value: 5, valids: ['sad'], label: 'value', key: undefined }
         }]);
     });
 
@@ -182,7 +182,7 @@ describe('errors', () => {
             message: 'must be one of [sad]',
             path: [],
             type: 'any.allowOnly',
-            context: { valids: ['sad'], label: 'value', key: undefined }
+            context: { value: 5, valids: ['sad'], label: 'value', key: undefined }
         }]);
     });
 
@@ -462,7 +462,7 @@ describe('errors', () => {
                     message: '"a" must be one of [a, b, c, d]',
                     path: ['a'],
                     type: 'any.allowOnly',
-                    context: { valids: ['a', 'b', 'c', 'd'], label: 'a', key: 'a' }
+                    context: { value: 'm', valids: ['a', 'b', 'c', 'd'], label: 'a', key: 'a' }
                 },
                 {
                     message: '"u" is required',
@@ -496,7 +496,7 @@ describe('errors', () => {
                 message: '"a" must be one of [a, b, c, d]',
                 path: ['a'],
                 type: 'any.allowOnly',
-                context: { valids: ['a', 'b', 'c', 'd'], label: 'a', key: 'a' }
+                context: { value: 'm', valids: ['a', 'b', 'c', 'd'], label: 'a', key: 'a' }
             }]);
             expect(err.annotate(true)).to.equal('{\n  "a" [1]: \"m\"\n}\n\n[1] "a" must be one of [a, b, c, d]');
         });
@@ -518,19 +518,19 @@ describe('errors', () => {
                     message: '"2" must be one of [1, 2]',
                     path: ['a', 2],
                     type: 'any.allowOnly',
-                    context: { valids: [1, 2], label: 2, key: 2 }
+                    context: { value: 3, valids: [1, 2], label: 2, key: 2 }
                 },
                 {
                     message: '"3" must be one of [1, 2]',
                     path: ['a', 3],
                     type: 'any.allowOnly',
-                    context: { valids: [1, 2], label: 3, key: 3 }
+                    context: { value: 4, valids: [1, 2], label: 3, key: 3 }
                 },
                 {
                     message: '"5" must be one of [1, 2]',
                     path: ['a', 5],
                     type: 'any.allowOnly',
-                    context: { valids: [1, 2], label: 5, key: 5 }
+                    context: { value: 5, valids: [1, 2], label: 5, key: 5 }
                 }
             ]);
             expect(err.annotate()).to.equal('{\n  \"a\": [\n    1,\n    2,\n    3, \u001b[31m[1]\u001b[0m\n    4, \u001b[31m[2]\u001b[0m\n    2,\n    5 \u001b[31m[3]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] \"2\" must be one of [1, 2]\n[2] \"3\" must be one of [1, 2]\n[3] \"5\" must be one of [1, 2]\u001b[0m');

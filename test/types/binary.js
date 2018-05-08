@@ -55,7 +55,7 @@ describe('binary', () => {
                     message: '"value" must be one of [hello]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { valids: [hello], label: 'value', key: undefined }
+                    context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value', key: undefined }
                 }]
             }],
             [Buffer.from('goodbye'), false, null, {
@@ -64,7 +64,7 @@ describe('binary', () => {
                     message: '"value" must be one of [hello]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { valids: [hello], label: 'value', key: undefined }
+                    context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value', key: undefined }
                 }]
             }],
             [Buffer.from('HELLO'), false, null, {
@@ -73,7 +73,7 @@ describe('binary', () => {
                     message: '"value" must be one of [hello]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { valids: [hello], label: 'value', key: undefined }
+                    context: { value: Buffer.from('HELLO'), valids: [hello], label: 'value', key: undefined }
                 }]
             }]
         ]);

@@ -260,7 +260,7 @@ describe('date', () => {
                             message: '"c" must be one of [0]',
                             path: ['c'],
                             type: 'any.allowOnly',
-                            context: { valids: [0], label: 'c', key: 'c' }
+                            context: { value: 42, valids: [0], label: 'c', key: 'c' }
                         }]
                     }],
                     [{ a: 456, b: 123, c: 42 }, false, null, {
@@ -269,7 +269,7 @@ describe('date', () => {
                             message: '"c" must be one of [0]',
                             path: ['c'],
                             type: 'any.allowOnly',
-                            context: { valids: [0], label: 'c', key: 'c' }
+                            context: { value: 42, valids: [0], label: 'c', key: 'c' }
                         }]
                     }]
                 ]);

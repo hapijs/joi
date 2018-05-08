@@ -145,7 +145,7 @@ describe('alternatives', () => {
                             message: '"p" must be one of [foo, bar]',
                             path: ['p'],
                             type: 'any.allowOnly',
-                            context: { valids: ['foo', 'bar'], label: 'p', key: 'p' }
+                            context: { value: '...', valids: ['foo', 'bar'], label: 'p', key: 'p' }
                         }
                     ]
                 }],
@@ -217,7 +217,7 @@ describe('alternatives', () => {
                             message: '"p" must be one of foo, bar',
                             path: ['p'],
                             type: 'any.allowOnly',
-                            context: { valids: ['foo', 'bar'], label: 'p', key: 'p' }
+                            context: { value: '...', valids: ['foo', 'bar'], label: 'p', key: 'p' }
                         }
                     ]
                 }],
@@ -279,7 +279,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { value: 'x', valids: ['y'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y', b: 5 }, false, null, {
@@ -288,7 +288,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y', b: 6 }, true],
@@ -298,7 +298,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'z', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'z', b: 6 }, false, null, {
@@ -307,7 +307,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { value: 'z', valids: ['y'], label: 'a', key: 'a' }
                         }]
                     }]
                 ]);
@@ -330,7 +330,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { value: 'x', valids: ['y'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y', '': 5 }, false, null, {
@@ -339,7 +339,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y', '': 6 }, true],
@@ -349,7 +349,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'z', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'z', '': 6 }, false, null, {
@@ -358,7 +358,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { value: 'z', valids: ['y'], label: 'a', key: 'a' }
                         }]
                     }]
                 ]);
@@ -381,7 +381,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [z]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['z'], label: 'a', key: 'a' }
+                            context: { value: 'x', valids: ['z'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y', b: 5 }, false, null, {
@@ -390,7 +390,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y', b: 6 }, false, null, {
@@ -399,7 +399,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [z]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['z'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['z'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'z', b: 5 }, false, null, {
@@ -408,7 +408,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'z', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'z', b: 6 }, true]
@@ -431,7 +431,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [z]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['z'], label: 'a', key: 'a' }
+                            context: { value: 'x', valids: ['z'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'x', b: 6 }, false, null, {
@@ -440,7 +440,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { value: 'x', valids: ['y'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y', b: 5 }, false, null, {
@@ -449,7 +449,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [z]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['z'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['z'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y', b: 6 }, true],
@@ -460,7 +460,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [y]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['y'], label: 'a', key: 'a' }
+                            context: { value: 'z', valids: ['y'], label: 'a', key: 'a' }
                         }]
                     }]
                 ]);
@@ -517,7 +517,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 1, b: null }, false, null, {
@@ -566,7 +566,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y' }, false, null, {
@@ -575,7 +575,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }]
                 ]);
@@ -608,7 +608,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'y' }, false, null, {
@@ -617,7 +617,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [x]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: ['x'], label: 'a', key: 'a' }
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }]
                 ]);
@@ -639,7 +639,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: [ref], label: 'a', key: 'a' }
+                            context: { value: 'x', valids: [ref], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 1, b: 5, c: '1' }, true],
@@ -649,7 +649,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: [ref], label: 'a', key: 'a' }
+                            context: { value: '1', valids: [ref], label: 'a', key: 'a' }
                         }]
                     }]
                 ]);
@@ -671,7 +671,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: [ref], label: 'a', key: 'a' }
+                            context: { value: 'x', valids: [ref], label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 1, b: 5, c: '1' }, true],
@@ -681,7 +681,7 @@ describe('alternatives', () => {
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
                             type: 'any.allowOnly',
-                            context: { valids: [ref], label: 'a', key: 'a' }
+                            context: { value: '1', valids: [ref], label: 'a', key: 'a' }
                         }]
                     }]
                 ]);
@@ -775,7 +775,7 @@ describe('alternatives', () => {
                             message: '"c" must be one of [789]',
                             path: ['c'],
                             type: 'any.allowOnly',
-                            context: { valids: [789], label: 'c', key: 'c' }
+                            context: { value: 456, valids: [789], label: 'c', key: 'c' }
                         }]
                     }],
                     [{ a: 123, b: 456, c: 789 }, false, null, {
@@ -784,7 +784,7 @@ describe('alternatives', () => {
                             message: '"c" must be one of [456]',
                             path: ['c'],
                             type: 'any.allowOnly',
-                            context: { valids: [456], label: 'c', key: 'c' }
+                            context: { value: 789, valids: [456], label: 'c', key: 'c' }
                         }]
                     }]
                 ]);

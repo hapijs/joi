@@ -81,7 +81,7 @@ describe('Joi', () => {
                     message: '"value" must be one of [b]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { valids: ['b'], label: 'value', key: undefined }
+                    context: { value: 'a', valids: ['b'], label: 'value', key: undefined }
                 }]
             }],
             ['b', true],
@@ -119,7 +119,7 @@ describe('Joi', () => {
                     message: '"value" must be one of [null]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { valids: [null], label: 'value', key: undefined }
+                    context: { value: 'a', valids: [null], label: 'value', key: undefined }
                 }]
             }],
             [null, true]
@@ -135,7 +135,7 @@ describe('Joi', () => {
                     message: '"value" must be one of [5]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { valids: [5], label: 'value', key: undefined }
+                    context: { value: 6, valids: [5], label: 'value', key: undefined }
                 }]
             }],
             [5, true]
@@ -151,7 +151,7 @@ describe('Joi', () => {
                     message: '"value" must be one of [5]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { valids: ['5'], label: 'value', key: undefined }
+                    context: { value: '6', valids: ['5'], label: 'value', key: undefined }
                 }]
             }],
             ['5', true]
@@ -167,7 +167,7 @@ describe('Joi', () => {
                     message: '"value" must be one of [true]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { valids: [true], label: 'value', key: undefined }
+                    context: { value: false, valids: [true], label: 'value', key: undefined }
                 }]
             }],
             [true, true]
@@ -187,7 +187,7 @@ describe('Joi', () => {
                     message: `"value" must be one of [${dnow}]`,
                     path: [],
                     type: 'any.allowOnly',
-                    context: { valids: [dnow], label: 'value', key: undefined }
+                    context: { value: new Date(now * 2), valids: [dnow], label: 'value', key: undefined }
                 }]
             }]
         ]);
@@ -206,7 +206,7 @@ describe('Joi', () => {
                         message: '"value" must be one of [key]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { valids: ['key'], label: 'value', key: undefined }
+                        context: { value: 'other', valids: ['key'], label: 'value', key: undefined }
                     },
                     {
                         message: '"value" must be a number',
@@ -235,7 +235,7 @@ describe('Joi', () => {
                         message: '"value" must be one of [5]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { valids: [5], label: 'value', key: undefined }
+                        context: { value: 6, valids: [5], label: 'value', key: undefined }
                     },
                     {
                         message: '"value" must be an object',
@@ -310,7 +310,7 @@ describe('Joi', () => {
                         message: '"value" must be one of [key]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { valids: ['key'], label: 'value', key: undefined }
+                        context: { value: 'other', valids: ['key'], label: 'value', key: undefined }
                     },
                     {
                         message: '"value" must be a number',
@@ -339,7 +339,7 @@ describe('Joi', () => {
                         message: '"value" must be one of [5]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { valids: [5], label: 'value', key: undefined }
+                        context: { value: 6, valids: [5], label: 'value', key: undefined }
                     },
                     {
                         message: '"value" must be an object',
@@ -476,7 +476,7 @@ describe('Joi', () => {
                     message: '"upc" is not allowed to be empty',
                     path: ['upc'],
                     type: 'any.empty',
-                    context: { label: 'upc', key: 'upc' }
+                    context: { value: '', invalids: [''], label: 'upc', key: 'upc' }
                 }]
             }],
             [{ txt: 'test', upc: undefined }, false, null, {
@@ -540,7 +540,7 @@ describe('Joi', () => {
                     message: '"upc" is not allowed to be empty',
                     path: ['upc'],
                     type: 'any.empty',
-                    context: { label: 'upc', key: 'upc' }
+                    context: { value: '', invalids: [''], label: 'upc', key: 'upc' }
                 }]
             }],
             [{ txt: 'test', upc: undefined }, true],
@@ -620,7 +620,7 @@ describe('Joi', () => {
                     message: '"upc" is not allowed to be empty',
                     path: ['upc'],
                     type: 'any.empty',
-                    context: { label: 'upc', key: 'upc' }
+                    context: { value: '', invalids: [''], label: 'upc', key: 'upc' }
                 }]
             }],
             [{ txt: '', upc: 'test' }, false, null, {
@@ -629,7 +629,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: null, upc: 'test' }, false, null, {
@@ -649,7 +649,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: '' }, false, null, {
@@ -658,7 +658,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: 'test', upc: 'test' }, false, null, {
@@ -842,7 +842,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: null, upc: 'test' }, false, null, {
@@ -864,7 +864,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: undefined, code: 999 }, false, null, {
@@ -873,7 +873,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: undefined, code: undefined }, false, null, {
@@ -882,7 +882,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: '' }, false, null, {
@@ -891,7 +891,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: 'test', upc: 'test' }, true],
@@ -1045,7 +1045,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: null, upc: 'test' }, false, null, {
@@ -1127,7 +1127,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: undefined, code: 999 }, false, null, {
@@ -1136,7 +1136,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: undefined, code: undefined }, false, null, {
@@ -1145,7 +1145,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: '' }, false, null, {
@@ -1154,7 +1154,7 @@ describe('Joi', () => {
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
                     type: 'any.empty',
-                    context: { label: 'txt', key: 'txt' }
+                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: 'test', upc: 'test' }, false, null, {
@@ -1270,7 +1270,7 @@ describe('Joi', () => {
                 message: '"mode" must be one of [required, optional, try, null]',
                 path: ['auth', 'mode'],
                 type: 'any.allowOnly',
-                context: { valids: ['required', 'optional', 'try', null], label: 'mode', key: 'mode' }
+                context: { value: 'none', valids: ['required', 'optional', 'try', null], label: 'mode', key: 'mode' }
             },
             {
                 message: '"auth" must be a string',
@@ -1369,7 +1369,7 @@ describe('Joi', () => {
                 message: '"mode" must be one of [required, optional, try, null]',
                 path: ['auth', 'mode'],
                 type: 'any.allowOnly',
-                context: { valids: ['required', 'optional', 'try', null], label: 'mode', key: 'mode' }
+                context: { value: 'none', valids: ['required', 'optional', 'try', null], label: 'mode', key: 'mode' }
             },
             {
                 message: '"auth" must be a string',
@@ -1617,7 +1617,7 @@ describe('Joi', () => {
                     message: '"1" must be one of [amex, visa]',
                     path: ['brand', 1],
                     type: 'any.allowOnly',
-                    context: { valids: ['amex', 'visa'], label: 1, key: 1 }
+                    context: { value: 'mc', valids: ['amex', 'visa'], label: 1, key: 1 }
                 }]
             }]
         ]);
@@ -1671,7 +1671,7 @@ describe('Joi', () => {
                     message: '"value" contains an invalid value',
                     path: [],
                     type: 'any.invalid',
-                    context: { label: 'value', key: undefined }
+                    context: { value: 5, invalids: [Infinity, -Infinity, 5], label: 'value', key: undefined }
                 }]
             }],
             ['5', false, null, {
@@ -1680,7 +1680,7 @@ describe('Joi', () => {
                     message: '"value" contains an invalid value',
                     path: [],
                     type: 'any.invalid',
-                    context: { label: 'value', key: undefined }
+                    context: { value: 5, invalids: [Infinity, -Infinity, 5], label: 'value', key: undefined }
                 }]
             }]
         ]);
