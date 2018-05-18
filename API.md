@@ -138,7 +138,7 @@
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(condition, options)`](#alternativeswhencondition-options)
-  - [`lazy(fn)` - inherits from `Any`](#lazyfn---inherits-from-any)
+  - [`lazy(fn, ...args)` - inherits from `Any`](#lazyfn---inherits-from-any)
 - [Errors](#errors)
 
 <!-- tocstop -->
@@ -2169,11 +2169,27 @@ Generates a placeholder schema for a schema that you would provide with the `fn`
 Supports the same methods of the [`any()`](#any) type.
 
 This is mostly useful for recursive schemas, like :
+
 ```js
 const Person = Joi.object({
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     children: Joi.array().items(Joi.lazy(() => Person).description('Person schema'))
+});
+```
+
+This is another useful schemas, like :
+
+```js
+const Person = Joi.object({
+    name: Joi.string().required(),
+    age: Joi.lazy((oldest, name) => {
+
+        if (name === '张三丰') {
+            return Joi.number().max(oldest + 100);
+        }
+        return Joi.number().max(oldest);
+    }, 150, Joi.ref('name'))
 });
 ```
 
