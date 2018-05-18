@@ -157,6 +157,38 @@ describe('ref', () => {
         await expect(parent.validate({ e: input })).to.not.reject();
     });
 
+    it('uses ref reach options.operate be function', async () => {
+
+        const ref = Joi.ref('b.c', { operate: (value) => value + 1 });
+        expect(ref.root).to.equal('b');
+
+        const schema = Joi.object({
+            a: ref,
+            b: {
+                c: Joi.any()
+            }
+        });
+
+        await expect(schema.validate({ a: 6, b: { c: 5 } })).to.not.reject();
+        await expect(schema.validate({ a: 5, b: { c: 5 } })).to.reject();
+    });
+
+    it('uses ref reach options.operate not function', async () => {
+
+        const ref = Joi.ref('b.c', { operate: 10 });
+        expect(ref.root).to.equal('b');
+
+        const schema = Joi.object({
+            a: ref,
+            b: {
+                c: Joi.any()
+            }
+        });
+
+        await expect(schema.validate({ a: 5, b: { c: 5 } })).to.not.reject();
+        await expect(schema.validate({ a: 6, b: { c: 5 } })).to.reject();
+    });
+
     it('uses ref reach options', async () => {
 
         const ref = Joi.ref('b/c', { separator: '/' });
