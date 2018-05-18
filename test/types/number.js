@@ -1884,15 +1884,15 @@ describe('number', () => {
 
     describe('precision()', () => {
 
-        it('converts numbers', () => {
+        it.only('converts numbers', () => {
 
             const rule = Joi.number().precision(4);
             Helper.validate(rule, [
                 [1.5, true, null, 1.5],
                 [0.12345, true, null, 0.1235],
                 [123456, true, null, 123456],
-                [123456.123456, true, null, 123456.1235],
-                ['123456.123456', true, null, 123456.1235],
+                [123456.123456, true, null, 123456.123456],
+                ['123456.123456', true, null, 123456.123456],
                 ['abc', false, null, {
                     message: '"value" must be a number',
                     details: [{
@@ -1913,6 +1913,8 @@ describe('number', () => {
                 }]
             ]);
         });
+
+
     });
 
     describe('describe()', () => {
