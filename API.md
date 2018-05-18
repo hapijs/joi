@@ -286,6 +286,7 @@ References support the following arguments:
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator.
     - `contextPrefix` - overrides the default `$` context prefix signifier.
+    - `operate` - function with argument (value) lazy calculate in validate time to the ref value.
     - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
@@ -301,6 +302,19 @@ const schema = Joi.object().keys({
 });
 
 Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, (err, value) => {});
+```
+
+Calculate the ref value which options.operate.
+
+```js
+const schema = Joi.object().keys({
+    a: Joi.ref('b.c', { operate: (value) => value + 1 }),
+    b: {
+        c: Joi.any()
+    }
+});
+
+Joi.validate({ a: 6, b: { c: 5 } }, schema }, (err, value) => {});
 ```
 
 ### `isRef(ref)`
