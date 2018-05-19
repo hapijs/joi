@@ -1884,15 +1884,42 @@ describe('number', () => {
 
     describe('precision()', () => {
 
-        it.only('converts numbers', () => {
+        it('converts numbers', () => {
 
             const rule = Joi.number().precision(4);
             Helper.validate(rule, [
                 [1.5, true, null, 1.5],
-                [0.12345, true, null, 0.1235],
+                [0.1235, true, null, 0.1235],
                 [123456, true, null, 123456],
-                [123456.123456, true, null, 123456.123456],
-                ['123456.123456', true, null, 123456.123456],
+                ['123456', true, null, 123456],
+                ['123456.1234', true, null, 123456.1234],
+                [0.12345, false, null, {
+                    message: '"value" must have no more than 4 decimal places',
+                    details: [{
+                        message: '"value" must have no more than 4 decimal places',
+                        path: [],
+                        type: 'number.precision',
+                        context: { limit: 4, value: 0.12345, key: undefined, label: 'value' }
+                    }]
+                }],
+                [123456.123456, false, null, {
+                    message: '"value" must have no more than 4 decimal places',
+                    details: [{
+                        message: '"value" must have no more than 4 decimal places',
+                        path: [],
+                        type: 'number.precision',
+                        context: { limit: 4, value: 123456.123456, key: undefined, label: 'value' }
+                    }]
+                }],
+                ['123456.123456', false, null, {
+                    message: '"value" must have no more than 4 decimal places',
+                    details: [{
+                        message: '"value" must have no more than 4 decimal places',
+                        path: [],
+                        type: 'number.precision',
+                        context: { limit: 4, value: 123456.123456, key: undefined, label: 'value' }
+                    }]
+                }],
                 ['abc', false, null, {
                     message: '"value" must be a number',
                     details: [{
@@ -1913,8 +1940,6 @@ describe('number', () => {
                 }]
             ]);
         });
-
-
     });
 
     describe('describe()', () => {
