@@ -69,6 +69,8 @@
   - [`date` - inherits from `Any`](#date---inherits-from-any)
     - [`date.min(date)`](#datemindate)
     - [`date.max(date)`](#datemaxdate)
+    - [`date.greater(date)`](#dategreaterdate)
+    - [`date.less(date)`](#datelessdate)
     - [`date.iso()`](#dateiso)
     - [`date.timestamp([type])`](#datetimestamptype)
   - [`func` - inherits from `Any`](#func---inherits-from-any)
@@ -1194,6 +1196,51 @@ It can also be a reference to another field.
 ```js
 const schema = Joi.object({
   from: Joi.date().max(Joi.ref('to')).required(),
+  to: Joi.date().required()
+});
+```
+
+#### `date.greater(date)`
+
+Specifies that the value must be greater than `date`.
+
+```js
+const schema = Joi.date().greater('1-1-1974');
+```
+
+Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+
+```js
+const schema = Joi.date().greater('now');
+```
+
+It can also be a reference to another field.
+
+```js
+const schema = Joi.object({
+  from: Joi.date().required(),
+  to: Joi.date().greater(Joi.ref('from')).required()
+});
+```
+
+#### `date.less(date)`
+
+Specifies that the value must be less than `date`.
+
+```js
+const schema = Joi.date().less('12-31-2020');
+
+Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+
+```js
+const schema = Joi.date().max('now');
+```
+
+It can also be a reference to another field.
+
+```js
+const schema = Joi.object({
+  from: Joi.date().less(Joi.ref('to')).required(),
   to: Joi.date().required()
 });
 ```
