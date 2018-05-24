@@ -131,6 +131,7 @@
     - [`string.guid()` - aliases: `uuid`](#stringguid---aliases-uuid)
     - [`string.hex([options])`](#stringhexoptions)
     - [`string.base64([options])`](#stringbase64options)
+    - [`string.dataUri()`](#stringdatauri)
     - [`string.hostname()`](#stringhostname)
     - [`string.normalize([form])`](#stringnormalizeform)
     - [`string.lowercase()`](#stringlowercase)
@@ -2069,6 +2070,16 @@ paddingRequiredSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
 const paddingOptionalSchema = Joi.string().base64({ paddingRequired: false });
 paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM'); // No Error
 paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
+```
+
+#### `string.dataUri()`
+
+Requires the string value to be a valid data URI string.
+
+```js
+const schema = Joi.string().dataUri();
+schema.validate('VE9PTUFOWVNFQ1JFVFM='); // ValidationError: "value" must be a valid dataUri string
+schema.validate('data:image/png;base64,VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
 #### `string.hostname()`
