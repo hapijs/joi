@@ -56,7 +56,7 @@
     - [`array.min(limit)`](#arrayminlimit)
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
-    - [`array.unique([comparator])`](#arrayuniquecomparator)
+    - [`array.unique([comparator], [options])`](#arrayuniquecomparator-options)
   - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
     - [`boolean.truthy(value)`](#booleantruthyvalue)
     - [`boolean.falsy(value)`](#booleanfalsyvalue)
@@ -1022,13 +1022,15 @@ const schema = Joi.object({
 });
 ```
 
-#### `array.unique([comparator])`
+#### `array.unique([comparator], [options])`
 
 Requires the array values to be unique.
 
 You can provide a custom `comparator` that is either :
 - a function that takes 2 parameters to compare. This function should return whether the 2 parameters are equal or not, you are also **responsible** for this function not to fail, any `Error` would bubble out of Joi.
 - a string in dot notation representing the path of the element to do uniqueness check on. Any missing path will be considered undefined, and can as well only exist once.
+You can also provide an `options` object containing:
+- `ignoreUndefined`. When set to `true`, undefined values for the dot notation string comparator will not cause the array to fail on uniqueness.
 
 Note: remember that if you provide a custom comparator function, different types can be passed as parameter depending on the rules you set on items.
 
@@ -1044,6 +1046,18 @@ const schema = Joi.array().unique((a, b) => a.property === b.property);
 
 ```js
 const schema = Joi.array().unique('customer.id');
+```
+
+```js
+let schema = Joi.array().unique('identifier');
+
+schema.validate([{}, {}]);
+// ValidationError: "value" position 1 contains a duplicate value
+
+schema = Joi.array().unique('identifier', { ignoreUndefined: true });
+
+schema.validate([{}, {}]);
+// error: null
 ```
 
 ### `boolean` - inherits from `Any`
