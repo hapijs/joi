@@ -1611,6 +1611,18 @@ const schema = Joi.object({
 }).pattern(/\w\d/, Joi.boolean());
 ```
 
+#### `object.pattern(keySchema, valueSchema)`
+
+Specify validation rules for unknown keys matching a pattern where:
+- `keySchema` - the schema object validated against the unknown key names.
+- `valueSchema` - the schema object matching keys must validate against.
+
+```js
+const schema = Joi.object({
+    a: Joi.string()
+}).pattern(Joi.string(), Joi.boolean());
+```
+
 #### `object.and(peers)`
 
 Defines an all-or-nothing relationship between keys where if one of the peers is present, all of them are required as
