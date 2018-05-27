@@ -2808,6 +2808,12 @@ describe('Joi', () => {
             const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
             expect(Joi.reach(schema, 'foo.baz')).to.be.undefined();
         });
+
+        it('should return the same schema with an empty path', () => {
+
+            const schema = Joi.object();
+            expect(Joi.reach(schema, '')).to.shallow.equal(schema);
+        });
     });
 
     describe('extend()', () => {
