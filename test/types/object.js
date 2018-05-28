@@ -1535,8 +1535,8 @@ describe('object', () => {
                 },
                 patterns: [
                     {
-                        patternRule: '/\\w\\d/i',
-                        valueRule: {
+                        regex: '/\\w\\d/i',
+                        rule: {
                             type: 'boolean',
                             truthy: [true],
                             falsy: [false],
@@ -1565,7 +1565,7 @@ describe('object', () => {
                 },
                 patterns: [
                     {
-                        patternRule: {
+                        regex: {
                             invalids: [''],
                             rules: [{
                                 arg: 'uuidv4',
@@ -1573,7 +1573,7 @@ describe('object', () => {
                             }],
                             type: 'string'
                         },
-                        valueRule: {
+                        rule: {
                             type: 'boolean',
                             truthy: [true],
                             falsy: [false],
