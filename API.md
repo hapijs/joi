@@ -1599,17 +1599,22 @@ Specifies the exact number of keys in the object where:
 const schema = Joi.object().length(5);
 ```
 
-#### `object.pattern(regex, schema)`
+#### `object.pattern(pattern, schema)`
 
 Specify validation rules for unknown keys matching a pattern where:
-- `regex` - a regular expression tested against the unknown key names.
-- `regex` - may also be a schema object validated against the unknown key names.
+- `pattern` - a pattern that can be either a regular expression or a joi schema that will be tested against the unknown key names.
 - `schema` - the schema object matching keys must validate against.
 
 ```js
 const schema = Joi.object({
     a: Joi.string()
 }).pattern(/\w\d/, Joi.boolean());
+
+// OR
+
+const schema = Joi.object({
+    a: Joi.string()
+}).pattern(Joi.string().min(2).max(5), Joi.boolean());
 ```
 
 #### `object.and(peers)`

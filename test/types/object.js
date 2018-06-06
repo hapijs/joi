@@ -1565,7 +1565,7 @@ describe('object', () => {
                 },
                 patterns: [
                     {
-                        regex: {
+                        schema: {
                             invalids: [''],
                             rules: [{
                                 arg: 'uuidv4',
