@@ -1,5 +1,5 @@
 <!-- version -->
-# 13.3.0 API Reference
+# 13.4.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -99,7 +99,7 @@
     - [`object.min(limit)`](#objectminlimit)
     - [`object.max(limit)`](#objectmaxlimit)
     - [`object.length(limit)`](#objectlengthlimit)
-    - [`object.pattern(regex, schema)`](#objectpatternregex-schema)
+    - [`object.pattern(pattern, schema)`](#objectpatternpattern-schema)
     - [`object.and(peers)`](#objectandpeers)
     - [`object.nand(peers)`](#objectnandpeers)
     - [`object.or(peers)`](#objectorpeers)
