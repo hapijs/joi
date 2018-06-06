@@ -3009,6 +3009,33 @@ describe('Joi', () => {
             ]);
         });
 
+        it('defines a custom type with a custom base while preserving its original helper params', () => {
+
+            const customJoi = Joi.extend({
+                base: Joi.object(),
+                name: 'myType'
+            });
+
+            expect(Joi.myType).to.not.exist();
+            expect(customJoi.myType).to.be.a.function();
+
+            const schema = customJoi.myType({ a: customJoi.number() });
+            Helper.validate(schema, [
+                [undefined, true],
+                [{}, true],
+                [{ a: 1 }, true],
+                [{ a: 'a' }, false, null, {
+                    message: 'child "a" fails because ["a" must be a number]',
+                    details: [{
+                        message: '"a" must be a number',
+                        path: ['a'],
+                        type: 'number.base',
+                        context: { key: 'a', label: 'a' }
+                    }]
+                }]
+            ]);
+        });
+
         it('defines a custom type with new rules', () => {
 
             const customJoi = Joi.extend({
