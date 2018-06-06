@@ -1603,6 +1603,7 @@ const schema = Joi.object().length(5);
 
 Specify validation rules for unknown keys matching a pattern where:
 - `regex` - a regular expression tested against the unknown key names.
+- `regex` - may also be a schema object validated against the unknown key names.
 - `schema` - the schema object matching keys must validate against.
 
 ```js

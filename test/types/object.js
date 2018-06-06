@@ -1548,6 +1548,43 @@ describe('object', () => {
                 ]
             });
         });
+
+        it('describes patterns with schema', () => {
+
+            const schema = Joi.object({
+                a: Joi.string()
+            }).pattern(Joi.string().uuid('uuidv4'), Joi.boolean());
+
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                children: {
+                    a: {
+                        type: 'string',
+                        invalids: ['']
+                    }
+                },
+                patterns: [
+                    {
+                        regex: {
+                            invalids: [''],
+                            rules: [{
+                                arg: 'uuidv4',
+                                name: 'guid'
+                            }],
+                            type: 'string'
+                        },
+                        rule: {
+                            type: 'boolean',
+                            truthy: [true],
+                            falsy: [false],
+                            flags: {
+                                insensitive: true
+                            }
+                        }
+                    }
+                ]
+            });
+        });
     });
 
     describe('length()', () => {
@@ -1609,11 +1646,70 @@ describe('object', () => {
 
         });
 
-        it('validates unknown keys using a pattern', async () => {
+        it('validates unknown keys using a regex pattern', async () => {
 
             const schema = Joi.object({
                 a: Joi.number()
             }).pattern(/\d+/, Joi.boolean()).pattern(/\w\w+/, 'x');
+
+            const err = await expect(Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false })).to.reject();
+            expect(err).to.be.an.error('child "5" fails because ["5" must be a boolean]. child "bb" fails because ["bb" must be one of [x]]');
+            expect(err.details).to.equal([
+                {
+                    message: '"5" must be a boolean',
+                    path: ['5'],
+                    type: 'boolean.base',
+                    context: { label: '5', key: '5' }
+                },
+                {
+                    message: '"bb" must be one of [x]',
+                    path: ['bb'],
+                    type: 'any.allowOnly',
+                    context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
+                }
+            ]);
+
+            Helper.validate(schema, [
+                [{ a: 5 }, true],
+                [{ a: 'x' }, false, null, {
+                    message: 'child "a" fails because ["a" must be a number]',
+                    details: [{
+                        message: '"a" must be a number',
+                        path: ['a'],
+                        type: 'number.base',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ b: 'x' }, false, null, {
+                    message: '"b" is not allowed',
+                    details: [{
+                        message: '"b" is not allowed',
+                        path: ['b'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'b', label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ bb: 'x' }, true],
+                [{ 5: 'x' }, false, null, {
+                    message: 'child "5" fails because ["5" must be a boolean]',
+                    details: [{
+                        message: '"5" must be a boolean',
+                        path: ['5'],
+                        type: 'boolean.base',
+                        context: { label: '5', key: '5' }
+                    }]
+                }],
+                [{ 5: false }, true],
+                [{ 5: undefined }, true]
+            ]);
+        });
+
+        it('validates unknown keys using a schema pattern', async () => {
+
+            const schema = Joi.object({
+                a: Joi.number()
+            }).pattern(Joi.number().positive(), Joi.boolean())
+                .pattern(Joi.string().length(2), 'x');
 
             const err = await expect(Joi.validate({ bb: 'y', 5: 'x' }, schema, { abortEarly: false })).to.reject();
             expect(err).to.be.an.error('child "5" fails because ["5" must be a boolean]. child "bb" fails because ["bb" must be one of [x]]');
@@ -1693,9 +1789,48 @@ describe('object', () => {
             ]);
         });
 
-        it('errors when using a pattern on empty schema with unknown(false) and pattern mismatch', async () => {
+        it('validates unknown keys using a pattern (nested)', async () => {
+
+            const schema = {
+                x: Joi.object({
+                    a: Joi.number()
+                }).pattern(Joi.number().positive(), Joi.boolean()).pattern(Joi.string().length(2), 'x')
+            };
+
+            const err = await expect(Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false })).to.reject();
+            expect(err).to.be.an.error('child "x" fails because [child "5" fails because ["5" must be a boolean], child "bb" fails because ["bb" must be one of [x]]]');
+            expect(err.details).to.equal([
+                {
+                    message: '"5" must be a boolean',
+                    path: ['x', '5'],
+                    type: 'boolean.base',
+                    context: { label: '5', key: '5' }
+                },
+                {
+                    message: '"bb" must be one of [x]',
+                    path: ['x', 'bb'],
+                    type: 'any.allowOnly',
+                    context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
+                }
+            ]);
+        });
+
+        it('errors when using a pattern on empty schema with unknown(false) and regex pattern mismatch', async () => {
 
             const schema = Joi.object().pattern(/\d/, Joi.number()).unknown(false);
+
+            const err = await expect(Joi.validate({ a: 5 }, schema, { abortEarly: false })).to.reject('"a" is not allowed');
+            expect(err.details).to.equal([{
+                message: '"a" is not allowed',
+                path: ['a'],
+                type: 'object.allowUnknown',
+                context: { child: 'a', label: 'a', key: 'a' }
+            }]);
+        });
+
+        it('errors when using a pattern on empty schema with unknown(false) and schema pattern mismatch', async () => {
+
+            const schema = Joi.object().pattern(Joi.number().positive(), Joi.number()).unknown(false);
 
             const err = await expect(Joi.validate({ a: 5 }, schema, { abortEarly: false })).to.reject('"a" is not allowed');
             expect(err.details).to.equal([{
@@ -1718,6 +1853,19 @@ describe('object', () => {
 
             const value = await Joi.validate({ a1: undefined, a2: null, a3: 'test' }, schema);
             expect(value).to.equal({ a1: undefined, a2: undefined, a3: 'test' });
+        });
+
+        it('should throw an error if pattern is not regex or instance of Any', () => {
+
+            let error;
+            try {
+                Joi.object().pattern(17, Joi.boolean());
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+            expect(error).to.equal(true);
         });
     });
 
