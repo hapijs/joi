@@ -1156,33 +1156,93 @@ describe('any', () => {
 
     describe('example()', () => {
 
-        it('sets an example', () => {
+        it('sets a default valid example', () => {
 
             const schema = Joi.valid(5, 6, 7).example(5);
-            expect(schema._examples).to.include(5);
-            expect(schema.describe().examples).to.equal([5]);
+            expect(schema._examples.valid).to.include(5);
+            expect(schema.describe().examples).to.equal({ valid: [5] });
+        });
+
+        it('sets an explicit valid example', () => {
+
+            const schema = Joi.valid(5, 6, 7).example(5, true);
+            expect(schema._examples.valid).to.include(5);
+            expect(schema.describe().examples).to.equal({ valid: [5] });
+        });
+
+        it('sets an invalid example', () => {
+
+            const schema = Joi.valid(5, 6, 7).example(1, false);
+            expect(schema._examples.invalid).to.include(1);
+            expect(schema.describe().examples).to.equal({ invalid: [1] });
+        });
+
+        it('sets both valid and invalid examples', () => {
+
+            const schema = Joi.valid(5, 6, 7).example(5).example(1, false);
+            expect(schema._examples.valid).to.include(5);
+            expect(schema._examples.invalid).to.include(1);
+            expect(schema.describe().examples).to.equal({ valid: [5], invalid: [1] });
         });
 
         it('does not flatten examples', () => {
 
             const schema = Joi.array().items(5, 6, 7).example([5, 6]);
-            expect(schema._examples).to.equal([[5, 6]]);
-            expect(schema.describe().examples).to.equal([[5, 6]]);
+            expect(schema._examples.valid).to.equal([[5, 6]]);
+            expect(schema.describe().examples).to.equal({ valid: [[5, 6]] });
         });
 
-        it('throws when tags are missing', () => {
+        it('throws when example is missing', () => {
 
             expect(() => {
 
                 Joi.example();
-            }).to.throw('Missing example');
+            }).to.throw('Missing example or invalid isValid value');
         });
 
-        it('does not throw when example fails own rules', () => {
+        it('throw when isValid is provided, but not a boolean', () => {
 
-            const schema = Joi.valid(5, 6, 7).example(4);
-            expect(schema._examples).to.equal([4]);
-            expect(schema.describe().examples).to.equal([4]);
+            expect(() => {
+
+                Joi.example(undefined, 'not a boolean');
+            }).to.throw('Missing example or invalid isValid value');
+        });
+
+        it('does not throw when example fails own rules and example validation not requested by default', () => {
+
+            const schema = Joi.valid(5, 6, 7).example(4, false);
+            expect(schema._examples.invalid).to.equal([4]);
+            expect(schema.describe().examples).to.equal({ invalid: [4] });
+        });
+
+        it('does not throw when valid example passed validation', () => {
+
+            const schema = Joi.options({ validateExample: true }).valid(5, 6, 7).example(5);
+            expect(schema._examples.valid).to.include(5);
+            expect(schema.describe().examples).to.equal({ valid: [5] });
+        });
+
+        it('does not throw when invalid example failed validation', () => {
+
+            const schema = Joi.options({ validateExample: true }).invalid(1, 2).example(1, false);
+            expect(schema._examples.invalid).to.include(1);
+            expect(schema.describe().examples).to.equal({ invalid: [1] });
+        });
+
+        it('throws when valid example fails own rules when example validation requested', () => {
+
+            expect(() => {
+
+                Joi.options({ validateExample: true }).valid(5, 6, 7).example(4);
+            }).to.throw('Bad valid example: "value" must be one of [5, 6, 7]');
+        });
+
+        it('throws when invalid example fails own rules when example validation requested', () => {
+
+            expect(() => {
+
+                Joi.options({ validateExample: true }).valid(5, 6, 7).example(5, false);
+            }).to.throw('Bad invalid example: Missing expected validation error');
         });
     });
 
@@ -1546,7 +1606,7 @@ describe('any', () => {
 
         it('overrides and append information', () => {
 
-            const a = Joi.description('a').unit('a').tags('a').example('a');
+            const a = Joi.description('a').unit('a').tags('a').example('c', false);
             const b = Joi.description('b').unit('b').tags('b').example('b');
 
             const desc = a.concat(b).describe();
@@ -1554,7 +1614,7 @@ describe('any', () => {
                 type: 'any',
                 description: 'b',
                 tags: ['a', 'b'],
-                examples: ['a', 'b'],
+                examples: { valid: ['b'], invalid: ['c'] },
                 unit: 'b'
             });
         });
