@@ -1479,6 +1479,62 @@ describe('array', () => {
             ]);
         });
 
+        it('ignores undefined value when ignoreUndefined is true', () => {
+
+            const schema = Joi.array().unique('a', { ignoreUndefined: true });
+
+            Helper.validate(schema, [
+                [[{ a: 'b' }, { a: 'c' }], true],
+                [[{ c: 'd' }, { c: 'd' }], true],
+                [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, null, {
+                    message: '"value" position 1 contains a duplicate value',
+                    details: [{
+                        message: '"value" position 1 contains a duplicate value',
+                        path: [1],
+                        type: 'array.unique',
+                        context: {
+                            pos: 1,
+                            value: { a: 'b', c: 'd' },
+                            dupePos: 0,
+                            dupeValue: { a: 'b', c: 'd' },
+                            label: 'value',
+                            key: 1,
+                            path: 'a'
+                        }
+                    }]
+                }],
+                [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, null, {
+                    message: '"value" position 1 contains a duplicate value',
+                    details: [{
+                        message: '"value" position 1 contains a duplicate value',
+                        path: [1],
+                        type: 'array.unique',
+                        context: {
+                            pos: 1,
+                            value: { a: 'b', c: 'd' },
+                            dupePos: 0,
+                            dupeValue: { a: 'b', c: 'c' },
+                            label: 'value',
+                            key: 1,
+                            path: 'a'
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('fails with invalid configs', () => {
+
+            expect(() => {
+
+                Joi.array().unique('id', 'invalid configs');
+            }).to.throw(Error, 'configs must be an object');
+            expect(() => {
+
+                Joi.array().unique('id', {});
+            }).to.not.throw();
+        });
+
         it('fails with invalid comparator', () => {
 
             expect(() => {
