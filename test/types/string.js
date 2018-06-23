@@ -1531,6 +1531,18 @@ describe('string', () => {
             ], { convert: false });
         });
 
+        it('disable existing trim flag when passing enabled: false', () => {
+
+            const schema = Joi.string().trim().trim(false);
+            Helper.validateOptions(schema, [
+                [' something', true],
+                ['something ', true],
+                ['something\n', true],
+                ['some thing', true],
+                ['something', true]
+            ], { convert: false });
+        });
+
         it('removes leading and trailing whitespace before validation', async () => {
 
             const schema = Joi.string().trim();
