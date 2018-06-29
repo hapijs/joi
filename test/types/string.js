@@ -2523,7 +2523,15 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 ['foo://example.com:8042/over/there?name=ferret#nose', true],
-                ['https://example.com?abc[]=123&abc[]=456', true],
+                ['https://example.com?abc[]=123&abc[]=456', false, null, {
+                    message:'"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'https://example.com?abc[]=123&abc[]=456', label: 'value', key: undefined }
+                    }]
+                }],
                 ['urn:example:animal:ferret:nose', true],
                 ['ftp://ftp.is.co.za/rfc/rfc1808.txt', true],
                 ['http://www.ietf.org/rfc/rfc2396.txt', true],
@@ -4378,6 +4386,20 @@ describe('string', () => {
                 }],
                 ['/absolute', true]
             ]);
+        });
+
+        it('validates uri with square brackets allowed', () => {
+
+            const schema = Joi.string().uri({ allowQuerySquareBrackets: true });
+
+            Helper.validate(schema, [
+                ['https://example.com?abc[]=123&abc[]=456', true]
+            ]);
+        });
+
+        it('warns about unknown options', () => {
+
+            expect(() => Joi.string().uri({ foo: 'bar', baz: 'qux' })).to.throw('options contain unknown keys: foo,baz');
         });
     });
 

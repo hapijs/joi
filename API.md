@@ -2038,6 +2038,7 @@ Requires the string value to be a valid [RFC 3986](http://tools.ietf.org/html/rf
     - `scheme` - Specifies one or more acceptable Schemes, should only include the scheme name. Can be an Array or String (strings are automatically escaped for use in a Regular Expression).
     - `allowRelative` - Allow relative URIs. Defaults to `false`.
     - `relativeOnly` - Restrict only relative URIs.  Defaults to `false`.
+    - `allowQuerySquareBrackets` - Allows unencoded square brackets inside the query string. This is **NOT** RFC 3986 compliant but query strings like `abc[]=123&abc[]=456` are very common these days. Defaults to `false`.
 
 ```js
 // Accept git or git http/https
