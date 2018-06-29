@@ -2101,9 +2101,12 @@ paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM'); // No Error
 paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
-#### `string.dataUri()`
+#### `string.dataUri([options])`
 
 Requires the string value to be a valid data URI string.
+
+- `options` - optional settings:
+    - `paddingRequired` - optional parameter defaulting to `true` which will require `=` padding if `true` or make padding optional if `false`.
 
 ```js
 const schema = Joi.string().dataUri();
