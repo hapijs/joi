@@ -2523,6 +2523,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 ['foo://example.com:8042/over/there?name=ferret#nose', true],
+                ['https://example.com?abc[]=123&abc[]=456', true],
                 ['urn:example:animal:ferret:nose', true],
                 ['ftp://ftp.is.co.za/rfc/rfc1808.txt', true],
                 ['http://www.ietf.org/rfc/rfc2396.txt', true],
