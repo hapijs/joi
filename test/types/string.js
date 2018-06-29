@@ -10104,6 +10104,197 @@ describe('string', () => {
             ]);
         });
 
+        it('validates a dataUri string', () => {
+
+            const rule = Joi.string().dataUri();
+            Helper.validate(rule, [
+                ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:image/png;base64,YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['data:image/png;charset=utf-8,=YW55IGNhcm5hbCBwbGVhc3VyZS', true]
+            ]);
+        });
+
+        it('validates a dataUri string with padding explicitly required', () => {
+
+            const rule = Joi.string().dataUri({ paddingRequired: true });
+            Helper.validate(rule, [
+                ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:image/png;base64,YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['data:image/png;charset=utf-8,=YW55IGNhcm5hbCBwbGVhc3VyZS', true]
+            ]);
+
+        });
+
+        it('validates a dataUri string with padding not required', () => {
+
+            const rule = Joi.string().dataUri({ paddingRequired: false });
+            Helper.validate(rule, [
+                ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                    message: '"value" must be a valid dataUri string',
+                    details: [{
+                        message: '"value" must be a valid dataUri string',
+                        path: [],
+                        type: 'string.dataUri',
+                        context: {
+                            value: 'data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['data:image/png;base64,YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['data:image/png;charset=utf-8,=YW55IGNhcm5hbCBwbGVhc3VyZS', true]
+            ]);
+
+        });
+
         it('validates combination of uppercase, min, max, alphanum and valid', () => {
 
             const rule = Joi.string().uppercase().min(2).max(3).alphanum().valid('AB', 'BC');
