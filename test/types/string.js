@@ -1533,13 +1533,22 @@ describe('string', () => {
 
         it('disable existing trim flag when passing enabled: false', () => {
 
-            const schema = Joi.string().trim().trim(false);
-            Helper.validateOptions(schema, [
-                [' something', true],
-                ['something ', true],
-                ['something\n', true],
-                ['some thing', true],
-                ['something', true]
+            const trimEnabledSchema = Joi.string().trim(true);
+            Helper.validateOptions(trimEnabledSchema, [
+                [' something', false, null, {
+                    message: '"value" must not have leading or trailing whitespace',
+                    details: [{
+                        message: '"value" must not have leading or trailing whitespace',
+                        path: [],
+                        type: 'string.trim',
+                        context: { value: ' something', label: 'value', key: undefined }
+                    }]
+                }]
+            ], { convert: false });
+
+            const trimDisabledSchema = trimEnabledSchema.trim(false);
+            Helper.validateOptions(trimDisabledSchema, [
+                [' something', true]
             ], { convert: false });
         });
 
@@ -1665,6 +1674,14 @@ describe('string', () => {
                 [' ABC', true],
                 ['ABC', true]
             ]);
+        });
+
+        it('throws when option is not a boolean', () => {
+
+            expect(() => {
+
+                Joi.string().trim(42);
+            }).to.throw('option must be a boolean');
         });
     });
 
