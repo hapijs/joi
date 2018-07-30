@@ -28,7 +28,7 @@ const schema = Joi.object().keys({
     password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
     access_token: [Joi.string(), Joi.number()],
     birthyear: Joi.number().integer().min(1900).max(2013),
-    email: Joi.string().email()
+    email: Joi.string().email({ minDomainAtoms: 2 })
 }).with('username', 'birthyear').without('password', 'access_token');
 
 // Return result.
@@ -56,6 +56,7 @@ The above schema defines the following constraints:
     * an integer between 1900 and 2013
 * `email`
     * a valid email address string
+    * must have two domain parts e.g. `example.com`
 
 # Usage
 
