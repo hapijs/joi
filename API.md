@@ -136,7 +136,7 @@
     - [`string.normalize([form])`](#stringnormalizeform)
     - [`string.lowercase()`](#stringlowercase)
     - [`string.uppercase()`](#stringuppercase)
-    - [`string.trim()`](#stringtrim)
+    - [`string.trim([enabled])`](#stringtrimenabled)
     - [`string.isoDate()`](#stringisodate)
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
@@ -2155,13 +2155,17 @@ will be forced to uppercase.
 const schema = Joi.string().uppercase();
 ```
 
-#### `string.trim()`
+#### `string.trim([enabled])`
 
 Requires the string value to contain no whitespace before or after. If the validation `convert` option is on (enabled by
 default), the string will be trimmed.
 
+Parameters are:
+- `enabled` - optional parameter defaulting to `true` which allows you to reset the behavior of trim by providing a falsy value.
+
 ```js
 const schema = Joi.string().trim();
+const schema = Joi.string().trim(false); // disable trim flag
 ```
 
 #### `string.isoDate()`
