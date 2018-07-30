@@ -1495,6 +1495,18 @@ describe('string', () => {
 
     describe('trim()', () => {
 
+        it('avoids unnecessary cloning when called twice', () => {
+
+            const schema1 = Joi.string().trim();
+            expect(schema1.trim()).to.shallow.equal(schema1);
+
+            const schema2 = Joi.string().trim(false);
+            expect(schema2.trim(false)).to.shallow.equal(schema2);
+
+            const schema3 = Joi.string();
+            expect(schema3.trim(false)).to.shallow.equal(schema3);
+        });
+
         it('only allow strings that have no leading or trailing whitespace', () => {
 
             const schema = Joi.string().trim();
