@@ -1,5 +1,5 @@
 <!-- version -->
-# 13.4.0 API Reference
+# 13.5.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -131,7 +131,7 @@
     - [`string.guid()` - aliases: `uuid`](#stringguid---aliases-uuid)
     - [`string.hex([options])`](#stringhexoptions)
     - [`string.base64([options])`](#stringbase64options)
-    - [`string.dataUri()`](#stringdatauri)
+    - [`string.dataUri([options])`](#stringdataurioptions)
     - [`string.hostname()`](#stringhostname)
     - [`string.normalize([form])`](#stringnormalizeform)
     - [`string.lowercase()`](#stringlowercase)
