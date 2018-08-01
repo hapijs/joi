@@ -80,6 +80,104 @@ describe('lazy', () => {
                 }]
             ]);
         });
+
+        it('should validate a schema with arguments', () => {
+
+            const schema = Joi.object({
+                name: Joi.string().required(),
+                age: Joi.lazy((oldest) => Joi.number().max(oldest), 150)
+            });
+
+            Helper.validate(schema, [
+                [{ name: 'foo' }, true],
+                [{ name: 'foo', age: 200 }, false, null, {
+                    message: 'child "age" fails because ["age" must be less than or equal to 150]',
+                    details: [{
+                        message: '"age" must be less than or equal to 150',
+                        path: ['age'],
+                        type: 'number.max',
+                        context: { value: 200, label: 'age', key: 'age', limit: 150 }
+                    }]
+                }]
+            ]);
+        });
+
+        it('should validate a schema with ref arguments', () => {
+
+            const schema = Joi.object({
+                name: Joi.string().required(),
+                age: Joi.lazy((oldest, name) => {
+
+                    if (name === '张三丰') {
+                        return Joi.number().max(oldest + 100);
+                    }
+                    return Joi.number().max(oldest);
+                }, 150, Joi.ref('name'))
+            });
+
+            Helper.validate(schema, [
+                [{ name: 'foo' }, true],
+                [{ name: 'foo', age: 200 }, false, null, {
+                    message: 'child "age" fails because ["age" must be less than or equal to 150]',
+                    details: [{
+                        message: '"age" must be less than or equal to 150',
+                        path: ['age'],
+                        type: 'number.max',
+                        context: { value: 200, label: 'age', key: 'age', limit: 150 }
+                    }]
+                }],
+                [{ name: '张三丰', age: 200 }, true]
+            ]);
+        });
+
+        it('should validate a schema with ref arguments in when', () => {
+
+            const schema = Joi.object({
+                surname: Joi.string().required(),
+                name: Joi.string().required(),
+                age: Joi.any().when('surname', {
+                    is: Joi.lazy((name) => {
+
+                        if (name === '张三丰') {
+                            return Joi.any();
+                        }
+                        return Joi.string().valid('张');
+                    }, Joi.ref('name')),
+                    then: Joi.lazy((oldest, name) => {
+
+                        if (name === '张三丰') {
+                            return Joi.number().max(oldest + 100);
+                        }
+                        return Joi.number().max(oldest);
+                    }, 150, Joi.ref('name')),
+                    otherwise: Joi.number().max(120)
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ surname: 'f', name: 'foo' }, true],
+                [{ surname: 'f', name: 'foo', age: 200 }, false, null, {
+                    message: 'child "age" fails because ["age" must be less than or equal to 120]',
+                    details: [{
+                        message: '"age" must be less than or equal to 120',
+                        path: ['age'],
+                        type: 'number.max',
+                        context: { value: 200, label: 'age', key: 'age', limit: 120 }
+                    }]
+                }],
+                [{ surname: '刘', name: '刘三三', age: 140 }, false, null, {
+                    message: 'child "age" fails because ["age" must be less than or equal to 120]',
+                    details: [{
+                        message: '"age" must be less than or equal to 120',
+                        path: ['age'],
+                        type: 'number.max',
+                        context: { value: 140, label: 'age', key: 'age', limit: 120 }
+                    }]
+                }],
+                [{ surname: '张', name: '张三三', age: 140 }, true],
+                [{ surname: '张', name: '张三丰', age: 200 }, true]
+            ]);
+        });
     });
 
     describe('describe()', () => {
