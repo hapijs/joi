@@ -170,7 +170,7 @@ Validates a value using the given schema and options where:
   - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
     - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped if the option `escapeHtml` is also set to `true`
     - strings are always preceeded by the key name, unless a `{{label}}` is found elsewhere or if the string is prefixed by a `!!`
-    - when `'label'` is set, it overrides the key name in the error message
+    - when `'root'` is set, it is used the key name in the error message if key does not exist
     - to better understand the structure of the language, it's advised to have a look at the existing messages you want to override [here](lib/language.js)
   - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
     Defaults to `'optional'`.
