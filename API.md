@@ -36,7 +36,7 @@
     - [`any.notes(notes)`](#anynotesnotes)
     - [`any.tags(tags)`](#anytagstags)
     - [`any.meta(meta)`](#anymetameta)
-    - [`any.example(value)`](#anyexamplevalue)
+    - [`any.example(value, [isValid])`](#anyexamplevalue-isvalid)
     - [`any.unit(name)`](#anyunitname)
     - [`any.options(options)`](#anyoptionsoptions)
     - [`any.strict(isStrict)`](#anystrictisstrict)
@@ -178,6 +178,7 @@ Validates a value using the given schema and options where:
     `validate()` and not using `any.options()`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
   - `escapeHtml` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
+  - `validateExample` - when `true`, will throw an error if any of the examples is not as expected. This only affects the compile time behavior. Defaults to `false`.
 - `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
@@ -641,15 +642,17 @@ Attaches metadata to the key where:
 const schema = Joi.any().meta({ index: true });
 ```
 
-#### `any.example(value)`
+#### `any.example(value, [isValid])`
 
 Annotates the key where:
 - `value` - an example value.
+- `isValid` - an optional boolean value denoting whether the example is a valid one. Defaults to `true`.
 
-If the example fails to pass validation, the function will throw.
+If the `validateExample` option was set to `true`, all examples will be validated. If any examples fails to pass validation, the function will throw.
 
 ```js
 const schema = Joi.string().min(4).example('abcd');
+const schema = Joi.number().min(5).example(5).example(4, false);
 ```
 
 #### `any.unit(name)`

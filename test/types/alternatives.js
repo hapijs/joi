@@ -1065,7 +1065,7 @@ describe('alternatives', () => {
                 notes: ['f'],
                 tags: ['g'],
                 meta: ['b', 'c'],
-                examples: ['a'],
+                examples: { valid: ['a'] },
                 alternatives: [{
                     type: 'string',
                     flags: {
