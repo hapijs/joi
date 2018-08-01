@@ -198,7 +198,7 @@ describe('errors', () => {
             message: '"a&#x28;&#x29;" must be a number',
             path: ['a()'],
             type: 'number.base',
-            context: { label: 'a()', key: 'a()' }
+            context: { label: 'a()', key: 'a()', value: 'x' }
         }]);
 
         const err2 = await expect(Joi.validate({ 'b()': 'x' }, schema, { escapeHtml: true })).to.reject();
@@ -223,7 +223,7 @@ describe('errors', () => {
             message: '"a()" must be a number',
             path: ['a()'],
             type: 'number.base',
-            context: { label: 'a()', key: 'a()' }
+            context: { label: 'a()', key: 'a()', value: 'x' }
         }]);
 
         const err2 = await expect(Joi.validate({ 'b()': 'x' }, schema)).to.reject();
@@ -257,7 +257,7 @@ describe('errors', () => {
                 message: '"notNumber" must be a number',
                 path: ['notNumber'],
                 type: 'number.base',
-                context: { label: 'notNumber', key: 'notNumber' }
+                context: { label: 'notNumber', key: 'notNumber', value: '' }
             },
             {
                 message: '"notString" must be a string',
@@ -288,7 +288,7 @@ describe('errors', () => {
             message: '"x" must be a number',
             path: [1, 1, 'x'],
             type: 'number.base',
-            context: { label: 'x', key: 'x' }
+            context: { label: 'x', key: 'x', value: 'a' }
         }]);
     });
 
@@ -326,7 +326,7 @@ describe('errors', () => {
             message: '"x" must be a number',
             path: ['x', 1, 'x'],
             type: 'number.base',
-            context: { label: 'x', key: 'x' }
+            context: { label: 'x', key: 'x', value: 'a' }
         }]);
     });
 
@@ -593,7 +593,7 @@ describe('errors', () => {
                 message: '"0" must be a number',
                 path: ['a', 0],
                 type: 'number.base',
-                context: { label: 0, key: 0 }
+                context: { label: 0, key: 0, value: { b: 2 } }
             }]);
             expect(err.annotate()).to.equal('{\n  \"a\": [\n    { \u001b[31m[1]\u001b[0m\n      \"b\": 2\n    }\n  ]\n}\n\u001b[31m\n[1] \"0\" must be a number\u001b[0m');
         });
@@ -688,7 +688,7 @@ describe('errors', () => {
                     message: '"x" must be a number',
                     path: ['x'],
                     type: 'number.base',
-                    context: { label: 'x', key: 'x' }
+                    context: { label: 'x', key: 'x', value: true }
                 },
                 {
                     message: '"x" must be a number of milliseconds or valid date string',
@@ -743,7 +743,7 @@ describe('errors', () => {
                 message: '"z" must be a number',
                 path: ['x', 'y', 'z'],
                 type: 'number.base',
-                context: { label: 'z', key: 'z' }
+                context: { label: 'z', key: 'z', value: input.x.y }
             }]);
             expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\": {\n      \"z\" \u001b[31m[1]\u001b[0m: \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"z\" must be a number\u001b[0m');
         });

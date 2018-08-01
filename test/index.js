@@ -212,7 +212,7 @@ describe('Joi', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'other' }
                     },
                     {
                         message: '"value" must be an object',
@@ -258,7 +258,7 @@ describe('Joi', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: { c: 5 } }
                     },
                     {
                         message: '"c" is not allowed',
@@ -284,7 +284,7 @@ describe('Joi', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: { a: 5, b: 'a' } }
                     },
                     {
                         message: '"a" must be a boolean',
@@ -316,7 +316,7 @@ describe('Joi', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'other' }
                     },
                     {
                         message: '"value" must be an object',
@@ -362,7 +362,7 @@ describe('Joi', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: { c: 5 } }
                     },
                     {
                         message: '"c" is not allowed',
@@ -388,7 +388,7 @@ describe('Joi', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: { a: 5, b: 'a' } }
                     },
                     {
                         message: '"a" must be a boolean',
@@ -830,7 +830,7 @@ describe('Joi', () => {
                     message: '"code" must be a number',
                     path: ['code'],
                     type: 'number.base',
-                    context: { label: 'code', key: 'code' }
+                    context: { label: 'code', key: 'code', value: null }
                 }]
             }],
             [{ code: 123 }, true],
@@ -988,7 +988,7 @@ describe('Joi', () => {
                     message: '"code" must be a number',
                     path: ['code'],
                     type: 'number.base',
-                    context: { label: 'code', key: 'code' }
+                    context: { label: 'code', key: 'code', value: null }
                 }]
             }],
             [{ code: 123 }, false, null, {
@@ -3030,7 +3030,7 @@ describe('Joi', () => {
                         message: '"a" must be a number',
                         path: ['a'],
                         type: 'number.base',
-                        context: { key: 'a', label: 'a' }
+                        context: { key: 'a', label: 'a', value: 'a' }
                     }]
                 }]
             ]);

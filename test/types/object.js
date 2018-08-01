@@ -339,7 +339,7 @@ describe('object', () => {
                     message: '"num" must be a number',
                     path: ['num'],
                     type: 'number.base',
-                    context: { label: 'num', key: 'num' }
+                    context: { label: 'num', key: 'num', value: [1, 2, 3] }
                 }]
             }]
         ]);
@@ -362,7 +362,7 @@ describe('object', () => {
                     message: '"num" must be a number',
                     path: ['num'],
                     type: 'number.base',
-                    context: { label: 'num', key: 'num' }
+                    context: { label: 'num', key: 'num', value: [1, 2, 3] }
                 }]
             }],
             [{ num: 1, obj: { item: 'something' } }, true],
@@ -901,7 +901,7 @@ describe('object', () => {
                         message: '"b" must be a number',
                         path: ['a', 'b'],
                         type: 'number.base',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ a: { b: 5 }, c: 'ignore' }, true],
@@ -933,7 +933,7 @@ describe('object', () => {
                         message: '"b" must be a number',
                         path: ['a', 'b'],
                         type: 'number.base',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ a: { b: 5 }, c: 'ignore' }, false, null, {
@@ -968,7 +968,7 @@ describe('object', () => {
                         message: '"b" must be a number',
                         path: ['a', 'b'],
                         type: 'number.base',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ a: { b: 5 }, d: 'ignore' }, true, null, { a: { b: 5 } }],
@@ -1677,7 +1677,7 @@ describe('object', () => {
                         message: '"a" must be a number',
                         path: ['a'],
                         type: 'number.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: 'x' }
                     }]
                 }],
                 [{ b: 'x' }, false, null, {
@@ -1736,7 +1736,7 @@ describe('object', () => {
                         message: '"a" must be a number',
                         path: ['a'],
                         type: 'number.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: 'x' }
                     }]
                 }],
                 [{ b: 'x' }, false, null, {

@@ -42,7 +42,7 @@ describe('number', () => {
                     message: '"value" must be a number',
                     path: [],
                     type: 'number.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: true }
                 }]
             }],
             [false, false, null, {
@@ -51,7 +51,7 @@ describe('number', () => {
                     message: '"value" must be a number',
                     path: [],
                     type: 'number.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: false }
                 }]
             }]
         ]);
@@ -105,7 +105,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }],
                 [1.02, false, null, {
@@ -185,7 +185,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '1 some text' }
                     }]
                 }],
                 ['\t\r', false, null, {
@@ -194,7 +194,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '\t\r' }
                     }]
                 }],
                 [' ', false, null, {
@@ -203,7 +203,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: ' ' }
                     }]
                 }],
                 [' 2', true],
@@ -215,7 +215,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: '' }
                     }]
                 }]
             ]);
@@ -231,7 +231,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: NaN }
                     }]
                 }],
                 ['100', true]
@@ -260,7 +260,7 @@ describe('number', () => {
                 message: '"value" must be a number',
                 path: [],
                 type: 'number.base',
-                context: { label: 'value', key: undefined }
+                context: { label: 'value', key: undefined, value: null }
             }]);
         });
 
@@ -294,7 +294,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -349,7 +349,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -384,7 +384,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -419,7 +419,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -462,7 +462,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -498,7 +498,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -526,7 +526,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -667,7 +667,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -723,7 +723,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -796,7 +796,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -842,7 +842,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -896,7 +896,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -989,7 +989,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -1108,7 +1108,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -1283,7 +1283,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: null }
                     }]
                 }]
             ]);
@@ -1899,7 +1899,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'abc' }
                     }]
                 }],
                 [NaN, false, null, {
@@ -1908,7 +1908,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: NaN }
                     }]
                 }]
             ]);
@@ -1973,7 +1973,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'a' }
                     }]
                 }],
                 [9.1, false, null, {
@@ -2019,7 +2019,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'a' }
                     }]
                 }],
                 [10.501, false, null, {
@@ -2135,7 +2135,7 @@ describe('number', () => {
                         message: '"b" must be a number',
                         path: ['b'],
                         type: 'number.base',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: NaN }
                     }]
                 }]
             ]);

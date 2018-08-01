@@ -799,7 +799,7 @@ describe('array', () => {
                         message: '"0" must be a number',
                         path: [0],
                         type: 'number.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 'a' }
                     }]
                 }],
                 [['1', '2', 4], true]
@@ -851,7 +851,7 @@ describe('array', () => {
                         message: '"2" must be a number',
                         path: [2],
                         type: 'number.base',
-                        context: { label: 2, key: 2 }
+                        context: { label: 2, key: 2, value: [1] }
                     }]
                 }]
             ]);
@@ -1869,7 +1869,7 @@ describe('array', () => {
                         message: '"0" must be a number',
                         path: [0],
                         type: 'number.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 'a' }
                     }]
                 }],
                 ['a', false, null, {
@@ -1878,7 +1878,7 @@ describe('array', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'a' }
                     }]
                 }],
                 [true, false, null, {
@@ -1927,7 +1927,7 @@ describe('array', () => {
                         message: '"0" must be a number',
                         path: [0, 0],
                         type: 'number.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 'a' }
                     }]
                 }],
                 [['a'], false, null, {
@@ -2125,7 +2125,7 @@ describe('array', () => {
                 message: '"0" must be a number',
                 path: [0],
                 type: 'number.base',
-                context: { label: 0, key: 0 }
+                context: { label: 0, key: 0, value: 's1' }
             }]);
         });
 
@@ -2199,7 +2199,7 @@ describe('array', () => {
                 message: '"4" must be a number',
                 path: [4],
                 type: 'number.base',
-                context: { label: 4, key: 4 }
+                context: { label: 4, key: 4, value: 's5' }
             }]);
         });
 
@@ -2263,7 +2263,7 @@ describe('array', () => {
                     message: '"0" must be a number',
                     path: [0],
                     type: 'number.base',
-                    context: { label: 0, key: 0 }
+                    context: { label: 0, key: 0, value: 's1' }
                 },
                 {
                     message: '"1" must be a string',

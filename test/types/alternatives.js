@@ -507,7 +507,7 @@ describe('alternatives', () => {
                             message: '"a" must be a number',
                             path: ['a'],
                             type: 'number.base',
-                            context: { label: 'a', key: 'a' }
+                            context: { label: 'a', key: 'a', value: 'y' }
                         }]
                     }],
                     [{ a: 'x', b: null }, true],
