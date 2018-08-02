@@ -2150,6 +2150,17 @@ describe('object', () => {
                     }
             }]);
         });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string() })
+            }).or('a', 'b.c');
+            Helper.validate(schema, [
+                [{ b: { c: 'bc' } }, true]
+            ]);
+        });
     });
 
     describe('and()', () => {
