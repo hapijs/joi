@@ -1085,7 +1085,8 @@ describe('date', () => {
                             type: 'date.isoDate',
                             context: { label: 'value', key: undefined }
                         }]
-                    }]
+                    }],
+                    ['2013', true, null, new Date('2013')]
                 ]);
             });
 
