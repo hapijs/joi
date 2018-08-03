@@ -1841,15 +1841,15 @@ describe('object', () => {
             }]);
         });
 
-        it('removes global flag from patterns', async () => {
+        it('reject global and sticky flags from patterns', () => {
 
-            const schema = Joi.object().pattern(/a/g, Joi.number());
-            await Joi.validate({ a1: 5, a2: 6 }, schema);
+            expect(() => Joi.object().pattern(/a/g, Joi.number())).to.throw('pattern should not use global or sticky mode');
+            expect(() => Joi.object().pattern(/a/y, Joi.number())).to.throw('pattern should not use global or sticky mode');
         });
 
         it('allows using empty() on values', async () => {
 
-            const schema = Joi.object().pattern(/a/g, Joi.any().empty(null));
+            const schema = Joi.object().pattern(/a/, Joi.any().empty(null));
 
             const value = await Joi.validate({ a1: undefined, a2: null, a3: 'test' }, schema);
             expect(value).to.equal({ a1: undefined, a2: undefined, a3: 'test' });

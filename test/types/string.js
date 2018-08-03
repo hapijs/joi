@@ -4855,13 +4855,10 @@ describe('string', () => {
             ]);
         });
 
-        it('validates regex (ignoring global flag)', () => {
+        it('rejects regex with global or sticky flag', () => {
 
-            const schema = Joi.string().regex(/a/g);
-            Helper.validate(schema, [
-                ['ab', true],
-                ['ac', true]
-            ]);
+            expect(() => Joi.string().regex(/a/g)).to.throw('pattern should not use global or sticky mode');
+            expect(() => Joi.string().regex(/a/y)).to.throw('pattern should not use global or sticky mode');
         });
 
         it('validates token', () => {
