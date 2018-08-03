@@ -356,6 +356,15 @@ describe('array', () => {
             ]);
         });
 
+        it('overrides rule when called multiple times', () => {
+
+            const schema = Joi.array().min(2).min(1);
+            Helper.validate(schema, [
+                [[1, 2], true],
+                [[1], true]
+            ]);
+        });
+
         it('throws when limit is not a number', () => {
 
             expect(() => {
@@ -481,6 +490,15 @@ describe('array', () => {
             ]);
         });
 
+        it('overrides rule when called multiple times', () => {
+
+            const schema = Joi.array().max(1).max(2);
+            Helper.validate(schema, [
+                [[1, 2], true],
+                [[1], true]
+            ]);
+        });
+
         it('throws when limit is not a number', () => {
 
             expect(() => {
@@ -602,6 +620,23 @@ describe('array', () => {
                         path: [],
                         type: 'array.length',
                         context: { limit: 2, value: [1], label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('overrides rule when called multiple times', () => {
+
+            const schema = Joi.array().length(2).length(1);
+            Helper.validate(schema, [
+                [[1], true],
+                [[1, 2], false, null, {
+                    message: '"value" must contain 1 items',
+                    details: [{
+                        message: '"value" must contain 1 items',
+                        path: [],
+                        type: 'array.length',
+                        context: { limit: 1, value: [1, 2], label: 'value', key: undefined }
                     }]
                 }]
             ]);
