@@ -2158,7 +2158,8 @@ describe('object', () => {
                 b: Joi.object({ c: Joi.string() })
             }).or('a', 'b.c');
             Helper.validate(schema, [
-                [{ b: { c: 'bc' } }, true]
+                [{ b: { c: 'bc' } }, true],
+                [{ b: { d: 'bc' } }, false]
             ]);
         });
     });
