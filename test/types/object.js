@@ -2219,7 +2219,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should apply labels without any peer', () => {
+        it('should apply labels without any nested peers', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2240,7 +2240,7 @@ describe('object', () => {
             }] );
         });
 
-        it('should apply labels with too many peers', () => {
+        it('should apply labels with too many nested peers', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2457,6 +2457,30 @@ describe('object', () => {
                         presentWithLabels: ['first'],
                         missing: ['b.c'],
                         missingWithLabels: ['second'],
+                        label: 'value',
+                        key: undefined
+                    }
+            }]);
+        });
+
+        it('should apply labels with invalid nested peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+            }).and('a', 'c.d');
+            const error = schema.validate({ a: 1, b: { d: 1 } }).error;
+            expect(error).to.be.an.error('"value" contains [first] without its required peers [c.d]');
+            expect(error.details).to.equal([{
+                message: '"value" contains [first] without its required peers [c.d]',
+                path: [],
+                type: 'object.and',
+                context:
+                    {
+                        present: ['a'],
+                        presentWithLabels: ['first'],
+                        missing: ['c.d'],
+                        missingWithLabels: ['c.d'],
                         label: 'value',
                         key: undefined
                     }
