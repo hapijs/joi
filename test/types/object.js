@@ -1934,6 +1934,37 @@ describe('object', () => {
                 }
             }]);
         });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).with('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { c: 'test2' } };
+            const sampleObject2 = { a: 'test', b: { d: 80 } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"a" missing required peer "b.c"');
+            expect(error2.details).to.equal([{
+                message: '"a" missing required peer "b.c"',
+                path: ['a'],
+                type: 'object.with',
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'a',
+                    peer: 'b.c',
+                    peerWithLabel: 'b.c',
+                    key: 'a',
+                    label: 'a'
+                }
+            }]);
+        });
     });
 
     describe('without()', () => {
@@ -2014,6 +2045,37 @@ describe('object', () => {
                 }
             }]);
         });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).without('a', ['b.c', 'b.d']);
+
+            const sampleObject = { a: 'test', d: 9000 };
+            const sampleObject2 = { a: 'test', b: { d: 80 } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"a" conflict with forbidden peer "b.d"');
+            expect(error2.details).to.equal([{
+                message: '"a" conflict with forbidden peer "b.d"',
+                path: ['a'],
+                type: 'object.without',
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'a',
+                    peer: 'b.d',
+                    peerWithLabel: 'b.d',
+                    key: 'a',
+                    label: 'a'
+                }
+            }]);
+        });
     });
 
     describe('xor()', () => {
@@ -2078,6 +2140,35 @@ describe('object', () => {
                     peersWithLabels: ['first', 'second'],
                     label: 'value',
                     key: undefined
+                }
+            }]);
+        });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).xor('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { d: 80 } };
+            const sampleObject2 = { a: 'test', b: { c: 'test2' } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"value" contains a conflict between exclusive peers [a, b.c]');
+            expect(error2.details).to.equal([{
+                message: '"value" contains a conflict between exclusive peers [a, b.c]',
+                path: [],
+                type: 'object.xor',
+                context: {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['a', 'b.c'],
+                    key: undefined,
+                    label: 'value'
                 }
             }]);
         });
@@ -2155,12 +2246,29 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.object({ c: Joi.string() })
+                b: Joi.object({ c: Joi.string() }),
+                d: Joi.number()
             }).or('a', 'b.c');
-            Helper.validate(schema, [
-                [{ b: { c: 'bc' } }, true],
-                [{ b: { d: 'bc' } }, false]
-            ]);
+
+            const sampleObject = { b: { c: 'bc' } };
+            const sampleObject2 = { d: 90 };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"value" must contain at least one of [a, b.c]');
+            expect(error2.details).to.equal([{
+                message: '"value" must contain at least one of [a, b.c]',
+                path: [],
+                type: 'object.missing',
+                context: {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['a', 'b.c'],
+                    key: undefined,
+                    label: 'value'
+                }
+            }]);
         });
     });
 
@@ -2189,6 +2297,37 @@ describe('object', () => {
                     }
             }]);
         });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).and('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { c: 'test2' } };
+            const sampleObject2 = { a: 'test', b: { d: 80 } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"value" contains [a] without its required peers [b.c]');
+            expect(error2.details).to.equal([{
+                message: '"value" contains [a] without its required peers [b.c]',
+                path: [],
+                type: 'object.and',
+                context: {
+                    present: ['a'],
+                    presentWithLabels: ['a'],
+                    missing: ['b.c'],
+                    missingWithLabels: ['b.c'],
+                    key: undefined,
+                    label: 'value'
+                }
+            }]);
+        });
     });
 
     describe('nand()', () => {
@@ -2212,6 +2351,37 @@ describe('object', () => {
                     peersWithLabels: ['second'],
                     label: 'value',
                     key: undefined
+                }
+            }]);
+        });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).nand('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { d: 80 } };
+            const sampleObject2 = { a: 'test', b: { c: 'test2' } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"a" must not exist simultaneously with [b.c]');
+            expect(error2.details).to.equal([{
+                message: '"a" must not exist simultaneously with [b.c]',
+                path: [],
+                type: 'object.nand',
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'a',
+                    peers: ['b.c'],
+                    peersWithLabels: ['b.c'],
+                    key: undefined,
+                    label: 'value'
                 }
             }]);
         });
