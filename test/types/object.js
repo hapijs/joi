@@ -681,6 +681,29 @@ describe('object', () => {
         ]);
     });
 
+    it('should apply labels with nested objects', () => {
+
+        const schema = Joi.object({
+            a: Joi.number().label('first'),
+            b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+        }).with('a', ['b.c']);
+        const error = schema.validate({ a: 1 , b: { d: 2 } }).error;
+        expect(error).to.be.an.error('"first" missing required peer "second"');
+        expect(error.details).to.equal([{
+            message: '"first" missing required peer "second"',
+            path: ['a'],
+            type: 'object.with',
+            context: {
+                main: 'a',
+                mainWithLabel: 'first',
+                peer: 'b.c',
+                peerWithLabel: 'second',
+                label: 'a',
+                key: 'a'
+            }
+        }]);
+    });
+
     describe('keys()', () => {
 
         it('allows any key', async () => {
