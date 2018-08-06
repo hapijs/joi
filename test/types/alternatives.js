@@ -841,6 +841,121 @@ describe('alternatives', () => {
         });
     });
 
+    describe('label()', () => {
+
+        it('passes the label to the underlying schema', () => {
+
+            const schema = Joi.object().keys({
+                a: Joi.boolean(),
+                b: Joi.when('a', {
+                    is: true,
+                    then: Joi.string().empty('').allow(null)
+                }).label('Label b'),
+                c: Joi.when('a', {
+                    is: true,
+                    otherwise: Joi.string().empty('').allow(null)
+                }).label('Label c'),
+                d: Joi.alt().try([Joi.string()]).label('Label d')
+            }).or('b', 'c', 'd');
+
+            Helper.validate(schema, [
+                [{ a: true, b: 1 }, false, null, {
+                    message: 'child "Label b" fails because ["Label b" must be a string]',
+                    details: [{
+                        message: '"Label b" must be a string',
+                        path: ['b'],
+                        type: 'string.base',
+                        context: { value: 1, key: 'b', label: 'Label b' }
+                    }]
+                }],
+                [{ a: false, b: 1, d: 1 }, false, null, {
+                    message: 'child "Label d" fails because ["Label d" must be a string]',
+                    details: [{
+                        message: '"Label d" must be a string',
+                        path: ['d'],
+                        type: 'string.base',
+                        context: { value: 1, key: 'd', label: 'Label d' }
+                    }]
+                }],
+                [{ a: false, b: 1, c: 1 }, false, null, {
+                    message: 'child "Label c" fails because ["Label c" must be a string]',
+                    details: [{
+                        message: '"Label c" must be a string',
+                        path: ['c'],
+                        type: 'string.base',
+                        context: { value: 1, key: 'c', label: 'Label c' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('does not modify the original schema', () => {
+
+            const schema = Joi.when('a', {
+                is: true,
+                then: Joi.string().empty('').allow(null)
+            });
+            const labeled = schema.label('Label b');
+
+            expect(schema.describe()).to.equal({
+                base: { type: 'any' },
+                flags: { presence: 'ignore' },
+                type: 'alternatives',
+                alternatives: [{
+                    is: {
+                        type: 'boolean',
+                        flags: { allowOnly: true, insensitive: true, presence: 'required' },
+                        truthy: [true],
+                        falsy: [false],
+                        valids: [true]
+                    },
+                    ref: 'ref:a',
+                    then: {
+                        type: 'string',
+                        flags: {
+                            empty: {
+                                flags: { allowOnly: true },
+                                type: 'string',
+                                valids: ['']
+                            }
+                        },
+                        valids: [null],
+                        invalids: ['']
+                    }
+                }]
+            });
+            expect(labeled.describe()).to.equal({
+                base: { type: 'any' },
+                flags: { presence: 'ignore' },
+                label: 'Label b',
+                type: 'alternatives',
+                alternatives: [{
+                    is: {
+                        type: 'boolean',
+                        flags: { allowOnly: true, insensitive: true, presence: 'required' },
+                        truthy: [true],
+                        falsy: [false],
+                        valids: [true]
+                    },
+                    ref: 'ref:a',
+                    then: {
+                        type: 'string',
+                        flags: {
+                            empty: {
+                                flags: { allowOnly: true },
+                                type: 'string',
+                                valids: ['']
+                            }
+                        },
+                        label: 'Label b',
+                        valids: [null],
+                        invalids: ['']
+                    }
+                }]
+            });
+        });
+    });
+
     describe('describe()', () => {
 
         it('describes when', () => {
