@@ -77,17 +77,17 @@ describe('symbol', () => {
 
             it('converts keys to correct symbol', () => {
 
-                const symbols = [Symbol(1), Symbol(2), Symbol(3)];
+                const symbols = [Symbol(1), Symbol(2)];
                 const otherSymbol = Symbol(1);
-                const map = new Map([[1, symbols[0]], ['two', symbols[1]], [symbols[0], symbols[2]]]);
+                const map = new Map([[1, symbols[0]], ['two', symbols[1]]]);
                 const rule = Joi.symbol().map(map);
                 Helper.validate(rule, [
                     [1, true, null, symbols[0]],
                     [symbols[0], true, null, symbols[0]],
                     ['1', false, null, {
-                        message: '"value" must be one of Map { 1 => Symbol(1), "two" => Symbol(2), Symbol(1) => Symbol(3) }',
+                        message: `"value" must be one of Map { 1 => Symbol(1), 'two' => Symbol(2) }`,
                         details: [{
-                            message: '"value" must be one of Map { 1 => Symbol(1), "two" => Symbol(2), Symbol(1) => Symbol(3) }',
+                            message: `"value" must be one of Map { 1 => Symbol(1), 'two' => Symbol(2) }`,
                             path: [],
                             type: 'symbol.map',
                             context: { label: 'value', key: undefined, map }
@@ -95,9 +95,9 @@ describe('symbol', () => {
                     }],
                     ['two', true, null, symbols[1]],
                     [otherSymbol, false, null, {
-                        message: '"value" must be one of [Symbol(1), Symbol(2), Symbol(3)]',
+                        message: '"value" must be one of [Symbol(1), Symbol(2)]',
                         details: [{
-                            message: '"value" must be one of [Symbol(1), Symbol(2), Symbol(3)]',
+                            message: '"value" must be one of [Symbol(1), Symbol(2)]',
                             path: [],
                             type: 'any.allowOnly',
                             context: { value: otherSymbol, label: 'value', valids: symbols, key: undefined }
@@ -125,9 +125,9 @@ describe('symbol', () => {
                         }]
                     }],
                     ['toString', false, null, {
-                        message: '"value" must be one of Map { "one" => Symbol(one), "two" => Symbol(two) }',
+                        message: `"value" must be one of Map { 'one' => Symbol(one), 'two' => Symbol(two) }`,
                         details: [{
-                            message: '"value" must be one of Map { "one" => Symbol(one), "two" => Symbol(two) }',
+                            message: `"value" must be one of Map { 'one' => Symbol(one), 'two' => Symbol(two) }`,
                             path: [],
                             type: 'symbol.map',
                             context: { label: 'value', key: undefined, map: new Map([['one', symbols[0]], ['two', symbols[1]]]) }
@@ -180,7 +180,15 @@ describe('symbol', () => {
 
                 expect(
                     () => Joi.symbol().map([[{}, Symbol()]])
-                ).to.throw('Key must be a simple type');
+                ).to.throw('Key must not be an object, function, or Symbol');
+
+                expect(
+                    () => Joi.symbol().map([[() => {}, Symbol()]])
+                ).to.throw('Key must not be an object, function, or Symbol');
+
+                expect(
+                    () => Joi.symbol().map([[Symbol(), Symbol()]])
+                ).to.throw('Key must not be an object, function, or Symbol');
             });
         });
 
