@@ -80,6 +80,7 @@
     - [`func.class()`](#funcclass)
     - [`func.ref()`](#funcref)
   - [`number` - inherits from `Any`](#number---inherits-from-any)
+    - [`number.unsafe([enabled])`](#numberunsafeenabled)
     - [`number.min(limit)`](#numberminlimit)
     - [`number.max(limit)`](#numbermaxlimit)
     - [`number.greater(limit)`](#numbergreaterlimit)
@@ -1350,8 +1351,11 @@ const schema = Joi.func().ref();
 
 ### `number` - inherits from `Any`
 
-Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). If the
-validation `convert` option is on (enabled by default), a string will be converted to a `number` if specified. Also, if
+Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). 
+
+By default, it only allows safe numbers, see [`number.unsafe()`](#numberunsafeenabled).
+
+If the validation `convert` option is on (enabled by default), a string will be converted to a `number` if specified. Also, if
 `convert` is on and `number.precision()` is used, the value will be converted to the specified `precision` as well.
 
 `Infinity` and `-Infinity` are invalid by default, you can change that behavior by calling `allow(Infinity, -Infinity)`.
@@ -1361,6 +1365,24 @@ Supports the same methods of the [`any()`](#any) type.
 ```js
 const number = Joi.number();
 number.validate(5, (err, value) => { });
+```
+
+#### `number.unsafe([enabled])`
+
+By default, numbers must be within JavaScript's safety range (`Number.MIN_SAFE_INTEGER` & `Number.MAX_SAFE_INTEGER`), and when given a string, should be converted without loss of information. You can allow unsafe numbers at your own risks by calling `number.unsafe()`.
+
+Parameters are:
+- `enabled` - optional parameter defaulting to `true` which allows you to reset the behavior of unsafe by providing a falsy value.
+
+```js
+const safeNumber = Joi.number();
+unsafeNumber.validate(90071992547409924);
+// error -> "value" must be a safe number
+
+const unsafeNumber = Joi.number().unsafe();
+unsafeNumber.validate(90071992547409924);
+// error -> null
+// value -> 90071992547409920
 ```
 
 #### `number.min(limit)`

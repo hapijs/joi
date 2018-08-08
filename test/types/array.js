@@ -1021,12 +1021,12 @@ describe('array', () => {
                 type: 'array',
                 flags: { sparse: false },
                 orderedItems: [
-                    { type: 'number', invalids: [Infinity, -Infinity] },
+                    { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
                     { type: 'string', invalids: [''] },
                     { type: 'string', invalids: [''], flags: { presence: 'required' } }
                 ],
                 items: [
-                    { type: 'number', invalids: [Infinity, -Infinity] },
+                    { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
                     { type: 'string', invalids: [''] },
                     { type: 'boolean', flags: { presence: 'forbidden', insensitive: true }, truthy: [true], falsy: [false] }
                 ]

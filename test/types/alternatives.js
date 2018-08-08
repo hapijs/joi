@@ -982,7 +982,8 @@ describe('alternatives', () => {
                                     type: 'number',
                                     flags: {
                                         allowOnly: true,
-                                        presence: 'required'
+                                        presence: 'required',
+                                        unsafe: false
                                     },
                                     valids: [5],
                                     invalids: [Infinity, -Infinity]
@@ -1044,7 +1045,8 @@ describe('alternatives', () => {
                                     type: 'number',
                                     flags: {
                                         allowOnly: true,
-                                        presence: 'required'
+                                        presence: 'required',
+                                        unsafe: false
                                     },
                                     valids: [5],
                                     invalids: [Infinity, -Infinity]
@@ -1098,7 +1100,8 @@ describe('alternatives', () => {
                                     type: 'number',
                                     flags: {
                                         allowOnly: true,
-                                        presence: 'required'
+                                        presence: 'required',
+                                        unsafe: false
                                     },
                                     valids: [5],
                                     invalids: [Infinity, -Infinity]

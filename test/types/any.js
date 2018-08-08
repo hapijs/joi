@@ -249,10 +249,8 @@ describe('any', () => {
                 },
                 base: {
                     type: 'number',
-                    invalids: [
-                        Infinity,
-                        -Infinity
-                    ],
+                    invalids: [Infinity, -Infinity],
+                    flags: { unsafe: false },
                     rules: [
                         { arg: 10, name: 'min' }
                     ]
@@ -263,7 +261,8 @@ describe('any', () => {
                         type: 'number',
                         flags: {
                             allowOnly: true,
-                            presence: 'required'
+                            presence: 'required',
+                            unsafe: false
                         },
                         valids: [5],
                         invalids: [Infinity, -Infinity]
@@ -271,7 +270,8 @@ describe('any', () => {
                     then: {
                         type: 'number',
                         flags: {
-                            presence: 'required'
+                            presence: 'required',
+                            unsafe: false
                         },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
@@ -2198,6 +2198,7 @@ describe('any', () => {
                 base: {
                     type: 'number',
                     invalids: [Infinity, -Infinity],
+                    flags: { unsafe: false },
                     rules: [
                         { arg: 10, name: 'min' }
                     ]
@@ -2208,7 +2209,8 @@ describe('any', () => {
                         type: 'number',
                         flags: {
                             allowOnly: true,
-                            presence: 'required'
+                            presence: 'required',
+                            unsafe: false
                         },
                         valids: [5],
                         invalids: [Infinity, -Infinity]
@@ -2216,7 +2218,8 @@ describe('any', () => {
                     then: {
                         type: 'number',
                         flags: {
-                            presence: 'required'
+                            presence: 'required',
+                            unsafe: false
                         },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
@@ -2233,18 +2236,20 @@ describe('any', () => {
                 flags: { presence: 'ignore' },
                 base: {
                     type: 'number',
+                    flags: { unsafe: false },
                     invalids: [Infinity, -Infinity],
                     rules: [{ arg: 10, name: 'min' }]
                 },
                 alternatives: [{
                     peek: {
                         type: 'number',
+                        flags: { unsafe: false },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', arg: 5 }]
                     },
                     then: {
                         type: 'number',
-                        flags: { presence: 'required' },
+                        flags: { presence: 'required', unsafe: false },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
                     }

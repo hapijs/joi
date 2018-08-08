@@ -2469,7 +2469,8 @@ describe('Joi', () => {
                     alternatives: [
                         {
                             type: 'number',
-                            invalids: [Infinity, -Infinity]
+                            invalids: [Infinity, -Infinity],
+                            flags: { unsafe: false }
                         },
                         {
                             type: 'string',
@@ -3626,7 +3627,8 @@ describe('Joi', () => {
                 const schema = customJoi.myType();
                 expect(schema.describe()).to.equal({
                     type: 'myType',
-                    invalids: [Infinity, -Infinity]
+                    invalids: [Infinity, -Infinity],
+                    flags: { unsafe: false }
                 });
             });
 

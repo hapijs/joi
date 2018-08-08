@@ -640,7 +640,7 @@ describe('ref', () => {
                 },
                 then: {
                     type: 'number',
-                    flags: { allowOnly: true, default: 'ref:a.b' },
+                    flags: { allowOnly: true, default: 'ref:a.b', unsafe: false },
                     valids: ['ref:a.b'],
                     invalids: ['context:b.c', Infinity, -Infinity],
                     rules: [
