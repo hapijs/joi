@@ -1401,7 +1401,7 @@ Parameters are:
 
 ```js
 const safeNumber = Joi.number();
-unsafeNumber.validate(90071992547409924);
+safeNumber.validate(90071992547409924);
 // error -> "value" must be a safe number
 
 const unsafeNumber = Joi.number().unsafe();
