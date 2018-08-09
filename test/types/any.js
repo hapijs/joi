@@ -1159,30 +1159,58 @@ describe('any', () => {
         it('sets an example', () => {
 
             const schema = Joi.valid(5, 6, 7).example(5);
-            expect(schema._examples).to.include(5);
-            expect(schema.describe().examples).to.equal([5]);
+            expect(schema._examples).to.equal([{ value: 5 }]);
+            expect(schema.describe().examples).to.equal([{ value: 5 }]);
         });
 
         it('does not flatten examples', () => {
 
-            const schema = Joi.array().items(5, 6, 7).example([5, 6]);
-            expect(schema._examples).to.equal([[5, 6]]);
-            expect(schema.describe().examples).to.equal([[5, 6]]);
+            const schema = Joi.array().items(5, 6, 7).example([[5, 6]]);
+            expect(schema._examples).to.equal([{ value: [5, 6] }]);
+            expect(schema.describe().examples).to.equal([{ value: [5, 6] }]);
         });
 
-        it('throws when tags are missing', () => {
+        it('throws on bad root arrays', () => {
 
-            expect(() => {
-
-                Joi.example();
-            }).to.throw('Missing example');
+            expect(() => Joi.array().items(5, 6, 7).example([5, 6])).to.throw('Options for example at index 0 must be an object');
         });
 
-        it('does not throw when example fails own rules', () => {
+        it('throws on bad example array length', () => {
 
-            const schema = Joi.valid(5, 6, 7).example(4);
-            expect(schema._examples).to.equal([4]);
-            expect(schema.describe().examples).to.equal([4]);
+            expect(() => Joi.array().items(5, 6, 7).example([5, {}, 6])).to.throw('Bad example format at index 0');
+        });
+
+        it('throws on null as options', () => {
+
+            expect(() => Joi.array().items(5, 6, 7).example([5, null])).to.throw('Options for example at index 0 must be an object');
+        });
+
+        it('throws when examples are missing', () => {
+
+            expect(() => Joi.example()).to.throw('Missing examples');
+        });
+
+        it('throws when example fails own rules', () => {
+
+            expect(() => Joi.valid(5, 6, 7).example(4)).to.throw('Bad example at index 0: "value" must be one of [5, 6, 7]');
+        });
+
+        it('validates a reference with parent examples', () => {
+
+            const schema = Joi.number().min(Joi.ref('other'));
+
+            expect(() => schema.example(0)).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example([0])).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example([0, { parent: { other: -1 } }])).to.not.throw();
+        });
+
+        it('validates a context reference with context', () => {
+
+            const schema = Joi.number().min(Joi.ref('$other'));
+
+            expect(() => schema.example(0)).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example([0])).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example([0, { context: { other: -1 } }])).to.not.throw();
         });
     });
 
@@ -1554,7 +1582,7 @@ describe('any', () => {
                 type: 'any',
                 description: 'b',
                 tags: ['a', 'b'],
-                examples: ['a', 'b'],
+                examples: [{ value: 'a' }, { value: 'b' }],
                 unit: 'b'
             });
         });

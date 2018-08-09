@@ -641,15 +641,40 @@ Attaches metadata to the key where:
 const schema = Joi.any().meta({ index: true });
 ```
 
-#### `any.example(value)`
+#### `any.example(...values)`
 
-Annotates the key where:
-- `value` - an example value.
+Adds examples to the schema where:
+- `values` - each argument is either an example value, or an array of the shape `[value, options]`:
+  - `value` - single value example.
+  - `options` - optional object argument to pass options to the validation:
+    - `parent` - parent value in case you used normal references in your schema.
+    - `context` - context of the validation in case you used context references in your schema.
 
-If the example fails to pass validation, the function will throw.
+If any of the examples fail to pass validation, the function will throw.
+
+Calling this function again will override the previous examples.
 
 ```js
+// Valid examples
 const schema = Joi.string().min(4).example('abcd');
+
+const refSchema = Joi.number().min(Joi.ref('sibling')).example([42, { parent: { sibling: 10 } }]);
+
+const contextSchema = Joi.number().min(Joi.ref('$threshold')).example([42, { context: { $threshold: 10 } }]);
+
+// Invalid examples
+const invalidSchema = Joi.string().min(4).example('abc');
+
+const invalidRefSchema = Joi.number().min(Joi.ref('sibling')).example([42, { parent: { sibling: 50 } }]);
+
+const invalidContextSchema = Joi.number().min(Joi.ref('$threshold')).example([42, { context: { $threshold: 50 } }]);
+
+// Multiple examples
+const after = Joi.date().min(Joi.ref('before'))
+                    .example(
+                        ['2016-01-01', { parent: { before: '2015-01-01' } }],
+                        ['2016-01-01', { parent: { before: '2015-12-31' } }]
+                    )
 ```
 
 #### `any.unit(name)`

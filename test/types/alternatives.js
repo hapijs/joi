@@ -1183,7 +1183,7 @@ describe('alternatives', () => {
                 notes: ['f'],
                 tags: ['g'],
                 meta: ['b', 'c'],
-                examples: ['a'],
+                examples: [{ value: 'a' }],
                 alternatives: [{
                     type: 'string',
                     flags: {
