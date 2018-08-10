@@ -171,12 +171,21 @@ describe('number', () => {
                 ['1', true, null, 1],
                 ['100', true, null, 100],
                 ['+100', true, null, 100],
+                ['+00100', true, null, 100],
                 ['1e3', true, null, 1000],
+                ['1e003', true, null, 1000],
+                ['1e-003', true, null, 0.001],
                 ['-1e+3', true, null, -1000],
                 ['+1e-3', true, null, 0.001],
                 ['1.0000', true, null, 1],
                 ['1.10000', true, null, 1.1],
                 ['1.1e4', true, null, 11000],
+                ['1.100e4', true, null, 11000],
+                ['100e3', true, null, 100000],
+                ['-00100e3', true, null, -100000],
+                ['-00100e-003', true, null, -0.1],
+                ['-001231.0133210e003', true, null, -1231013.321],
+                ['+001231.0133210e003', true, null, 1231013.321],
                 ['1 some text', false, null, {
                     message: '"value" must be a number',
                     details: [{
@@ -1332,6 +1341,15 @@ describe('number', () => {
                         path: [],
                         type: 'number.unsafe',
                         context: { value: '9007199254740981.1', key: undefined, label: 'value' }
+                    }]
+                }],
+                ['90071992547409811e-1', false, null, {
+                    message: '"value" must be a safe number',
+                    details: [{
+                        message: '"value" must be a safe number',
+                        path: [],
+                        type: 'number.unsafe',
+                        context: { value: '90071992547409811e-1', key: undefined, label: 'value' }
                     }]
                 }],
                 ['9007199254740992', false, null, {
