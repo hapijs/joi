@@ -1,5 +1,5 @@
 <!-- version -->
-# 13.5.2 API Reference
+# 13.6.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
