@@ -164,7 +164,20 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[1, 2, 'a'], true, null, [1, 2, 'a']],
-                [[1, { foo: 'bar' }, 'a', 2], true, null, [1, 'a', 2]]
+                [[1, { foo: 'bar' }, 'a', 2], false, null, {
+                    message: '"value" at position 1 does not match any of the allowed types',
+                    details: [{
+                        context: {
+                            key: 1,
+                            label: 'value',
+                            pos: 1,
+                            value: { foo: 'bar' }
+                        },
+                        message: '"value" at position 1 does not match any of the allowed types',
+                        path: [1],
+                        type: 'array.includes'
+                    }]
+                }]
             ]);
         });
 
@@ -2061,11 +2074,10 @@ describe('array', () => {
 
     describe('options()', () => {
 
-        it('respects stripUnknown', async () => {
+        it('ignores stripUnknown when true', async () => {
 
             const schema = Joi.array().items(Joi.string()).options({ stripUnknown: true });
-            const value = await schema.validate(['one', 'two', 3, 4, true, false]);
-            expect(value).to.equal(['one', 'two']);
+            await expect(schema.validate(['one', 'two', 3, 4, true, false])).to.reject('"value" at position 2 fails because ["2" must be a string]');
         });
 
         it('respects stripUnknown (as an object)', async () => {
