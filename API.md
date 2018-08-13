@@ -2307,9 +2307,12 @@ const schema = {
 };
 ```
 
-### `lazy(fn)` - inherits from `Any`
+### `lazy(fn[, options])` - inherits from `Any`
 
-Generates a placeholder schema for a schema that you would provide with the `fn`.
+Generates a placeholder schema for a schema that you would provide where:
+- `fn` - is a function returning the actual schema to use for validation.
+- `options`:
+  - `once` - enables or disables the single evaluation behavior. When `false`, the function will be called every time a validation happens, otherwise the schema will be cached for further re-use. Defaults to `true`.
 
 Supports the same methods of the [`any()`](#any) type.
 

@@ -42,7 +42,7 @@ describe('lazy', () => {
 
         it('should validate a schema is returned', async () => {
 
-            const schema = Joi.lazy(() => true, 'foo');
+            const schema = Joi.lazy(() => true);
             const err = await expect(schema.validate('bar')).to.reject('schema error: lazy schema function must return a schema');
             expect(err.details).to.equal([{
                 message: 'schema error: lazy schema function must return a schema',
@@ -52,15 +52,29 @@ describe('lazy', () => {
             }]);
         });
 
+        it('should check options', () => {
+
+            expect(() => Joi.lazy(() => {}, false)).to.throw('Options must be an object');
+            expect(() => Joi.lazy(() => {}, true)).to.throw('Options must be an object');
+            expect(() => Joi.lazy(() => {}, [])).to.throw('Options must be an object');
+            expect(() => Joi.lazy(() => {}, { oce: true })).to.throw('Options contain unknown keys: oce');
+            expect(() => Joi.lazy(() => {}, { once: 'foo' })).to.throw('Option "once" must be a boolean');
+            expect(() => Joi.lazy(() => {}, {})).to.not.throw();
+        });
     });
 
     describe('validate()', () => {
 
         it('should validate a recursive schema', () => {
 
+            let callCount = 0;
             const schema = Joi.object({
                 name: Joi.string().required(),
-                children: Joi.array().items(Joi.lazy(() => schema))
+                children: Joi.array().items(Joi.lazy(() => {
+
+                    callCount++;
+                    return schema;
+                }))
             });
 
             Helper.validate(schema, [
@@ -79,6 +93,40 @@ describe('lazy', () => {
                     }]
                 }]
             ]);
+
+            expect(callCount).to.equal(1);
+        });
+
+        it('should validate a recursive schema with once disabled', () => {
+
+            let callCount = 0;
+            const schema = Joi.object({
+                name: Joi.string().required(),
+                children: Joi.array().items(Joi.lazy(() => {
+
+                    callCount++;
+                    return schema;
+                }, { once: false }))
+            });
+
+            Helper.validate(schema, [
+                [{ name: 'foo' }, true],
+                [{ name: 'foo', children: [] }, true],
+                [{ name: 'foo', children: [{ name: 'bar' }] }, true],
+                [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz' }] }] }, true],
+                [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 'qux' }] }] }] }, true],
+                [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 42 }] }] }] }, false, null, {
+                    message: 'child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "name" fails because ["name" must be a string]]]]]]]',
+                    details: [{
+                        message: '"name" must be a string',
+                        path: ['children', 0, 'children', 0, 'children', 0, 'name'],
+                        type: 'string.base',
+                        context: { value: 42, label: 'name', key: 'name' }
+                    }]
+                }]
+            ]);
+
+            expect(callCount).to.equal(9);
         });
     });
 
@@ -103,7 +151,9 @@ describe('lazy', () => {
                             {
                                 type: 'lazy',
                                 description: 'person',
-                                flags: {}
+                                flags: {
+                                    once: true
+                                }
                             }
                         ]
                     },
