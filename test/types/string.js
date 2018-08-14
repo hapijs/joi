@@ -94,6 +94,21 @@ describe('string', () => {
             const schema = Joi.string().insensitive();
             expect(schema.insensitive()).to.shallow.equal(schema);
         });
+
+        it('sets right values with valid', () => {
+
+            const simpleSchema = Joi.string().insensitive().valid('A');
+            expect(simpleSchema.validate('a').value).to.equal('A');
+
+            const refSchema = Joi.string().insensitive().valid(Joi.ref('$v'));
+            expect(refSchema.validate('a', { context: { v: 'A' } }).value).to.equal('A');
+
+            const refArraySchema = Joi.string().insensitive().valid(Joi.ref('$v'));
+            expect(refArraySchema.validate('a', { context: { v: ['B', 'A'] } }).value).to.equal('A');
+
+            const strictSchema = Joi.string().insensitive().valid('A').strict();
+            expect(strictSchema.validate('a').value).to.equal('a');
+        });
     });
 
     describe('valid()', () => {

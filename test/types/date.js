@@ -115,6 +115,7 @@ describe('date', () => {
 
         const now = Date.now();
         await Joi.date().valid(new Date(now)).validate(new Date(now));
+        await Joi.date().valid(new Date(now)).validate(new Date(now).toISOString());
     });
 
     it('errors on invalid input and convert disabled', async () => {

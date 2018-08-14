@@ -1558,8 +1558,8 @@ describe('any', () => {
             ]);
 
             Helper.validate(a.concat(b), [
-                ['a', true],
-                ['A', true],
+                ['a', true, null, 'a'],
+                ['A', true, null, 'a'],
                 ['b', false, null, {
                     message: '"value" must be one of [a]',
                     details: [{
