@@ -451,33 +451,34 @@ describe('array', () => {
 
         it('validates reference is a safe integer', () => {
 
+            const ref = Joi.ref('limit');
             const schema = Joi.object().keys({
                 limit: Joi.any(),
-                arr: Joi.array().min(Joi.ref('limit'))
+                arr: Joi.array().min(ref)
             });
             Helper.validate(schema, [
                 [{
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "limit" which is not a positive integer]',
+                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
                     details: [{
-                        message: '"arr" references "limit" which is not a positive integer',
+                        message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
                         type: 'array.ref',
-                        context: { ref: 'limit', label: 'arr', key: 'arr' }
+                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53) }
                     }]
                 }],
                 [{
                     limit: 'I like turtles',
                     arr: [1]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "limit" which is not a positive integer]',
+                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
                     details: [{
-                        message: '"arr" references "limit" which is not a positive integer',
+                        message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
                         type: 'array.ref',
-                        context: { ref: 'limit', label: 'arr', key: 'arr' }
+                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles' }
                     }]
                 }]
             ]);
@@ -883,7 +884,7 @@ describe('array', () => {
                         message: '"0" must be an object',
                         path: [0],
                         type: 'object.base',
-                        context: { label: 0, key: 0 }
+                        context: { label: 0, key: 0, value: 1 }
                     }]
                 }]
             ]);
@@ -1655,7 +1656,7 @@ describe('array', () => {
                             message: '"2" must be an object',
                             path: [2],
                             type: 'object.base',
-                            context: { label: 2, key: 2 }
+                            context: { label: 2, key: 2, value: 3 }
                         }
                     ]
                 }]
@@ -1765,7 +1766,7 @@ describe('array', () => {
                             message: '"1" must be an object',
                             path: [1],
                             type: 'object.base',
-                            context: { label: 1, key: 1 }
+                            context: { label: 1, key: 1, value: 3 }
                         },
                         {
                             message: '"value" does not contain 1 required value(s)',

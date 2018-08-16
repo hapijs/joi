@@ -218,7 +218,7 @@ describe('Joi', () => {
                         message: '"value" must be an object',
                         path: [],
                         type: 'object.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'other' }
                     }
                 ]
             }],
@@ -241,7 +241,7 @@ describe('Joi', () => {
                         message: '"value" must be an object',
                         path: [],
                         type: 'object.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 6 }
                     }
                 ]
             }],
@@ -264,7 +264,7 @@ describe('Joi', () => {
                         message: '"c" is not allowed',
                         path: ['c'],
                         type: 'object.allowUnknown',
-                        context: { child: 'c', label: 'c', key: 'c' }
+                        context: { child: 'c', label: 'c', key: 'c', value: 5 }
                     }
                 ]
             }],
@@ -290,7 +290,7 @@ describe('Joi', () => {
                         message: '"a" must be a boolean',
                         path: ['a'],
                         type: 'boolean.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: 5 }
                     }
                 ]
             }]
@@ -322,7 +322,7 @@ describe('Joi', () => {
                         message: '"value" must be an object',
                         path: [],
                         type: 'object.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'other' }
                     }
                 ]
             }],
@@ -345,7 +345,7 @@ describe('Joi', () => {
                         message: '"value" must be an object',
                         path: [],
                         type: 'object.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 6 }
                     }
                 ]
             }],
@@ -368,7 +368,7 @@ describe('Joi', () => {
                         message: '"c" is not allowed',
                         path: ['c'],
                         type: 'object.allowUnknown',
-                        context: { child: 'c', label: 'c', key: 'c' }
+                        context: { child: 'c', label: 'c', key: 'c', value: 5 }
                     }
                 ]
             }],
@@ -394,7 +394,7 @@ describe('Joi', () => {
                         message: '"a" must be a boolean',
                         path: ['a'],
                         type: 'boolean.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: 5 }
                     }
                 ]
             }]
@@ -670,6 +670,8 @@ describe('Joi', () => {
                     context: {
                         peers: ['txt', 'upc'],
                         peersWithLabels: ['txt', 'upc'],
+                        present: ['txt', 'upc'],
+                        presentWithLabels: ['txt', 'upc'],
                         label: 'value',
                         key: undefined
                     }
@@ -725,6 +727,8 @@ describe('Joi', () => {
                     context: {
                         peers: ['code', 'upc'],
                         peersWithLabels: ['code', 'upc'],
+                        present: ['code', 'upc'],
+                        presentWithLabels: ['code', 'upc'],
                         label: 'value',
                         key: undefined
                     }
@@ -767,6 +771,8 @@ describe('Joi', () => {
                     context: {
                         peers: ['code', 'upc'],
                         peersWithLabels: ['code', 'upc'],
+                        present: ['code', 'upc'],
+                        presentWithLabels: ['code', 'upc'],
                         label: 'value',
                         key: undefined
                     }
@@ -1282,7 +1288,7 @@ describe('Joi', () => {
                 message: '"auth" must be a boolean',
                 path: ['auth'],
                 type: 'boolean.base',
-                context: { label: 'auth', key: 'auth' }
+                context: { label: 'auth', key: 'auth', value: { mode: 'none' } }
             }
         ]);
 
@@ -1294,7 +1300,7 @@ describe('Joi', () => {
                     message: '"something" is not allowed',
                     path: ['something'],
                     type: 'object.allowUnknown',
-                    context: { child: 'something', label: 'something', key: 'something' }
+                    context: { child: 'something', label: 'something', key: 'something', value: undefined }
                 }]
             }],
             [{ auth: { something: undefined } }, false, null, {
@@ -1304,7 +1310,7 @@ describe('Joi', () => {
                         message: '"something" is not allowed',
                         path: ['auth', 'something'],
                         type: 'object.allowUnknown',
-                        context: { child: 'something', label: 'something', key: 'something' }
+                        context: { child: 'something', label: 'something', key: 'something', value: undefined }
                     },
                     {
                         message: '"auth" must be a string',
@@ -1316,7 +1322,7 @@ describe('Joi', () => {
                         message: '"auth" must be a boolean',
                         path: ['auth'],
                         type: 'boolean.base',
-                        context: { label: 'auth', key: 'auth' }
+                        context: { label: 'auth', key: 'auth', value: { something: undefined } }
                     }
                 ]
             }],
@@ -1331,7 +1337,7 @@ describe('Joi', () => {
                         message: '"auth" must be an object',
                         path: ['auth'],
                         type: 'object.base',
-                        context: { label: 'auth', key: 'auth' }
+                        context: { label: 'auth', key: 'auth', value: 123 }
                     },
                     {
                         message: '"auth" must be a string',
@@ -1343,7 +1349,7 @@ describe('Joi', () => {
                         message: '"auth" must be a boolean',
                         path: ['auth'],
                         type: 'boolean.base',
-                        context: { label: 'auth', key: 'auth' }
+                        context: { label: 'auth', key: 'auth', value: 123 }
                     }
                 ]
             }]
@@ -1381,7 +1387,7 @@ describe('Joi', () => {
                 message: '"auth" must be a boolean',
                 path: ['auth'],
                 type: 'boolean.base',
-                context: { label: 'auth', key: 'auth' }
+                context: { label: 'auth', key: 'auth', value: { mode: 'none' } }
             }
         ]);
 
@@ -1393,7 +1399,7 @@ describe('Joi', () => {
                     message: '"something" is not allowed',
                     path: ['something'],
                     type: 'object.allowUnknown',
-                    context: { child: 'something', label: 'something', key: 'something' }
+                    context: { child: 'something', label: 'something', key: 'something', value: undefined }
                 }]
             }],
             [{ auth: { something: undefined } }, false, null, {
@@ -1403,7 +1409,7 @@ describe('Joi', () => {
                         message: '"something" is not allowed',
                         path: ['auth', 'something'],
                         type: 'object.allowUnknown',
-                        context: { child: 'something', label: 'something', key: 'something' }
+                        context: { child: 'something', label: 'something', key: 'something', value: undefined }
                     },
                     {
                         message: '"auth" must be a string',
@@ -1415,7 +1421,7 @@ describe('Joi', () => {
                         message: '"auth" must be a boolean',
                         path: ['auth'],
                         type: 'boolean.base',
-                        context: { label: 'auth', key: 'auth' }
+                        context: { label: 'auth', key: 'auth', value: { something: undefined } }
                     }
                 ]
             }],
@@ -1430,7 +1436,7 @@ describe('Joi', () => {
                         message: '"auth" must be an object',
                         path: ['auth'],
                         type: 'object.base',
-                        context: { label: 'auth', key: 'auth' }
+                        context: { label: 'auth', key: 'auth', value: 123 }
                     },
                     {
                         message: '"auth" must be a string',
@@ -1442,7 +1448,7 @@ describe('Joi', () => {
                         message: '"auth" must be a boolean',
                         path: ['auth'],
                         type: 'boolean.base',
-                        context: { label: 'auth', key: 'auth' }
+                        context: { label: 'auth', key: 'auth', value: 123 }
                     }
                 ]
             }]
@@ -1472,7 +1478,7 @@ describe('Joi', () => {
                         message: '"a" must be a boolean',
                         path: ['a'],
                         type: 'boolean.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: null }
                     }
                 ]
             }],
@@ -1493,7 +1499,7 @@ describe('Joi', () => {
                         message: '"a" must be a boolean',
                         path: ['a'],
                         type: 'boolean.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: 123 }
                     }
                 ]
             }],
@@ -1510,7 +1516,7 @@ describe('Joi', () => {
                         message: '"a" must be a boolean',
                         path: ['a'],
                         type: 'boolean.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: { c: 1 } }
                     }
                 ]
             }],
@@ -1520,7 +1526,7 @@ describe('Joi', () => {
                     message: '"b" is not allowed',
                     path: ['b'],
                     type: 'object.allowUnknown',
-                    context: { child: 'b', label: 'b', key: 'b' }
+                    context: { child: 'b', label: 'b', key: 'b', value: undefined }
                 }]
             }]
         ]);
@@ -1549,7 +1555,7 @@ describe('Joi', () => {
                         message: '"a" must be a boolean',
                         path: ['a'],
                         type: 'boolean.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: null }
                     }
                 ]
             }],
@@ -1570,7 +1576,7 @@ describe('Joi', () => {
                         message: '"a" must be a boolean',
                         path: ['a'],
                         type: 'boolean.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: 123 }
                     }
                 ]
             }],
@@ -1587,7 +1593,7 @@ describe('Joi', () => {
                         message: '"a" must be a boolean',
                         path: ['a'],
                         type: 'boolean.base',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: { c: 1 } }
                     }
                 ]
             }],
@@ -1597,7 +1603,7 @@ describe('Joi', () => {
                     message: '"b" is not allowed',
                     path: ['b'],
                     type: 'object.allowUnknown',
-                    context: { child: 'b', label: 'b', key: 'b' }
+                    context: { child: 'b', label: 'b', key: 'b', value: undefined }
                 }]
             }]
         ]);
@@ -1731,7 +1737,7 @@ describe('Joi', () => {
             message: '"foo" is not allowed',
             path: ['foo'],
             type: 'object.allowUnknown',
-            context: { child: 'foo', label: 'foo', key: 'foo' }
+            context: { child: 'foo', label: 'foo', key: 'foo', value: 'bar' }
         }]);
 
         const err2 = await expect(Joi.compile({}).validate({ foo: 'bar' })).to.reject();
@@ -2352,7 +2358,7 @@ describe('Joi', () => {
             message: '"baz" is not allowed',
             path: ['test2', 'test3', 2, 'baz', 'test4', 0, 'baz'],
             type: 'object.allowUnknown',
-            context: { key: 'baz', label: 'baz', child: 'baz' }
+            context: { key: 'baz', label: 'baz', child: 'baz', value: '123' }
         }]);
     });
 

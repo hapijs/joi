@@ -42,13 +42,14 @@ describe('lazy', () => {
 
         it('should validate a schema is returned', async () => {
 
-            const schema = Joi.lazy(() => true);
+            const fn = () => true;
+            const schema = Joi.lazy(fn);
             const err = await expect(schema.validate('bar')).to.reject('schema error: lazy schema function must return a schema');
             expect(err.details).to.equal([{
                 message: 'schema error: lazy schema function must return a schema',
                 path: [],
                 type: 'lazy.schema',
-                context: { label: 'value', key: undefined }
+                context: { label: 'value', key: undefined, schema: true }
             }]);
         });
 

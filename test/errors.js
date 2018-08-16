@@ -93,7 +93,7 @@ describe('errors', () => {
                 message: '"date" 18',
                 path: ['date'],
                 type: 'date.base',
-                context: { label: 'date', key: 'date' }
+                context: { label: 'date', key: 'date', value: 'invalid-date' }
             },
             {
                 message: '"alphanum" 16',
@@ -207,7 +207,7 @@ describe('errors', () => {
             message: '"b&#x28;&#x29;" is not allowed',
             path: ['b()'],
             type: 'object.allowUnknown',
-            context: { child: 'b()', label: 'b()', key: 'b()' }
+            context: { child: 'b()', label: 'b()', key: 'b()', value: 'x' }
         }]);
     });
 
@@ -232,7 +232,7 @@ describe('errors', () => {
             message: '"b()" is not allowed',
             path: ['b()'],
             type: 'object.allowUnknown',
-            context: { child: 'b()', label: 'b()', key: 'b()' }
+            context: { child: 'b()', label: 'b()', key: 'b()', value: 'x' }
         }]);
     });
 
@@ -269,7 +269,7 @@ describe('errors', () => {
                 message: '"notBoolean" must be a boolean',
                 path: ['notBoolean'],
                 type: 'boolean.base',
-                context: { label: 'notBoolean', key: 'notBoolean' }
+                context: { label: 'notBoolean', key: 'notBoolean', value: 9 }
             }
         ]);
     });
@@ -365,7 +365,7 @@ describe('errors', () => {
             message: '"0" must be a boolean',
             path: [0],
             type: 'boolean.base',
-            context: { label: 0, key: 0 }
+            context: { label: 0, key: 0, value: 4 }
         }]);
     });
 
@@ -694,7 +694,7 @@ describe('errors', () => {
                     message: '"x" must be a number of milliseconds or valid date string',
                     path: ['x'],
                     type: 'date.base',
-                    context: { label: 'x', key: 'x' }
+                    context: { label: 'x', key: 'x', value: true }
                 }
             ]);
             expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be a string\n[2] "x" must be a number\n[3] "x" must be a number of milliseconds or valid date string\u001b[0m');
@@ -719,7 +719,7 @@ describe('errors', () => {
                 message: '"x" is not allowed',
                 path: ['x', 'x'],
                 type: 'object.allowUnknown',
-                context: { child: 'x', label: 'x', key: 'x' }
+                context: { child: 'x', label: 'x', key: 'x', value: input.x }
             }]);
             expect(err.annotate()).to.equal('{\n  \"x\" \u001b[31m[1]\u001b[0m: \"[Circular ~]\"\n}\n\u001b[31m\n[1] \"x\" is not allowed\u001b[0m');
         });
@@ -767,7 +767,7 @@ describe('errors', () => {
                 message: '"foo" is not allowed',
                 path: ['x', 'y', 'foo'],
                 type: 'object.allowUnknown',
-                context: { child: 'foo', label: 'foo', key: 'foo' }
+                context: { child: 'foo', label: 'foo', key: 'foo', value: input.x.y.foo }
             }]);
             expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"y\": {\n      \"z\": 1,\n      \"foo\" \u001b[31m[1]\u001b[0m: \"[Circular ~.x.y]\"\n    }\n  }\n}\n\u001b[31m\n[1] \"foo\" is not allowed\u001b[0m');
         });
@@ -811,7 +811,7 @@ describe('errors', () => {
                 message: '"y" must be a number of milliseconds or valid date string',
                 path: ['x', 'y'],
                 type: 'date.base',
-                context: { label: 'y', key: 'y' }
+                context: { label: 'y', key: 'y', value: NaN }
             }]);
             expect(err.annotate()).to.equal('{\n  \"x\": {\n    \"z\": Infinity,\n    \"u\": -Infinity,\n    \"g\": Symbol(foo),\n    \"h\": -Infinity,\n    \"i\": Infinity,\n    \"k\": (a) => a,\n    \"p\": Symbol(bar),\n    \"f\": function (x) {\\n\\n                        return [{ y: 2 }];\\n                    },\n    \"y\" \u001b[31m[1]\u001b[0m: NaN\n  }\n}\n\u001b[31m\n[1] \"y\" must be a number of milliseconds or valid date string\u001b[0m');
         });
@@ -834,7 +834,7 @@ describe('errors', () => {
                 message: '"c" is not allowed',
                 path: ['a', 'c'],
                 type: 'object.allowUnknown',
-                context: { child: 'c', label: 'c', key: 'c' }
+                context: { child: 'c', label: 'c', key: 'c', value: 'string' }
             }]);
             expect(err.annotate(true)).to.equal('{\n  \"a\" [1]: \"{\\\"c\\\":\\\"string\\\"}\"\n}\n\n[1] \"c\" is not allowed');
         });

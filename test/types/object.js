@@ -38,7 +38,7 @@ describe('object', () => {
             message: '"value" must be an object',
             path: [],
             type: 'object.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: 'a string' }
         }]);
     });
 
@@ -54,7 +54,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -126,7 +126,7 @@ describe('object', () => {
             message: '"value" must be an object',
             path: [],
             type: 'object.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: [1, 2, 3] }
         }]);
     });
 
@@ -141,7 +141,7 @@ describe('object', () => {
                     message: '"item2" is not allowed',
                     path: ['item2'],
                     type: 'object.allowUnknown',
-                    context: { child: 'item2', label: 'item2', key: 'item2' }
+                    context: { child: 'item2', label: 'item2', key: 'item2', value: 'something else' }
                 }]
             }],
             ['', false, null, {
@@ -150,7 +150,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -166,7 +166,7 @@ describe('object', () => {
                     message: '"value" must have at least 3 children',
                     path: [],
                     type: 'object.min',
-                    context: { limit: 3, label: 'value', key: undefined }
+                    context: { limit: 3, label: 'value', key: undefined, value: { item: 'something' } }
                 }]
             }],
             [{ item: 'something', item2: 'something else' }, false, null, {
@@ -175,7 +175,7 @@ describe('object', () => {
                     message: '"value" must have at least 3 children',
                     path: [],
                     type: 'object.min',
-                    context: { limit: 3, label: 'value', key: undefined }
+                    context: { limit: 3, label: 'value', key: undefined, value: { item: 'something', item2: 'something else' } }
                 }]
             }],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
@@ -185,7 +185,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -203,7 +203,7 @@ describe('object', () => {
                     message: '"value" must have less than or equal to 2 children',
                     path: [],
                     type: 'object.max',
-                    context: { limit: 2, label: 'value', key: undefined }
+                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something', item2: 'something else', item3: 'something something else' } }
                 }]
             }],
             ['', false, null, {
@@ -212,7 +212,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -228,7 +228,7 @@ describe('object', () => {
                     message: '"value" must have at least 2 children',
                     path: [],
                     type: 'object.min',
-                    context: { limit: 2, label: 'value', key: undefined }
+                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something' } }
                 }]
             }],
             [{ item: 'something', item2: 'something else' }, true],
@@ -239,7 +239,7 @@ describe('object', () => {
                     message: '"value" must have less than or equal to 3 children',
                     path: [],
                     type: 'object.max',
-                    context: { limit: 3, label: 'value', key: undefined }
+                    context: { limit: 3, label: 'value', key: undefined, value: { item: 'something', item2: 'something else', item3: 'something something else', item4: 'item4' } }
                 }]
             }],
             ['', false, null, {
@@ -248,7 +248,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -264,7 +264,7 @@ describe('object', () => {
                     message: '"value" must have 2 children',
                     path: [],
                     type: 'object.length',
-                    context: { limit: 2, label: 'value', key: undefined }
+                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something' } }
                 }]
             }],
             [{ item: 'something', item2: 'something else' }, true],
@@ -274,7 +274,7 @@ describe('object', () => {
                     message: '"value" must have 2 children',
                     path: [],
                     type: 'object.length',
-                    context: { limit: 2, label: 'value', key: undefined }
+                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something', item2: 'something else', item3: 'something something else' } }
                 }]
             }],
             ['', false, null, {
@@ -283,7 +283,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -292,6 +292,7 @@ describe('object', () => {
     it('should validate constructor when type is set', () => {
 
         const schema = Joi.object().type(RegExp);
+        const d = new Date();
         Helper.validate(schema, [
             [{ item: 'something' }, false, null, {
                 message: '"value" must be an instance of "RegExp"',
@@ -299,7 +300,7 @@ describe('object', () => {
                     message: '"value" must be an instance of "RegExp"',
                     path: [],
                     type: 'object.type',
-                    context: { type: 'RegExp', label: 'value', key: undefined }
+                    context: { type: 'RegExp', label: 'value', key: undefined, value: { item: 'something' } }
                 }]
             }],
             ['', false, null, {
@@ -308,16 +309,16 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }],
-            [new Date(), false, null, {
+            [d, false, null, {
                 message: '"value" must be an instance of "RegExp"',
                 details: [{
                     message: '"value" must be an instance of "RegExp"',
                     path: [],
                     type: 'object.type',
-                    context: { type: 'RegExp', label: 'value', key: undefined }
+                    context: { type: 'RegExp', label: 'value', key: undefined, value: d }
                 }]
             }],
             [/abcd/, true],
@@ -397,7 +398,7 @@ describe('object', () => {
                     message: '"num" is not allowed',
                     path: ['num'],
                     type: 'object.allowUnknown',
-                    context: { child: 'num', label: 'num', key: 'num' }
+                    context: { child: 'num', label: 'num', key: 'num', value: 1 }
                 }]
             }],
             [{ obj: {} }, true],
@@ -410,7 +411,7 @@ describe('object', () => {
                     message: '"item" must be a boolean',
                     path: ['obj', 'obj', 'obj', 'item'],
                     type: 'boolean.base',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 10 }
                 }]
             }]
         ]);
@@ -435,7 +436,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: null }
                 }]
             }],
             [undefined, true],
@@ -458,7 +459,7 @@ describe('object', () => {
                     message: '"item" must be a boolean',
                     path: ['obj', 'obj', 'obj', 'item'],
                     type: 'boolean.base',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 10 }
                 }]
             }]
         ]);
@@ -483,7 +484,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: null }
                 }]
             }],
             [undefined, true],
@@ -506,7 +507,7 @@ describe('object', () => {
                     message: '"item" must be a boolean',
                     path: ['obj', 'obj', 'obj', 'item'],
                     type: 'boolean.base',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 10 }
                 }]
             }]
         ]);
@@ -521,7 +522,7 @@ describe('object', () => {
             message: '"b" is not allowed',
             path: ['b'],
             type: 'object.allowUnknown',
-            context: { child: 'b', label: 'b', key: 'b' }
+            context: { child: 'b', label: 'b', key: 'b', value: 'value' }
         }]);
     });
 
@@ -601,7 +602,7 @@ describe('object', () => {
             message: '"b" is not allowed',
             path: ['a', 'b'],
             type: 'object.allowUnknown',
-            context: { child: 'b', label: 'b', key: 'b' }
+            context: { child: 'b', label: 'b', key: 'b', value: 'value' }
         }]);
     });
 
@@ -614,7 +615,7 @@ describe('object', () => {
             message: '"c" is not allowed',
             path: ['c'],
             type: 'object.allowUnknown',
-            context: { child: 'c', label: 'c', key: 'c' }
+            context: { child: 'c', label: 'c', key: 'c', value: 'hello' }
         }]);
     });
 
@@ -657,26 +658,25 @@ describe('object', () => {
                 message: '"hasOwnProperty" is not allowed',
                 path: ['hasOwnProperty'],
                 type: 'object.allowUnknown',
-                context:
-                    {
-                        child: 'hasOwnProperty',
-                        label: 'hasOwnProperty',
-                        key: 'hasOwnProperty'
-                    }
+                context: {
+                    child: 'hasOwnProperty',
+                    label: 'hasOwnProperty',
+                    key: 'hasOwnProperty',
+                    value: 'foo'
+                }
             },
             {
                 message: '"a" missing required peer "b"',
                 path: ['a'],
                 type: 'object.with',
-                context:
-                    {
-                        main: 'a',
-                        mainWithLabel: 'a',
-                        peer: 'b',
-                        peerWithLabel: 'b',
-                        label: 'a',
-                        key: 'a'
-                    }
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'a',
+                    peer: 'b',
+                    peerWithLabel: 'b',
+                    label: 'a',
+                    key: 'a'
+                }
             }
         ]);
     });
@@ -692,7 +692,7 @@ describe('object', () => {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
+                context: { child: 'b', label: 'b', key: 'b', value: 3 }
             }]);
 
             await b.validate({ b: 3 });
@@ -708,7 +708,7 @@ describe('object', () => {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
+                context: { child: 'b', label: 'b', key: 'b', value: 3 }
             }]);
         });
 
@@ -721,7 +721,7 @@ describe('object', () => {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
+                context: { child: 'b', label: 'b', key: 'b', value: 2 }
             }]);
 
             await b.validate({ a: 1, b: 2 });
@@ -911,7 +911,7 @@ describe('object', () => {
                         message: '"c" is not allowed',
                         path: ['a', 'c'],
                         type: 'object.allowUnknown',
-                        context: { child: 'c', label: 'c', key: 'c' }
+                        context: { child: 'c', label: 'c', key: 'c', value: 'ignore' }
                     }]
                 }]
             ]);
@@ -942,7 +942,7 @@ describe('object', () => {
                         message: '"c" is not allowed',
                         path: ['c'],
                         type: 'object.allowUnknown',
-                        context: { child: 'c', label: 'c', key: 'c' }
+                        context: { child: 'c', label: 'c', key: 'c', value: 'ignore' }
                     }]
                 }],
                 [{ a: { b: 5, c: 'ignore' } }, true]
@@ -1234,13 +1234,13 @@ describe('object', () => {
                         message: '"d" is not allowed',
                         path: ['d'],
                         type: 'object.allowUnknown',
-                        context: { child: 'd', key: 'd', label: 'd' }
+                        context: { child: 'd', key: 'd', label: 'd', value: 1 }
                     },
                     {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', key: 'b', label: 'b' }
+                        context: { child: 'b', key: 'b', label: 'b', value: 1 }
                     }
                 ]);
             });
@@ -1659,7 +1659,7 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
@@ -1686,7 +1686,7 @@ describe('object', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ bb: 'x' }, true],
@@ -1696,7 +1696,7 @@ describe('object', () => {
                         message: '"5" must be a boolean',
                         path: ['5'],
                         type: 'boolean.base',
-                        context: { label: '5', key: '5' }
+                        context: { label: '5', key: '5', value: 'x' }
                     }]
                 }],
                 [{ 5: false }, true],
@@ -1718,7 +1718,7 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
@@ -1745,7 +1745,7 @@ describe('object', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ bb: 'x' }, true],
@@ -1755,7 +1755,7 @@ describe('object', () => {
                         message: '"5" must be a boolean',
                         path: ['5'],
                         type: 'boolean.base',
-                        context: { label: '5', key: '5' }
+                        context: { label: '5', key: '5', value: 'x' }
                     }]
                 }],
                 [{ 5: false }, true],
@@ -1778,7 +1778,7 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['x', '5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
@@ -1804,7 +1804,7 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['x', '5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
@@ -1824,7 +1824,7 @@ describe('object', () => {
                 message: '"a" is not allowed',
                 path: ['a'],
                 type: 'object.allowUnknown',
-                context: { child: 'a', label: 'a', key: 'a' }
+                context: { child: 'a', label: 'a', key: 'a', value: 5 }
             }]);
         });
 
@@ -1837,7 +1837,7 @@ describe('object', () => {
                 message: '"a" is not allowed',
                 path: ['a'],
                 type: 'object.allowUnknown',
-                context: { child: 'a', label: 'a', key: 'a' }
+                context: { child: 'a', label: 'a', key: 'a', value: 5 }
             }]);
         });
 
@@ -2058,7 +2058,7 @@ describe('object', () => {
                     label: 'value',
                     key: undefined
                 }
-            }] );
+            }]);
         });
 
         it('should apply labels with too many peers', () => {
@@ -2076,6 +2076,33 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b'],
                     peersWithLabels: ['first', 'second'],
+                    present: ['a', 'b'],
+                    presentWithLabels: ['first', 'second'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
+        });
+
+        it('should apply labels with too many peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second'),
+                c: Joi.string().label('third'),
+                d: Joi.string().label('fourth')
+            }).xor('a', 'b', 'c', 'd');
+            const error = schema.validate({ a: 1, b: 'b', d: 'd' }).error;
+            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [first, second, third, fourth]');
+            expect(error.details).to.equal([{
+                message: '"value" contains a conflict between exclusive peers [first, second, third, fourth]',
+                path: [],
+                type: 'object.xor',
+                context: {
+                    peers: ['a', 'b', 'c', 'd'],
+                    peersWithLabels: ['first', 'second', 'third', 'fourth'],
+                    present: ['a', 'b', 'd'],
+                    presentWithLabels: ['first', 'second', 'fourth'],
                     label: 'value',
                     key: undefined
                 }
@@ -2349,7 +2376,7 @@ describe('object', () => {
                 message: '"value" must be an instance of "Foo"',
                 path: [],
                 type: 'object.type',
-                context: { type: 'Foo', label: 'value', key: undefined }
+                context: { type: 'Foo', label: 'value', key: undefined, value: {} }
             }]);
         });
 
@@ -2363,7 +2390,7 @@ describe('object', () => {
                 message: '"value" must be an instance of "Bar"',
                 path: [],
                 type: 'object.type',
-                context: { type: 'Bar', label: 'value', key: undefined }
+                context: { type: 'Bar', label: 'value', key: undefined, value: {} }
             }]);
         });
 
@@ -2377,7 +2404,7 @@ describe('object', () => {
                 message: '"value" must be an instance of "Bar"',
                 path: [],
                 type: 'object.type',
-                context: { type: 'Bar', label: 'value', key: undefined }
+                context: { type: 'Bar', label: 'value', key: undefined, value: {} }
             }]);
         });
 

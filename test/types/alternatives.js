@@ -110,13 +110,13 @@ describe('alternatives', () => {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: { p: 1 } }
                         },
                         {
                             message: '"p" must be a boolean',
                             path: ['p'],
                             type: 'boolean.base',
-                            context: { label: 'p', key: 'p' }
+                            context: { label: 'p', key: 'p', value: 1 }
                         },
                         {
                             message: '"p" must be a string',
@@ -133,13 +133,13 @@ describe('alternatives', () => {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: { p: '...' } }
                         },
                         {
                             message: '"p" must be a boolean',
                             path: ['p'],
                             type: 'boolean.base',
-                            context: { label: 'p', key: 'p' }
+                            context: { label: 'p', key: 'p', value: '...' }
                         },
                         {
                             message: '"p" must be one of [foo, bar]',
@@ -156,13 +156,13 @@ describe('alternatives', () => {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 1 }
                         },
                         {
                             message: '"value" must be an object',
                             path: [],
                             type: 'object.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 1 }
                         }
                     ]
                 }]
@@ -182,13 +182,13 @@ describe('alternatives', () => {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: { p: 1 } }
                         },
                         {
                             message: '"p" must be a boolean',
                             path: ['p'],
                             type: 'boolean.base',
-                            context: { label: 'p', key: 'p' }
+                            context: { label: 'p', key: 'p', value: 1 }
                         },
                         {
                             message: '"p" must be a string',
@@ -205,13 +205,13 @@ describe('alternatives', () => {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: { p: '...' } }
                         },
                         {
                             message: '"p" must be a boolean',
                             path: ['p'],
                             type: 'boolean.base',
-                            context: { label: 'p', key: 'p' }
+                            context: { label: 'p', key: 'p', value: '...' }
                         },
                         {
                             message: '"p" must be one of foo, bar',
@@ -228,13 +228,13 @@ describe('alternatives', () => {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 1 }
                         },
                         {
                             message: '"value" must be an object',
                             path: [],
                             type: 'object.base',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 1 }
                         }
                     ]
                 }]

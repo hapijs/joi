@@ -128,7 +128,7 @@ describe('ref', () => {
                     message: '"b" must be an object',
                     path: ['b'],
                     type: 'object.base',
-                    context: { label: 'b', key: 'b' }
+                    context: { label: 'b', key: 'b', value: 5 }
                 }]
             }],
             [{ a: '5', b: { c: '5' } }, true]
@@ -498,7 +498,7 @@ describe('ref', () => {
                     message: '"a" must be a boolean',
                     path: ['a'],
                     type: 'boolean.base',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, true, { context: { x: 1 } }]
@@ -595,7 +595,7 @@ describe('ref', () => {
                     message: '"a" must be a boolean',
                     path: ['a'],
                     type: 'boolean.base',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, true, { context: { x: { y: 1 } } }]

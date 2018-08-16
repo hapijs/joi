@@ -347,7 +347,7 @@ describe('any', () => {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
+                context: { child: 'b', label: 'b', key: 'b', value: 'a' }
             }]);
         });
     });
@@ -1650,7 +1650,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 2 }
                     }]
                 }]
             ]);
@@ -1668,7 +1668,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 2 }
                     }]
                 }]
             ]);
@@ -1681,7 +1681,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 2 }
                     }]
                 }]
             ]);
@@ -1700,7 +1700,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 2 }
                     }]
                 }]
             ]);
@@ -1712,7 +1712,7 @@ describe('any', () => {
                         message: '"a" is not allowed',
                         path: ['a'],
                         type: 'object.allowUnknown',
-                        context: { child: 'a', label: 'a', key: 'a' }
+                        context: { child: 'a', label: 'a', key: 'a', value: 1 }
                     }]
                 }],
                 [{ b: 2 }, true]
@@ -2165,7 +2165,7 @@ describe('any', () => {
                         message: '"c" must be a boolean',
                         path: ['c'],
                         type: 'boolean.base',
-                        context: { key: 'c', label: 'c' }
+                        context: { key: 'c', label: 'c', value: 'c' }
                     }]
                 }],
                 [{ a: 'aa' }, false, null, {

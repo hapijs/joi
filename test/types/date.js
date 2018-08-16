@@ -62,7 +62,7 @@ describe('date', () => {
                     message: '"value" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: true }
                 }]
             }],
             [false, false, null, {
@@ -71,7 +71,7 @@ describe('date', () => {
                     message: '"value" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: false }
                 }]
             }]
         ]);
@@ -87,7 +87,7 @@ describe('date', () => {
                     message: '"value" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: Infinity }
                 }]
             }],
             [-Infinity, false, null, {
@@ -96,7 +96,7 @@ describe('date', () => {
                     message: '"value" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: -Infinity }
                 }]
             }],
             [NaN, false, null, {
@@ -105,7 +105,7 @@ describe('date', () => {
                     message: '"value" must be a number of milliseconds or valid date string',
                     path: [],
                     type: 'date.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: NaN }
                 }]
             }]
         ]);
@@ -126,7 +126,7 @@ describe('date', () => {
             message: '"value" must be a valid date',
             path: [],
             type: 'date.strict',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: '1-1-2013 UTC' }
         }]);
     });
 
@@ -161,7 +161,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.min',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(0) }
                         }]
                     }],
                     ['0', false, null, {
@@ -170,7 +170,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.min',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(0) }
                         }]
                     }],
                     ['-1', false, null, {
@@ -179,7 +179,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.min',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(-1) }
                         }]
                     }],
                     ['1-1-1999 UTC', false, null, {
@@ -188,7 +188,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.min',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-1999 UTC') }
                         }]
                     }]
                 ]);
@@ -214,7 +214,7 @@ describe('date', () => {
                     message: `"value" must be larger than or equal to "${dnow}"`,
                     path: [],
                     type: 'date.min',
-                    context: { limit: dnow, label: 'value', key: undefined }
+                    context: { limit: dnow, label: 'value', key: undefined, value: past }
                 }]);
             });
 
@@ -233,7 +233,7 @@ describe('date', () => {
                             message: `"b" must be larger than or equal to "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -292,7 +292,7 @@ describe('date', () => {
                             message: `"b" must be larger than or equal to "${dnow}"`,
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: dnow, label: 'b', key: 'b' }
+                            context: { limit: dnow, label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -300,17 +300,18 @@ describe('date', () => {
 
             it('errors if reference is not a date', () => {
 
-                const schema = Joi.object({ a: Joi.string(), b: Joi.date().min(Joi.ref('a')) });
+                const ref = Joi.ref('a');
+                const schema = Joi.object({ a: Joi.string(), b: Joi.date().min(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ a: 'abc', b: now }, false, null, {
-                        message: 'child "b" fails because ["b" references "a" which is not a date]',
+                        message: 'child "b" fails because ["b" references "ref:a" which is not a date]',
                         details: [{
-                            message: '"b" references "a" which is not a date',
+                            message: '"b" references "ref:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
-                            context: { ref: 'a', label: 'b', key: 'b' }
+                            context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ a: '123', b: now }, true],
@@ -320,7 +321,7 @@ describe('date', () => {
                             message: `"b" must be larger than or equal to "${new Date(now + 1e3)}"`,
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -328,17 +329,18 @@ describe('date', () => {
 
             it('errors if context reference is not a date', () => {
 
-                const schema = Joi.object({ b: Joi.date().min(Joi.ref('$a')) });
+                const ref = Joi.ref('$a');
+                const schema = Joi.object({ b: Joi.date().min(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: 'child "b" fails because ["b" references "a" which is not a date]',
+                        message: 'child "b" fails because ["b" references "context:a" which is not a date]',
                         details: [{
-                            message: '"b" references "a" which is not a date',
+                            message: '"b" references "context:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
-                            context: { ref: 'a', label: 'b', key: 'b' }
+                            context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
@@ -347,7 +349,7 @@ describe('date', () => {
                             message: `"b" must be larger than or equal to "${new Date(now + 1e3)}"`,
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -367,7 +369,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.max',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-1971 UTC') }
                         }]
                     }],
                     ['1-1-1970 UTC', true],
@@ -378,7 +380,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.max',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(1) }
                         }]
                     }],
                     ['0', true],
@@ -389,7 +391,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.max',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-2014 UTC') }
                         }]
                     }]
                 ]);
@@ -416,7 +418,7 @@ describe('date', () => {
                     message: `"value" must be less than or equal to "${dnow}"`,
                     path: [],
                     type: 'date.max',
-                    context: { limit: dnow, label: 'value', key: undefined }
+                    context: { limit: dnow, label: 'value', key: undefined, value: future }
                 }]);
             });
 
@@ -434,7 +436,7 @@ describe('date', () => {
                             message: `"b" must be less than or equal to "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ a: now, b: now - 1e3 }, true]
@@ -454,7 +456,7 @@ describe('date', () => {
                             message: `"b" must be less than or equal to "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ b: now - 1e3 }, true, { context: { a: now } }]
@@ -463,17 +465,18 @@ describe('date', () => {
 
             it('errors if reference is not a date', () => {
 
-                const schema = Joi.object({ a: Joi.string(), b: Joi.date().max(Joi.ref('a')) });
+                const ref = Joi.ref('a');
+                const schema = Joi.object({ a: Joi.string(), b: Joi.date().max(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ a: 'abc', b: new Date() }, false, null, {
-                        message: 'child "b" fails because ["b" references "a" which is not a date]',
+                        message: 'child "b" fails because ["b" references "ref:a" which is not a date]',
                         details: [{
-                            message: '"b" references "a" which is not a date',
+                            message: '"b" references "ref:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
-                            context: { ref: 'a', label: 'b', key: 'b' }
+                            context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ a: '100000000000000', b: now }, true],
@@ -483,7 +486,7 @@ describe('date', () => {
                             message: `"b" must be less than or equal to "${new Date(now - 1e3)}"`,
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -491,17 +494,18 @@ describe('date', () => {
 
             it('errors if context reference is not a date', () => {
 
-                const schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
+                const ref = Joi.ref('$a');
+                const schema = Joi.object({ b: Joi.date().max(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: 'child "b" fails because ["b" references "a" which is not a date]',
+                        message: 'child "b" fails because ["b" references "context:a" which is not a date]',
                         details: [{
-                            message: '"b" references "a" which is not a date',
+                            message: '"b" references "context:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
-                            context: { ref: 'a', label: 'b', key: 'b' }
+                            context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ b: now }, true, { context: { a: '100000000000000' } }],
@@ -511,7 +515,7 @@ describe('date', () => {
                             message: `"b" must be less than or equal to "${new Date(now - 1e3)}"`,
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -532,7 +536,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.greater',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-2000 UTC') }
                         }]
                     }],
                     [0, false, null, {
@@ -541,7 +545,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.greater',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(0) }
                         }]
                     }],
                     ['0', false, null, {
@@ -550,7 +554,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.greater',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(0) }
                         }]
                     }],
                     ['-1', false, null, {
@@ -559,7 +563,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.greater',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(-1) }
                         }]
                     }],
                     ['1-1-1999 UTC', false, null, {
@@ -568,7 +572,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.greater',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-1999 UTC') }
                         }]
                     }]
                 ]);
@@ -594,7 +598,7 @@ describe('date', () => {
                     message: `"value" must be greater than "${dnow}"`,
                     path: [],
                     type: 'date.greater',
-                    context: { limit: dnow, label: 'value', key: undefined }
+                    context: { limit: dnow, label: 'value', key: undefined, value: past }
                 }]);
             });
 
@@ -611,7 +615,7 @@ describe('date', () => {
                             message: `"b" must be greater than "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }],
                     [{ a: now, b: now + 1e3 }, true],
@@ -621,7 +625,7 @@ describe('date', () => {
                             message: `"b" must be greater than "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -670,7 +674,7 @@ describe('date', () => {
                             message: `"b" must be greater than "${dnow}"`,
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: dnow, label: 'b', key: 'b' }
+                            context: { limit: dnow, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }],
                     [{ b: now + 1e3 }, true, { context: { a: now } }],
@@ -680,7 +684,7 @@ describe('date', () => {
                             message: `"b" must be greater than "${dnow}"`,
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: dnow, label: 'b', key: 'b' }
+                            context: { limit: dnow, label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -688,17 +692,18 @@ describe('date', () => {
 
             it('errors if reference is not a date', () => {
 
-                const schema = Joi.object({ a: Joi.string(), b: Joi.date().greater(Joi.ref('a')) });
+                const ref = Joi.ref('a');
+                const schema = Joi.object({ a: Joi.string(), b: Joi.date().greater(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ a: 'abc', b: now }, false, null, {
-                        message: 'child "b" fails because ["b" references "a" which is not a date]',
+                        message: 'child "b" fails because ["b" references "ref:a" which is not a date]',
                         details: [{
-                            message: '"b" references "a" which is not a date',
+                            message: '"b" references "ref:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
-                            context: { ref: 'a', label: 'b', key: 'b' }
+                            context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ a: '123', b: now }, true],
@@ -708,7 +713,7 @@ describe('date', () => {
                             message: `"b" must be greater than "${new Date(now + 1e3)}"`,
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -716,17 +721,18 @@ describe('date', () => {
 
             it('errors if context reference is not a date', () => {
 
-                const schema = Joi.object({ b: Joi.date().greater(Joi.ref('$a')) });
+                const ref = Joi.ref('$a');
+                const schema = Joi.object({ b: Joi.date().greater(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: 'child "b" fails because ["b" references "a" which is not a date]',
+                        message: 'child "b" fails because ["b" references "context:a" which is not a date]',
                         details: [{
-                            message: '"b" references "a" which is not a date',
+                            message: '"b" references "context:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
-                            context: { ref: 'a', label: 'b', key: 'b' }
+                            context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
@@ -735,7 +741,7 @@ describe('date', () => {
                             message: `"b" must be greater than "${new Date(now + 1e3)}"`,
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -755,7 +761,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.less',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-1971 UTC') }
                         }]
                     }],
                     ['1-1-1970 UTC', false, null, {
@@ -764,7 +770,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.less',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-1970 UTC') }
                         }]
                     }],
                     [0, false, null, {
@@ -773,7 +779,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.less',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(0) }
                         }]
                     }],
                     [1, false, null, {
@@ -782,7 +788,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.less',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(1) }
                         }]
                     }],
                     ['0', false, null, {
@@ -791,7 +797,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.less',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date(0) }
                         }]
                     }],
                     ['-1', true],
@@ -801,7 +807,7 @@ describe('date', () => {
                             message,
                             path: [],
                             type: 'date.less',
-                            context: { limit: d, label: 'value', key: undefined }
+                            context: { limit: d, label: 'value', key: undefined, value: new Date('1-1-2014 UTC') }
                         }]
                     }]
                 ]);
@@ -828,7 +834,7 @@ describe('date', () => {
                     message: `"value" must be less than "${dnow}"`,
                     path: [],
                     type: 'date.less',
-                    context: { limit: dnow, label: 'value', key: undefined }
+                    context: { limit: dnow, label: 'value', key: undefined, value: future }
                 }]);
             });
 
@@ -845,7 +851,7 @@ describe('date', () => {
                             message: `"b" must be less than "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }],
                     [{ a: now, b: now + 1e3 }, false, null, {
@@ -854,7 +860,7 @@ describe('date', () => {
                             message: `"b" must be less than "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ a: now, b: now - 1e3 }, true]
@@ -873,7 +879,7 @@ describe('date', () => {
                             message: `"b" must be less than "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }],
                     [{ b: now + 1e3 }, false, { context: { a: now } }, {
@@ -882,7 +888,7 @@ describe('date', () => {
                             message: `"b" must be less than "${new Date(now)}"`,
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now), label: 'b', key: 'b' }
+                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ b: now - 1e3 }, true, { context: { a: now } }]
@@ -891,17 +897,18 @@ describe('date', () => {
 
             it('errors if reference is not a date', () => {
 
-                const schema = Joi.object({ a: Joi.string(), b: Joi.date().less(Joi.ref('a')) });
+                const ref = Joi.ref('a');
+                const schema = Joi.object({ a: Joi.string(), b: Joi.date().less(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ a: 'abc', b: new Date() }, false, null, {
-                        message: 'child "b" fails because ["b" references "a" which is not a date]',
+                        message: 'child "b" fails because ["b" references "ref:a" which is not a date]',
                         details: [{
-                            message: '"b" references "a" which is not a date',
+                            message: '"b" references "ref:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
-                            context: { ref: 'a', label: 'b', key: 'b' }
+                            context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ a: '100000000000000', b: now }, true],
@@ -911,7 +918,7 @@ describe('date', () => {
                             message: `"b" must be less than "${new Date(now - 1e3)}"`,
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -919,17 +926,18 @@ describe('date', () => {
 
             it('errors if context reference is not a date', () => {
 
-                const schema = Joi.object({ b: Joi.date().less(Joi.ref('$a')) });
+                const ref = Joi.ref('$a');
+                const schema = Joi.object({ b: Joi.date().less(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: 'child "b" fails because ["b" references "a" which is not a date]',
+                        message: 'child "b" fails because ["b" references "context:a" which is not a date]',
                         details: [{
-                            message: '"b" references "a" which is not a date',
+                            message: '"b" references "context:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
-                            context: { ref: 'a', label: 'b', key: 'b' }
+                            context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ b: now }, true, { context: { a: '100000000000000' } }],
@@ -939,7 +947,7 @@ describe('date', () => {
                             message: `"b" must be less than "${new Date(now - 1e3)}"`,
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b' }
+                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -948,6 +956,7 @@ describe('date', () => {
 
         it('validates only valid dates', () => {
 
+            const invalidDate = new Date('not a valid date');
             Helper.validate(Joi.date(), [
                 ['1-1-2013 UTC', true],
                 [new Date().getTime(), true],
@@ -958,16 +967,16 @@ describe('date', () => {
                         message: '"value" must be a number of milliseconds or valid date string',
                         path: [],
                         type: 'date.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 'not a valid date' }
                     }]
                 }],
-                [new Date('not a valid date'), false, null, {
+                [invalidDate, false, null, {
                     message: '"value" must be a number of milliseconds or valid date string',
                     details: [{
                         message: '"value" must be a number of milliseconds or valid date string',
                         path: [],
                         type: 'date.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: invalidDate }
                     }]
                 }]
             ]);
@@ -992,7 +1001,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '002013-06-07T14:21:46.295Z' }
                         }]
                     }],
                     ['+2013-06-07T14:21:46.295Z', false, null, {
@@ -1001,7 +1010,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '+2013-06-07T14:21:46.295Z' }
                         }]
                     }],
                     ['-2013-06-07T14:21:46.295Z', false, null, {
@@ -1010,7 +1019,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '-2013-06-07T14:21:46.295Z' }
                         }]
                     }],
                     ['2013-06-07T14:21:46.295Z', true],
@@ -1020,7 +1029,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21:46.295Z0' }
                         }]
                     }],
                     ['2013-06-07T14:21:46.295+07:00', true],
@@ -1030,7 +1039,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21:46.295+07:000' }
                         }]
                     }],
                     ['2013-06-07T14:21:46.295-07:00', true],
@@ -1041,7 +1050,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21:46Z0' }
                         }]
                     }],
                     ['2013-06-07T14:21:46+07:00', true],
@@ -1054,7 +1063,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21+07:000' }
                         }]
                     }],
                     ['2013-06-07T14:21-07:00', true],
@@ -1064,7 +1073,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T14:21Z+7:00' }
                         }]
                     }],
                     ['2013-06-07', true],
@@ -1074,7 +1083,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '2013-06-07T' }
                         }]
                     }],
                     ['2013-06-07T14:21', true],
@@ -1084,7 +1093,7 @@ describe('date', () => {
                             message: '"value" must be a valid ISO 8601 date',
                             path: [],
                             type: 'date.isoDate',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '1-1-2013' }
                         }]
                     }],
                     ['2013', true, null, new Date('2013')]
@@ -1107,7 +1116,7 @@ describe('date', () => {
                     message: '"item" must be a valid ISO 8601 date',
                     path: ['item'],
                     type: 'date.isoDate',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 'something' }
                 }]);
             });
 
@@ -1136,7 +1145,7 @@ describe('date', () => {
                             message: '"value" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { key: undefined, label: 'value' }
+                            context: { key: undefined, label: 'value', value: '' }
                         }]
                     }],
                     [' \t ', false, null, {
@@ -1145,7 +1154,7 @@ describe('date', () => {
                             message: '"value" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { key: undefined, label: 'value' }
+                            context: { key: undefined, label: 'value', value: ' \t ' }
                         }]
                     }]
                 ]);
@@ -1196,6 +1205,7 @@ describe('date', () => {
 
             it('validates only valid timestamps and returns a friendly error message', () => {
 
+                const invalidDate = new Date('not a valid date');
                 Helper.validate(Joi.date().timestamp(), [
                     [new Date().getTime(), true],
                     [new Date().getTime().toFixed(4), true],
@@ -1209,7 +1219,7 @@ describe('date', () => {
                             message: '"value" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: ',' }
                         }]
                     }],
                     ['123A,0xA', false, null, {
@@ -1218,7 +1228,7 @@ describe('date', () => {
                             message: '"value" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '123A,0xA' }
                         }]
                     }],
                     ['1-1-2013 UTC', false, null, {
@@ -1227,7 +1237,7 @@ describe('date', () => {
                             message: '"value" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: '1-1-2013 UTC' }
                         }]
                     }],
                     ['not a valid timestamp', false, null, {
@@ -1236,16 +1246,16 @@ describe('date', () => {
                             message: '"value" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: 'not a valid timestamp' }
                         }]
                     }],
-                    [new Date('not a valid date'), false, null, {
+                    [invalidDate, false, null, {
                         message: '"value" must be a valid timestamp or number of milliseconds',
                         details: [{
                             message: '"value" must be a valid timestamp or number of milliseconds',
                             path: [],
                             type: 'date.timestamp.javascript',
-                            context: { label: 'value', key: undefined }
+                            context: { label: 'value', key: undefined, value: invalidDate }
                         }]
                     }]
                 ]);

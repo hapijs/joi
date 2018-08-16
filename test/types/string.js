@@ -374,16 +374,17 @@ describe('string', () => {
 
         it('errors if reference is not a number', () => {
 
-            const schema = Joi.object({ a: Joi.any(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.any(), b: Joi.string().min(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -391,16 +392,17 @@ describe('string', () => {
 
         it('errors if context reference is not a number', () => {
 
-            const schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.string().min(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "context:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -498,16 +500,17 @@ describe('string', () => {
 
         it('errors if reference is not a number', () => {
 
-            const schema = Joi.object({ a: Joi.any(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.any(), b: Joi.string().max(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -515,16 +518,17 @@ describe('string', () => {
 
         it('errors if context reference is not a number', () => {
 
-            const schema = Joi.object({ b: Joi.string().max(Joi.ref('$a'), 'utf8') });
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.string().max(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "context:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -669,16 +673,17 @@ describe('string', () => {
 
         it('errors if reference is not a number', () => {
 
-            const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -686,16 +691,17 @@ describe('string', () => {
 
         it('errors if context reference is not a number', () => {
 
-            const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('$a'), 'utf8') });
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "context:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
