@@ -1862,7 +1862,7 @@ schema.validate('12345', (err, value) => { });
 
 #### `string.insensitive()`
 
-Allows the value to match any whitelist of blacklist item in a case insensitive comparison.
+Allows the value to match any whitelist or blacklist item in a case insensitive comparison.
 
 ```js
 const schema = Joi.string().valid('a').insensitive();
