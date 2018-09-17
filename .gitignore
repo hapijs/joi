@@ -3,6 +3,7 @@
 npm-debug.log
 dump.rdb
 node_modules
+dist
 results.tap
 results.xml
 config.json

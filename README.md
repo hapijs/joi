@@ -119,7 +119,21 @@ When validating a schema:
 
 # Browsers
 
-Joi doesn't directly support browsers, but you could use [joi-browser](https://github.com/jeffbski/joi-browser) for an ES5 build of Joi that works in browsers, or as a source of inspiration for your own builds.
+Joi works well in browsers too. You can find the latest ES5 build of Joi on [jsDelivr](https://cdn.jsdelivr.net/npm/joi@13/dist/joi.min.js).
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/joi@13/dist/joi.min.js"></script>
+
+<script>
+var schema = Joi.object().keys({
+  //...
+});
+
+var result = Joi.validate({ username: 'abc', birthyear: 1994 }, schema);
+</script>
+```
+
+You could also use [joi-browser](https://github.com/jeffbski/joi-browser) as a source of inspiration for your own builds.
 
 ## Acknowledgements
 
