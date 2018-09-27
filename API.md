@@ -2011,6 +2011,8 @@ Requires the string value to be a valid email address.
     - `errorLevel` - Numerical threshold at which an email address is considered invalid.
     - `tldWhitelist` - Specifies a list of acceptable TLDs.
     - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
+    
+Have a look at [`isemail`’s documentation](https://github.com/hapijs/isemail) for a detailed description of the options.
 
 ```js
 const schema = Joi.string().email();
