@@ -1,5 +1,5 @@
 <!-- version -->
-# 13.5.2 API Reference
+# 13.7.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -139,6 +139,8 @@
     - [`string.uppercase()`](#stringuppercase)
     - [`string.trim([enabled])`](#stringtrimenabled)
     - [`string.isoDate()`](#stringisodate)
+  - [`symbol` - inherits from `Any`](#symbol---inherits-from-any)
+    - [`symbol.map(map)`](#symbolmapmap)
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(condition, options)`](#alternativeswhencondition-options)
@@ -2137,7 +2139,7 @@ schema.validate('12345', (err, value) => { });
 
 #### `string.insensitive()`
 
-Allows the value to match any whitelist of blacklist item in a case insensitive comparison.
+Allows the value to match any whitelist or blacklist item in a case insensitive comparison.
 
 ```js
 const schema = Joi.string().valid('a').insensitive();
@@ -2300,6 +2302,8 @@ Requires the string value to be a valid email address.
     - `errorLevel` - Numerical threshold at which an email address is considered invalid.
     - `tldWhitelist` - Specifies a list of acceptable TLDs.
     - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
+    
+Have a look at [`isemail`’s documentation](https://github.com/hapijs/isemail) for a detailed description of the options.
 
 ```js
 const schema = Joi.string().email();
@@ -2495,6 +2499,34 @@ const schema = Joi.string().isoDate();
 ```
 
 💥 Possible validation errors:[`string.isoDate`](#stringisodate-1)
+
+### `symbol` - inherits from `Any`
+
+Generates a schema object that matches a `Symbol` data type.
+
+If the validation `convert` option is on (enabled by default), the mappings declared in `map()` will be tried for an eventual match. 
+
+Supports the same methods of the [`any()`](#any) type.
+
+```js
+const schema = Joi.symbol().map({ 'foo': Symbol('foo'), 'bar': Symbol('bar') });
+schema.validate('foo', (err, value) => { });
+```
+
+#### `symbol.map(map)`
+
+Allows values to be transformed into `Symbol`s, where:
+- `map` - mapping declaration that can be:
+  - an object, where keys are strings, and values are `Symbol`s
+  - an array of arrays of length 2, where for each sub-array, the 1st element must be anything but an object, a function or a `Symbol`, and the 2nd element must be a Symbol
+  - a `Map`, following the same principles as the array above 
+
+```js
+const schema = Joi.symbol().map([
+    [1, Symbol('one')],
+    ['two', Symbol('two')]
+]);
+```
 
 ### `alternatives` - inherits from `Any`
 
