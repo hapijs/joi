@@ -1,5 +1,5 @@
 <!-- version -->
-# 13.6.0 API Reference
+# 13.7.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -138,6 +138,8 @@
     - [`string.uppercase()`](#stringuppercase)
     - [`string.trim([enabled])`](#stringtrimenabled)
     - [`string.isoDate()`](#stringisodate)
+  - [`symbol` - inherits from `Any`](#symbol---inherits-from-any)
+    - [`symbol.map(map)`](#symbolmapmap)
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(condition, options)`](#alternativeswhencondition-options)
