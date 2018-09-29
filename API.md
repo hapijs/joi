@@ -2183,6 +2183,34 @@ If the validation `convert` option is on (enabled by default), the string will b
 const schema = Joi.string().isoDate();
 ```
 
+### `symbol` - inherits from `Any`
+
+Generates a schema object that matches a `Symbol` data type.
+
+If the validation `convert` option is on (enabled by default), the mappings declared in `map()` will be tried for an eventual match. 
+
+Supports the same methods of the [`any()`](#any) type.
+
+```js
+const schema = Joi.symbol().map({ 'foo': Symbol('foo'), 'bar': Symbol('bar') });
+schema.validate('foo', (err, value) => { });
+```
+
+#### `symbol.map(map)`
+
+Allows values to be transformed into `Symbol`s, where:
+- `map` - mapping declaration that can be:
+  - an object, where keys are strings, and values are `Symbol`s
+  - an array of arrays of length 2, where for each sub-array, the 1st element must be anything but an object, a function or a `Symbol`, and the 2nd element must be a Symbol
+  - a `Map`, following the same principles as the array above 
+
+```js
+const schema = Joi.symbol().map([
+    [1, Symbol('one')],
+    ['two', Symbol('two')]
+]);
+```
+
 ### `alternatives` - inherits from `Any`
 
 Generates a type that will match one of the provided alternative schemas via the [`try()`](#alternativestryschemas)
