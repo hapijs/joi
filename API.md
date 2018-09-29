@@ -243,15 +243,17 @@
     - [`string.normalize`](#stringnormalize)
     - [`string.ref`](#stringref)
     - [`string.regex.base`](#stringregexbase)
+    - [`string.regex.name`](#stringregexname)
     - [`string.regex.invert.base`](#stringregexinvertbase)
     - [`string.regex.invert.name`](#stringregexinvertname)
-    - [`string.regex.name`](#stringregexname)
     - [`string.token`](#stringtoken-1)
     - [`string.trim`](#stringtrim)
     - [`string.uppercase`](#stringuppercase-1)
+    - [`string.uri`](#stringuri)
     - [`string.uriCustomScheme`](#stringuricustomscheme)
     - [`string.uriRelativeOnly`](#stringurirelativeonly)
-    - [`string.uri`](#stringuri)
+    - [`symbol.base`](#symbolbase)
+    - [`symbol.map`](#symbolmap)
 
 <!-- tocstop -->
 
@@ -2513,6 +2515,8 @@ const schema = Joi.symbol().map({ 'foo': Symbol('foo'), 'bar': Symbol('bar') });
 schema.validate('foo', (err, value) => { });
 ```
 
+💥 Possible validation errors:[`symbol.base`](#symbolbase)
+
 #### `symbol.map(map)`
 
 Allows values to be transformed into `Symbol`s, where:
@@ -2527,6 +2531,8 @@ const schema = Joi.symbol().map([
     ['two', Symbol('two')]
 ]);
 ```
+
+💥 Possible validation errors:[`symbol.map`](#symbolmap)
 
 ### `alternatives` - inherits from `Any`
 
@@ -4284,6 +4290,38 @@ The string is a valid relative URI.
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
     value: string // Input value
+}
+```
+
+#### `symbol.base`
+
+**Description**
+
+The input is not a Symbol.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+    ...
+}
+```
+
+#### `symbol.map`
+
+**Description**
+
+The input is not a Symbol or could not be converted to one.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+    ...
 }
 ```
 <!-- errorsstop -->
