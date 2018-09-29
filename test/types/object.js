@@ -2263,6 +2263,8 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b.c'],
                     peersWithLabels: ['a', 'b.c'],
+                    present: ['a', 'b.c'],
+                    presentWithLabels: ['a', 'b.c'],
                     key: undefined,
                     label: 'value'
                 }
@@ -2305,6 +2307,8 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b.c'],
                     peersWithLabels: ['first', 'second'],
+                    present: ['a', 'b.c'],
+                    presentWithLabels: ['first', 'second'],
                     label: 'value',
                     key: undefined
                 }
