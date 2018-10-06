@@ -993,6 +993,18 @@ describe('object', () => {
                 await Joi.compile(schema).validate({ FOOBAR: 'a' });
             });
 
+            it('provides capture groups', async () => {
+
+                const regex = /^someprefix-(\w+)$/g;
+
+                const schema = Joi.object()
+                    .rename(regex, '$1', { ignoreUndefined: true, multiple: true });
+
+                const value = await Joi.compile(schema).validate({ 'someprefix-A': 1, 'someprefix-B': 2 }, { convert: true });
+                expect(value.A).to.equal(1);
+                expect(value.B).to.equal(2);
+            });
+
             it('aliases a key', async () => {
 
                 const regex = /^a$/i;
