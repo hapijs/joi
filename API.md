@@ -390,7 +390,7 @@ Extension objects use the following parameters :
 
 Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended joi being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
 
-THe `params` of `rules` rely on the fact that all engines, even though not stated in the ECMA specifications, preserve the order of object keys, this is a conscious choice to simplify the API for the end-user. If you ever see an engine misbehaving or are uncomfortable relying on this, you can use a single option object to describe your parameters, like:
+The `params` of `rules` rely on the fact that all engines, even though not stated in the ECMA specifications, preserve the order of object keys, this is a conscious choice to simplify the API for the end-user. If you ever see an engine misbehaving or are uncomfortable relying on this, you can use a single option object to describe your parameters, like:
 ```js
 params: { options: Joi.object({ param1: Joi.number().required(), param2: Joi.string() }) }
 ```
