@@ -9703,6 +9703,59 @@ describe('string', () => {
             ], { convert: true });
         });
 
+        it('validates isoDuration', () => {
+
+            Helper.validateOptions(Joi.string().isoDuration(), [
+                ['P3Y6M4DT12H30M5S', true],
+                ['P3Y6M4DT12H30M', true],
+                ['P3Y6M4DT12H5S', true],
+                ['P3Y6M4DT30M5S', true],
+                ['P3Y6MT12H30M5S', true],
+                ['P3Y4DT12H30M5S', true],
+                ['P6M4DT12H30M5S', true],
+                ['PT10H20M5S', true],
+                ['PT40S', true],
+                ['PT0S', true],
+                ['P0D', true],
+                ['P30S', false, null, {
+                    message: '"value" must be a valid ISO 8601 duration',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 duration',
+                        path: [],
+                        type: 'string.isoDuration',
+                        context: { value: 'P30S', label: 'value', key: undefined }
+                    }]
+                }],
+                ['P30', false, null, {
+                    message: '"value" must be a valid ISO 8601 duration',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 duration',
+                        path: [],
+                        type: 'string.isoDuration',
+                        context: { value: 'P30', label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                    }]
+                }],
+                [null, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: null, label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+
         it('validates the hexadecimal options', () => {
 
             expect(() => {
