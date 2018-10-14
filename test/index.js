@@ -2415,6 +2415,7 @@ describe('Joi', () => {
 
             return 'test';
         };
+
         defaultFn.description = 'testing';
 
         const defaultDescribedFn = function () {
@@ -3788,6 +3789,7 @@ describe('Joi', () => {
             });
 
             const Any = require('../lib/types/any');
+
             expect(customJoi).to.be.an.instanceof(Any);
         });
 

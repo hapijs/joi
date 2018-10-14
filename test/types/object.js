@@ -1888,6 +1888,7 @@ describe('object', () => {
             catch (e) {
                 error = true;
             }
+
             expect(error).to.equal(true);
         });
     });
@@ -1904,6 +1905,7 @@ describe('object', () => {
             catch (e) {
                 error = true;
             }
+
             expect(error).to.equal(true);
 
             try {
@@ -1913,6 +1915,7 @@ describe('object', () => {
             catch (e) {
                 error = true;
             }
+
             expect(error).to.equal(true);
         });
 
@@ -2025,6 +2028,7 @@ describe('object', () => {
             catch (e) {
                 error = true;
             }
+
             expect(error).to.equal(true);
 
             try {
@@ -2034,6 +2038,7 @@ describe('object', () => {
             catch (e) {
                 error = true;
             }
+
             expect(error).to.equal(true);
 
 
@@ -2159,6 +2164,7 @@ describe('object', () => {
             catch (e) {
                 error = true;
             }
+
             expect(error).to.equal(true);
 
             try {
@@ -2168,6 +2174,7 @@ describe('object', () => {
             catch (e) {
                 error = true;
             }
+
             expect(error).to.equal(true);
         });
 
@@ -2328,6 +2335,7 @@ describe('object', () => {
             catch (e) {
                 error = true;
             }
+
             expect(error).to.equal(true);
 
             try {
@@ -2337,6 +2345,7 @@ describe('object', () => {
             catch (e) {
                 error = true;
             }
+
             expect(error).to.equal(true);
         });
 

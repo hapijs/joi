@@ -24,10 +24,12 @@ describe('date', () => {
         // Mock Date.now so we don't have to deal with sub-second differences in the tests
 
         const original = Date.now;
+
         Date.now = function () {
 
             return 1485907200000;   // Random date
         };
+
         Date.now.restore = function () {
 
             Date.now = original;

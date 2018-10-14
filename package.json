@@ -21,7 +21,7 @@
   "devDependencies": {
     "code": "5.x.x",
     "hapitoc": "1.x.x",
-    "lab": "15.x.x"
+    "lab": "16.x.x"
   },
   "scripts": {
     "test": "lab -t 100 -a code -L",

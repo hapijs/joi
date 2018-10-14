@@ -500,6 +500,7 @@ describe('any', () => {
                 context.bar = 'broken';
                 return 'test';
             };
+
             defaultFn.description = 'testing';
 
             const schema = Joi.object({
@@ -557,6 +558,7 @@ describe('any', () => {
 
                 return defaultFn;
             };
+
             defaultGeneratorFn.description = 'generate a default fn';
 
             let schema;
@@ -600,6 +602,7 @@ describe('any', () => {
 
                 throw error;
             };
+
             defaultFn.description = 'broken method';
 
             const schema = Joi.string().default(defaultFn);
@@ -2721,6 +2724,7 @@ describe('any', () => {
                                         text += `"${error.context.key}" ∈ ℤ`;
                                         break;
                                 }
+
                                 return memo + text;
                             }, '');
                         })

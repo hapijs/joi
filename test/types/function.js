@@ -224,6 +224,7 @@ describe('func', () => {
 
             return Joi.func().maxArity(-2);
         };
+
         expect(schemaWithStringMaxArity).to.throw('n must be a positive integer');
         expect(schemaWithNegativeMaxArity).to.throw('n must be a positive integer');
     });

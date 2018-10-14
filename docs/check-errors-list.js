@@ -30,6 +30,7 @@ internals.parseTitles = function (markdown) {
     while (match = re.exec(markdown)) {
         matches.push(match[1]);
     }
+
     return matches;
 };
 
@@ -48,6 +49,7 @@ internals.generateCurrentErrorCodes = function (obj = Language.errors, path = []
             if (!internals.ignoredCodes.includes(code)) {
                 result.push(code);
             }
+
             continue;
         }
 
