@@ -42,7 +42,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -95,7 +95,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -148,7 +148,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -207,7 +207,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -262,7 +262,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -329,14 +329,15 @@ describe('func', () => {
 
         const schema = Joi.func().ref();
 
+        const fn = () => {};
         Helper.validate(schema, [
-            [() => {}, false, null, {
+            [fn, false, null, {
                 message: '"value" must be a Joi reference',
                 details: [{
                     message: '"value" must be a Joi reference',
                     path: [],
                     type: 'function.ref',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: fn }
                 }]
             }],
             [{}, false, null, {
@@ -345,7 +346,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: {} }
                 }]
             }],
             [Joi.ref('a.b'), true]
@@ -372,7 +373,7 @@ describe('func().class()', () => {
                     message: '"_class" must be a class',
                     path: ['_class'],
                     type: 'function.class',
-                    context: { key: '_class', label: '_class' }
+                    context: { key: '_class', label: '_class', value: testFunc }
                 }]
             }]
         ]);
@@ -391,7 +392,7 @@ describe('func().class()', () => {
                     message: '"_class" must be a Function',
                     path: ['_class'],
                     type: 'function.base',
-                    context: { key: '_class', label: '_class' }
+                    context: { key: '_class', label: '_class', value: ['class '] }
                 }]
             }],
             [{ _class: null }, false, null, {
@@ -400,7 +401,7 @@ describe('func().class()', () => {
                     message: '"_class" must be a Function',
                     path: ['_class'],
                     type: 'function.base',
-                    context: { key: '_class', label: '_class' }
+                    context: { key: '_class', label: '_class', value: null }
                 }]
             }]
         ]);

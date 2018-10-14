@@ -99,6 +99,7 @@ describe('number', () => {
             Helper.validate(t, [
                 [100, true],
                 [0, true],
+                ['+42', true, null, 42],
                 [null, false, null, {
                     message: '"value" must be a number',
                     details: [{
@@ -124,15 +125,6 @@ describe('number', () => {
                         path: [],
                         type: 'number.integer',
                         context: { value: 0.01, label: 'value', key: undefined }
-                    }]
-                }],
-                ['90071992547409910.1', false, null, {
-                    message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 90071992547409910.1, label: 'value', key: undefined }
                     }]
                 }]
             ]);
@@ -176,9 +168,24 @@ describe('number', () => {
 
             const t = Joi.number();
             Helper.validate(t, [
-                ['1', true],
-                ['100', true],
-                ['1e3', true],
+                ['1', true, null, 1],
+                ['100', true, null, 100],
+                ['+100', true, null, 100],
+                ['+00100', true, null, 100],
+                ['1e3', true, null, 1000],
+                ['1e003', true, null, 1000],
+                ['1e-003', true, null, 0.001],
+                ['-1e+3', true, null, -1000],
+                ['+1e-3', true, null, 0.001],
+                ['1.0000', true, null, 1],
+                ['1.10000', true, null, 1.1],
+                ['1.1e4', true, null, 11000],
+                ['1.100e4', true, null, 11000],
+                ['100e3', true, null, 100000],
+                ['-00100e3', true, null, -100000],
+                ['-00100e-003', true, null, -0.1],
+                ['-001231.0133210e003', true, null, -1231013.321],
+                ['+001231.0133210e003', true, null, 1231013.321],
                 ['1 some text', false, null, {
                     message: '"value" must be a number',
                     details: [{
@@ -972,7 +979,6 @@ describe('number', () => {
                         context: { limit: 1, value: 9.9999, label: 'value', key: undefined }
                     }]
                 }],
-                [9.999e99, true],
                 [9.9e-99, false, null, {
                     message: '"value" must have no more than 1 decimal places',
                     details: [{
@@ -1311,6 +1317,100 @@ describe('number', () => {
             const t = Joi.number().integer();
             const err = await expect(Joi.compile(t).validate('1.1')).to.reject();
             expect(err.message).to.contain('integer');
+        });
+    });
+
+    describe('unsafe', () => {
+
+        it('should return the same instance if nothing changed', () => {
+
+            const schema = Joi.number();
+            expect(schema.unsafe(false)).to.shallow.equal(schema);
+            expect(schema.unsafe()).to.not.shallow.equal(schema);
+            expect(schema.unsafe(true)).to.not.shallow.equal(schema);
+        });
+
+        it('should check unsafe numbers', () => {
+
+            const t = Joi.number();
+            Helper.validate(t, [
+                ['9007199254740981.1', false, null, {
+                    message: '"value" must be a safe number',
+                    details: [{
+                        message: '"value" must be a safe number',
+                        path: [],
+                        type: 'number.unsafe',
+                        context: { value: '9007199254740981.1', key: undefined, label: 'value' }
+                    }]
+                }],
+                ['90071992547409811e-1', false, null, {
+                    message: '"value" must be a safe number',
+                    details: [{
+                        message: '"value" must be a safe number',
+                        path: [],
+                        type: 'number.unsafe',
+                        context: { value: '90071992547409811e-1', key: undefined, label: 'value' }
+                    }]
+                }],
+                ['9007199254740992', false, null, {
+                    message: '"value" must be a safe number',
+                    details: [{
+                        message: '"value" must be a safe number',
+                        path: [],
+                        type: 'number.unsafe',
+                        context: { value: '9007199254740992', key: undefined, label: 'value' }
+                    }]
+                }],
+                ['-9007199254740992', false, null, {
+                    message: '"value" must be a safe number',
+                    details: [{
+                        message: '"value" must be a safe number',
+                        path: [],
+                        type: 'number.unsafe',
+                        context: { value: '-9007199254740992', key: undefined, label: 'value' }
+                    }]
+                }],
+                ['90.071992549e+15', false, null, {
+                    message: '"value" must be a safe number',
+                    details: [{
+                        message: '"value" must be a safe number',
+                        path: [],
+                        type: 'number.unsafe',
+                        context: { value: '90.071992549e+15', key: undefined, label: 'value' }
+                    }]
+                }],
+                [9007199254740992, false, null, {
+                    message: '"value" must be a safe number',
+                    details: [{
+                        message: '"value" must be a safe number',
+                        path: [],
+                        type: 'number.unsafe',
+                        context: { value: 9007199254740992, key: undefined, label: 'value' }
+                    }]
+                }],
+                [-9007199254740992, false, null, {
+                    message: '"value" must be a safe number',
+                    details: [{
+                        message: '"value" must be a safe number',
+                        path: [],
+                        type: 'number.unsafe',
+                        context: { value: -9007199254740992, key: undefined, label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('should accept unsafe numbers with a loss of precision when disabled', () => {
+
+            const t = Joi.number().unsafe();
+            Helper.validate(t, [
+                ['9007199254740981.1', true, null, 9007199254740981],
+                ['9007199254740992', true, null, 9007199254740992],
+                ['-9007199254740992', true, null, -9007199254740992],
+                ['90.071992549e+15', true, null, 90071992549000000],
+                [9007199254740992, true, null, 9007199254740992],
+                [-9007199254740992, true, null, -9007199254740992]
+            ]);
         });
     });
 
@@ -1923,6 +2023,7 @@ describe('number', () => {
             expect(schema.describe()).to.equal({
                 type: 'number',
                 invalids: [Infinity, -Infinity],
+                flags: { unsafe: false },
                 rules: [
                     {
                         name: 'min',

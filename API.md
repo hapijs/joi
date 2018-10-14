@@ -36,7 +36,7 @@
     - [`any.notes(notes)`](#anynotesnotes)
     - [`any.tags(tags)`](#anytagstags)
     - [`any.meta(meta)`](#anymetameta)
-    - [`any.example(value)`](#anyexamplevalue)
+    - [`any.example(...values)`](#anyexamplevalues)
     - [`any.unit(name)`](#anyunitname)
     - [`any.options(options)`](#anyoptionsoptions)
     - [`any.strict(isStrict)`](#anystrictisstrict)
@@ -80,6 +80,7 @@
     - [`func.class()`](#funcclass)
     - [`func.ref()`](#funcref)
   - [`number` - inherits from `Any`](#number---inherits-from-any)
+    - [`number.unsafe([enabled])`](#numberunsafeenabled)
     - [`number.min(limit)`](#numberminlimit)
     - [`number.max(limit)`](#numbermaxlimit)
     - [`number.greater(limit)`](#numbergreaterlimit)
@@ -143,8 +144,116 @@
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
     - [`alternatives.when(condition, options)`](#alternativeswhencondition-options)
-  - [`lazy(fn)` - inherits from `Any`](#lazyfn---inherits-from-any)
+  - [`lazy(fn[, options])` - inherits from `Any`](#lazyfn-options---inherits-from-any)
 - [Errors](#errors)
+  - [List of errors](#list-of-errors)
+    - [`alternatives.base`](#alternativesbase)
+    - [`any.allowOnly`](#anyallowonly)
+    - [`any.default`](#anydefault)
+    - [`any.empty`](#anyempty)
+    - [`any.invalid`](#anyinvalid)
+    - [`any.required`](#anyrequired)
+    - [`any.unknown`](#anyunknown)
+    - [`array.base`](#arraybase)
+    - [`array.excludes`](#arrayexcludes)
+    - [`array.excludesSingle`](#arrayexcludessingle)
+    - [`array.includesRequiredBoth`](#arrayincludesrequiredboth)
+    - [`array.includesRequiredKnowns`](#arrayincludesrequiredknowns)
+    - [`array.includesRequiredUnknowns`](#arrayincludesrequiredunknowns)
+    - [`array.includes`](#arrayincludes)
+    - [`array.includesSingle`](#arrayincludessingle)
+    - [`array.length`](#arraylength)
+    - [`array.max`](#arraymax)
+    - [`array.min`](#arraymin)
+    - [`array.orderedLength`](#arrayorderedlength)
+    - [`array.ref`](#arrayref)
+    - [`array.sparse`](#arraysparse)
+    - [`array.unique`](#arrayunique)
+    - [`binary.base`](#binarybase)
+    - [`binary.length`](#binarylength)
+    - [`binary.max`](#binarymax)
+    - [`binary.min`](#binarymin)
+    - [`boolean.base`](#booleanbase)
+    - [`date.base`](#datebase)
+    - [`date.greater`](#dategreater)
+    - [`date.isoDate`](#dateisodate)
+    - [`date.less`](#dateless)
+    - [`date.max`](#datemax)
+    - [`date.min`](#datemin)
+    - [`date.ref`](#dateref)
+    - [`date.strict`](#datestrict)
+    - [`date.timestamp.javascript`](#datetimestampjavascript)
+    - [`date.timestamp.unix`](#datetimestampunix)
+    - [`function.arity`](#functionarity)
+    - [`function.base`](#functionbase)
+    - [`function.class`](#functionclass)
+    - [`function.maxArity`](#functionmaxarity)
+    - [`function.minArity`](#functionminarity)
+    - [`function.ref`](#functionref)
+    - [`lazy.base`](#lazybase)
+    - [`lazy.schema`](#lazyschema)
+    - [`number.base`](#numberbase)
+    - [`number.greater`](#numbergreater)
+    - [`number.integer`](#numberinteger-1)
+    - [`number.less`](#numberless)
+    - [`number.max`](#numbermax)
+    - [`number.min`](#numbermin)
+    - [`number.multiple`](#numbermultiple)
+    - [`number.negative`](#numbernegative-1)
+    - [`number.port`](#numberport-1)
+    - [`number.positive`](#numberpositive-1)
+    - [`number.precision`](#numberprecision)
+    - [`number.ref`](#numberref)
+    - [`number.unsafe`](#numberunsafe)
+    - [`object.allowUnknown`](#objectallowunknown)
+    - [`object.and`](#objectand)
+    - [`object.assert`](#objectassert)
+    - [`object.base`](#objectbase)
+    - [`object.length`](#objectlength)
+    - [`object.max`](#objectmax)
+    - [`object.min`](#objectmin)
+    - [`object.missing`](#objectmissing)
+    - [`object.nand`](#objectnand)
+    - [`object.rename.multiple`](#objectrenamemultiple)
+    - [`object.rename.override`](#objectrenameoverride)
+    - [`object.rename.regex.multiple`](#objectrenameregexmultiple)
+    - [`object.rename.regex.override`](#objectrenameregexoverride)
+    - [`object.schema`](#objectschema-1)
+    - [`object.type`](#objecttype)
+    - [`object.with`](#objectwith)
+    - [`object.without`](#objectwithout)
+    - [`object.xor`](#objectxor)
+    - [`string.alphanum`](#stringalphanum-1)
+    - [`string.base64`](#stringbase64)
+    - [`string.base`](#stringbase)
+    - [`string.creditCard`](#stringcreditcard-1)
+    - [`string.dataUri`](#stringdatauri)
+    - [`string.email`](#stringemail)
+    - [`string.guid`](#stringguid)
+    - [`string.hexAlign`](#stringhexalign)
+    - [`string.hex`](#stringhex)
+    - [`string.hostname`](#stringhostname-1)
+    - [`string.ipVersion`](#stringipversion)
+    - [`string.ip`](#stringip)
+    - [`string.isoDate`](#stringisodate-1)
+    - [`string.length`](#stringlength)
+    - [`string.lowercase`](#stringlowercase-1)
+    - [`string.max`](#stringmax)
+    - [`string.min`](#stringmin)
+    - [`string.normalize`](#stringnormalize)
+    - [`string.ref`](#stringref)
+    - [`string.regex.base`](#stringregexbase)
+    - [`string.regex.name`](#stringregexname)
+    - [`string.regex.invert.base`](#stringregexinvertbase)
+    - [`string.regex.invert.name`](#stringregexinvertname)
+    - [`string.token`](#stringtoken-1)
+    - [`string.trim`](#stringtrim)
+    - [`string.uppercase`](#stringuppercase-1)
+    - [`string.uri`](#stringuri)
+    - [`string.uriCustomScheme`](#stringuricustomscheme)
+    - [`string.uriRelativeOnly`](#stringurirelativeonly)
+    - [`symbol.base`](#symbolbase)
+    - [`symbol.map`](#symbolmap)
 
 <!-- tocstop -->
 
@@ -165,10 +274,10 @@ Validates a value using the given schema and options where:
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
-    - when `true`, all unknown elements will be removed.
     - when an `object` :
       - `arrays` - set to `true` to remove unknown items from arrays.
       - `objects` - set to `true` to remove unknown keys from objects.
+    - when `true`, it is equivalent to having `{ arrays: false, objects: true }`.
   - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
     - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped if the option `escapeHtml` is also set to `true`
     - strings are always preceeded by the key name, unless a `{{label}}` is found elsewhere or if the string is prefixed by a `!!`
@@ -543,6 +652,8 @@ const schema = {
 };
 ```
 
+💥 Possible validation errors:[`any.allowOnly`](#anyallowonly)
+
 #### `any.invalid(value)` - aliases: `disallow`, `not`
 
 Blacklists a value where:
@@ -557,6 +668,8 @@ const schema = {
 };
 ```
 
+💥 Possible validation errors:[`any.invalid`](#anyinvalid)
+
 #### `any.required()` - aliases: `exist`
 
 Marks a key as required which will not allow `undefined` as value. All keys are optional by default.
@@ -564,6 +677,8 @@ Marks a key as required which will not allow `undefined` as value. All keys are 
 ```js
 const schema = Joi.any().required();
 ```
+
+💥 Possible validation errors:[`any.required`](#anyrequired)
 
 #### `any.optional()`
 
@@ -584,6 +699,8 @@ const schema = {
     a: Joi.any().forbidden()
 };
 ```
+
+💥 Possible validation errors:[`any.unknown`](#anyunknown)
 
 #### `any.strip()`
 
@@ -642,15 +759,40 @@ Attaches metadata to the key where:
 const schema = Joi.any().meta({ index: true });
 ```
 
-#### `any.example(value)`
+#### `any.example(...values)`
 
-Annotates the key where:
-- `value` - an example value.
+Adds examples to the schema where:
+- `values` - each argument is either an example value, or an array of the shape `[value, options]`:
+  - `value` - single value example.
+  - `options` - optional object argument to pass options to the validation:
+    - `parent` - parent value in case you used normal references in your schema.
+    - `context` - context of the validation in case you used context references in your schema.
 
-If the example fails to pass validation, the function will throw.
+If any of the examples fail to pass validation, the function will throw.
+
+Calling this function again will override the previous examples.
 
 ```js
+// Valid examples
 const schema = Joi.string().min(4).example('abcd');
+
+const refSchema = Joi.number().min(Joi.ref('sibling')).example([42, { parent: { sibling: 10 } }]);
+
+const contextSchema = Joi.number().min(Joi.ref('$threshold')).example([42, { context: { $threshold: 10 } }]);
+
+// Invalid examples
+const invalidSchema = Joi.string().min(4).example('abc');
+
+const invalidRefSchema = Joi.number().min(Joi.ref('sibling')).example([42, { parent: { sibling: 50 } }]);
+
+const invalidContextSchema = Joi.number().min(Joi.ref('$threshold')).example([42, { context: { $threshold: 50 } }]);
+
+// Multiple examples
+const after = Joi.date().min(Joi.ref('before'))
+                    .example(
+                        ['2016-01-01', { parent: { before: '2015-01-01' } }],
+                        ['2016-01-01', { parent: { before: '2015-12-31' } }]
+                    )
 ```
 
 #### `any.unit(name)`
@@ -720,6 +862,8 @@ Joi.validate({
     // value.created will be the time of validation
 });
 ```
+
+💥 Possible validation errors:[`any.default`](#anydefault)
 
 #### `any.concat(schema)`
 
@@ -929,6 +1073,8 @@ const array = Joi.array().items(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], (err, value) => { });
 ```
 
+💥 Possible validation errors:[`array.base`](#arraybase)
+
 #### `array.sparse([enabled])`
 
 Allows this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
@@ -937,6 +1083,8 @@ Allows this array to be sparse. `enabled` can be used with a falsy value to go b
 let schema = Joi.array().sparse(); // undefined values are now allowed
 schema = schema.sparse(false); // undefined values are now denied
 ```
+
+💥 Possible validation errors:[`array.sparse`](#arraysparse)
 
 #### `array.single([enabled])`
 
@@ -951,6 +1099,8 @@ const schema = Joi.array().items(Joi.number()).single();
 schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
 schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 ```
+
+💥 Possible validation errors:[`array.excludesSingle`](#arrayexcludessingle), [`array.includesSingle`](#arrayincludessingle)
 
 #### `array.items(type)`
 
@@ -969,6 +1119,8 @@ const schema = Joi.array().items(Joi.string().valid('not allowed').forbidden(), 
 const schema = Joi.array().items(Joi.string().label('My string').required(), Joi.number().required()); // If this fails it can result in `[ValidationError: "value" does not contain [My string] and 1 other required value(s)]`
 ```
 
+💥 Possible validation errors:[`array.excludes`](#arrayexcludes), [`array.includesRequiredBoth`], [`array.includesRequiredKnowns`], [`array.includesRequiredUnknowns`], [`array.includes`](#arrayincludes)
+
 #### `array.ordered(type)`
 
 Lists the types in sequence order for the array values where:
@@ -982,6 +1134,8 @@ const schema = Joi.array().ordered(Joi.string().required(), Joi.number().require
 const schema = Joi.array().ordered(Joi.string().required()).items(Joi.number().required()); // array must have first item as string and 1 or more subsequent items as number
 const schema = Joi.array().ordered(Joi.string().required(), Joi.number()); // array must have first item as string and optionally second item as number
 ```
+
+💥 Possible validation errors:[`array.excludesSingle`](#arrayexcludessingle), [`array.includesSingle`](#arrayincludessingle), [`array.orderedLength`](#arrayorderedlength)
 
 #### `array.min(limit)`
 
@@ -1001,6 +1155,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`array.min`](#arraymin), [`array.ref`](#arrayref)
+
 #### `array.max(limit)`
 
 Specifies the maximum number of items in the array where:
@@ -1019,6 +1175,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`array.max`](#arraymax), [`array.ref`](#arrayref)
+
 #### `array.length(limit)`
 
 Specifies the exact number of items in the array where:
@@ -1036,6 +1194,8 @@ const schema = Joi.object({
   numbers: Joi.array().length(Joi.ref('limit')).required()
 });
 ```
+
+💥 Possible validation errors:[`array.length`](#arraylength), [`array.ref`](#arrayref)
 
 #### `array.unique([comparator], [options])`
 
@@ -1075,6 +1235,8 @@ schema.validate([{}, {}]);
 // error: null
 ```
 
+💥 Possible validation errors:[`array.unique`](#arrayunique)
+
 ### `boolean` - inherits from `Any`
 
 Generates a schema object that matches a boolean data type. Can also be called via `bool()`. If the validation `convert`
@@ -1088,6 +1250,8 @@ boolean.validate(true, (err, value) => { }); // Valid
 
 boolean.validate(1, (err, value) => { }); // Invalid
 ```
+
+💥 Possible validation errors:[`boolean.base`](#booleanbase)
 
 #### `boolean.truthy(value)`
 
@@ -1133,6 +1297,8 @@ Supports the same methods of the [`any()`](#any) type.
 const schema = Joi.binary();
 ```
 
+💥 Possible validation errors:[`binary.base`](#binarybase)
+
 #### `binary.encoding(encoding)`
 
 Sets the string encoding format if a string input is converted to a buffer where:
@@ -1151,6 +1317,8 @@ Specifies the minimum length of the buffer where:
 const schema = Joi.binary().min(2);
 ```
 
+💥 Possible validation errors:[`binary.min`](#binarymin)
+
 #### `binary.max(limit)`
 
 Specifies the maximum length of the buffer where:
@@ -1160,6 +1328,8 @@ Specifies the maximum length of the buffer where:
 const schema = Joi.binary().max(10);
 ```
 
+💥 Possible validation errors:[`binary.max`](#binarymax)
+
 #### `binary.length(limit)`
 
 Specifies the exact length of the buffer:
@@ -1168,6 +1338,8 @@ Specifies the exact length of the buffer:
 ```js
 const schema = Joi.binary().length(5);
 ```
+
+💥 Possible validation errors:[`binary.length`](#binarylength)
 
 ### `date` - inherits from `Any`
 
@@ -1180,6 +1352,8 @@ Supports the same methods of the [`any()`](#any) type.
 const date = Joi.date();
 date.validate('12-21-2012', (err, value) => { });
 ```
+
+💥 Possible validation errors:[`date.base`](#datebase), [`date.strict`](#datestrict)
 
 #### `date.min(date)`
 
@@ -1205,6 +1379,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`date.min`](#datemin), [`date.ref`](#dateref)
+
 #### `date.max(date)`
 
 Specifies the latest date allowed where:
@@ -1229,6 +1405,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`date.max`](#datemax), [`date.ref`](#dateref)
+
 #### `date.greater(date)`
 
 Specifies that the value must be greater than `date`.
@@ -1252,6 +1430,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`date.greater`](#dategreater), [`date.ref`](#dateref)
+
 #### `date.less(date)`
 
 Specifies that the value must be less than `date`.
@@ -1274,6 +1454,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`date.less`](#dateless), [`date.ref`](#dateref)
+
 #### `date.iso()`
 
 Requires the string value to be in valid ISO 8601 date format.
@@ -1281,6 +1463,8 @@ Requires the string value to be in valid ISO 8601 date format.
 ```js
 const schema = Joi.date().iso();
 ```
+
+💥 Possible validation errors:[`date.isoDate`](#dateisodate)
 
 #### `date.timestamp([type])`
 
@@ -1293,6 +1477,8 @@ const schema = Joi.date().timestamp(); // defaults to javascript timestamp
 const schema = Joi.date().timestamp('javascript'); // also, for javascript timestamp (milliseconds)
 const schema = Joi.date().timestamp('unix'); // for unix timestamp (seconds)
 ```
+
+💥 Possible validation errors:[`date.timestamp.javascript`](#datetimestampjavascript), [`date.timestamp.unix`](#datetimestampunix)
 
 ### `func` - inherits from `Any`
 
@@ -1307,6 +1493,8 @@ const func = Joi.func();
 func.validate(function () {}, (err, value) => { });
 ```
 
+💥 Possible validation errors:[`function.base`](#functionbase)
+
 #### `func.arity(n)`
 
 Specifies the arity of the function where:
@@ -1315,6 +1503,8 @@ Specifies the arity of the function where:
 ```js
 const schema = Joi.func().arity(2);
 ```
+
+💥 Possible validation errors:[`function.arity`](#functionarity)
 
 #### `func.minArity(n)`
 
@@ -1325,6 +1515,8 @@ Specifies the minimal arity of the function where:
 const schema = Joi.func().minArity(1);
 ```
 
+💥 Possible validation errors:[`function.minArity`](#functionminarity)
+
 #### `func.maxArity(n)`
 
 Specifies the maximal arity of the function where:
@@ -1334,6 +1526,8 @@ Specifies the maximal arity of the function where:
 const schema = Joi.func().maxArity(3);
 ```
 
+💥 Possible validation errors:[`function.maxArity`](#functionmaxarity)
+
 #### `func.class()`
 
 Requires the function to be a class.
@@ -1341,6 +1535,8 @@ Requires the function to be a class.
 ```js
 const schema = Joi.func().class();
 ```
+
+💥 Possible validation errors:[`function.class`](#functionclass)
 
 #### `func.ref()`
 
@@ -1350,10 +1546,15 @@ Requires the function to be a Joi reference.
 const schema = Joi.func().ref();
 ```
 
+💥 Possible validation errors:[`function.ref`](#functionref)
+
 ### `number` - inherits from `Any`
 
-Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). If the
-validation `convert` option is on (enabled by default), a string will be converted to a `number` if specified. Also, if
+Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). 
+
+By default, it only allows safe numbers, see [`number.unsafe()`](#numberunsafeenabled).
+
+If the validation `convert` option is on (enabled by default), a string will be converted to a `number` if specified. Also, if
 `convert` is on and `number.precision()` is used, the value will be converted to the specified `precision` as well.
 
 `Infinity` and `-Infinity` are invalid by default, you can change that behavior by calling `allow(Infinity, -Infinity)`.
@@ -1364,6 +1565,28 @@ Supports the same methods of the [`any()`](#any) type.
 const number = Joi.number();
 number.validate(5, (err, value) => { });
 ```
+
+💥 Possible validation errors:[`number.base`](#numberbase)
+
+#### `number.unsafe([enabled])`
+
+By default, numbers must be within JavaScript's safety range (`Number.MIN_SAFE_INTEGER` & `Number.MAX_SAFE_INTEGER`), and when given a string, should be converted without loss of information. You can allow unsafe numbers at your own risks by calling `number.unsafe()`.
+
+Parameters are:
+- `enabled` - optional parameter defaulting to `true` which allows you to reset the behavior of unsafe by providing a falsy value.
+
+```js
+const safeNumber = Joi.number();
+safeNumber.validate(90071992547409924);
+// error -> "value" must be a safe number
+
+const unsafeNumber = Joi.number().unsafe();
+unsafeNumber.validate(90071992547409924);
+// error -> null
+// value -> 90071992547409920
+```
+
+💥 Possible validation errors:[`number.unsafe`](#numberunsafe)
 
 #### `number.min(limit)`
 
@@ -1383,6 +1606,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`number.min`](#numbermin), [`number.ref`](#numberref)
+
 #### `number.max(limit)`
 
 Specifies the maximum value where:
@@ -1401,6 +1626,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`number.max`](#numbermax), [`number.ref`](#numberref)
+
 #### `number.greater(limit)`
 
 Specifies that the value must be greater than `limit`.
@@ -1415,6 +1642,8 @@ const schema = Joi.object({
   max: Joi.number().greater(Joi.ref('min')).required()
 });
 ```
+
+💥 Possible validation errors:[`number.greater`](#numbergreater), [`number.ref`](#numberref)
 
 #### `number.less(limit)`
 
@@ -1433,6 +1662,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`number.less`](#numberless), [`number.ref`](#numberref)
+
 #### `number.integer()`
 
 Requires the number to be an integer (no floating point).
@@ -1440,6 +1671,8 @@ Requires the number to be an integer (no floating point).
 ```js
 const schema = Joi.number().integer();
 ```
+
+💥 Possible validation errors:[`number.base`](#numberbase)
 
 #### `number.precision(limit)`
 
@@ -1450,6 +1683,8 @@ Specifies the maximum number of decimal places where:
 const schema = Joi.number().precision(2);
 ```
 
+💥 Possible validation errors:[`number.integer`](#numberinteger-1)
+
 #### `number.multiple(base)`
 
 Specifies that the value must be a multiple of `base`:
@@ -1459,7 +1694,9 @@ const schema = Joi.number().multiple(3);
 ```
 
 Notes: `Joi.number.multiple(base)` _uses the modulo operator (%) to determine if a number is multiple of another number.
-Therefore, it has the normal limitations of Javascript modulo operator. The results with decimal/floats maybe incorrect._
+Therefore, it has the normal limitations of Javascript modulo operator. The results with decimal/floats may be incorrect._
+
+💥 Possible validation errors:[`number.multiple`](#numbermultiple), [`number.ref`](#numberref)
 
 #### `number.positive()`
 
@@ -1469,6 +1706,8 @@ Requires the number to be positive.
 const schema = Joi.number().positive();
 ```
 
+💥 Possible validation errors:[`number.positive`](#numberpositive-1)
+
 #### `number.negative()`
 
 Requires the number to be negative.
@@ -1477,6 +1716,8 @@ Requires the number to be negative.
 const schema = Joi.number().negative();
 ```
 
+💥 Possible validation errors:[`number.negative`](#numbernegative-1)
+
 #### `number.port()`
 
 Requires the number to be a TCP port, so between 0 and 65535.
@@ -1484,6 +1725,8 @@ Requires the number to be a TCP port, so between 0 and 65535.
 ```js
 const schema = Joi.number().port();
 ```
+
+💥 Possible validation errors:[`number.port`](#numberport-1)
 
 ### `object` - inherits from `Any`
 
@@ -1501,6 +1744,8 @@ const object = Joi.object().keys({
 
 object.validate({ a: 5 }, (err, value) => { });
 ```
+
+💥 Possible validation errors:[`object.base`](#objectbase)
 
 #### `object.keys([schema])`
 
@@ -1544,6 +1789,8 @@ const schema = Joi.object().keys({
     b: Joi.number()
 });
 ```
+
+💥 Possible validation errors:[`object.allowUnknown`](#objectallowunknown)
 
 While all these three objects defined above will result in the same validation object, there are some differences in using one or another:
 
@@ -1610,6 +1857,8 @@ Specifies the minimum number of keys in the object where:
 const schema = Joi.object().min(2);
 ```
 
+💥 Possible validation errors:[`object.min`](#objectmin)
+
 #### `object.max(limit)`
 
 Specifies the maximum number of keys in the object where:
@@ -1619,6 +1868,8 @@ Specifies the maximum number of keys in the object where:
 const schema = Joi.object().max(10);
 ```
 
+💥 Possible validation errors:[`object.max`](#objectmax)
+
 #### `object.length(limit)`
 
 Specifies the exact number of keys in the object where:
@@ -1627,6 +1878,8 @@ Specifies the exact number of keys in the object where:
 ```js
 const schema = Joi.object().length(5);
 ```
+
+💥 Possible validation errors:[`object.length`](#objectlength)
 
 #### `object.pattern(pattern, schema)`
 
@@ -1660,6 +1913,8 @@ const schema = Joi.object().keys({
 }).and('a', 'b');
 ```
 
+💥 Possible validation errors:[`object.and`](#objectand)
+
 #### `object.nand(peers)`
 
 Defines a relationship between keys where not all peers can be present at the
@@ -1674,6 +1929,8 @@ const schema = Joi.object().keys({
 }).nand('a', 'b');
 ```
 
+💥 Possible validation errors:[`object.nand`](#objectnand)
+
 #### `object.or(peers)`
 
 Defines a relationship between keys where one of the peers is required (and more than one is allowed) where:
@@ -1687,6 +1944,8 @@ const schema = Joi.object().keys({
 }).or('a', 'b');
 ```
 
+💥 Possible validation errors:[`object.missing`](#objectmissing)
+
 #### `object.xor(peers)`
 
 Defines an exclusive relationship between a set of keys where one of them is required but not at the same time where:
@@ -1699,6 +1958,8 @@ const schema = Joi.object().keys({
     b: Joi.any()
 }).xor('a', 'b');
 ```
+
+💥 Possible validation errors:[`object.xor`](#objectxor), [`object.missing`](#objectmissing)
 
 #### `object.with(key, peers)`
 
@@ -1716,6 +1977,8 @@ const schema = Joi.object().keys({
 }).with('a', 'b');
 ```
 
+💥 Possible validation errors:[`object.with`](#objectwith)
+
 #### `object.without(key, peers)`
 
 Forbids the presence of other keys whenever the specified is present where:
@@ -1728,6 +1991,8 @@ const schema = Joi.object().keys({
     b: Joi.any()
 }).without('a', ['b']);
 ```
+
+💥 Possible validation errors:[`object.without`](#objectwithout)
 
 #### `object.rename(from, to, [options])`
 
@@ -1762,6 +2027,8 @@ const schema = Joi.object().keys({
 schema.validate({ FooBar: 'a'}, (err, value) => {});
 ```
 
+💥 Possible validation errors:[`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride), [`object.rename.regex.multiple`](#objectrenameregexmultiple), [`object.rename.regex.override`](#objectrenameregexoverride)
+
 #### `object.assert(ref, schema, [message])`
 
 Verifies an assertion where:
@@ -1782,6 +2049,8 @@ const schema = Joi.object().keys({
 }).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
 ```
 
+💥 Possible validation errors:[`object.assert`](#objectassert)
+
 #### `object.unknown([allow])`
 
 Overrides the handling of unknown keys for the scope of the current object only (does not apply to children) where:
@@ -1790,6 +2059,8 @@ Overrides the handling of unknown keys for the scope of the current object only 
 ```js
 const schema = Joi.object({ a: Joi.any() }).unknown();
 ```
+
+💥 Possible validation errors:[`object.allowUnknown`](#objectallowunknown)
 
 #### `object.type(constructor, [name])`
 
@@ -1801,6 +2072,8 @@ Requires the object to be an instance of a given constructor where:
 const schema = Joi.object().type(RegExp);
 ```
 
+💥 Possible validation errors:[`object.type`](#objecttype)
+
 #### `object.schema()`
 
 Requires the object to be a Joi schema instance.
@@ -1808,6 +2081,8 @@ Requires the object to be a Joi schema instance.
 ```js
 const schema = Joi.object().schema();
 ```
+
+💥 Possible validation errors:[`object.schema`](#objectschema-1)
 
 #### `object.requiredKeys(children)`
 
@@ -1862,6 +2137,8 @@ const schema = Joi.string().min(1).max(10);
 schema.validate('12345', (err, value) => { });
 ```
 
+💥 Possible validation errors:[`string.base`](#stringbase), [`any.empty`](#anyempty)
+
 #### `string.insensitive()`
 
 Allows the value to match any whitelist or blacklist item in a case insensitive comparison.
@@ -1889,6 +2166,8 @@ const schema = Joi.object({
 });
 ```
 
+💥 Possible validation errors:[`string.min`](#stringmin), [`string.ref`](#stringref)
+
 #### `string.max(limit, [encoding])`
 
 Specifies the maximum number of string characters where:
@@ -1907,6 +2186,8 @@ const schema = Joi.object({
   value: Joi.string().max(Joi.ref('max'), 'utf8').required()
 });
 ```
+
+💥 Possible validation errors:[`string.max`](#stringmax), [`string.ref`](#stringref)
 
 #### `string.truncate([enabled])`
 
@@ -1928,6 +2209,8 @@ Algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)).
 const schema = Joi.string().creditCard();
 ```
 
+💥 Possible validation errors:[`string.creditCard`](#stringcreditcard-1)
+
 #### `string.length(limit, [encoding])`
 
 Specifies the exact string length required where:
@@ -1946,6 +2229,8 @@ const schema = Joi.object({
   value: Joi.string().length(Joi.ref('length'), 'utf8').required()
 });
 ```
+
+💥 Possible validation errors:[`string.length`](#stringlength), [`string.ref`](#stringref)
 
 #### `string.regex(pattern, [name | options])`
 
@@ -1972,6 +2257,8 @@ const invertedNamedSchema = Joi.string().regex(/^[a-z]+$/, { name: 'alpha', inve
 invertedNamedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted alpha pattern
 ```
 
+💥 Possible validation errors:[`string.regex.base`](#stringregexbase), [`string.regex.invert.base`](#stringregexinvertbase), [`string.regex.invert.name`](#stringregexinvertname), [`string.regex.name`](#stringregexname)
+
 #### `string.replace(pattern, replacement)`
 
 Replace characters matching the given _pattern_ with the specified
@@ -1997,6 +2284,8 @@ Requires the string value to only contain a-z, A-Z, and 0-9.
 const schema = Joi.string().alphanum();
 ```
 
+💥 Possible validation errors:[`string.alphanum`](#stringalphanum-1)
+
 #### `string.token()`
 
 Requires the string value to only contain a-z, A-Z, 0-9, and underscore _.
@@ -2004,6 +2293,8 @@ Requires the string value to only contain a-z, A-Z, 0-9, and underscore _.
 ```js
 const schema = Joi.string().token();
 ```
+
+💥 Possible validation errors:[`string.token`](#stringtoken-1)
 
 #### `string.email([options])`
 
@@ -2019,6 +2310,8 @@ Have a look at [`isemail`’s documentation](https://github.com/hapijs/isemail) 
 ```js
 const schema = Joi.string().email();
 ```
+
+💥 Possible validation errors:[`string.email`](#stringemail)
 
 #### `string.ip([options])`
 
@@ -2038,6 +2331,8 @@ const schema = Joi.string().ip({
   cidr: 'required'
 });
 ```
+
+💥 Possible validation errors:[`string.ip`](#stringip), [`string.ipVersion`](#stringipversion)
 
 #### `string.uri([options])`
 
@@ -2059,6 +2354,8 @@ const schema = Joi.string().uri({
 });
 ```
 
+💥 Possible validation errors:[`string.uri`](#stringuri), [`string.uriCustomScheme`](#stringuricustomscheme), [`string.uriRelativeOnly`](#stringurirelativeonly)
+
 #### `string.guid()` - aliases: `uuid`
 
 Requires the string value to be a valid GUID.
@@ -2076,6 +2373,8 @@ const schema = Joi.string().guid({
 });
 ```
 
+💥 Possible validation errors:[`string.guid`](#stringguid)
+
 #### `string.hex([options])`
 
 Requires the string value to be a valid hexadecimal string.
@@ -2085,6 +2384,8 @@ Requires the string value to be a valid hexadecimal string.
 ```js
 const schema = Joi.string().hex();
 ```
+
+💥 Possible validation errors:[`string.hex`](#stringhex), [`string.hexAlign`](#stringhexalign)
 
 #### `string.base64([options])`
 
@@ -2109,6 +2410,8 @@ paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM'); // No Error
 paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
+💥 Possible validation errors:[`string.base64`](#stringbase64)
+
 #### `string.dataUri([options])`
 
 Requires the string value to be a valid data URI string.
@@ -2122,6 +2425,8 @@ schema.validate('VE9PTUFOWVNFQ1JFVFM='); // ValidationError: "value" must be a v
 schema.validate('data:image/png;base64,VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
+💥 Possible validation errors:[`string.dataUri`](#stringdatauri)
+
 #### `string.hostname()`
 
 Requires the string value to be a valid hostname as per [RFC1123](http://tools.ietf.org/html/rfc1123).
@@ -2129,6 +2434,8 @@ Requires the string value to be a valid hostname as per [RFC1123](http://tools.i
 ```js
 const schema = Joi.string().hostname();
 ```
+
+💥 Possible validation errors:[`string.hostname`](#stringhostname-1)
 
 #### `string.normalize([form])`
 
@@ -2145,6 +2452,8 @@ const schema = Joi.string().normalize('NFKC'); // compatibility composition
 const schema = Joi.string().normalize('NFKD'); // compatibility decomposition
 ```
 
+💥 Possible validation errors:[`string.normalize`](#stringnormalize)
+
 #### `string.lowercase()`
 
 Requires the string value to be all lowercase. If the validation `convert` option is on (enabled by default), the string
@@ -2154,6 +2463,8 @@ will be forced to lowercase.
 const schema = Joi.string().lowercase();
 ```
 
+💥 Possible validation errors:[`string.lowercase`](#stringlowercase-1)
+
 #### `string.uppercase()`
 
 Requires the string value to be all uppercase. If the validation `convert` option is on (enabled by default), the string
@@ -2162,6 +2473,8 @@ will be forced to uppercase.
 ```js
 const schema = Joi.string().uppercase();
 ```
+
+💥 Possible validation errors:[`string.uppercase`](#stringuppercase-1)
 
 #### `string.trim([enabled])`
 
@@ -2176,6 +2489,8 @@ const schema = Joi.string().trim();
 const schema = Joi.string().trim(false); // disable trim flag
 ```
 
+💥 Possible validation errors:[`string.trim`](#stringtrim)
+
 #### `string.isoDate()`
 
 Requires the string value to be in valid ISO 8601 date format.
@@ -2184,6 +2499,8 @@ If the validation `convert` option is on (enabled by default), the string will b
 ```js
 const schema = Joi.string().isoDate();
 ```
+
+💥 Possible validation errors:[`string.isoDate`](#stringisodate-1)
 
 ### `symbol` - inherits from `Any`
 
@@ -2197,6 +2514,8 @@ Supports the same methods of the [`any()`](#any) type.
 const schema = Joi.symbol().map({ 'foo': Symbol('foo'), 'bar': Symbol('bar') });
 schema.validate('foo', (err, value) => { });
 ```
+
+💥 Possible validation errors:[`symbol.base`](#symbolbase)
 
 #### `symbol.map(map)`
 
@@ -2213,6 +2532,8 @@ const schema = Joi.symbol().map([
 ]);
 ```
 
+💥 Possible validation errors:[`symbol.map`](#symbolmap)
+
 ### `alternatives` - inherits from `Any`
 
 Generates a type that will match one of the provided alternative schemas via the [`try()`](#alternativestryschemas)
@@ -2226,6 +2547,8 @@ Alternatives can be expressed using the shorter `[]` notation.
 const alt = Joi.alternatives().try(Joi.number(), Joi.string());
 // Same as [Joi.number(), Joi.string()]
 ```
+
+💥 Possible validation errors:[`alternatives.base`](#alternativesbase)
 
 #### `alternatives.try(schemas)`
 
@@ -2292,9 +2615,12 @@ const schema = {
 };
 ```
 
-### `lazy(fn)` - inherits from `Any`
+### `lazy(fn[, options])` - inherits from `Any`
 
-Generates a placeholder schema for a schema that you would provide with the `fn`.
+Generates a placeholder schema for a schema that you would provide where:
+- `fn` - is a function returning the actual schema to use for validation.
+- `options`:
+  - `once` - enables or disables the single evaluation behavior. When `false`, the function will be called every time a validation happens, otherwise the schema will be cached for further re-use. Defaults to `true`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -2306,6 +2632,8 @@ const Person = Joi.object({
     children: Joi.array().items(Joi.lazy(() => Person).description('Person schema'))
 });
 ```
+
+💥 Possible validation errors:[`lazy.base`](#lazybase), [`lazy.schema`](#lazyschema)
 
 ## Errors
 
@@ -2321,3 +2649,1679 @@ Joi throws classical javascript `Error`s containing :
         - `label` - label of the value that errored, or the `key` if any, or the default `language.root`.
 - `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occurred. Takes an optional parameter that, if truthy, will strip the colors out of the output.
 - `_object` - the original object to validate.
+
+### List of errors
+
+<!-- errors -->
+#### `alternatives.base`
+
+**Description**
+
+No alternative matched the input.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string // Label if defined, otherwise it's the key
+}
+```
+
+#### `any.allowOnly`
+
+**Description**
+
+Only some values were allowed, the input didn't match any of them.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    valids: Array<any> // Contains the list of the valid values that were expected
+}
+```
+
+#### `any.default`
+
+**Description**
+
+If your [`any.default()`](#anydefaultvalue-description) generator function throws error, you will have it here.
+
+**Context**
+```ts
+{
+    error: Error // Error generated during the default value function call
+}
+```
+
+#### `any.empty`
+
+**Description**
+
+When an empty string is found and denied by invalid values.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: '', // Empty string
+    invalids: Array<any> // Contains the list of the invalid values that should be rejected
+}
+```
+
+#### `any.invalid`
+
+**Description**
+
+The value matched a value listed in the invalid values.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any, // Value being validated
+    invalids: Array<any> // Contains the list of the invalid values that should be rejected
+}
+```
+
+#### `any.required`
+
+**Description**
+
+A required value wasn't present.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string // Label if defined, otherwise it's the key
+}
+```
+
+#### `any.unknown`
+
+**Description**
+
+A value was present while it wasn't expected.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string // Label if defined, otherwise it's the key
+}
+```
+
+#### `array.base`
+
+**Description**
+
+The value is not of Array type or could not be cast to an Array from a string.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string // Label if defined, otherwise it's the key
+}
+```
+
+#### `array.excludes`
+
+**Description**
+
+The array contains a value that is part of the exclusion list.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    pos: number, // Index where the value was found in the array
+    value: any // Value that matched an exclude condition
+}
+```
+
+#### `array.excludesSingle`
+
+**Description**
+
+Same as `array.excludes` but the value was a single value. Happens with [`array.single()`](#arraysingleenabled).
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    pos: number, // Index where the value was found in the array
+    value: any // Value that matched an exclude condition
+}
+```
+
+#### `array.includesRequiredBoth`
+
+**Description**
+
+Some values were expected to be present in the array and are missing. This error happens when we have a mix of labelled and unlabelled schemas.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    knownMisses: Array<string>, // Labels of all the missing values
+    unknownMisees: number // Count of missing values that didn't have a label
+}
+```
+
+#### `array.includesRequiredKnowns`
+
+**Description**
+
+Some values were expected to be present in the array and are missing. This error happens when we only have labelled schemas.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    knownMisses: Array<string> // Labels of all the missing values
+}
+```
+
+#### `array.includesRequiredUnknowns`
+
+**Description**
+
+Some values were expected to be present in the array and are missing. This error happens when we only have unlabelled schemas.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    unknownMisees: number // Count of missing values that didn't have a label
+}
+```
+
+#### `array.includes`
+
+**Description**
+
+The value didn't match any of the allowed types for that array.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    pos: number, // Index where the value was found in the array
+    value: any // Value that failed all the schemas
+}
+```
+
+#### `array.includesSingle`
+
+**Description**
+
+Same as `array.includes` but the value was a single value. Happens with [`array.single()`](#arraysingleenabled).
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    pos: number, // Index where the value was found in the array
+    value: any // Value that failed all the schemas
+}
+```
+
+#### `array.length`
+
+**Description**
+
+The array is not of the expected length.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Length that was expected for this array
+    value: Array<any> // The array itself
+}
+```
+
+#### `array.max`
+
+**Description**
+
+The array has more elements than the maximum allowed.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Maximum length that was expected for this array
+    value: Array<any> // The array itself
+}
+```
+
+#### `array.min`
+
+**Description**
+
+The array has less elements than the minimum allowed.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Minimum length that was expected for this array
+    value: Array<any> // The array itself
+}
+```
+
+#### `array.orderedLength`
+
+**Description**
+
+Given an [`array.ordered()`](#arrayorderedtype), that array has more elements than it should.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    pos: number, // Index where the value was found in the array
+    limit: number // Maximum length that was expected for this array
+}
+```
+
+#### `array.ref`
+
+**Description**
+
+A reference was used in one of [`array.min()`](#arrayminlimit), [`array.max()`](#arraymaxlimit) or [`array.length()`](#arraylengthlimit) and the value pointed to by that reference in the input is not a valid number for those rules.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    ref: Reference, // Reference used
+    value: any // Value found using the reference
+}
+```
+
+#### `array.sparse`
+
+**Description**
+
+An `undefined` value was found in an array that shouldn't be sparse.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    pos: number // Index where an undefined value was found in the array
+}
+```
+
+#### `array.unique`
+
+**Description**
+
+A duplicate value was found in an array.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    pos: number, // Index where the duplicate value was found in the array
+    value: any, // Value that is duplicated
+    dupePos: number, // Index where the first appearance of the duplicate value was found in the array
+    dupeValue: any // Value with which the duplicate was met
+}
+```
+
+#### `binary.base`
+
+**Description**
+
+The value is either not a Buffer or could not be cast to a Buffer from a string.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string // Label if defined, otherwise it's the key
+}
+```
+
+#### `binary.length`
+
+**Description**
+
+The buffer was not of the specified length.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Length that was expected for this buffer
+    value: Buffer // The buffer itself
+}
+```
+
+#### `binary.max`
+
+**Description**
+
+The buffer contains more bytes than expected.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Maximum length that was expected for this buffer
+    value: Buffer // The buffer itself
+}
+```
+
+#### `binary.min`
+
+**Description**
+
+The buffer contains less bytes than expected.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Minimum length that was expected for this buffer
+    value: Buffer // The buffer itself
+}
+```
+
+#### `boolean.base`
+
+**Description**
+
+The value is either not a boolean or could not be cast to a boolean from one of the truthy or falsy values.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `date.base`
+
+**Description**
+
+The value is either not a date or could not be cast to a date from a string or a number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `date.greater`
+
+**Description**
+
+The date is over the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: Date, // Maximum date
+    value: Date // Input value as Date
+}
+```
+
+#### `date.isoDate`
+
+**Description**
+
+The date does not match the ISO 8601 format.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `date.less`
+
+**Description**
+
+The date is under the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: Date, // Minimum date
+    value: Date // Input value as Date
+}
+```
+
+#### `date.max`
+
+**Description**
+
+The date is over or equal to the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: Date, // Maximum date
+    value: Date // Input value as Date
+}
+```
+
+#### `date.min`
+
+**Description**
+
+The date is under or equal to the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: Date, // Minimum date
+    value: Date // Input value as Date
+}
+```
+
+#### `date.ref`
+
+**Description**
+
+A reference was used in one of [`date.min()`](#datemindate), [`date.max()`](#datemaxdate), [`date.less()`](#datelessdate) or [`date.greater()`](#dategreaterdate) and the value pointed to by that reference in the input is not a valid date.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    ref: Reference, // Reference used
+    value: any // Value found using the reference
+}
+```
+
+#### `date.strict`
+
+**Description**
+
+Occurs when the input is not a Date type and `convert` is disabled.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Value
+}
+```
+
+#### `date.timestamp.javascript`
+
+**Description**
+
+Failed to be converted from a string or a number to a date as JavaScript timestamp.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `date.timestamp.unix`
+
+**Description**
+
+Failed to be converted from a string or a number to a date as Unix timestamp.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `function.arity`
+
+**Description**
+
+The number of arguments for the function doesn't match the required number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    n: number // Expected arity
+}
+```
+
+#### `function.base`
+
+**Description**
+
+The input is not a function.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `function.class`
+
+**Description**
+
+The input is not a JavaScript class.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `function.maxArity`
+
+**Description**
+
+The number of arguments for the function is over the required number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    n: number // Maximum expected arity
+}
+```
+
+#### `function.minArity`
+
+**Description**
+
+The number of arguments for the function is under the required number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    n: number // Minimum expected arity
+}
+```
+
+#### `function.ref`
+
+**Description**
+
+The function is not a [`Joi.ref()`](#refkey-options).
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: function // Input value
+}
+```
+
+#### `lazy.base`
+
+**Description**
+
+The lazy function is not set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string // Label if defined, otherwise it's the key
+}
+```
+
+#### `lazy.schema`
+
+**Description**
+
+The lazy function didn't return a joi schema.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    schema: any // The value return by the generator function
+}
+```
+
+#### `number.base`
+
+**Description**
+
+The value is not a number or could not be cast to a number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `number.greater`
+
+**Description**
+
+The number is lower or equal to the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Minimum value that was expected for this number
+    value: number // The number itself
+}
+```
+
+#### `number.integer`
+
+**Description**
+
+The number is not a valid integer.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: number // Value that failed, likely a floating number
+}
+```
+
+#### `number.less`
+
+**Description**
+
+The number is higher or equal to the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Maximum value that was expected for this number
+    value: number // The number itself
+}
+```
+
+#### `number.max`
+
+**Description**
+
+The number is higher than the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Maximum value that was expected for this number
+    value: number // The number itself
+}
+```
+
+#### `number.min`
+
+**Description**
+
+The number is lower than the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Minimum value that was expected for this number
+    value: number // The number itself
+}
+```
+
+#### `number.multiple`
+
+**Description**
+
+The number could not be divided by the multiple you provided.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    multiple: number, // The number of which the input is supposed to be a multiple of
+    value: number // The number itself
+}
+```
+
+#### `number.negative`
+
+**Description**
+
+The number was positive.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: number // The number itself
+}
+```
+
+#### `number.port`
+
+**Description**
+
+The number didn't look like a port number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: number // The number itself 
+}
+```
+
+#### `number.positive`
+
+**Description**
+
+The number was negative.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: number // The number itself
+}
+```
+
+#### `number.precision`
+
+**Description**
+
+The number didn't have the required precision.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // The precision that it should have had
+    value: number // The number itself
+}
+```
+
+#### `number.ref`
+
+**Description**
+
+A reference was used in one of [`number.min()`](#numberminlimit), [`number.max()`](#numbermaxlimit), [`number.less()`](#numberlesslimit), [`number.greater()`](#numbergreaterlimit), or [`number.multiple()`](#numbermultiplebase) and the value pointed to by that reference in the input is not a valid number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    ref: Reference, // Reference used
+    value: any // Value found using the reference
+}
+```
+
+#### `number.unsafe`
+
+**Description**
+
+The number is not within the safe range of JavaScript numbers.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `object.allowUnknown`
+
+**Description**
+
+An unexpected property was found in the object.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    child: string, // Property that is unexpected
+    value: any // Value of that property
+}
+```
+
+#### `object.and`
+
+**Description**
+
+The AND condition between the properties you specified was not satisfied in that object.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    present: Array<string>, // List of properties that are set
+    presentWithLabels: Array<string>, // List of labels for the properties that are set
+    missing: Array<string>, // List of properties that are not set
+    missingWithLabels: Array<string> // List of labels for the properties that are not set
+}
+```
+
+#### `object.assert`
+
+**Description**
+
+The schema on an [`object.assert()`](#objectassertref-schema-message) failed to validate.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    ref: string, // Dotted path to the property that was checked
+    message: string // Custom message or default one
+}
+```
+
+#### `object.base`
+
+**Description**
+
+The value is not of object type or could not be cast to an object from a string.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `object.length`
+
+**Description**
+
+The number of keys for this object is not of the expected length.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Number of keys that was expected for this object
+    value: object // The object itself
+}
+```
+
+#### `object.max`
+
+**Description**
+
+The number of keys for this object is over or equal to the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Maximum number of keys
+    value: object // Input value
+}
+```
+
+#### `object.min`
+
+**Description**
+
+The number of keys for this object is under or equal to the limit that you set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Minimum number of keys
+    value: object // Input value
+}
+```
+
+#### `object.missing`
+
+**Description**
+
+The OR or XOR condition between the properties you specified was not satisfied in that object, none of it were set.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    peers: Array<string>, // List of properties were none of it was set
+    peersWithLabels: Array<string> // List of labels for the properties were none of it was set
+}
+```
+
+#### `object.nand`
+
+**Description**
+
+The NAND condition between the properties you specified was not satisfied in that object.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    main: string, // One of the properties that was present
+    mainWithLabel: string, // The label of the `main` property
+    peers: Array<string>, // List of the other properties that were present
+    peersWithLabels: Array<string> // List of the labels of the other properties that were present
+}
+```
+
+#### `object.rename.multiple`
+
+**Description**
+
+Another rename was already done to the same target property.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    from: string, // Origin property name of the rename
+    to: string // Target property of the rename
+}
+```
+
+#### `object.rename.override`
+
+**Description**
+
+The target property already exists and you disallowed overrides.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    from: string, // Origin property name of the rename
+    to: string // Target property of the rename
+}
+```
+
+#### `object.rename.regex.multiple`
+
+**Description**
+
+The target property already exists and you disallowed overrides.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    from: Array<string>, // List of property names that matched the regex
+    to: string // Target property of the rename
+}
+```
+
+#### `object.rename.regex.override`
+
+**Description**
+
+The target property already exists and you disallowed overrides.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    from: Array<string>, // List of property names that matched the regex
+    to: string // Target property of the rename
+}
+```
+
+#### `object.schema`
+
+**Description**
+
+The object was not a joi schema.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string // Label if defined, otherwise it's the key
+}
+```
+
+#### `object.type`
+
+**Description**
+
+The object is not of the type you specified.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    type: string, // Type name the object should have been
+    value: object // Input value
+}
+```
+
+#### `object.with`
+
+**Description**
+
+Property that should have been present at the same time as another one was missing.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    main: string, // Property that triggered the check
+    mainWithLabel: string, // Label of the property that triggered the check
+    peer: string, // Property that was missing
+    peerWithLabels: string // Label of the other property that was missing
+}
+```
+
+#### `object.without`
+
+**Description**
+
+Property that should have been absent at the same time as another one was present.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    main: string, // Property that triggered the check
+    mainWithLabel: string, // Label of the property that triggered the check
+    peer: string, // Property that was present
+    peerWithLabels: string // Label of the other property that was present
+}
+```
+
+#### `object.xor`
+
+**Description**
+
+The XOR condition between the properties you specified was not satisfied in that object.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    peers: Array<string>, // List of properties were none of it was set
+    peersWithLabels: Array<string> // List of labels for the properties were none of it was set
+}
+```
+
+#### `string.alphanum`
+
+**Description**
+
+The string doesn't only contain alphanumeric characters.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.base64`
+
+**Description**
+
+The string isn't a valid base64 string.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.base`
+
+**Description**
+
+The input is not a string.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+}
+```
+
+#### `string.creditCard`
+
+**Description**
+
+The string is not a valid credit card number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.dataUri`
+
+**Description**
+
+The string is not a valid data URI.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.email`
+
+**Description**
+
+The string is not a valid e-mail.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.guid`
+
+**Description**
+
+The string is not a valid GUID.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.hexAlign`
+
+**Description**
+
+The string contains hexadecimal characters but they are not byte-aligned.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.hex`
+
+**Description**
+
+The string is not a valid hexadecimal string.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.hostname`
+
+**Description**
+
+The string is not a valid hostname.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.ipVersion`
+
+**Description**
+
+The string is not a valid IP address considering the provided constraints.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    cidr: string, // CIDR used for the validation
+    version: Array<string>, // List of IP version accepted
+    value: string // Input value
+}
+```
+
+#### `string.ip`
+
+**Description**
+
+The string is not a valid IP address.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    cidr: string, // CIDR used for the validation
+    value: string // Input value
+}
+```
+
+#### `string.isoDate`
+
+**Description**
+
+The string is not a valid ISO date string.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.length`
+
+**Description**
+
+The string is not of the expected length.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Length that was expected for this string
+    encoding: undefined | string, // Encoding specified for the check if any
+    value: string // Input value
+}
+```
+
+#### `string.lowercase`
+
+**Description**
+
+The string isn't all lower-cased.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.max`
+
+**Description**
+
+The string is larger than expected.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Maximum length that was expected for this string
+    encoding: undefined | string, // Encoding specified for the check if any
+    value: string // Input value
+}
+```
+
+#### `string.min`
+
+**Description**
+
+The string is smaller than expected.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    limit: number, // Minimum length that was expected for this string
+    encoding: undefined | string, // Encoding specified for the check if any
+    value: string // Input value
+}
+```
+
+#### `string.normalize`
+
+**Description**
+
+The string isn't valid in regards of the normalization form expected.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    form: string, // Normalization form that is expected
+    value: string // Input value
+}
+```
+
+#### `string.ref`
+
+**Description**
+
+A reference was used in one of [`string.min()`](#stringminlimit-encoding), [`string.max()`](#stringmaxlimit-encoding) or [`string.length()`](#stringlengthlimit-encoding) and the value pointed to by that reference in the input is not a valid number for those rules.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    ref: Reference, // Reference used
+    value: any // Value found using the reference
+}
+```
+
+#### `string.regex.base`
+
+**Description**
+
+The string didn't match the regular expression.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    name: undefined, // Undefined since the regular expression has no name
+    pattern: string, // Regular expression
+    value: string // Input value
+}
+```
+
+#### `string.regex.name`
+
+**Description**
+
+The string didn't match the named regular expression.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    name: string, // Name of the regular expression
+    pattern: string, // Regular expression
+    value: string // Input value
+}
+```
+
+#### `string.regex.invert.base`
+
+**Description**
+
+The string matched the regular expression while it shouldn't.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    name: undefined, // Undefined since the regular expression has no name
+    pattern: string, // Regular expression
+    value: string // Input value
+}
+```
+
+#### `string.regex.invert.name`
+
+**Description**
+
+The string matched the named regular expression while it shouldn't.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    name: string, // Name of the regular expression
+    pattern: string, // Regular expression
+    value: string // Input value
+}
+```
+
+#### `string.token`
+
+**Description**
+
+The string isn't a token.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.trim`
+
+**Description**
+
+The string contains whitespaces around it.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.uppercase`
+
+**Description**
+
+The string isn't all upper-cased.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.uri`
+
+**Description**
+
+The string isn't a valid URI.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.uriCustomScheme`
+
+**Description**
+
+The string isn't a valid URI considering the custom schemes.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    scheme: string, // Scheme prefix that is expected in the URI
+    value: string // Input value
+}
+```
+
+#### `string.uriRelativeOnly`
+
+**Description**
+
+The string is a valid relative URI.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `symbol.base`
+
+**Description**
+
+The input is not a Symbol.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+    ...
+}
+```
+
+#### `symbol.map`
+
+**Description**
+
+The input is not a Symbol or could not be converted to one.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: any // Input value
+    ...
+}
+```
+<!-- errorsstop -->

@@ -27,7 +27,7 @@
     "test": "lab -t 100 -a code -L",
     "test-debug": "lab -a code",
     "test-cov-html": "lab -r html -o coverage.html -a code",
-    "toc": "hapitoc",
+    "toc": "hapitoc && node docs/check-errors-list.js",
     "version": "npm run toc && git add API.md README.md"
   },
   "license": "BSD-3-Clause"

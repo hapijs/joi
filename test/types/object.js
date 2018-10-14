@@ -38,7 +38,7 @@ describe('object', () => {
             message: '"value" must be an object',
             path: [],
             type: 'object.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: 'a string' }
         }]);
     });
 
@@ -54,7 +54,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -126,7 +126,7 @@ describe('object', () => {
             message: '"value" must be an object',
             path: [],
             type: 'object.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value', key: undefined, value: [1, 2, 3] }
         }]);
     });
 
@@ -141,7 +141,7 @@ describe('object', () => {
                     message: '"item2" is not allowed',
                     path: ['item2'],
                     type: 'object.allowUnknown',
-                    context: { child: 'item2', label: 'item2', key: 'item2' }
+                    context: { child: 'item2', label: 'item2', key: 'item2', value: 'something else' }
                 }]
             }],
             ['', false, null, {
@@ -150,7 +150,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -166,7 +166,7 @@ describe('object', () => {
                     message: '"value" must have at least 3 children',
                     path: [],
                     type: 'object.min',
-                    context: { limit: 3, label: 'value', key: undefined }
+                    context: { limit: 3, label: 'value', key: undefined, value: { item: 'something' } }
                 }]
             }],
             [{ item: 'something', item2: 'something else' }, false, null, {
@@ -175,7 +175,7 @@ describe('object', () => {
                     message: '"value" must have at least 3 children',
                     path: [],
                     type: 'object.min',
-                    context: { limit: 3, label: 'value', key: undefined }
+                    context: { limit: 3, label: 'value', key: undefined, value: { item: 'something', item2: 'something else' } }
                 }]
             }],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
@@ -185,7 +185,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -203,7 +203,7 @@ describe('object', () => {
                     message: '"value" must have less than or equal to 2 children',
                     path: [],
                     type: 'object.max',
-                    context: { limit: 2, label: 'value', key: undefined }
+                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something', item2: 'something else', item3: 'something something else' } }
                 }]
             }],
             ['', false, null, {
@@ -212,7 +212,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -228,7 +228,7 @@ describe('object', () => {
                     message: '"value" must have at least 2 children',
                     path: [],
                     type: 'object.min',
-                    context: { limit: 2, label: 'value', key: undefined }
+                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something' } }
                 }]
             }],
             [{ item: 'something', item2: 'something else' }, true],
@@ -239,7 +239,7 @@ describe('object', () => {
                     message: '"value" must have less than or equal to 3 children',
                     path: [],
                     type: 'object.max',
-                    context: { limit: 3, label: 'value', key: undefined }
+                    context: { limit: 3, label: 'value', key: undefined, value: { item: 'something', item2: 'something else', item3: 'something something else', item4: 'item4' } }
                 }]
             }],
             ['', false, null, {
@@ -248,7 +248,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -264,7 +264,7 @@ describe('object', () => {
                     message: '"value" must have 2 children',
                     path: [],
                     type: 'object.length',
-                    context: { limit: 2, label: 'value', key: undefined }
+                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something' } }
                 }]
             }],
             [{ item: 'something', item2: 'something else' }, true],
@@ -274,7 +274,7 @@ describe('object', () => {
                     message: '"value" must have 2 children',
                     path: [],
                     type: 'object.length',
-                    context: { limit: 2, label: 'value', key: undefined }
+                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something', item2: 'something else', item3: 'something something else' } }
                 }]
             }],
             ['', false, null, {
@@ -283,7 +283,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }]
         ]);
@@ -292,6 +292,7 @@ describe('object', () => {
     it('should validate constructor when type is set', () => {
 
         const schema = Joi.object().type(RegExp);
+        const d = new Date();
         Helper.validate(schema, [
             [{ item: 'something' }, false, null, {
                 message: '"value" must be an instance of "RegExp"',
@@ -299,7 +300,7 @@ describe('object', () => {
                     message: '"value" must be an instance of "RegExp"',
                     path: [],
                     type: 'object.type',
-                    context: { type: 'RegExp', label: 'value', key: undefined }
+                    context: { type: 'RegExp', label: 'value', key: undefined, value: { item: 'something' } }
                 }]
             }],
             ['', false, null, {
@@ -308,16 +309,16 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: '' }
                 }]
             }],
-            [new Date(), false, null, {
+            [d, false, null, {
                 message: '"value" must be an instance of "RegExp"',
                 details: [{
                     message: '"value" must be an instance of "RegExp"',
                     path: [],
                     type: 'object.type',
-                    context: { type: 'RegExp', label: 'value', key: undefined }
+                    context: { type: 'RegExp', label: 'value', key: undefined, value: d }
                 }]
             }],
             [/abcd/, true],
@@ -397,7 +398,7 @@ describe('object', () => {
                     message: '"num" is not allowed',
                     path: ['num'],
                     type: 'object.allowUnknown',
-                    context: { child: 'num', label: 'num', key: 'num' }
+                    context: { child: 'num', label: 'num', key: 'num', value: 1 }
                 }]
             }],
             [{ obj: {} }, true],
@@ -410,7 +411,7 @@ describe('object', () => {
                     message: '"item" must be a boolean',
                     path: ['obj', 'obj', 'obj', 'item'],
                     type: 'boolean.base',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 10 }
                 }]
             }]
         ]);
@@ -435,7 +436,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: null }
                 }]
             }],
             [undefined, true],
@@ -458,7 +459,7 @@ describe('object', () => {
                     message: '"item" must be a boolean',
                     path: ['obj', 'obj', 'obj', 'item'],
                     type: 'boolean.base',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 10 }
                 }]
             }]
         ]);
@@ -483,7 +484,7 @@ describe('object', () => {
                     message: '"value" must be an object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', key: undefined }
+                    context: { label: 'value', key: undefined, value: null }
                 }]
             }],
             [undefined, true],
@@ -506,7 +507,7 @@ describe('object', () => {
                     message: '"item" must be a boolean',
                     path: ['obj', 'obj', 'obj', 'item'],
                     type: 'boolean.base',
-                    context: { label: 'item', key: 'item' }
+                    context: { label: 'item', key: 'item', value: 10 }
                 }]
             }]
         ]);
@@ -521,7 +522,7 @@ describe('object', () => {
             message: '"b" is not allowed',
             path: ['b'],
             type: 'object.allowUnknown',
-            context: { child: 'b', label: 'b', key: 'b' }
+            context: { child: 'b', label: 'b', key: 'b', value: 'value' }
         }]);
     });
 
@@ -601,7 +602,7 @@ describe('object', () => {
             message: '"b" is not allowed',
             path: ['a', 'b'],
             type: 'object.allowUnknown',
-            context: { child: 'b', label: 'b', key: 'b' }
+            context: { child: 'b', label: 'b', key: 'b', value: 'value' }
         }]);
     });
 
@@ -614,7 +615,7 @@ describe('object', () => {
             message: '"c" is not allowed',
             path: ['c'],
             type: 'object.allowUnknown',
-            context: { child: 'c', label: 'c', key: 'c' }
+            context: { child: 'c', label: 'c', key: 'c', value: 'hello' }
         }]);
     });
 
@@ -657,28 +658,50 @@ describe('object', () => {
                 message: '"hasOwnProperty" is not allowed',
                 path: ['hasOwnProperty'],
                 type: 'object.allowUnknown',
-                context:
-                    {
-                        child: 'hasOwnProperty',
-                        label: 'hasOwnProperty',
-                        key: 'hasOwnProperty'
-                    }
+                context: {
+                    child: 'hasOwnProperty',
+                    label: 'hasOwnProperty',
+                    key: 'hasOwnProperty',
+                    value: 'foo'
+                }
             },
             {
                 message: '"a" missing required peer "b"',
                 path: ['a'],
                 type: 'object.with',
-                context:
-                    {
-                        main: 'a',
-                        mainWithLabel: 'a',
-                        peer: 'b',
-                        peerWithLabel: 'b',
-                        label: 'a',
-                        key: 'a'
-                    }
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'a',
+                    peer: 'b',
+                    peerWithLabel: 'b',
+                    label: 'a',
+                    key: 'a'
+                }
             }
         ]);
+    });
+
+    it('should apply labels with nested objects', () => {
+
+        const schema = Joi.object({
+            a: Joi.number().label('first'),
+            b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+        }).with('a', ['b.c']);
+        const error = schema.validate({ a: 1 , b: { d: 2 } }).error;
+        expect(error).to.be.an.error('"first" missing required peer "second"');
+        expect(error.details).to.equal([{
+            message: '"first" missing required peer "second"',
+            path: ['a'],
+            type: 'object.with',
+            context: {
+                main: 'a',
+                mainWithLabel: 'first',
+                peer: 'b.c',
+                peerWithLabel: 'second',
+                label: 'a',
+                key: 'a'
+            }
+        }]);
     });
 
     describe('keys()', () => {
@@ -692,7 +715,7 @@ describe('object', () => {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
+                context: { child: 'b', label: 'b', key: 'b', value: 3 }
             }]);
 
             await b.validate({ b: 3 });
@@ -708,7 +731,7 @@ describe('object', () => {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
+                context: { child: 'b', label: 'b', key: 'b', value: 3 }
             }]);
         });
 
@@ -721,7 +744,7 @@ describe('object', () => {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
+                context: { child: 'b', label: 'b', key: 'b', value: 2 }
             }]);
 
             await b.validate({ a: 1, b: 2 });
@@ -911,7 +934,7 @@ describe('object', () => {
                         message: '"c" is not allowed',
                         path: ['a', 'c'],
                         type: 'object.allowUnknown',
-                        context: { child: 'c', label: 'c', key: 'c' }
+                        context: { child: 'c', label: 'c', key: 'c', value: 'ignore' }
                     }]
                 }]
             ]);
@@ -942,7 +965,7 @@ describe('object', () => {
                         message: '"c" is not allowed',
                         path: ['c'],
                         type: 'object.allowUnknown',
-                        context: { child: 'c', label: 'c', key: 'c' }
+                        context: { child: 'c', label: 'c', key: 'c', value: 'ignore' }
                     }]
                 }],
                 [{ a: { b: 5, c: 'ignore' } }, true]
@@ -1234,13 +1257,13 @@ describe('object', () => {
                         message: '"d" is not allowed',
                         path: ['d'],
                         type: 'object.allowUnknown',
-                        context: { child: 'd', key: 'd', label: 'd' }
+                        context: { child: 'd', key: 'd', label: 'd', value: 1 }
                     },
                     {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', key: 'b', label: 'b' }
+                        context: { child: 'b', key: 'b', label: 'b', value: 1 }
                     }
                 ]);
             });
@@ -1659,7 +1682,7 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
@@ -1686,7 +1709,7 @@ describe('object', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ bb: 'x' }, true],
@@ -1696,7 +1719,7 @@ describe('object', () => {
                         message: '"5" must be a boolean',
                         path: ['5'],
                         type: 'boolean.base',
-                        context: { label: '5', key: '5' }
+                        context: { label: '5', key: '5', value: 'x' }
                     }]
                 }],
                 [{ 5: false }, true],
@@ -1718,7 +1741,7 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
@@ -1745,7 +1768,7 @@ describe('object', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
                 [{ bb: 'x' }, true],
@@ -1755,7 +1778,7 @@ describe('object', () => {
                         message: '"5" must be a boolean',
                         path: ['5'],
                         type: 'boolean.base',
-                        context: { label: '5', key: '5' }
+                        context: { label: '5', key: '5', value: 'x' }
                     }]
                 }],
                 [{ 5: false }, true],
@@ -1778,7 +1801,7 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['x', '5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
@@ -1804,7 +1827,7 @@ describe('object', () => {
                     message: '"5" must be a boolean',
                     path: ['x', '5'],
                     type: 'boolean.base',
-                    context: { label: '5', key: '5' }
+                    context: { label: '5', key: '5', value: 'x' }
                 },
                 {
                     message: '"bb" must be one of [x]',
@@ -1824,7 +1847,7 @@ describe('object', () => {
                 message: '"a" is not allowed',
                 path: ['a'],
                 type: 'object.allowUnknown',
-                context: { child: 'a', label: 'a', key: 'a' }
+                context: { child: 'a', label: 'a', key: 'a', value: 5 }
             }]);
         });
 
@@ -1837,19 +1860,19 @@ describe('object', () => {
                 message: '"a" is not allowed',
                 path: ['a'],
                 type: 'object.allowUnknown',
-                context: { child: 'a', label: 'a', key: 'a' }
+                context: { child: 'a', label: 'a', key: 'a', value: 5 }
             }]);
         });
 
-        it('removes global flag from patterns', async () => {
+        it('reject global and sticky flags from patterns', () => {
 
-            const schema = Joi.object().pattern(/a/g, Joi.number());
-            await Joi.validate({ a1: 5, a2: 6 }, schema);
+            expect(() => Joi.object().pattern(/a/g, Joi.number())).to.throw('pattern should not use global or sticky mode');
+            expect(() => Joi.object().pattern(/a/y, Joi.number())).to.throw('pattern should not use global or sticky mode');
         });
 
         it('allows using empty() on values', async () => {
 
-            const schema = Joi.object().pattern(/a/g, Joi.any().empty(null));
+            const schema = Joi.object().pattern(/a/, Joi.any().empty(null));
 
             const value = await Joi.validate({ a1: undefined, a2: null, a3: 'test' }, schema);
             expect(value).to.equal({ a1: undefined, a2: undefined, a3: 'test' });
@@ -1934,6 +1957,60 @@ describe('object', () => {
                 }
             }]);
         });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).with('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { c: 'test2' } };
+            const sampleObject2 = { a: 'test', b: { d: 80 } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"a" missing required peer "b.c"');
+            expect(error2.details).to.equal([{
+                message: '"a" missing required peer "b.c"',
+                path: ['a'],
+                type: 'object.with',
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'a',
+                    peer: 'b.c',
+                    peerWithLabel: 'b.c',
+                    key: 'a',
+                    label: 'a'
+                }
+            }]);
+        });
+    });
+
+    it('should apply labels with nested objects', () => {
+
+        const schema = Joi.object({
+            a: Joi.number().label('first'),
+            b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+        }).with('a', ['b.c']);
+        const error = schema.validate({ a: 1 , b: { d: 2 } }).error;
+        expect(error).to.be.an.error('"first" missing required peer "second"');
+        expect(error.details).to.equal([{
+            message: '"first" missing required peer "second"',
+            path: ['a'],
+            type: 'object.with',
+            context: {
+                main: 'a',
+                mainWithLabel: 'first',
+                peer: 'b.c',
+                peerWithLabel: 'second',
+                label: 'a',
+                key: 'a'
+            }
+        }]);
     });
 
     describe('without()', () => {
@@ -2014,6 +2091,60 @@ describe('object', () => {
                 }
             }]);
         });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).without('a', ['b.c', 'b.d']);
+
+            const sampleObject = { a: 'test', d: 9000 };
+            const sampleObject2 = { a: 'test', b: { d: 80 } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"a" conflict with forbidden peer "b.d"');
+            expect(error2.details).to.equal([{
+                message: '"a" conflict with forbidden peer "b.d"',
+                path: ['a'],
+                type: 'object.without',
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'a',
+                    peer: 'b.d',
+                    peerWithLabel: 'b.d',
+                    key: 'a',
+                    label: 'a'
+                }
+            }]);
+        });
+
+        it('should apply labels with nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+            }).without('a', ['b.c']);
+            const error = schema.validate({ a: 1, b: { c: 'c' } }).error;
+            expect(error).to.be.an.error('"first" conflict with forbidden peer "second"');
+            expect(error.details).to.equal([{
+                message: '"first" conflict with forbidden peer "second"',
+                path: ['a'],
+                type: 'object.without',
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'first',
+                    peer: 'b.c',
+                    peerWithLabel: 'second',
+                    label: 'a',
+                    key: 'a'
+                }
+            }]);
+        });
     });
 
     describe('xor()', () => {
@@ -2058,7 +2189,7 @@ describe('object', () => {
                     label: 'value',
                     key: undefined
                 }
-            }] );
+            }]);
         });
 
         it('should apply labels with too many peers', () => {
@@ -2076,6 +2207,108 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b'],
                     peersWithLabels: ['first', 'second'],
+                    present: ['a', 'b'],
+                    presentWithLabels: ['first', 'second'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
+        });
+
+        it('should apply labels with too many peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second'),
+                c: Joi.string().label('third'),
+                d: Joi.string().label('fourth')
+            }).xor('a', 'b', 'c', 'd');
+            const error = schema.validate({ a: 1, b: 'b', d: 'd' }).error;
+            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [first, second, third, fourth]');
+            expect(error.details).to.equal([{
+                message: '"value" contains a conflict between exclusive peers [first, second, third, fourth]',
+                path: [],
+                type: 'object.xor',
+                context: {
+                    peers: ['a', 'b', 'c', 'd'],
+                    peersWithLabels: ['first', 'second', 'third', 'fourth'],
+                    present: ['a', 'b', 'd'],
+                    presentWithLabels: ['first', 'second', 'fourth'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
+        });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).xor('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { d: 80 } };
+            const sampleObject2 = { a: 'test', b: { c: 'test2' } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"value" contains a conflict between exclusive peers [a, b.c]');
+            expect(error2.details).to.equal([{
+                message: '"value" contains a conflict between exclusive peers [a, b.c]',
+                path: [],
+                type: 'object.xor',
+                context: {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['a', 'b.c'],
+                    present: ['a', 'b.c'],
+                    presentWithLabels: ['a', 'b.c'],
+                    key: undefined,
+                    label: 'value'
+                }
+            }]);
+        });
+
+        it('should apply labels without any nested peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+            }).xor('a', 'b.c');
+            const error = schema.validate({}).error;
+            expect(error).to.be.an.error('"value" must contain at least one of [first, second]');
+            expect(error.details).to.equal([{
+                message: '"value" must contain at least one of [first, second]',
+                path: [],
+                type: 'object.missing',
+                context: {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['first', 'second'],
+                    label: 'value',
+                    key: undefined
+                }
+            }] );
+        });
+
+        it('should apply labels with too many nested peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+            }).xor('a', 'b.c');
+            const error = schema.validate({ a: 1, b: { c: 'c' } }).error;
+            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [first, second]');
+            expect(error.details).to.equal([{
+                message: '"value" contains a conflict between exclusive peers [first, second]',
+                path: [],
+                type: 'object.xor',
+                context: {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['first', 'second'],
+                    present: ['a', 'b.c'],
+                    presentWithLabels: ['first', 'second'],
                     label: 'value',
                     key: undefined
                 }
@@ -2150,6 +2383,57 @@ describe('object', () => {
                     }
             }]);
         });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string() }),
+                d: Joi.number()
+            }).or('a', 'b.c');
+
+            const sampleObject = { b: { c: 'bc' } };
+            const sampleObject2 = { d: 90 };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"value" must contain at least one of [a, b.c]');
+            expect(error2.details).to.equal([{
+                message: '"value" must contain at least one of [a, b.c]',
+                path: [],
+                type: 'object.missing',
+                context: {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['a', 'b.c'],
+                    key: undefined,
+                    label: 'value'
+                }
+            }]);
+        });
+
+        it('should apply labels with nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+            }).or('a', 'b.c');
+            const error = schema.validate({}).error;
+            expect(error).to.be.an.error('"value" must contain at least one of [first, second]');
+            expect(error.details).to.equal([{
+                message: '"value" must contain at least one of [first, second]',
+                path: [],
+                type: 'object.missing',
+                context:
+                    {
+                        peers: ['a', 'b.c'],
+                        peersWithLabels: ['first', 'second'],
+                        label: 'value',
+                        key: undefined
+                    }
+            }]);
+        });
     });
 
     describe('and()', () => {
@@ -2177,6 +2461,85 @@ describe('object', () => {
                     }
             }]);
         });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).and('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { c: 'test2' } };
+            const sampleObject2 = { a: 'test', b: { d: 80 } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"value" contains [a] without its required peers [b.c]');
+            expect(error2.details).to.equal([{
+                message: '"value" contains [a] without its required peers [b.c]',
+                path: [],
+                type: 'object.and',
+                context: {
+                    present: ['a'],
+                    presentWithLabels: ['a'],
+                    missing: ['b.c'],
+                    missingWithLabels: ['b.c'],
+                    key: undefined,
+                    label: 'value'
+                }
+            }]);
+        });
+
+        it('should apply labels with nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+            }).and('a', 'b.c');
+            const error = schema.validate({ a: 1 }).error;
+            expect(error).to.be.an.error('"value" contains [first] without its required peers [second]');
+            expect(error.details).to.equal([{
+                message: '"value" contains [first] without its required peers [second]',
+                path: [],
+                type: 'object.and',
+                context:
+                    {
+                        present: ['a'],
+                        presentWithLabels: ['first'],
+                        missing: ['b.c'],
+                        missingWithLabels: ['second'],
+                        label: 'value',
+                        key: undefined
+                    }
+            }]);
+        });
+
+        it('should apply labels with invalid nested peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+            }).and('a', 'c.d');
+            const error = schema.validate({ a: 1, b: { d: 1 } }).error;
+            expect(error).to.be.an.error('"value" contains [first] without its required peers [c.d]');
+            expect(error.details).to.equal([{
+                message: '"value" contains [first] without its required peers [c.d]',
+                path: [],
+                type: 'object.and',
+                context:
+                    {
+                        present: ['a'],
+                        presentWithLabels: ['first'],
+                        missing: ['c.d'],
+                        missingWithLabels: ['c.d'],
+                        label: 'value',
+                        key: undefined
+                    }
+            }]);
+        });
     });
 
     describe('nand()', () => {
@@ -2197,6 +2560,60 @@ describe('object', () => {
                     main: 'a',
                     mainWithLabel: 'first',
                     peers: ['b'],
+                    peersWithLabels: ['second'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
+        });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).nand('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { d: 80 } };
+            const sampleObject2 = { a: 'test', b: { c: 'test2' } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"a" must not exist simultaneously with [b.c]');
+            expect(error2.details).to.equal([{
+                message: '"a" must not exist simultaneously with [b.c]',
+                path: [],
+                type: 'object.nand',
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'a',
+                    peers: ['b.c'],
+                    peersWithLabels: ['b.c'],
+                    key: undefined,
+                    label: 'value'
+                }
+            }]);
+        });
+
+        it('should apply labels with nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
+            }).nand('a', 'b.c');
+            const error = schema.validate({ a: 1, b: { c: 'c' } }).error;
+            expect(error).to.be.an.error('"first" must not exist simultaneously with [second]');
+            expect(error.details).to.equal([{
+                message: '"first" must not exist simultaneously with [second]',
+                path: [],
+                type: 'object.nand',
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'first',
+                    peers: ['b.c'],
                     peersWithLabels: ['second'],
                     label: 'value',
                     key: undefined
@@ -2349,7 +2766,7 @@ describe('object', () => {
                 message: '"value" must be an instance of "Foo"',
                 path: [],
                 type: 'object.type',
-                context: { type: 'Foo', label: 'value', key: undefined }
+                context: { type: 'Foo', label: 'value', key: undefined, value: {} }
             }]);
         });
 
@@ -2363,7 +2780,7 @@ describe('object', () => {
                 message: '"value" must be an instance of "Bar"',
                 path: [],
                 type: 'object.type',
-                context: { type: 'Bar', label: 'value', key: undefined }
+                context: { type: 'Bar', label: 'value', key: undefined, value: {} }
             }]);
         });
 
@@ -2377,7 +2794,7 @@ describe('object', () => {
                 message: '"value" must be an instance of "Bar"',
                 path: [],
                 type: 'object.type',
-                context: { type: 'Bar', label: 'value', key: undefined }
+                context: { type: 'Bar', label: 'value', key: undefined, value: {} }
             }]);
         });
 

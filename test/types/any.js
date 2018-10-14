@@ -249,10 +249,8 @@ describe('any', () => {
                 },
                 base: {
                     type: 'number',
-                    invalids: [
-                        Infinity,
-                        -Infinity
-                    ],
+                    invalids: [Infinity, -Infinity],
+                    flags: { unsafe: false },
                     rules: [
                         { arg: 10, name: 'min' }
                     ]
@@ -263,7 +261,8 @@ describe('any', () => {
                         type: 'number',
                         flags: {
                             allowOnly: true,
-                            presence: 'required'
+                            presence: 'required',
+                            unsafe: false
                         },
                         valids: [5],
                         invalids: [Infinity, -Infinity]
@@ -271,7 +270,8 @@ describe('any', () => {
                     then: {
                         type: 'number',
                         flags: {
-                            presence: 'required'
+                            presence: 'required',
+                            unsafe: false
                         },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
@@ -347,7 +347,7 @@ describe('any', () => {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.allowUnknown',
-                context: { child: 'b', label: 'b', key: 'b' }
+                context: { child: 'b', label: 'b', key: 'b', value: 'a' }
             }]);
         });
     });
@@ -1159,30 +1159,58 @@ describe('any', () => {
         it('sets an example', () => {
 
             const schema = Joi.valid(5, 6, 7).example(5);
-            expect(schema._examples).to.include(5);
-            expect(schema.describe().examples).to.equal([5]);
+            expect(schema._examples).to.equal([{ value: 5 }]);
+            expect(schema.describe().examples).to.equal([{ value: 5 }]);
         });
 
         it('does not flatten examples', () => {
 
-            const schema = Joi.array().items(5, 6, 7).example([5, 6]);
-            expect(schema._examples).to.equal([[5, 6]]);
-            expect(schema.describe().examples).to.equal([[5, 6]]);
+            const schema = Joi.array().items(5, 6, 7).example([[5, 6]]);
+            expect(schema._examples).to.equal([{ value: [5, 6] }]);
+            expect(schema.describe().examples).to.equal([{ value: [5, 6] }]);
         });
 
-        it('throws when tags are missing', () => {
+        it('throws on bad root arrays', () => {
 
-            expect(() => {
-
-                Joi.example();
-            }).to.throw('Missing example');
+            expect(() => Joi.array().items(5, 6, 7).example([5, 6])).to.throw('Options for example at index 0 must be an object');
         });
 
-        it('does not throw when example fails own rules', () => {
+        it('throws on bad example array length', () => {
 
-            const schema = Joi.valid(5, 6, 7).example(4);
-            expect(schema._examples).to.equal([4]);
-            expect(schema.describe().examples).to.equal([4]);
+            expect(() => Joi.array().items(5, 6, 7).example([5, {}, 6])).to.throw('Bad example format at index 0');
+        });
+
+        it('throws on null as options', () => {
+
+            expect(() => Joi.array().items(5, 6, 7).example([5, null])).to.throw('Options for example at index 0 must be an object');
+        });
+
+        it('throws when examples are missing', () => {
+
+            expect(() => Joi.example()).to.throw('Missing examples');
+        });
+
+        it('throws when example fails own rules', () => {
+
+            expect(() => Joi.valid(5, 6, 7).example(4)).to.throw('Bad example at index 0: "value" must be one of [5, 6, 7]');
+        });
+
+        it('validates a reference with parent examples', () => {
+
+            const schema = Joi.number().min(Joi.ref('other'));
+
+            expect(() => schema.example(0)).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example([0])).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example([0, { parent: { other: -1 } }])).to.not.throw();
+        });
+
+        it('validates a context reference with context', () => {
+
+            const schema = Joi.number().min(Joi.ref('$other'));
+
+            expect(() => schema.example(0)).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example([0])).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example([0, { context: { other: -1 } }])).to.not.throw();
         });
     });
 
@@ -1530,8 +1558,8 @@ describe('any', () => {
             ]);
 
             Helper.validate(a.concat(b), [
-                ['a', true],
-                ['A', true],
+                ['a', true, null, 'a'],
+                ['A', true, null, 'a'],
                 ['b', false, null, {
                     message: '"value" must be one of [a]',
                     details: [{
@@ -1554,7 +1582,7 @@ describe('any', () => {
                 type: 'any',
                 description: 'b',
                 tags: ['a', 'b'],
-                examples: ['a', 'b'],
+                examples: [{ value: 'a' }, { value: 'b' }],
                 unit: 'b'
             });
         });
@@ -1622,7 +1650,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 2 }
                     }]
                 }]
             ]);
@@ -1640,7 +1668,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 2 }
                     }]
                 }]
             ]);
@@ -1653,7 +1681,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 2 }
                     }]
                 }]
             ]);
@@ -1672,7 +1700,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'object.allowUnknown',
-                        context: { child: 'b', label: 'b', key: 'b' }
+                        context: { child: 'b', label: 'b', key: 'b', value: 2 }
                     }]
                 }]
             ]);
@@ -1684,7 +1712,7 @@ describe('any', () => {
                         message: '"a" is not allowed',
                         path: ['a'],
                         type: 'object.allowUnknown',
-                        context: { child: 'a', label: 'a', key: 'a' }
+                        context: { child: 'a', label: 'a', key: 'a', value: 1 }
                     }]
                 }],
                 [{ b: 2 }, true]
@@ -2137,7 +2165,7 @@ describe('any', () => {
                         message: '"c" must be a boolean',
                         path: ['c'],
                         type: 'boolean.base',
-                        context: { key: 'c', label: 'c' }
+                        context: { key: 'c', label: 'c', value: 'c' }
                     }]
                 }],
                 [{ a: 'aa' }, false, null, {
@@ -2198,6 +2226,7 @@ describe('any', () => {
                 base: {
                     type: 'number',
                     invalids: [Infinity, -Infinity],
+                    flags: { unsafe: false },
                     rules: [
                         { arg: 10, name: 'min' }
                     ]
@@ -2208,7 +2237,8 @@ describe('any', () => {
                         type: 'number',
                         flags: {
                             allowOnly: true,
-                            presence: 'required'
+                            presence: 'required',
+                            unsafe: false
                         },
                         valids: [5],
                         invalids: [Infinity, -Infinity]
@@ -2216,7 +2246,8 @@ describe('any', () => {
                     then: {
                         type: 'number',
                         flags: {
-                            presence: 'required'
+                            presence: 'required',
+                            unsafe: false
                         },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
@@ -2233,18 +2264,20 @@ describe('any', () => {
                 flags: { presence: 'ignore' },
                 base: {
                     type: 'number',
+                    flags: { unsafe: false },
                     invalids: [Infinity, -Infinity],
                     rules: [{ arg: 10, name: 'min' }]
                 },
                 alternatives: [{
                     peek: {
                         type: 'number',
+                        flags: { unsafe: false },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', arg: 5 }]
                     },
                     then: {
                         type: 'number',
-                        flags: { presence: 'required' },
+                        flags: { presence: 'required', unsafe: false },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
                     }
@@ -2629,7 +2662,7 @@ describe('any', () => {
                 expect(err.isJoi).to.exist();
                 expect(err.message).to.equal('child "b" fails because [child "c" fails because [Really wanted a number!]]');
                 expect(err.details).to.equal([{
-                    message: '"c" must be a number',
+                    message: 'Really wanted a number!',
                     path: ['b', 'c'],
                     type: 'number.base',
                     context: { key: 'c', label: 'c', value: 'x' }
@@ -2653,13 +2686,13 @@ describe('any', () => {
                 expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" must be larger than or equal to 0 and "c" must be an integer]]');
                 expect(err.details).to.equal([
                     {
-                        message: '"c" must be larger than or equal to 0',
+                        message: '"c" must be larger than or equal to 0 and "c" must be an integer',
                         path: ['b', 'c'],
                         type: 'number.min',
                         context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                     },
                     {
-                        message: '"c" must be an integer',
+                        message: '"c" must be larger than or equal to 0 and "c" must be an integer',
                         path: ['b', 'c'],
                         type: 'number.integer',
                         context: { value: -1.5, key: 'c', label: 'c' }
@@ -2699,13 +2732,13 @@ describe('any', () => {
                 expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" > 0 && "c" ∈ ℤ]]');
                 expect(err.details).to.equal([
                     {
-                        message: '"c" must be larger than or equal to 0',
+                        message: '"c" > 0 && "c" ∈ ℤ',
                         path: ['b', 'c'],
                         type: 'number.min',
                         context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                     },
                     {
-                        message: '"c" must be an integer',
+                        message: '"c" > 0 && "c" ∈ ℤ',
                         path: ['b', 'c'],
                         type: 'number.integer',
                         context: { value: -1.5, key: 'c', label: 'c' }
@@ -2791,13 +2824,13 @@ describe('any', () => {
                 expect(err.message).to.equal('"c" must be a positive integer');
                 expect(err.details).to.equal([
                     {
-                        message: '"c" must be larger than or equal to 0',
+                        message: '"c" must be a positive integer',
                         path: ['b', 'c'],
                         type: 'number.min',
                         context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                     },
                     {
-                        message: '"c" must be an integer',
+                        message: '"c" must be a positive integer',
                         path: ['b', 'c'],
                         type: 'number.integer',
                         context: { value: -1.5, key: 'c', label: 'c' }

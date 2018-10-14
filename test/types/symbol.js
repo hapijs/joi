@@ -47,7 +47,7 @@ describe('symbol', () => {
                         message: '"value" must be a symbol',
                         path: [],
                         type: 'symbol.base',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value', key: undefined, value: 1 }
                     }]
                 }]
             ]);
@@ -90,7 +90,7 @@ describe('symbol', () => {
                             message: `"value" must be one of Map { 1 => Symbol(1), 'two' => Symbol(2) }`,
                             path: [],
                             type: 'symbol.map',
-                            context: { label: 'value', key: undefined, map }
+                            context: { label: 'value', key: undefined, value: '1', map }
                         }]
                     }],
                     ['two', true, null, symbols[1]],
@@ -130,7 +130,7 @@ describe('symbol', () => {
                             message: `"value" must be one of Map { 'one' => Symbol(one), 'two' => Symbol(two) }`,
                             path: [],
                             type: 'symbol.map',
-                            context: { label: 'value', key: undefined, map: new Map([['one', symbols[0]], ['two', symbols[1]]]) }
+                            context: { label: 'value', key: undefined, value: 'toString', map: new Map([['one', symbols[0]], ['two', symbols[1]]]) }
                         }]
                     }]
                 ]);
@@ -210,7 +210,7 @@ describe('symbol', () => {
                 message: '"value" must be a symbol',
                 path: [],
                 type: 'symbol.base',
-                context: { label: 'value', key: undefined }
+                context: { label: 'value', key: undefined, value: 1 }
             }]);
         });
 

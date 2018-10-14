@@ -94,6 +94,21 @@ describe('string', () => {
             const schema = Joi.string().insensitive();
             expect(schema.insensitive()).to.shallow.equal(schema);
         });
+
+        it('sets right values with valid', () => {
+
+            const simpleSchema = Joi.string().insensitive().valid('A');
+            expect(simpleSchema.validate('a').value).to.equal('A');
+
+            const refSchema = Joi.string().insensitive().valid(Joi.ref('$v'));
+            expect(refSchema.validate('a', { context: { v: 'A' } }).value).to.equal('A');
+
+            const refArraySchema = Joi.string().insensitive().valid(Joi.ref('$v'));
+            expect(refArraySchema.validate('a', { context: { v: ['B', 'A'] } }).value).to.equal('A');
+
+            const strictSchema = Joi.string().insensitive().valid('A').strict();
+            expect(strictSchema.validate('a').value).to.equal('a');
+        });
     });
 
     describe('valid()', () => {
@@ -359,16 +374,17 @@ describe('string', () => {
 
         it('errors if reference is not a number', () => {
 
-            const schema = Joi.object({ a: Joi.any(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.any(), b: Joi.string().min(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -376,16 +392,17 @@ describe('string', () => {
 
         it('errors if context reference is not a number', () => {
 
-            const schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.string().min(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "context:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -483,16 +500,17 @@ describe('string', () => {
 
         it('errors if reference is not a number', () => {
 
-            const schema = Joi.object({ a: Joi.any(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.any(), b: Joi.string().max(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -500,16 +518,17 @@ describe('string', () => {
 
         it('errors if context reference is not a number', () => {
 
-            const schema = Joi.object({ b: Joi.string().max(Joi.ref('$a'), 'utf8') });
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.string().max(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "context:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -654,16 +673,17 @@ describe('string', () => {
 
         it('errors if reference is not a number', () => {
 
-            const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -671,16 +691,17 @@ describe('string', () => {
 
         it('errors if context reference is not a number', () => {
 
-            const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(Joi.ref('$a'), 'utf8') });
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(ref, 'utf8') });
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: 'child "b" fails because ["b" references "a" which is not a number]',
+                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
                     details: [{
-                        message: '"b" references "a" which is not a number',
+                        message: '"b" references "context:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
-                        context: { ref: 'a', label: 'b', key: 'b' }
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
                     }]
                 }]
             ]);
@@ -4855,13 +4876,10 @@ describe('string', () => {
             ]);
         });
 
-        it('validates regex (ignoring global flag)', () => {
+        it('rejects regex with global or sticky flag', () => {
 
-            const schema = Joi.string().regex(/a/g);
-            Helper.validate(schema, [
-                ['ab', true],
-                ['ac', true]
-            ]);
+            expect(() => Joi.string().regex(/a/g)).to.throw('pattern should not use global or sticky mode');
+            expect(() => Joi.string().regex(/a/y)).to.throw('pattern should not use global or sticky mode');
         });
 
         it('validates token', () => {
