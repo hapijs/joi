@@ -2662,7 +2662,7 @@ describe('any', () => {
                 expect(err.isJoi).to.exist();
                 expect(err.message).to.equal('child "b" fails because [child "c" fails because [Really wanted a number!]]');
                 expect(err.details).to.equal([{
-                    message: '"c" must be a number',
+                    message: 'Really wanted a number!',
                     path: ['b', 'c'],
                     type: 'number.base',
                     context: { key: 'c', label: 'c', value: 'x' }
@@ -2686,13 +2686,13 @@ describe('any', () => {
                 expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" must be larger than or equal to 0 and "c" must be an integer]]');
                 expect(err.details).to.equal([
                     {
-                        message: '"c" must be larger than or equal to 0',
+                        message: '"c" must be larger than or equal to 0 and "c" must be an integer',
                         path: ['b', 'c'],
                         type: 'number.min',
                         context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                     },
                     {
-                        message: '"c" must be an integer',
+                        message: '"c" must be larger than or equal to 0 and "c" must be an integer',
                         path: ['b', 'c'],
                         type: 'number.integer',
                         context: { value: -1.5, key: 'c', label: 'c' }
@@ -2732,13 +2732,13 @@ describe('any', () => {
                 expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" > 0 && "c" ∈ ℤ]]');
                 expect(err.details).to.equal([
                     {
-                        message: '"c" must be larger than or equal to 0',
+                        message: '"c" > 0 && "c" ∈ ℤ',
                         path: ['b', 'c'],
                         type: 'number.min',
                         context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                     },
                     {
-                        message: '"c" must be an integer',
+                        message: '"c" > 0 && "c" ∈ ℤ',
                         path: ['b', 'c'],
                         type: 'number.integer',
                         context: { value: -1.5, key: 'c', label: 'c' }
@@ -2824,13 +2824,13 @@ describe('any', () => {
                 expect(err.message).to.equal('"c" must be a positive integer');
                 expect(err.details).to.equal([
                     {
-                        message: '"c" must be larger than or equal to 0',
+                        message: '"c" must be a positive integer',
                         path: ['b', 'c'],
                         type: 'number.min',
                         context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
                     },
                     {
-                        message: '"c" must be an integer',
+                        message: '"c" must be a positive integer',
                         path: ['b', 'c'],
                         type: 'number.integer',
                         context: { value: -1.5, key: 'c', label: 'c' }
