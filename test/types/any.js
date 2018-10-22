@@ -187,6 +187,19 @@ describe('any', () => {
 
     describe('options()', () => {
 
+        it('does not modify provided options', () => {
+
+            const options = { convert: true };
+            const schema = Joi.object().options(options);
+            schema.validate({});
+            expect(options).to.equal({ convert: true });
+
+            const options2 = { convert: false };
+            Joi.validate({}, schema, options2);
+            expect(options).to.equal({ convert: true });
+            expect(options2).to.equal({ convert: false });
+        });
+
         it('adds to existing options', async () => {
 
             const schema = Joi.object({ b: Joi.number().strict().options({ convert: true }) });
