@@ -175,7 +175,12 @@ describe('object', () => {
                     message: '"value" must have at least 3 children',
                     path: [],
                     type: 'object.min',
-                    context: { limit: 3, label: 'value', key: undefined, value: { item: 'something', item2: 'something else' } }
+                    context: {
+                        limit: 3,
+                        label: 'value',
+                        key: undefined,
+                        value: { item: 'something', item2: 'something else' }
+                    }
                 }]
             }],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
@@ -203,7 +208,12 @@ describe('object', () => {
                     message: '"value" must have less than or equal to 2 children',
                     path: [],
                     type: 'object.max',
-                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something', item2: 'something else', item3: 'something something else' } }
+                    context: {
+                        limit: 2,
+                        label: 'value',
+                        key: undefined,
+                        value: { item: 'something', item2: 'something else', item3: 'something something else' }
+                    }
                 }]
             }],
             ['', false, null, {
@@ -233,13 +243,28 @@ describe('object', () => {
             }],
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
-            [{ item: 'something', item2: 'something else', item3: 'something something else', item4: 'item4' }, false, null, {
+            [{
+                item: 'something',
+                item2: 'something else',
+                item3: 'something something else',
+                item4: 'item4'
+            }, false, null, {
                 message: '"value" must have less than or equal to 3 children',
                 details: [{
                     message: '"value" must have less than or equal to 3 children',
                     path: [],
                     type: 'object.max',
-                    context: { limit: 3, label: 'value', key: undefined, value: { item: 'something', item2: 'something else', item3: 'something something else', item4: 'item4' } }
+                    context: {
+                        limit: 3,
+                        label: 'value',
+                        key: undefined,
+                        value: {
+                            item: 'something',
+                            item2: 'something else',
+                            item3: 'something something else',
+                            item4: 'item4'
+                        }
+                    }
                 }]
             }],
             ['', false, null, {
@@ -274,7 +299,12 @@ describe('object', () => {
                     message: '"value" must have 2 children',
                     path: [],
                     type: 'object.length',
-                    context: { limit: 2, label: 'value', key: undefined, value: { item: 'something', item2: 'something else', item3: 'something something else' } }
+                    context: {
+                        limit: 2,
+                        label: 'value',
+                        key: undefined,
+                        value: { item: 'something', item2: 'something else', item3: 'something something else' }
+                    }
                 }]
             }],
             ['', false, null, {
@@ -687,7 +717,7 @@ describe('object', () => {
             a: Joi.number().label('first'),
             b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
         }).with('a', ['b.c']);
-        const error = schema.validate({ a: 1 , b: { d: 2 } }).error;
+        const error = schema.validate({ a: 1, b: { d: 2 } }).error;
         expect(error).to.be.an.error('"first" missing required peer "second"');
         expect(error.details).to.equal([{
             message: '"first" missing required peer "second"',
@@ -1794,7 +1824,12 @@ describe('object', () => {
                 }).pattern(/\d+/, Joi.boolean()).pattern(/\w\w+/, 'x')
             };
 
-            const err = await expect(Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false })).to.reject();
+            const err = await expect(Joi.validate({
+                x: {
+                    bb: 'y',
+                    5: 'x'
+                }
+            }, schema, { abortEarly: false })).to.reject();
             expect(err).to.be.an.error('child "x" fails because [child "5" fails because ["5" must be a boolean], child "bb" fails because ["bb" must be one of [x]]]');
             expect(err.details).to.equal([
                 {
@@ -1820,7 +1855,12 @@ describe('object', () => {
                 }).pattern(Joi.number().positive(), Joi.boolean()).pattern(Joi.string().length(2), 'x')
             };
 
-            const err = await expect(Joi.validate({ x: { bb: 'y', 5: 'x' } }, schema, { abortEarly: false })).to.reject();
+            const err = await expect(Joi.validate({
+                x: {
+                    bb: 'y',
+                    5: 'x'
+                }
+            }, schema, { abortEarly: false })).to.reject();
             expect(err).to.be.an.error('child "x" fails because [child "5" fails because ["5" must be a boolean], child "bb" fails because ["bb" must be one of [x]]]');
             expect(err.details).to.equal([
                 {
@@ -1969,27 +2009,50 @@ describe('object', () => {
                 d: Joi.number()
             }).with('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: { c: 'test2' } };
-            const sampleObject2 = { a: 'test', b: { d: 80 } };
+            Helper.validate(schema, [
+                [{ a: 'test', b: { c: 'test2' } }, true],
+                [{ a: 'test', b: { d: 80 } }, false, null, {
+                    message: '"a" missing required peer "b.c"',
+                    details: [{
+                        message: '"a" missing required peer "b.c"',
+                        path: ['a'],
+                        type: 'object.with',
+                        context: {
+                            main: 'a',
+                            mainWithLabel: 'a',
+                            peer: 'b.c',
+                            peerWithLabel: 'b.c',
+                            key: 'a',
+                            label: 'a'
+                        }
+                    }]
+                }]
+            ]);
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.equal(null);
+            const schema2 = Joi.object({
+                a: Joi.object({ b: Joi.string() }),
+                b: Joi.object({ c: Joi.string() })
+            }).with('a.b', 'b.c');
 
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"a" missing required peer "b.c"');
-            expect(error2.details).to.equal([{
-                message: '"a" missing required peer "b.c"',
-                path: ['a'],
-                type: 'object.with',
-                context: {
-                    main: 'a',
-                    mainWithLabel: 'a',
-                    peer: 'b.c',
-                    peerWithLabel: 'b.c',
-                    key: 'a',
-                    label: 'a'
-                }
-            }]);
+            Helper.validate(schema2, [
+                [{ a: { b: 'test' }, b: { c: 'test2' } }, true],
+                [{ a: { b: 'test' }, b: {} }, false, null, {
+                    message: '"a.b" missing required peer "b.c"',
+                    details: [{
+                        message: '"a.b" missing required peer "b.c"',
+                        path: ['a', 'b'],
+                        type: 'object.with',
+                        context: {
+                            main: 'a.b',
+                            mainWithLabel: 'a.b',
+                            peer: 'b.c',
+                            peerWithLabel: 'b.c',
+                            key: 'b',
+                            label: 'b'
+                        }
+                    }]
+                }]
+            ]);
         });
     });
 
@@ -1999,7 +2062,7 @@ describe('object', () => {
             a: Joi.number().label('first'),
             b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
         }).with('a', ['b.c']);
-        const error = schema.validate({ a: 1 , b: { d: 2 } }).error;
+        const error = schema.validate({ a: 1, b: { d: 2 } }).error;
         expect(error).to.be.an.error('"first" missing required peer "second"');
         expect(error.details).to.equal([{
             message: '"first" missing required peer "second"',
@@ -2012,6 +2075,26 @@ describe('object', () => {
                 peerWithLabel: 'second',
                 label: 'a',
                 key: 'a'
+            }
+        }]);
+
+        const schema2 = Joi.object({
+            a: Joi.object({ b: Joi.string().label('first') }),
+            b: Joi.object({ c: Joi.string().label('second') })
+        }).with('a.b', ['b.c']);
+        const error2 = schema2.validate({ a: { b: 'test' }, b: {} }).error;
+        expect(error2).to.be.an.error('"first" missing required peer "second"');
+        expect(error2.details).to.equal([{
+            message: '"first" missing required peer "second"',
+            path: ['a', 'b'],
+            type: 'object.with',
+            context: {
+                main: 'a.b',
+                mainWithLabel: 'first',
+                peer: 'b.c',
+                peerWithLabel: 'second',
+                label: 'b',
+                key: 'b'
             }
         }]);
     });
@@ -2296,7 +2379,7 @@ describe('object', () => {
                     label: 'value',
                     key: undefined
                 }
-            }] );
+            }]);
         });
 
         it('should apply labels with too many nested peers', () => {
@@ -2767,7 +2850,8 @@ describe('object', () => {
 
         it('uses constructor name for default type name', async () => {
 
-            const Foo = function Foo() { };
+            const Foo = function Foo() {
+            };
 
             const schema = Joi.object().type(Foo);
             const err = await expect(schema.validate({})).to.reject('"value" must be an instance of "Foo"');
@@ -2781,7 +2865,8 @@ describe('object', () => {
 
         it('uses custom type name if supplied', async () => {
 
-            const Foo = function () { };
+            const Foo = function () {
+            };
 
             const schema = Joi.object().type(Foo, 'Bar');
             const err = await expect(schema.validate({})).to.reject('"value" must be an instance of "Bar"');
@@ -2795,7 +2880,8 @@ describe('object', () => {
 
         it('overrides constructor name with custom name', async () => {
 
-            const Foo = function Foo() { };
+            const Foo = function Foo() {
+            };
 
             const schema = Joi.object().type(Foo, 'Bar');
             const err = await expect(schema.validate({})).to.reject('"value" must be an instance of "Bar"');
@@ -2824,7 +2910,9 @@ describe('object', () => {
 
         it('uses the constructor reference in the schema description', () => {
 
-            const Foo = function Foo() { };
+            const Foo = function Foo() {
+            };
+
             const description = Joi.object().type(Foo).describe();
 
             expect(new Foo()).to.be.an.instanceof(description.rules[0].arg.ctor);
@@ -2984,7 +3072,10 @@ describe('object', () => {
 
         it('should set keys as optional', () => {
 
-            const schema = Joi.object({ a: Joi.number().required(), b: Joi.number().required() }).optionalKeys('a', 'b');
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().required()
+            }).optionalKeys('a', 'b');
             Helper.validate(schema, [
                 [{}, true],
                 [{ a: 0 }, true],
@@ -2997,7 +3088,10 @@ describe('object', () => {
 
         it('should set keys as forbidden', () => {
 
-            const schema = Joi.object({ a: Joi.number().required(), b: Joi.number().required() }).forbiddenKeys('a', 'b');
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().required()
+            }).forbiddenKeys('a', 'b');
             Helper.validate(schema, [
                 [{}, true],
                 [{ a: undefined }, true],
