@@ -1588,6 +1588,85 @@ describe('any', () => {
             ]);
         });
 
+        it('merges two schemas (flags with empty on both sides)', () => {
+
+            const a = Joi.string().valid('a').empty('');
+            const b = Joi.string().insensitive().empty(' ');
+
+            Helper.validate(a, [
+                ['a', true],
+                ['A', false, null, {
+                    message: '"value" must be one of [a]',
+                    details: [{
+                        message: '"value" must be one of [a]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { value: 'A', valids: ['a'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['b', false, null, {
+                    message: '"value" must be one of [a]',
+                    details: [{
+                        message: '"value" must be one of [a]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['', true, null, undefined],
+                [' ', false, null, {
+                    message: '"value" must be one of [a]',
+                    details: [{
+                        message: '"value" must be one of [a]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { value: ' ', valids: ['a'], label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+
+            const ab = a.concat(b);
+            Helper.validate(ab, [
+                ['a', true, null, 'a'],
+                ['A', true, null, 'a'],
+                ['b', false, null, {
+                    message: '"value" must be one of [a]',
+                    details: [{
+                        message: '"value" must be one of [a]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                    }]
+                }],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                    }]
+                }],
+                [' ', true, null, undefined]
+            ]);
+
+            expect(ab.describe()).to.equal({
+                type: 'string',
+                flags: {
+                    allowOnly: true,
+                    empty: {
+                        type: 'string',
+                        flags: { allowOnly: true },
+                        valids: [' '],
+                        invalids: ['']
+                    },
+                    insensitive: true
+                },
+                valids: ['a'],
+                invalids: ['']
+            });
+        });
+
         it('overrides and append information', () => {
 
             const a = Joi.description('a').unit('a').tags('a').example('a');
