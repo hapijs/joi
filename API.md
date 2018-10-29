@@ -628,7 +628,7 @@ Whitelists a value where:
   `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
 
 Note that this whitelist of allowed values is in *addition* to any other permitted values.
-To create an exclusive whitelist of values, see [`any.valid(value)`](#anyvalidvalue).
+To create an exclusive whitelist of values, see [`any.valid(value)`](#anyvalidvalue---aliases-only-equal).
 
 ```js
 const schema = {
