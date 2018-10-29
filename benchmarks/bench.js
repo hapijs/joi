@@ -1,0 +1,118 @@
+'use strict';
+
+const Fs = require('fs');
+const Benchmark = require('benchmark');
+const Bossy = require('bossy');
+const Chalk = require('chalk');
+const CliTable = require('cli-table');
+const D3 = require('d3-format');
+
+const definition = {
+    c: {
+        alias: 'compare',
+        type: 'string'
+    },
+    s: {
+        alias: 'save',
+        type: 'string'
+    },
+    t: {
+        alias: 'threshold',
+        type: 'number',
+        default: 10
+    }
+};
+
+const args = Bossy.parse(definition);
+
+let compare;
+if (args.compare) {
+    try {
+        compare = JSON.parse(Fs.readFileSync(args.compare, 'utf8'));
+    }
+    catch (e) {
+        // Ignore error
+    }
+}
+
+const formats = {
+    number: D3.format(',d'),
+    percentage: D3.format('.2f'),
+    integer: D3.format(',')
+};
+
+const Suite = new Benchmark.Suite('joi');
+
+const test = ([name, initFn, testFn]) => {
+
+    const [schema, value] = initFn();
+    Suite.add(name, () => {
+
+        testFn(schema, value);
+    });
+};
+
+require('./suite').forEach(test);
+
+Suite
+    .on('complete', (benches) => {
+
+        const report = benches.currentTarget.map((bench) => {
+
+            const { name, hz, stats } = bench;
+            return { name, hz, rme: stats.rme, size: stats.sample.length };
+        });
+
+        if (args.save) {
+            Fs.writeFileSync(args.save, JSON.stringify(report, null, 2), 'utf8');
+        }
+
+        const tableDefinition = {
+            head: [Chalk.blue('Name'), '', Chalk.yellow('Ops/sec'), Chalk.yellow('MoE'), Chalk.yellow('Sample size')],
+            colAligns: ['left', '', 'right', 'right', 'right']
+        };
+
+        if (compare) {
+            tableDefinition.head.push('', Chalk.cyan('Previous ops/sec'), Chalk.cyan('Previous MoE'), Chalk.cyan('Previous sample size'), '', Chalk.whiteBright('% difference'));
+            tableDefinition.colAligns.push('', 'right', 'right', 'right', '', 'right');
+        }
+
+        const table = new CliTable(tableDefinition);
+
+        table.push(...report.map((s) => {
+
+            const row = [
+                s.name,
+                '',
+                formats.number(s.hz),
+                `± ${formats.percentage(s.rme)} %`,
+                formats.integer(s.size)
+            ];
+
+            if (compare) {
+                const previousRun = compare.find((run) => run.name === s.name);
+                if (previousRun) {
+                    const difference = s.hz - previousRun.hz;
+                    const percentage = 100 * difference / previousRun.hz;
+                    const isSignificant = Math.abs(percentage) > args.threshold;
+                    const formattedDifference = `${percentage > 0 ? '+' : ''}${formats.percentage(percentage)} %`;
+                    row.push(
+                        '',
+                        formats.number(previousRun.hz),
+                        `± ${formats.percentage(s.rme)} %`,
+                        formats.integer(s.size),
+                        '',
+                        isSignificant
+                            ? Chalk[difference > 0 ? 'green' : 'red'](formattedDifference)
+                            : formattedDifference
+                    );
+                }
+            }
+
+            return row;
+        }));
+
+        console.log(table.toString());
+    });
+
+Suite.run();
