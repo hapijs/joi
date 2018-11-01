@@ -120,9 +120,3 @@ When validating a schema:
 # Browsers
 
 Joi doesn't directly support browsers, but you could use [joi-browser](https://github.com/jeffbski/joi-browser) for an ES5 build of Joi that works in browsers, or as a source of inspiration for your own builds.
-
-## Acknowledgements
-
-This project is kindly sponsored by:
-
-[![nearForm logo](https://www.nearform.com/img/nearform-logotype.svg)](https://nearform.com)
