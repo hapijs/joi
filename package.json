@@ -10,9 +10,6 @@
     "schema",
     "validation"
   ],
-  "engines": {
-    "node": ">=8.12.0"
-  },
   "dependencies": {
     "hoek": "6.x.x",
     "isemail": "3.x.x",
