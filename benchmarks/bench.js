@@ -59,8 +59,8 @@ Suite
 
         const report = benches.currentTarget.map((bench) => {
 
-            const { name, hz, stats } = bench;
-            return { name, hz, rme: stats.rme, size: stats.sample.length };
+            const { name, hz, stats, error } = bench;
+            return { name, hz, rme: stats.rme, size: stats.sample.length, error };
         });
 
         if (args.save) {
@@ -82,7 +82,7 @@ Suite
         table.push(...report.map((s) => {
 
             const row = [
-                s.name,
+                s.error ? Chalk.redBright(s.name) : s.name,
                 '',
                 formats.number(s.hz),
                 `± ${formats.percentage(s.rme)} %`,
@@ -113,6 +113,12 @@ Suite
         }));
 
         console.log(table.toString());
+
+        const errors = report.filter((s) => s.error);
+        if (errors.length) {
+            console.log(Chalk.redBright.underline.bold('\nErrors:'));
+            console.log(errors.map((e) => `> ${Chalk.italic(e.name)}\n${e.error.stack}`).join('\n'));
+        }
     });
 
 Suite.run();
