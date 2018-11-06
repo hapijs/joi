@@ -115,7 +115,7 @@ When validating a schema:
     ```
 
 * Strings are utf-8 encoded by default.
-* Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
+* Rules are defined in an additive fashion and evaluated in order after safelist and blocklist checks.
 
 # Browsers
 
