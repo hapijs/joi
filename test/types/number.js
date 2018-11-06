@@ -1414,6 +1414,18 @@ describe('number', () => {
         });
     });
 
+    describe('safe', () => {
+
+        it('should accept safe numbers', () => {
+
+            const t = Joi.number();
+            Helper.validate(t, [
+                [Number.MAX_SAFE_INTEGER, true, null, Number.MAX_SAFE_INTEGER],
+                [Number.MIN_SAFE_INTEGER, true, null, Number.MIN_SAFE_INTEGER],
+            ]);
+        });
+    });
+
     describe('min()', () => {
 
         it('throws when limit is not a number', () => {
