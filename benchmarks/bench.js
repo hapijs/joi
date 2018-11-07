@@ -99,8 +99,8 @@ Suite
                     row.push(
                         '',
                         formats.number(previousRun.hz),
-                        `± ${formats.percentage(s.rme)} %`,
-                        formats.integer(s.size),
+                        `± ${formats.percentage(previousRun.rme)} %`,
+                        formats.integer(previousRun.size),
                         '',
                         isSignificant
                             ? Chalk[difference > 0 ? 'green' : 'red'](formattedDifference)
