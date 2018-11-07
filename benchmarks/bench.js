@@ -6,6 +6,7 @@ const Bossy = require('bossy');
 const Chalk = require('chalk');
 const CliTable = require('cli-table');
 const D3 = require('d3-format');
+const Hoek = require('hoek');
 
 const definition = {
     c: {
@@ -45,11 +46,22 @@ const Suite = new Benchmark.Suite('joi');
 
 const test = ([name, initFn, testFn]) => {
 
-    const [schema, value] = initFn();
-    Suite.add(name, () => {
+    const [schema, valid, invalid] = initFn();
 
-        testFn(schema, value);
+    Hoek.assert(valid === undefined || testFn(schema, valid).error === null, 'validation must not fail for: ' + name);
+    Hoek.assert(invalid === undefined || testFn(schema, invalid).error !== null, 'validation must fail for: ' + name);
+
+    Suite.add(name + (valid !== undefined ? ' (valid)' : ''), () => {
+
+        testFn(schema, valid);
     });
+
+    if (invalid !== undefined) {
+        Suite.add(name + ' (invalid)', () => {
+
+            testFn(schema, invalid);
+        });
+    }
 };
 
 require('./suite').forEach(test);

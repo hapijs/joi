@@ -12,11 +12,12 @@ module.exports = [
                     .valid(['debug', 'info', 'notice'])
                     .required()
             }).unknown(false),
-            { id: '1', level: 'info' }
+            { id: '1', level: 'info' },
+            { id: '2', level: 'warning' }
         ],
         (schema, value) => {
 
-            schema.validate(value, { convert: false });
+            return schema.validate(value, { convert: false });
         }
     ],
     [
@@ -28,11 +29,12 @@ module.exports = [
                     .valid(['debug', 'info', 'notice'])
                     .required()
             }).unknown(false).options({ convert: false }),
-            { id: '1', level: 'info' }
+            { id: '1', level: 'info' },
+            { id: '2', level: 'warning' }
         ],
         (schema, value) => {
 
-            schema.validate(value);
+            return schema.validate(value);
         }
     ],
     [
@@ -63,6 +65,47 @@ module.exports = [
                 .strip()
                 .default(() => 'foo', 'Def')
                 .optional();
+        }
+    ],
+    [
+        'Schema creation with long valid() list',
+        () => {
+
+            const list = [];
+            for (let i = 10000; i < 50000; i++) {
+                list.push(i.toString());
+            }
+            return [list.filter(x => !['12345', '23456', '34567', '456789'].includes(x))];
+        },
+        (list) => {
+
+            Joi.object().keys({
+                foo: Joi.string().valid(list)
+            });
+        }
+    ],
+    [
+        'String with long valid() list',
+        () => {
+
+            const list = [];
+            for (let i = 10000; i < 50000; i++) {
+                list.push(i.toString());
+            }
+
+            const schema = Joi.string().valid(list);
+
+            let i = 0;
+            const value = () => {
+
+                return `${10000 + (++i % 40000)}`;
+            };
+
+            return [ schema, value, () => '5000' ];
+        },
+        (schema, value) => {
+
+            return schema.validate(value());
         }
     ]
 ];
