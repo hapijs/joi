@@ -1421,7 +1421,7 @@ describe('number', () => {
             const t = Joi.number();
             Helper.validate(t, [
                 [Number.MAX_SAFE_INTEGER, true, null, Number.MAX_SAFE_INTEGER],
-                [Number.MIN_SAFE_INTEGER, true, null, Number.MIN_SAFE_INTEGER],
+                [Number.MIN_SAFE_INTEGER, true, null, Number.MIN_SAFE_INTEGER]
             ]);
         });
     });
