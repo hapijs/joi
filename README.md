@@ -71,17 +71,17 @@ const schema = {
 Note that **joi** schema objects are immutable which means every additional rule added (e.g. `.min(5)`) will return a
 new schema object.
 
-Then the value is validated against the schema:
+Second, the value is validated against the defined schema:
 
 ```javascript
 const {error, value} = Joi.validate({ a: 'a string' }, schema);
 
 // or
 
-Joi.validate({ a: 'a string' }, schema, function (err, value) { });
+Joi.validate({ a: 'a string' }, schema, function (error, value) { });
 ```
 
-If the input is valid, then the error will be `null`, otherwise it will be an Error object.
+If the input is valid, then the `error` will be `null`, otherwise it will be an `Error` object providing more information.
 
 The schema can be a plain JavaScript object where every key is assigned a **joi** type, or it can be a **joi** type directly:
 
