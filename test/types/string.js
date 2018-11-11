@@ -10222,7 +10222,8 @@ describe('string', () => {
                     }]
                 }],
                 ['data:image/png;base64,YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
-                ['data:image/png;charset=utf-8,=YW55IGNhcm5hbCBwbGVhc3VyZS', true]
+                ['data:image/png;charset=utf-8,=YW55IGNhcm5hbCBwbGVhc3VyZS', true],
+                ['data:text/x-script.phyton;charset=utf-8,=YW55IGNhcm5hbCBwbGVhc3VyZS', true]
             ]);
         });
 
