@@ -395,10 +395,13 @@ so that if one key validation depends on another, the dependent key is validated
 References support the following arguments:
 - `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
   their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
-  which is looked up in the `context` option object.
+  which is looked up in the `context` option object. If the `key` starts with a separator character, it is the same as setting
+  `options.self` to `true`.
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator.
     - `contextPrefix` - overrides the default `$` context prefix signifier.
+    - `self` - if `true`, the reference is for a property of the value it operates on instead of a sibling of the value.
+      Defaults to `false`.
     - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
