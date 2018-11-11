@@ -72,10 +72,11 @@ module.exports = [
         () => {
 
             const list = [];
-            for (let i = 10000; i < 50000; i++) {
+            for (let i = 10000; i < 50000; ++i) {
                 list.push(i.toString());
             }
-            return [list.filter(x => !['12345', '23456', '34567', '456789'].includes(x))];
+
+            return [list.filter((x) => !['12345', '23456', '34567', '456789'].includes(x))];
         },
         (list) => {
 
@@ -89,7 +90,7 @@ module.exports = [
         () => {
 
             const list = [];
-            for (let i = 10000; i < 50000; i++) {
+            for (let i = 10000; i < 50000; ++i) {
                 list.push(i.toString());
             }
 
@@ -101,7 +102,7 @@ module.exports = [
                 return `${10000 + (++i % 40000)}`;
             };
 
-            return [ schema, value, () => '5000' ];
+            return [schema, value, () => '5000'];
         },
         (schema, value) => {
 
