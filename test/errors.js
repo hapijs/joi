@@ -2,6 +2,7 @@
 
 // Load modules
 
+const Code = require('code');
 const Lab = require('lab');
 const Joi = require('../lib');
 
@@ -13,7 +14,8 @@ const internals = {};
 
 // Test shortcuts
 
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 describe('errors', () => {
@@ -446,7 +448,7 @@ describe('errors', () => {
             const schema = {
                 a: Joi.string().valid('a', 'b', 'c', 'd'),
                 y: Joi.object({
-                    u: Joi.string().valid(['e', 'f', 'g', 'h']).required(),
+                    u: Joi.string().valid('e', 'f', 'g', 'h').required(),
                     b: Joi.string().valid('i', 'j').allow(false),
                     d: Joi.object({
                         x: Joi.string().valid('k', 'l').required(),

@@ -1,20 +1,16 @@
 'use strict';
 
-// Load modules
-
+const Code = require('code');
 const Lab = require('lab');
 const Joi = require('../lib');
 const Helper = require('./helper');
 
 
-// Declare internals
-
 const internals = {};
 
 
-// Test shortcuts
-
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 describe('Joi', () => {
@@ -1359,13 +1355,13 @@ describe('Joi', () => {
     it('validates alternatives', async () => {
 
         const schema = Joi.object({
-            auth: Joi.alternatives(
+            auth: Joi.alternatives([
                 Joi.object({
                     mode: Joi.string().valid('required', 'optional', 'try').allow(null)
                 }).allow(null),
                 Joi.string(),
                 Joi.boolean()
-            )
+            ])
         });
 
         const err = await expect(schema.validate({ auth: { mode: 'none' } })).to.reject();
@@ -1458,10 +1454,10 @@ describe('Joi', () => {
     it('validates required alternatives', () => {
 
         const schema = {
-            a: Joi.alternatives(
+            a: Joi.alternatives([
                 Joi.string().required(),
                 Joi.boolean().required()
-            )
+            ])
         };
 
         Helper.validate(schema, [
@@ -1789,13 +1785,13 @@ describe('Joi', () => {
     it('validates key with required alternatives', async () => {
 
         const config = {
-            module: Joi.alt().try(
+            module: Joi.alt().try([
                 Joi.object({
                     compile: Joi.func().required(),
                     execute: Joi.func()
                 }).required(),
                 Joi.string().required()
-            )
+            ])
         };
 
         await Joi.compile(config).validate({});
@@ -1804,13 +1800,13 @@ describe('Joi', () => {
     it('validates required key with alternatives', async () => {
 
         const config = {
-            module: Joi.alt().try(
+            module: Joi.alt().try([
                 Joi.object({
                     compile: Joi.func().required(),
                     execute: Joi.func()
                 }),
                 Joi.string()
-            ).required()
+            ]).required()
         };
 
         const err = await expect(Joi.compile(config).validate({})).to.reject();
@@ -2828,12 +2824,13 @@ describe('Joi', () => {
 
         describe('parameters', () => {
 
-            it('must be an object or array of objects', () => {
+            it('must be an object or multiple object arguments', () => {
 
                 expect(() => Joi.extend(true)).to.throw(/"value" at position 0 does not match any of the allowed types/);
                 expect(() => Joi.extend(null)).to.throw(/"value" at position 0 does not match any of the allowed types/);
-                expect(() => Joi.extend([{ name: 'foo' }, true])).to.throw(/"value" at position 1 does not match any of the allowed types/);
-                expect(() => Joi.extend([{ name: 'foo' }, null])).to.throw(/"value" at position 1 does not match any of the allowed types/);
+                expect(() => Joi.extend({ name: 'foo' }, true)).to.throw(/"value" at position 1 does not match any of the allowed types/);
+                expect(() => Joi.extend({ name: 'foo' }, null)).to.throw(/"value" at position 1 does not match any of the allowed types/);
+                expect(() => Joi.extend([{ name: 'foo' }])).to.throw('Method no longer accepts array arguments: extend');
                 expect(() => Joi.extend()).to.throw('You need to provide at least one extension');
             });
 
@@ -3814,7 +3811,7 @@ describe('Joi', () => {
 
         it('should be able to use types defined in the same extend call', () => {
 
-            const customJoi = Joi.extend([
+            const customJoi = Joi.extend(
                 {
                     name: 'myType'
                 },
@@ -3822,14 +3819,14 @@ describe('Joi', () => {
                     name: 'mySecondType',
                     base: joi.myType()
                 })
-            ]);
+            );
 
             expect(() => customJoi.mySecondType()).to.not.throw();
         });
 
         it('should be able to merge rules when type is defined several times in the same extend call', () => {
 
-            const customJoi = Joi.extend([
+            const customJoi = Joi.extend(
                 (joi) => ({
                     name: 'myType',
                     base: joi.myType ? joi.myType() : joi.number(), // Inherit an already existing implementation or number
@@ -3856,7 +3853,7 @@ describe('Joi', () => {
                         }
                     ]
                 })
-            ]);
+            );
 
             expect(() => customJoi.myType().foo().bar()).to.not.throw();
             expect(customJoi.attempt({ a: 123, b: 456 }, { a: customJoi.myType().foo(), b: customJoi.myType().bar() })).to.equal({ a: 1, b: 2 });
@@ -3864,7 +3861,7 @@ describe('Joi', () => {
 
         it('should only keep last definition when type is defined several times with different bases', () => {
 
-            const customJoi = Joi.extend([
+            const customJoi = Joi.extend(
                 (joi) => ({
                     name: 'myType',
                     base: Joi.number(),
@@ -3891,7 +3888,7 @@ describe('Joi', () => {
                         }
                     ]
                 })
-            ]);
+            );
 
             expect(() => customJoi.myType().foo()).to.throw();
             expect(() => customJoi.myType().bar()).to.not.throw();

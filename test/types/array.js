@@ -1,20 +1,17 @@
 'use strict';
 
-// Load modules
-
+const Code = require('code');
 const Lab = require('lab');
 const Joi = require('../..');
+
 const Helper = require('../helper');
 
-
-// Declare internals
 
 const internals = {};
 
 
-// Test shortcuts
-
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 describe('array', () => {
@@ -2114,7 +2111,7 @@ describe('array', () => {
 
         it('validates input against items in order', async () => {
 
-            const schema = Joi.array().ordered([Joi.string().required(), Joi.number().required()]);
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required());
             const input = ['s1', 2];
             const value = await schema.validate(input);
             expect(value).to.equal(['s1', 2]);
@@ -2122,7 +2119,7 @@ describe('array', () => {
 
         it('validates input with optional item', async () => {
 
-            const schema = Joi.array().ordered([Joi.string().required(), Joi.number().required(), Joi.number()]);
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number());
             const input = ['s1', 2, 3];
 
             const value = await schema.validate(input);
@@ -2131,7 +2128,7 @@ describe('array', () => {
 
         it('validates input without optional item', async () => {
 
-            const schema = Joi.array().ordered([Joi.string().required(), Joi.number().required(), Joi.number()]);
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number());
             const input = ['s1', 2];
 
             const value = await schema.validate(input);
@@ -2140,7 +2137,7 @@ describe('array', () => {
 
         it('validates input without optional item', async () => {
 
-            const schema = Joi.array().ordered([Joi.string().required(), Joi.number().required(), Joi.number()]).sparse(true);
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number()).sparse(true);
             const input = ['s1', 2, undefined];
 
             const value = await schema.validate(input);
@@ -2149,7 +2146,7 @@ describe('array', () => {
 
         it('validates input without optional item in a sparse array', async () => {
 
-            const schema = Joi.array().ordered([Joi.string().required(), Joi.number(), Joi.number().required()]).sparse(true);
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number(), Joi.number().required()).sparse(true);
             const input = ['s1', undefined, 3];
 
             const value = await schema.validate(input);
@@ -2158,7 +2155,7 @@ describe('array', () => {
 
         it('validates when input matches ordered items and matches regular items', async () => {
 
-            const schema = Joi.array().ordered([Joi.string().required(), Joi.number().required()]).items(Joi.number());
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number());
             const input = ['s1', 2, 3, 4, 5];
             const value = await schema.validate(input);
             expect(value).to.equal(['s1', 2, 3, 4, 5]);
@@ -2166,7 +2163,7 @@ describe('array', () => {
 
         it('errors when input does not match ordered items', async () => {
 
-            const schema = Joi.array().ordered([Joi.number().required(), Joi.string().required()]);
+            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
             const input = ['s1', 2];
             const err = await expect(schema.validate(input)).to.reject('"value" at position 0 fails because ["0" must be a number]');
             expect(err.details).to.equal([{
@@ -2179,7 +2176,7 @@ describe('array', () => {
 
         it('errors when input has more items than ordered items', async () => {
 
-            const schema = Joi.array().ordered([Joi.number().required(), Joi.string().required()]);
+            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
             const input = [1, 's2', 3];
             const err = await expect(schema.validate(input)).to.reject('"value" at position 2 fails because array must contain at most 2 items');
             expect(err.details).to.equal([{
@@ -2192,7 +2189,7 @@ describe('array', () => {
 
         it('errors when input has more items than ordered items with abortEarly = false', async () => {
 
-            const schema = Joi.array().ordered([Joi.string(), Joi.number()]).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.string(), Joi.number()).options({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
             const err = await expect(schema.validate(input)).to.reject();
             expect(err).to.be.an.error('"value" at position 0 fails because ["0" must be a string]. "value" at position 2 fails because array must contain at most 2 items. "value" at position 3 fails because array must contain at most 2 items. "value" at position 4 fails because array must contain at most 2 items');
@@ -2227,7 +2224,7 @@ describe('array', () => {
 
         it('errors when input has less items than ordered items', async () => {
 
-            const schema = Joi.array().ordered([Joi.number().required(), Joi.string().required()]);
+            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
             const input = [1];
             const err = await expect(schema.validate(input)).to.reject('"value" does not contain 1 required value(s)');
             expect(err.details).to.equal([{
@@ -2240,7 +2237,7 @@ describe('array', () => {
 
         it('errors when input matches ordered items but not matches regular items', async () => {
 
-            const schema = Joi.array().ordered([Joi.string().required(), Joi.number().required()]).items(Joi.number()).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number()).options({ abortEarly: false });
             const input = ['s1', 2, 3, 4, 's5'];
             const err = await expect(schema.validate(input)).to.reject('"value" at position 4 fails because ["4" must be a number]');
             expect(err.details).to.equal([{
@@ -2253,7 +2250,7 @@ describe('array', () => {
 
         it('errors when input does not match ordered items but matches regular items', async () => {
 
-            const schema = Joi.array().ordered([Joi.string(), Joi.number()]).items(Joi.number()).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.number()).options({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
             const err = await expect(schema.validate(input)).to.reject('"value" at position 0 fails because ["0" must be a string]');
             expect(err.details).to.equal([{
@@ -2266,7 +2263,7 @@ describe('array', () => {
 
         it('errors when input does not match ordered items not matches regular items', async () => {
 
-            const schema = Joi.array().ordered([Joi.string(), Joi.number()]).items(Joi.string()).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.string()).options({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
             const err = await expect(schema.validate(input)).to.reject();
             expect(err).to.be.an.error('"value" at position 0 fails because ["0" must be a string]. "value" at position 2 fails because ["2" must be a string]. "value" at position 3 fails because ["3" must be a string]. "value" at position 4 fails because ["4" must be a string]');
@@ -2301,7 +2298,7 @@ describe('array', () => {
 
         it('errors but continues when abortEarly is set to false', async () => {
 
-            const schema = Joi.array().ordered([Joi.number().required(), Joi.string().required()]).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required()).options({ abortEarly: false });
             const input = ['s1', 2];
             const err = await expect(schema.validate(input)).to.reject();
             expect(err).to.be.an.error('"value" at position 0 fails because ["0" must be a number]. "value" at position 1 fails because ["1" must be a string]');
@@ -2442,7 +2439,7 @@ describe('array', () => {
 
         it('strips item', async () => {
 
-            const schema = Joi.array().ordered([Joi.string().required(), Joi.number().strip(), Joi.number().required()]);
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().strip(), Joi.number().required());
             const input = ['s1', 2, 3];
             const value = await schema.validate(input);
             expect(value).to.equal(['s1', 3]);
@@ -2450,7 +2447,7 @@ describe('array', () => {
 
         it('strips multiple items', async () => {
 
-            const schema = Joi.array().ordered([Joi.string().strip(), Joi.number(), Joi.number().strip()]);
+            const schema = Joi.array().ordered(Joi.string().strip(), Joi.number(), Joi.number().strip());
             const input = ['s1', 2, 3];
             const value = await schema.validate(input);
             expect(value).to.equal([2]);

@@ -1,21 +1,18 @@
 'use strict';
 
-// Load modules
-
+const Code = require('code');
 const Lab = require('lab');
 const Joi = require('../..');
+
 const Lazy = require('../../lib/types/lazy/index');
 const Helper = require('../helper');
 
 
-// Declare internals
-
 const internals = {};
 
 
-// Test shortcuts
-
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 describe('lazy', () => {

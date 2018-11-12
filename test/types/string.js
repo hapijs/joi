@@ -1,20 +1,17 @@
 'use strict';
 
-// Load modules
-
+const Code = require('code');
 const Lab = require('lab');
 const Joi = require('../..');
+
 const Helper = require('../helper');
 
-
-// Declare internals
 
 const internals = {};
 
 
-// Test shortcuts
-
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 process.env.TZ = 'utc'; // Needed for timezone sensitive tests
@@ -4668,7 +4665,7 @@ describe('string', () => {
 
         it('validates array arguments correctly', () => {
 
-            const schema = Joi.string().valid(['a', 'b', 'c']);
+            const schema = Joi.string().valid('a', 'b', 'c');
             Helper.validate(schema, [
                 ['x', false, null, {
                     message: '"value" must be one of [a, b, c]',
