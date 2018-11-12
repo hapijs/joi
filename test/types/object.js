@@ -2406,6 +2406,98 @@ describe('object', () => {
         });
     });
 
+    describe('oxor()', () => {
+
+        it('should throw an error when a parameter is not a string', () => {
+
+            let error;
+            try {
+                Joi.object().oxor({});
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().oxor(123);
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+
+            expect(error).to.equal(true);
+        });
+
+        it('allows none of optional peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.string()
+            }).oxor('a', 'b');
+
+            const error = schema.validate({}).error;
+            expect(error).to.not.exist();
+        });
+
+        it('should apply labels with too many peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).oxor('a', 'b');
+            const error = schema.validate({ a: 1, b: 'b' }).error;
+            expect(error).to.be.an.error('"value" contains a conflict between optional exclusive peers [first, second]');
+            expect(error.details).to.equal([{
+                message: '"value" contains a conflict between optional exclusive peers [first, second]',
+                path: [],
+                type: 'object.oxor',
+                context: {
+                    peers: ['a', 'b'],
+                    peersWithLabels: ['first', 'second'],
+                    present: ['a', 'b'],
+                    presentWithLabels: ['first', 'second'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
+        });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).oxor('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { d: 80 } };
+            const sampleObject2 = { a: 'test', b: { c: 'test2' } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"value" contains a conflict between optional exclusive peers [a, b.c]');
+            expect(error2.details).to.equal([{
+                message: '"value" contains a conflict between optional exclusive peers [a, b.c]',
+                path: [],
+                type: 'object.oxor',
+                context: {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['a', 'b.c'],
+                    present: ['a', 'b.c'],
+                    presentWithLabels: ['a', 'b.c'],
+                    key: undefined,
+                    label: 'value'
+                }
+            }]);
+        });
+    });
+
     describe('or()', () => {
 
         it('should throw an error when a parameter is not a string', () => {
@@ -2467,12 +2559,12 @@ describe('object', () => {
                 path: [],
                 type: 'object.missing',
                 context:
-                    {
-                        peers: ['a', 'b'],
-                        peersWithLabels: ['first', 'second'],
-                        label: 'value',
-                        key: undefined
-                    }
+                {
+                    peers: ['a', 'b'],
+                    peersWithLabels: ['first', 'second'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
 
@@ -2518,12 +2610,12 @@ describe('object', () => {
                 path: [],
                 type: 'object.missing',
                 context:
-                    {
-                        peers: ['a', 'b.c'],
-                        peersWithLabels: ['first', 'second'],
-                        label: 'value',
-                        key: undefined
-                    }
+                {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['first', 'second'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
     });
@@ -2543,14 +2635,14 @@ describe('object', () => {
                 path: [],
                 type: 'object.and',
                 context:
-                    {
-                        present: ['a'],
-                        presentWithLabels: ['first'],
-                        missing: ['b'],
-                        missingWithLabels: ['second'],
-                        label: 'value',
-                        key: undefined
-                    }
+                {
+                    present: ['a'],
+                    presentWithLabels: ['first'],
+                    missing: ['b'],
+                    missingWithLabels: ['second'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
 
@@ -2598,14 +2690,14 @@ describe('object', () => {
                 path: [],
                 type: 'object.and',
                 context:
-                    {
-                        present: ['a'],
-                        presentWithLabels: ['first'],
-                        missing: ['b.c'],
-                        missingWithLabels: ['second'],
-                        label: 'value',
-                        key: undefined
-                    }
+                {
+                    present: ['a'],
+                    presentWithLabels: ['first'],
+                    missing: ['b.c'],
+                    missingWithLabels: ['second'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
 
@@ -2622,14 +2714,14 @@ describe('object', () => {
                 path: [],
                 type: 'object.and',
                 context:
-                    {
-                        present: ['a'],
-                        presentWithLabels: ['first'],
-                        missing: ['c.d'],
-                        missingWithLabels: ['c.d'],
-                        label: 'value',
-                        key: undefined
-                    }
+                {
+                    present: ['a'],
+                    presentWithLabels: ['first'],
+                    missing: ['c.d'],
+                    missingWithLabels: ['c.d'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
     });

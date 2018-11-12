@@ -1961,6 +1961,20 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.xor`](#objectxor), [`object.missing`](#objectmissing)
 
+#### `object.oxor(...peers)`
+
+Defines an exclusive relationship between a set of keys where only one is allowed but non are required where:
+- `peers` - the exclusive key names that must not appear together but where none are required.
+
+```js
+const schema = Joi.object().keys({
+    a: Joi.any(),
+    b: Joi.any()
+}).oxor('a', 'b');
+```
+
+💥 Possible validation errors:[`object.xor`](#objectxor), [`object.missing`](#objectmissing)
+
 #### `object.with(key, peers)`
 
 Requires the presence of other keys whenever the specified key is present where:
