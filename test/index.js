@@ -3297,7 +3297,7 @@ describe('Joi', () => {
                         },
                         validate(params, value, state, options) {
 
-                            const q = params.q(state.parent, options) || 0;
+                            const q = params.q(value, state.ancestors, options) || 0;
                             const v = value * q;
                             return params.currency ? params.currency + v : v;
                         }

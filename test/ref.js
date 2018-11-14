@@ -24,6 +24,241 @@ describe('ref', () => {
         expect(Joi.isRef(Joi.ref('a.b'))).to.be.true();
     });
 
+    it('throws when reference reaches beyond the schema root', () => {
+
+        const schema = {
+            a: Joi.any(),
+            b: Joi.ref('...c')
+        };
+
+        expect(() => Joi.validate({ a: 1, b: 2 }, schema)).to.throw('Invalid reference exceeds the schema root: ref:...c');
+    });
+
+    it('reaches parent', () => {
+
+        const schema = {
+            a: Joi.any(),
+            a1: Joi.ref('a'),
+            a2: Joi.ref('..a')
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: 1,
+                    a1: 1,
+                    a2: 1
+                }, true
+            ]
+        ]);
+    });
+
+    it('reaches grandparent', () => {
+
+        const schema = {
+            a: Joi.any(),
+            b: {
+                a1: Joi.ref('...a'),
+                a2: Joi.ref('...a')
+            }
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: 1,
+                    b: {
+                        a1: 1,
+                        a2: 1
+                    }
+                }, true
+            ]
+        ]);
+    });
+
+    it('reaches any level of the relative value structure', () => {
+
+        const ix = Joi.ref('...i');
+
+        const schema = {
+            a: {
+                b: {
+                    c: {
+                        d: Joi.any()
+                    },
+                    e: 2,
+                    dx: Joi.ref('c.d'),
+                    ex: Joi.ref('..e'),
+                    ix,
+                    gx: Joi.ref('....f.g'),
+                    hx: Joi.ref('....h')
+                },
+                i: Joi.any()
+            },
+            f: {
+                g: Joi.any()
+            },
+            h: Joi.any()
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: {
+                        b: {
+                            c: {
+                                d: 1
+                            },
+                            e: 2,
+                            dx: 1,
+                            ex: 2,
+                            gx: 3,
+                            hx: 4,
+                            ix: 5
+                        },
+                        i: 5
+                    },
+                    f: {
+                        g: 3
+                    },
+                    h: 4
+                }, true
+            ],
+            [
+                {
+                    a: {
+                        b: {
+                            c: {
+                                d: 1
+                            },
+                            e: 2,
+                            dx: 1,
+                            ex: 2,
+                            gx: 3,
+                            hx: 4,
+                            ix: 5
+                        },
+                        i: 10
+                    },
+                    f: {
+                        g: 3
+                    },
+                    h: 4
+                }, false, null, {
+                    message: 'child "a" fails because [child "b" fails because [child "ix" fails because ["ix" must be one of [ref:...i]]]]',
+                    details: [
+                        {
+                            message: '"ix" must be one of [ref:...i]',
+                            path: ['a', 'b', 'ix'],
+                            type: 'any.allowOnly',
+                            context: {
+                                value: 5,
+                                valids: [ix],
+                                key: 'ix',
+                                label: 'ix'
+                            }
+                        }
+                    ]
+
+                }
+            ]
+        ]);
+    });
+
+    it('reaches any level of the relative value structure (ancestor option)', () => {
+
+        const ix = Joi.ref('i', { ancestor: 2 });
+
+        const schema = {
+            a: {
+                b: {
+                    c: {
+                        d: Joi.any()
+                    },
+                    e: 2,
+                    dx: Joi.ref('c.d', { ancestor: 1 }),
+                    ex: Joi.ref('e', { ancestor: 1 }),
+                    ix,
+                    gx: Joi.ref('f.g', { ancestor: 3 }),
+                    hx: Joi.ref('h', { ancestor: 3 })
+                },
+                i: Joi.any()
+            },
+            f: {
+                g: Joi.any()
+            },
+            h: Joi.any()
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: {
+                        b: {
+                            c: {
+                                d: 1
+                            },
+                            e: 2,
+                            dx: 1,
+                            ex: 2,
+                            gx: 3,
+                            hx: 4,
+                            ix: 5
+                        },
+                        i: 5
+                    },
+                    f: {
+                        g: 3
+                    },
+                    h: 4
+                }, true
+            ],
+            [
+                {
+                    a: {
+                        b: {
+                            c: {
+                                d: 1
+                            },
+                            e: 2,
+                            dx: 1,
+                            ex: 2,
+                            gx: 3,
+                            hx: 4,
+                            ix: 5
+                        },
+                        i: 10
+                    },
+                    f: {
+                        g: 3
+                    },
+                    h: 4
+                }, false, null, {
+                    message: 'child "a" fails because [child "b" fails because [child "ix" fails because ["ix" must be one of [ref:...i]]]]',
+                    details: [
+                        {
+                            message: '"ix" must be one of [ref:...i]',
+                            path: ['a', 'b', 'ix'],
+                            type: 'any.allowOnly',
+                            context: {
+                                value: 5,
+                                valids: [ix],
+                                key: 'ix',
+                                label: 'ix'
+                            }
+                        }
+                    ]
+
+                }
+            ]
+        ]);
+    });
+
+    it('throws on prefix + ancestor option)', () => {
+
+        expect(() => Joi.ref('..x', { ancestor: 0 })).to.throw('Cannot combine prefix with ancestor option');
+    });
+
     it('uses ref as a valid value', async () => {
 
         const ref = Joi.ref('b');

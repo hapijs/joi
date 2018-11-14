@@ -395,13 +395,13 @@ so that if one key validation depends on another, the dependent key is validated
 References support the following arguments:
 - `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
   their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
-  which is looked up in the `context` option object. If the `key` starts with a separator character, it is the same as setting
-  `options.self` to `true`.
+  which is looked up in the `context` option object. The `key` can start with one or more separator characters to indicate a
+  [relative starting point](#Relative-references).
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator.
     - `contextPrefix` - overrides the default `$` context prefix signifier.
-    - `self` - if `true`, the reference is for a property of the value it operates on instead of a sibling of the value.
-      Defaults to `false`.
+    - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined
+      with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
     - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
@@ -418,6 +418,77 @@ const schema = Joi.object().keys({
 
 Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, (err, value) => {});
 ```
+
+#### Relative references
+
+By default, a reference is relative to the parent of the current value (the reference key is lookup
+up inside the parent). This means that in the schema:
+
+```js
+{
+    x: {
+        a: Joi.any(),
+        b: {
+            c: Joi.any(),
+            d: Joi.ref('c')
+        }
+    },
+    y: Joi.any()
+}
+```
+
+The reference `Joi.ref('c')` points to `c` which is a sibling of `d` - the reference starting point
+is `d`'s parent which is `b`. This schema means that `d` must be equal to `c`.
+
+In order to reference a parent peer, you can use a separator prefix where (using `.` as separator):
+- `.` - self
+- `..` - parent (same as no prefix)
+- `...` - grandparent
+- `....` - great-grandparent
+- etc.
+
+For example:
+
+```js
+{
+    x: {
+        a: Joi.any(),
+        b: {
+            c: Joi.any(),
+            d: Joi.ref('c'),
+            e: Joi.ref('...a'),
+            f: Joi.ref('....y')
+        }
+    },
+    y: Joi.any()
+}
+```
+
+Another way to specify the relative starting point is using the `ancestor` option where:
+- 0 - self
+- 1 - parent (this is the default value if no key prefix is present)
+- 2 - grandparent
+- 3 - great-grandparent
+- etc.
+
+For example:
+
+```js
+{
+    x: {
+        a: Joi.any(),
+        b: {
+            c: Joi.any(),
+            d: Joi.ref('c', { ancestor: 1 }),
+            e: Joi.ref('a', { ancestor: 2 }),
+            f: Joi.ref('y', { ancestor: 3 })
+        }
+    },
+    y: Joi.any()
+}
+```
+
+Note that if a reference tries to reach beyond the value root, validation fails.
 
 ### `isRef(ref)`
 
