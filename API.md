@@ -9,6 +9,7 @@
 - [Joi](#joi)
   - [`version`](#version)
   - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
+  - [`ValidationError`](#ValidationError)
   - [`compile(schema)`](#compileschema)
   - [`describe(schema)`](#describeschema)
   - [`assert(value, schema, [message])`](#assertvalue-schema-message)
@@ -320,6 +321,12 @@ promise.then((value) => {
     // value -> { "a" : 123 }
 });
 ```
+
+### `ValidationError`
+
+Thrown by `assert` when validation fails.
+
+See [Errors](#errors)
 
 ### `compile(schema)`
 
@@ -2640,7 +2647,7 @@ const Person = Joi.object({
 
 ## Errors
 
-Joi throws classical javascript `Error`s containing :
+Joi throws `ValidationError`s containing :
 - `name` - `'ValidationError'`.
 - `isJoi` - `true`.
 - `details` - an array of errors :
@@ -2652,6 +2659,17 @@ Joi throws classical javascript `Error`s containing :
         - `label` - label of the value that errored, or the `key` if any, or the default `language.root`.
 - `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occurred. Takes an optional parameter that, if truthy, will strip the colors out of the output.
 - `_object` - the original object to validate.
+
+Check if an Error is a Joi `ValidationError` like:
+```js
+} catch (error) {
+    if (error instanceof Joi.ValidationError) {
+        // 400
+    } else {
+        // 500
+    }
+}
+```
 
 ### List of errors
 
