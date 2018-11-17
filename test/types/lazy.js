@@ -61,6 +61,7 @@ describe('lazy', () => {
             expect(() => Joi.lazy(() => {}, { oce: true })).to.throw('Options contain unknown keys: oce');
             expect(() => Joi.lazy(() => {}, { once: 'foo' })).to.throw('Option "once" must be a boolean');
             expect(() => Joi.lazy(() => {}, {})).to.not.throw();
+            expect(() => Joi.lazy(() => {}, { once: true })).to.not.throw();
         });
     });
 

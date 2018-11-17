@@ -31,6 +31,11 @@ describe('object', () => {
         expect(value.hi).to.equal(true);
     });
 
+    it('fails on json string in strict mode', async () => {
+
+        await expect(Joi.object().strict().validate('{"hi":true}')).to.reject('"value" must be an object');
+    });
+
     it('errors on non-object string', async () => {
 
         const err = await expect(Joi.object().validate('a string')).to.reject('"value" must be an object');
@@ -1191,6 +1196,24 @@ describe('object', () => {
                 expect(value).to.equal({ a: 'something' });
             });
 
+            it('should delete a key with override and ignoredUndefined if from exists', async () => {
+
+                const regex = /^b$/i;
+
+                const schema = Joi.object().keys({
+                    c: Joi.any(),
+                    a: Joi.any()
+                }).rename(regex, 'a', { ignoreUndefined: true, override: true });
+
+                const input = {
+                    a: 'something',
+                    b: 'something else'
+                };
+
+                const value = await schema.validate(input);
+                expect(value).to.equal({ a: 'something else' });
+            });
+
             it('should fulfill describe() with non-defaults', () => {
 
                 const regex = /^b$/i;
@@ -1504,6 +1527,19 @@ describe('object', () => {
 
             const value = await schema.validate(input);
             expect(value).to.equal({ a: 'something' });
+        });
+
+        it('should delete a key with override and ignoredUndefined if from exists', async () => {
+
+            const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true, override: true });
+
+            const input = {
+                a: 'something',
+                b: 'something else'
+            };
+
+            const value = await schema.validate(input);
+            expect(value).to.equal({ a: 'something else' });
         });
 
         it('should fulfill describe() with defaults', () => {
