@@ -2013,7 +2013,7 @@ Keys are renamed before any other validation rules are applied.
 ```js
 const object = Joi.object().keys({
     a: Joi.number()
-}).rename('b', 'a');
+}).rename('a', 'b');
 
 object.validate({ b: 5 }, (err, value) => { });
 ```
