@@ -2649,6 +2649,14 @@ describe('Joi', () => {
             }).to.throw('"value" must be a number');
         });
 
+        it('throws a ValidationError on invalid value', () => {
+
+            expect(() => {
+
+                Joi.attempt('x', Joi.number());
+            }).to.throw(Joi.ValidationError);
+        });
+
         it('does not throw on valid value', () => {
 
             expect(() => {
@@ -4280,6 +4288,22 @@ describe('Joi', () => {
 
                 expect(err).to.be.an.error('oops');
             });
+        });
+
+    });
+
+    describe('ValidationError', () => {
+
+        it('should be Joi', () => {
+
+            const error = new Joi.ValidationError();
+            expect(error.isJoi).to.equal(true);
+        });
+
+        it('should be named ValidationError', () => {
+
+            const error = new Joi.ValidationError();
+            expect(error.name).to.equal('ValidationError');
         });
 
     });
