@@ -106,6 +106,7 @@
     - [`object.nand(peers)`](#objectnandpeers)
     - [`object.or(peers)`](#objectorpeers)
     - [`object.xor(peers)`](#objectxorpeers)
+    - [`object.oxor(...peers)`](#objectoxorpeers)
     - [`object.with(key, peers)`](#objectwithkey-peers)
     - [`object.without(key, peers)`](#objectwithoutkey-peers)
     - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
@@ -224,6 +225,7 @@
     - [`object.with`](#objectwith)
     - [`object.without`](#objectwithout)
     - [`object.xor`](#objectxor)
+    - [`object.oxor`](#objectoxor)
     - [`string.alphanum`](#stringalphanum-1)
     - [`string.base64`](#stringbase64)
     - [`string.base`](#stringbase)
@@ -1970,6 +1972,20 @@ const schema = Joi.object().keys({
 ```
 
 💥 Possible validation errors:[`object.xor`](#objectxor), [`object.missing`](#objectmissing)
+
+#### `object.oxor(...peers)`
+
+Defines an exclusive relationship between a set of keys where only one is allowed but non are required where:
+- `peers` - the exclusive key names that must not appear together but where none are required.
+
+```js
+const schema = Joi.object().keys({
+    a: Joi.any(),
+    b: Joi.any()
+}).oxor('a', 'b');
+```
+
+💥 Possible validation errors:[`object.oxor`](#objectoxor)
 
 #### `object.with(key, peers)`
 
@@ -3854,8 +3870,24 @@ The XOR condition between the properties you specified was not satisfied in that
 {
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
-    peers: Array<string>, // List of properties were none of it was set
-    peersWithLabels: Array<string> // List of labels for the properties were none of it was set
+    peers: Array<string>, // List of properties where none of it or too many of it was set
+    peersWithLabels: Array<string> // List of labels for the properties where none of it or too many of it was set
+}
+```
+
+#### `object.oxor`
+
+**Description**
+
+The optional XOR condition between the properties you specified was not satisfied in that object.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    peers: Array<string>, // List of properties where too many of it was set
+    peersWithLabels: Array<string> // List of labels for the properties where too many of it was set
 }
 ```
 

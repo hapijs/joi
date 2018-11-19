@@ -811,6 +811,48 @@ describe('alternatives', () => {
                 ]);
             });
 
+
+            it('validates when is has either ref pointing to a complex type or value', () => {
+
+                const date = new Date(42);
+                const now = Date.now();
+
+                const schema = {
+                    a: Joi.alternatives().when('b', {
+                        is: Joi.valid(
+                            new Date(+date), // Intentional cloning of the date to change the reference
+                            Joi.ref('c')
+                        ),
+                        then: 'x'
+                    }),
+                    b: Joi.date(),
+                    c: Joi.date()
+                };
+
+                Helper.validate(schema, [
+                    [{ a: 'x', b: date, c: date }, true],
+                    [{ a: 'x', b: date, c: now }, true, null, { a: 'x', b: date, c: new Date(now) }],
+                    [{ a: 'y', b: date, c: date }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 'y' }, false, null, {
+                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        details: [{
+                            message: '"a" must be one of [x]',
+                            path: ['a'],
+                            type: 'any.allowOnly',
+                            context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
+                        }]
+                    }]
+                ]);
+            });
+
             it('validates when then has ref', () => {
 
                 const ref = Joi.ref('c');

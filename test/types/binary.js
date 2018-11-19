@@ -97,6 +97,17 @@ describe('binary', () => {
             const value = await Joi.binary().validate(Buffer.from('hello world'));
             expect(value.toString('utf8')).to.equal('hello world');
         });
+
+        it('accepts a buffer object in strict mode', async () => {
+
+            const value = await Joi.binary().strict().validate(Buffer.from('hello world'));
+            expect(value.toString('utf8')).to.equal('hello world');
+        });
+
+        it('rejects strings in strict mode', async () => {
+
+            await expect(Joi.binary().strict().validate('hello world')).to.reject('"value" must be a buffer or a string');
+        });
     });
 
     describe('encoding()', () => {

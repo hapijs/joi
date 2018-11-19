@@ -96,6 +96,14 @@ describe('Set', () => {
             set.add('x');
             expect(set.values({ stripUndefined: true })).to.not.include(undefined).and.to.equal(['x']);
         });
+
+        it('ignores absent stripUndefined', () => {
+
+            const set = new Set();
+            set.add(undefined);
+            set.add('x');
+            expect(set.values({})).to.equal([undefined, 'x']);
+        });
     });
 
     describe('add()', () => {

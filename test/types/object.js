@@ -31,6 +31,11 @@ describe('object', () => {
         expect(value.hi).to.equal(true);
     });
 
+    it('fails on json string in strict mode', async () => {
+
+        await expect(Joi.object().strict().validate('{"hi":true}')).to.reject('"value" must be an object');
+    });
+
     it('errors on non-object string', async () => {
 
         const err = await expect(Joi.object().validate('a string')).to.reject('"value" must be an object');
@@ -1191,6 +1196,24 @@ describe('object', () => {
                 expect(value).to.equal({ a: 'something' });
             });
 
+            it('should delete a key with override and ignoredUndefined if from exists', async () => {
+
+                const regex = /^b$/i;
+
+                const schema = Joi.object().keys({
+                    c: Joi.any(),
+                    a: Joi.any()
+                }).rename(regex, 'a', { ignoreUndefined: true, override: true });
+
+                const input = {
+                    a: 'something',
+                    b: 'something else'
+                };
+
+                const value = await schema.validate(input);
+                expect(value).to.equal({ a: 'something else' });
+            });
+
             it('should fulfill describe() with non-defaults', () => {
 
                 const regex = /^b$/i;
@@ -1504,6 +1527,19 @@ describe('object', () => {
 
             const value = await schema.validate(input);
             expect(value).to.equal({ a: 'something' });
+        });
+
+        it('should delete a key with override and ignoredUndefined if from exists', async () => {
+
+            const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true, override: true });
+
+            const input = {
+                a: 'something',
+                b: 'something else'
+            };
+
+            const value = await schema.validate(input);
+            expect(value).to.equal({ a: 'something else' });
         });
 
         it('should fulfill describe() with defaults', () => {
@@ -2406,6 +2442,98 @@ describe('object', () => {
         });
     });
 
+    describe('oxor()', () => {
+
+        it('should throw an error when a parameter is not a string', () => {
+
+            let error;
+            try {
+                Joi.object().oxor({});
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+
+            expect(error).to.equal(true);
+
+            try {
+                Joi.object().oxor(123);
+                error = false;
+            }
+            catch (e) {
+                error = true;
+            }
+
+            expect(error).to.equal(true);
+        });
+
+        it('allows none of optional peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.string()
+            }).oxor('a', 'b');
+
+            const error = schema.validate({}).error;
+            expect(error).to.not.exist();
+        });
+
+        it('should apply labels with too many peers', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().label('first'),
+                b: Joi.string().label('second')
+            }).oxor('a', 'b');
+            const error = schema.validate({ a: 1, b: 'b' }).error;
+            expect(error).to.be.an.error('"value" contains a conflict between optional exclusive peers [first, second]');
+            expect(error.details).to.equal([{
+                message: '"value" contains a conflict between optional exclusive peers [first, second]',
+                path: [],
+                type: 'object.oxor',
+                context: {
+                    peers: ['a', 'b'],
+                    peersWithLabels: ['first', 'second'],
+                    present: ['a', 'b'],
+                    presentWithLabels: ['first', 'second'],
+                    label: 'value',
+                    key: undefined
+                }
+            }]);
+        });
+
+        it('should support nested objects', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object({ c: Joi.string(), d: Joi.number() }),
+                d: Joi.number()
+            }).oxor('a', 'b.c');
+
+            const sampleObject = { a: 'test', b: { d: 80 } };
+            const sampleObject2 = { a: 'test', b: { c: 'test2' } };
+
+            const error = schema.validate(sampleObject).error;
+            expect(error).to.equal(null);
+
+            const error2 = schema.validate(sampleObject2).error;
+            expect(error2).to.be.an.error('"value" contains a conflict between optional exclusive peers [a, b.c]');
+            expect(error2.details).to.equal([{
+                message: '"value" contains a conflict between optional exclusive peers [a, b.c]',
+                path: [],
+                type: 'object.oxor',
+                context: {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['a', 'b.c'],
+                    present: ['a', 'b.c'],
+                    presentWithLabels: ['a', 'b.c'],
+                    key: undefined,
+                    label: 'value'
+                }
+            }]);
+        });
+    });
+
     describe('or()', () => {
 
         it('should throw an error when a parameter is not a string', () => {
@@ -2466,13 +2594,12 @@ describe('object', () => {
                 message: '"value" must contain at least one of [first, second]',
                 path: [],
                 type: 'object.missing',
-                context:
-                    {
-                        peers: ['a', 'b'],
-                        peersWithLabels: ['first', 'second'],
-                        label: 'value',
-                        key: undefined
-                    }
+                context: {
+                    peers: ['a', 'b'],
+                    peersWithLabels: ['first', 'second'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
 
@@ -2517,13 +2644,12 @@ describe('object', () => {
                 message: '"value" must contain at least one of [first, second]',
                 path: [],
                 type: 'object.missing',
-                context:
-                    {
-                        peers: ['a', 'b.c'],
-                        peersWithLabels: ['first', 'second'],
-                        label: 'value',
-                        key: undefined
-                    }
+                context: {
+                    peers: ['a', 'b.c'],
+                    peersWithLabels: ['first', 'second'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
     });
@@ -2542,15 +2668,14 @@ describe('object', () => {
                 message: '"value" contains [first] without its required peers [second]',
                 path: [],
                 type: 'object.and',
-                context:
-                    {
-                        present: ['a'],
-                        presentWithLabels: ['first'],
-                        missing: ['b'],
-                        missingWithLabels: ['second'],
-                        label: 'value',
-                        key: undefined
-                    }
+                context: {
+                    present: ['a'],
+                    presentWithLabels: ['first'],
+                    missing: ['b'],
+                    missingWithLabels: ['second'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
 
@@ -2597,15 +2722,14 @@ describe('object', () => {
                 message: '"value" contains [first] without its required peers [second]',
                 path: [],
                 type: 'object.and',
-                context:
-                    {
-                        present: ['a'],
-                        presentWithLabels: ['first'],
-                        missing: ['b.c'],
-                        missingWithLabels: ['second'],
-                        label: 'value',
-                        key: undefined
-                    }
+                context: {
+                    present: ['a'],
+                    presentWithLabels: ['first'],
+                    missing: ['b.c'],
+                    missingWithLabels: ['second'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
 
@@ -2621,15 +2745,14 @@ describe('object', () => {
                 message: '"value" contains [first] without its required peers [c.d]',
                 path: [],
                 type: 'object.and',
-                context:
-                    {
-                        present: ['a'],
-                        presentWithLabels: ['first'],
-                        missing: ['c.d'],
-                        missingWithLabels: ['c.d'],
-                        label: 'value',
-                        key: undefined
-                    }
+                context: {
+                    present: ['a'],
+                    presentWithLabels: ['first'],
+                    missing: ['c.d'],
+                    missingWithLabels: ['c.d'],
+                    label: 'value',
+                    key: undefined
+                }
             }]);
         });
     });
