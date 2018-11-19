@@ -2558,8 +2558,7 @@ describe('object', () => {
                 message: '"value" must contain at least one of [first, second]',
                 path: [],
                 type: 'object.missing',
-                context:
-                {
+                context: {
                     peers: ['a', 'b'],
                     peersWithLabels: ['first', 'second'],
                     label: 'value',
@@ -2609,8 +2608,7 @@ describe('object', () => {
                 message: '"value" must contain at least one of [first, second]',
                 path: [],
                 type: 'object.missing',
-                context:
-                {
+                context: {
                     peers: ['a', 'b.c'],
                     peersWithLabels: ['first', 'second'],
                     label: 'value',
@@ -2634,8 +2632,7 @@ describe('object', () => {
                 message: '"value" contains [first] without its required peers [second]',
                 path: [],
                 type: 'object.and',
-                context:
-                {
+                context: {
                     present: ['a'],
                     presentWithLabels: ['first'],
                     missing: ['b'],
@@ -2689,8 +2686,7 @@ describe('object', () => {
                 message: '"value" contains [first] without its required peers [second]',
                 path: [],
                 type: 'object.and',
-                context:
-                {
+                context: {
                     present: ['a'],
                     presentWithLabels: ['first'],
                     missing: ['b.c'],
@@ -2713,8 +2709,7 @@ describe('object', () => {
                 message: '"value" contains [first] without its required peers [c.d]',
                 path: [],
                 type: 'object.and',
-                context:
-                {
+                context: {
                     present: ['a'],
                     presentWithLabels: ['first'],
                     missing: ['c.d'],
