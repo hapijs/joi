@@ -57,6 +57,7 @@
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
     - [`array.unique([comparator], [options])`](#arrayuniquecomparator-options)
+    - [`array.assertItem(schema)`](#arrayassertitemschema)
   - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
     - [`boolean.truthy(value)`](#booleantruthyvalue)
     - [`boolean.falsy(value)`](#booleanfalsyvalue)
@@ -170,6 +171,8 @@
     - [`array.ref`](#arrayref)
     - [`array.sparse`](#arraysparse)
     - [`array.unique`](#arrayunique)
+    - [`array.assertItemKnown`](#arrayassertitemknown)
+    - [`array.assertItemUnknown`](#arrayassertitemunknown)
     - [`binary.base`](#binarybase)
     - [`binary.length`](#binarylength)
     - [`binary.max`](#binarymax)
@@ -1238,6 +1241,24 @@ schema.validate([{}, {}]);
 ```
 
 💥 Possible validation errors:[`array.unique`](#arrayunique)
+
+#### `array.assertItem(schema)`
+
+Verifies that an assertion passes for at least one item in the array, where:
+- `schema` - the validation rules required to satisfy the assertion. If the `schema` includes references, they are resolved against
+  the array item being tested, not the value of the `ref` target.
+
+```js
+const schema = Joi.array().items(
+  Joi.object({
+    a: Joi.string(),
+    b: Joi.number()
+  })
+).assertItem(Joi.object({ a: Joi.string().valid('a'), b: Joi.number() }))
+```
+
+💥 Possible validation errors:[`array.assertItemKnown`](#arrayassertitemknown), [`array.assertitemUnknown`](#arrayassertitemunknown)
+
 
 ### `boolean` - inherits from `Any`
 
@@ -3005,6 +3026,35 @@ A duplicate value was found in an array.
     value: any, // Value that is duplicated
     dupePos: number, // Index where the first appearance of the duplicate value was found in the array
     dupeValue: any // Value with which the duplicate was met
+}
+```
+
+#### `array.assertItemKnown`
+
+**Description**
+
+The schema on an [`array.assertItem()`](#arrayassertitem) failed to validate. This error happens when the schema is labelled.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    assertionLabel: string // Label of assertion schema
+}
+```
+
+#### `array.assertItemUnknown`
+
+**Description**
+
+The schema on an [`array.assertItem()`](#arrayassertitem) failed to validate. This error happens when the schema is unlabelled.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
 }
 ```
 
