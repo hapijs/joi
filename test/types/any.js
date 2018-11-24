@@ -292,6 +292,51 @@ describe('any', () => {
                 }]
             });
         });
+
+        it('merges options properly', () => {
+
+            const baseSchema = Joi.any();
+            expect(baseSchema.describe().options).to.undefined();
+
+            const languageSchema = baseSchema.options({ language: { type: { foo: 'foo' } } });
+            expect(languageSchema.describe().options).to.equal({ language: { type: { foo: 'foo' } } });
+
+            const normalOptionSchema = baseSchema.options({ abortEarly: true });
+            expect(normalOptionSchema.describe().options).to.equal({ abortEarly: true });
+
+            const normalOptionsOverLanguageSchema = languageSchema.options({ abortEarly: true });
+            expect(normalOptionsOverLanguageSchema.describe().options).to.equal({
+                abortEarly: true,
+                language: {
+                    type: {
+                        foo: 'foo'
+                    }
+                }
+            });
+
+            const languageOptionsOverNormalOptionsSchema = normalOptionSchema.options({ language: { type: { foo: 'foo' } } });
+            expect(languageOptionsOverNormalOptionsSchema.describe().options).to.equal({
+                abortEarly: true,
+                language: {
+                    type: {
+                        foo: 'foo'
+                    }
+                }
+            });
+
+            const languageOptionsOverLanguageOptionsSchema = languageSchema.options({
+                language: {
+                    type: { bar: 'bar' },
+                    type2: { foo: 'foo' }
+                }
+            });
+            expect(languageOptionsOverLanguageOptionsSchema.describe().options).to.equal({
+                language: {
+                    type: { foo: 'foo', bar: 'bar' },
+                    type2: { foo: 'foo' }
+                }
+            });
+        });
     });
 
     describe('label()', () => {

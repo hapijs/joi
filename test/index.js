@@ -3920,6 +3920,96 @@ describe('Joi', () => {
             }]);
         });
 
+        it('merges languages when multiple extensions extend the same type', () => {
+
+            const customJoiWithBoth = Joi.extend([
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    language: { foo: 'foo' },
+                    rules: [{
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.foo', null, state, options);
+                        }
+                    }]
+                }),
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    language: { bar: 'bar' },
+                    rules: [{
+                        name: 'bar',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.bar', null, state, options);
+                        }
+                    }]
+                })
+            ]);
+
+            expect(customJoiWithBoth.number().foo().validate(0).error).to.be.an.error('"value" foo');
+            expect(customJoiWithBoth.number().bar().validate(0).error).to.be.an.error('"value" bar');
+
+            const customJoiWithFirst = Joi.extend([
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    language: { foo: 'foo' },
+                    rules: [{
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.foo', null, state, options);
+                        }
+                    }]
+                }),
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    rules: [{
+                        name: 'bar',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.base', null, state, options);
+                        }
+                    }]
+                })
+            ]);
+
+            expect(customJoiWithFirst.number().foo().validate(0).error).to.be.an.error('"value" foo');
+            expect(customJoiWithFirst.number().bar().validate(0).error).to.be.an.error('"value" must be a number');
+
+            const customJoiWithSecond = Joi.extend([
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    rules: [{
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.base', null, state, options);
+                        }
+                    }]
+                }),
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    language: { bar: 'bar' },
+                    rules: [{
+                        name: 'bar',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.bar', null, state, options);
+                        }
+                    }]
+                })
+            ]);
+
+            expect(customJoiWithSecond.number().foo().validate(0).error).to.be.an.error('"value" must be a number');
+            expect(customJoiWithSecond.number().bar().validate(0).error).to.be.an.error('"value" bar');
+        });
     });
 
     describe('defaults()', () => {
