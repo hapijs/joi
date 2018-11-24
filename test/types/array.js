@@ -762,13 +762,13 @@ describe('array', () => {
         });
     });
 
-    describe('assertItem()', () => {
+    describe('has()', () => {
 
         it('shows path to errors in schema', () => {
 
             expect(() => {
 
-                Joi.array().assertItem({
+                Joi.array().has({
                     a: {
                         b: {
                             c: {
@@ -784,7 +784,7 @@ describe('array', () => {
 
             expect(() => {
 
-                Joi.array().assertItem(undefined);
+                Joi.array().has(undefined);
             }).to.throw(Error, 'Invalid schema content: ');
         });
 
@@ -800,7 +800,7 @@ describe('array', () => {
                         e: Joi.any()
                     }
                 })
-            ).assertItem(Joi.object().assert('d.e', Joi.ref('a.c'), 'equal to a.c'));
+            ).has(Joi.object().assert('d.e', Joi.ref('a.c'), 'equal to a.c'));
 
             Helper.validate(schema, [
                 [[{ a: { b: 'x', c: 5 }, d: { e: 5 } }], true]
@@ -810,7 +810,7 @@ describe('array', () => {
 
         it('does not throw if assertion passes', () => {
 
-            const schema = Joi.array().assertItem(Joi.string());
+            const schema = Joi.array().has(Joi.string());
             Helper.validate(schema, [
                 [['foo'], true]
             ]);
@@ -818,14 +818,14 @@ describe('array', () => {
 
         it('throws with proper message if assertion fails on unknown schema', () => {
 
-            const schema = Joi.array().assertItem(Joi.string());
+            const schema = Joi.array().has(Joi.string());
             Helper.validate(schema, [
                 [[0], false, null, {
-                    message: '"value" failed an assertion test',
+                    message: '"value" does not contain at least one required match',
                     details: [{
-                        message: '"value" failed an assertion test',
+                        message: '"value" does not contain at least one required match',
                         path: [],
-                        type: 'array.assertItemUnknown',
+                        type: 'array.hasUnknown',
                         context: { label: 'value', key: undefined }
                     }]
                 }]
@@ -834,15 +834,15 @@ describe('array', () => {
 
         it('throws with proper message if assertion fails on known schema', () => {
 
-            const schema = Joi.array().assertItem(Joi.string().label('foo'));
+            const schema = Joi.array().has(Joi.string().label('foo'));
             Helper.validate(schema, [
                 [[0], false, null, {
-                    message: '"value" does not contain a match for type "foo"',
+                    message: '"value" does not contain at least one required match for type "foo"',
                     details: [{
-                        message: '"value" does not contain a match for type "foo"',
+                        message: '"value" does not contain at least one required match for type "foo"',
                         path: [],
-                        type: 'array.assertItemKnown',
-                        context: { label: 'value', key: undefined, assertionLabel: 'foo' }
+                        type: 'array.hasKnown',
+                        context: { label: 'value', key: undefined, patternLabel: 'foo' }
                     }]
                 }]
             ]);
@@ -851,15 +851,15 @@ describe('array', () => {
         it('shows correct path for error', () => {
 
             const schema = Joi.object({
-                arr: Joi.array().assertItem(Joi.string())
+                arr: Joi.array().has(Joi.string())
             });
             Helper.validate(schema, [
                 [{ arr: [0] }, false, null, {
-                    message: 'child "arr" fails because ["arr" failed an assertion test]',
+                    message: 'child "arr" fails because ["arr" does not contain at least one required match]',
                     details: [{
-                        message: '"arr" failed an assertion test',
+                        message: '"arr" does not contain at least one required match',
                         path: ['arr'],
-                        type: 'array.assertItemUnknown',
+                        type: 'array.hasUnknown',
                         context: { label: 'arr', key: 'arr' }
                     }]
                 }]
@@ -870,7 +870,7 @@ describe('array', () => {
 
             const schema = Joi.object({
                 arr: Joi.array().items(
-                    Joi.object({ foo: Joi.array().assertItem(Joi.string()) })
+                    Joi.object({ foo: Joi.array().has(Joi.string()) })
                 )
             });
             Helper.validate(schema, [
@@ -882,16 +882,16 @@ describe('array', () => {
 
             const schema = Joi.object({
                 arr: Joi.array().items(
-                    Joi.object({ foo: Joi.array().assertItem(Joi.string()) })
+                    Joi.object({ foo: Joi.array().has(Joi.string()) })
                 )
             });
             Helper.validate(schema, [
                 [{ arr: [{ foo: [0] }] }, false, null, {
-                    message: 'child "arr" fails because ["arr" at position 0 fails because [child "foo" fails because ["foo" failed an assertion test]]]',
+                    message: 'child "arr" fails because ["arr" at position 0 fails because [child "foo" fails because ["foo" does not contain at least one required match]]]',
                     details: [{
-                        message: '"foo" failed an assertion test',
+                        message: '"foo" does not contain at least one required match',
                         path: ['arr', 0, 'foo'],
-                        type: 'array.assertItemUnknown',
+                        type: 'array.hasUnknown',
                         context: { label: 'foo', key: 'foo' }
                     }]
                 }]
@@ -900,22 +900,35 @@ describe('array', () => {
 
         it('handles multiple assertions', () => {
 
-            const schema = Joi.array().assertItem(Joi.string()).assertItem(Joi.number());
+            const schema = Joi.array().has(Joi.string()).has(Joi.number());
             Helper.validate(schema, [
                 [['foo', 0], true]
             ]);
 
             Helper.validate(schema, [
                 [['foo'], false, null, {
-                    message: '"value" failed an assertion test',
+                    message: '"value" does not contain at least one required match',
                     details: [{
-                        message: '"value" failed an assertion test',
+                        message: '"value" does not contain at least one required match',
                         path: [],
-                        type: 'array.assertItemUnknown',
+                        type: 'array.hasUnknown',
                         context: { label: 'value', key: undefined }
                     }]
                 }]
             ]);
+        });
+
+        it('describes the pattern schema', () => {
+
+            const schema = Joi.array().has(Joi.string()).has(Joi.number());
+            expect(schema.describe()).to.equal({
+                type: 'array',
+                flags: { sparse: false },
+                rules: [
+                    { name: 'has', arg: { type: 'string', invalids: [''] } },
+                    { name: 'has', arg: { type: 'number', flags: { unsafe: false }, invalids: [Infinity, -Infinity] } }
+                ]
+            });
         });
     });
 

@@ -57,7 +57,7 @@
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
     - [`array.unique([comparator], [options])`](#arrayuniquecomparator-options)
-    - [`array.assertItem(schema)`](#arrayassertitemschema)
+    - [`array.has(schema)`](#arrayhasschema)
   - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
     - [`boolean.truthy(value)`](#booleantruthyvalue)
     - [`boolean.falsy(value)`](#booleanfalsyvalue)
@@ -171,8 +171,8 @@
     - [`array.ref`](#arrayref)
     - [`array.sparse`](#arraysparse)
     - [`array.unique`](#arrayunique)
-    - [`array.assertItemKnown`](#arrayassertitemknown)
-    - [`array.assertItemUnknown`](#arrayassertitemunknown)
+    - [`array.hasKnown`](#arrayhasknown)
+    - [`array.hasUnknown`](#arrayhasunknown)
     - [`binary.base`](#binarybase)
     - [`binary.length`](#binarylength)
     - [`binary.max`](#binarymax)
@@ -1242,10 +1242,10 @@ schema.validate([{}, {}]);
 
 💥 Possible validation errors:[`array.unique`](#arrayunique)
 
-#### `array.assertItem(schema)`
+#### `array.has(schema)`
 
-Verifies that an assertion passes for at least one item in the array, where:
-- `schema` - the validation rules required to satisfy the assertion. If the `schema` includes references, they are resolved against
+Verifies that a schema validates at least one of the values in the array, where:
+- `schema` - the validation rules required to satisfy the check. If the `schema` includes references, they are resolved against
   the array item being tested, not the value of the `ref` target.
 
 ```js
@@ -1254,10 +1254,10 @@ const schema = Joi.array().items(
     a: Joi.string(),
     b: Joi.number()
   })
-).assertItem(Joi.object({ a: Joi.string().valid('a'), b: Joi.number() }))
+).has(Joi.object({ a: Joi.string().valid('a'), b: Joi.number() }))
 ```
 
-💥 Possible validation errors:[`array.assertItemKnown`](#arrayassertitemknown), [`array.assertitemUnknown`](#arrayassertitemunknown)
+💥 Possible validation errors:[`array.hasKnown`](#arrayhasknown), [`array.hasUnknown`](#arrayhasunknown)
 
 
 ### `boolean` - inherits from `Any`
@@ -3029,26 +3029,26 @@ A duplicate value was found in an array.
 }
 ```
 
-#### `array.assertItemKnown`
+#### `array.hasKnown`
 
 **Description**
 
-The schema on an [`array.assertItem()`](#arrayassertitem) failed to validate. This error happens when the schema is labelled.
+The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is labelled.
 
 **Context**
 ```ts
 {
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
-    assertionLabel: string // Label of assertion schema
+    patternLabel: string // Label of assertion schema
 }
 ```
 
-#### `array.assertItemUnknown`
+#### `array.hasUnknown`
 
 **Description**
 
-The schema on an [`array.assertItem()`](#arrayassertitem) failed to validate. This error happens when the schema is unlabelled.
+The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is unlabelled.
 
 **Context**
 ```ts
