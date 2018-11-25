@@ -1,5 +1,5 @@
 <!-- version -->
-# 14.2.0 API Reference
+# 14.3.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -17,6 +17,7 @@
   - [`isRef(ref)`](#isrefref)
   - [`reach(schema, path)`](#reachschema-path)
   - [`defaults(fn)`](#defaultsfn)
+  - [`bind()`](#bind)
   - [`extend(extension)`](#extendextension)
     - [Terms](#terms)
     - [Extension](#extension)
