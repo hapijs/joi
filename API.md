@@ -1,5 +1,5 @@
 <!-- version -->
-# 14.1.1 API Reference
+# 14.2.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -46,7 +46,7 @@
     - [`any.label(name)`](#anylabelname)
     - [`any.raw(isRaw)`](#anyrawisraw)
     - [`any.empty(schema)`](#anyemptyschema)
-    - [`any.error(err)`](#anyerrorerr)
+    - [`any.error(err, [options])`](#anyerrorerr-options)
     - [`any.describe()`](#anydescribe)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.sparse([enabled])`](#arraysparseenabled)
