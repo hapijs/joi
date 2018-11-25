@@ -465,6 +465,18 @@ const defaultJoi = Joi.defaults((schema) => {
 const schema = defaultJoi.object(); // Equivalent to a Joi.object().min(1)
 ```
 
+### `bind()`
+
+By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because they use `this` internally. So `Joi.string()` works but if you extract the function from it and call `string()` it won't. `bind()` creates a new Joi instance where all the functions relying on `this` are bound to the Joi instance.
+
+```js
+const { object, string } = require('joi').bind();
+
+const schema = object({
+  property: string().min(4)
+});
+```
+
 ### `extend(extension)`
 
 Creates a new Joi instance customized with the extension(s) you provide included.

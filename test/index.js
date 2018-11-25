@@ -4373,4 +4373,45 @@ describe('Joi', () => {
         });
 
     });
+
+    describe('bind()', () => {
+
+        it('binds functions', () => {
+
+            expect(() => {
+
+                const string = Joi.string;
+                string();
+            }).to.throw('Must be invoked on a Joi instance.');
+
+            const { string } = Joi.bind();
+            expect(() => string()).to.not.throw();
+
+            const { error } = string().validate(0);
+            expect(error).to.be.an.error('"value" must be a string');
+        });
+
+        it('binds functions on an extended joi', () => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string(),
+                name: 'myType'
+            });
+
+            expect(() => {
+
+                const string = customJoi.string;
+                string();
+            }).to.throw('Must be invoked on a Joi instance.');
+
+            const { string, myType } = customJoi.bind();
+            expect(() => string()).to.not.throw();
+            expect(string().validate(0).error).to.be.an.error('"value" must be a string');
+
+            expect(() => myType()).to.not.throw();
+            expect(myType().validate(0).error).to.be.an.error('"value" must be a string');
+
+            expect(customJoi._binds.size).to.equal(Joi._binds.size + 1);
+        });
+    });
 });
