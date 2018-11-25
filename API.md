@@ -991,7 +991,7 @@ schema = schema.empty();
 schema.validate(''); // returns { error: "value" is not allowed to be empty, value: '' }
 ```
 
-#### `any.error(err)`
+#### `any.error(err, [options])`
 
 Overrides the default joi error with a custom error if the rule fails where:
 - `err` can be:
@@ -1004,6 +1004,8 @@ Overrides the default joi error with a custom error if the rule fails where:
       - `template` - optional parameter if `message` is provided, containing a template string, using the same format as usual joi language errors.
       - `context` - optional parameter, to provide context to your error if you are using the `template`.
     - return an `Error` - same as when you directly provide an `Error`, but you can customize the error message based on the errors.
+- `options`:
+  - `self` - Boolean value indicating whether the error handler should be used for all errors or only for errors occurring on this property (`true` value). This concept only makes sense for `array` or `object` schemas as other values don't have children. Defaults to `false`.
 
 Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any of the
 normal joi error properties. If validation fails and another error is found before the error
@@ -1017,6 +1019,12 @@ schema.validate(3);     // returns error.message === 'Was REALLY expecting a str
 let schema = Joi.object({
     foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
 });
+schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" requires a positive number]'
+
+let schema = Joi.object({
+    foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
+}).required().error(() => 'root object is required', { self: true });
+schema.validate();               // returns error.message === 'root object is required'
 schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" requires a positive number]'
 
 let schema = Joi.object({
