@@ -2007,7 +2007,7 @@ const schema = Joi.object().keys({
 
 #### `object.oxor(...peers)`
 
-Defines an exclusive relationship between a set of keys where only one is allowed but non are required where:
+Defines an exclusive relationship between a set of keys where only one is allowed but none are required where:
 - `peers` - the exclusive key names that must not appear together but where none are required.
 
 ```js
