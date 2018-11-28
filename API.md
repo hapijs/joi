@@ -138,6 +138,7 @@
     - [`string.uppercase()`](#stringuppercase)
     - [`string.trim([enabled])`](#stringtrimenabled)
     - [`string.isoDate()`](#stringisodate)
+    - [`string.isoDuration()`](#stringisoduration)
   - [`symbol` - inherits from `Any`](#symbol---inherits-from-any)
     - [`symbol.map(map)`](#symbolmapmap)
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
@@ -2183,6 +2184,21 @@ If the validation `convert` option is on (enabled by default), the string will b
 
 ```js
 const schema = Joi.string().isoDate();
+schema.validate('2018-11-28T18:25:32+00:00'); // No Error
+schema.validate('20181-11-28T18:25:32+00:00'); // ValidationError: must be a valid 8601 date
+schema.validate(''); // ValidationError: must be a valid 8601 date
+```
+
+#### `string.isoDuration()`
+
+Requires the string value to be in valid ISO 8601 duration format.
+
+```js
+const schema = Joi.string().isoDuration();
+schema.validate('P3Y6M4DT12H30M5S'); // No Error
+schema.validate('2018-11-28T18:25:32+00:00'); // ValidationError: must be a valid ISO 8601 duration
+schema.validate(''); // ValidationError: must be a valid ISO 8601 duration
+
 ```
 
 ### `symbol` - inherits from `Any`
