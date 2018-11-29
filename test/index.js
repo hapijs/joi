@@ -2974,6 +2974,7 @@ describe('Joi', () => {
 
             const schema = customJoi.myType();
             expect(schema._type).to.equal('myType');
+            expect(schema._baseType).to.be.undefined();
             expect(schema.isJoi).to.be.true();
         });
 
@@ -2988,6 +2989,7 @@ describe('Joi', () => {
             expect(customJoi.myType).to.be.a.function();
 
             const schema = customJoi.myType();
+            expect(schema._baseType._type).to.equal('string');
             Helper.validate(schema, [
                 [123, false, null, {
                     message: '"value" must be a string',
@@ -3028,6 +3030,7 @@ describe('Joi', () => {
             expect(customJoi.myType).to.be.a.function();
 
             const schema = customJoi.myType({ a: customJoi.number() });
+            expect(schema._baseType._type).to.equal('object');
             Helper.validate(schema, [
                 [undefined, true],
                 [{}, true],
@@ -3074,6 +3077,7 @@ describe('Joi', () => {
             expect(original.bar).to.not.exist();
 
             const schema = customJoi.myType();
+            expect(schema._baseType).to.be.undefined();
             const valid = schema.foo().validate({});
             const invalid = schema.bar().validate({});
 
@@ -3633,6 +3637,11 @@ describe('Joi', () => {
 
                 const schema = customJoi.myType();
                 expect(schema.describe()).to.equal({
+                    base: {
+                        flags: { unsafe: false },
+                        invalids: [Infinity, -Infinity],
+                        type: 'number'
+                    },
                     type: 'myType',
                     invalids: [Infinity, -Infinity],
                     flags: { unsafe: false }
