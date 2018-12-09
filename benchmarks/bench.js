@@ -42,6 +42,8 @@ const formats = {
     integer: D3.format(',')
 };
 
+Benchmark.options.minSamples = 100;
+
 const Suite = new Benchmark.Suite('joi');
 
 const test = ([name, initFn, testFn]) => {
