@@ -1840,7 +1840,7 @@ describe('string', () => {
                 type: 'string.regex.base',
                 context: {
                     name: undefined,
-                    pattern: /[0-9]+/,
+                    pattern: '/[0-9]+/',
                     value: 'abcd',
                     label: 'value',
                     key: undefined
@@ -1859,7 +1859,7 @@ describe('string', () => {
                 type: 'string.regex.name',
                 context: {
                     name: 'numbers',
-                    pattern: /[0-9]+/,
+                    pattern: '/[0-9]+/',
                     value: 'abcd',
                     label: 'value',
                     key: undefined
@@ -1878,7 +1878,7 @@ describe('string', () => {
                 type: 'string.regex.name',
                 context: {
                     name: 'numbers',
-                    pattern: /[0-9]+/,
+                    pattern: '/[0-9]+/',
                     value: 'abcd',
                     label: 'value',
                     key: undefined
@@ -1899,7 +1899,7 @@ describe('string', () => {
                         type: 'string.regex.invert.base',
                         context: {
                             name: undefined,
-                            pattern: /[a-z]/,
+                            pattern: '/[a-z]/',
                             value: 'abcdefg',
                             label: 'value',
                             key: undefined
@@ -1925,7 +1925,7 @@ describe('string', () => {
                         type: 'string.regex.invert.name',
                         context: {
                             name: 'lowercase',
-                            pattern: /[a-z]/,
+                            pattern: '/[a-z]/',
                             value: 'abcdefg',
                             label: 'value',
                             key: undefined
@@ -4865,7 +4865,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^[0-9][-][a-z]+$/,
+                            pattern: '/^[0-9][-][a-z]+$/',
                             value: 'van',
                             label: 'value',
                             key: undefined
@@ -5349,7 +5349,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '123',
                             label: 'value',
                             key: undefined
@@ -5379,7 +5379,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '12',
                             label: 'value',
                             key: undefined
@@ -5451,7 +5451,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '123',
                             label: 'value',
                             key: undefined
@@ -5481,7 +5481,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '12',
                             label: 'value',
                             key: undefined
@@ -5545,7 +5545,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '123',
                             label: 'value',
                             key: undefined
@@ -5575,7 +5575,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '12',
                             label: 'value',
                             key: undefined
@@ -5888,7 +5888,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '123',
                             label: 'value',
                             key: undefined
@@ -5918,7 +5918,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '12',
                             label: 'value',
                             key: undefined
@@ -6000,7 +6000,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '123',
                             label: 'value',
                             key: undefined
@@ -6030,7 +6030,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '12',
                             label: 'value',
                             key: undefined
@@ -6112,7 +6112,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '123',
                             label: 'value',
                             key: undefined
@@ -6142,7 +6142,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            pattern: '/^a/',
                             value: '12',
                             label: 'value',
                             key: undefined
@@ -6694,7 +6694,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^1234/,
+                            pattern: '/^1234/',
                             value: '123@x.com',
                             label: 'value',
                             key: undefined
@@ -6765,7 +6765,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^1234/,
+                            pattern: '/^1234/',
                             value: '123@x.com',
                             label: 'value',
                             key: undefined
@@ -6828,7 +6828,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^1234/,
+                            pattern: '/^1234/',
                             value: '123@x.com',
                             label: 'value',
                             key: undefined
@@ -8516,7 +8516,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21+07:00',
                             label: 'value',
                             key: undefined
@@ -8540,7 +8540,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21-07:00',
                             label: 'value',
                             key: undefined
@@ -8735,7 +8735,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21+07:00',
                             label: 'value',
                             key: undefined
@@ -8759,7 +8759,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21-07:00',
                             label: 'value',
                             key: undefined
@@ -9141,7 +9141,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21+07:00',
                             label: 'value',
                             key: undefined
@@ -9165,7 +9165,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21-07:00',
                             label: 'value',
                             key: undefined
@@ -9366,7 +9366,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21+07:00',
                             label: 'value',
                             key: undefined
@@ -9390,7 +9390,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21-07:00',
                             label: 'value',
                             key: undefined
@@ -9583,7 +9583,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21+07:00',
                             label: 'value',
                             key: undefined
@@ -9607,7 +9607,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            pattern: '/Z$/',
                             value: '2013-06-07T14:21-07:00',
                             label: 'value',
                             key: undefined
@@ -12374,7 +12374,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e908/,
+                            pattern: '/^{7e908/',
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value',
                             key: undefined
@@ -12404,7 +12404,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e908/,
+                            pattern: '/^{7e908/',
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value',
                             key: undefined
@@ -12526,7 +12526,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e908/,
+                            pattern: '/^{7e908/',
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value',
                             key: undefined
@@ -12556,7 +12556,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e908/,
+                            pattern: '/^{7e908/',
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value',
                             key: undefined
@@ -12790,7 +12790,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            pattern: '/^{7e9081/i',
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value',
                             key: undefined
@@ -12820,7 +12820,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            pattern: '/^{7e9081/i',
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value',
                             key: undefined
@@ -12866,7 +12866,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            pattern: '/^{7e9081/i',
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
                             label: 'value',
                             key: undefined
@@ -12960,7 +12960,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            pattern: '/^{7e9081/i',
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value',
                             key: undefined
@@ -12990,7 +12990,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            pattern: '/^{7e9081/i',
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value',
                             key: undefined
@@ -13036,7 +13036,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            pattern: '/^{7e9081/i',
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
                             label: 'value',
                             key: undefined
@@ -13122,7 +13122,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            pattern: '/^{7e9081/i',
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value',
                             key: undefined
@@ -13152,7 +13152,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            pattern: '/^{7e9081/i',
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value',
                             key: undefined
@@ -13198,7 +13198,7 @@ describe('string', () => {
                         type: 'string.regex.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            pattern: '/^{7e9081/i',
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
                             label: 'value',
                             key: undefined

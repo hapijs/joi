@@ -412,7 +412,7 @@ describe('Joi', () => {
             type: 'string.regex.base',
             context: {
                 name: undefined,
-                pattern: /.{2}/,
+                pattern: '/.{2}/',
                 value: '6',
                 label: 'value',
                 key: undefined
