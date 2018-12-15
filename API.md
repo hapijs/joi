@@ -951,7 +951,7 @@ const schema = Joi.object({
     }).unknown(),
     {
         then: Joi.object({
-        bar: Joi.required()
+            bar: Joi.required()
         })
     }
 );
