@@ -928,7 +928,34 @@ const schema = Joi.object({
 });
 ```
 
-Note that this style is much more useful when your whole schema depends on the value of one of its property, or if you find yourself repeating the check for many keys of an object.
+Note that this style is much more useful when your whole schema depends on the value of one of its property, or if you find yourself repeating the check for many keys of an object. For example to validate this logic:
+
+```js
+const schema = Joi.object({
+    capacity: Joi.string()
+        .valid(["A", "B", "C"])
+        .required(),
+    // required if capacity == "A"
+    foo: Joi.when("capacity", {
+        is: "A",
+        then: Joi.string()
+        .valid(["X", "Y", "Z"])
+        .required()
+    }),
+    // required if capacity === "A" and foo !== "Z"
+    bar: Joi.string()
+}).when(
+    Joi.object({
+        capacity: Joi.only("A").required(),
+        foo: Joi.not("Z")
+    }).unknown(),
+    {
+        then: Joi.object({
+            bar: Joi.required()
+        })
+    }
+);
+```
 
 Alternatively, if you want to specify a specific type such as `string`, `array`, etc, you can do so like this:
 
