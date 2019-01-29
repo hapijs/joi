@@ -8,5 +8,8 @@ coverage.*
 
 **/*.pem
 
-.idea
+**/.idea
+**/.vscode
+**/.vs
+
 sandbox.js
