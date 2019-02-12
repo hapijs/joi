@@ -2637,6 +2637,17 @@ describe('Joi', () => {
             }).to.not.throw();
             expect(result).to.not.exist();
         });
+
+        it('respects abortEarly option', () => {
+
+            try {
+                Joi.assert({}, Joi.object().keys({ a: Joi.required(), b: Joi.required() }), { abortEarly: false });
+                throw new Error('should not reach that');
+            }
+            catch (err) {
+                expect(err.details.length).to.equal(2);
+            }
+        });
     });
 
     describe('attempt()', () => {
@@ -2675,11 +2686,23 @@ describe('Joi', () => {
             }).to.throw('the reason is "value" must be a number');
         });
 
-        it('throws on invalid value with message as error', () => {
+        it('throws on invalid value with message and abortEarly: false', () => {
+
+            try {
+                Joi.attempt({}, Joi.object().keys({ a: Joi.required(), b: Joi.required() }), 'the reasons are', { abortEarly: false });
+                throw new Error('should not reach that');
+            }
+            catch (err) {
+                expect(err.message.match(/the reasons are/)).to.not.equal(null);
+                expect(err.details.length).to.equal(2);
+            }
+        });
+
+        it('throws on invalid value with message as error even with abortEarly: false', () => {
 
             expect(() => {
 
-                Joi.attempt('x', Joi.number(), new Error('invalid value'));
+                Joi.attempt({}, Joi.object().keys({ a: Joi.required(), b: Joi.required() }), new Error('invalid value'), { abortEarly: false });
             }).to.throw('invalid value');
         });
 
