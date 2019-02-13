@@ -1514,6 +1514,82 @@ describe('string', () => {
         });
     });
 
+    describe('capitalize()', () => {
+
+        it('only allow strings that are capitalized', () => {
+
+            const schema = Joi.string().capitalize();
+            Helper.validateOptions(schema, [
+                ['This is capitalized', true],
+                ['5', true],
+                ['This\nis\nok', true],
+                ['This\nIs\nNot\nOk', false, null, {
+                    message: '"value" must be a capitalized string',
+                    details: [{
+                        message: '"value" must be a capitalized string',
+                        path: [],
+                        type: 'string.capitalize',
+                        context: { value: 'This\nIs\nNot\nOk', label: 'value', key: undefined }
+                    }]
+                }],
+                [1, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 1, label: 'value', key: undefined }
+                    }]
+                }]
+            ], { convert: false });
+        });
+
+        it('coerce string to uppercase before validation', async () => {
+
+            const schema = Joi.string().uppercase();
+            const value = await schema.validate('lower to upper');
+            expect(value).to.equal('LOWER TO UPPER');
+        });
+
+        it('works in combination with a forced trim', () => {
+
+            const schema = Joi.string().uppercase().trim();
+            Helper.validate(schema, [
+                [' abc', true],
+                [' ABC', true],
+                ['ABC', true],
+                [1, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 1, label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('works in combination with a forced replacement', () => {
+
+            const schema = Joi.string().uppercase().replace(/\s+/g, ' ');
+            Helper.validate(schema, [
+                ['a\r b\n c', true, null, 'A B C'],
+                ['A\t B  C', true, null, 'A B C'],
+                ['ABC', true, null, 'ABC'],
+                [1, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 1, label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+    });
+
     describe('trim()', () => {
 
         it('avoids unnecessary cloning when called twice', () => {
