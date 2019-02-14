@@ -140,6 +140,7 @@
     - [`string.normalize([form])`](#stringnormalizeform)
     - [`string.lowercase()`](#stringlowercase)
     - [`string.uppercase()`](#stringuppercase)
+    - [`string.capitalize()`](#stringcapitalize)
     - [`string.trim([enabled])`](#stringtrimenabled)
     - [`string.isoDate()`](#stringisodate)
   - [`symbol` - inherits from `Any`](#symbol---inherits-from-any)
@@ -1621,7 +1622,7 @@ const schema = Joi.func().ref();
 
 ### `number` - inherits from `Any`
 
-Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). 
+Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
 
 By default, it only allows safe numbers, see [`number.unsafe()`](#numberunsafeenabled).
 
@@ -2389,7 +2390,7 @@ Requires the string value to be a valid email address.
     - `errorLevel` - Numerical threshold at which an email address is considered invalid.
     - `tldWhitelist` - Specifies a list of acceptable TLDs.
     - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
-    
+
 Have a look at [`isemail`’s documentation](https://github.com/hapijs/isemail) for a detailed description of the options.
 
 ```js
@@ -2561,6 +2562,15 @@ const schema = Joi.string().uppercase();
 
 💥 Possible validation errors:[`string.uppercase`](#stringuppercase-1)
 
+#### `string.capitalize()`
+
+Requires the string value to have the first character uppercase. If the validation `convert` option is on (enabled by default), the string
+will be forced to capitalize.
+
+```js
+const schema = Joi.string().capitalize();
+```
+
 #### `string.trim([enabled])`
 
 Requires the string value to contain no whitespace before or after. If the validation `convert` option is on (enabled by
@@ -2591,7 +2601,7 @@ const schema = Joi.string().isoDate();
 
 Generates a schema object that matches a `Symbol` data type.
 
-If the validation `convert` option is on (enabled by default), the mappings declared in `map()` will be tried for an eventual match. 
+If the validation `convert` option is on (enabled by default), the mappings declared in `map()` will be tried for an eventual match.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -2608,7 +2618,7 @@ Allows values to be transformed into `Symbol`s, where:
 - `map` - mapping declaration that can be:
   - an object, where keys are strings, and values are `Symbol`s
   - an array of arrays of length 2, where for each sub-array, the 1st element must be anything but an object, a function or a `Symbol`, and the 2nd element must be a Symbol
-  - a `Map`, following the same principles as the array above 
+  - a `Map`, following the same principles as the array above
 
 ```js
 const schema = Joi.symbol().map([
@@ -3593,7 +3603,7 @@ The number didn't look like a port number.
 {
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
-    value: number // The number itself 
+    value: number // The number itself
 }
 ```
 
