@@ -1546,18 +1546,18 @@ describe('string', () => {
 
         it('coerce string to uppercase before validation', async () => {
 
-            const schema = Joi.string().uppercase();
-            const value = await schema.validate('lower to upper');
-            expect(value).to.equal('LOWER TO UPPER');
+            const schema = Joi.string().capitalize();
+            const value = await schema.validate('use capitalize');
+            expect(value).to.equal('Use capitalize');
         });
 
         it('works in combination with a forced trim', () => {
 
-            const schema = Joi.string().uppercase().trim();
+            const schema = Joi.string().capitalize().trim();
             Helper.validate(schema, [
                 [' abc', true],
-                [' ABC', true],
-                ['ABC', true],
+                [' Abc', true],
+                ['Abc', true],
                 [1, false, null, {
                     message: '"value" must be a string',
                     details: [{
@@ -1572,11 +1572,11 @@ describe('string', () => {
 
         it('works in combination with a forced replacement', () => {
 
-            const schema = Joi.string().uppercase().replace(/\s+/g, ' ');
+            const schema = Joi.string().capitalize().replace(/\s+/g, ' ');
             Helper.validate(schema, [
-                ['a\r b\n c', true, null, 'A B C'],
-                ['A\t B  C', true, null, 'A B C'],
-                ['ABC', true, null, 'ABC'],
+                ['a\r b\n c', true, null, 'A b c'],
+                ['A\t B  C', true, null, 'A b c'],
+                ['ABC', true, null, 'Abc'],
                 [1, false, null, {
                     message: '"value" must be a string',
                     details: [{
