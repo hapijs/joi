@@ -2357,4 +2357,27 @@ describe('number', () => {
             ]);
         });
     });
+
+    describe('cache()', () => {
+
+        it('can save time', () => {
+
+            const min = 4000;
+            const uncachedSchema = Joi
+                .number()
+                .min(min)
+                .max(50000000000)
+                .integer()
+                .positive()
+                .multiple(25)
+                .precision(0);
+            const cachedSchema = uncachedSchema.cache().min(min);
+            const countdown = 100000;
+            const value = 10000;
+            const timeSpentUncached = Helper.time(countdown, uncachedSchema, value);
+            const timeSpentCached = Helper.time(countdown, cachedSchema, value);
+            // console.log(timeSpentUncached, timeSpentCached);
+            expect(timeSpentUncached * 0.8).to.be.greaterThan(timeSpentCached);
+        });
+    });
 });

@@ -10,6 +10,19 @@ const Joi = require('../');
 
 const internals = {};
 
+exports.time = function (countdown, schema, value) {
+
+    const start = new Date();
+    const compiled = Joi.compile(schema);
+    for (let i = countdown; i > 0; i -= 1) {
+        Joi.validate(value, compiled);
+    }
+
+    const finished = new Date();
+    const delta = finished - start;
+    return delta;
+};
+
 
 exports.validate = function (schema, config) {
 

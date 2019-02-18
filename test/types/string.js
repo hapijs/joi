@@ -13313,4 +13313,24 @@ describe('string', () => {
             });
         });
     });
+
+    describe('cache()', () => {
+
+        it('can save time', () => {
+
+            const uncachedSchema = Joi
+                .string()
+                .lowercase()
+                .trim()
+                .regex(/^[0-9A-Z]{2,}$/i)
+                .alphanum();
+            const cachedSchema = uncachedSchema.cache();
+            const countdown = 100000;
+            const value = 'USD';
+            const timeSpentUncached = Helper.time(countdown, uncachedSchema, value);
+            const timeSpentCached = Helper.time(countdown, cachedSchema, value);
+            // console.log(timeSpentUncached, timeSpentCached);
+            expect(timeSpentUncached * 0.8).to.be.greaterThan(timeSpentCached);
+        });
+    });
 });
