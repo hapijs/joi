@@ -13,6 +13,7 @@
   "dependencies": {
     "hoek": "6.x.x",
     "isemail": "3.x.x",
+    "moment": "^2.24.0",
     "topo": "3.x.x"
   },
   "devDependencies": {
