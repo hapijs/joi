@@ -707,103 +707,45 @@ describe('string', () => {
 
     describe('email()', () => {
 
-        it('throws when options are not an object', (done) => {
+        it('validates unsupported options', (done) => {
 
-            expect(() => {
+            expect(() => Joi.string().email({ checkDNS: true })).to.throw('checkDNS option is not supported');
+            expect(() => Joi.string().email({ errorLevel: 1 })).to.throw('errorLevel option is not supported');
+            expect(() => Joi.string().email({ minDomainAtoms: 1 })).to.throw('minDomainAtoms option is not supported, use minDomainSegments instead');
+            expect(() => Joi.string().email({ tldWhitelist: ['com'] })).to.throw('tldWhitelist option is not supported, use tlds.allow instead');
+            expect(() => Joi.string().email({ tldBlacklist: ['com'] })).to.throw('tldBlacklist option is not supported, use tlds.deny instead');
 
-                const emailOptions = true;
-                Joi.string().email(emailOptions);
-            }).to.throw('email options must be an object');
             done();
         });
 
-        it('throws when checkDNS option is enabled', (done) => {
+        it('validates options', (done) => {
 
-            expect(() => {
+            expect(() => Joi.string().email(true)).to.throw('email options must be an object');
 
-                const emailOptions = { checkDNS: true };
-                Joi.string().email(emailOptions);
-            }).to.throw('checkDNS option is not supported');
-            done();
-        });
+            expect(() => Joi.string().email({ minDomainSegments: 1 })).to.not.throw();
+            expect(() => Joi.string().email({ minDomainSegments: '1' })).to.throw('minDomainSegments must be a positive integer');
+            expect(() => Joi.string().email({ minDomainSegments: 0 })).to.throw('minDomainSegments must be a positive integer');
+            expect(() => Joi.string().email({ minDomainSegments: -1 })).to.throw('minDomainSegments must be a positive integer');
+            expect(() => Joi.string().email({ minDomainSegments: 2.3 })).to.throw('minDomainSegments must be a positive integer');
 
-        it('throws when tldWhitelist is not an array or object', (done) => {
+            expect(() => Joi.string().email({ tlds: false })).to.not.throw();
+            expect(() => Joi.string().email({ tlds: true })).to.not.throw();
+            expect(() => Joi.string().email({ tlds: {} })).to.not.throw();
 
-            expect(() => {
+            expect(() => Joi.string().email({ tlds: { allow: true } })).to.not.throw();
+            expect(() => Joi.string().email({ tlds: { allow: false } })).to.not.throw();
+            expect(() => Joi.string().email({ tlds: { allow: ['com'] } })).to.not.throw();
+            expect(() => Joi.string().email({ tlds: { allow: new Set(['com']) } })).to.not.throw();
+            expect(() => Joi.string().email({ tlds: { allow: 'com' } })).to.throw('tlds.allow must be an array, Set, or boolean');
+            expect(() => Joi.string().email({ tlds: { allow: { com: true } } })).to.throw('tlds.allow must be an array, Set, or boolean');
 
-                const emailOptions = { tldWhitelist: 'domain.tld' };
-                Joi.string().email(emailOptions);
-            }).to.throw('tldWhitelist must be an array or object');
-            done();
-        });
+            expect(() => Joi.string().email({ tlds: { deny: ['com'] } })).to.not.throw();
+            expect(() => Joi.string().email({ tlds: { deny: new Set(['com']) } })).to.not.throw();
+            expect(() => Joi.string().email({ tlds: { deny: true } })).to.throw('tlds.deny must be an array or Set');
+            expect(() => Joi.string().email({ tlds: { deny: false } })).to.throw('tlds.deny must be an array or Set');
+            expect(() => Joi.string().email({ tlds: { deny: 'com' } })).to.throw('tlds.deny must be an array or Set');
+            expect(() => Joi.string().email({ tlds: { deny: { com: true } } })).to.throw('tlds.deny must be an array or Set');
 
-        it('throws when minDomainAtoms is not a number', (done) => {
-
-            expect(() => {
-
-                const emailOptions = { minDomainAtoms: '1' };
-                Joi.string().email(emailOptions);
-            }).to.throw('minDomainAtoms must be a positive integer');
-            done();
-        });
-
-        it('throws when minDomainAtoms is not an integer', (done) => {
-
-            expect(() => {
-
-                const emailOptions = { minDomainAtoms: 1.2 };
-                Joi.string().email(emailOptions);
-            }).to.throw('minDomainAtoms must be a positive integer');
-            done();
-        });
-
-        it('throws when minDomainAtoms is not positive', (done) => {
-
-            expect(() => {
-
-                const emailOptions = { minDomainAtoms: 0 };
-                Joi.string().email(emailOptions);
-            }).to.throw('minDomainAtoms must be a positive integer');
-            done();
-        });
-
-        it('does not throw when minDomainAtoms is a positive integer', (done) => {
-
-            expect(() => {
-
-                const emailOptions = { minDomainAtoms: 1 };
-                Joi.string().email(emailOptions);
-            }).to.not.throw();
-            done();
-        });
-
-        it('throws when errorLevel is not an integer or boolean', (done) => {
-
-            expect(() => {
-
-                const emailOptions = { errorLevel: 1.2 };
-                Joi.string().email(emailOptions);
-            }).to.throw('errorLevel must be a non-negative integer or boolean');
-            done();
-        });
-
-        it('throws when errorLevel is negative', (done) => {
-
-            expect(() => {
-
-                const emailOptions = { errorLevel: -1 };
-                Joi.string().email(emailOptions);
-            }).to.throw('errorLevel must be a non-negative integer or boolean');
-            done();
-        });
-
-        it('does not throw when errorLevel is 0', (done) => {
-
-            expect(() => {
-
-                const emailOptions = { errorLevel: 0 };
-                Joi.string().email(emailOptions);
-            }).to.not.throw();
             done();
         });
 
@@ -812,8 +754,16 @@ describe('string', () => {
             const schema = Joi.string().email();
             Helper.validate(schema, [
                 ['joe@example.com', true],
-                ['"joe"@example.com', true],
                 ['êjness@something.com', true],
+                ['"joe"@example.com', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: '"joe"@example.com', label: 'value', key: undefined }
+                    }]
+                }],
                 ['@iaminvalid.com', false, null, {
                     message: '"value" must be a valid email',
                     details: [{
@@ -823,7 +773,15 @@ describe('string', () => {
                         context: { value: '@iaminvalid.com', label: 'value', key: undefined }
                     }]
                 }],
-                ['joe@[IPv6:2a00:1450:4001:c02::1b]', true],
+                ['joe@[IPv6:2a00:1450:4001:c02::1b]', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe@[IPv6:2a00:1450:4001:c02::1b]', label: 'value', key: undefined }
+                    }]
+                }],
                 ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false, null, {
                     message: '"value" must be a valid email',
                     details: [{
@@ -845,9 +803,9 @@ describe('string', () => {
             ], done);
         });
 
-        it('validates email with tldWhitelist as array', (done) => {
+        it('validates email with tlds.allow', (done) => {
 
-            const schema = Joi.string().email({ tldWhitelist: ['com', 'org'] });
+            const schema = Joi.string().email({ tlds: { allow: ['com', 'org'] } });
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['joe@example.org', true],
@@ -863,27 +821,9 @@ describe('string', () => {
             ], done);
         });
 
-        it('validates email with tldWhitelist as object', (done) => {
+        it('validates email with minDomainSegments', (done) => {
 
-            const schema = Joi.string().email({ tldWhitelist: { com: true, org: true } });
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['joe@example.org', true],
-                ['joe@example.edu', false, null, {
-                    message: '"value" must be a valid email',
-                    details: [{
-                        message: '"value" must be a valid email',
-                        path: [],
-                        type: 'string.email',
-                        context: { value: 'joe@example.edu', label: 'value', key: undefined }
-                    }]
-                }]
-            ], done);
-        });
-
-        it('validates email with minDomainAtoms', (done) => {
-
-            const schema = Joi.string().email({ minDomainAtoms: 4 });
+            const schema = Joi.string().email({ minDomainSegments: 4 });
             Helper.validate(schema, [
                 ['joe@example.com', false, null, {
                     message: '"value" must be a valid email',
@@ -904,69 +844,6 @@ describe('string', () => {
                     }]
                 }],
                 ['joe@sub.www.example.com', true]
-            ], done);
-        });
-
-        it('validates email with errorLevel as boolean', (done) => {
-
-            let schema = Joi.string().email({ errorLevel: false });
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['joe@www.example.com', true],
-                ['joe@localhost', true],
-                ['joe', false, null, {
-                    message: '"value" must be a valid email',
-                    details: [{
-                        message: '"value" must be a valid email',
-                        path: [],
-                        type: 'string.email',
-                        context: { value: 'joe', label: 'value', key: undefined }
-                    }]
-                }]
-            ]);
-
-            schema = Joi.string().email({ errorLevel: true });
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['joe@www.example.com', true],
-                ['joe@localhost', true],
-                ['joe@', false, null, {
-                    message: '"value" must be a valid email',
-                    details: [{
-                        message: '"value" must be a valid email',
-                        path: [],
-                        type: 'string.email',
-                        context: { value: 'joe@', label: 'value', key: undefined }
-                    }]
-                }],
-                ['joe', false, null, {
-                    message: '"value" must be a valid email',
-                    details: [{
-                        message: '"value" must be a valid email',
-                        path: [],
-                        type: 'string.email',
-                        context: { value: 'joe', label: 'value', key: undefined }
-                    }]
-                }]
-            ], done);
-        });
-
-        it('validates email with errorLevel as integer', (done) => {
-
-            const schema = Joi.string().email({ errorLevel: 10 });
-            Helper.validate(schema, [
-                ['joe@example.com', true],
-                ['joe@www.example.com', true],
-                ['joe@localhost', true],
-                ['joe', false, null, {
-                    message: '"value" must be a valid email',
-                    details: [{
-                        message: '"value" must be a valid email',
-                        path: [],
-                        type: 'string.email',
-                        context: { value: 'joe', label: 'value', key: undefined }
-                    }]
-                }]
             ], done);
         });
 
@@ -1965,7 +1842,7 @@ describe('string', () => {
         it('should include inverted pattern name if specified', (done) => {
 
             const schema = Joi.string().regex(/[a-z]/, {
-                name  : 'lowercase',
+                name: 'lowercase',
                 invert: true
             });
             Helper.validate(schema, [
@@ -2003,7 +1880,7 @@ describe('string', () => {
                     details: [{
                         message,
                         path: [],
-                        type:  /versions/.test(message) ? 'string.ipVersion' : 'string.ip',
+                        type: /versions/.test(message) ? 'string.ipVersion' : 'string.ip',
                         context: (() => {
 
                             const context = {
@@ -2159,7 +2036,7 @@ describe('string', () => {
             '7:6:5:4:3:2:1::'
         ]);
 
-        const validIPvFuturesWithCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:/32','v1.09azAZ-._~!$&\'()*+,;=:/128']);
+        const validIPvFuturesWithCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:/32', 'v1.09azAZ-._~!$&\'()*+,;=:/128']);
 
         const validIPvFuturesWithoutCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:']);
 

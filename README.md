@@ -1,23 +1,12 @@
-![joi Logo](https://raw.github.com/hapijs/joi/master/images/joi.png)
+# joi
 
 Object schema description language and validator for JavaScript objects.
 
-[![npm version](https://badge.fury.io/js/joi.svg)](http://badge.fury.io/js/joi)
-[![Build Status](https://secure.travis-ci.org/hapijs/joi.svg?branch=master)](http://travis-ci.org/hapijs/joi)
-<!--
+[![Build Status](https://travis-ci.org/hapijs/joi.svg?branch=v12-commercial)](https://travis-ci.org/hapijs/joi)
 
-Remove those badges until they work properly on semver.
+## License
 
-[![Dependencies Status](https://david-dm.org/hapijs/joi.svg)](https://david-dm.org/hapijs/joi)
-[![DevDependencies Status](https://david-dm.org/hapijs/joi/dev-status.svg)](https://david-dm.org/hapijs/joi#info=devDependencies)
-
--->
-[![NSP Status](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e/badge)](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e)
-[![Known Vulnerabilities](https://snyk.io/test/github/hapijs/joi/badge.svg)](https://snyk.io/test/github/hapijs/joi)
-
-[![Join the chat at https://gitter.im/hapijs/joi](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hapijs/joi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
+This version of the package requires a commercial license. You may not use, copy, or distribute it without first acquiring a commercial license from Sideway Inc. Using this software without a license is a violation of US and international law. To obtain a license, please contact [sales@sideway.com](mailto:sales@sideway.com). The open source version of this package can be found [here](https://github.com/hapijs/joi).
 
 # Introduction
 
@@ -26,7 +15,8 @@ Imagine you run facebook and you want visitors to sign up on the website with re
 This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object that stores information) to ensure *validation* of key information.
 
 # API
-See the detailed [API Reference](https://github.com/hapijs/joi/blob/v12.0.0/API.md).
+
+See the detailed [API Reference](https://github.com/hapijs/joi/blob/v12-commercial/API.md).
 
 # Example
 

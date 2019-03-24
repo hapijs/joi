@@ -1,5 +1,5 @@
 {
-  "name": "joi",
+  "name": "@commercial/joi",
   "description": "Object schema validation",
   "version": "12.0.0",
   "homepage": "https://github.com/hapijs/joi",
@@ -10,24 +10,18 @@
     "schema",
     "validation"
   ],
-  "engines": {
-    "node": ">=4.0.0"
-  },
   "dependencies": {
-    "hoek": "4.x.x",
-    "isemail": "3.x.x",
-    "topo": "2.x.x"
+    "@commercial/address": "1.x.x",
+    "@commercial/hoek": "4.x.x",
+    "@commercial/topo": "2.x.x"
   },
   "devDependencies": {
-    "hapitoc": "1.x.x",
+    "code": "4.x.x",
     "lab": "14.x.x"
   },
   "scripts": {
-    "test": "lab -t 100 -a code -L",
-    "test-debug": "lab -a code",
-    "test-cov-html": "lab -r html -o coverage.html -a code",
-    "toc": "hapitoc",
-    "version": "npm run toc && git add API.md README.md"
+    "test": "lab -t 100 -a code -L -l",
+    "test-cov-html": "lab -r html -o coverage.html -a code -l"
   },
-  "license": "BSD-3-Clause"
+  "license": "SEE LICENSE IN LICENSE.md"
 }

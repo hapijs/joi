@@ -1,5 +1,5 @@
 <!-- version -->
-# 12.0.0 API Reference
+# 12.1.0 API Reference
 <!-- versionstop -->
 
 <img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
@@ -366,7 +366,7 @@ If you publish your extension on npm, make sure to add `joi` and `extension` as 
 #### Examples
 
 ```js
-const Joi = require('joi');
+const Joi = require('@commercial/joi');
 const customJoi = Joi.extend((joi) => ({
     base: joi.number(),
     name: 'number',
@@ -1861,9 +1861,20 @@ const schema = Joi.string().token();
 Requires the string value to be a valid email address.
 
 - `options` - optional settings:
-    - `errorLevel` - Numerical threshold at which an email address is considered invalid.
-    - `tldWhitelist` - Specifies a list of acceptable TLDs.
-    - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
+    - `allowUnicode` - if `true`, Unicode characters are permitted. Defaults to `true`.
+    - `minDomainSegments` - Number of segments required for the domain. Be careful since some
+      domains, such as `io`, directly allow email.
+    - `tlds` - options for TLD (top level domain) validation. By default, the TLD must be a valid
+      name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt). To
+      disable validation, set `tlds` to `false`. To customize how TLDs are validated, set one of
+      these:
+        - `allow` - one of:
+            - `true` to use the IANA list of registered TLDs. This is the default value.
+            - `false` to allow any TLD not listed in the `deny` list, if present.
+            - a `Set` or array of the allowed TLDs. Cannot be used together with `deny`.
+        - `deny` - one of:
+            - a `Set` or array of the forbidden TLDs. Cannot be used together with a custom `allow`
+              list.
 
 ```js
 const schema = Joi.string().email();

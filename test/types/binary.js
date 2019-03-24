@@ -52,13 +52,13 @@ describe('binary', () => {
 
     it('validates allowed buffer content', (done) => {
 
-        const hello = new Buffer('hello');
+        const hello = Buffer.from('hello');
         const schema = Joi.binary().valid(hello);
 
         Helper.validate(schema, [
             ['hello', true],
             [hello, true],
-            [new Buffer('hello'), true],
+            [Buffer.from('hello'), true],
             ['goodbye', false, null, {
                 message: '"value" must be one of [hello]',
                 details: [{
@@ -68,7 +68,7 @@ describe('binary', () => {
                     context: { valids: [hello], label: 'value', key: undefined }
                 }]
             }],
-            [new Buffer('goodbye'), false, null, {
+            [Buffer.from('goodbye'), false, null, {
                 message: '"value" must be one of [hello]',
                 details: [{
                     message: '"value" must be one of [hello]',
@@ -77,7 +77,7 @@ describe('binary', () => {
                     context: { valids: [hello], label: 'value', key: undefined }
                 }]
             }],
-            [new Buffer('HELLO'), false, null, {
+            [Buffer.from('HELLO'), false, null, {
                 message: '"value" must be one of [hello]',
                 details: [{
                     message: '"value" must be one of [hello]',
@@ -108,7 +108,7 @@ describe('binary', () => {
 
         it('accepts a buffer object', (done) => {
 
-            Joi.binary().validate(new Buffer('hello world'), (err, value) => {
+            Joi.binary().validate(Buffer.from('hello world'), (err, value) => {
 
                 expect(err).to.not.exist();
                 expect(value.toString('utf8')).to.equal('hello world');
@@ -122,7 +122,7 @@ describe('binary', () => {
         it('applies encoding', (done) => {
 
             const schema = Joi.binary().encoding('base64');
-            const input = new Buffer('abcdef');
+            const input = Buffer.from('abcdef');
             schema.validate(input.toString('base64'), (err, value) => {
 
                 expect(err).to.not.exist();
@@ -155,14 +155,14 @@ describe('binary', () => {
 
             const schema = Joi.binary().min(5);
             Helper.validate(schema, [
-                [new Buffer('testing'), true],
-                [new Buffer('test'), false, null, {
+                [Buffer.from('testing'), true],
+                [Buffer.from('test'), false, null, {
                     message: '"value" must be at least 5 bytes',
                     details: [{
                         message: '"value" must be at least 5 bytes',
                         path: [],
                         type: 'binary.min',
-                        context: { limit: 5, value: new Buffer('test'), label: 'value', key: undefined }
+                        context: { limit: 5, value: Buffer.from('test'), label: 'value', key: undefined }
                     }]
                 }]
             ], done);
@@ -193,7 +193,7 @@ describe('binary', () => {
 
             const schema = Joi.binary().max(5);
             Helper.validate(schema, [
-                [new Buffer('testing'), false, null, {
+                [Buffer.from('testing'), false, null, {
                     message: '"value" must be less than or equal to 5 bytes',
                     details: [{
                         message: '"value" must be less than or equal to 5 bytes',
@@ -201,13 +201,13 @@ describe('binary', () => {
                         type: 'binary.max',
                         context: {
                             limit: 5,
-                            value: new Buffer('testing'),
+                            value: Buffer.from('testing'),
                             label: 'value',
                             key: undefined
                         }
                     }]
                 }],
-                [new Buffer('test'), true]
+                [Buffer.from('test'), true]
             ], done);
         });
 
@@ -236,8 +236,8 @@ describe('binary', () => {
 
             const schema = Joi.binary().length(4);
             Helper.validate(schema, [
-                [new Buffer('test'), true],
-                [new Buffer('testing'), false, null, {
+                [Buffer.from('test'), true],
+                [Buffer.from('testing'), false, null, {
                     message: '"value" must be 4 bytes',
                     details: [{
                         message: '"value" must be 4 bytes',
@@ -245,7 +245,7 @@ describe('binary', () => {
                         type: 'binary.length',
                         context: {
                             limit: 4,
-                            value: new Buffer('testing'),
+                            value: Buffer.from('testing'),
                             label: 'value',
                             key: undefined
                         }
