@@ -1,12 +1,14 @@
 'use strict';
 
 const Fs = require('fs');
+
 const Benchmark = require('benchmark');
-const Bossy = require('bossy');
+const Bossy = require('@hapi/bossy');
 const Chalk = require('chalk');
 const CliTable = require('cli-table');
 const D3 = require('d3-format');
-const Hoek = require('hoek');
+const Hoek = require('@hapi/hoek');
+
 
 const definition = {
     c: {

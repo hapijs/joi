@@ -1,14 +1,13 @@
 'use strict';
 
-// Load modules
+const Code = require('code');
+const Joi = require('../lib');
 
-const { expect } = require('code');
-const Joi = require('../');
-
-
-// Declare internals
 
 const internals = {};
+
+
+const { expect } = Code;
 
 
 exports.validate = function (schema, config) {
