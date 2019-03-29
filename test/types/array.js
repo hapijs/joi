@@ -38,6 +38,12 @@ describe('array', () => {
         expect(value.length).to.equal(3);
     });
 
+    it('converts a string with whitespace to an array', async () => {
+
+        const value = await Joi.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3] \n\r\t');
+        expect(value.length).to.equal(3);
+    });
+
     it('errors on non-array string', async () => {
 
         const err = await expect(Joi.array().validate('{ "something": false }')).to.reject('"value" must be an array');
