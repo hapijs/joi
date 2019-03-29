@@ -1,11 +1,8 @@
-![joi Logo](https://raw.github.com/hapijs/joi/master/images/joi.png)
+# joi
 
 Object schema description language and validator for JavaScript objects.
 
-[![npm version](https://badge.fury.io/js/joi.svg)](http://badge.fury.io/js/joi)
 [![Build Status](https://travis-ci.org/hapijs/joi.svg?branch=master)](https://travis-ci.org/hapijs/joi)
-[![NSP Status](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e/badge)](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e)
-[![Known Vulnerabilities](https://snyk.io/test/github/hapijs/joi/badge.svg)](https://snyk.io/test/github/hapijs/joi)
 
 Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
@@ -16,7 +13,7 @@ Imagine you run facebook and you want visitors to sign up on the website with re
 This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object that stores information) to ensure *validation* of key information.
 
 # API
-See the detailed [API Reference](https://github.com/hapijs/joi/blob/v14.3.1/API.md).
+See the detailed [API Reference](/blob/v14.4.0/API.md).
 
 # Example
 
