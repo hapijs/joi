@@ -1,10 +1,13 @@
 {
   "name": "@hapi/joi",
   "description": "Object schema validation",
-  "version": "14.3.1",
+  "version": "14.4.0",
   "repository": "git://github.com/hapijs/joi",
   "main": "lib/index.js",
-  "keywords": ["schema", "validation"],
+  "keywords": [
+    "schema",
+    "validation"
+  ],
   "dependencies": {
     "@hapi/hoek": "6.x.x",
     "isemail": "3.x.x",
