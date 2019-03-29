@@ -1296,31 +1296,31 @@ describe('object', () => {
                 expect(err.details).to.equal([
                     {
                         message: '"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b"',
-                        path: [ ],
+                        path: [],
                         type: 'object.rename.regex.multiple',
-                        context: { from: [ 'c' ], to: 'b', label: 'value', key: undefined }
+                        context: { from: ['c'], to: 'b', label: 'value', key: undefined }
                     },
                     {
                         message:'"value" cannot rename children [z] because override is disabled and target "z" exists',
-                        path: [ ],
+                        path: [],
                         type: 'object.rename.regex.override',
-                        context: { from: [ 'z' ], to: 'z', label: 'value', key: undefined }
+                        context: { from: ['z'], to: 'z', label: 'value', key: undefined }
                     },
                     {
                         message:'"z" must be a string',
-                        path: [ 'z' ],
+                        path: ['z'],
                         type: 'string.base',
                         context: { value: 1, key: 'z', label: 'z' }
                     },
                     {
                         message:'"d" is not allowed',
-                        path: [ 'd' ],
+                        path: ['d'],
                         type: 'object.allowUnknown',
-                        context: { child: 'd', value: 1, key: 'd', label: 'd'}
+                        context: { child: 'd', value: 1, key: 'd', label: 'd' }
                     },
                     {
                         message:'"b" is not allowed',
-                        path: [ 'b' ],
+                        path: ['b'],
                         type: 'object.allowUnknown',
                         context: { child: 'b', value: 1, key: 'b', label: 'b' }
                     }
@@ -3431,7 +3431,7 @@ describe('object', () => {
         it('should set keys to lower case', () => {
 
             const schema = Joi.object({
-                a: Joi.number().required(),
+                a: Joi.number().required()
             });
             const result = Joi.validate({ A: 1 }, schema, { keysToLowerCase: true });
             expect(result.value.a).to.equal(1);
@@ -3440,7 +3440,7 @@ describe('object', () => {
         it('should leave keys as is', () => {
 
             const schema = Joi.object({
-                A: Joi.number().required(),
+                A: Joi.number().required()
             });
             const result = Joi.validate({ A: 1 }, schema, { keysToLowerCase: false });
             expect(result.value.A).to.equal(1);
@@ -3449,7 +3449,7 @@ describe('object', () => {
         it('should leave keys as is by default keysToLowerCase is false', () => {
 
             const schema = Joi.object({
-                A: Joi.number().required(),
+                A: Joi.number().required()
             });
             const result = Joi.validate({ A: 1 }, schema);
             expect(result.value.A).to.equal(1);
