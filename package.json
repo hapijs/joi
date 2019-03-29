@@ -1,7 +1,7 @@
 {
   "name": "@hapi/joi",
   "description": "Object schema validation",
-  "version": "14.4.0",
+  "version": "14.4.1",
   "repository": "git://github.com/hapijs/joi",
   "main": "lib/index.js",
   "keywords": [
@@ -16,7 +16,7 @@
   "devDependencies": {
     "code": "5.x.x",
     "hapitoc": "1.x.x",
-    "lab": "18.x.x"
+    "@hapi/lab": "18.x.x"
   },
   "scripts": {
     "test": "lab -t 100 -a code -L",
