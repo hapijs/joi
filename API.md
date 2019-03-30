@@ -292,6 +292,7 @@ Validates a value using the given schema and options where:
     `validate()` and not using `any.options()`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
   - `escapeHtml` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
+  - `keysToLowerCase` - when `true` all of the value's object keys will be lower cased. Defaults to `false`.
 - `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
@@ -1619,7 +1620,7 @@ const schema = Joi.func().ref();
 
 ### `number` - inherits from `Any`
 
-Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). 
+Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
 
 By default, it only allows safe numbers, see [`number.unsafe()`](#numberunsafeenabled).
 
@@ -2387,7 +2388,7 @@ Requires the string value to be a valid email address.
     - `errorLevel` - Numerical threshold at which an email address is considered invalid.
     - `tldWhitelist` - Specifies a list of acceptable TLDs.
     - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
-    
+
 Have a look at [`isemail`’s documentation](https://github.com/hapijs/isemail) for a detailed description of the options.
 
 ```js
@@ -2589,7 +2590,7 @@ const schema = Joi.string().isoDate();
 
 Generates a schema object that matches a `Symbol` data type.
 
-If the validation `convert` option is on (enabled by default), the mappings declared in `map()` will be tried for an eventual match. 
+If the validation `convert` option is on (enabled by default), the mappings declared in `map()` will be tried for an eventual match.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -2606,7 +2607,7 @@ Allows values to be transformed into `Symbol`s, where:
 - `map` - mapping declaration that can be:
   - an object, where keys are strings, and values are `Symbol`s
   - an array of arrays of length 2, where for each sub-array, the 1st element must be anything but an object, a function or a `Symbol`, and the 2nd element must be a Symbol
-  - a `Map`, following the same principles as the array above 
+  - a `Map`, following the same principles as the array above
 
 ```js
 const schema = Joi.symbol().map([
@@ -3591,7 +3592,7 @@ The number didn't look like a port number.
 {
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
-    value: number // The number itself 
+    value: number // The number itself
 }
 ```
 

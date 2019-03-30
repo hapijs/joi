@@ -3417,6 +3417,48 @@ describe('object', () => {
         });
     });
 
+    describe('should normalize keysToLowerCase', () => {
+
+        it('should set keys to lower case', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required()
+            });
+            const result = Joi.validate({ A: 1 }, schema, { keysToLowerCase: true });
+            expect(result.value.a).to.equal(1);
+        });
+
+        it('should leave keys as is', () => {
+
+            const schema = Joi.object({
+                A: Joi.number().required()
+            });
+            const result = Joi.validate({ A: 1 }, schema, { keysToLowerCase: false });
+            expect(result.value.A).to.equal(1);
+        });
+
+        it('should leave keys as is by default keysToLowerCase is false', () => {
+
+            const schema = Joi.object({
+                A: Joi.number().required()
+            });
+            const result = Joi.validate({ A: 1 }, schema);
+            expect(result.value.A).to.equal(1);
+        });
+
+        it('should not delete lower case keys', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().required()
+            });
+            const result = Joi.validate({ a: 1, B: 2 }, schema, { keysToLowerCase: true });
+            expect(result.value.a).to.equal(1);
+            expect(result.value.b).to.equal(2);
+        });
+
+    });
+
     describe('forbiddenKeys()', () => {
 
         it('should set keys as forbidden', () => {
