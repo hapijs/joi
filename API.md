@@ -1,5 +1,5 @@
 <!-- version -->
-# 14.3.1 API Reference
+# 15.0.0 API Reference
 <!-- versionstop -->
 
 <!-- toc -->
@@ -469,7 +469,7 @@ const schema = defaultJoi.object(); // Equivalent to a Joi.object().min(1)
 By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because they use `this` internally. So `Joi.string()` works but if you extract the function from it and call `string()` it won't. `bind()` creates a new Joi instance where all the functions relying on `this` are bound to the Joi instance.
 
 ```js
-const { object, string } = require('joi').bind();
+const { object, string } = require('@hapi/joi').bind();
 
 const schema = object({
   property: string().min(4)
@@ -535,7 +535,7 @@ If you publish your extension on npm, make sure to add `joi` and `extension` as 
 #### Examples
 
 ```js
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 const customJoi = Joi.extend((joi) => ({
     base: joi.number(),
     name: 'number',
@@ -894,7 +894,7 @@ const ab = a.concat(b);
 
 #### `any.when(condition, options)`
 
-Converts the type into an [`alternatives`](#alternatives) type where the conditions are merged into the type definition where:
+Converts the type into an [`alternatives`](#alternatives---inherits-from-any) type where the conditions are merged into the type definition where:
 - `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
     - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted using [Joi.compile](#compileschema). Forbidden when `condition` is a schema.
@@ -2384,11 +2384,20 @@ const schema = Joi.string().token();
 Requires the string value to be a valid email address.
 
 - `options` - optional settings:
-    - `errorLevel` - Numerical threshold at which an email address is considered invalid.
-    - `tldWhitelist` - Specifies a list of acceptable TLDs.
-    - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
-    
-Have a look at [`isemail`’s documentation](https://github.com/hapijs/isemail) for a detailed description of the options.
+    - `allowUnicode` - if `true`, Unicode characters are permitted. Defaults to `true`.
+    - `minDomainSegments` - Number of segments required for the domain. Be careful since some
+      domains, such as `io`, directly allow email.
+    - `tlds` - options for TLD (top level domain) validation. By default, the TLD must be a valid
+      name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt). To
+      disable validation, set `tlds` to `false`. To customize how TLDs are validated, set one of
+      these:
+        - `allow` - one of:
+            - `true` to use the IANA list of registered TLDs. This is the default value.
+            - `false` to allow any TLD not listed in the `deny` list, if present.
+            - a `Set` or array of the allowed TLDs. Cannot be used together with `deny`.
+        - `deny` - one of:
+            - a `Set` or array of the forbidden TLDs. Cannot be used together with a custom `allow`
+              list.
 
 ```js
 const schema = Joi.string().email();

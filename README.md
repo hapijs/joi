@@ -13,7 +13,7 @@ Imagine you run facebook and you want visitors to sign up on the website with re
 This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object that stores information) to ensure *validation* of key information.
 
 # API
-See the detailed [API Reference](https://github.com/hapijs/joi/blob/v14.4.1/API.md).
+See the detailed [API Reference](https://github.com/hapijs/joi/blob/v15.0.0/API.md).
 
 # Example
 

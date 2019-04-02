@@ -1,7 +1,7 @@
 'use strict';
 
-const Code = require('code');
-const Joi = require('../lib');
+const Code = require('@hapi/code');
+const Joi = require('..');
 
 
 const internals = {};
