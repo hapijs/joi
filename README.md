@@ -18,7 +18,7 @@ See the detailed [API Reference](https://github.com/hapijs/joi/blob/v15.0.0/API.
 # Example
 
 ```javascript
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 
 const schema = Joi.object().keys({
     username: Joi.string().alphanum().min(3).max(30).required(),
