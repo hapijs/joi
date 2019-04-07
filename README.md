@@ -1,3 +1,5 @@
+<img src="https://github.com/hapijs/assets/blob/master/images/family.svg" width="180px" align="right" />
+
 # joi
 
 Object schema description language and validator for JavaScript objects.
@@ -6,16 +8,16 @@ Object schema description language and validator for JavaScript objects.
 
 Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
 
-# Introduction
+## Introduction
 
 Imagine you run facebook and you want visitors to sign up on the website with real names and not something like `l337_p@nda` in the first name field. How would you define the limitations of what can be inputted and validate it against the set rules?
 
 This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object that stores information) to ensure *validation* of key information.
 
-# API
+## API
 See the detailed [API Reference](https://github.com/hapijs/joi/blob/v15.0.0/API.md).
 
-# Example
+## Example
 
 ```javascript
 const Joi = require('@hapi/joi');
@@ -55,7 +57,7 @@ The above schema defines the following constraints:
     * a valid email address string
     * must have two domain parts e.g. `example.com`
 
-# Usage
+## Usage
 
 Usage is a two steps process. First, a schema is constructed using the provided types and constraints:
 
@@ -114,6 +116,6 @@ When validating a schema:
 * Strings are utf-8 encoded by default.
 * Rules are defined in an additive fashion and evaluated in order, first the inclusive rules, then the exclusive rules.
 
-# Browsers
+## Browsers
 
 Joi doesn't directly support browsers, but you could use [joi-browser](https://github.com/jeffbski/joi-browser) for an ES5 build of Joi that works in browsers, or as a source of inspiration for your own builds.
