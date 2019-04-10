@@ -233,7 +233,7 @@ describe('any', () => {
 
             expect(() => {
 
-                Joi.any().options({ presence: 'optional', raw: true });
+                Joi.any().options({ presence: 'optional', noDefaults: true });
             }).to.not.throw();
         });
 
