@@ -1,20 +1,17 @@
 'use strict';
 
-// Load modules
-
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 const Joi = require('../..');
+
 const Helper = require('../helper');
 
-
-// Declare internals
 
 const internals = {};
 
 
-// Test shortcuts
-
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 describe('any', () => {
@@ -236,7 +233,7 @@ describe('any', () => {
 
             expect(() => {
 
-                Joi.any().options({ presence: 'optional', raw: true });
+                Joi.any().options({ presence: 'optional', noDefaults: true });
             }).to.not.throw();
         });
 

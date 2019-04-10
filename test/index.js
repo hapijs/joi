@@ -1,20 +1,17 @@
 'use strict';
 
-// Load modules
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
+const Joi = require('..');
 
-const Lab = require('lab');
-const Joi = require('../lib');
 const Helper = require('./helper');
 
-
-// Declare internals
 
 const internals = {};
 
 
-// Test shortcuts
-
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 describe('Joi', () => {
@@ -3367,7 +3364,7 @@ describe('Joi', () => {
             expect(schema.validate(3)).to.contain({ error: null, value: 6 });
         });
 
-        it('overrides a predefined language', () => {
+        it('does not override a predefined language', () => {
 
             const base = Joi.any().options({
                 language: {
@@ -3400,7 +3397,36 @@ describe('Joi', () => {
             const schema = customJoi.myType().foo();
             const result = schema.validate({});
             expect(result.error).to.be.an.instanceof(Error);
-            expect(result.error.toString()).to.equal('ValidationError: "value" modified');
+            expect(result.error.toString()).to.equal('ValidationError: "value" original');
+        });
+
+        it('does not change predefined options', () => {
+
+            const base = Joi.number().options({
+                abortEarly: false
+            });
+
+            const customJoi = Joi.extend({
+                base,
+                name: 'myType',
+                language: {
+                    foo: 'foo'
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('myType.foo', null, state, options);
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType().min(10).max(0).foo();
+            const result = schema.validate(5);
+            expect(result.error).to.be.an.instanceof(Error);
+            expect(result.error.toString()).to.equal('ValidationError: "value" must be larger than or equal to 10. "value" must be less than or equal to 0. "value" foo');
         });
 
         it('defines a custom type coercing its input value', () => {

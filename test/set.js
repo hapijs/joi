@@ -1,19 +1,16 @@
 'use strict';
 
-// Load modules
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 
-const Lab = require('lab');
 const Set = require('../lib/set');
 
-
-// Declare internals
 
 const internals = {};
 
 
-// Test shortcuts
-
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 describe('Set', () => {
