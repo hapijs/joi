@@ -2028,6 +2028,14 @@ describe('object', () => {
 
             expect(error).to.equal(true);
         });
+
+        it('allows using refs in .valid() schema pattern', async () => {
+
+            const schema = Joi.object().pattern(Joi.string().valid(Joi.ref('$keys')), Joi.any());
+
+            const value = await Joi.validate({ a: 'test' }, schema, { context: { keys: ['a'] } });
+            expect(value).to.equal({ a: 'test' });
+        });
     });
 
     describe('with()', () => {
