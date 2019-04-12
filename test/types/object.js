@@ -28,6 +28,12 @@ describe('object', () => {
         expect(value.hi).to.equal(true);
     });
 
+    it('converts a json string with whitespace to an object', async () => {
+
+        const value = await Joi.object().validate(' \n\r\t{ \n\r\t"hi" \n\r\t: \n\r\ttrue \n\r\t} \n\r\t');
+        expect(value).to.equal({ hi: true });
+    });
+
     it('fails on json string in strict mode', async () => {
 
         await expect(Joi.object().strict().validate('{"hi":true}')).to.reject('"value" must be an object');
