@@ -8,7 +8,7 @@
   - [`version`](#version)
   - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
   - [`compile(schema)`](#compileschema)
-  - [`describe(schema)`](DESCRIBE.md#describeschema)
+  - [`describe(schema)`](DESCRIBE.md)
   - [`assert(value, schema, [message])`](#assertvalue-schema-message)
   - [`attempt(value, schema, [message])`](#attemptvalue-schema-message)
   - [`ref(key, [options])`](#refkey-options)
@@ -1089,6 +1089,8 @@ Results in:
   flags: { allowOnly: true },
   valids: [ 'foo', 'bar' ] }
 ```
+
+For more examples of `describe` on `any` methods, see the documentation [here](DESCRIBE.md#any).
 
 ### `array` - inherits from `Any`
 
