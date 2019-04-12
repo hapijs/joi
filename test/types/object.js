@@ -1849,6 +1849,64 @@ describe('object', () => {
             ]);
         });
 
+        it('validates unknown keys using a schema pattern with a reference', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.object().pattern(Joi.only(Joi.ref('a')), Joi.boolean())
+            });
+
+            Helper.validate(schema, [
+                [{ a: 'x' }, true],
+                [{ a: 5 }, false, null, {
+                    message: 'child "a" fails because ["a" must be a string]',
+                    details: [{
+                        message: '"a" must be a string',
+                        path: ['a'],
+                        type: 'string.base',
+                        context: { label: 'a', key: 'a', value: 5 }
+                    }]
+                }],
+                [{ b: 'x' }, false, null, {
+                    message: 'child "b" fails because ["b" must be an object]',
+                    details: [{
+                        message: '"b" must be an object',
+                        path: ['b'],
+                        type: 'object.base',
+                        context: { label: 'b', key: 'b', value: 'x' }
+                    }]
+                }],
+                [{ b: {} }, true],
+                [{ b: { foo: true } }, false, null, {
+                    message: 'child "b" fails because ["foo" is not allowed]',
+                    details: [{
+                        message: '"foo" is not allowed',
+                        path: ['b', 'foo'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'foo', value: true, key: 'foo', label: 'foo' }
+                    }]
+                }],
+                [{ a: 'x', b: { foo: true } }, false, null, {
+                    message: 'child "b" fails because ["foo" is not allowed]',
+                    details: [{
+                        message: '"foo" is not allowed',
+                        path: ['b', 'foo'],
+                        type: 'object.allowUnknown',
+                        context: { child: 'foo', value: true, key: 'foo', label: 'foo' }
+                    }]
+                }],
+                [{ a: 'x', b: { x: 'y' } }, false, null, {
+                    message: 'child "b" fails because [child "x" fails because ["x" must be a boolean]]',
+                    details: [{
+                        message: '"x" must be a boolean',
+                        path: ['b', 'x'],
+                        type: 'boolean.base',
+                        context: { value: 'y', key: 'x', label: 'x' }
+                    }]
+                }]
+            ]);
+        });
+
         it('validates unknown keys using a pattern (nested)', async () => {
 
             const schema = {
