@@ -3221,6 +3221,34 @@ describe('Joi', () => {
             expect(schema.addTwice(3).validate(0).value).to.equal(6);
         });
 
+        it('defines a custom type with a rule with both setup and validate', () => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                rules: [
+                    {
+                        name: 'add',
+                        params: {
+                            factor: Joi.number().required()
+                        },
+                        setup(params) {
+
+                            const newSchema = Joi.number().min(0);
+                            newSchema._flags.add = params.factor;
+                            return newSchema;
+                        },
+                        validate(params, value, state, options) {
+
+                            return value + params.factor;
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(schema.add(3).validate(3).value).to.equal(6);
+        });
+
         it('defines a rule that validates its parameters', () => {
 
             const customJoi = Joi.extend({
