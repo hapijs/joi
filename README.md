@@ -15,7 +15,7 @@ This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript o
 # Installation
 
 ```cli 
- npm install --save joi 
+ npm install --save @hapi/joi
  ```
 
 ## API
