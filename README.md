@@ -31,7 +31,7 @@ const schema = Joi.object().keys({
     password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
     access_token: [Joi.string(), Joi.number()],
     birthyear: Joi.number().integer().min(1900).max(2013),
-    email: Joi.string().email({ minDomainAtoms: 2 })
+    email: Joi.string().email({ minDomainSegments: 2 })
 }).with('username', 'birthyear').without('password', 'access_token');
 
 // Return result.
