@@ -742,6 +742,16 @@ describe('object', () => {
         }]);
     });
 
+    it('should keep symbols', async () => {
+
+        const schema = Joi.object().keys({
+            a: Joi.number()
+        });
+        const symbol = Symbol();
+        const value = await schema.validate({ [symbol]: 5, a: 5 });
+        expect(value[symbol]).to.equal(5);
+    });
+
     describe('keys()', () => {
 
         it('allows any key', async () => {
