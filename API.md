@@ -520,6 +520,17 @@ The `params` of `rules` rely on the fact that all engines, even though not state
 params: { options: Joi.object({ param1: Joi.number().required(), param2: Joi.string() }) }
 ```
 
+To resolve referenced `params` in you `validate` or `setup` functions, you can use the following approach:
+```js
+validate(params, value, state, options) {
+  let {foo} = params;
+  if (Joi.isRef(foo)) {
+    foo = foo(state.reference || state.parent, options);
+  }
+  //...
+}
+```
+
 Any of the `coerce`, `pre` and `validate` functions should use `this.createError(type, context, state, options[, flags])` to create and return errors.
 This function potentially takes 5 arguments:
 * `type` - the dotted type of the error matching predefined language elements or the ones defined in your extension. **Required**.
