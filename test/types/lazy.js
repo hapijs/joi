@@ -5,7 +5,7 @@ const Lab = require('@hapi/lab');
 const Joi = require('../..');
 
 const Helper = require('../helper');
-const Lazy = require('../../lib/types/lazy/index');
+const Lazy = require('../../lib/types/lazy');
 
 
 const internals = {};

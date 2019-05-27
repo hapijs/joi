@@ -3,7 +3,7 @@
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 
-const Set = require('../lib/set');
+const Values = require('../lib/values');
 
 
 const internals = {};
@@ -13,63 +13,63 @@ const { describe, it } = exports.lab = Lab.script();
 const { expect } = Code;
 
 
-describe('Set', () => {
+describe('Values', () => {
 
     describe('has()', () => {
 
         it('compares date to null', () => {
 
-            const set = new Set();
+            const set = new Values();
             set.add(null);
             expect(set.has(new Date())).to.be.false();
         });
 
         it('compares buffer to null', () => {
 
-            const set = new Set();
+            const set = new Values();
             set.add(null);
             expect(set.has(Buffer.from(''))).to.be.false();
         });
 
         it('compares different types of values', () => {
 
-            let set = new Set();
+            let set = new Values();
             set.add(1);
             expect(set.has(1)).to.be.true();
             expect(set.has(2)).to.be.false();
 
             const d = new Date();
-            set = new Set();
+            set = new Values();
             set.add(d);
             expect(set.has(new Date(d.getTime()))).to.be.true();
             expect(set.has(new Date(d.getTime() + 1))).to.be.false();
 
             const str = 'foo';
-            set = new Set();
+            set = new Values();
             set.add(str);
             expect(set.has(str)).to.be.true();
             expect(set.has('foobar')).to.be.false();
 
             const s = Symbol('foo');
-            set = new Set();
+            set = new Values();
             set.add(s);
             expect(set.has(s)).to.be.true();
             expect(set.has(Symbol('foo'))).to.be.false();
 
             const o = {};
-            set = new Set();
+            set = new Values();
             set.add(o);
             expect(set.has(o)).to.be.true();
             expect(set.has({})).to.be.false();
 
             const f = () => {};
-            set = new Set();
+            set = new Values();
             set.add(f);
             expect(set.has(f)).to.be.true();
             expect(set.has(() => {})).to.be.false();
 
             const b = Buffer.from('foo');
-            set = new Set();
+            set = new Values();
             set.add(b);
             expect(set.has(b)).to.be.true();
             expect(set.has(Buffer.from('foobar'))).to.be.false();
@@ -80,7 +80,7 @@ describe('Set', () => {
 
         it('returns array', () => {
 
-            const set = new Set();
+            const set = new Values();
             set.add('x');
             set.add('y');
             expect(set.values()).to.equal(['x', 'y']);
@@ -88,7 +88,7 @@ describe('Set', () => {
 
         it('strips undefined', () => {
 
-            const set = new Set();
+            const set = new Values();
             set.add(undefined);
             set.add('x');
             expect(set.values({ stripUndefined: true })).to.not.include(undefined).and.to.equal(['x']);
@@ -96,7 +96,7 @@ describe('Set', () => {
 
         it('ignores absent stripUndefined', () => {
 
-            const set = new Set();
+            const set = new Values();
             set.add(undefined);
             set.add('x');
             expect(set.values({})).to.equal([undefined, 'x']);
@@ -109,7 +109,7 @@ describe('Set', () => {
 
             expect(() => {
 
-                const set = new Set();
+                const set = new Values();
                 set.add(true);
                 set.add(1);
                 set.add('hello');
@@ -122,9 +122,9 @@ describe('Set', () => {
 
     describe('slice', () => {
 
-        it('returns a new Set', () => {
+        it('returns a new Values', () => {
 
-            const set = new Set();
+            const set = new Values();
             set.add(null);
             const otherValids = set.slice();
             otherValids.add('null');
@@ -137,9 +137,9 @@ describe('Set', () => {
 
     describe('concat', () => {
 
-        it('merges _set into a new Set', () => {
+        it('merges _set into a new Values', () => {
 
-            const set = new Set();
+            const set = new Values();
             const otherValids = set.slice();
             set.add(null);
             otherValids.add('null');
