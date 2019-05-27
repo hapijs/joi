@@ -310,6 +310,194 @@ describe('alternatives', () => {
                 ]);
             });
 
+            it('validates conditional alternatives (self reference, explicit)', () => {
+
+                const schema = Joi.object({
+                    a: Joi.boolean().required()
+                })
+                    .when(Joi.ref('a', { self: true }), {
+                        is: true,
+                        then: {
+                            b: Joi.string().required()
+                        },
+                        otherwise: {
+                            c: Joi.string().required()
+                        }
+                    });
+
+                Helper.validate(schema, [
+                    [{ a: true, b: 'x' }, true],
+                    [{ a: true, b: 5 }, false, null, {
+                        message: 'child "b" fails because ["b" must be a string]',
+                        details: [{
+                            message: '"b" must be a string',
+                            path: ['b'],
+                            type: 'string.base',
+                            context: { value: 5, key: 'b', label: 'b' }
+                        }]
+                    }],
+                    [{ a: true }, false, null, {
+                        message: 'child "b" fails because ["b" is required]',
+                        details: [{
+                            message: '"b" is required',
+                            path: ['b'],
+                            type: 'any.required',
+                            context: { key: 'b', label: 'b' }
+                        }]
+                    }],
+                    [{ a: true, c: 5 }, false, null, {
+                        message: 'child "b" fails because ["b" is required]',
+                        details: [{
+                            message: '"b" is required',
+                            path: ['b'],
+                            type: 'any.required',
+                            context: { key: 'b', label: 'b' }
+                        }]
+                    }],
+                    [{ a: true, c: 'x' }, false, null, {
+                        message: 'child "b" fails because ["b" is required]',
+                        details: [{
+                            message: '"b" is required',
+                            path: ['b'],
+                            type: 'any.required',
+                            context: { key: 'b', label: 'b' }
+                        }]
+                    }],
+
+                    [{ a: false, b: 'x' }, false, null, {
+                        message: 'child "c" fails because ["c" is required]',
+                        details: [{
+                            message: '"c" is required',
+                            path: ['c'],
+                            type: 'any.required',
+                            context: { key: 'c', label: 'c' }
+                        }]
+                    }],
+                    [{ a: false, b: 5 }, false, null, {
+                        message: 'child "c" fails because ["c" is required]',
+                        details: [{
+                            message: '"c" is required',
+                            path: ['c'],
+                            type: 'any.required',
+                            context: { key: 'c', label: 'c' }
+                        }]
+                    }],
+                    [{ a: false }, false, null, {
+                        message: 'child "c" fails because ["c" is required]',
+                        details: [{
+                            message: '"c" is required',
+                            path: ['c'],
+                            type: 'any.required',
+                            context: { key: 'c', label: 'c' }
+                        }]
+                    }],
+                    [{ a: false, c: 5 }, false, null, {
+                        message: 'child "c" fails because ["c" must be a string]',
+                        details: [{
+                            message: '"c" must be a string',
+                            path: ['c'],
+                            type: 'string.base',
+                            context: { value: 5, key: 'c', label: 'c' }
+                        }]
+                    }],
+                    [{ a: false, c: 'x' }, true]
+                ]);
+            });
+
+            it('validates conditional alternatives (self reference, implicit)', () => {
+
+                const schema = Joi.object({
+                    a: Joi.boolean().required()
+                })
+                    .when('.a', {
+                        is: true,
+                        then: {
+                            b: Joi.string().required()
+                        },
+                        otherwise: {
+                            c: Joi.string().required()
+                        }
+                    });
+
+                Helper.validate(schema, [
+                    [{ a: true, b: 'x' }, true],
+                    [{ a: true, b: 5 }, false, null, {
+                        message: 'child "b" fails because ["b" must be a string]',
+                        details: [{
+                            message: '"b" must be a string',
+                            path: ['b'],
+                            type: 'string.base',
+                            context: { value: 5, key: 'b', label: 'b' }
+                        }]
+                    }],
+                    [{ a: true }, false, null, {
+                        message: 'child "b" fails because ["b" is required]',
+                        details: [{
+                            message: '"b" is required',
+                            path: ['b'],
+                            type: 'any.required',
+                            context: { key: 'b', label: 'b' }
+                        }]
+                    }],
+                    [{ a: true, c: 5 }, false, null, {
+                        message: 'child "b" fails because ["b" is required]',
+                        details: [{
+                            message: '"b" is required',
+                            path: ['b'],
+                            type: 'any.required',
+                            context: { key: 'b', label: 'b' }
+                        }]
+                    }],
+                    [{ a: true, c: 'x' }, false, null, {
+                        message: 'child "b" fails because ["b" is required]',
+                        details: [{
+                            message: '"b" is required',
+                            path: ['b'],
+                            type: 'any.required',
+                            context: { key: 'b', label: 'b' }
+                        }]
+                    }],
+
+                    [{ a: false, b: 'x' }, false, null, {
+                        message: 'child "c" fails because ["c" is required]',
+                        details: [{
+                            message: '"c" is required',
+                            path: ['c'],
+                            type: 'any.required',
+                            context: { key: 'c', label: 'c' }
+                        }]
+                    }],
+                    [{ a: false, b: 5 }, false, null, {
+                        message: 'child "c" fails because ["c" is required]',
+                        details: [{
+                            message: '"c" is required',
+                            path: ['c'],
+                            type: 'any.required',
+                            context: { key: 'c', label: 'c' }
+                        }]
+                    }],
+                    [{ a: false }, false, null, {
+                        message: 'child "c" fails because ["c" is required]',
+                        details: [{
+                            message: '"c" is required',
+                            path: ['c'],
+                            type: 'any.required',
+                            context: { key: 'c', label: 'c' }
+                        }]
+                    }],
+                    [{ a: false, c: 5 }, false, null, {
+                        message: 'child "c" fails because ["c" must be a string]',
+                        details: [{
+                            message: '"c" must be a string',
+                            path: ['c'],
+                            type: 'string.base',
+                            context: { value: 5, key: 'c', label: 'c' }
+                        }]
+                    }],
+                    [{ a: false, c: 'x' }, true]
+                ]);
+            });
+
             it('validates conditional alternatives (empty key)', () => {
 
                 const schema = {

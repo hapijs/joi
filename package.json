@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@hapi/code": "5.x.x",
-    "@hapi/lab": "18.x.x",
+    "@hapi/lab": "19.x.x",
     "hapitoc": "1.x.x"
   },
   "scripts": {

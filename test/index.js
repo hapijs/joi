@@ -2546,7 +2546,7 @@ describe('Joi', () => {
                     flags: {
                         default: {
                             description: 'testing',
-                            function   : defaultFn
+                            function: defaultFn
                         }
                     },
                     invalids: ['']
@@ -2556,7 +2556,7 @@ describe('Joi', () => {
                     flags: {
                         default: {
                             description: 'described test',
-                            function   : defaultDescribedFn
+                            function: defaultDescribedFn
                         }
                     },
                     invalids: ['']
@@ -2644,6 +2644,14 @@ describe('Joi', () => {
 
                 Joi.attempt('x', Joi.number());
             }).to.throw('"value" must be a number');
+        });
+
+        it('throws a ValidationError on invalid value', () => {
+
+            expect(() => {
+
+                Joi.attempt('x', Joi.number());
+            }).to.throw(Joi.ValidationError);
         });
 
         it('does not throw on valid value', () => {
@@ -2805,7 +2813,7 @@ describe('Joi', () => {
 
             const bar = Joi.number();
             const schema = Joi.object({ foo: Joi.object({ bar }) });
-            expect(Joi.reach(schema, ['foo','bar'])).to.shallow.equal(bar);
+            expect(Joi.reach(schema, ['foo', 'bar'])).to.shallow.equal(bar);
         });
 
         it('should return undefined when deep key is not found', () => {
@@ -2850,23 +2858,23 @@ describe('Joi', () => {
             it('must have valid coerce function', () => {
 
                 expect(() => Joi.extend({ name: 'a', coerce: true })).to.throw(/"coerce" must be a Function/);
-                expect(() => Joi.extend({ name: 'a', coerce() {} })).to.throw(/"coerce" must have an arity of 3/);
-                expect(() => Joi.extend({ name: 'a', coerce(a, b) {} })).to.throw(/"coerce" must have an arity of 3/);
-                expect(() => Joi.extend({ name: 'a', coerce(a, b, c, d) {} })).to.throw(/"coerce" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', coerce() { } })).to.throw(/"coerce" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', coerce(a, b) { } })).to.throw(/"coerce" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', coerce(a, b, c, d) { } })).to.throw(/"coerce" must have an arity of 3/);
             });
 
             it('must have valid pre function', () => {
 
                 expect(() => Joi.extend({ name: 'a', pre: true })).to.throw(/"pre" must be a Function/);
-                expect(() => Joi.extend({ name: 'a', pre() {} })).to.throw(/"pre" must have an arity of 3/);
-                expect(() => Joi.extend({ name: 'a', pre(a, b) {} })).to.throw(/"pre" must have an arity of 3/);
-                expect(() => Joi.extend({ name: 'a', pre(a, b, c, d) {} })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre() { } })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre(a, b) { } })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre(a, b, c, d) { } })).to.throw(/"pre" must have an arity of 3/);
             });
 
             it('must have valid language object', () => {
 
                 expect(() => Joi.extend({ name: 'a', language: true })).to.throw(/"language" must be an object/);
-                expect(() => Joi.extend({ name: 'a', language() {} })).to.throw(/"language" must be an object/);
+                expect(() => Joi.extend({ name: 'a', language() { } })).to.throw(/"language" must be an object/);
                 expect(() => Joi.extend({ name: 'a', language: null })).to.throw(/"language" must be an object/);
             });
 
@@ -2888,7 +2896,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate() {}
+                            validate() { }
                         }]
                     });
                 }).to.throw(/"validate" must have an arity of 4/);
@@ -2903,7 +2911,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            setup() {}
+                            setup() { }
                         }]
                     });
                 }).to.throw(/"setup" must have an arity of 1/);
@@ -2913,7 +2921,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate(a, b, c, d) {},
+                            validate(a, b, c, d) { },
                             params: {
                                 foo: true
                             }
@@ -2926,7 +2934,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate(a, b, c, d) {},
+                            validate(a, b, c, d) { },
                             params: {
                                 foo: {}
                             }
@@ -2939,7 +2947,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate(a, b, c, d) {},
+                            validate(a, b, c, d) { },
                             params: {
                                 foo: { isJoi: true }
                             }
@@ -2952,7 +2960,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate(a, b, c, d) {},
+                            validate(a, b, c, d) { },
                             params: Joi.number()
                         }]
                     });
@@ -3179,7 +3187,7 @@ describe('Joi', () => {
                         name: 'foobar',
                         setup(params) {
 
-                            return { isJoi:true };
+                            return { isJoi: true };
                         }
                     }
                 ]
@@ -3700,11 +3708,11 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'foo',
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         },
                         {
                             name: 'bar',
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         }
                     ]
                 });
@@ -3732,7 +3740,7 @@ describe('Joi', () => {
                                 qux: Joi.func().ref(),
                                 quux: Joi.func().ref()
                             },
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         }
                     ]
                 });
@@ -3757,7 +3765,7 @@ describe('Joi', () => {
                                 bar: Joi.string()
                             },
                             description: 'something',
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         },
                         {
                             name: 'bar',
@@ -3769,7 +3777,7 @@ describe('Joi', () => {
                                 expect(params).to.equal({ baz: 'baz' });
                                 return 'whatever';
                             },
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         }
                     ]
                 });
@@ -3808,7 +3816,7 @@ describe('Joi', () => {
                                 bar: Joi.string()
                             },
                             description: 'something',
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         },
                         {
                             name: 'bar',
@@ -3820,7 +3828,7 @@ describe('Joi', () => {
                                 expect(params).to.equal({ baz: 'baz' });
                                 return 'whatever';
                             },
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         }
                     ]
                 });
@@ -4426,6 +4434,21 @@ describe('Joi', () => {
             });
         });
 
+    });
+
+    describe('ValidationError', () => {
+
+        it('should be Joi', () => {
+
+            const error = new Joi.ValidationError();
+            expect(error.isJoi).to.equal(true);
+        });
+
+        it('should be named ValidationError', () => {
+
+            const error = new Joi.ValidationError();
+            expect(error.name).to.equal('ValidationError');
+        });
     });
 
     describe('bind()', () => {
