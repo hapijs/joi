@@ -1,29 +1,27 @@
 {
-  "name": "joi",
+  "name": "@hapi/joi",
   "description": "Object schema validation",
-  "version": "14.0.6",
+  "version": "15.0.3",
   "homepage": "https://github.com/hapijs/joi",
   "repository": "git://github.com/hapijs/joi",
   "main": "lib/index.js",
   "keywords": [
-    "hapi",
     "schema",
     "validation"
   ],
   "dependencies": {
-    "hoek": "6.x.x",
-    "isemail": "3.x.x",
-    "topo": "3.x.x"
+    "@hapi/hoek": "6.x.x",
+    "@hapi/address": "2.x.x",
+    "@hapi/topo": "3.x.x"
   },
   "devDependencies": {
-    "code": "5.x.x",
-    "hapitoc": "1.x.x",
-    "lab": "18.x.x"
+    "@hapi/code": "5.x.x",
+    "@hapi/lab": "18.x.x",
+    "hapitoc": "1.x.x"
   },
   "scripts": {
-    "test": "lab -t 100 -a code -L",
-    "test-debug": "lab -a code",
-    "test-cov-html": "lab -r html -o coverage.html -a code",
+    "test": "lab -t 100 -a @hapi/code -L",
+    "test-cov-html": "lab -r html -o coverage.html -a @hapi/code",
     "toc": "hapitoc && node docs/check-errors-list.js",
     "version": "npm run toc && git add API.md README.md"
   },

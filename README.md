@@ -1,34 +1,37 @@
-![joi Logo](https://raw.github.com/hapijs/joi/master/images/joi.png)
+<a href="http://hapijs.com"><img src="https://raw.githubusercontent.com/hapijs/assets/master/images/family.png" width="180px" align="right" /></a>
+
+# joi
 
 Object schema description language and validator for JavaScript objects.
 
-[![npm version](https://badge.fury.io/js/joi.svg)](http://badge.fury.io/js/joi)
 [![Build Status](https://travis-ci.org/hapijs/joi.svg?branch=master)](https://travis-ci.org/hapijs/joi)
-[![NSP Status](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e/badge)](https://nodesecurity.io/orgs/hapijs/projects/0394bf83-b5bc-410b-878c-e8cf1b92033e)
-[![Known Vulnerabilities](https://snyk.io/test/github/hapijs/joi/badge.svg)](https://snyk.io/test/github/hapijs/joi)
 
-Lead Maintainer: [Nicolas Morel](https://github.com/marsup)
-
-# Introduction
+## Introduction
 
 Imagine you run facebook and you want visitors to sign up on the website with real names and not something like `l337_p@nda` in the first name field. How would you define the limitations of what can be inputted and validate it against the set rules?
 
 This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object that stores information) to ensure *validation* of key information.
 
-# API
-See the detailed [API Reference](https://github.com/hapijs/joi/blob/v14.0.6/API.md).
+# Installation
 
-# Example
+```cli 
+ npm install --save @hapi/joi
+ ```
+
+## API
+See the detailed [API Reference](https://github.com/hapijs/joi/blob/v15.0.3/API.md).
+
+## Example
 
 ```javascript
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 
 const schema = Joi.object().keys({
     username: Joi.string().alphanum().min(3).max(30).required(),
     password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
     access_token: [Joi.string(), Joi.number()],
     birthyear: Joi.number().integer().min(1900).max(2013),
-    email: Joi.string().email({ minDomainAtoms: 2 })
+    email: Joi.string().email({ minDomainSegments: 2 })
 }).with('username', 'birthyear').without('password', 'access_token');
 
 // Return result.
@@ -58,7 +61,7 @@ The above schema defines the following constraints:
     * a valid email address string
     * must have two domain parts e.g. `example.com`
 
-# Usage
+## Usage
 
 Usage is a two steps process. First, a schema is constructed using the provided types and constraints:
 
@@ -115,8 +118,8 @@ When validating a schema:
     ```
 
 * Strings are utf-8 encoded by default.
-* Rules are defined in an additive fashion and evaluated in order after whitelist and blacklist checks.
+* Rules are defined in an additive fashion and evaluated in order, first the inclusive rules, then the exclusive rules.
 
-# Browsers
+## Browsers
 
 Joi doesn't directly support browsers, but you could use [joi-browser](https://github.com/jeffbski/joi-browser) for an ES5 build of Joi that works in browsers, or as a source of inspiration for your own builds.

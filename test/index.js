@@ -1,20 +1,17 @@
 'use strict';
 
-// Load modules
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
+const Joi = require('..');
 
-const Lab = require('lab');
-const Joi = require('../lib');
 const Helper = require('./helper');
 
-
-// Declare internals
 
 const internals = {};
 
 
-// Test shortcuts
-
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 describe('Joi', () => {
@@ -2549,7 +2546,7 @@ describe('Joi', () => {
                     flags: {
                         default: {
                             description: 'testing',
-                            function   : defaultFn
+                            function: defaultFn
                         }
                     },
                     invalids: ['']
@@ -2559,7 +2556,7 @@ describe('Joi', () => {
                     flags: {
                         default: {
                             description: 'described test',
-                            function   : defaultDescribedFn
+                            function: defaultDescribedFn
                         }
                     },
                     invalids: ['']
@@ -2816,7 +2813,7 @@ describe('Joi', () => {
 
             const bar = Joi.number();
             const schema = Joi.object({ foo: Joi.object({ bar }) });
-            expect(Joi.reach(schema, ['foo','bar'])).to.shallow.equal(bar);
+            expect(Joi.reach(schema, ['foo', 'bar'])).to.shallow.equal(bar);
         });
 
         it('should return undefined when deep key is not found', () => {
@@ -2861,23 +2858,23 @@ describe('Joi', () => {
             it('must have valid coerce function', () => {
 
                 expect(() => Joi.extend({ name: 'a', coerce: true })).to.throw(/"coerce" must be a Function/);
-                expect(() => Joi.extend({ name: 'a', coerce() {} })).to.throw(/"coerce" must have an arity of 3/);
-                expect(() => Joi.extend({ name: 'a', coerce(a, b) {} })).to.throw(/"coerce" must have an arity of 3/);
-                expect(() => Joi.extend({ name: 'a', coerce(a, b, c, d) {} })).to.throw(/"coerce" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', coerce() { } })).to.throw(/"coerce" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', coerce(a, b) { } })).to.throw(/"coerce" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', coerce(a, b, c, d) { } })).to.throw(/"coerce" must have an arity of 3/);
             });
 
             it('must have valid pre function', () => {
 
                 expect(() => Joi.extend({ name: 'a', pre: true })).to.throw(/"pre" must be a Function/);
-                expect(() => Joi.extend({ name: 'a', pre() {} })).to.throw(/"pre" must have an arity of 3/);
-                expect(() => Joi.extend({ name: 'a', pre(a, b) {} })).to.throw(/"pre" must have an arity of 3/);
-                expect(() => Joi.extend({ name: 'a', pre(a, b, c, d) {} })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre() { } })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre(a, b) { } })).to.throw(/"pre" must have an arity of 3/);
+                expect(() => Joi.extend({ name: 'a', pre(a, b, c, d) { } })).to.throw(/"pre" must have an arity of 3/);
             });
 
             it('must have valid language object', () => {
 
                 expect(() => Joi.extend({ name: 'a', language: true })).to.throw(/"language" must be an object/);
-                expect(() => Joi.extend({ name: 'a', language() {} })).to.throw(/"language" must be an object/);
+                expect(() => Joi.extend({ name: 'a', language() { } })).to.throw(/"language" must be an object/);
                 expect(() => Joi.extend({ name: 'a', language: null })).to.throw(/"language" must be an object/);
             });
 
@@ -2899,7 +2896,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate() {}
+                            validate() { }
                         }]
                     });
                 }).to.throw(/"validate" must have an arity of 4/);
@@ -2914,7 +2911,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            setup() {}
+                            setup() { }
                         }]
                     });
                 }).to.throw(/"setup" must have an arity of 1/);
@@ -2924,7 +2921,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate(a, b, c, d) {},
+                            validate(a, b, c, d) { },
                             params: {
                                 foo: true
                             }
@@ -2937,7 +2934,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate(a, b, c, d) {},
+                            validate(a, b, c, d) { },
                             params: {
                                 foo: {}
                             }
@@ -2950,7 +2947,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate(a, b, c, d) {},
+                            validate(a, b, c, d) { },
                             params: {
                                 foo: { isJoi: true }
                             }
@@ -2963,7 +2960,7 @@ describe('Joi', () => {
                     Joi.extend({
                         name: 'a', rules: [{
                             name: 'foo',
-                            validate(a, b, c, d) {},
+                            validate(a, b, c, d) { },
                             params: Joi.number()
                         }]
                     });
@@ -3190,7 +3187,7 @@ describe('Joi', () => {
                         name: 'foobar',
                         setup(params) {
 
-                            return { isJoi:true };
+                            return { isJoi: true };
                         }
                     }
                 ]
@@ -3230,6 +3227,34 @@ describe('Joi', () => {
 
             const schema = customJoi.myType();
             expect(schema.addTwice(3).validate(0).value).to.equal(6);
+        });
+
+        it('defines a custom type with a rule with both setup and validate', () => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                rules: [
+                    {
+                        name: 'add',
+                        params: {
+                            factor: Joi.number().required()
+                        },
+                        setup(params) {
+
+                            const newSchema = Joi.number().min(0);
+                            newSchema._flags.add = params.factor;
+                            return newSchema;
+                        },
+                        validate(params, value, state, options) {
+
+                            return value + params.factor;
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            expect(schema.add(3).validate(3).value).to.equal(6);
         });
 
         it('defines a rule that validates its parameters', () => {
@@ -3375,7 +3400,7 @@ describe('Joi', () => {
             expect(schema.validate(3)).to.contain({ error: null, value: 6 });
         });
 
-        it('overrides a predefined language', () => {
+        it('does not override a predefined language', () => {
 
             const base = Joi.any().options({
                 language: {
@@ -3408,7 +3433,36 @@ describe('Joi', () => {
             const schema = customJoi.myType().foo();
             const result = schema.validate({});
             expect(result.error).to.be.an.instanceof(Error);
-            expect(result.error.toString()).to.equal('ValidationError: "value" modified');
+            expect(result.error.toString()).to.equal('ValidationError: "value" original');
+        });
+
+        it('does not change predefined options', () => {
+
+            const base = Joi.number().options({
+                abortEarly: false
+            });
+
+            const customJoi = Joi.extend({
+                base,
+                name: 'myType',
+                language: {
+                    foo: 'foo'
+                },
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('myType.foo', null, state, options);
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType().min(10).max(0).foo();
+            const result = schema.validate(5);
+            expect(result.error).to.be.an.instanceof(Error);
+            expect(result.error.toString()).to.equal('ValidationError: "value" must be larger than or equal to 10. "value" must be less than or equal to 0. "value" foo');
         });
 
         it('defines a custom type coercing its input value', () => {
@@ -3654,11 +3708,11 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'foo',
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         },
                         {
                             name: 'bar',
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         }
                     ]
                 });
@@ -3686,7 +3740,7 @@ describe('Joi', () => {
                                 qux: Joi.func().ref(),
                                 quux: Joi.func().ref()
                             },
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         }
                     ]
                 });
@@ -3711,7 +3765,7 @@ describe('Joi', () => {
                                 bar: Joi.string()
                             },
                             description: 'something',
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         },
                         {
                             name: 'bar',
@@ -3723,7 +3777,7 @@ describe('Joi', () => {
                                 expect(params).to.equal({ baz: 'baz' });
                                 return 'whatever';
                             },
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         }
                     ]
                 });
@@ -3762,7 +3816,7 @@ describe('Joi', () => {
                                 bar: Joi.string()
                             },
                             description: 'something',
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         },
                         {
                             name: 'bar',
@@ -3774,7 +3828,7 @@ describe('Joi', () => {
                                 expect(params).to.equal({ baz: 'baz' });
                                 return 'whatever';
                             },
-                            validate(params, value, state, options) {}
+                            validate(params, value, state, options) { }
                         }
                     ]
                 });
@@ -3928,6 +3982,96 @@ describe('Joi', () => {
             }]);
         });
 
+        it('merges languages when multiple extensions extend the same type', () => {
+
+            const customJoiWithBoth = Joi.extend([
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    language: { foo: 'foo' },
+                    rules: [{
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.foo', null, state, options);
+                        }
+                    }]
+                }),
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    language: { bar: 'bar' },
+                    rules: [{
+                        name: 'bar',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.bar', null, state, options);
+                        }
+                    }]
+                })
+            ]);
+
+            expect(customJoiWithBoth.number().foo().validate(0).error).to.be.an.error('"value" foo');
+            expect(customJoiWithBoth.number().bar().validate(0).error).to.be.an.error('"value" bar');
+
+            const customJoiWithFirst = Joi.extend([
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    language: { foo: 'foo' },
+                    rules: [{
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.foo', null, state, options);
+                        }
+                    }]
+                }),
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    rules: [{
+                        name: 'bar',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.base', null, state, options);
+                        }
+                    }]
+                })
+            ]);
+
+            expect(customJoiWithFirst.number().foo().validate(0).error).to.be.an.error('"value" foo');
+            expect(customJoiWithFirst.number().bar().validate(0).error).to.be.an.error('"value" must be a number');
+
+            const customJoiWithSecond = Joi.extend([
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    rules: [{
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.base', null, state, options);
+                        }
+                    }]
+                }),
+                (joi) => ({
+                    base: joi.number(),
+                    name: 'number',
+                    language: { bar: 'bar' },
+                    rules: [{
+                        name: 'bar',
+                        validate(params, value, state, options) {
+
+                            return this.createError('number.bar', null, state, options);
+                        }
+                    }]
+                })
+            ]);
+
+            expect(customJoiWithSecond.number().foo().validate(0).error).to.be.an.error('"value" must be a number');
+            expect(customJoiWithSecond.number().bar().validate(0).error).to.be.an.error('"value" bar');
+        });
     });
 
     describe('defaults()', () => {
@@ -4305,6 +4449,46 @@ describe('Joi', () => {
             const error = new Joi.ValidationError();
             expect(error.name).to.equal('ValidationError');
         });
+    });
 
+    describe('bind()', () => {
+
+        it('binds functions', () => {
+
+            expect(() => {
+
+                const string = Joi.string;
+                string();
+            }).to.throw('Must be invoked on a Joi instance.');
+
+            const { string } = Joi.bind();
+            expect(() => string()).to.not.throw();
+
+            const { error } = string().validate(0);
+            expect(error).to.be.an.error('"value" must be a string');
+        });
+
+        it('binds functions on an extended joi', () => {
+
+            const customJoi = Joi.extend({
+                base: Joi.string(),
+                name: 'myType'
+            });
+
+            expect(() => {
+
+                const string = customJoi.string;
+                string();
+            }).to.throw('Must be invoked on a Joi instance.');
+
+            const { string, myType } = customJoi.bind();
+            expect(() => string()).to.not.throw();
+            expect(string().validate(0).error).to.be.an.error('"value" must be a string');
+
+            expect(() => myType()).to.not.throw();
+            expect(myType().validate(0).error).to.be.an.error('"value" must be a string');
+
+            expect(customJoi._binds.size).to.equal(Joi._binds.size + 1);
+        });
     });
 });

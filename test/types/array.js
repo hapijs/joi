@@ -1,20 +1,17 @@
 'use strict';
 
-// Load modules
-
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 const Joi = require('../..');
+
 const Helper = require('../helper');
 
-
-// Declare internals
 
 const internals = {};
 
 
-// Test shortcuts
-
-const { describe, it, expect } = exports.lab = Lab.script();
+const { describe, it } = exports.lab = Lab.script();
+const { expect } = Code;
 
 
 describe('array', () => {
@@ -35,6 +32,12 @@ describe('array', () => {
     it('converts a string to an array', async () => {
 
         const value = await Joi.array().validate('[1,2,3]');
+        expect(value.length).to.equal(3);
+    });
+
+    it('converts a string with whitespace to an array', async () => {
+
+        const value = await Joi.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3] \n\r\t');
         expect(value.length).to.equal(3);
     });
 
@@ -761,6 +764,177 @@ describe('array', () => {
             ]);
         });
     });
+
+    describe('has()', () => {
+
+        it('shows path to errors in schema', () => {
+
+            expect(() => {
+
+                Joi.array().has({
+                    a: {
+                        b: {
+                            c: {
+                                d: undefined
+                            }
+                        }
+                    }
+                });
+            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+        });
+
+        it('shows errors in schema', () => {
+
+            expect(() => {
+
+                Joi.array().has(undefined);
+            }).to.throw(Error, 'Invalid schema content: ');
+        });
+
+        it('works with object.assert', () => {
+
+            const schema = Joi.array().items(
+                Joi.object().keys({
+                    a: {
+                        b: Joi.string(),
+                        c: Joi.number()
+                    },
+                    d: {
+                        e: Joi.any()
+                    }
+                })
+            ).has(Joi.object().assert('d.e', Joi.ref('a.c'), 'equal to a.c'));
+
+            Helper.validate(schema, [
+                [[{ a: { b: 'x', c: 5 }, d: { e: 5 } }], true]
+            ]);
+        });
+
+
+        it('does not throw if assertion passes', () => {
+
+            const schema = Joi.array().has(Joi.string());
+            Helper.validate(schema, [
+                [['foo'], true]
+            ]);
+        });
+
+        it('throws with proper message if assertion fails on unknown schema', () => {
+
+            const schema = Joi.array().has(Joi.string());
+            Helper.validate(schema, [
+                [[0], false, null, {
+                    message: '"value" does not contain at least one required match',
+                    details: [{
+                        message: '"value" does not contain at least one required match',
+                        path: [],
+                        type: 'array.hasUnknown',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('throws with proper message if assertion fails on known schema', () => {
+
+            const schema = Joi.array().has(Joi.string().label('foo'));
+            Helper.validate(schema, [
+                [[0], false, null, {
+                    message: '"value" does not contain at least one required match for type "foo"',
+                    details: [{
+                        message: '"value" does not contain at least one required match for type "foo"',
+                        path: [],
+                        type: 'array.hasKnown',
+                        context: { label: 'value', key: undefined, patternLabel: 'foo' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('shows correct path for error', () => {
+
+            const schema = Joi.object({
+                arr: Joi.array().has(Joi.string())
+            });
+            Helper.validate(schema, [
+                [{ arr: [0] }, false, null, {
+                    message: 'child "arr" fails because ["arr" does not contain at least one required match]',
+                    details: [{
+                        message: '"arr" does not contain at least one required match',
+                        path: ['arr'],
+                        type: 'array.hasUnknown',
+                        context: { label: 'arr', key: 'arr' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('supports nested arrays', () => {
+
+            const schema = Joi.object({
+                arr: Joi.array().items(
+                    Joi.object({ foo: Joi.array().has(Joi.string()) })
+                )
+            });
+            Helper.validate(schema, [
+                [{ arr: [{ foo: ['bar'] }] }, true]
+            ]);
+        });
+
+        it('provides accurate error message for nested arrays', () => {
+
+            const schema = Joi.object({
+                arr: Joi.array().items(
+                    Joi.object({ foo: Joi.array().has(Joi.string()) })
+                )
+            });
+            Helper.validate(schema, [
+                [{ arr: [{ foo: [0] }] }, false, null, {
+                    message: 'child "arr" fails because ["arr" at position 0 fails because [child "foo" fails because ["foo" does not contain at least one required match]]]',
+                    details: [{
+                        message: '"foo" does not contain at least one required match',
+                        path: ['arr', 0, 'foo'],
+                        type: 'array.hasUnknown',
+                        context: { label: 'foo', key: 'foo' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('handles multiple assertions', () => {
+
+            const schema = Joi.array().has(Joi.string()).has(Joi.number());
+            Helper.validate(schema, [
+                [['foo', 0], true]
+            ]);
+
+            Helper.validate(schema, [
+                [['foo'], false, null, {
+                    message: '"value" does not contain at least one required match',
+                    details: [{
+                        message: '"value" does not contain at least one required match',
+                        path: [],
+                        type: 'array.hasUnknown',
+                        context: { label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('describes the pattern schema', () => {
+
+            const schema = Joi.array().has(Joi.string()).has(Joi.number());
+            expect(schema.describe()).to.equal({
+                type: 'array',
+                flags: { sparse: false },
+                rules: [
+                    { name: 'has', arg: { type: 'string', invalids: [''] } },
+                    { name: 'has', arg: { type: 'number', flags: { unsafe: false }, invalids: [Infinity, -Infinity] } }
+                ]
+            });
+        });
+    });
+
 
     describe('validate()', () => {
 

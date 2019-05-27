@@ -1,8 +1,6 @@
 <!-- version -->
-# 14.0.6 API Reference
+# 15.0.3 API Reference
 <!-- versionstop -->
-
-<img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
 
 <!-- toc -->
 
@@ -18,6 +16,7 @@
   - [`isRef(ref)`](#isrefref)
   - [`reach(schema, path)`](#reachschema-path)
   - [`defaults(fn)`](#defaultsfn)
+  - [`bind()`](#bind)
   - [`extend(extension)`](#extendextension)
     - [Terms](#terms)
     - [Extension](#extension)
@@ -47,7 +46,7 @@
     - [`any.label(name)`](#anylabelname)
     - [`any.raw(isRaw)`](#anyrawisraw)
     - [`any.empty(schema)`](#anyemptyschema)
-    - [`any.error(err)`](#anyerrorerr)
+    - [`any.error(err, [options])`](#anyerrorerr-options)
     - [`any.describe()`](#anydescribe)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.sparse([enabled])`](#arraysparseenabled)
@@ -58,6 +57,7 @@
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
     - [`array.unique([comparator], [options])`](#arrayuniquecomparator-options)
+    - [`array.has(schema)`](#arrayhasschema)
   - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
     - [`boolean.truthy(value)`](#booleantruthyvalue)
     - [`boolean.falsy(value)`](#booleanfalsyvalue)
@@ -171,6 +171,8 @@
     - [`array.ref`](#arrayref)
     - [`array.sparse`](#arraysparse)
     - [`array.unique`](#arrayunique)
+    - [`array.hasKnown`](#arrayhasknown)
+    - [`array.hasUnknown`](#arrayhasunknown)
     - [`binary.base`](#binarybase)
     - [`binary.length`](#binarylength)
     - [`binary.max`](#binarymax)
@@ -472,6 +474,18 @@ const defaultJoi = Joi.defaults((schema) => {
 const schema = defaultJoi.object(); // Equivalent to a Joi.object().min(1)
 ```
 
+### `bind()`
+
+By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because they use `this` internally. So `Joi.string()` works but if you extract the function from it and call `string()` it won't. `bind()` creates a new Joi instance where all the functions relying on `this` are bound to the Joi instance.
+
+```js
+const { object, string } = require('@hapi/joi').bind();
+
+const schema = object({
+  property: string().min(4)
+});
+```
+
 ### `extend(extension)`
 
 Creates a new Joi instance customized with the extension(s) you provide included.
@@ -516,6 +530,17 @@ The `params` of `rules` rely on the fact that all engines, even though not state
 params: { options: Joi.object({ param1: Joi.number().required(), param2: Joi.string() }) }
 ```
 
+To resolve referenced `params` in you `validate` or `setup` functions, you can use the following approach:
+```js
+validate(params, value, state, options) {
+  let {foo} = params;
+  if (Joi.isRef(foo)) {
+    foo = foo(state.reference || state.parent, options);
+  }
+  //...
+}
+```
+
 Any of the `coerce`, `pre` and `validate` functions should use `this.createError(type, context, state, options[, flags])` to create and return errors.
 This function potentially takes 5 arguments:
 * `type` - the dotted type of the error matching predefined language elements or the ones defined in your extension. **Required**.
@@ -531,7 +556,7 @@ If you publish your extension on npm, make sure to add `joi` and `extension` as 
 #### Examples
 
 ```js
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 const customJoi = Joi.extend((joi) => ({
     base: joi.number(),
     name: 'number',
@@ -890,7 +915,7 @@ const ab = a.concat(b);
 
 #### `any.when(condition, options)`
 
-Converts the type into an [`alternatives`](#alternatives) type where the conditions are merged into the type definition where:
+Converts the type into an [`alternatives`](#alternatives---inherits-from-any) type where the conditions are merged into the type definition where:
 - `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
     - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted using [Joi.compile](#compileschema). Forbidden when `condition` is a schema.
@@ -922,7 +947,34 @@ const schema = Joi.object({
 });
 ```
 
-Note that this style is much more useful when your whole schema depends on the value of one of its property, or if you find yourself repeating the check for many keys of an object.
+Note that this style is much more useful when your whole schema depends on the value of one of its property, or if you find yourself repeating the check for many keys of an object. For example to validate this logic:
+
+```js
+const schema = Joi.object({
+    capacity: Joi.string()
+        .valid(["A", "B", "C"])
+        .required(),
+    // required if capacity == "A"
+    foo: Joi.when("capacity", {
+        is: "A",
+        then: Joi.string()
+        .valid(["X", "Y", "Z"])
+        .required()
+    }),
+    // required if capacity === "A" and foo !== "Z"
+    bar: Joi.string()
+}).when(
+    Joi.object({
+        capacity: Joi.only("A").required(),
+        foo: Joi.not("Z")
+    }).unknown(),
+    {
+        then: Joi.object({
+            bar: Joi.required()
+        })
+    }
+);
+```
 
 Alternatively, if you want to specify a specific type such as `string`, `array`, etc, you can do so like this:
 
@@ -998,7 +1050,7 @@ schema = schema.empty();
 schema.validate(''); // returns { error: "value" is not allowed to be empty, value: '' }
 ```
 
-#### `any.error(err)`
+#### `any.error(err, [options])`
 
 Overrides the default joi error with a custom error if the rule fails where:
 - `err` can be:
@@ -1011,6 +1063,8 @@ Overrides the default joi error with a custom error if the rule fails where:
       - `template` - optional parameter if `message` is provided, containing a template string, using the same format as usual joi language errors.
       - `context` - optional parameter, to provide context to your error if you are using the `template`.
     - return an `Error` - same as when you directly provide an `Error`, but you can customize the error message based on the errors.
+- `options`:
+  - `self` - Boolean value indicating whether the error handler should be used for all errors or only for errors occurring on this property (`true` value). This concept only makes sense for `array` or `object` schemas as other values don't have children. Defaults to `false`.
 
 Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any of the
 normal joi error properties. If validation fails and another error is found before the error
@@ -1024,6 +1078,12 @@ schema.validate(3);     // returns error.message === 'Was REALLY expecting a str
 let schema = Joi.object({
     foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
 });
+schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" requires a positive number]'
+
+let schema = Joi.object({
+    foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
+}).required().error(() => 'root object is required', { self: true });
+schema.validate();               // returns error.message === 'root object is required'
 schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" requires a positive number]'
 
 let schema = Joi.object({
@@ -1248,6 +1308,24 @@ schema.validate([{}, {}]);
 ```
 
 💥 Possible validation errors:[`array.unique`](#arrayunique)
+
+#### `array.has(schema)`
+
+Verifies that a schema validates at least one of the values in the array, where:
+- `schema` - the validation rules required to satisfy the check. If the `schema` includes references, they are resolved against
+  the array item being tested, not the value of the `ref` target.
+
+```js
+const schema = Joi.array().items(
+  Joi.object({
+    a: Joi.string(),
+    b: Joi.number()
+  })
+).has(Joi.object({ a: Joi.string().valid('a'), b: Joi.number() }))
+```
+
+💥 Possible validation errors:[`array.hasKnown`](#arrayhasknown), [`array.hasUnknown`](#arrayhasunknown)
+
 
 ### `boolean` - inherits from `Any`
 
@@ -1975,7 +2053,7 @@ const schema = Joi.object().keys({
 
 #### `object.oxor(...peers)`
 
-Defines an exclusive relationship between a set of keys where only one is allowed but non are required where:
+Defines an exclusive relationship between a set of keys where only one is allowed but none are required where:
 - `peers` - the exclusive key names that must not appear together but where none are required.
 
 ```js
@@ -2327,11 +2405,20 @@ const schema = Joi.string().token();
 Requires the string value to be a valid email address.
 
 - `options` - optional settings:
-    - `errorLevel` - Numerical threshold at which an email address is considered invalid.
-    - `tldWhitelist` - Specifies a list of acceptable TLDs.
-    - `minDomainAtoms` - Number of atoms required for the domain. Be careful since some domains, such as `io`, directly allow email.
-    
-Have a look at [`isemail`’s documentation](https://github.com/hapijs/isemail) for a detailed description of the options.
+    - `allowUnicode` - if `true`, Unicode characters are permitted. Defaults to `true`.
+    - `minDomainSegments` - Number of segments required for the domain. Be careful since some
+      domains, such as `io`, directly allow email.
+    - `tlds` - options for TLD (top level domain) validation. By default, the TLD must be a valid
+      name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt). To
+      disable validation, set `tlds` to `false`. To customize how TLDs are validated, set one of
+      these:
+        - `allow` - one of:
+            - `true` to use the IANA list of registered TLDs. This is the default value.
+            - `false` to allow any TLD not listed in the `deny` list, if present.
+            - a `Set` or array of the allowed TLDs. Cannot be used together with `deny`.
+        - `deny` - one of:
+            - a `Set` or array of the forbidden TLDs. Cannot be used together with a custom `allow`
+              list.
 
 ```js
 const schema = Joi.string().email();
@@ -3026,6 +3113,35 @@ A duplicate value was found in an array.
     value: any, // Value that is duplicated
     dupePos: number, // Index where the first appearance of the duplicate value was found in the array
     dupeValue: any // Value with which the duplicate was met
+}
+```
+
+#### `array.hasKnown`
+
+**Description**
+
+The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is labelled.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    patternLabel: string // Label of assertion schema
+}
+```
+
+#### `array.hasUnknown`
+
+**Description**
+
+The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is unlabelled.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
 }
 ```
 

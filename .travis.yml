@@ -8,7 +8,15 @@ os:
 node_js:
   - "8"
   - "10"
-  - "11"
+  - "12"
   - "node"
 
 sudo: false
+
+install:
+  - "npm install"
+
+os:
+  - "linux"
+  - "osx"
+  - "windows"
