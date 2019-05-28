@@ -4546,7 +4546,7 @@ describe('string', () => {
 
         it('validates array arguments correctly', () => {
 
-            const schema = Joi.string().valid(['a', 'b', 'c']);
+            const schema = Joi.string().valid('a', 'b', 'c');
             Helper.validate(schema, [
                 ['x', false, null, {
                     message: '"value" must be one of [a, b, c]',

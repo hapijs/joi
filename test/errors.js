@@ -442,7 +442,7 @@ describe('errors', () => {
             const schema = {
                 a: Joi.string().valid('a', 'b', 'c', 'd'),
                 y: Joi.object({
-                    u: Joi.string().valid(['e', 'f', 'g', 'h']).required(),
+                    u: Joi.string().valid('e', 'f', 'g', 'h').required(),
                     b: Joi.string().valid('i', 'j').allow(false),
                     d: Joi.object({
                         x: Joi.string().valid('k', 'l').required(),

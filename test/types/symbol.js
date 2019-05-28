@@ -54,7 +54,7 @@ describe('symbol', () => {
 
             const symbols = [Symbol(1), Symbol(2)];
             const otherSymbol = Symbol(1);
-            const rule = Joi.symbol().valid(symbols);
+            const rule = Joi.symbol().valid(...symbols);
             Helper.validate(rule, [
                 [symbols[0], true, null, symbols[0]],
                 [symbols[1], true, null, symbols[1]],

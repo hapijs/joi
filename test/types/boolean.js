@@ -470,7 +470,7 @@ describe('boolean', () => {
 
         it('should handle work with additional truthy array', () => {
 
-            const rule = Joi.boolean().truthy(['Y', 'Si']);
+            const rule = Joi.boolean().truthy('Y', 'Si');
             Helper.validate(rule, [
                 ['Si', true],
                 ['Y', true],
@@ -527,7 +527,7 @@ describe('boolean', () => {
 
         it('should handle work with additional falsy array', () => {
 
-            const rule = Joi.boolean().falsy(['N', 'Never']);
+            const rule = Joi.boolean().falsy('N', 'Never');
             Helper.validate(rule, [
                 ['N', true],
                 ['Never', true],
@@ -556,7 +556,7 @@ describe('boolean', () => {
 
         it('should handle work with required, null allowed, and both additional truthy and falsy values', () => {
 
-            const rule = Joi.boolean().truthy(['Y', 'Si', 1]).falsy(['N', 'Never', 0]).allow(null).required();
+            const rule = Joi.boolean().truthy('Y', 'Si', 1).falsy('N', 'Never', 0).allow(null).required();
             Helper.validate(rule, [
                 ['N', true],
                 ['Never', true],

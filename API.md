@@ -285,7 +285,7 @@ Validates a value using the given schema and options where:
     - when `true`, it is equivalent to having `{ arrays: false, objects: true }`.
   - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
     - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped if the option `escapeHtml` is also set to `true`
-    - strings are always preceeded by the key name, unless a `{{label}}` is found elsewhere or if the string is prefixed by a `!!`
+    - strings are always preceded by the key name, unless a `{{label}}` is found elsewhere or if the string is prefixed by a `!!`
     - to better understand the structure of the language, it's advised to have a look at the existing messages you want to override [here](lib/language.js)
   - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
     Defaults to `'optional'`.
@@ -658,50 +658,48 @@ const result = schema.validate(value);
 const promise = schema.validate(value);
 ```
 
-#### `any.allow(value)`
+#### `any.allow(...values)`
 
-Whitelists a value where:
-- `value` - the allowed value which can be of any type and will be matched against the validated value before applying any other rules.
-  `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
+Allows values where:
+- `values` - one or more allowed values which can be of any type and will be matched against the
+  validated value before applying any other rules. Supports [references](#refkey-options).
 
-Note that this whitelist of allowed values is in *addition* to any other permitted values.
-To create an exclusive whitelist of values, see [`any.valid(value)`](#anyvalidvalue---aliases-only-equal).
+Note that this list of allowed values is in *addition* to any other permitted values.
+To create an exclusive list of values, see [`any.valid(value)`](#anyvalidvalue---aliases-only-equal).
 
 ```js
 const schema = {
     a: Joi.any().allow('a'),
-    b: Joi.any().allow('b', 'B'),
-    c: Joi.any().allow(['c', 'C'])
+    b: Joi.any().allow('b', 'B')
 };
 ```
 
-#### `any.valid(value)` - aliases: `only`, `equal`
+#### `any.valid(...values)` - aliases: `only`, `equal`
 
-Adds the provided values into the allowed whitelist and marks them as the only valid values allowed where:
-- `value` - the allowed value which can be of any type and will be matched against the validated value before applying any other rules.
-  `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
+Adds the provided values into the allowed whitelist and marks them as the only valid values allowed
+where:
+- `values` - one or more allowed values which can be of any type and will be matched against the
+  validated value before applying any other rules. Supports [references](#refkey-options).
 
 ```js
 const schema = {
     a: Joi.any().valid('a'),
-    b: Joi.any().valid('b', 'B'),
-    c: Joi.any().valid(['c', 'C'])
+    b: Joi.any().valid('b', 'B')
 };
 ```
 
 💥 Possible validation errors:[`any.allowOnly`](#anyallowonly)
 
-#### `any.invalid(value)` - aliases: `disallow`, `not`
+#### `any.invalid(...values)` - aliases: `disallow`, `not`
 
-Blacklists a value where:
-- `value` - the forbidden value which can be of any type and will be matched against the validated value before applying any other rules.
-  `value` can be an array of values, or multiple values can be passed as individual arguments. `value` supports [references](#refkey-options).
+Disallows values where:
+- `values` - the forbidden values which can be of any type and will be matched against the
+  validated value before applying any other rules. Supports [references](#refkey-options).
 
 ```js
 const schema = {
     a: Joi.any().invalid('a'),
-    b: Joi.any().invalid('b', 'B'),
-    c: Joi.any().invalid(['c', 'C'])
+    b: Joi.any().invalid('b', 'B')
 };
 ```
 
@@ -1174,10 +1172,10 @@ schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 
 💥 Possible validation errors:[`array.excludesSingle`](#arrayexcludessingle), [`array.includesSingle`](#arrayincludessingle)
 
-#### `array.items(type)`
+#### `array.items(...types)`
 
 Lists the types allowed for the array values where:
-- `type` - a **joi** schema object to validate each array item against. `type` can be an array of values, or multiple values can be passed as individual arguments.
+- `types` - one or more **joi** schema objects to validate each array item against.
 
 If a given type is `.required()` then there must be a matching item in the array.
 If a type is `.forbidden()` then it cannot appear in the array.
@@ -1193,10 +1191,10 @@ const schema = Joi.array().items(Joi.string().label('My string').required(), Joi
 
 💥 Possible validation errors:[`array.excludes`](#arrayexcludes), [`array.includesRequiredBoth`], [`array.includesRequiredKnowns`], [`array.includesRequiredUnknowns`], [`array.includes`](#arrayincludes)
 
-#### `array.ordered(type)`
+#### `array.ordered(...type)`
 
 Lists the types in sequence order for the array values where:
-- `type` - a **joi** schema object to validate against each array item in sequence order. `type` can be an array of values, or multiple values can be passed as individual arguments.
+- `types` - one or more **joi** schema objects to validate against each array item in sequence order.
 
 If a given type is `.required()` then there must be a matching item with the same index position in the array.
 Errors will contain the number of items that didn't match. Any unmatched item having a [label](#anylabelname) will be mentioned explicitly.
@@ -1343,9 +1341,9 @@ boolean.validate(1, (err, value) => { }); // Invalid
 
 💥 Possible validation errors:[`boolean.base`](#booleanbase)
 
-#### `boolean.truthy(value)`
+#### `boolean.truthy(...values)`
 
-Allows for additional values to be considered valid booleans by converting them to `true` during validation. Accepts a value or an array of values.
+Allows for additional values to be considered valid booleans by converting them to `true` during validation.
 
 String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
 
@@ -1354,9 +1352,9 @@ const boolean = Joi.boolean().truthy('Y');
 boolean.validate('Y', (err, value) => { }); // Valid
 ```
 
-#### `boolean.falsy(value)`
+#### `boolean.falsy(...values)`
 
-Allows for additional values to be considered valid booleans by converting them to `false` during validation. Accepts a value or an array of values.
+Allows for additional values to be considered valid booleans by converting them to `false` during validation.
 
 String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
 
@@ -1989,12 +1987,11 @@ const schema = Joi.object({
 }).pattern(Joi.string().min(2).max(5), Joi.boolean());
 ```
 
-#### `object.and(peers)`
+#### `object.and(...peers)`
 
 Defines an all-or-nothing relationship between keys where if one of the peers is present, all of them are required as
 well where:
-- `peers` - the key names of which if one present, all are required. `peers` can be a single string value, an
-  array of string values, or each peer provided as an argument.
+- `peers` - the key names of which if one present, all are required.
 
 ```js
 const schema = Joi.object().keys({
@@ -2005,12 +2002,11 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.and`](#objectand)
 
-#### `object.nand(peers)`
+#### `object.nand(...peers)`
 
 Defines a relationship between keys where not all peers can be present at the
 same time where:
-- `peers` - the key names of which if one present, the others may not all be present. `peers` can be a single string value, an
-  array of string values, or each peer provided as an argument.
+- `peers` - the key names of which if one present, the others may not all be present.
 
 ```js
 const schema = Joi.object().keys({
@@ -2021,11 +2017,10 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.nand`](#objectnand)
 
-#### `object.or(peers)`
+#### `object.or(...peers)`
 
 Defines a relationship between keys where one of the peers is required (and more than one is allowed) where:
-- `peers` - the key names of which at least one must appear. `peers` can be a single string value, an
-  array of string values, or each peer provided as an argument.
+- `peers` - the key names of which at least one must appear.
 
 ```js
 const schema = Joi.object().keys({
@@ -2036,11 +2031,10 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.missing`](#objectmissing)
 
-#### `object.xor(peers)`
+#### `object.xor(...peers)`
 
 Defines an exclusive relationship between a set of keys where one of them is required but not at the same time where:
-- `peers` - the exclusive key names that must not appear together but where one of them is required. `peers` can be a single string value, an
-  array of string values, or each peer provided as an argument.
+- `peers` - the exclusive key names that must not appear together but where one of them is required.
 
 ```js
 const schema = Joi.object().keys({
@@ -2188,10 +2182,10 @@ const schema = Joi.object().schema();
 
 💥 Possible validation errors:[`object.schema`](#objectschema-1)
 
-#### `object.requiredKeys(children)`
+#### `object.requiredKeys(...children)`
 
 Sets the specified children to required.
-- `children` - can be a single string value, an array of string values, or each child provided as an argument.
+- `children` - the keys to specified as required.
 
 ```js
 const schema = Joi.object().keys({ a: { b: Joi.number() }, c: { d: Joi.string() } });
@@ -2200,10 +2194,10 @@ const requiredSchema = schema.requiredKeys('', 'a.b', 'c', 'c.d');
 
 Note that in this example `''` means the current object, `a` is not required but `b` is, as well as `c` and `d`.
 
-#### `object.optionalKeys(children)`
+#### `object.optionalKeys(...children)`
 
 Sets the specified children to optional.
-- `children` - can be a single string value, an array of string values, or each child provided as an argument.
+- `children` - the keys to specified as optional.
 
 ```js
 const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
@@ -2212,10 +2206,10 @@ const optionalSchema = schema.optionalKeys('a.b', 'c.d');
 
 The behavior is exactly the same as `requiredKeys`.
 
-#### `object.forbiddenKeys(children)`
+#### `object.forbiddenKeys(...children)`
 
 Sets the specified children to forbidden.
-- `children` - can be a single string value, an array of string values, or each child provided as an argument.
+- `children` - the keys specified as forbidden.
 
 ```js
 const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
@@ -2657,7 +2651,7 @@ Supports the same methods of the [`any()`](#any) type.
 Alternatives can be expressed using the shorter `[]` notation.
 
 ```js
-const alt = Joi.alternatives().try(Joi.number(), Joi.string());
+const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
 // Same as [Joi.number(), Joi.string()]
 ```
 
@@ -2666,10 +2660,10 @@ const alt = Joi.alternatives().try(Joi.number(), Joi.string());
 #### `alternatives.try(schemas)`
 
 Adds an alternative schema type for attempting to match against the validated value where:
-- `schema` - an array of alternative **joi** types. Also supports providing each type as a separate argument.
+- `schema` - a single or an array of alternative **joi** types.
 
 ```js
-const alt = Joi.alternatives().try(Joi.number(), Joi.string());
+const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
 alt.validate('a', (err, value) => { });
 ```
 
