@@ -2479,7 +2479,7 @@ describe('Joi', () => {
                         {
                             type: 'string',
                             invalids: [''],
-                            rules: [{ name: 'min', arg: 3 }]
+                            rules: [{ name: 'min', arg: { limit: 3 } }]
                         }
                     ]
                 },
@@ -2489,7 +2489,7 @@ describe('Joi', () => {
                         default: 0
                     },
                     invalids: [''],
-                    rules: [{ name: 'max', arg: 3 }]
+                    rules: [{ name: 'max', arg: { limit: 3 } }]
                 },
                 required: {
                     type: 'string',

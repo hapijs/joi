@@ -299,17 +299,18 @@ describe('string', () => {
 
         it('accepts references as min length', () => {
 
-            const schema = Joi.object({ a: Joi.number(), b: Joi.string().min(Joi.ref('a'), 'utf8') });
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.number(), b: Joi.string().min(ref, 'utf8') });
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
                 [{ a: 2, b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" length must be at least 2 characters long]',
+                    message: 'child "b" fails because ["b" length must be at least ref:a characters long]',
                     details: [{
-                        message: '"b" length must be at least 2 characters long',
+                        message: '"b" length must be at least ref:a characters long',
                         path: ['b'],
                         type: 'string.min',
                         context: {
-                            limit: 2,
+                            limit: ref,
                             value: 'a',
                             encoding: 'utf8',
                             label: 'b',
@@ -348,17 +349,18 @@ describe('string', () => {
 
         it('accepts context references as min length', () => {
 
-            const schema = Joi.object({ b: Joi.string().min(Joi.ref('$a'), 'utf8') });
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.string().min(ref, 'utf8') });
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
                 [{ b: 'a' }, false, { context: { a: 2 } }, {
-                    message: 'child "b" fails because ["b" length must be at least 2 characters long]',
+                    message: 'child "b" fails because ["b" length must be at least context:a characters long]',
                     details: [{
-                        message: '"b" length must be at least 2 characters long',
+                        message: '"b" length must be at least context:a characters long',
                         path: ['b'],
                         type: 'string.min',
                         context: {
-                            limit: 2,
+                            limit: ref,
                             value: 'a',
                             encoding: 'utf8',
                             label: 'b',
@@ -451,17 +453,18 @@ describe('string', () => {
 
         it('accepts references as min length', () => {
 
-            const schema = Joi.object({ a: Joi.number(), b: Joi.string().max(Joi.ref('a'), 'utf8') });
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.number(), b: Joi.string().max(ref, 'utf8') });
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
                 [{ a: 2, b: 'three' }, false, null, {
-                    message: 'child "b" fails because ["b" length must be less than or equal to 2 characters long]',
+                    message: 'child "b" fails because ["b" length must be less than or equal to ref:a characters long]',
                     details: [{
-                        message: '"b" length must be less than or equal to 2 characters long',
+                        message: '"b" length must be less than or equal to ref:a characters long',
                         path: ['b'],
                         type: 'string.max',
                         context: {
-                            limit: 2,
+                            limit: ref,
                             value: 'three',
                             encoding: 'utf8',
                             label: 'b',
@@ -474,17 +477,18 @@ describe('string', () => {
 
         it('accepts context references as min length', () => {
 
-            const schema = Joi.object({ b: Joi.string().max(Joi.ref('$a'), 'utf8') });
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.string().max(ref, 'utf8') });
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
                 [{ b: 'three' }, false, { context: { a: 2 } }, {
-                    message: 'child "b" fails because ["b" length must be less than or equal to 2 characters long]',
+                    message: 'child "b" fails because ["b" length must be less than or equal to context:a characters long]',
                     details: [{
-                        message: '"b" length must be less than or equal to 2 characters long',
+                        message: '"b" length must be less than or equal to context:a characters long',
                         path: ['b'],
                         type: 'string.max',
                         context: {
-                            limit: 2,
+                            limit: ref,
                             value: 'three',
                             encoding: 'utf8',
                             label: 'b',
@@ -569,6 +573,15 @@ describe('string', () => {
                         context: { value: '4111111111111112', label: 'value', key: undefined }
                     }]
                 }],
+                ['411111111111111X', false, null, {
+                    message: '"value" must be a credit card',
+                    details: [{
+                        message: '"value" must be a credit card',
+                        path: [],
+                        type: 'string.creditCard',
+                        context: { value: '411111111111111X', label: 'value', key: undefined }
+                    }]
+                }],
                 [null, false, null, {
                     message: '"value" must be a string',
                     details: [{
@@ -627,16 +640,17 @@ describe('string', () => {
 
         it('accepts references as length', () => {
 
-            const schema = Joi.object({ a: Joi.number(), b: Joi.string().length(Joi.ref('a'), 'utf8') });
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.number(), b: Joi.string().length(ref, 'utf8') });
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
                 [{ a: 2, b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" length must be 2 characters long]',
+                    message: 'child "b" fails because ["b" length must be ref:a characters long]',
                     details: [{
-                        message: '"b" length must be 2 characters long',
+                        message: '"b" length must be ref:a characters long',
                         path: ['b'],
                         type: 'string.length',
-                        context: { limit: 2, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
+                        context: { limit: ref, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
                     }]
                 }]
             ]);
@@ -644,25 +658,26 @@ describe('string', () => {
 
         it('accepts context references as length', () => {
 
-            const schema = Joi.object({ b: Joi.string().length(Joi.ref('$a'), 'utf8') });
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.string().length(ref, 'utf8') });
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
                 [{ b: 'a' }, false, { context: { a: 2 } }, {
-                    message: 'child "b" fails because ["b" length must be 2 characters long]',
+                    message: 'child "b" fails because ["b" length must be context:a characters long]',
                     details: [{
-                        message: '"b" length must be 2 characters long',
+                        message: '"b" length must be context:a characters long',
                         path: ['b'],
                         type: 'string.length',
-                        context: { limit: 2, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
+                        context: { limit: ref, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
                     }]
                 }],
                 [{ b: 'a' }, false, { context: { a: 2 } }, {
-                    message: 'child "b" fails because ["b" length must be 2 characters long]',
+                    message: 'child "b" fails because ["b" length must be context:a characters long]',
                     details: [{
-                        message: '"b" length must be 2 characters long',
+                        message: '"b" length must be context:a characters long',
                         path: ['b'],
                         type: 'string.length',
-                        context: { limit: 2, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
+                        context: { limit: ref, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
                     }]
                 }]
             ]);
@@ -9604,7 +9619,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().hex('a');
-            }).to.throw('hex options must be an object');
+            }).to.throw('options must be an object');
 
             expect(() => {
 
@@ -9688,7 +9703,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().base64('a');
-            }).to.throw('base64 options must be an object');
+            }).to.throw('options must be an object');
 
             expect(() => {
 

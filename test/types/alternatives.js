@@ -1392,7 +1392,7 @@ describe('alternatives', () => {
                         type: 'string',
                         flags: { presence: 'required' },
                         invalids: [''],
-                        rules: [{ arg: 1, name: 'min' }]
+                        rules: [{ arg: { limit: 1 }, name: 'min' }]
                     },
                     otherwise: {
                         type: 'boolean',

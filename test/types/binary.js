@@ -157,7 +157,7 @@ describe('binary', () => {
             expect(() => {
 
                 Joi.binary().min('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when min is not an integer', () => {
@@ -165,7 +165,7 @@ describe('binary', () => {
             expect(() => {
 
                 Joi.binary().min(1.2);
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
         });
     });
 
@@ -198,7 +198,7 @@ describe('binary', () => {
             expect(() => {
 
                 Joi.binary().max('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when max is not an integer', () => {
@@ -206,7 +206,7 @@ describe('binary', () => {
             expect(() => {
 
                 Joi.binary().max(1.2);
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
         });
     });
 
@@ -239,7 +239,7 @@ describe('binary', () => {
             expect(() => {
 
                 Joi.binary().length('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when length is not an integer', () => {
@@ -247,7 +247,7 @@ describe('binary', () => {
             expect(() => {
 
                 Joi.binary().length(1.2);
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
         });
     });
 });

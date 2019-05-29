@@ -668,9 +668,9 @@ describe('ref', () => {
                             type: 'string',
                             invalids: [''],
                             rules: [
-                                { name: 'min', arg: 'ref:a.b' },
-                                { name: 'max', arg: 'ref:a.b' },
-                                { name: 'length', arg: 'ref:a.b' }
+                                { name: 'min', arg: { limit: 'ref:a.b' } },
+                                { name: 'max', arg: { limit: 'ref:a.b' } },
+                                { name: 'length', arg: { limit: 'ref:a.b' } }
                             ]
                         }
                     },

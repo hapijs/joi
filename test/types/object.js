@@ -845,9 +845,10 @@ describe('object', () => {
 
         it('strips keys while preserving transformed values', () => {
 
+            const ref = Joi.ref('a');
             const schema = Joi.object({
                 a: Joi.number().strip(),
-                b: Joi.number().min(Joi.ref('a'))
+                b: Joi.number().min(ref)
             });
 
             const result = schema.validate({ a: '1', b: '2' });
@@ -856,12 +857,12 @@ describe('object', () => {
             expect(result.value.b).to.equal(2);
 
             const result2 = schema.validate({ a: '1', b: '0' });
-            expect(result2.error).to.be.an.error('child "b" fails because ["b" must be larger than or equal to 1]');
+            expect(result2.error).to.be.an.error('child "b" fails because ["b" must be larger than or equal to ref:a]');
             expect(result2.error.details).to.equal([{
-                message: '"b" must be larger than or equal to 1',
+                message: '"b" must be larger than or equal to ref:a',
                 path: ['b'],
                 type: 'number.min',
-                context: { limit: 1, value: 0, label: 'b', key: 'b' }
+                context: { limit: ref, value: 0, label: 'b', key: 'b' }
             }]);
         });
 
@@ -1686,7 +1687,7 @@ describe('object', () => {
             expect(() => {
 
                 Joi.object().length('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
         });
     });
 
@@ -1697,7 +1698,7 @@ describe('object', () => {
             expect(() => {
 
                 Joi.object().min('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
         });
     });
 
@@ -1708,7 +1709,7 @@ describe('object', () => {
             expect(() => {
 
                 Joi.object().max('a');
-            }).to.throw('limit must be a positive integer');
+            }).to.throw('limit must be a positive integer or reference');
         });
     });
 

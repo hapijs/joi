@@ -203,17 +203,16 @@ describe('date', () => {
             it('errors if .min("now") is used with a past date', async () => {
 
                 const now = Date.now();
-                const dnow = new Date(now);
                 const past = new Date(now - 1000000);
 
                 const err = await expect(Joi.date().min('now').validate(past)).to.reject();
-                const message = `"value" must be larger than or equal to "${dnow}"`;
+                const message = '"value" must be larger than or equal to "now"';
                 expect(err).to.be.an.error(message);
                 expect(err.details).to.equal([{
-                    message: `"value" must be larger than or equal to "${dnow}"`,
+                    message,
                     path: [],
                     type: 'date.min',
-                    context: { limit: dnow, label: 'value', key: undefined, value: past }
+                    context: { limit: 'now', label: 'value', key: undefined, value: past }
                 }]);
             });
 
@@ -227,12 +226,12 @@ describe('date', () => {
                     [{ a: now, b: now }, true],
                     [{ a: now, b: now + 1e3 }, true],
                     [{ a: now, b: now - 1e3 }, false, null, {
-                        message: `child "b" fails because ["b" must be larger than or equal to "${new Date(now)}"]`,
+                        message: 'child "b" fails because ["b" must be larger than or equal to "ref:a"]',
                         details: [{
-                            message: `"b" must be larger than or equal to "${new Date(now)}"`,
+                            message: '"b" must be larger than or equal to "ref:a"',
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now - 1e3) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -280,18 +279,17 @@ describe('date', () => {
                 const ref = Joi.ref('$a');
                 const schema = Joi.object({ b: Joi.date().min(ref) });
                 const now = Date.now();
-                const dnow = new Date(now);
 
                 Helper.validate(schema, [
                     [{ b: now }, true, { context: { a: now } }],
                     [{ b: now + 1e3 }, true, { context: { a: now } }],
                     [{ b: now - 1e3 }, false, { context: { a: now } }, {
-                        message: `child "b" fails because ["b" must be larger than or equal to "${dnow}"]`,
+                        message: 'child "b" fails because ["b" must be larger than or equal to "context:a"]',
                         details: [{
-                            message: `"b" must be larger than or equal to "${dnow}"`,
+                            message: '"b" must be larger than or equal to "context:a"',
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: dnow, label: 'b', key: 'b', value: new Date(now - 1e3) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -315,12 +313,12 @@ describe('date', () => {
                     }],
                     [{ a: '123', b: now }, true],
                     [{ a: (now + 1e3).toString(), b: now }, false, null, {
-                        message: `child "b" fails because ["b" must be larger than or equal to "${new Date(now + 1e3)}"]`,
+                        message: 'child "b" fails because ["b" must be larger than or equal to "ref:a"]',
                         details: [{
-                            message: `"b" must be larger than or equal to "${new Date(now + 1e3)}"`,
+                            message: '"b" must be larger than or equal to "ref:a"',
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -343,12 +341,12 @@ describe('date', () => {
                         }]
                     }],
                     [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
-                        message: `child "b" fails because ["b" must be larger than or equal to "${new Date(now + 1e3)}"]`,
+                        message: 'child "b" fails because ["b" must be larger than or equal to "context:a"]',
                         details: [{
-                            message: `"b" must be larger than or equal to "${new Date(now + 1e3)}"`,
+                            message: '"b" must be larger than or equal to "context:a"',
                             path: ['b'],
                             type: 'date.min',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -407,17 +405,16 @@ describe('date', () => {
             it('errors if .max("now") is used with a future date', async () => {
 
                 const now = Date.now();
-                const dnow = new Date(now);
                 const future = new Date(now + 1000000);
 
                 const err = await expect(Joi.date().max('now').validate(future)).to.reject();
-                const message = `"value" must be less than or equal to "${dnow}"`;
+                const message = '"value" must be less than or equal to "now"';
                 expect(err).to.be.an.error(message);
                 expect(err.details).to.equal([{
-                    message: `"value" must be less than or equal to "${dnow}"`,
+                    message,
                     path: [],
                     type: 'date.max',
-                    context: { limit: dnow, label: 'value', key: undefined, value: future }
+                    context: { limit: 'now', label: 'value', key: undefined, value: future }
                 }]);
             });
 
@@ -430,12 +427,12 @@ describe('date', () => {
                 Helper.validate(schema, [
                     [{ a: now, b: now }, true],
                     [{ a: now, b: now + 1e3 }, false, null, {
-                        message: `child "b" fails because ["b" must be less than or equal to "${new Date(now)}"]`,
+                        message: 'child "b" fails because ["b" must be less than or equal to "ref:a"]',
                         details: [{
-                            message: `"b" must be less than or equal to "${new Date(now)}"`,
+                            message: '"b" must be less than or equal to "ref:a"',
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ a: now, b: now - 1e3 }, true]
@@ -444,18 +441,19 @@ describe('date', () => {
 
             it('accepts references as max date', () => {
 
-                const schema = Joi.object({ b: Joi.date().max(Joi.ref('$a')) });
+                const ref = Joi.ref('$a');
+                const schema = Joi.object({ b: Joi.date().max(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, true, { context: { a: now } }],
                     [{ b: now + 1e3 }, false, { context: { a: now } }, {
-                        message: `child "b" fails because ["b" must be less than or equal to "${new Date(now)}"]`,
+                        message: 'child "b" fails because ["b" must be less than or equal to "context:a"]',
                         details: [{
-                            message: `"b" must be less than or equal to "${new Date(now)}"`,
+                            message: '"b" must be less than or equal to "context:a"',
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ b: now - 1e3 }, true, { context: { a: now } }]
@@ -480,12 +478,12 @@ describe('date', () => {
                     }],
                     [{ a: '100000000000000', b: now }, true],
                     [{ a: (now - 1e3).toString(), b: now }, false, null, {
-                        message: `child "b" fails because ["b" must be less than or equal to "${new Date(now - 1e3)}"]`,
+                        message: 'child "b" fails because ["b" must be less than or equal to "ref:a"]',
                         details: [{
-                            message: `"b" must be less than or equal to "${new Date(now - 1e3)}"`,
+                            message: '"b" must be less than or equal to "ref:a"',
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -509,12 +507,12 @@ describe('date', () => {
                     }],
                     [{ b: now }, true, { context: { a: '100000000000000' } }],
                     [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
-                        message: `child "b" fails because ["b" must be less than or equal to "${new Date(now - 1e3)}"]`,
+                        message: 'child "b" fails because ["b" must be less than or equal to "context:a"]',
                         details: [{
-                            message: `"b" must be less than or equal to "${new Date(now - 1e3)}"`,
+                            message: '"b" must be less than or equal to "context:a"',
                             path: ['b'],
                             type: 'date.max',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -587,17 +585,16 @@ describe('date', () => {
             it('errors if .greater("now") is used with a past date', async () => {
 
                 const now = Date.now();
-                const dnow = new Date(now);
                 const past = new Date(now - 1000000);
 
                 const err = await expect(Joi.date().greater('now').validate(past)).to.reject();
-                const message = `"value" must be greater than "${dnow}"`;
+                const message = '"value" must be greater than "now"';
                 expect(err).to.be.an.error(message);
                 expect(err.details).to.equal([{
-                    message: `"value" must be greater than "${dnow}"`,
+                    message: '"value" must be greater than "now"',
                     path: [],
                     type: 'date.greater',
-                    context: { limit: dnow, label: 'value', key: undefined, value: past }
+                    context: { limit: 'now', label: 'value', key: undefined, value: past }
                 }]);
             });
 
@@ -609,22 +606,22 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ a: now, b: now }, false, null, {
-                        message: `child "b" fails because ["b" must be greater than "${new Date(now)}"]`,
+                        message: 'child "b" fails because ["b" must be greater than "ref:a"]',
                         details: [{
-                            message: `"b" must be greater than "${new Date(now)}"`,
+                            message: '"b" must be greater than "ref:a"',
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }],
                     [{ a: now, b: now + 1e3 }, true],
                     [{ a: now, b: now - 1e3 }, false, null, {
-                        message: `child "b" fails because ["b" must be greater than "${new Date(now)}"]`,
+                        message: 'child "b" fails because ["b" must be greater than "ref:a"]',
                         details: [{
-                            message: `"b" must be greater than "${new Date(now)}"`,
+                            message: '"b" must be greater than "ref:a"',
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now - 1e3) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -664,26 +661,25 @@ describe('date', () => {
                 const ref = Joi.ref('$a');
                 const schema = Joi.object({ b: Joi.date().greater(ref) });
                 const now = Date.now();
-                const dnow = new Date(now);
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: now } }, {
-                        message: `child "b" fails because ["b" must be greater than "${dnow}"]`,
+                        message: 'child "b" fails because ["b" must be greater than "context:a"]',
                         details: [{
-                            message: `"b" must be greater than "${dnow}"`,
+                            message: '"b" must be greater than "context:a"',
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: dnow, label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }],
                     [{ b: now + 1e3 }, true, { context: { a: now } }],
                     [{ b: now - 1e3 }, false, { context: { a: now } }, {
-                        message: `child "b" fails because ["b" must be greater than "${dnow}"]`,
+                        message: 'child "b" fails because ["b" must be greater than "context:a"]',
                         details: [{
-                            message: `"b" must be greater than "${dnow}"`,
+                            message: '"b" must be greater than "context:a"',
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: dnow, label: 'b', key: 'b', value: new Date(now - 1e3) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
                         }]
                     }]
                 ]);
@@ -707,12 +703,12 @@ describe('date', () => {
                     }],
                     [{ a: '123', b: now }, true],
                     [{ a: (now + 1e3).toString(), b: now }, false, null, {
-                        message: `child "b" fails because ["b" must be greater than "${new Date(now + 1e3)}"]`,
+                        message: 'child "b" fails because ["b" must be greater than "ref:a"]',
                         details: [{
-                            message: `"b" must be greater than "${new Date(now + 1e3)}"`,
+                            message: '"b" must be greater than "ref:a"',
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -735,12 +731,12 @@ describe('date', () => {
                         }]
                     }],
                     [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
-                        message: `child "b" fails because ["b" must be greater than "${new Date(now + 1e3)}"]`,
+                        message: 'child "b" fails because ["b" must be greater than "context:a"]',
                         details: [{
-                            message: `"b" must be greater than "${new Date(now + 1e3)}"`,
+                            message: '"b" must be greater than "context:a"',
                             path: ['b'],
                             type: 'date.greater',
-                            context: { limit: new Date(now + 1e3), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -823,17 +819,16 @@ describe('date', () => {
             it('errors if .less("now") is used with a future date', async () => {
 
                 const now = Date.now();
-                const dnow = new Date(now);
                 const future = new Date(now + 1000000);
 
                 const err = await expect(Joi.date().less('now').validate(future)).to.reject();
-                const message = `"value" must be less than "${dnow}"`;
+                const message = '"value" must be less than "now"';
                 expect(err).to.be.an.error(message);
                 expect(err.details).to.equal([{
-                    message: `"value" must be less than "${dnow}"`,
+                    message: '"value" must be less than "now"',
                     path: [],
                     type: 'date.less',
-                    context: { limit: dnow, label: 'value', key: undefined, value: future }
+                    context: { limit: 'now', label: 'value', key: undefined, value: future }
                 }]);
             });
 
@@ -845,21 +840,21 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ a: now, b: now }, false, null, {
-                        message: `child "b" fails because ["b" must be less than "${new Date(now)}"]`,
+                        message: 'child "b" fails because ["b" must be less than "ref:a"]',
                         details: [{
-                            message: `"b" must be less than "${new Date(now)}"`,
+                            message: '"b" must be less than "ref:a"',
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }],
                     [{ a: now, b: now + 1e3 }, false, null, {
-                        message: `child "b" fails because ["b" must be less than "${new Date(now)}"]`,
+                        message: 'child "b" fails because ["b" must be less than "ref:a"]',
                         details: [{
-                            message: `"b" must be less than "${new Date(now)}"`,
+                            message: '"b" must be less than "ref:a"',
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ a: now, b: now - 1e3 }, true]
@@ -868,26 +863,27 @@ describe('date', () => {
 
             it('accepts references as less date', () => {
 
-                const schema = Joi.object({ b: Joi.date().less(Joi.ref('$a')) });
+                const ref = Joi.ref('$a');
+                const schema = Joi.object({ b: Joi.date().less(ref) });
                 const now = Date.now();
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: now } }, {
-                        message: `child "b" fails because ["b" must be less than "${new Date(now)}"]`,
+                        message: 'child "b" fails because ["b" must be less than "context:a"]',
                         details: [{
-                            message: `"b" must be less than "${new Date(now)}"`,
+                            message: '"b" must be less than "context:a"',
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }],
                     [{ b: now + 1e3 }, false, { context: { a: now } }, {
-                        message: `child "b" fails because ["b" must be less than "${new Date(now)}"]`,
+                        message: 'child "b" fails because ["b" must be less than "context:a"]',
                         details: [{
-                            message: `"b" must be less than "${new Date(now)}"`,
+                            message: '"b" must be less than "context:a"',
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now), label: 'b', key: 'b', value: new Date(now + 1e3) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                         }]
                     }],
                     [{ b: now - 1e3 }, true, { context: { a: now } }]
@@ -912,12 +908,12 @@ describe('date', () => {
                     }],
                     [{ a: '100000000000000', b: now }, true],
                     [{ a: (now - 1e3).toString(), b: now }, false, null, {
-                        message: `child "b" fails because ["b" must be less than "${new Date(now - 1e3)}"]`,
+                        message: 'child "b" fails because ["b" must be less than "ref:a"]',
                         details: [{
-                            message: `"b" must be less than "${new Date(now - 1e3)}"`,
+                            message: '"b" must be less than "ref:a"',
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);
@@ -941,12 +937,12 @@ describe('date', () => {
                     }],
                     [{ b: now }, true, { context: { a: '100000000000000' } }],
                     [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
-                        message: `child "b" fails because ["b" must be less than "${new Date(now - 1e3)}"]`,
+                        message: 'child "b" fails because ["b" must be less than "context:a"]',
                         details: [{
-                            message: `"b" must be less than "${new Date(now - 1e3)}"`,
+                            message: '"b" must be less than "context:a"',
                             path: ['b'],
                             type: 'date.less',
-                            context: { limit: new Date(now - 1e3), label: 'b', key: 'b', value: new Date(now) }
+                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }]
                 ]);

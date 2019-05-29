@@ -1257,8 +1257,8 @@ describe('any', () => {
 
             const schema = Joi.number().min(Joi.ref('other'));
 
-            expect(() => schema.example(0)).to.throw('Bad example at index 0: "value" references "other" which is not a number');
-            expect(() => schema.example([0])).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example(0)).to.throw('Bad example at index 0: "value" references "ref:other" which is not a number');
+            expect(() => schema.example([0])).to.throw('Bad example at index 0: "value" references "ref:other" which is not a number');
             expect(() => schema.example([0, { parent: { other: -1 } }])).to.not.throw();
         });
 
@@ -1266,8 +1266,8 @@ describe('any', () => {
 
             const schema = Joi.number().min(Joi.ref('$other'));
 
-            expect(() => schema.example(0)).to.throw('Bad example at index 0: "value" references "other" which is not a number');
-            expect(() => schema.example([0])).to.throw('Bad example at index 0: "value" references "other" which is not a number');
+            expect(() => schema.example(0)).to.throw('Bad example at index 0: "value" references "context:other" which is not a number');
+            expect(() => schema.example([0])).to.throw('Bad example at index 0: "value" references "context:other" which is not a number');
             expect(() => schema.example([0, { context: { other: -1 } }])).to.not.throw();
         });
     });

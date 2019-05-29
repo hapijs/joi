@@ -459,6 +459,7 @@ describe('array', () => {
                 limit: Joi.any(),
                 arr: Joi.array().min(ref)
             });
+
             Helper.validate(schema, [
                 [{
                     limit: Math.pow(2, 53),
@@ -589,33 +590,35 @@ describe('array', () => {
 
         it('validates reference is a safe integer', () => {
 
+            const ref = Joi.ref('limit');
             const schema = Joi.object().keys({
                 limit: Joi.any(),
-                arr: Joi.array().max(Joi.ref('limit'))
+                arr: Joi.array().max(ref)
             });
+
             Helper.validate(schema, [
                 [{
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "limit" which is not a positive integer]',
+                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
                     details: [{
-                        message: '"arr" references "limit" which is not a positive integer',
+                        message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
                         type: 'array.ref',
-                        context: { ref: 'limit', label: 'arr', key: 'arr' }
+                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53) }
                     }]
                 }],
                 [{
                     limit: 'I like turtles',
                     arr: [1]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "limit" which is not a positive integer]',
+                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
                     details: [{
-                        message: '"arr" references "limit" which is not a positive integer',
+                        message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
                         type: 'array.ref',
-                        context: { ref: 'limit', label: 'arr', key: 'arr' }
+                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles' }
                     }]
                 }]
             ]);
@@ -732,33 +735,35 @@ describe('array', () => {
 
         it('validates reference is a safe integer', () => {
 
+            const ref = Joi.ref('limit');
             const schema = Joi.object().keys({
                 limit: Joi.any(),
-                arr: Joi.array().length(Joi.ref('limit'))
+                arr: Joi.array().length(ref)
             });
+
             Helper.validate(schema, [
                 [{
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "limit" which is not a positive integer]',
+                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
                     details: [{
-                        message: '"arr" references "limit" which is not a positive integer',
+                        message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
                         type: 'array.ref',
-                        context: { ref: 'limit', label: 'arr', key: 'arr' }
+                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53) }
                     }]
                 }],
                 [{
                     limit: 'I like turtles',
                     arr: [1]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "limit" which is not a positive integer]',
+                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
                     details: [{
-                        message: '"arr" references "limit" which is not a positive integer',
+                        message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
                         type: 'array.ref',
-                        context: { ref: 'limit', label: 'arr', key: 'arr' }
+                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles' }
                     }]
                 }]
             ]);
@@ -1227,7 +1232,7 @@ describe('array', () => {
         it('errors if duplicate numbers, strings, objects, binaries, functions, dates and booleans', () => {
 
             const buffer = Buffer.from('hello world');
-            const func = function () {};
+            const func = function () { };
             const now = new Date();
             const schema = Joi.array().sparse().unique();
 
@@ -1459,8 +1464,8 @@ describe('array', () => {
 
             const buffer = Buffer.from('hello world');
             const buffer2 = Buffer.from('Hello world');
-            const func = function () {};
-            const func2 = function () {};
+            const func = function () { };
+            const func2 = function () { };
             const now = new Date();
             const now2 = new Date(+now + 100);
             const schema = Joi.array().unique();
