@@ -68,7 +68,7 @@ describe('object', () => {
         ]);
     });
 
-    it('return object reference when no rules specified', async () => {
+    it('returns object reference when no rules specified', async () => {
 
         const schema = Joi.object({
             a: Joi.object()
@@ -92,6 +92,30 @@ describe('object', () => {
         const value = await schema.validate({ b: '5', a: 5 });
         expect(value.a).to.equal(5);
         expect(value.b).to.equal(5);
+    });
+
+    it('retains symbols', async () => {
+
+        const schema = Joi.object({ a: Joi.number() });
+
+        const symbol = Symbol();
+        const value = await schema.validate({ [symbol]: 5, a: 5 });
+        expect(value[symbol]).to.equal(5);
+    });
+
+    it('retains prototype', async () => {
+
+        const schema = Joi.object({ a: Joi.number() });
+
+        const Test = class {
+            constructor() {
+
+                this.a = 5;
+            }
+        };
+
+        const value = await schema.validate(new Test());
+        expect(value).to.be.instanceof(Test);
     });
 
     it('allows any key when schema is undefined', async () => {
@@ -2170,8 +2194,8 @@ describe('object', () => {
             }).with('a', 'b.c');
 
             Helper.validate(schema, [
-                [{ a: 'test', b: Object.assign(() => {}, { c: 'test2' }) }, true],
-                [{ a: 'test', b: Object.assign(() => {}, { d: 80 }) }, false, null, {
+                [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, true],
+                [{ a: 'test', b: Object.assign(() => { }, { d: 80 }) }, false, null, {
                     message: '"a" missing required peer "b.c"',
                     details: [{
                         message: '"a" missing required peer "b.c"',
@@ -2355,7 +2379,7 @@ describe('object', () => {
             }).without('a', ['b.c', 'b.d']);
 
             const sampleObject = { a: 'test', d: 9000 };
-            const sampleObject2 = { a: 'test', b: Object.assign(() => {}, { d: 80 }) };
+            const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
 
             const error = schema.validate(sampleObject).error;
             expect(error).to.equal(null);
@@ -2535,8 +2559,8 @@ describe('object', () => {
                 d: Joi.number()
             }).xor('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: Object.assign(() => {}, { d: 80 }) };
-            const sampleObject2 = { a: 'test', b: Object.assign(() => {}, { c: 'test2' }) };
+            const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
+            const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
 
             const error = schema.validate(sampleObject).error;
             expect(error).to.equal(null);
@@ -2702,8 +2726,8 @@ describe('object', () => {
                 d: Joi.number()
             }).oxor('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: Object.assign(() => {}, { d: 80 }) };
-            const sampleObject2 = { a: 'test', b: Object.assign(() => {}, { c: 'test2' }) };
+            const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
+            const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
 
             const error = schema.validate(sampleObject).error;
             expect(error).to.equal(null);
@@ -2832,7 +2856,7 @@ describe('object', () => {
                 d: Joi.number()
             }).or('a', 'b.c');
 
-            const sampleObject = { b: Object.assign(() => {}, { c: 'bc' }) };
+            const sampleObject = { b: Object.assign(() => { }, { c: 'bc' }) };
             const sampleObject2 = { d: 90 };
 
             const error = schema.validate(sampleObject).error;
@@ -2939,8 +2963,8 @@ describe('object', () => {
                 d: Joi.number()
             }).and('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: Object.assign(() => {}, { c: 'test2' }) };
-            const sampleObject2 = { a: 'test', b: Object.assign(() => {}, { d: 80 }) };
+            const sampleObject = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
+            const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
 
             const error = schema.validate(sampleObject).error;
             expect(error).to.equal(null);
@@ -3073,8 +3097,8 @@ describe('object', () => {
                 d: Joi.number()
             }).nand('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: Object.assign(() => {}, { d: 80 }) };
-            const sampleObject2 = { a: 'test', b: Object.assign(() => {}, { c: 'test2' }) };
+            const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
+            const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
 
             const error = schema.validate(sampleObject).error;
             expect(error).to.equal(null);
