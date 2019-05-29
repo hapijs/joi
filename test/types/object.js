@@ -1207,6 +1207,23 @@ describe('object', () => {
                 expect(value).to.equal({});
             });
 
+            it('skips when all matches are undefined and ignoredUndefined is true', async () => {
+
+                const regex = /^b$/i;
+
+                const schema = Joi.object().keys({
+                    a: Joi.any(),
+                    b: Joi.any()
+                }).rename(regex, 'a', { ignoreUndefined: true });
+
+                const input = {
+                    b: undefined
+                };
+
+                const value = await schema.validate(input);
+                expect(value).to.equal({ b: undefined });
+            });
+
             it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', async () => {
 
                 const regex = /^b$/i;
@@ -1254,7 +1271,6 @@ describe('object', () => {
                     renames: [{
                         from: regex,
                         to: 'a',
-                        isRegExp: true,
                         options: {
                             alias: true,
                             multiple: true,
@@ -1276,7 +1292,6 @@ describe('object', () => {
                     renames: [{
                         from: regex,
                         to: 'a',
-                        isRegExp: true,
                         options: {
                             alias: false,
                             multiple: false,
@@ -1580,7 +1595,6 @@ describe('object', () => {
                 renames: [{
                     from: 'b',
                     to: 'a',
-                    isRegExp: false,
                     options: {
                         alias: false,
                         multiple: false,
@@ -1600,7 +1614,6 @@ describe('object', () => {
                 renames: [{
                     from: 'b',
                     to: 'a',
-                    isRegExp: false,
                     options: {
                         alias: true,
                         multiple: true,
