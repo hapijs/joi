@@ -128,6 +128,7 @@
     - [`string.replace(pattern, replacement)`](#stringreplacepattern-replacement)
     - [`string.alphanum()`](#stringalphanum)
     - [`string.token()`](#stringtoken)
+    - [`string.domain([options])`](#stringdomainoptions)
     - [`string.email([options])`](#stringemailoptions)
     - [`string.ip([options])`](#stringipoptions)
     - [`string.uri([options])`](#stringurioptions)
@@ -234,6 +235,7 @@
     - [`string.base`](#stringbase)
     - [`string.creditCard`](#stringcreditcard-1)
     - [`string.dataUri`](#stringdatauri)
+    - [`string.domain`](#stringdomain)
     - [`string.email`](#stringemail)
     - [`string.guid`](#stringguid)
     - [`string.hexAlign`](#stringhexalign)
@@ -2398,6 +2400,32 @@ const schema = Joi.string().token();
 
 💥 Possible validation errors:[`string.token`](#stringtoken-1)
 
+#### `string.domain([options])`
+
+Requires the string value to be a valid domain name.
+
+- `options` - optional settings:
+    - `allowUnicode` - if `true`, Unicode characters are permitted. Defaults to `true`.
+    - `minDomainSegments` - Number of segments required for the domain. Be careful since some
+      domains, such as `io`, directly allow email.
+    - `tlds` - options for TLD (top level domain) validation. By default, the TLD must be a valid
+      name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt). To
+      disable validation, set `tlds` to `false`. To customize how TLDs are validated, set one of
+      these:
+        - `allow` - one of:
+            - `true` to use the IANA list of registered TLDs. This is the default value.
+            - `false` to allow any TLD not listed in the `deny` list, if present.
+            - a `Set` or array of the allowed TLDs. Cannot be used together with `deny`.
+        - `deny` - one of:
+            - a `Set` or array of the forbidden TLDs. Cannot be used together with a custom `allow`
+              list.
+
+```js
+const schema = Joi.string().domain();
+```
+
+💥 Possible validation errors:[`string.domain`](#stringdomain)
+
 #### `string.email([options])`
 
 Requires the string value to be a valid email address.
@@ -4086,6 +4114,21 @@ The string is not a valid credit card number.
 **Description**
 
 The string is not a valid data URI.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.domain`
+
+**Description**
+
+The string is not a valid domain name.
 
 **Context**
 ```ts

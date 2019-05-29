@@ -720,6 +720,110 @@ describe('string', () => {
         });
     });
 
+    describe('domain()', () => {
+
+        it('validates options', () => {
+
+            expect(() => Joi.string().domain({ minDomainSegments: 1 })).to.not.throw();
+            expect(() => Joi.string().domain({ minDomainSegments: '1' })).to.throw('minDomainSegments must be a positive integer');
+            expect(() => Joi.string().domain({ minDomainSegments: 0 })).to.throw('minDomainSegments must be a positive integer');
+            expect(() => Joi.string().domain({ minDomainSegments: -1 })).to.throw('minDomainSegments must be a positive integer');
+            expect(() => Joi.string().domain({ minDomainSegments: 2.3 })).to.throw('minDomainSegments must be a positive integer');
+
+            expect(() => Joi.string().domain({ tlds: false })).to.not.throw();
+            expect(() => Joi.string().domain({ tlds: true })).to.not.throw();
+            expect(() => Joi.string().domain({ tlds: {} })).to.not.throw();
+
+            expect(() => Joi.string().domain({ tlds: { allow: true } })).to.not.throw();
+            expect(() => Joi.string().domain({ tlds: { allow: false } })).to.not.throw();
+            expect(() => Joi.string().domain({ tlds: { allow: ['com'] } })).to.not.throw();
+            expect(() => Joi.string().domain({ tlds: { allow: new Set(['com']) } })).to.not.throw();
+            expect(() => Joi.string().domain({ tlds: { allow: 'com' } })).to.throw('tlds.allow must be an array, Set, or boolean');
+            expect(() => Joi.string().domain({ tlds: { allow: { com: true } } })).to.throw('tlds.allow must be an array, Set, or boolean');
+
+            expect(() => Joi.string().domain({ tlds: { deny: ['com'] } })).to.not.throw();
+            expect(() => Joi.string().domain({ tlds: { deny: new Set(['com']) } })).to.not.throw();
+            expect(() => Joi.string().domain({ tlds: { deny: true } })).to.throw('tlds.deny must be an array or Set');
+            expect(() => Joi.string().domain({ tlds: { deny: false } })).to.throw('tlds.deny must be an array or Set');
+            expect(() => Joi.string().domain({ tlds: { deny: 'com' } })).to.throw('tlds.deny must be an array or Set');
+            expect(() => Joi.string().domain({ tlds: { deny: { com: true } } })).to.throw('tlds.deny must be an array or Set');
+        });
+
+        it('validates domain', () => {
+
+            const schema = Joi.string().domain();
+            Helper.validate(schema, [
+                ['example.com', true],
+                ['"example.com', false, null, {
+                    message: '"value" must be a valid domain name',
+                    details: [{
+                        message: '"value" must be a valid domain name',
+                        path: [],
+                        type: 'string.domain',
+                        context: { value: '"example.com', label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates domain with tlds.allow', () => {
+
+            const schema = Joi.string().domain({ tlds: { allow: ['com', 'org'] } });
+            Helper.validate(schema, [
+                ['example.com', true],
+                ['example.org', true],
+                ['example.edu', false, null, {
+                    message: '"value" must be a valid domain name',
+                    details: [{
+                        message: '"value" must be a valid domain name',
+                        path: [],
+                        type: 'string.domain',
+                        context: { value: 'example.edu', label: 'value', key: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates domain with minDomainSegments', () => {
+
+            const schema = Joi.string().domain({ minDomainSegments: 4 });
+            Helper.validate(schema, [
+                ['example.com', false, null, {
+                    message: '"value" must be a valid domain name',
+                    details: [{
+                        message: '"value" must be a valid domain name',
+                        path: [],
+                        type: 'string.domain',
+                        context: { value: 'example.com', label: 'value', key: undefined }
+                    }]
+                }],
+                ['www.example.com', false, null, {
+                    message: '"value" must be a valid domain name',
+                    details: [{
+                        message: '"value" must be a valid domain name',
+                        path: [],
+                        type: 'string.domain',
+                        context: { value: 'www.example.com', label: 'value', key: undefined }
+                    }]
+                }],
+                ['sub.www.example.com', true]
+            ]);
+        });
+
+        it('validates domain with a friendly error message', async () => {
+
+            const schema = { item: Joi.string().domain() };
+            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid domain name]');
+            expect(err.details).to.equal([{
+                message: '"item" must be a valid domain name',
+                path: ['item'],
+                type: 'string.domain',
+                context: { value: 'something', label: 'item', key: 'item' }
+            }]);
+        });
+    });
+
     describe('email()', () => {
 
         it('validates unsupported options', () => {
