@@ -141,6 +141,7 @@
     - [`string.uppercase()`](#stringuppercase)
     - [`string.trim([enabled])`](#stringtrimenabled)
     - [`string.isoDate()`](#stringisodate)
+    - [`string.isoDuration()`](#stringisoduration)
   - [`symbol` - inherits from `Any`](#symbol---inherits-from-any)
     - [`symbol.map(map)`](#symbolmapmap)
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
@@ -241,6 +242,7 @@
     - [`string.ipVersion`](#stringipversion)
     - [`string.ip`](#stringip)
     - [`string.isoDate`](#stringisodate-1)
+    - [`string.isoDuration`](#stringisoduration-1)
     - [`string.length`](#stringlength)
     - [`string.lowercase`](#stringlowercase-1)
     - [`string.max`](#stringmax)
@@ -2605,9 +2607,25 @@ If the validation `convert` option is on (enabled by default), the string will b
 
 ```js
 const schema = Joi.string().isoDate();
+schema.validate('2018-11-28T18:25:32+00:00'); // No Error
+schema.validate('20181-11-28T18:25:32+00:00'); // ValidationError: must be a valid 8601 date
+schema.validate(''); // ValidationError: must be a valid 8601 date
 ```
 
 💥 Possible validation errors:[`string.isoDate`](#stringisodate-1)
+
+#### `string.isoDuration()`
+
+Requires the string value to be in valid ISO 8601 duration format.
+
+```js
+const schema = Joi.string().isoDuration();
+schema.validate('P3Y6M4DT12H30M5S'); // No Error
+schema.validate('2018-11-28T18:25:32+00:00'); // ValidationError: must be a valid ISO 8601 duration
+schema.validate(''); // ValidationError: must be a valid ISO 8601 duration
+```
+
+💥 Possible validation errors:[`string.isoDuration`](#stringisoduration-1)
 
 ### `symbol` - inherits from `Any`
 
@@ -4189,6 +4207,21 @@ The string is not a valid IP address.
 **Description**
 
 The string is not a valid ISO date string.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: string // Input value
+}
+```
+
+#### `string.isoDuration`
+
+**Description**
+
+The string must be a valid ISO 8601 duration.
 
 **Context**
 ```ts
