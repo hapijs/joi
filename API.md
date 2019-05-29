@@ -10,8 +10,8 @@
   - [`ValidationError`](#ValidationError)
   - [`compile(schema)`](#compileschema)
   - [`describe(schema)`](#describeschema)
-  - [`assert(value, schema, [message])`](#assertvalue-schema-message)
-  - [`attempt(value, schema, [message])`](#attemptvalue-schema-message)
+  - [`assert(value, schema, [message], [options])`](#assertvalue-schema-message-options)
+  - [`attempt(value, schema, [message], [options])`](#attemptvalue-schema-message-options)
   - [`ref(key, [options])`](#refkey-options)
   - [`isRef(ref)`](#isrefref)
   - [`reach(schema, path)`](#reachschema-path)
@@ -378,23 +378,25 @@ Results in:
   valids: [ 'foo', 'bar' ] }
 ```
 
-### `assert(value, schema, [message])`
+### `assert(value, schema, [message], [options])`
 
 Validates a value against a schema and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
 - `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
+- `options` - optional options object, passed in to [`Joi.validate`](##validatevalue-schema-options-callback)
 
 ```js
 Joi.assert('x', Joi.number());
 ```
 
-### `attempt(value, schema, [message])`
+### `attempt(value, schema, [message], [options])`
 
 Validates a value against a schema, returns valid object, and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
 - `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
+- `options` - optional options object, passed in to [`Joi.validate`](##validatevalue-schema-options-callback)
 
 ```js
 Joi.attempt('x', Joi.number()); // throws error
