@@ -1142,6 +1142,16 @@ describe('object', () => {
                 expect(value.arr[0].two).to.equal('2');
             });
 
+            it('skips when existing name matches', async () => {
+
+                const regex = /^abc$/i;
+
+                const schema = Joi.object({ abc: Joi.string() }).rename(regex, 'abc', { override: true });
+
+                expect(await schema.validate({ ABC: 'x' })).to.equal({ abc: 'x' });
+                expect(await schema.validate({ abc: 'x' })).to.equal({ abc: 'x' });
+            });
+
             it('applies rename and validation in the correct order regardless of key order', async () => {
 
                 const regex = /^b$/i;
@@ -1335,7 +1345,7 @@ describe('object', () => {
 
                 const schema = Joi.object().keys({ z: Joi.string() }).rename(/a/i, 'b').rename(/c/i, 'b').rename(/z/i, 'z').options({ abortEarly: false });
                 const err = await expect(schema.validate({ a: 1, c: 1, d: 1, z: 1 })).to.reject();
-                expect(err.message).to.equal('"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename children [z] because override is disabled and target "z" exists. "d" is not allowed. "b" is not allowed');
+                expect(err.message).to.equal('"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename children [z] because override is disabled and target "z" exists. child "z" fails because ["z" must be a string]. "d" is not allowed. "b" is not allowed');
                 expect(err.details).to.equal([
                     {
                         message: '"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b"',
@@ -1348,6 +1358,12 @@ describe('object', () => {
                         path: [],
                         type: 'object.rename.regex.override',
                         context: { from: ['z'], to: 'z', key: undefined, label: 'value' }
+                    },
+                    {
+                        message: '"z" must be a string',
+                        path: ['z'],
+                        type: 'string.base',
+                        context: { value: 1, key: 'z', label: 'z' }
                     },
                     {
                         message: '"d" is not allowed',
