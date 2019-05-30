@@ -755,9 +755,9 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['example.com', true],
                 ['"example.com', false, null, {
-                    message: '"value" must be a valid domain name',
+                    message: '"value" must contain a valid domain name',
                     details: [{
-                        message: '"value" must be a valid domain name',
+                        message: '"value" must contain a valid domain name',
                         path: [],
                         type: 'string.domain',
                         context: { value: '"example.com', label: 'value', key: undefined }
@@ -773,9 +773,9 @@ describe('string', () => {
                 ['example.com', true],
                 ['example.org', true],
                 ['example.edu', false, null, {
-                    message: '"value" must be a valid domain name',
+                    message: '"value" must contain a valid domain name',
                     details: [{
-                        message: '"value" must be a valid domain name',
+                        message: '"value" must contain a valid domain name',
                         path: [],
                         type: 'string.domain',
                         context: { value: 'example.edu', label: 'value', key: undefined }
@@ -789,18 +789,18 @@ describe('string', () => {
             const schema = Joi.string().domain({ minDomainSegments: 4 });
             Helper.validate(schema, [
                 ['example.com', false, null, {
-                    message: '"value" must be a valid domain name',
+                    message: '"value" must contain a valid domain name',
                     details: [{
-                        message: '"value" must be a valid domain name',
+                        message: '"value" must contain a valid domain name',
                         path: [],
                         type: 'string.domain',
                         context: { value: 'example.com', label: 'value', key: undefined }
                     }]
                 }],
                 ['www.example.com', false, null, {
-                    message: '"value" must be a valid domain name',
+                    message: '"value" must contain a valid domain name',
                     details: [{
-                        message: '"value" must be a valid domain name',
+                        message: '"value" must contain a valid domain name',
                         path: [],
                         type: 'string.domain',
                         context: { value: 'www.example.com', label: 'value', key: undefined }
@@ -814,9 +814,9 @@ describe('string', () => {
 
             const schema = { item: Joi.string().domain() };
             const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
-            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid domain name]');
+            expect(err).to.be.an.error('child "item" fails because ["item" must contain a valid domain name]');
             expect(err.details).to.equal([{
-                message: '"item" must be a valid domain name',
+                message: '"item" must contain a valid domain name',
                 path: ['item'],
                 type: 'string.domain',
                 context: { value: 'something', label: 'item', key: 'item' }
@@ -3079,6 +3079,41 @@ describe('string', () => {
             }).to.throw(Error, 'scheme at position 0 must be a valid scheme');
         });
 
+        it('validates uri and domain', () => {
+
+            const schema = Joi.string().uri({ domain: { minDomainSegments: 3, tlds: { allow: ['com'] } } });
+
+            Helper.validate(schema, [
+                ['http://test.google.com', true],
+                ['http://google.com', false, null, {
+                    message: '"value" must contain a valid domain name',
+                    details: [{
+                        message: '"value" must contain a valid domain name',
+                        path: [],
+                        type: 'string.domain',
+                        context: {
+                            value: 'google.com',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['http://test.google.net', false, null, {
+                    message: '"value" must contain a valid domain name',
+                    details: [{
+                        message: '"value" must contain a valid domain name',
+                        path: [],
+                        type: 'string.domain',
+                        context: {
+                            value: 'test.google.net',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
+            ]);
+        });
+
         it('validates relative uri', () => {
 
             const schema = Joi.string().uri({ allowRelative: true });
@@ -4456,7 +4491,7 @@ describe('string', () => {
             ]);
         });
 
-        it('warns about unknown options', () => {
+        it('errors on unknown options', () => {
 
             expect(() => Joi.string().uri({ foo: 'bar', baz: 'qux' })).to.throw('options contain unknown keys: foo,baz');
         });
