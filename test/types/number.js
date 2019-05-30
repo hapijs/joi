@@ -183,6 +183,7 @@ describe('number', () => {
                 ['-00100e-003', true, null, -0.1],
                 ['-001231.0133210e003', true, null, -1231013.321],
                 ['+001231.0133210e003', true, null, 1231013.321],
+                ['.5', true, null, 0.5],
                 ['1 some text', false, null, {
                     message: '"value" must be a number',
                     details: [{
