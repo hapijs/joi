@@ -114,6 +114,18 @@ describe('boolean', () => {
         ]);
     });
 
+    it('errors on truthy without convert', () => {
+
+        const schema = Joi.boolean().truthy('y');
+        expect(schema.validate('y', { convert: false }).error).be.an.error('"value" cannot cast value to truthy or falsy without enabling the convert option');
+    });
+
+    it('errors on falsy without convert', () => {
+
+        const schema = Joi.boolean().falsy('n');
+        expect(schema.validate('n', { convert: false }).error).be.an.error('"value" cannot cast value to truthy or falsy without enabling the convert option');
+    });
+
     describe('insensitive()', () => {
 
         it('should default to case insensitive', () => {

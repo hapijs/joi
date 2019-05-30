@@ -180,6 +180,7 @@
     - [`binary.max`](#binarymax)
     - [`binary.min`](#binarymin)
     - [`boolean.base`](#booleanbase)
+    - [`boolean.cast`](#booleancast)
     - [`date.base`](#datebase)
     - [`date.greater`](#dategreater)
     - [`date.isoDate`](#dateisodate)
@@ -1345,11 +1346,12 @@ boolean.validate(true, (err, value) => { }); // Valid
 boolean.validate(1, (err, value) => { }); // Invalid
 ```
 
-💥 Possible validation errors:[`boolean.base`](#booleanbase)
+💥 Possible validation errors:[`boolean.base`](#booleanbase), [`boolean.cast`](#booleancast)
 
 #### `boolean.truthy(...values)`
 
 Allows for additional values to be considered valid booleans by converting them to `true` during validation.
+Requires the validation `convert` option to be `true`.
 
 String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
 
@@ -1361,6 +1363,7 @@ boolean.validate('Y', (err, value) => { }); // Valid
 #### `boolean.falsy(...values)`
 
 Allows for additional values to be considered valid booleans by converting them to `false` during validation.
+Requires the validation `convert` option to be `true`.
 
 String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
 
@@ -3261,6 +3264,20 @@ The value is either not a boolean or could not be cast to a boolean from one of 
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
     value: any // Input value
+}
+```
+
+#### `boolean.cast`
+
+**Description**
+
+The value matches a provided turthy or falsly value but the `convert` option is false.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string // Label if defined, otherwise it's the key
 }
 ```
 
