@@ -621,46 +621,46 @@ describe('ref', () => {
                 type: 'any',
                 flags: {
                     allowOnly: true,
-                    default: 'ref:a.b'
+                    default: { type: 'ref', key: 'a.b', path: ['a', 'b'] }
                 },
-                invalids: ['context:b.c'],
-                valids: ['ref:a.b']
+                invalids: [{ type: 'context', key: 'b.c', path: ['b', 'c'] }],
+                valids: [{ type: 'ref', key: 'a.b', path: ['a', 'b'] }]
             },
             alternatives: [{
-                ref: 'ref:a.b',
+                ref: { type: 'ref', key: 'a.b', path: ['a', 'b'] },
                 is: {
                     type: 'date',
                     rules: [
-                        { name: 'min', arg: 'ref:a.b' },
-                        { name: 'max', arg: 'ref:a.b' }
+                        { name: 'min', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
+                        { name: 'max', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } }
                     ]
                 },
                 then: {
                     type: 'number',
-                    flags: { allowOnly: true, default: 'ref:a.b', unsafe: false },
-                    valids: ['ref:a.b'],
-                    invalids: ['context:b.c', Infinity, -Infinity],
+                    flags: { allowOnly: true, default: { type: 'ref', key: 'a.b', path: ['a', 'b'] }, unsafe: false },
+                    valids: [{ type: 'ref', key: 'a.b', path: ['a', 'b'] }],
+                    invalids: [{ type: 'context', key: 'b.c', path: ['b', 'c'] }, Infinity, -Infinity],
                     rules: [
-                        { name: 'min', arg: 'ref:a.b' },
-                        { name: 'max', arg: 'ref:a.b' },
-                        { name: 'greater', arg: 'ref:a.b' },
-                        { name: 'less', arg: 'ref:a.b' }
+                        { name: 'min', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
+                        { name: 'max', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
+                        { name: 'greater', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
+                        { name: 'less', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } }
                     ]
                 },
                 otherwise: {
                     type: 'object',
-                    flags: { allowOnly: true, default: 'ref:a.b' },
-                    valids: ['ref:a.b'],
-                    invalids: ['context:b.c'],
+                    flags: { allowOnly: true, default: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
+                    valids: [{ type: 'ref', key: 'a.b', path: ['a', 'b'] }],
+                    invalids: [{ type: 'context', key: 'b.c', path: ['b', 'c'] }],
                     rules: [{
                         name: 'assert',
                         arg: {
                             schema: {
                                 type: 'any',
                                 flags: { allowOnly: true },
-                                valids: ['ref:a.b']
+                                valids: [{ type: 'ref', key: 'a.b', path: ['a', 'b'] }]
                             },
-                            ref: 'ref:a.b'
+                            ref: { type: 'ref', key: 'a.b', path: ['a', 'b'] }
                         }
                     }],
                     children: {
@@ -668,9 +668,9 @@ describe('ref', () => {
                             type: 'string',
                             invalids: [''],
                             rules: [
-                                { name: 'min', arg: { limit: 'ref:a.b' } },
-                                { name: 'max', arg: { limit: 'ref:a.b' } },
-                                { name: 'length', arg: { limit: 'ref:a.b' } }
+                                { name: 'min', arg: { limit: { type: 'ref', key: 'a.b', path: ['a', 'b'] } } },
+                                { name: 'max', arg: { limit: { type: 'ref', key: 'a.b', path: ['a', 'b'] } } },
+                                { name: 'length', arg: { limit: { type: 'ref', key: 'a.b', path: ['a', 'b'] } } }
                             ]
                         }
                     },

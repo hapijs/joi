@@ -1149,7 +1149,7 @@ describe('alternatives', () => {
                         falsy: [false],
                         valids: [true]
                     },
-                    ref: 'ref:a',
+                    ref: { type: 'ref', key: 'a', path: ['a'] },
                     then: {
                         type: 'string',
                         flags: {
@@ -1164,6 +1164,7 @@ describe('alternatives', () => {
                     }
                 }]
             });
+
             expect(labeled.describe()).to.equal({
                 base: { type: 'any' },
                 flags: { presence: 'ignore' },
@@ -1177,7 +1178,7 @@ describe('alternatives', () => {
                         falsy: [false],
                         valids: [true]
                     },
-                    ref: 'ref:a',
+                    ref: { type: 'ref', key: 'a', path: ['a'] },
                     then: {
                         type: 'string',
                         flags: {
@@ -1217,7 +1218,7 @@ describe('alternatives', () => {
                         type: 'alternatives',
                         alternatives: [
                             {
-                                ref: 'ref:b',
+                                ref: { type: 'ref', key: 'b', path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -1280,7 +1281,7 @@ describe('alternatives', () => {
                         type: 'alternatives',
                         alternatives: [
                             {
-                                ref: 'ref:b',
+                                ref: { type: 'ref', key: 'b', path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -1335,7 +1336,7 @@ describe('alternatives', () => {
                         type: 'alternatives',
                         alternatives: [
                             {
-                                ref: 'ref:b',
+                                ref: { type: 'ref', key: 'b', path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {

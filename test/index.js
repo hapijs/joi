@@ -2440,7 +2440,11 @@ describe('Joi', () => {
             defaultRef: Joi.string().default(defaultRef, 'not here'),
             defaultFn: Joi.string().default(defaultFn, 'not here'),
             defaultDescribedFn: Joi.string().default(defaultDescribedFn, 'described test')
-        }).options({ abortEarly: false, convert: false }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
+        })
+            .options({ abortEarly: false, convert: false })
+            .rename('renamed', 'required')
+            .without('required', 'xor')
+            .without('xor', 'required');
 
         const result = {
             type: 'object',
@@ -2537,7 +2541,11 @@ describe('Joi', () => {
                 defaultRef: {
                     type: 'string',
                     flags: {
-                        default: 'ref:xor'
+                        default: {
+                            type: 'ref',
+                            key: 'xor',
+                            path: ['xor']
+                        }
                     },
                     invalids: ['']
                 },
@@ -2595,7 +2603,7 @@ describe('Joi', () => {
 
             const description = schema.describe();
             expect(description).to.equal(result);
-            expect(description.children.defaultRef.flags.default).to.equal('ref:xor');
+            expect(description.children.defaultRef.flags.default).to.equal({ type: 'ref', key: 'xor', path: ['xor'] });
             expect(description.children.defaultFn.flags.default.description).to.equal('testing');
             expect(description.children.defaultDescribedFn.flags.default.description).to.equal('described test');
         });
@@ -2619,6 +2627,13 @@ describe('Joi', () => {
 
             const description = Joi.allow(null).describe();
             expect(description.invalids).to.not.exist();
+        });
+
+        it('includes schemas in description)', () => {
+
+            const description = Joi.describe(schema);
+            expect(description).to.equal(result);
+            expect(description[Joi.schema]).to.equal(schema);
         });
     });
 
@@ -3772,7 +3787,7 @@ describe('Joi', () => {
                 expect(schema.describe()).to.equal({
                     type: 'myType',
                     rules: [
-                        { name: 'foo', arg: { bar: 'bar', baz: 42, qux: 'ref:a.b', quux: 'context:c.d' } }
+                        { name: 'foo', arg: { bar: 'bar', baz: 42, qux: { type: 'ref', key: 'a.b', path: ['a', 'b'] }, quux: { type: 'context', key: 'c.d', path: ['c', 'd'] } } }
                     ]
                 });
             });

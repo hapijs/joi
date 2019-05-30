@@ -266,7 +266,7 @@ describe('any', () => {
                     ]
                 },
                 alternatives: [{
-                    ref: 'ref:a',
+                    ref: { type: 'ref', key: 'a', path: ['a'] },
                     is: {
                         type: 'number',
                         flags: {
@@ -2487,7 +2487,7 @@ describe('any', () => {
                     ]
                 },
                 alternatives: [{
-                    ref: 'ref:a',
+                    ref: { type: 'ref', key: 'a', path: ['a'] },
                     is: {
                         type: 'number',
                         flags: {

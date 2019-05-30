@@ -133,9 +133,10 @@ describe('lazy', () => {
 
         it('should be able to describe with description', () => {
 
+            const lazy = () => schema;
             const schema = Joi.object({
                 name: Joi.string().required(),
-                children: Joi.array().items(Joi.lazy(() => schema).description('person'))
+                children: Joi.array().items(Joi.lazy(lazy).description('person'))
             });
 
             expect(schema.describe()).to.equal({
@@ -150,6 +151,7 @@ describe('lazy', () => {
                             {
                                 type: 'lazy',
                                 description: 'person',
+                                schema: lazy,
                                 flags: {
                                     once: true
                                 }
