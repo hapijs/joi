@@ -2505,7 +2505,8 @@ Requires the string value to be a valid GUID.
 
 - `options` - optional settings:
     - `version` - Specifies one or more acceptable versions. Can be an Array or String with the following values:
-    `uuidv1`, `uuidv2`, `uuidv3`, `uuidv4`, or `uuidv5`. If no `version` is specified then it is assumed to be a generic `guid`.
+    `uuidv1`, `uuidv2`, `uuidv3`, `uuidv4`, or `uuidv5`. If no `version` is specified then it is assumed to be a generic `guid`
+    which will not validate the version or variant of the guid and just check for general structure format.
 
 ```js
 const schema = Joi.string().guid({
