@@ -3262,7 +3262,16 @@ describe('string', () => {
                         context: { value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f', label: 'value', key: undefined }
                     }]
                 }],
-                ['/absolute', true]
+                ['/absolute', true],
+                ['http://', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'http://', label: 'value', key: undefined }
+                    }]
+                }]
             ]);
         });
 
