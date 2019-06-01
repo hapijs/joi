@@ -78,6 +78,12 @@ describe('number', () => {
             ]);
         });
 
+        it('supports valid matching post-coerce value', async () => {
+
+            const schema = Joi.number().valid(1, 2, 3);
+            expect(await schema.validate('1')).to.equal(1);
+        });
+
         it('should return false for denied value', async () => {
 
             const text = Joi.number().invalid(50);
@@ -1356,7 +1362,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: '9007199254740992', key: undefined, label: 'value' }
+                        context: { value: 9007199254740992, key: undefined, label: 'value' }
                     }]
                 }],
                 ['-9007199254740992', false, null, {
@@ -1365,7 +1371,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: '-9007199254740992', key: undefined, label: 'value' }
+                        context: { value: -9007199254740992, key: undefined, label: 'value' }
                     }]
                 }],
                 ['90.071992549e+15', false, null, {
@@ -1374,7 +1380,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: '90.071992549e+15', key: undefined, label: 'value' }
+                        context: { value: 90071992549000000, key: undefined, label: 'value' }
                     }]
                 }],
                 [9007199254740992, false, null, {

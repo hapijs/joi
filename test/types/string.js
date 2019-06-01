@@ -7117,8 +7117,8 @@ describe('string', () => {
         it('validates isoDate with a friendly error message', async () => {
 
             const schema = { item: Joi.string().isoDate() };
-            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
-            expect(err.message).to.contain('must be a valid ISO 8601 date');
+            await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject('child "item" fails because ["item" must be a valid ISO 8601 date]');
+            await expect(Joi.compile(schema).validate({ item: 'something' }, { convert: false })).to.reject('child "item" fails because ["item" must be a valid ISO 8601 date]');
         });
 
         it('validates combination of isoDate and min', () => {

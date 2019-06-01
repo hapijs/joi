@@ -3128,6 +3128,31 @@ describe('Joi', () => {
             expect(invalid.error.toString()).to.equal('ValidationError: "value" oh no bar !');
         });
 
+        it('concat custom type', () => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                rules: [
+                    {
+                        name: 'test',
+                        validate(params, value, state, options) {
+
+                            return null; // Valid
+                        }
+                    }
+                ]
+            });
+
+            const schema = customJoi.myType();
+            const base = schema.test();
+            const merged = base.concat(base);
+
+            expect(merged.describe()).to.equal({
+                type: 'myType',
+                rules: [{ name: 'test', arg: {} }, { name: 'test', arg: {} }]
+            });
+        });
+
         it('new rules should have the correct this', () => {
 
             const customJoi = Joi.extend({

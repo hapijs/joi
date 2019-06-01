@@ -181,7 +181,6 @@
     - [`binary.max`](#binarymax)
     - [`binary.min`](#binarymin)
     - [`boolean.base`](#booleanbase)
-    - [`boolean.cast`](#booleancast)
     - [`date.base`](#datebase)
     - [`date.greater`](#dategreater)
     - [`date.isoDate`](#dateisodate)
@@ -1222,8 +1221,7 @@ Results in:
 
 Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by
 default but can be by using `sparse()`. If the validation `convert` option is on (enabled by default), a string will be
-converted to an `array` if specified via `JSON.parse()`. Also, if `convert` `array.single()` are both on, then when a
-single value is specified it will be converted to an `array`.
+converted to an `array` if specified via `JSON.parse()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -1250,8 +1248,6 @@ schema = schema.sparse(false); // undefined values are now denied
 Allows single values to be checked against rules as if it were provided as an array.
 
 `enabled` can be used with a falsy value to go back to the default behavior.
-
-Note: `convert` option must be enabled.
 
 ```js
 const schema = Joi.array().items(Joi.number()).single();
@@ -1422,7 +1418,7 @@ boolean.validate(true, (err, value) => { }); // Valid
 boolean.validate(1, (err, value) => { }); // Invalid
 ```
 
-💥 Possible validation errors:[`boolean.base`](#booleanbase), [`boolean.cast`](#booleancast)
+💥 Possible validation errors:[`boolean.base`](#booleanbase)
 
 #### `boolean.truthy(...values)`
 
@@ -2694,7 +2690,11 @@ const schema = Joi.string().trim(false); // disable trim flag
 #### `string.isoDate()`
 
 Requires the string value to be in valid ISO 8601 date format.
-If the validation `convert` option is on (enabled by default), the string will be forced to simplified extended ISO format (ISO 8601). Be aware that this operation uses javascript Date object, which does not support the full ISO format, so a few formats might not pass when using `convert`.
+
+If the validation `convert` option is on (enabled by default), the string will be forced to
+simplified extended ISO format (ISO 8601). Be aware that this operation uses javascript Date
+object, which does not support the full ISO format, so a few formats might not pass when using
+`convert`.
 
 ```js
 const schema = Joi.string().isoDate();
@@ -3322,20 +3322,6 @@ The value is either not a boolean or could not be cast to a boolean from one of 
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
     value: any // Input value
-}
-```
-
-#### `boolean.cast`
-
-**Description**
-
-The value matches a provided turthy or falsly value but the `convert` option is false.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string // Label if defined, otherwise it's the key
 }
 ```
 

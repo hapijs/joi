@@ -117,13 +117,13 @@ describe('boolean', () => {
     it('errors on truthy without convert', () => {
 
         const schema = Joi.boolean().truthy('y');
-        expect(schema.validate('y', { convert: false }).error).be.an.error('"value" cannot cast value to truthy or falsy without enabling the convert option');
+        expect(schema.validate('y', { convert: false }).error).be.an.error('"value" must be a boolean');
     });
 
     it('errors on falsy without convert', () => {
 
         const schema = Joi.boolean().falsy('n');
-        expect(schema.validate('n', { convert: false }).error).be.an.error('"value" cannot cast value to truthy or falsy without enabling the convert option');
+        expect(schema.validate('n', { convert: false }).error).be.an.error('"value" must be a boolean');
     });
 
     describe('insensitive()', () => {
