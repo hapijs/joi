@@ -43,6 +43,9 @@ describe('Joi', () => {
             c: Joi.string().email().optional()
         }).without('a', 'none');
 
+        expect(Joi.isSchema(schema)).to.be.true();
+        expect(Joi.isSchema({})).to.be.false();
+
         const obj = {
             a: 1,
             b: 'a',
@@ -3160,7 +3163,7 @@ describe('Joi', () => {
                         name: 'foo',
                         params: {
                             first: Joi.string(),
-                            second: Joi.func().ref()
+                            second: Joi.object().ref()
                         },
                         setup(params) {
 
@@ -3363,12 +3366,12 @@ describe('Joi', () => {
                     {
                         name: 'multiply',
                         params: {
-                            q: Joi.func().ref(),
+                            q: Joi.object().ref(),
                             currency: Joi.string()
                         },
                         validate(params, value, state, options) {
 
-                            const q = params.q(state.parent, options) || 0;
+                            const q = params.q.resolve(value, state, options) || 0;
                             const v = value * q;
                             return params.currency ? params.currency + v : v;
                         }
@@ -3775,8 +3778,8 @@ describe('Joi', () => {
                             params: {
                                 bar: Joi.string(),
                                 baz: Joi.number(),
-                                qux: Joi.func().ref(),
-                                quux: Joi.func().ref()
+                                qux: Joi.object().ref(),
+                                quux: Joi.object().ref()
                             },
                             validate(params, value, state, options) { }
                         }

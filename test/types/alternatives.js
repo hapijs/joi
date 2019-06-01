@@ -330,7 +330,7 @@ describe('alternatives', () => {
                 const schema = Joi.object({
                     a: Joi.boolean().required()
                 })
-                    .when(Joi.ref('a', { self: true }), {
+                    .when(Joi.ref('a', { ancestor: 0 }), {
                         is: true,
                         then: {
                             b: Joi.string().required()

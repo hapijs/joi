@@ -68,6 +68,24 @@ describe('object', () => {
         ]);
     });
 
+    it('validates references', () => {
+
+        const schema = Joi.object().ref();
+
+        Helper.validate(schema, [
+            [{}, false, null, {
+                message: '"value" must be a Joi reference',
+                details: [{
+                    message: '"value" must be a Joi reference',
+                    path: [],
+                    type: 'object.refType',
+                    context: { label: 'value', key: undefined, value: {} }
+                }]
+            }],
+            [Joi.ref('a.b'), true]
+        ]);
+    });
+
     it('returns object reference when no rules specified', async () => {
 
         const schema = Joi.object({

@@ -322,34 +322,6 @@ describe('func', () => {
         expect(validated()).to.equal('abc');
         expect(validated).to.equal(value);
     });
-
-    it('validates references', () => {
-
-        const schema = Joi.func().ref();
-
-        const fn = () => {};
-        Helper.validate(schema, [
-            [fn, false, null, {
-                message: '"value" must be a Joi reference',
-                details: [{
-                    message: '"value" must be a Joi reference',
-                    path: [],
-                    type: 'function.ref',
-                    context: { label: 'value', key: undefined, value: fn }
-                }]
-            }],
-            [{}, false, null, {
-                message: '"value" must be a Function',
-                details: [{
-                    message: '"value" must be a Function',
-                    path: [],
-                    type: 'function.base',
-                    context: { label: 'value', key: undefined, value: {} }
-                }]
-            }],
-            [Joi.ref('a.b'), true]
-        ]);
-    });
 });
 
 describe('func().class()', () => {

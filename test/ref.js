@@ -21,6 +21,351 @@ describe('ref', () => {
         expect(Joi.isRef(Joi.ref('a.b'))).to.be.true();
     });
 
+    it('throws when reference reaches beyond the schema root', () => {
+
+        const schema = {
+            a: Joi.any(),
+            b: Joi.ref('...c')
+        };
+
+        expect(() => Joi.validate({ a: 1, b: 2 }, schema)).to.throw('Invalid reference exceeds the schema root: ref:...c');
+    });
+
+    it('reaches self', () => {
+
+        const schema = Joi.object({
+            x: Joi.alternatives([
+                Joi.number(),
+                Joi.object({
+                    a: Joi.boolean().required()
+                })
+                    .when('.a', {
+                        is: true,
+                        then: {
+                            b: Joi.string().required()
+                        }
+                    })
+            ])
+        });
+
+        Helper.validate(schema, [
+            [{ x: 1 }, true],
+            [{ x: { a: true, b: 'x' } }, true]
+        ]);
+    });
+
+    it('reaches parent', () => {
+
+        const schema = {
+            a: Joi.any(),
+            a1: Joi.ref('a'),
+            a2: Joi.ref('..a')
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: 1,
+                    a1: 1,
+                    a2: 1
+                }, true
+            ]
+        ]);
+    });
+
+    it('reaches grandparent', () => {
+
+        const schema = {
+            a: Joi.any(),
+            b: {
+                a1: Joi.ref('...a'),
+                a2: Joi.ref('...a')
+            }
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: 1,
+                    b: {
+                        a1: 1,
+                        a2: 1
+                    }
+                }, true
+            ]
+        ]);
+    });
+
+    it('reaches any level of the relative value structure', () => {
+
+        const ix = Joi.ref('...i');
+
+        const schema = {
+            a: {
+                b: {
+                    c: {
+                        d: Joi.any()
+                    },
+                    e: 2,
+                    dx: Joi.ref('c.d'),
+                    ex: Joi.ref('..e'),
+                    ix,
+                    gx: Joi.ref('....f.g'),
+                    hx: Joi.ref('....h')
+                },
+                i: Joi.any()
+            },
+            f: {
+                g: Joi.any()
+            },
+            h: Joi.any()
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: {
+                        b: {
+                            c: {
+                                d: 1
+                            },
+                            e: 2,
+                            dx: 1,
+                            ex: 2,
+                            gx: 3,
+                            hx: 4,
+                            ix: 5
+                        },
+                        i: 5
+                    },
+                    f: {
+                        g: 3
+                    },
+                    h: 4
+                }, true
+            ],
+            [
+                {
+                    a: {
+                        b: {
+                            c: {
+                                d: 1
+                            },
+                            e: 2,
+                            dx: 1,
+                            ex: 2,
+                            gx: 3,
+                            hx: 4,
+                            ix: 5
+                        },
+                        i: 10
+                    },
+                    f: {
+                        g: 3
+                    },
+                    h: 4
+                }, false, null, {
+                    message: 'child "a" fails because [child "b" fails because [child "ix" fails because ["ix" must be one of [ref:...i]]]]',
+                    details: [
+                        {
+                            message: '"ix" must be one of [ref:...i]',
+                            path: ['a', 'b', 'ix'],
+                            type: 'any.allowOnly',
+                            context: {
+                                value: 5,
+                                valids: [ix],
+                                key: 'ix',
+                                label: 'ix'
+                            }
+                        }
+                    ]
+
+                }
+            ]
+        ]);
+    });
+
+    it('reaches any level of the relative value structure (ancestor option)', () => {
+
+        const ix = Joi.ref('i', { ancestor: 2 });
+
+        const schema = {
+            a: {
+                b: {
+                    c: {
+                        d: Joi.any()
+                    },
+                    e: 2,
+                    dx: Joi.ref('c.d', { ancestor: 1 }),
+                    ex: Joi.ref('e', { ancestor: 1 }),
+                    ix,
+                    gx: Joi.ref('f.g', { ancestor: 3 }),
+                    hx: Joi.ref('h', { ancestor: 3 })
+                },
+                i: Joi.any()
+            },
+            f: {
+                g: Joi.any()
+            },
+            h: Joi.any()
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: {
+                        b: {
+                            c: {
+                                d: 1
+                            },
+                            e: 2,
+                            dx: 1,
+                            ex: 2,
+                            gx: 3,
+                            hx: 4,
+                            ix: 5
+                        },
+                        i: 5
+                    },
+                    f: {
+                        g: 3
+                    },
+                    h: 4
+                }, true
+            ],
+            [
+                {
+                    a: {
+                        b: {
+                            c: {
+                                d: 1
+                            },
+                            e: 2,
+                            dx: 1,
+                            ex: 2,
+                            gx: 3,
+                            hx: 4,
+                            ix: 5
+                        },
+                        i: 10
+                    },
+                    f: {
+                        g: 3
+                    },
+                    h: 4
+                }, false, null, {
+                    message: 'child "a" fails because [child "b" fails because [child "ix" fails because ["ix" must be one of [ref:...i]]]]',
+                    details: [
+                        {
+                            message: '"ix" must be one of [ref:...i]',
+                            path: ['a', 'b', 'ix'],
+                            type: 'any.allowOnly',
+                            context: {
+                                value: 5,
+                                valids: [ix],
+                                key: 'ix',
+                                label: 'ix'
+                            }
+                        }
+                    ]
+
+                }
+            ]
+        ]);
+    });
+
+    it('throws on prefix + ancestor option)', () => {
+
+        expect(() => Joi.ref('..x', { ancestor: 0 })).to.throw('Cannot combine prefix with ancestor option');
+    });
+
+
+    it('errors on ancestor circular dependency', () => {
+
+        const schema = {
+            a: {
+                x: Joi.any(),
+                b: {
+                    c: {
+                        d: Joi.ref('....b.x')
+                    }
+                }
+            },
+            b: {
+                x: Joi.any(),
+                y: {
+                    z: {
+                        o: Joi.ref('....a.x')
+                    }
+                }
+            }
+        };
+
+        expect(() => Joi.compile(schema)).to.throw('Item cannot come after itself: b(a.b)');
+    });
+
+    it('references array length', () => {
+
+        const ref = Joi.ref('length');
+        const schema = Joi.object({
+            x: Joi.array().items(Joi.number().valid(ref))
+        });
+
+        Helper.validate(schema, [
+            [{ x: [1] }, true],
+            [{ x: [2, 2] }, true],
+            [{ x: [2, 2, 2] }, false, null, {
+                message: 'child "x" fails because ["x" at position 0 fails because ["0" must be one of [ref:length]]]',
+                details: [
+                    {
+                        message: '"0" must be one of [ref:length]',
+                        path: ['x', 0],
+                        type: 'any.allowOnly',
+                        context: {
+                            value: 2,
+                            valids: [ref],
+                            key: 0,
+                            label: 0
+                        }
+                    }
+                ]
+            }]
+        ]);
+    });
+
+    it('references object own child', () => {
+
+        const ref = Joi.ref('.length');
+        const schema = Joi.object({
+            length: Joi.number().required()
+        })
+            .length(ref)
+            .unknown();
+
+        expect(schema._refs.refs).to.equal([]);     // Does not register reference it itself
+
+        Helper.validate(schema, [
+            [{ length: 1 }, true],
+            [{ length: 2, x: 3 }, true],
+            [{ length: 2, x: 3, y: 4 }, false, null, {
+                message: '"value" must have ref:.length children',
+                details: [
+                    {
+                        message: '"value" must have ref:.length children',
+                        path: [],
+                        type: 'object.length',
+                        context: {
+                            key: undefined,
+                            value: { length: 2, x: 3, y: 4 },
+                            limit: ref,
+                            label: 'value'
+                        }
+                    }
+                ]
+            }]
+        ]);
+    });
+
     it('uses ref as a valid value', async () => {
 
         const ref = Joi.ref('b');
@@ -609,7 +954,7 @@ describe('ref', () => {
                 is: Joi.date().min(Joi.ref('a.b')).max(Joi.ref('a.b')),
                 then: Joi.number().min(Joi.ref('a.b')).max(Joi.ref('a.b')).greater(Joi.ref('a.b')).less(Joi.ref('a.b')),
                 otherwise: Joi.object({
-                    a: Joi.string().min(Joi.ref('a.b')).max(Joi.ref('a.b')).length(Joi.ref('a.b'))
+                    a: Joi.string().min(Joi.ref('b.c')).max(Joi.ref('b.c')).length(Joi.ref('b.c'))
                 }).with('a', 'b').without('b', 'c').assert('a.b', Joi.ref('a.b'))
             })
             .describe();
@@ -668,9 +1013,9 @@ describe('ref', () => {
                             type: 'string',
                             invalids: [''],
                             rules: [
-                                { name: 'min', arg: { limit: { type: 'ref', key: 'a.b', path: ['a', 'b'] } } },
-                                { name: 'max', arg: { limit: { type: 'ref', key: 'a.b', path: ['a', 'b'] } } },
-                                { name: 'length', arg: { limit: { type: 'ref', key: 'a.b', path: ['a', 'b'] } } }
+                                { name: 'min', arg: { limit: { type: 'ref', key: 'b.c', path: ['b', 'c'] } } },
+                                { name: 'max', arg: { limit: { type: 'ref', key: 'b.c', path: ['b', 'c'] } } },
+                                { name: 'length', arg: { limit: { type: 'ref', key: 'b.c', path: ['b', 'c'] } } }
                             ]
                         }
                     },

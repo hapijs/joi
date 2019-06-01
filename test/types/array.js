@@ -211,7 +211,7 @@ describe('array', () => {
         it('allows forbidden to restrict values (ref)', async () => {
 
             const schema = Joi.object({
-                array: Joi.array().items(Joi.valid(Joi.ref('value')).forbidden(), Joi.string()),
+                array: Joi.array().items(Joi.valid(Joi.ref('...value')).forbidden(), Joi.string()),
                 value: Joi.string().required()
             });
 
@@ -226,6 +226,27 @@ describe('array', () => {
                 path: ['array', 3],
                 type: 'array.excludes',
                 context: { pos: 3, value: 'four', label: 'array', key: 3 }
+            }]);
+        });
+
+        it('process referenced property first when referenced by an item rule', async () => {
+
+            const schema = Joi.object({
+                array: Joi.array().items(Joi.valid(Joi.ref('...value')).forbidden(), Joi.number()),
+                value: Joi.number().required()
+            });
+
+            const input = {
+                array: [1, 2, 3, 4],
+                value: '4'
+            };
+
+            const err = await expect(schema.validate(input)).to.reject('child "array" fails because ["array" at position 3 contains an excluded value]');
+            expect(err.details).to.equal([{
+                message: '"array" at position 3 contains an excluded value',
+                path: ['array', 3],
+                type: 'array.excludes',
+                context: { pos: 3, value: 4, label: 'array', key: 3 }
             }]);
         });
 
@@ -815,7 +836,6 @@ describe('array', () => {
             ]);
         });
 
-
         it('does not throw if assertion passes', () => {
 
             const schema = Joi.array().has(Joi.string());
@@ -883,6 +903,29 @@ describe('array', () => {
             });
             Helper.validate(schema, [
                 [{ arr: [{ foo: ['bar'] }] }, true]
+            ]);
+        });
+
+        it('supports peer item references', () => {
+
+            const schema = Joi.object({
+                array: Joi.array()
+                    .items(Joi.number())
+                    .has(Joi.number().greater(Joi.ref('..0')))
+            });
+
+            Helper.validate(schema, [
+                [{ array: [10, 1, 11, 5] }, true],
+                [{ array: [10, 1, 2, 5, 12] }, true],
+                [{ array: [10, 1, 2, 5, 1] }, false, null, {
+                    message: 'child "array" fails because ["array" does not contain at least one required match]',
+                    details: [{
+                        message: '"array" does not contain at least one required match',
+                        path: ['array'],
+                        type: 'array.hasUnknown',
+                        context: { label: 'array', key: 'array' }
+                    }]
+                }]
             ]);
         });
 
@@ -2633,6 +2676,13 @@ describe('array', () => {
             const input = ['s1', 2, 3];
             const value = await schema.validate(input);
             expect(value).to.equal([2]);
+        });
+
+        it('references array members', async () => {
+
+            const schema = Joi.array().ordered(Joi.number(), Joi.number().greater(Joi.ref('..0')));
+            expect(await schema.validate([1, 2])).to.equal([1, 2]);
+            await expect(schema.validate([1, 0])).to.reject();
         });
     });
 });

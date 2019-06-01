@@ -79,7 +79,6 @@
     - [`func.minArity(n)`](#funcminarityn)
     - [`func.maxArity(n)`](#funcmaxarityn)
     - [`func.class()`](#funcclass)
-    - [`func.ref()`](#funcref)
   - [`number` - inherits from `Any`](#number---inherits-from-any)
     - [`number.unsafe([enabled])`](#numberunsafeenabled)
     - [`number.min(limit)`](#numberminlimit)
@@ -109,6 +108,7 @@
     - [`object.oxor(...peers)`](#objectoxorpeers)
     - [`object.with(key, peers)`](#objectwithkey-peers)
     - [`object.without(key, peers)`](#objectwithoutkey-peers)
+    - [`object.ref()`](#objectref)
     - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
     - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
     - [`object.unknown([allow])`](#objectunknownallow)
@@ -196,7 +196,6 @@
     - [`function.class`](#functionclass)
     - [`function.maxArity`](#functionmaxarity)
     - [`function.minArity`](#functionminarity)
-    - [`function.ref`](#functionref)
     - [`lazy.base`](#lazybase)
     - [`lazy.schema`](#lazyschema)
     - [`number.base`](#numberbase)
@@ -221,6 +220,7 @@
     - [`object.min`](#objectmin)
     - [`object.missing`](#objectmissing)
     - [`object.nand`](#objectnand)
+    - [`object.refType`](#objectreftype)
     - [`object.rename.multiple`](#objectrenamemultiple)
     - [`object.rename.override`](#objectrenameoverride)
     - [`object.rename.regex.multiple`](#objectrenameregexmultiple)
@@ -413,13 +413,13 @@ so that if one key validation depends on another, the dependent key is validated
 References support the following arguments:
 - `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
   their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
-  which is looked up in the `context` option object. If the `key` starts with a separator character, it is the same as setting
-  `options.self` to `true`.
+  which is looked up in the `context` option object. The `key` can start with one or more separator characters to indicate a
+  [relative starting point](#Relative-references).
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator.
     - `contextPrefix` - overrides the default `$` context prefix signifier.
-    - `self` - if `true`, the reference is for a property of the value it operates on instead of a sibling of the value.
-      Defaults to `false`.
+    - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined
+      with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
     - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
@@ -436,6 +436,77 @@ const schema = Joi.object().keys({
 
 Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, (err, value) => {});
 ```
+
+#### Relative references
+
+By default, a reference is relative to the parent of the current value (the reference key is lookup
+up inside the parent). This means that in the schema:
+
+```js
+{
+    x: {
+        a: Joi.any(),
+        b: {
+            c: Joi.any(),
+            d: Joi.ref('c')
+        }
+    },
+    y: Joi.any()
+}
+```
+
+The reference `Joi.ref('c')` points to `c` which is a sibling of `d` - the reference starting point
+is `d`'s parent which is `b`. This schema means that `d` must be equal to `c`.
+
+In order to reference a parent peer, you can use a separator prefix where (using `.` as separator):
+- `.` - self
+- `..` - parent (same as no prefix)
+- `...` - grandparent
+- `....` - great-grandparent
+- etc.
+
+For example:
+
+```js
+{
+    x: {
+        a: Joi.any(),
+        b: {
+            c: Joi.any(),
+            d: Joi.ref('c'),
+            e: Joi.ref('...a'),
+            f: Joi.ref('....y')
+        }
+    },
+    y: Joi.any()
+}
+```
+
+Another way to specify the relative starting point is using the `ancestor` option where:
+- 0 - self
+- 1 - parent (this is the default value if no key prefix is present)
+- 2 - grandparent
+- 3 - great-grandparent
+- etc.
+
+For example:
+
+```js
+{
+    x: {
+        a: Joi.any(),
+        b: {
+            c: Joi.any(),
+            d: Joi.ref('c', { ancestor: 1 }),
+            e: Joi.ref('a', { ancestor: 2 }),
+            f: Joi.ref('y', { ancestor: 3 })
+        }
+    },
+    y: Joi.any()
+}
+```
+
+Note that if a reference tries to reach beyond the value root, validation fails.
 
 ### `isRef(ref)`
 
@@ -542,7 +613,7 @@ To resolve referenced `params` in you `validate` or `setup` functions, you can u
 validate(params, value, state, options) {
   let {foo} = params;
   if (Joi.isRef(foo)) {
-    foo = foo(state.reference || state.parent, options);
+    foo = foo.resolve(value, state, options);
   }
   //...
 }
@@ -1217,13 +1288,11 @@ const schema = Joi.array().ordered(Joi.string().required(), Joi.number()); // ar
 #### `array.min(limit)`
 
 Specifies the minimum number of items in the array where:
-- `limit` - the lowest number of array items allowed.
+- `limit` - the lowest number of array items allowed or a reference.
 
 ```js
 const schema = Joi.array().min(2);
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1237,13 +1306,11 @@ const schema = Joi.object({
 #### `array.max(limit)`
 
 Specifies the maximum number of items in the array where:
-- `limit` - the highest number of array items allowed.
+- `limit` - the highest number of array items allowed or a reference.
 
 ```js
 const schema = Joi.array().max(10);
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1257,13 +1324,11 @@ const schema = Joi.object({
 #### `array.length(limit)`
 
 Specifies the exact number of items in the array where:
-- `limit` - the number of array items allowed.
+- `limit` - the number of array items allowed or a reference.
 
 ```js
 const schema = Joi.array().length(5);
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1408,7 +1473,7 @@ const schema = Joi.binary().encoding('base64');
 #### `binary.min(limit)`
 
 Specifies the minimum length of the buffer where:
-- `limit` - the lowest size of the buffer.
+- `limit` - the lowest size of the buffer or a reference.
 
 ```js
 const schema = Joi.binary().min(2);
@@ -1419,7 +1484,7 @@ const schema = Joi.binary().min(2);
 #### `binary.max(limit)`
 
 Specifies the maximum length of the buffer where:
-- `limit` - the highest size of the buffer.
+- `limit` - the highest size of the buffer or a reference.
 
 ```js
 const schema = Joi.binary().max(10);
@@ -1430,7 +1495,7 @@ const schema = Joi.binary().max(10);
 #### `binary.length(limit)`
 
 Specifies the exact length of the buffer:
-- `limit` - the size of buffer allowed.
+- `limit` - the size of buffer allowed or a reference.
 
 ```js
 const schema = Joi.binary().length(5);
@@ -1455,7 +1520,7 @@ date.validate('12-21-2012', (err, value) => { });
 #### `date.min(date)`
 
 Specifies the oldest date allowed where:
-- `date` - the oldest date allowed.
+- `date` - the oldest date allowed or a reference.
 
 ```js
 const schema = Joi.date().min('1-1-1974');
@@ -1466,8 +1531,6 @@ Notes: `'now'` can be passed in lieu of `date` so as to always compare relativel
 ```js
 const schema = Joi.date().min('now');
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1481,7 +1544,7 @@ const schema = Joi.object({
 #### `date.max(date)`
 
 Specifies the latest date allowed where:
-- `date` - the latest date allowed.
+- `date` - the latest date allowed or a reference.
 
 ```js
 const schema = Joi.date().max('12-31-2020');
@@ -1492,8 +1555,6 @@ Notes: `'now'` can be passed in lieu of `date` so as to always compare relativel
 ```js
 const schema = Joi.date().max('now');
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1506,7 +1567,7 @@ const schema = Joi.object({
 
 #### `date.greater(date)`
 
-Specifies that the value must be greater than `date`.
+Specifies that the value must be greater than `date` (or a reference).
 
 ```js
 const schema = Joi.date().greater('1-1-1974');
@@ -1517,8 +1578,6 @@ Notes: `'now'` can be passed in lieu of `date` so as to always compare relativel
 ```js
 const schema = Joi.date().greater('now');
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1531,7 +1590,7 @@ const schema = Joi.object({
 
 #### `date.less(date)`
 
-Specifies that the value must be less than `date`.
+Specifies that the value must be less than `date` (or a reference).
 
 ```js
 const schema = Joi.date().less('12-31-2020');
@@ -1541,8 +1600,6 @@ Notes: `'now'` can be passed in lieu of `date` so as to always compare relativel
 ```js
 const schema = Joi.date().max('now');
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1635,16 +1692,6 @@ const schema = Joi.func().class();
 
 💥 Possible validation errors:[`function.class`](#functionclass)
 
-#### `func.ref()`
-
-Requires the function to be a Joi reference.
-
-```js
-const schema = Joi.func().ref();
-```
-
-💥 Possible validation errors:[`function.ref`](#functionref)
-
 ### `number` - inherits from `Any`
 
 Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). 
@@ -1688,13 +1735,11 @@ unsafeNumber.validate(90071992547409924);
 #### `number.min(limit)`
 
 Specifies the minimum value where:
-- `limit` - the minimum value allowed.
+- `limit` - the minimum value allowed or a reference.
 
 ```js
 const schema = Joi.number().min(2);
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1708,13 +1753,11 @@ const schema = Joi.object({
 #### `number.max(limit)`
 
 Specifies the maximum value where:
-- `limit` - the maximum value allowed.
+- `limit` - the maximum value allowed or a reference.
 
 ```js
 const schema = Joi.number().max(10);
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1727,7 +1770,7 @@ const schema = Joi.object({
 
 #### `number.greater(limit)`
 
-Specifies that the value must be greater than `limit`.
+Specifies that the value must be greater than `limit` or a reference.
 
 ```js
 const schema = Joi.number().greater(5);
@@ -1744,13 +1787,11 @@ const schema = Joi.object({
 
 #### `number.less(limit)`
 
-Specifies that the value must be less than `limit`.
+Specifies that the value must be less than `limit` or a reference.
 
 ```js
 const schema = Joi.number().less(10);
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -1784,7 +1825,7 @@ const schema = Joi.number().precision(2);
 
 #### `number.multiple(base)`
 
-Specifies that the value must be a multiple of `base`:
+Specifies that the value must be a multiple of `base` (or a reference):
 
 ```js
 const schema = Joi.number().multiple(3);
@@ -1948,7 +1989,7 @@ const extended = base.append({
 #### `object.min(limit)`
 
 Specifies the minimum number of keys in the object where:
-- `limit` - the lowest number of keys allowed.
+- `limit` - the lowest number of keys allowed or a reference.
 
 ```js
 const schema = Joi.object().min(2);
@@ -1959,7 +2000,7 @@ const schema = Joi.object().min(2);
 #### `object.max(limit)`
 
 Specifies the maximum number of keys in the object where:
-- `limit` - the highest number of object keys allowed.
+- `limit` - the highest number of object keys allowed or a reference.
 
 ```js
 const schema = Joi.object().max(10);
@@ -1969,7 +2010,7 @@ const schema = Joi.object().max(10);
 
 #### `object.length(limit)`
 
-Specifies the exact number of keys in the object where:
+Specifies the exact number of keys in the object where or a reference:
 - `limit` - the number of object keys allowed.
 
 ```js
@@ -2100,6 +2141,16 @@ const schema = Joi.object().keys({
 ```
 
 💥 Possible validation errors:[`object.without`](#objectwithout)
+
+#### `object.ref()`
+
+Requires the object to be a Joi reference.
+
+```js
+const schema = Joi.object().ref();
+```
+
+💥 Possible validation errors:[`object.refType`](#objectreftype)
 
 #### `object.rename(from, to, [options])`
 
@@ -2257,14 +2308,12 @@ const schema = Joi.string().valid('a').insensitive();
 #### `string.min(limit, [encoding])`
 
 Specifies the minimum number string characters where:
-- `limit` - the minimum number of string characters required.
+- `limit` - the minimum number of string characters required or a reference.
 - `encoding` - if specified, the string length is calculated in bytes using the provided encoding.
 
 ```js
 const schema = Joi.string().min(2);
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -2278,14 +2327,12 @@ const schema = Joi.object({
 #### `string.max(limit, [encoding])`
 
 Specifies the maximum number of string characters where:
-- `limit` - the maximum number of string characters allowed.
+- `limit` - the maximum number of string characters allowed or a reference.
 - `encoding` - if specified, the string length is calculated in bytes using the provided encoding.
 
 ```js
 const schema = Joi.string().max(10);
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -2321,14 +2368,12 @@ const schema = Joi.string().creditCard();
 #### `string.length(limit, [encoding])`
 
 Specifies the exact string length required where:
-- `limit` - the required string length.
+- `limit` - the required string length or a reference.
 - `encoding` - if specified, the string length is calculated in bytes using the provided encoding.
 
 ```js
 const schema = Joi.string().length(5);
 ```
-
-It can also be a reference to another field.
 
 ```js
 const schema = Joi.object({
@@ -3513,21 +3558,6 @@ The number of arguments for the function is under the required number.
 }
 ```
 
-#### `function.ref`
-
-**Description**
-
-The function is not a [`Joi.ref()`](#refkey-options).
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: function // Input value
-}
-```
-
 #### `lazy.base`
 
 **Description**
@@ -3903,6 +3933,21 @@ The NAND condition between the properties you specified was not satisfied in tha
     mainWithLabel: string, // The label of the `main` property
     peers: Array<string>, // List of the other properties that were present
     peersWithLabels: Array<string> // List of the labels of the other properties that were present
+}
+```
+
+#### `object.refType`
+
+**Description**
+
+The object is not a [`Joi.ref()`](#refkey-options).
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    value: function // Input value
 }
 ```
 
