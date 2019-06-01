@@ -215,6 +215,7 @@
     - [`object.and`](#objectand)
     - [`object.assert`](#objectassert)
     - [`object.base`](#objectbase)
+    - [`object.child`](#objectchild)
     - [`object.length`](#objectlength)
     - [`object.max`](#objectmax)
     - [`object.min`](#objectmin)
@@ -3848,6 +3849,22 @@ The value is not of object type or could not be cast to an object from a string.
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
     value: any // Input value
+}
+```
+
+#### `object.child`
+
+**Description**
+
+An object key failed validation. This is an internal error that is used to construct other object validation errors.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    child: string, // The object key name
+    reason: string // The validation error
 }
 ```
 
