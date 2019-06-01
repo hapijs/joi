@@ -3020,7 +3020,7 @@ describe('Joi', () => {
 
             const schema = customJoi.myType();
             expect(schema._type).to.equal('myType');
-            expect(schema.isJoi).to.be.true();
+            expect(Joi.isSchema(schema)).to.be.true();
         });
 
         it('defines a custom type with a custom base', () => {

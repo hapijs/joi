@@ -14,6 +14,7 @@
   - [`attempt(value, schema, [message], [options])`](#attemptvalue-schema-message-options)
   - [`ref(key, [options])`](#refkey-options)
   - [`isRef(ref)`](#isrefref)
+  - [`isSchema(schema)`](#isschemaschema)
   - [`reach(schema, path)`](#reachschema-path)
   - [`defaults(fn)`](#defaultsfn)
   - [`bind()`](#bind)
@@ -516,6 +517,15 @@ It's especially useful if you want to post-process error messages.
 ```js
 const ref = Joi.ref('a');
 Joi.isRef(ref); // returns true
+```
+
+### `isRef(ref)`
+
+Checks whether or not the provided argument is a joi schema.
+
+```js
+const schema = Joi.any();
+Joi.isSchema(schema); // returns true
 ```
 
 ### `reach(schema, path)`

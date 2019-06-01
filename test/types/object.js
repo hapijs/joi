@@ -2144,7 +2144,7 @@ describe('object', () => {
             expect(() => Joi.object().with('a')).to.throw(message);
             expect(() => Joi.object().with('a', 'b', 'c')).to.throw(message);
 
-            expect(Joi.object().with('a', 'b')).to.be.an.object().and.contain({ isJoi: true });
+            expect(() => Joi.object().with('a', 'b')).to.not.throw();
         });
 
         it('should validate correctly when key is an empty string', () => {
@@ -2341,7 +2341,7 @@ describe('object', () => {
             expect(() => Joi.object().without('a')).to.throw(message);
             expect(() => Joi.object().without('a', 'b', 'c')).to.throw(message);
 
-            expect(Joi.object().without('a', 'b')).to.be.an.object().and.contain({ isJoi: true });
+            expect(() => Joi.object().without('a', 'b')).to.not.throw();
         });
 
         it('should validate correctly when key is an empty string', () => {
