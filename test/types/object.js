@@ -121,6 +121,19 @@ describe('object', () => {
         expect(value[symbol]).to.equal(5);
     });
 
+    it('retains non-enumerable', async () => {
+
+        const schema = Joi.object({ a: Joi.number() });
+
+        const obj = { a: 100 };
+        Object.defineProperty(obj, 'test', { value: 42, enumerable: false });
+        expect(obj.test).to.equal(42);
+
+        const value = await schema.validate(obj, { nonEnumerables: true });
+        expect(value.a).to.equal(100);
+        expect(value.test).to.equal(42);
+    });
+
     it('retains prototype', async () => {
 
         const schema = Joi.object({ a: Joi.number() });

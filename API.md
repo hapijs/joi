@@ -281,24 +281,25 @@ Validates a value using the given schema and options where:
 - `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
 - `options` - an optional object with the following optional keys:
   - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
-  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
+  - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
+    `validate()` and not using `any.options()`.
+  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
+  - `escapeHtml` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
+  - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
+    - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped if the option `escapeHtml` is also set to `true`
+    - strings are always preceded by the key name, unless a `{{label}}` is found elsewhere or if the string is prefixed by a `!!`
+    - to better understand the structure of the language, it's advised to have a look at the existing messages you want to override [here](lib/language.js)
+  - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
+  - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties. Defaults to `false`.
+  - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
+    Defaults to `'optional'`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
     - when an `object` :
       - `arrays` - set to `true` to remove unknown items from arrays.
       - `objects` - set to `true` to remove unknown keys from objects.
     - when `true`, it is equivalent to having `{ arrays: false, objects: true }`.
-  - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
-    - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped if the option `escapeHtml` is also set to `true`
-    - strings are always preceded by the key name, unless a `{{label}}` is found elsewhere or if the string is prefixed by a `!!`
-    - to better understand the structure of the language, it's advised to have a look at the existing messages you want to override [here](lib/language.js)
-  - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
-    Defaults to `'optional'`.
-  - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
-    `validate()` and not using `any.options()`.
-  - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
-  - `escapeHtml` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
 - `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
   - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
