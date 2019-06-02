@@ -380,6 +380,33 @@ describe('ref', () => {
         ]);
     });
 
+    it('splits when based on own array length', () => {
+
+        const pair = Joi.array().items(2);
+        const lucky = Joi.array().items(7);
+
+        const schema = Joi.object({
+            x: Joi.array().when('.length', { is: 2, then: pair, otherwise: lucky })
+        });
+
+        Helper.validate(schema, [
+            [{ x: [7] }, true],
+            [{ x: [7, 7, 7] }, true],
+            [{ x: [2, 2] }, true],
+            [{ x: [2, 2, 2] }, false, null, {
+                message: 'child "x" fails because ["x" at position 0 fails because ["0" must be one of [7]]]',
+                details: [
+                    {
+                        message: '"0" must be one of [7]',
+                        path: ['x', 0],
+                        type: 'any.allowOnly',
+                        context: { value: 2, valids: [7], key: 0, label: 0 }
+                    }
+                ]
+            }]
+        ]);
+    });
+
     it('references array item', () => {
 
         const ref = Joi.ref('0');
