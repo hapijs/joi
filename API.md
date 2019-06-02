@@ -1034,15 +1034,20 @@ const ab = a.concat(b);
 
 #### `any.when(condition, options)`
 
-Converts the type into an [`alternatives`](#alternatives---inherits-from-any) type where the conditions are merged into the type definition where:
+Converts the type into an [`alternatives`](#alternatives---inherits-from-any) type with the
+conditions merged into the type definition where:
 - `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
-    - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted using [Joi.compile](#compileschema). Forbidden when `condition` is a schema.
+    - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted
+      using [Joi.compile](#compileschema). Forbidden when `condition` is a schema.
     - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
     - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
 
-Note: by default, the `is` condition schema allows for `undefined` values. Use `.required()` to override.
-For example, use `is: Joi.number().required()` to guarantee that a joi reference exists and is a number.
+Notes:
+- By default, the `is` condition schema allows for `undefined` values. Use `.required()` to override.
+  For example, use `is: Joi.number().required()` to guarantee that a joi reference exists and is a number.
+- Chaining multiple `when()` statement does not produce a logical AND operation. Because the result of
+  this method is a new `alternatives()` type, adding additional whens create a chain of tries.
 
 ```js
 const schema = {
@@ -1066,7 +1071,9 @@ const schema = Joi.object({
 });
 ```
 
-Note that this style is much more useful when your whole schema depends on the value of one of its property, or if you find yourself repeating the check for many keys of an object. For example to validate this logic:
+Note that this style is much more useful when your whole schema depends on the value of one of its
+property, or if you find yourself repeating the check for many keys of an object. For example to
+validate this logic:
 
 ```js
 const schema = Joi.object({
@@ -1095,7 +1102,8 @@ const schema = Joi.object({
 );
 ```
 
-Alternatively, if you want to specify a specific type such as `string`, `array`, etc, you can do so like this:
+Alternatively, if you want to specify a specific type such as `string`, `array`, etc, you can do so
+like this:
 
 ```js
 const schema = {
@@ -1105,7 +1113,8 @@ const schema = {
 };
 ```
 
-If you need to validate a child key inside a nested object based on a sibling's value, you can do so like this:
+If you need to validate a child key inside a nested object based on a sibling's value, you can do
+so like this:
 
 ```js
 const schema = Joi.object().keys({
@@ -1122,7 +1131,10 @@ const schema = Joi.object().keys({
         })
 });
 ```
-If you want to validate one key based on the existence of another key, you can do so like the following (notice the use of `required()`):
+
+If you want to validate one key based on the existence of another key, you can do so like the
+following (notice the use of `required()`):
+
 ```js
 const schema = Joi.object().keys({
     min: Joi.number(),
