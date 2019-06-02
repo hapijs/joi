@@ -983,7 +983,6 @@ describe('array', () => {
         });
     });
 
-
     describe('validate()', () => {
 
         it('should, by default, allow undefined, allow empty array', () => {
@@ -1176,7 +1175,7 @@ describe('array', () => {
             expect(input).to.equal(['1', '2']);
         });
 
-        it('should have multiple errors if abort early is false', async () => {
+        it('returns multiple errors if abort early is false', async () => {
 
             const schema = Joi.array().items(Joi.number(), Joi.object()).items(Joi.boolean().forbidden());
             const input = [1, undefined, true, 'a'];
@@ -1212,6 +1211,58 @@ describe('array', () => {
                     value: 'a'
                 }
             }]);
+        });
+
+        it('returns multiple errors if abort early is false across items() and unique()', async () => {
+
+            const item = Joi.object({
+                test: Joi.string(),
+                hello: Joi.string().required()
+            });
+
+            const schema = Joi.array().items(item).unique('test');
+
+            const input = [
+                {
+                    test: 'test',
+                    hello: 'world'
+                },
+                {
+                    test: 'test'
+                }
+            ];
+
+            const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject('"value" at position 1 fails because [child "hello" fails because ["hello" is required]]. "value" position 1 contains a duplicate value');
+            expect(err.details).to.equal([
+                {
+                    context: {
+                        key: 'hello',
+                        label: 'hello'
+                    },
+                    message: '"hello" is required',
+                    path: [1, 'hello'],
+                    type: 'any.required'
+                },
+                {
+                    context: {
+                        dupePos: 0,
+                        dupeValue: {
+                            hello: 'world',
+                            test: 'test'
+                        },
+                        key: 1,
+                        label: 'value',
+                        path: 'test',
+                        pos: 1,
+                        value: {
+                            test: 'test'
+                        }
+                    },
+                    message: '"value" position 1 contains a duplicate value',
+                    path: [1],
+                    type: 'array.unique'
+                }
+            ]);
         });
     });
 
@@ -1265,6 +1316,22 @@ describe('array', () => {
                     { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
                     { type: 'string', invalids: [''] },
                     { type: 'boolean', flags: { presence: 'forbidden', insensitive: true }, truthy: [true], falsy: [false] }
+                ]
+            });
+        });
+
+        it('describes an array with array items', () => {
+
+            const schema = Joi.array().items(Joi.array());
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'array',
+                flags: { sparse: false },
+                items: [
+                    {
+                        type: 'array',
+                        flags: { sparse: false }
+                    }
                 ]
             });
         });
@@ -2135,7 +2202,7 @@ describe('array', () => {
 
     describe('single()', () => {
 
-        it('should allow a single element', () => {
+        it('allows a single element', () => {
 
             const schema = Joi.array().items(Joi.number()).items(Joi.boolean().forbidden()).single();
 
@@ -2172,7 +2239,7 @@ describe('array', () => {
             ]);
         });
 
-        it('should allow a single element with multiple types', () => {
+        it('allows a single element with multiple types', () => {
 
             const schema = Joi.array().items(Joi.number(), Joi.string()).single();
 
@@ -2193,87 +2260,19 @@ describe('array', () => {
             ]);
         });
 
-        it('should allow nested arrays', () => {
+        it('errors on single with array items', () => {
 
-            const schema = Joi.array().items(Joi.array().items(Joi.number())).single();
+            expect(() => Joi.array().items(Joi.array()).single()).to.throw('Cannot specify single rule when array has array items');
+            expect(() => Joi.array().items(Joi.alternatives([Joi.array()])).single()).to.throw('Cannot specify single rule when array has array items');
 
-            Helper.validate(schema, [
-                [[[1], [2], [3]], true],
-                [[1, 2, 3], true],
-                [[['a']], false, null, {
-                    message: '"value" at position 0 fails because ["0" at position 0 fails because ["0" must be a number]]',
-                    details: [{
-                        message: '"0" must be a number',
-                        path: [0, 0],
-                        type: 'number.base',
-                        context: { label: 0, key: 0, value: 'a' }
-                    }]
-                }],
-                [['a'], false, null, {
-                    message: '"value" at position 0 fails because ["0" must be an array]',
-                    details: [{
-                        message: '"0" must be an array',
-                        path: [0],
-                        type: 'array.base',
-                        context: { label: 0, key: 0 }
-                    }]
-                }],
-                ['a', false, null, {
-                    message: 'single value of "value" fails because ["value" must be an array]',
-                    details: [{
-                        message: '"value" must be an array',
-                        path: [],
-                        type: 'array.base',
-                        context: { label: 'value', key: undefined }
-                    }]
-                }],
-                [1, false, null, {
-                    message: 'single value of "value" fails because ["value" must be an array]',
-                    details: [{
-                        message: '"value" must be an array',
-                        path: [],
-                        type: 'array.base',
-                        context: { label: 'value', key: undefined }
-                    }]
-                }],
-                [true, false, null, {
-                    message: 'single value of "value" fails because ["value" must be an array]',
-                    details: [{
-                        message: '"value" must be an array',
-                        path: [],
-                        type: 'array.base',
-                        context: { label: 'value', key: undefined }
-                    }]
-                }]
-            ]);
-        });
+            expect(() => Joi.array().single().items(Joi.array())).to.throw('Cannot specify array item with single rule enabled');
+            expect(() => Joi.array().single().items(Joi.alternatives([Joi.array()]))).to.throw('Cannot specify array item with single rule enabled');
 
-        it('should allow nested arrays with multiple types', () => {
+            expect(() => Joi.array().ordered(Joi.array()).single()).to.throw('Cannot specify single rule when array has array items');
+            expect(() => Joi.array().ordered(Joi.alternatives([Joi.array()])).single()).to.throw('Cannot specify single rule when array has array items');
 
-            const schema = Joi.array().items(Joi.array().items(Joi.number(), Joi.boolean())).single();
-
-            Helper.validate(schema, [
-                [[[1, true]], true],
-                [[1, true], true],
-                [[[1, 'a']], false, null, {
-                    message: '"value" at position 0 fails because ["0" at position 1 does not match any of the allowed types]',
-                    details: [{
-                        message: '"0" at position 1 does not match any of the allowed types',
-                        path: [0, 1],
-                        type: 'array.includes',
-                        context: { pos: 1, value: 'a', label: 0, key: 1 }
-                    }]
-                }],
-                [[1, 'a'], false, null, {
-                    message: '"value" at position 0 fails because ["0" must be an array]',
-                    details: [{
-                        message: '"0" must be an array',
-                        path: [0],
-                        type: 'array.base',
-                        context: { label: 0, key: 0 }
-                    }]
-                }]
-            ]);
+            expect(() => Joi.array().single().ordered(Joi.array())).to.throw('Cannot specify array item with single rule enabled');
+            expect(() => Joi.array().single().ordered(Joi.alternatives([Joi.array()]))).to.throw('Cannot specify array item with single rule enabled');
         });
 
         it('switches the single flag with explicit value', () => {
