@@ -960,6 +960,18 @@ describe('any', () => {
         });
     });
 
+    describe('failover()', () => {
+
+        it('sets value on error', async () => {
+
+            const schema = Joi.object({ x: Joi.number().default(1).failover(2) });
+
+            expect(await schema.validate({})).to.equal({ x: 1 });
+            expect(await schema.validate({ x: 3 })).to.equal({ x: 3 });
+            expect(await schema.validate({ x: [] })).to.equal({ x: 2 });
+        });
+    });
+
     describe('required', () => {
 
         it('avoids unnecessary cloning when called twice', () => {

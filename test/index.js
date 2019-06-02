@@ -2434,7 +2434,7 @@ describe('Joi', () => {
                 })
             },
             min: [Joi.number(), Joi.string().min(3)],
-            max: Joi.string().max(3).default(0),
+            max: Joi.string().max(3).default(0).failover(1),
             required: Joi.string().required(),
             xor: Joi.string(),
             renamed: Joi.string().valid('456'),
@@ -2493,7 +2493,8 @@ describe('Joi', () => {
                 max: {
                     type: 'string',
                     flags: {
-                        default: 0
+                        default: 0,
+                        failover: 1
                     },
                     invalids: [''],
                     rules: [{ name: 'max', arg: { limit: 3 } }]

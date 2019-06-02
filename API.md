@@ -42,6 +42,7 @@
     - [`any.options(options)`](#anyoptionsoptions)
     - [`any.strict(isStrict)`](#anystrictisstrict)
     - [`any.default([value, [description]])`](#anydefaultvalue-description)
+    - [`any.failover([value, [description]])`](#anyfailovervalue-description)
     - [`any.concat(schema)`](#anyconcatschema)
     - [`any.when(condition, options)`](#anywhencondition-options)
     - [`any.label(name)`](#anylabelname)
@@ -155,6 +156,7 @@
     - [`alternatives.base`](#alternativesbase)
     - [`any.allowOnly`](#anyallowonly)
     - [`any.default`](#anydefault)
+    - [`any.failover`](#anyfailover)
     - [`any.empty`](#anyempty)
     - [`any.invalid`](#anyinvalid)
     - [`any.required`](#anyrequired)
@@ -992,6 +994,28 @@ Joi.validate({
 ```
 
 💥 Possible validation errors:[`any.default`](#anydefault)
+
+#### `any.failover([value, [description]])`
+
+Sets a failover value if the original value failes passing validation where:
+- `value` - the failover value.
+  - `value` supports [references](#refkey-options).
+  - `value` may also be a function which returns the default value. If `value` is specified as a
+    function that accepts a single parameter, that parameter will be a context object that can be
+    used to derive the resulting value.
+    - Use a function when setting a dynamic value, such as the current time. Ex: `default(Date.now, 'time of creation')`
+    - **Caution: this clones the object**, which incurs some overhead so if you don't need access
+      to the context define your method so that it does not accept any parameters.
+  - without any `value`, `default` has no effect, except for `object` that will then create nested
+    defaults (applying inner defaults of that object).
+
+Note that if `value` is an object, any changes to the object after `failover()` is called will
+change the reference and any future assignment.
+
+Additionally, when specifying a method you must either have a `description` property on your method
+or the second parameter is required.
+
+💥 Possible validation errors:[`any.failover`](#anyfailover)
 
 #### `any.concat(schema)`
 
@@ -2925,6 +2949,19 @@ If your [`any.default()`](#anydefaultvalue-description) generator function throw
 ```ts
 {
     error: Error // Error generated during the default value function call
+}
+```
+
+#### `any.failover`
+
+**Description**
+
+If your [`any.failover()`](#anyfailovervalue-description) generator function throws error, you will have it here.
+
+**Context**
+```ts
+{
+    error: Error // Error generated during the failover value function call
 }
 ```
 
