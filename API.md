@@ -422,6 +422,10 @@ References support the following arguments:
     - `contextPrefix` - overrides the default `$` context prefix signifier.
     - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined
       with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
+    - `adjust` - a function with the signature `function(value)` where `value` is the resolved reference value and the return
+      value is the adjusted value to use. For example `(value) => value + 5` will add 5 to the resolved value. Note that the
+      `adjust` feature will not perform any type validation on the adjusted value and it must match the value expected by the
+      rule it is used in.
     - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards

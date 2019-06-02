@@ -400,6 +400,63 @@ describe('ref', () => {
         ]);
     });
 
+    it('sets adjust function', () => {
+
+        const adjust = (v) => 2 * v;
+        const ref = Joi.ref('b', { adjust });
+        const schema = Joi.object({
+            a: ref,
+            b: Joi.number()
+        });
+
+        Helper.validate(schema, [
+            [{ b: 5 }, true],
+            [{ a: 10, b: 5 }, true],
+            [{ a: 10, b: '5' }, true],
+            [{ a: 5 }, false, null, {
+                message: 'child "a" fails because ["a" must be one of [ref:b]]',
+                details: [{
+                    message: '"a" must be one of [ref:b]',
+                    path: ['a'],
+                    type: 'any.allowOnly',
+                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
+                }]
+            }],
+            [{ a: 5, b: 5 }, false, null, {
+                message: 'child "a" fails because ["a" must be one of [ref:b]]',
+                details: [{
+                    message: '"a" must be one of [ref:b]',
+                    path: ['a'],
+                    type: 'any.allowOnly',
+                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
+                }]
+            }]
+        ]);
+
+        expect(schema.describe()).to.equal({
+            type: 'object',
+            children: {
+                b: {
+                    type: 'number',
+                    flags: { unsafe: false },
+                    invalids: [Infinity, -Infinity]
+                },
+                a: {
+                    type: 'any',
+                    flags: { allowOnly: true },
+                    valids: [
+                        {
+                            type: 'ref',
+                            key: 'b',
+                            path: ['b'],
+                            adjust
+                        }
+                    ]
+                }
+            }
+        });
+    });
+
     it('uses ref as a valid value (empty key)', async () => {
 
         const ref = Joi.ref('');
