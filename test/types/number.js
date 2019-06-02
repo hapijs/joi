@@ -78,9 +78,15 @@ describe('number', () => {
             ]);
         });
 
-        it('supports valid matching post-coerce value', async () => {
+        it('compares valid matching post-coerce value', async () => {
 
             const schema = Joi.number().valid(1, 2, 3);
+            expect(await schema.validate('1')).to.equal(1);
+        });
+
+        it('ignores invalid matching of pre-coerce value', async () => {
+
+            const schema = Joi.number().invalid('1');
             expect(await schema.validate('1')).to.equal(1);
         });
 

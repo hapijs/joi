@@ -1813,6 +1813,14 @@ describe('array', () => {
                 Joi.array().unique({});
             }).to.throw(Error, 'comparator must be a function or a string');
         });
+
+        it('handles period in key names', async () => {
+
+            const schema = Joi.array().unique('a.b', { separator: false });
+
+            const test = [{ 'a.b': 1 }, { 'a.b': 2 }];
+            expect(await schema.validate(test)).to.equal(test);
+        });
     });
 
     describe('sparse()', () => {

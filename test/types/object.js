@@ -2100,7 +2100,7 @@ describe('object', () => {
             expect(value).to.equal({ a1: undefined, a2: undefined, a3: 'test' });
         });
 
-        it('should throw an error if pattern is not regex or instance of Any', () => {
+        it('errors if pattern is not regex or instance of Any', () => {
 
             let error;
             try {
@@ -2125,7 +2125,7 @@ describe('object', () => {
 
     describe('with()', () => {
 
-        it('should throw an error when a parameter is not a string', () => {
+        it('errors when a parameter is not a string', () => {
 
             let error;
             try {
@@ -2147,17 +2147,6 @@ describe('object', () => {
             }
 
             expect(error).to.equal(true);
-        });
-
-        it('should throw an error unless 2 parameters are passed', () => {
-
-            const message = 'Invalid number of arguments, expected 2.';
-
-            expect(() => Joi.object().with()).to.throw(message);
-            expect(() => Joi.object().with('a')).to.throw(message);
-            expect(() => Joi.object().with('a', 'b', 'c')).to.throw(message);
-
-            expect(() => Joi.object().with('a', 'b')).to.not.throw();
         });
 
         it('should validate correctly when key is an empty string', () => {
@@ -2191,7 +2180,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested objects', () => {
+        it('allows nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -2245,7 +2234,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should support nested keys in functions', () => {
+        it('allows nested keys in functions', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -2316,11 +2305,23 @@ describe('object', () => {
                 }
             }]);
         });
+
+        it('handles period in key names', async () => {
+
+            const schema = Joi.object({
+                'x.from': Joi.string().lowercase().email(),
+                'x.url': Joi.string().uri({ scheme: ['https'] })
+            })
+                .with('x.from', 'x.url', { separator: false });
+
+            const test = { 'x.url': 'https://example.com', 'x.from': 'test@example.com' };
+            expect(await schema.validate(test)).to.equal(test);
+        });
     });
 
     describe('without()', () => {
 
-        it('should throw an error when a parameter is not a string', () => {
+        it('errors when a parameter is not a string', () => {
 
             let error;
             try {
@@ -2342,19 +2343,6 @@ describe('object', () => {
             }
 
             expect(error).to.equal(true);
-
-
-        });
-
-        it('should throw an error unless 2 parameters are passed', () => {
-
-            const message = 'Invalid number of arguments, expected 2.';
-
-            expect(() => Joi.object().without()).to.throw(message);
-            expect(() => Joi.object().without('a')).to.throw(message);
-            expect(() => Joi.object().without('a', 'b', 'c')).to.throw(message);
-
-            expect(() => Joi.object().without('a', 'b')).to.not.throw();
         });
 
         it('should validate correctly when key is an empty string', () => {
@@ -2371,6 +2359,7 @@ describe('object', () => {
                 a: Joi.any().strip(),
                 b: Joi.any()
             }).without('a', 'b');
+
             Helper.validate(schema, [
                 [{ a: 'hi', b: 'there' }, true]
             ]);
@@ -2399,7 +2388,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested objects', () => {
+        it('allows nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -2430,13 +2419,14 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested keys in functions', () => {
+        it('allows nested keys in functions', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
                 b: Joi.func().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
-            }).without('a', ['b.c', 'b.d']);
+            })
+                .without('a', ['b.c', 'b.d']);
 
             const sampleObject = { a: 'test', d: 9000 };
             const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
@@ -2487,7 +2477,7 @@ describe('object', () => {
 
     describe('xor()', () => {
 
-        it('should throw an error when a parameter is not a string', () => {
+        it('errors when a parameter is not a string', () => {
 
             let error;
             try {
@@ -2580,7 +2570,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested objects', () => {
+        it('allows nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -2611,7 +2601,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested keys in functions', () => {
+        it('allows nested keys in functions', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -2685,11 +2675,23 @@ describe('object', () => {
                 }
             }]);
         });
+
+        it('handles period in key names', async () => {
+
+            const schema = Joi.object({
+                'x.from': Joi.string().lowercase().email(),
+                'x.url': Joi.string().uri({ scheme: ['https'] })
+            })
+                .xor('x.from', 'x.url', { separator: false });
+
+            const test = { 'x.url': 'https://example.com' };
+            expect(await schema.validate(test)).to.equal(test);
+        });
     });
 
     describe('oxor()', () => {
 
-        it('should throw an error when a parameter is not a string', () => {
+        it('errors when a parameter is not a string', () => {
 
             let error;
             try {
@@ -2747,7 +2749,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested objects', () => {
+        it('allows nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -2778,7 +2780,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested keys in functions', () => {
+        it('allows nested keys in functions', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -2812,7 +2814,7 @@ describe('object', () => {
 
     describe('or()', () => {
 
-        it('should throw an error when a parameter is not a string', () => {
+        it('errors when a parameter is not a string', () => {
 
             let error;
             try {
@@ -2879,7 +2881,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested objects', () => {
+        it('allows nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -2908,7 +2910,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested keys in functions', () => {
+        it('allows nested keys in functions', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -2984,7 +2986,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested objects', () => {
+        it('allows nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -3015,7 +3017,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested keys in functions', () => {
+        it('allows nested keys in functions', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -3118,7 +3120,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested objects', () => {
+        it('allows nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
@@ -3149,7 +3151,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should support nested keys in functions', () => {
+        it('allows nested keys in functions', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),

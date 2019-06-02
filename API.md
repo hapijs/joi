@@ -7,14 +7,15 @@
 - [Joi](#joi)
   - [`version`](#version)
   - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
-  - [`ValidationError`](#ValidationError)
+  - [`ValidationError`](#validationerror)
   - [`compile(schema)`](#compileschema)
   - [`describe(schema)`](#describeschema)
   - [`assert(value, schema, [message], [options])`](#assertvalue-schema-message-options)
   - [`attempt(value, schema, [message], [options])`](#attemptvalue-schema-message-options)
   - [`ref(key, [options])`](#refkey-options)
+    - [Relative references](#relative-references)
   - [`isRef(ref)`](#isrefref)
-  - [`isSchema(schema)`](#isschemaschema)
+  - [`isRef(ref)`](#isrefref-1)
   - [`reach(schema, path)`](#reachschema-path)
   - [`defaults(fn)`](#defaultsfn)
   - [`bind()`](#bind)
@@ -26,9 +27,9 @@
   - [`any`](#any)
     - [`schemaType`](#schematype)
     - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
-    - [`any.allow(value)`](#anyallowvalue)
-    - [`any.valid(value)` - aliases: `only`, `equal`](#anyvalidvalue---aliases-only-equal)
-    - [`any.invalid(value)` - aliases: `disallow`, `not`](#anyinvalidvalue---aliases-disallow-not)
+    - [`any.allow(...values)`](#anyallowvalues)
+    - [`any.valid(...values)` - aliases: `only`, `equal`](#anyvalidvalues---aliases-only-equal)
+    - [`any.invalid(...values)` - aliases: `disallow`, `not`](#anyinvalidvalues---aliases-disallow-not)
     - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
     - [`any.optional()`](#anyoptional)
     - [`any.forbidden()`](#anyforbidden)
@@ -53,16 +54,16 @@
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.sparse([enabled])`](#arraysparseenabled)
     - [`array.single([enabled])`](#arraysingleenabled)
-    - [`array.items(type)`](#arrayitemstype)
-    - [`array.ordered(type)`](#arrayorderedtype)
+    - [`array.items(...types)`](#arrayitemstypes)
+    - [`array.ordered(...type)`](#arrayorderedtype)
     - [`array.min(limit)`](#arrayminlimit)
     - [`array.max(limit)`](#arraymaxlimit)
     - [`array.length(limit)`](#arraylengthlimit)
-    - [`array.unique([comparator], [options])`](#arrayuniquecomparator-options)
+    - [`array.unique([comparator, [options]])`](#arrayuniquecomparator-options)
     - [`array.has(schema)`](#arrayhasschema)
   - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
-    - [`boolean.truthy(value)`](#booleantruthyvalue)
-    - [`boolean.falsy(value)`](#booleanfalsyvalue)
+    - [`boolean.truthy(...values)`](#booleantruthyvalues)
+    - [`boolean.falsy(...values)`](#booleanfalsyvalues)
     - [`boolean.insensitive([enabled])`](#booleaninsensitiveenabled)
   - [`binary` - inherits from `Any`](#binary---inherits-from-any)
     - [`binary.encoding(encoding)`](#binaryencodingencoding)
@@ -103,22 +104,22 @@
     - [`object.max(limit)`](#objectmaxlimit)
     - [`object.length(limit)`](#objectlengthlimit)
     - [`object.pattern(pattern, schema)`](#objectpatternpattern-schema)
-    - [`object.and(peers)`](#objectandpeers)
-    - [`object.nand(peers)`](#objectnandpeers)
-    - [`object.or(peers)`](#objectorpeers)
-    - [`object.xor(peers)`](#objectxorpeers)
-    - [`object.oxor(...peers)`](#objectoxorpeers)
-    - [`object.with(key, peers)`](#objectwithkey-peers)
-    - [`object.without(key, peers)`](#objectwithoutkey-peers)
+    - [`object.and(...peers, [options])`](#objectandpeers-options)
+    - [`object.nand(...peers, [options])`](#objectnandpeers-options)
+    - [`object.or(...peers, [options])`](#objectorpeers-options)
+    - [`object.xor(...peers, [options])`](#objectxorpeers-options)
+    - [`object.oxor(...peers, [options])`](#objectoxorpeers-options)
+    - [`object.with(key, peers, [options])`](#objectwithkey-peers-options)
+    - [`object.without(key, peers, [options])`](#objectwithoutkey-peers-options)
     - [`object.ref()`](#objectref)
     - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
     - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
     - [`object.unknown([allow])`](#objectunknownallow)
     - [`object.type(constructor, [name])`](#objecttypeconstructor-name)
     - [`object.schema()`](#objectschema)
-    - [`object.requiredKeys(children)`](#objectrequiredkeyschildren)
-    - [`object.optionalKeys(children)`](#objectoptionalkeyschildren)
-    - [`object.forbiddenKeys(children)`](#objectforbiddenkeyschildren)
+    - [`object.requiredKeys(...children)`](#objectrequiredkeyschildren)
+    - [`object.optionalKeys(...children)`](#objectoptionalkeyschildren)
+    - [`object.forbiddenKeys(...children)`](#objectforbiddenkeyschildren)
   - [`string` - inherits from `Any`](#string---inherits-from-any)
     - [`string.insensitive()`](#stringinsensitive)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
@@ -182,6 +183,7 @@
     - [`binary.length`](#binarylength)
     - [`binary.max`](#binarymax)
     - [`binary.min`](#binarymin)
+    - [`binary.ref`](#binaryref)
     - [`boolean.base`](#booleanbase)
     - [`date.base`](#datebase)
     - [`date.greater`](#dategreater)
@@ -223,6 +225,7 @@
     - [`object.min`](#objectmin)
     - [`object.missing`](#objectmissing)
     - [`object.nand`](#objectnand)
+    - [`object.ref`](#objectref-1)
     - [`object.refType`](#objectreftype)
     - [`object.rename.multiple`](#objectrenamemultiple)
     - [`object.rename.override`](#objectrenameoverride)
@@ -412,15 +415,17 @@ const result = Joi.attempt('4', Joi.number()); // result -> 4
 
 ### `ref(key, [options])`
 
-Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency
-so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
+Generates a reference to the value of the named key. References are resolved at validation time and
+in order of dependency so that if one key validation depends on another, the dependent key is
+validated second after the reference is validated.
+
 References support the following arguments:
-- `key` - the reference target. References cannot point up the object tree, only to sibling keys, but they can point to
-  their siblings' children (e.g. 'a.b.c') using the `.` separator. If a `key` starts with `$` is signifies a context reference
-  which is looked up in the `context` option object. The `key` can start with one or more separator characters to indicate a
-  [relative starting point](#Relative-references).
+- `key` - the reference target. References can point to sibling keys (`a.b`) or ancestor keys
+  (`...a.b`) using the `.` separator. If a `key` starts with `$` is signifies a context reference
+  which is looked up in the `context` option object. The `key` can start with one or more separator
+  characters to indicate a [relative starting point](#Relative-references).
 - `options` - optional settings:
-    - `separator` - overrides the default `.` hierarchy separator.
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
     - `contextPrefix` - overrides the default `$` context prefix signifier.
     - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined
       with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
@@ -428,7 +433,6 @@ References support the following arguments:
       value is the adjusted value to use. For example `(value) => value + 5` will add 5 to the resolved value. Note that the
       `adjust` feature will not perform any type validation on the adjusted value and it must match the value expected by the
       rule it is used in.
-    - Other options can also be passed based on what [`Hoek.reach`](https://github.com/hapijs/hoek/blob/master/API.md#reachobj-chain-options) supports.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
 (parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
@@ -1375,15 +1379,20 @@ const schema = Joi.object({
 
 💥 Possible validation errors:[`array.length`](#arraylength), [`array.ref`](#arrayref)
 
-#### `array.unique([comparator], [options])`
+#### `array.unique([comparator, [options]])`
 
-Requires the array values to be unique.
-
-You can provide a custom `comparator` that is either :
-- a function that takes 2 parameters to compare. This function should return whether the 2 parameters are equal or not, you are also **responsible** for this function not to fail, any `Error` would bubble out of Joi.
-- a string in dot notation representing the path of the element to do uniqueness check on. Any missing path will be considered undefined, and can as well only exist once.
-You can also provide an `options` object containing:
-- `ignoreUndefined`. When set to `true`, undefined values for the dot notation string comparator will not cause the array to fail on uniqueness.
+Requires the array values to be unique where:
+- `comparator` - an optional custom `comparator` that is either:
+    - a function that takes 2 parameters to compare. This function should return whether the 2
+      parameters are equal or not, you are also **responsible** for this function not to fail, any
+      `Error` would bubble out of Joi.
+    - a string in dot notation representing the path of the element to do uniqueness check on. Any
+      missing path will be considered undefined, and can as well only exist once.
+- `options` - optional settings:
+    - `ignoreUndefined` - if `true`, undefined values for the dot notation string comparator will
+      not cause the array to fail on uniqueness. Defaults to `false`.
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the
+      `key` as a literal value.
 
 Note: remember that if you provide a custom comparator function, different types can be passed as parameter depending on the rules you set on items.
 
@@ -1515,7 +1524,7 @@ Specifies the minimum length of the buffer where:
 const schema = Joi.binary().min(2);
 ```
 
-💥 Possible validation errors:[`binary.min`](#binarymin)
+💥 Possible validation errors:[`binary.min`](#binarymin), [`binary.ref`](#binaryref)
 
 #### `binary.max(limit)`
 
@@ -1526,7 +1535,7 @@ Specifies the maximum length of the buffer where:
 const schema = Joi.binary().max(10);
 ```
 
-💥 Possible validation errors:[`binary.max`](#binarymax)
+💥 Possible validation errors:[`binary.max`](#binarymax), [`binary.ref`](#binaryref)
 
 #### `binary.length(limit)`
 
@@ -1537,7 +1546,7 @@ Specifies the exact length of the buffer:
 const schema = Joi.binary().length(5);
 ```
 
-💥 Possible validation errors:[`binary.length`](#binarylength)
+💥 Possible validation errors:[`binary.length`](#binarylength), [`binary.ref`](#binaryref)
 
 ### `date` - inherits from `Any`
 
@@ -2031,7 +2040,7 @@ Specifies the minimum number of keys in the object where:
 const schema = Joi.object().min(2);
 ```
 
-💥 Possible validation errors:[`object.min`](#objectmin)
+💥 Possible validation errors: [`object.min`](#objectmin), [`object.ref`](#objectref)
 
 #### `object.max(limit)`
 
@@ -2042,7 +2051,7 @@ Specifies the maximum number of keys in the object where:
 const schema = Joi.object().max(10);
 ```
 
-💥 Possible validation errors:[`object.max`](#objectmax)
+💥 Possible validation errors:[`object.max`](#objectmax), [`object.ref`](#objectref)
 
 #### `object.length(limit)`
 
@@ -2053,7 +2062,7 @@ Specifies the exact number of keys in the object where or a reference:
 const schema = Joi.object().length(5);
 ```
 
-💥 Possible validation errors:[`object.length`](#objectlength)
+💥 Possible validation errors:[`object.length`](#objectlength), [`object.ref`](#objectref)
 
 #### `object.pattern(pattern, schema)`
 
@@ -2073,11 +2082,13 @@ const schema = Joi.object({
 }).pattern(Joi.string().min(2).max(5), Joi.boolean());
 ```
 
-#### `object.and(...peers)`
+#### `object.and(...peers, [options])`
 
-Defines an all-or-nothing relationship between keys where if one of the peers is present, all of them are required as
-well where:
-- `peers` - the key names of which if one present, all are required.
+Defines an all-or-nothing relationship between keys where if one of the peers is present, all of
+them are required as well where:
+- `peers` - the string key names of which if one present, all are required.
+- `options` - optional settings:
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
 const schema = Joi.object().keys({
@@ -2088,11 +2099,12 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.and`](#objectand)
 
-#### `object.nand(...peers)`
+#### `object.nand(...peers, [options])`
 
-Defines a relationship between keys where not all peers can be present at the
-same time where:
+Defines a relationship between keys where not all peers can be present at the same time where:
 - `peers` - the key names of which if one present, the others may not all be present.
+- `options` - optional settings:
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
 const schema = Joi.object().keys({
@@ -2103,10 +2115,13 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.nand`](#objectnand)
 
-#### `object.or(...peers)`
+#### `object.or(...peers, [options])`
 
-Defines a relationship between keys where one of the peers is required (and more than one is allowed) where:
+Defines a relationship between keys where one of the peers is required (and more than one is
+allowed) where:
 - `peers` - the key names of which at least one must appear.
+- `options` - optional settings:
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
 const schema = Joi.object().keys({
@@ -2117,10 +2132,13 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.missing`](#objectmissing)
 
-#### `object.xor(...peers)`
+#### `object.xor(...peers, [options])`
 
-Defines an exclusive relationship between a set of keys where one of them is required but not at the same time where:
+Defines an exclusive relationship between a set of keys where one of them is required but not at
+the same time where:
 - `peers` - the exclusive key names that must not appear together but where one of them is required.
+- `options` - optional settings:
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
 const schema = Joi.object().keys({
@@ -2131,10 +2149,13 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.xor`](#objectxor), [`object.missing`](#objectmissing)
 
-#### `object.oxor(...peers)`
+#### `object.oxor(...peers, [options])`
 
-Defines an exclusive relationship between a set of keys where only one is allowed but none are required where:
+Defines an exclusive relationship between a set of keys where only one is allowed but none are
+required where:
 - `peers` - the exclusive key names that must not appear together but where none are required.
+- `options` - optional settings:
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
 const schema = Joi.object().keys({
@@ -2145,13 +2166,16 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.oxor`](#objectoxor)
 
-#### `object.with(key, peers)`
+#### `object.with(key, peers, [options])`
 
 Requires the presence of other keys whenever the specified key is present where:
 - `key` - the reference key.
-- `peers` - the required peer key names that must appear together with `key`. `peers` can be a single string value or an array of string values.
+- `peers` - the required peer key names that must appear together with `key`. `peers` can be a
+  single string value or an array of string values.
+- `options` - optional settings:
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
-Note that unlike [`object.and()`](#objectandpeers), `with()` creates a dependency only between the `key` and each of the `peers`, not
+Note that unlike [`object.and()`](#objectandpeers-options), `with()` creates a dependency only between the `key` and each of the `peers`, not
 between the `peers` themselves.
 
 ```js
@@ -2163,11 +2187,14 @@ const schema = Joi.object().keys({
 
 💥 Possible validation errors:[`object.with`](#objectwith)
 
-#### `object.without(key, peers)`
+#### `object.without(key, peers, [options])`
 
 Forbids the presence of other keys whenever the specified is present where:
 - `key` - the reference key.
-- `peers` - the forbidden peer key names that must not appear together with `key`. `peers` can be a single string value or an array of string values.
+- `peers` - the forbidden peer key names that must not appear together with `key`. `peers` can be a
+  single string value or an array of string values.
+- `options` - optional settings:
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
 const schema = Joi.object().keys({
@@ -3353,6 +3380,22 @@ The buffer contains less bytes than expected.
 }
 ```
 
+#### `binary.ref`
+
+**Description**
+
+A reference was used in one of [`binary.min()`](#binaryminlimit), [`binary.max()`](#binarymaxlimit), [`binary.length()`](#binarylengthlimit) and the value pointed to by that reference in the input is not a valid number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    ref: Reference, // Reference used
+    value: any // Value found using the reference
+}
+```
+
 #### `boolean.base`
 
 **Description**
@@ -3989,6 +4032,22 @@ The NAND condition between the properties you specified was not satisfied in tha
     mainWithLabel: string, // The label of the `main` property
     peers: Array<string>, // List of the other properties that were present
     peersWithLabels: Array<string> // List of the labels of the other properties that were present
+}
+```
+
+#### `object.ref`
+
+**Description**
+
+A reference was used in one of [`object.min()`](#objectminlimit), [`object.max()`](#objectmaxlimit), [`object.length()`](#objectlengthlimit) and the value pointed to by that reference in the input is not a valid number.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    ref: Reference, // Reference used
+    value: any // Value found using the reference
 }
 ```
 

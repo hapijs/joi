@@ -96,6 +96,54 @@ describe('ref', () => {
         ]);
     });
 
+    it('reaches literal', () => {
+
+        const schema = {
+            a: Joi.any(),
+            b: {
+                '...a': Joi.any(),
+                c: Joi.ref('...a', { separator: false })
+            }
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: 1,
+                    b: {
+                        '...a': 2,
+                        c: 2
+                    }
+                }, true
+            ]
+        ]);
+    });
+
+    it('reaches ancestor literal', () => {
+
+        const schema = {
+            a: Joi.any(),
+            '...a': Joi.any(),
+            b: {
+                '...a': Joi.any(),
+                c: Joi.ref('...a', { separator: false, ancestor: 2 })
+            }
+        };
+
+        Helper.validate(schema, [
+            [
+                {
+                    a: 1,
+                    '...a': 3,
+                    b: {
+                        '...a': 2,
+                        c: 3
+                    }
+                }, true
+            ]
+        ]);
+    });
+
     it('reaches any level of the relative value structure', () => {
 
         const ix = Joi.ref('...i');

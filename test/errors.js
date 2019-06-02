@@ -33,7 +33,10 @@ describe('errors', () => {
             xor: Joi.string(),
             renamed: Joi.string().valid('456'),
             notEmpty: Joi.string().required()
-        }).rename('renamed', 'required').without('required', 'xor').without('xor', 'required');
+        })
+            .rename('renamed', 'required')
+            .without('required', 'xor')
+            .without('xor', 'required');
 
         const input = {
             email: 'invalid-email',
