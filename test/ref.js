@@ -327,7 +327,6 @@ describe('ref', () => {
         expect(() => Joi.ref('..x', { ancestor: 0 })).to.throw('Cannot combine prefix with ancestor option');
     });
 
-
     it('errors on ancestor circular dependency', () => {
 
         const schema = {
@@ -375,6 +374,28 @@ describe('ref', () => {
                             key: 0,
                             label: 0
                         }
+                    }
+                ]
+            }]
+        ]);
+    });
+
+    it('references array item', () => {
+
+        const ref = Joi.ref('0');
+        const schema = Joi.array().ordered(Joi.number(), Joi.number().min(ref));
+
+        Helper.validate(schema, [
+            [[1, 2], true],
+            [[10, 20], true],
+            [[10, 5], false, null, {
+                message: '"value" at position 1 fails because ["1" must be larger than or equal to ref:0]',
+                details: [
+                    {
+                        message: '"1" must be larger than or equal to ref:0',
+                        path: [1],
+                        type: 'number.min',
+                        context: { limit: ref, value: 5, key: 1, label: 1 }
                     }
                 ]
             }]
