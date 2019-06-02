@@ -2589,7 +2589,8 @@ const schema = Joi.string().hex();
 Requires the string value to be a valid base64 string; does not check the decoded value.
 
 - `options` - optional settings:
-    - `paddingRequired` - optional parameter defaulting to `true` which will require `=` padding if `true` or make padding optional if `false`.
+    - `paddingRequired` - if `true`, the string must be properly padded with the `=` characters. Defaults to `true`.
+    - `urlSafe` - if `true`, uses the URI-safe base64 format which replaces `+` with `-` and `\` with `_`. Defaults to `false`.
 
 Padding characters are not required for decoding, as the number of missing bytes can be inferred from the number of digits. With that said, try to use padding if at all possible.
 

@@ -1909,7 +1909,7 @@ describe('string', () => {
         it('should include inverted pattern name if specified', () => {
 
             const schema = Joi.string().regex(/[a-z]/, {
-                name  : 'lowercase',
+                name: 'lowercase',
                 invert: true
             });
             Helper.validate(schema, [
@@ -1944,7 +1944,7 @@ describe('string', () => {
                     details: [{
                         message,
                         path: [],
-                        type:  /versions/.test(message) ? 'string.ipVersion' : 'string.ip',
+                        type: /versions/.test(message) ? 'string.ipVersion' : 'string.ip',
                         context: (() => {
 
                             const context = {
@@ -2100,7 +2100,7 @@ describe('string', () => {
             '7:6:5:4:3:2:1::'
         ]);
 
-        const validIPvFuturesWithCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:/32','v1.09azAZ-._~!$&\'()*+,;=:/128']);
+        const validIPvFuturesWithCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:/32', 'v1.09azAZ-._~!$&\'()*+,;=:/128']);
 
         const validIPvFuturesWithoutCidr = prepareIps(['v1.09azAZ-._~!$&\'()*+,;=:']);
 
@@ -2583,7 +2583,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['foo://example.com:8042/over/there?name=ferret#nose', true],
                 ['https://example.com?abc[]=123&abc[]=456', false, null, {
-                    message:'"value" must be a valid uri',
+                    message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
                         path: [],
@@ -9901,15 +9901,9 @@ describe('string', () => {
 
         it('validates the base64 options', () => {
 
-            expect(() => {
-
-                Joi.string().base64('a');
-            }).to.throw('options must be an object');
-
-            expect(() => {
-
-                Joi.string().base64({ paddingRequired: 'a' });
-            }).to.throw('paddingRequired must be boolean');
+            expect(() => Joi.string().base64('a')).to.throw('options must be an object');
+            expect(() => Joi.string().base64({ paddingRequired: 'a' })).to.throw('paddingRequired must be boolean');
+            expect(() => Joi.string().base64({ urlSafe: 'a' })).to.throw('urlSafe must be boolean');
         });
 
         it('validates a base64 string with no options', () => {
@@ -9917,6 +9911,7 @@ describe('string', () => {
             const rule = Joi.string().base64();
             Helper.validate(rule, [
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['YW55IGNh+/5hbCBwbGVhc3VyZS4=', true],
                 ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
                     message: '"value" must be a valid base64 string',
                     details: [{
@@ -9925,6 +9920,19 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: '=YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW55IGNhcm5hb-_wbGVhc3VyZS4=', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm5hb-_wbGVhc3VyZS4=',
                             label: 'value',
                             key: undefined
                         }
@@ -10249,6 +10257,77 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: '$#%#$^$^)(*&^%',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates a url-safe base64 string with padding explicitly required', () => {
+
+            const rule = Joi.string().base64({ urlSafe: true, paddingRequired: true });
+            Helper.validate(rule, [
+                ['YW55IGNhcm5hb-_wbGVhc3VyZS4=', true],
+                ['=YW55IGNhcm5-_CBwbGVhc3VyZS4', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: '=YW55IGNhcm5-_CBwbGVhc3VyZS4',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW55IGNhcm5+/CBwbGVhc3VyZS4=', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm5+/CBwbGVhc3VyZS4=',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates a url-safe base64 string with padding not required', () => {
+
+            const rule = Joi.string().base64({ urlSafe: true, paddingRequired: false });
+            Helper.validate(rule, [
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
+                ['YW55IGNhcm-_bCBwbGVhc3VyZS4=', true],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', true],
+                ['YW55IGNhc-_hbCBwbGVhc3VyZS4', true],
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
+                            label: 'value',
+                            key: undefined
+                        }
+                    }]
+                }],
+                ['YW55IGNhcm-_bCBwbGVhc3VyZS4==', false, null, {
+                    message: '"value" must be a valid base64 string',
+                    details: [{
+                        message: '"value" must be a valid base64 string',
+                        path: [],
+                        type: 'string.base64',
+                        context: {
+                            value: 'YW55IGNhcm-_bCBwbGVhc3VyZS4==',
                             label: 'value',
                             key: undefined
                         }
