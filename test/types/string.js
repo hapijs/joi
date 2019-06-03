@@ -754,6 +754,15 @@ describe('string', () => {
             const schema = Joi.string().domain();
             Helper.validate(schema, [
                 ['example.com', true],
+                ['com', false, null, {
+                    message: '"value" must contain a valid domain name',
+                    details: [{
+                        message: '"value" must contain a valid domain name',
+                        path: [],
+                        type: 'string.domain',
+                        context: { value: 'com', label: 'value', key: undefined }
+                    }]
+                }],
                 ['"example.com', false, null, {
                     message: '"value" must contain a valid domain name',
                     details: [{
@@ -875,6 +884,15 @@ describe('string', () => {
                         path: [],
                         type: 'string.email',
                         context: { value: '"joe"@example.com', label: 'value', key: undefined }
+                    }]
+                }],
+                ['example@io', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'example@io', label: 'value', key: undefined }
                     }]
                 }],
                 ['@iaminvalid.com', false, null, {

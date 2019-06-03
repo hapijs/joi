@@ -2529,8 +2529,7 @@ Requires the string value to be a valid domain name.
 
 - `options` - optional settings:
     - `allowUnicode` - if `true`, Unicode characters are permitted. Defaults to `true`.
-    - `minDomainSegments` - Number of segments required for the domain. Be careful since some
-      domains, such as `io`, directly allow email.
+    - `minDomainSegments` - Number of segments required for the domain. Defaults to `2`.
     - `tlds` - options for TLD (top level domain) validation. By default, the TLD must be a valid
       name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt). To
       disable validation, set `tlds` to `false`. To customize how TLDs are validated, set one of
@@ -2555,8 +2554,9 @@ Requires the string value to be a valid email address.
 
 - `options` - optional settings:
     - `allowUnicode` - if `true`, Unicode characters are permitted. Defaults to `true`.
-    - `minDomainSegments` - Number of segments required for the domain. Be careful since some
-      domains, such as `io`, directly allow email.
+    - `minDomainSegments` - Number of segments required for the domain. The default setting excludes
+      single segment domains such as `example@io` which is a valid email but very uncommon. Defaults
+      to `2`.
     - `tlds` - options for TLD (top level domain) validation. By default, the TLD must be a valid
       name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt). To
       disable validation, set `tlds` to `false`. To customize how TLDs are validated, set one of
