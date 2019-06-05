@@ -527,7 +527,7 @@ const ref = Joi.ref('a');
 Joi.isRef(ref); // returns true
 ```
 
-### `isRef(ref)`
+### `isSchema(schema)`
 
 Checks whether or not the provided argument is a joi schema.
 
