@@ -164,12 +164,10 @@
     - [`any.unknown`](#anyunknown)
     - [`array.base`](#arraybase)
     - [`array.excludes`](#arrayexcludes)
-    - [`array.excludesSingle`](#arrayexcludessingle)
     - [`array.includesRequiredBoth`](#arrayincludesrequiredboth)
     - [`array.includesRequiredKnowns`](#arrayincludesrequiredknowns)
     - [`array.includesRequiredUnknowns`](#arrayincludesrequiredunknowns)
     - [`array.includes`](#arrayincludes)
-    - [`array.includesSingle`](#arrayincludessingle)
     - [`array.length`](#arraylength)
     - [`array.max`](#arraymax)
     - [`array.min`](#arraymin)
@@ -219,7 +217,6 @@
     - [`object.and`](#objectand)
     - [`object.assert`](#objectassert)
     - [`object.base`](#objectbase)
-    - [`object.child`](#objectchild)
     - [`object.length`](#objectlength)
     - [`object.max`](#objectmax)
     - [`object.min`](#objectmin)
@@ -1191,11 +1188,15 @@ Overrides the default joi error with a custom error if the rule fails where:
     - return a single `object` or an `Array` of it, where:
       - `type` - optional parameter providing the type of the error (eg. `number.min`).
       - `message` - optional parameter if `template` is provided, containing the text of the error.
-      - `template` - optional parameter if `message` is provided, containing a template string, using the same format as usual joi language errors.
+      - `template` - optional parameter if `message` is provided, containing a template string,
+        using the same format as usual joi language errors.
       - `context` - optional parameter, to provide context to your error if you are using the `template`.
-    - return an `Error` - same as when you directly provide an `Error`, but you can customize the error message based on the errors.
+    - return an `Error` - same as when you directly provide an `Error`, but you can customize the
+      error message based on the errors.
 - `options`:
-  - `self` - Boolean value indicating whether the error handler should be used for all errors or only for errors occurring on this property (`true` value). This concept only makes sense for `array` or `object` schemas as other values don't have children. Defaults to `false`.
+  - `self` - Boolean value indicating whether the error handler should be used for all errors or
+    only for errors occurring on this property (`true` value). This concept only makes sense for
+    `array` or `object` schemas as other values don't have children. Defaults to `false`.
 
 Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any of the
 normal joi error properties. If validation fails and another error is found before the error
@@ -1209,13 +1210,13 @@ schema.validate(3);     // returns error.message === 'Was REALLY expecting a str
 let schema = Joi.object({
     foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
 });
-schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" requires a positive number]'
+schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a positive number'
 
 let schema = Joi.object({
     foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
 }).required().error(() => 'root object is required', { self: true });
 schema.validate();               // returns error.message === 'root object is required'
-schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" requires a positive number]'
+schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a positive number'
 
 let schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
@@ -1237,7 +1238,7 @@ let schema = Joi.object({
         };
     })
 });
-schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because ["foo" contains 1 errors, here is the list : [number.min]]'
+schema.validate({ foo: -2 });    // returns error.message === '"foo" contains 1 errors, here is the list : [number.min]'
 ```
 
 Note that if you want to intercept errors on nested structures such as objects and arrays, you will also get a nested structure to explore the children errors, going one level down through the `err.context.reason` property.
@@ -1300,7 +1301,7 @@ schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
 schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 ```
 
-💥 Possible validation errors:[`array.excludesSingle`](#arrayexcludessingle), [`array.includesSingle`](#arrayincludessingle)
+💥 Possible validation errors:[`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes)
 
 #### `array.items(...types)`
 
@@ -1335,7 +1336,7 @@ const schema = Joi.array().ordered(Joi.string().required()).items(Joi.number().r
 const schema = Joi.array().ordered(Joi.string().required(), Joi.number()); // array must have first item as string and optionally second item as number
 ```
 
-💥 Possible validation errors:[`array.excludesSingle`](#arrayexcludessingle), [`array.includesSingle`](#arrayincludessingle), [`array.orderedLength`](#arrayorderedlength)
+💥 Possible validation errors:[`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes), [`array.orderedLength`](#arrayorderedlength)
 
 #### `array.min(limit)`
 
@@ -3094,22 +3095,6 @@ The array contains a value that is part of the exclusion list.
 }
 ```
 
-#### `array.excludesSingle`
-
-**Description**
-
-Same as `array.excludes` but the value was a single value. Happens with [`array.single()`](#arraysingleenabled).
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    pos: number, // Index where the value was found in the array
-    value: any // Value that matched an exclude condition
-}
-```
-
 #### `array.includesRequiredBoth`
 
 **Description**
@@ -3161,22 +3146,6 @@ Some values were expected to be present in the array and are missing. This error
 **Description**
 
 The value didn't match any of the allowed types for that array.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    pos: number, // Index where the value was found in the array
-    value: any // Value that failed all the schemas
-}
-```
-
-#### `array.includesSingle`
-
-**Description**
-
-Same as `array.includes` but the value was a single value. Happens with [`array.single()`](#arraysingleenabled).
 
 **Context**
 ```ts
@@ -3946,22 +3915,6 @@ The value is not of object type or could not be cast to an object from a string.
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
     value: any // Input value
-}
-```
-
-#### `object.child`
-
-**Description**
-
-An object key failed validation. This is an internal error that is used to construct other object validation errors.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    child: string, // The object key name
-    reason: string // The validation error
 }
 ```
 

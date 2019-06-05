@@ -33,7 +33,7 @@ describe('lazy', () => {
                 message: 'schema error: lazy schema must be set',
                 path: [],
                 type: 'lazy.base',
-                context: { label: 'value', key: undefined }
+                context: { label: 'value' }
             }]);
         });
 
@@ -46,7 +46,7 @@ describe('lazy', () => {
                 message: 'schema error: lazy schema function must return a schema',
                 path: [],
                 type: 'lazy.schema',
-                context: { label: 'value', key: undefined, schema: true }
+                context: { label: 'value', schema: true }
             }]);
         });
 
@@ -83,12 +83,12 @@ describe('lazy', () => {
                 [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz' }] }] }, true],
                 [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 'qux' }] }] }] }, true],
                 [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 42 }] }] }] }, false, null, {
-                    message: 'child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "name" fails because ["name" must be a string]]]]]]]',
+                    message: '"children[0].children[0].children[0].name" must be a string',
                     details: [{
-                        message: '"name" must be a string',
+                        message: '"children[0].children[0].children[0].name" must be a string',
                         path: ['children', 0, 'children', 0, 'children', 0, 'name'],
                         type: 'string.base',
-                        context: { value: 42, label: 'name', key: 'name' }
+                        context: { value: 42, label: 'children[0].children[0].children[0].name', key: 'name' }
                     }]
                 }]
             ]);
@@ -115,12 +115,12 @@ describe('lazy', () => {
                 [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz' }] }] }, true],
                 [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 'qux' }] }] }] }, true],
                 [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 42 }] }] }] }, false, null, {
-                    message: 'child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "children" fails because ["children" at position 0 fails because [child "name" fails because ["name" must be a string]]]]]]]',
+                    message: '"children[0].children[0].children[0].name" must be a string',
                     details: [{
-                        message: '"name" must be a string',
+                        message: '"children[0].children[0].children[0].name" must be a string',
                         path: ['children', 0, 'children', 0, 'children', 0, 'name'],
                         type: 'string.base',
-                        context: { value: 42, label: 'name', key: 'name' }
+                        context: { value: 42, label: 'children[0].children[0].children[0].name', key: 'name' }
                     }]
                 }]
             ]);

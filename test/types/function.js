@@ -39,7 +39,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined, value: '' }
+                    context: { label: 'value', value: '' }
                 }]
             }]
         ]);
@@ -55,7 +55,7 @@ describe('func', () => {
                     message: '"value" must have an arity of 2',
                     path: [],
                     type: 'function.arity',
-                    context: { n: 2, label: 'value', key: undefined }
+                    context: { n: 2, label: 'value' }
                 }]
             }],
             [function (a) { }, false, null, {
@@ -64,7 +64,7 @@ describe('func', () => {
                     message: '"value" must have an arity of 2',
                     path: [],
                     type: 'function.arity',
-                    context: { n: 2, label: 'value', key: undefined }
+                    context: { n: 2, label: 'value' }
                 }]
             }],
             [(a,b) => { }, true],
@@ -74,7 +74,7 @@ describe('func', () => {
                     message: '"value" must have an arity of 2',
                     path: [],
                     type: 'function.arity',
-                    context: { n: 2, label: 'value', key: undefined }
+                    context: { n: 2, label: 'value' }
                 }]
             }],
             [(a) => { }, false, null, {
@@ -83,7 +83,7 @@ describe('func', () => {
                     message: '"value" must have an arity of 2',
                     path: [],
                     type: 'function.arity',
-                    context: { n: 2, label: 'value', key: undefined }
+                    context: { n: 2, label: 'value' }
                 }]
             }],
             ['', false, null, {
@@ -92,7 +92,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined, value: '' }
+                    context: { label: 'value', value: '' }
                 }]
             }]
         ]);
@@ -125,7 +125,7 @@ describe('func', () => {
                     message: '"value" must have an arity greater or equal to 2',
                     path: [],
                     type: 'function.minArity',
-                    context: { n: 2, label: 'value', key: undefined }
+                    context: { n: 2, label: 'value' }
                 }]
             }],
             [(a,b) => { }, true],
@@ -136,7 +136,7 @@ describe('func', () => {
                     message: '"value" must have an arity greater or equal to 2',
                     path: [],
                     type: 'function.minArity',
-                    context: { n: 2, label: 'value', key: undefined }
+                    context: { n: 2, label: 'value' }
                 }]
             }],
             ['', false, null, {
@@ -145,7 +145,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined, value: '' }
+                    context: { label: 'value', value: '' }
                 }]
             }]
         ]);
@@ -183,7 +183,7 @@ describe('func', () => {
                     message: '"value" must have an arity lesser or equal to 2',
                     path: [],
                     type: 'function.maxArity',
-                    context: { n: 2, label: 'value', key: undefined }
+                    context: { n: 2, label: 'value' }
                 }]
             }],
             [function (a) { }, true],
@@ -194,7 +194,7 @@ describe('func', () => {
                     message: '"value" must have an arity lesser or equal to 2',
                     path: [],
                     type: 'function.maxArity',
-                    context: { n: 2, label: 'value', key: undefined }
+                    context: { n: 2, label: 'value' }
                 }]
             }],
             [(a) => { }, true],
@@ -204,7 +204,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined, value: '' }
+                    context: { label: 'value', value: '' }
                 }]
             }]
         ]);
@@ -236,7 +236,7 @@ describe('func', () => {
 
         Helper.validate(Joi.func().keys({ a: Joi.string().required() }).required(), [
             [function () { }, false, null, {
-                message: 'child "a" fails because ["a" is required]',
+                message: '"a" is required',
                 details: [{
                     message: '"a" is required',
                     path: ['a'],
@@ -246,7 +246,7 @@ describe('func', () => {
             }],
             [a, true],
             [b, false, null, {
-                message: 'child "a" fails because ["a" must be a string]',
+                message: '"a" must be a string',
                 details: [{
                     message: '"a" must be a string',
                     path: ['a'],
@@ -260,7 +260,7 @@ describe('func', () => {
                     message: '"value" must be a Function',
                     path: [],
                     type: 'function.base',
-                    context: { label: 'value', key: undefined, value: '' }
+                    context: { label: 'value', value: '' }
                 }]
             }]
         ]);
@@ -338,7 +338,7 @@ describe('func().class()', () => {
         Helper.validate(classSchema, [
             [{ _class: testClass }, true],
             [{ _class: testFunc }, false, null, {
-                message: 'child "_class" fails because ["_class" must be a class]',
+                message: '"_class" must be a class',
                 details: [{
                     message: '"_class" must be a class',
                     path: ['_class'],
@@ -357,7 +357,7 @@ describe('func().class()', () => {
 
         Helper.validate(classSchema, [
             [{ _class: ['class '] }, false, null, {
-                message: 'child "_class" fails because ["_class" must be a Function]',
+                message: '"_class" must be a Function',
                 details: [{
                     message: '"_class" must be a Function',
                     path: ['_class'],
@@ -366,7 +366,7 @@ describe('func().class()', () => {
                 }]
             }],
             [{ _class: null }, false, null, {
-                message: 'child "_class" fails because ["_class" must be a Function]',
+                message: '"_class" must be a Function',
                 details: [{
                     message: '"_class" must be a Function',
                     path: ['_class'],

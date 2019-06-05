@@ -60,7 +60,7 @@ describe('any', () => {
                         message: '"value" must be one of [4]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 5, valids: [4], label: 'value', key: undefined }
+                        context: { value: 5, valids: [4], label: 'value' }
                     }]
                 }]
             ]);
@@ -79,7 +79,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 5, invalids: [5], label: 'value', key: undefined }
+                        context: { value: 5, invalids: [5], label: 'value' }
                     }]
                 }]
             ]);
@@ -98,7 +98,7 @@ describe('any', () => {
                         message: '"value" is required',
                         path: [],
                         type: 'any.required',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value' }
                     }]
                 }]
             ]);
@@ -116,33 +116,33 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
                 [{ array: ['1'] }, false, null, {
-                    message: 'child "array" fails because ["array" at position 0 does not match any of the allowed types]',
+                    message: '"array[0]" does not match any of the allowed types',
                     details: [{
-                        message: '"array" at position 0 does not match any of the allowed types',
+                        message: '"array[0]" does not match any of the allowed types',
                         path: ['array', 0],
                         type: 'array.includes',
-                        context: { pos: 0, value: '1', label: 'array', key: 0 }
+                        context: { pos: 0, value: '1', label: 'array[0]', key: 0 }
                     }]
                 }],
                 [{ array: [3] }, true],
                 [{ array: ['12345', 3] }, true],
                 [{ array: ['3'] }, false, null, {
-                    message: 'child "array" fails because ["array" at position 0 does not match any of the allowed types]',
+                    message: '"array[0]" does not match any of the allowed types',
                     details: [{
-                        message: '"array" at position 0 does not match any of the allowed types',
+                        message: '"array[0]" does not match any of the allowed types',
                         path: ['array', 0],
                         type: 'array.includes',
-                        context: { pos: 0, value: '3', label: 'array', key: 0 }
+                        context: { pos: 0, value: '3', label: 'array[0]', key: 0 }
                     }]
 
                 }],
                 [{ array: [1] }, false, null, {
-                    message: 'child "array" fails because ["array" at position 0 does not match any of the allowed types]',
+                    message: '"array[0]" does not match any of the allowed types',
                     details: [{
-                        message: '"array" at position 0 does not match any of the allowed types',
+                        message: '"array[0]" does not match any of the allowed types',
                         path: ['array', 0],
                         type: 'array.includes',
-                        context: { pos: 0, value: 1, label: 'array', key: 0 }
+                        context: { pos: 0, value: 1, label: 'array[0]', key: 0 }
                     }]
 
                 }]
@@ -158,24 +158,24 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
                 [{ array: ['1'] }, false, null, {
-                    message: 'child "array" fails because ["array" at position 0 does not match any of the allowed types]',
+                    message: '"array[0]" does not match any of the allowed types',
                     details: [{
-                        message: '"array" at position 0 does not match any of the allowed types',
+                        message: '"array[0]" does not match any of the allowed types',
                         path: ['array', 0],
                         type: 'array.includes',
-                        context: { pos: 0, value: '1', label: 'array', key: 0 }
+                        context: { pos: 0, value: '1', label: 'array[0]', key: 0 }
                     }]
                 }],
                 [{ array: [3] }, true],
                 [{ array: ['12345', 3] }, true],
                 [{ array: ['3'] }, true],
                 [{ array: [1] }, false, null, {
-                    message: 'child "array" fails because ["array" at position 0 does not match any of the allowed types]',
+                    message: '"array[0]" does not match any of the allowed types',
                     details: [{
-                        message: '"array" at position 0 does not match any of the allowed types',
+                        message: '"array[0]" does not match any of the allowed types',
                         path: ['array', 0],
                         type: 'array.includes',
-                        context: { pos: 0, value: 1, label: 'array', key: 0 }
+                        context: { pos: 0, value: 1, label: 'array[0]', key: 0 }
                     }]
                 }]
             ]);
@@ -369,7 +369,7 @@ describe('any', () => {
 
             const schema = Joi.object({ a: Joi.number() }).label('foo');
             const err = await expect(schema.validate({ a: 'a' })).to.reject();
-            expect(err.message).to.equal('child "a" fails because ["a" must be a number]');
+            expect(err.message).to.equal('"a" must be a number');
             expect(err.details).to.equal([{
                 message: '"a" must be a number',
                 path: ['a'],
@@ -383,12 +383,12 @@ describe('any', () => {
             const schema = Joi.array().items(Joi.object({ a: Joi.number() }).label('foo')).label('bar');
             const err = await expect(schema.validate([{ a: 'a' }])).to.reject();
             expect(err).to.exist();
-            expect(err.message).to.equal('"bar" at position 0 fails because [child "a" fails because ["a" must be a number]]');
+            expect(err.message).to.equal('"[0].a" must be a number');
             expect(err.details).to.equal([{
-                message: '"a" must be a number',
+                message: '"[0].a" must be a number',
                 path: [0, 'a'],
                 type: 'number.base',
-                context: { label: 'a', key: 'a', value: 'a' }
+                context: { label: '[0].a', key: 'a', value: 'a' }
             }]);
         });
 
@@ -414,7 +414,7 @@ describe('any', () => {
             const schema = Joi.object({ b: Joi.number().options({ convert: true }).strict() });
             const input = { b: '2' };
             const err = await expect(schema.validate(input)).to.reject();
-            expect(err.message).to.equal('child "b" fails because ["b" must be a number]');
+            expect(err.message).to.equal('"b" must be a number');
             expect(err.details).to.equal([{
                 message: '"b" must be a number',
                 path: ['b'],
@@ -668,7 +668,7 @@ describe('any', () => {
                 message: '"value" threw an error when running default method',
                 path: [],
                 type: 'any.default',
-                context: { error, label: 'value', key: undefined }
+                context: { error, label: 'value' }
             }]);
         });
 
@@ -716,7 +716,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: 0, b: 1 }, true],
                 [{ a: 0, b: 2 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [1]]',
+                    message: '"b" must be one of [1]',
                     details: [{
                         message: '"b" must be one of [1]',
                         path: ['b'],
@@ -726,7 +726,7 @@ describe('any', () => {
                 }],
                 [{ a: 1, b: 2 }, true],
                 [{ a: 1, b: 3 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [2]]',
+                    message: '"b" must be one of [2]',
                     details: [{
                         message: '"b" must be one of [2]',
                         path: ['b'],
@@ -736,7 +736,7 @@ describe('any', () => {
                 }],
                 [{ a: 2, b: 3 }, true],
                 [{ a: 2, b: 4 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [3]]',
+                    message: '"b" must be one of [3]',
                     details: [{
                         message: '"b" must be one of [3]',
                         path: ['b'],
@@ -761,7 +761,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: 0, b: 1 }, true],
                 [{ a: 0, b: 2 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [1]]',
+                    message: '"b" must be one of [1]',
                     details: [{
                         message: '"b" must be one of [1]',
                         path: ['b'],
@@ -772,7 +772,7 @@ describe('any', () => {
                 [{ a: 1, b: 2 }, true],
                 [{ a: 1, b: 3 }, true],
                 [{ a: 2, b: 3 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [2]]',
+                    message: '"b" must be one of [2]',
                     details: [{
                         message: '"b" must be one of [2]',
                         path: ['b'],
@@ -782,7 +782,7 @@ describe('any', () => {
                 }],
                 [{ a: 2, b: 2 }, true],
                 [{ a: 42, b: 128 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [2]]',
+                    message: '"b" must be one of [2]',
                     details: [{
                         message: '"b" must be one of [2]',
                         path: ['b'],
@@ -807,7 +807,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: 0, b: 1 }, true],
                 [{ a: 0, b: 2 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [10, 1]]',
+                    message: '"b" must be one of [10, 1]',
                     details: [{
                         message: '"b" must be one of [10, 1]',
                         path: ['b'],
@@ -818,7 +818,7 @@ describe('any', () => {
                 [{ a: 0, b: 10 }, true],
                 [{ a: 1, b: 2 }, true],
                 [{ a: 1, b: 3 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [10, 2]]',
+                    message: '"b" must be one of [10, 2]',
                     details: [{
                         message: '"b" must be one of [10, 2]',
                         path: ['b'],
@@ -829,7 +829,7 @@ describe('any', () => {
                 [{ a: 1, b: 10 }, true],
                 [{ a: 2, b: 3 }, true],
                 [{ a: 2, b: 4 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [10, 3]]',
+                    message: '"b" must be one of [10, 3]',
                     details: [{
                         message: '"b" must be one of [10, 3]',
                         path: ['b'],
@@ -839,7 +839,7 @@ describe('any', () => {
                 }],
                 [{ a: 2, b: 10 }, true],
                 [{ a: 42, b: 128 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [10]]',
+                    message: '"b" must be one of [10]',
                     details: [{
                         message: '"b" must be one of [10]',
                         path: ['b'],
@@ -995,7 +995,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: 5 }, false, null, {
-                    message: 'child "b" fails because ["b" is required]',
+                    message: '"b" is required',
                     details: [{
                         message: '"b" is required',
                         path: ['b'],
@@ -1004,7 +1004,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 5, b: 6 }, false, null, {
-                    message: 'child "c" fails because ["c" is required]',
+                    message: '"c" is required',
                     details: [{
                         message: '"c" is required',
                         path: ['c'],
@@ -1013,17 +1013,17 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 5, b: 6, c: {} }, false, null, {
-                    message: 'child "c" fails because [child "d" fails because ["d" is required]]',
+                    message: '"c.d" is required',
                     details: [{
-                        message: '"d" is required',
+                        message: '"c.d" is required',
                         path: ['c', 'd'],
                         type: 'any.required',
-                        context: { label: 'd', key: 'd' }
+                        context: { label: 'c.d', key: 'd' }
                     }]
                 }],
                 [{ a: 5, b: 6, c: { d: 7 } }, true],
                 [{}, false, null, {
-                    message: 'child "a" fails because ["a" is required]',
+                    message: '"a" is required',
                     details: [{
                         message: '"a" is required',
                         path: ['a'],
@@ -1032,7 +1032,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ b: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" is required]',
+                    message: '"a" is required',
                     details: [{
                         message: '"a" is required',
                         path: ['a'],
@@ -1062,7 +1062,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: 5 }, true],
                 [{ a: 5, b: 6 }, false, null, {
-                    message: 'child "b" fails because ["b" is not allowed]',
+                    message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
                         path: ['b'],
@@ -1071,7 +1071,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 'a' }, false, null, {
-                    message: 'child "a" fails because ["a" must be a number]',
+                    message: '"a" must be a number',
                     details: [{
                         message: '"a" must be a number',
                         path: ['a'],
@@ -1082,7 +1082,7 @@ describe('any', () => {
                 [{}, true],
                 [{ b: undefined }, true],
                 [{ b: null }, false, null, {
-                    message: 'child "b" fails because ["b" is not allowed]',
+                    message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
                         path: ['b'],
@@ -1120,7 +1120,7 @@ describe('any', () => {
                 message: '"value" must be a string',
                 path: [],
                 type: 'string.base',
-                context: { value: 1, label: 'value', key: undefined }
+                context: { value: 1, label: 'value' }
             }]);
         });
 
@@ -1313,7 +1313,7 @@ describe('any', () => {
                 message: '"value" contains an invalid value',
                 path: [],
                 type: 'any.invalid',
-                context: { value: 2, invalids: [Infinity, -Infinity, 2], label: 'value', key: undefined }
+                context: { value: 2, invalids: [Infinity, -Infinity, 2], label: 'value' }
             }]);
         });
     });
@@ -1343,7 +1343,7 @@ describe('any', () => {
                 message: '"value" must be a number',
                 path: [],
                 type: 'number.base',
-                context: { label: 'value', key: undefined, value: '2' }
+                context: { label: 'value', value: '2' }
             }]);
         });
 
@@ -1356,7 +1356,7 @@ describe('any', () => {
                 message: '"value" must be a number',
                 path: [],
                 type: 'number.base',
-                context: { label: 'value', key: undefined, value: '2' }
+                context: { label: 'value', value: '2' }
             }]);
         });
     });
@@ -1405,7 +1405,7 @@ describe('any', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: '1' }
+                        context: { label: 'value', value: '1' }
                     }]
                 }]
             ]);
@@ -1424,7 +1424,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1437,7 +1437,7 @@ describe('any', () => {
                         message: '"value" must be one of [b]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'a', valids: ['b'], label: 'value', key: undefined }
+                        context: { value: 'a', valids: ['b'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1461,7 +1461,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a'], label: 'value', key: undefined }
+                        context: { value: 'a', invalids: ['', 'a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1474,7 +1474,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b', invalids: ['b'], label: 'value', key: undefined }
+                        context: { value: 'b', invalids: ['b'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1486,7 +1486,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'a', invalids: ['', 'a', 'b'], label: 'value' }
                     }]
                 }],
                 ['b', false, null, {
@@ -1495,7 +1495,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b', invalids: ['', 'a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'b', invalids: ['', 'a', 'b'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1514,7 +1514,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b', invalids: ['', 'b'], label: 'value', key: undefined }
+                        context: { value: 'b', invalids: ['', 'b'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1527,7 +1527,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a'], label: 'value', key: undefined }
+                        context: { value: 'a', invalids: ['', 'a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1539,7 +1539,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a'], label: 'value', key: undefined }
+                        context: { value: 'a', invalids: ['', 'a'], label: 'value' }
                     }]
                 }],
                 ['b', true]
@@ -1558,7 +1558,7 @@ describe('any', () => {
                         message: '"value" must be larger than or equal to 5',
                         path: [],
                         type: 'number.min',
-                        context: { limit: 5, value: 4, label: 'value', key: undefined }
+                        context: { limit: 5, value: 4, label: 'value' }
                     }]
                 }],
                 [11, true]
@@ -1572,7 +1572,7 @@ describe('any', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }]
             ]);
@@ -1584,7 +1584,7 @@ describe('any', () => {
                         message: '"value" must be larger than or equal to 5',
                         path: [],
                         type: 'number.min',
-                        context: { limit: 5, value: 4, label: 'value', key: undefined }
+                        context: { limit: 5, value: 4, label: 'value' }
                     }]
                 }],
                 [6, true],
@@ -1594,7 +1594,7 @@ describe('any', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }]
             ]);
@@ -1613,7 +1613,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'A', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'A', valids: ['a'], label: 'value' }
                     }]
                 }],
                 ['b', false, null, {
@@ -1622,7 +1622,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1636,7 +1636,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1655,7 +1655,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'A', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'A', valids: ['a'], label: 'value' }
                     }]
                 }],
                 ['b', false, null, {
@@ -1664,7 +1664,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
                 ['', true, null, undefined],
@@ -1674,7 +1674,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: ' ', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: ' ', valids: ['a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1689,7 +1689,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -1698,7 +1698,7 @@ describe('any', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [' ', true, null, undefined]
@@ -1734,7 +1734,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'A', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'A', valids: ['a'], label: 'value' }
                     }]
                 }],
                 ['b', false, null, {
@@ -1743,7 +1743,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
                 ['', true, null, undefined],
@@ -1753,7 +1753,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: ' ', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: ' ', valids: ['a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1768,7 +1768,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
                 ['', true, null, undefined],
@@ -1778,7 +1778,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: ' ', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: ' ', valids: ['a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1808,7 +1808,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'b', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
                 ['', true, null, undefined],
@@ -1818,7 +1818,7 @@ describe('any', () => {
                         message: '"value" must be one of [a]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: ' ', valids: ['a'], label: 'value', key: undefined }
+                        context: { value: ' ', valids: ['a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1867,7 +1867,7 @@ describe('any', () => {
             Helper.validate(b, [
                 [{ b: 1 }, true],
                 [{ b: 2 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [1]]',
+                    message: '"b" must be one of [1]',
                     details: [{
                         message: '"b" must be one of [1]',
                         path: ['b'],
@@ -1880,7 +1880,7 @@ describe('any', () => {
             Helper.validate(a.concat(b), [
                 [{ b: 1 }, true],
                 [{ b: 2 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [1]]',
+                    message: '"b" must be one of [1]',
                     details: [{
                         message: '"b" must be one of [1]',
                         path: ['b'],
@@ -1893,7 +1893,7 @@ describe('any', () => {
             Helper.validate(b.concat(a), [
                 [{ b: 1 }, true],
                 [{ b: 2 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [1]]',
+                    message: '"b" must be one of [1]',
                     details: [{
                         message: '"b" must be one of [1]',
                         path: ['b'],
@@ -2023,7 +2023,7 @@ describe('any', () => {
             Helper.validate(a, [
                 [{ a: 1, b: 2, c: 3 }, true],
                 [{ a: 3, b: 1, c: 2 }, false, null, {
-                    message: 'child "a" fails because ["a" must be one of [1]]',
+                    message: '"a" must be one of [1]',
                     details: [{
                         message: '"a" must be one of [1]',
                         path: ['a'],
@@ -2035,7 +2035,7 @@ describe('any', () => {
 
             Helper.validate(b, [
                 [{ a: 1, b: 2, c: 3 }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [1]]',
+                    message: '"b" must be one of [1]',
                     details: [{
                         message: '"b" must be one of [1]',
                         path: ['b'],
@@ -2051,7 +2051,7 @@ describe('any', () => {
                 [{ a: 3, b: 1, c: 2 }, true],
                 [{ a: 1, b: 2, c: 2 }, true],
                 [{ a: 1, b: 2, c: 4 }, false, null, {
-                    message: 'child "c" fails because ["c" must be one of [3, 2]]',
+                    message: '"c" must be one of [3, 2]',
                     details: [{
                         message: '"c" must be one of [3, 2]',
                         path: ['c'],
@@ -2088,7 +2088,7 @@ describe('any', () => {
                 [{ a: { c: '5' }, b: 5 }, true],
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
                 [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                    message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
                     details: [
                         {
                             message: '"b" must be one of [ref:a.c]',
@@ -2139,14 +2139,14 @@ describe('any', () => {
                 message: '"value" is required',
                 path: [],
                 type: 'any.required',
-                context: { label: 'value', key: undefined }
+                context: { label: 'value' }
             }]);
             expect(schema.validate(1).error.message).to.equal('"value" must be one of [0]');
             expect(schema.validate(1).error.details).to.equal([{
                 message: '"value" must be one of [0]',
                 path: [],
                 type: 'any.allowOnly',
-                context: { value: 1, valids: [0], label: 'value', key: undefined }
+                context: { value: 1, valids: [0], label: 'value' }
             }]);
 
         });
@@ -2173,7 +2173,7 @@ describe('any', () => {
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, true],
                 [{ a: 5, b: 'z' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, y]]',
+                    message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
                         path: ['b'],
@@ -2183,7 +2183,7 @@ describe('any', () => {
                 }],
                 [{ a: 1, b: 'x' }, true],
                 [{ a: 1, b: 'y' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, z]]',
+                    message: '"b" must be one of [x, z]',
                     details: [{
                         message: '"b" must be one of [x, z]',
                         path: ['b'],
@@ -2193,7 +2193,7 @@ describe('any', () => {
                 }],
                 [{ a: 1, b: 'z' }, true],
                 [{ a: 5, b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, y]]',
+                    message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
                         path: ['b'],
@@ -2202,7 +2202,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, z]]',
+                    message: '"b" must be one of [x, z]',
                     details: [{
                         message: '"b" must be one of [x, z]',
                         path: ['b'],
@@ -2224,7 +2224,7 @@ describe('any', () => {
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, true],
                 [{ a: 5, b: 'z' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, y]]',
+                    message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
                         path: ['b'],
@@ -2234,7 +2234,7 @@ describe('any', () => {
                 }],
                 [{ a: 1, b: 'x' }, true],
                 [{ a: 1, b: 'y' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x]]',
+                    message: '"b" must be one of [x]',
                     details: [{
                         message: '"b" must be one of [x]',
                         path: ['b'],
@@ -2243,7 +2243,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 'z' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x]]',
+                    message: '"b" must be one of [x]',
                     details: [{
                         message: '"b" must be one of [x]',
                         path: ['b'],
@@ -2252,7 +2252,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 5, b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, y]]',
+                    message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
                         path: ['b'],
@@ -2261,7 +2261,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x]]',
+                    message: '"b" must be one of [x]',
                     details: [{
                         message: '"b" must be one of [x]',
                         path: ['b'],
@@ -2282,7 +2282,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x]]',
+                    message: '"b" must be one of [x]',
                     details: [{
                         message: '"b" must be one of [x]',
                         path: ['b'],
@@ -2291,7 +2291,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 5, b: 'z' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x]]',
+                    message: '"b" must be one of [x]',
                     details: [{
                         message: '"b" must be one of [x]',
                         path: ['b'],
@@ -2301,7 +2301,7 @@ describe('any', () => {
                 }],
                 [{ a: 1, b: 'x' }, true],
                 [{ a: 1, b: 'y' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, z]]',
+                    message: '"b" must be one of [x, z]',
                     details: [{
                         message: '"b" must be one of [x, z]',
                         path: ['b'],
@@ -2311,7 +2311,7 @@ describe('any', () => {
                 }],
                 [{ a: 1, b: 'z' }, true],
                 [{ a: 5, b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x]]',
+                    message: '"b" must be one of [x]',
                     details: [{
                         message: '"b" must be one of [x]',
                         path: ['b'],
@@ -2320,7 +2320,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, z]]',
+                    message: '"b" must be one of [x, z]',
                     details: [{
                         message: '"b" must be one of [x, z]',
                         path: ['b'],
@@ -2342,7 +2342,7 @@ describe('any', () => {
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, true],
                 [{ a: 5, b: 'z' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, y]]',
+                    message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
                         path: ['b'],
@@ -2352,7 +2352,7 @@ describe('any', () => {
                 }],
                 [{ a: 1, b: 'x' }, true],
                 [{ a: 1, b: 'y' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x]]',
+                    message: '"b" must be one of [x]',
                     details: [{
                         message: '"b" must be one of [x]',
                         path: ['b'],
@@ -2361,7 +2361,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 'z' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x]]',
+                    message: '"b" must be one of [x]',
                     details: [{
                         message: '"b" must be one of [x]',
                         path: ['b'],
@@ -2370,7 +2370,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 5, b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x, y]]',
+                    message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
                         path: ['b'],
@@ -2379,7 +2379,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" must be one of [x]]',
+                    message: '"b" must be one of [x]',
                     details: [{
                         message: '"b" must be one of [x]',
                         path: ['b'],
@@ -2406,7 +2406,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: 0 }, false, null, {
-                    message: 'child "a" fails because ["a" must be a string]',
+                    message: '"a" must be a string',
                     details: [{
                         message: '"a" must be a string',
                         path: ['a'],
@@ -2416,7 +2416,7 @@ describe('any', () => {
                 }],
                 [{ a: 'a' }, true],
                 [{ a: 'a', b: 'b' }, false, null, {
-                    message: 'child "b" fails because ["b" must be a number]',
+                    message: '"b" must be a number',
                     details: [{
                         message: '"b" must be a number',
                         path: ['b'],
@@ -2427,7 +2427,7 @@ describe('any', () => {
                 [{ a: 'a', b: 0 }, true],
                 [{ a: 'a', b: 0, c: true }, true],
                 [{ a: 'a', b: 0, c: 'c' }, false, null, {
-                    message: 'child "c" fails because ["c" must be a boolean]',
+                    message: '"c" must be a boolean',
                     details: [{
                         message: '"c" must be a boolean',
                         path: ['c'],
@@ -2436,7 +2436,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 'aa' }, false, null, {
-                    message: 'child "b" fails because ["b" is required]',
+                    message: '"b" is required',
                     details: [{
                         message: '"b" is required',
                         path: ['b'],
@@ -2448,7 +2448,7 @@ describe('any', () => {
                 [{ a: 'aa', b: 10 }, true],
                 [{ a: 'a', b: 10 }, true],
                 [{ a: 'a', b: 10, c: true }, false, null, {
-                    message: 'child "a" fails because ["a" length must be at least 3 characters long]',
+                    message: '"a" length must be at least 3 characters long',
                     details: [{
                         message: '"a" length must be at least 3 characters long',
                         path: ['a'],
@@ -2468,7 +2468,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ b: 5 }, false, null, {
-                    message: 'child "a" fails because ["a" is required]',
+                    message: '"a" is required',
                     details: [{
                         message: '"a" is required',
                         path: ['a'],
@@ -2580,7 +2580,7 @@ describe('any', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: 42, label: 'value', key: undefined }
+                        context: { value: 42, label: 'value' }
                     }]
                 }]
             ]);
@@ -2598,7 +2598,7 @@ describe('any', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 ['def', true, null, 'def']
@@ -2617,7 +2617,7 @@ describe('any', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }]
             ]);
@@ -2635,7 +2635,7 @@ describe('any', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }]
             ]);
@@ -2665,8 +2665,7 @@ describe('any', () => {
                         context: {
                             peers: ['a', 'b'],
                             peersWithLabels: ['a', 'b'],
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -2679,8 +2678,7 @@ describe('any', () => {
                         context: {
                             peers: ['a', 'b'],
                             peersWithLabels: ['a', 'b'],
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -2739,12 +2737,12 @@ describe('any', () => {
                 message: `"value" must be one of [${d}]`,
                 path: [],
                 type: 'any.allowOnly',
-                context: { value: new Date(d.getTime() + 1), valids: [d], label: 'value', key: undefined }
+                context: { value: new Date(d.getTime() + 1), valids: [d], label: 'value' }
             }]);
             expect(Joi.valid(Joi.ref('$a')).validate(d, { context: { a: new Date(d.getTime()) } }).error).to.be.null();
             expect(Joi.object({ a: Joi.date(), b: Joi.valid(Joi.ref('a')) }).validate({ a: d, b: d }).error).to.be.null();
             expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.ref('a')) }).validate({ a: d, b: d }).error).to.be.null();
-            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.ref('a')) }).validate({ a: new Date(0), b: d }).error).to.be.an.error(`child "b" fails because ["b" must be one of [ref:a]]`);
+            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.ref('a')) }).validate({ a: new Date(0), b: d }).error).to.be.an.error('"b" must be one of [ref:a]');
 
             const str = 'foo';
             expect(Joi.valid(str).validate(str).error).to.be.null();
@@ -2753,7 +2751,7 @@ describe('any', () => {
                 message: '"value" must be one of [foo]',
                 path: [],
                 type: 'any.allowOnly',
-                context: { value: 'foobar', valids: [str], label: 'value', key: undefined }
+                context: { value: 'foobar', valids: [str], label: 'value' }
             }]);
 
             const s = Symbol('foo');
@@ -2764,7 +2762,7 @@ describe('any', () => {
                 message: '"value" must be one of [Symbol(foo)]',
                 path: [],
                 type: 'any.allowOnly',
-                context: { value: otherSymbol, valids: [s], label: 'value', key: undefined }
+                context: { value: otherSymbol, valids: [s], label: 'value' }
             }]);
 
             const o = {};
@@ -2774,7 +2772,7 @@ describe('any', () => {
                 message: '"value" must be one of [[object Object]]',
                 path: [],
                 type: 'any.allowOnly',
-                context: { value: o, valids: [o], label: 'value', key: undefined }
+                context: { value: o, valids: [o], label: 'value' }
             }]);
 
             const f = () => {};
@@ -2785,7 +2783,7 @@ describe('any', () => {
                 message: '"value" must be one of [() => {}]',
                 path: [],
                 type: 'any.allowOnly',
-                context: { value: otherFunction, valids: [f], label: 'value', key: undefined }
+                context: { value: otherFunction, valids: [f], label: 'value' }
             }]);
 
             const b = Buffer.from('foo');
@@ -2795,7 +2793,7 @@ describe('any', () => {
                 message: '"value" must be one of [foo]',
                 path: [],
                 type: 'any.allowOnly',
-                context: { value: Buffer.from('foobar'), valids: [b], label: 'value', key: undefined }
+                context: { value: Buffer.from('foobar'), valids: [b], label: 'value' }
             }]);
 
         });
@@ -2877,7 +2875,7 @@ describe('any', () => {
 
             const err = await expect(Joi.validate({ a: 22, b: { c: 'x' } }, schema)).to.reject();
             expect(err.isJoi).to.be.true();
-            expect(err.message).to.equal('child "a" fails because ["a" must be a string]');
+            expect(err.message).to.equal('"a" must be a string');
             expect(err.details).to.equal([{
                 message: '"a" must be a string',
                 path: ['a'],
@@ -2927,12 +2925,12 @@ describe('any', () => {
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: 'x' } }, schema)).to.reject();
                 expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('child "b" fails because [child "c" fails because [Really wanted a number!]]');
+                expect(err.message).to.equal('Really wanted a number!');
                 expect(err.details).to.equal([{
                     message: 'Really wanted a number!',
                     path: ['b', 'c'],
                     type: 'number.base',
-                    context: { key: 'c', label: 'c', value: 'x' }
+                    context: { key: 'c', label: 'b.c', value: 'x' }
                 }]);
             });
 
@@ -2950,19 +2948,19 @@ describe('any', () => {
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
                 expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" must be larger than or equal to 0 and "c" must be an integer]]');
+                expect(err.message).to.equal('"b.c" must be larger than or equal to 0 and "b.c" must be an integer');
                 expect(err.details).to.equal([
                     {
-                        message: '"c" must be larger than or equal to 0 and "c" must be an integer',
+                        message: '"b.c" must be larger than or equal to 0 and "b.c" must be an integer',
                         path: ['b', 'c'],
                         type: 'number.min',
-                        context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
+                        context: { limit: 0, value: -1.5, key: 'c', label: 'b.c' }
                     },
                     {
-                        message: '"c" must be larger than or equal to 0 and "c" must be an integer',
+                        message: '"b.c" must be larger than or equal to 0 and "b.c" must be an integer',
                         path: ['b', 'c'],
                         type: 'number.integer',
-                        context: { value: -1.5, key: 'c', label: 'c' }
+                        context: { value: -1.5, key: 'c', label: 'b.c' }
                     }
                 ]);
             });
@@ -2997,111 +2995,19 @@ describe('any', () => {
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
                 expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" > 0 && "c" ∈ ℤ]]');
+                expect(err.message).to.equal('"c" > 0 && "c" ∈ ℤ');
                 expect(err.details).to.equal([
                     {
                         message: '"c" > 0 && "c" ∈ ℤ',
                         path: ['b', 'c'],
                         type: 'number.min',
-                        context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
+                        context: { limit: 0, value: -1.5, key: 'c', label: 'b.c' }
                     },
                     {
                         message: '"c" > 0 && "c" ∈ ℤ',
                         path: ['b', 'c'],
                         type: 'number.integer',
-                        context: { value: -1.5, key: 'c', label: 'c' }
-                    }
-                ]);
-            });
-
-            it('should be able to override at the root level', async () => {
-
-                const schema = Joi.object({
-                    a: Joi.string(),
-                    b: {
-                        c: Joi.number().min(0).integer().strict()
-                    }
-                }).error((errors) => {
-
-                    const getLeafs = (errs, leafs = []) => {
-
-                        errs.forEach((err) => {
-
-                            if (err.context.reason) {
-                                getLeafs(err.context.reason, leafs);
-                            }
-                            else {
-                                leafs.push(err);
-                            }
-                        });
-
-                        return leafs;
-                    };
-
-                    return getLeafs(errors).join(' | ');
-                });
-
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
-                expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('"c" must be larger than or equal to 0 | "c" must be an integer');
-                expect(err.details).to.equal([
-                    {
-                        message: '"c" must be larger than or equal to 0',
-                        path: ['b', 'c'],
-                        type: 'number.min',
-                        context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
-                    },
-                    {
-                        message: '"c" must be an integer',
-                        path: ['b', 'c'],
-                        type: 'number.integer',
-                        context: { value: -1.5, key: 'c', label: 'c' }
-                    }
-                ]);
-            });
-
-            it('should be able to override at several levels', async () => {
-
-                const schema = Joi.object({
-                    a: Joi.string(),
-                    b: {
-                        c: Joi.number().min(0).integer().strict().error(() => '"c" must be a positive integer')
-                    }
-                }).error((errors) => {
-
-                    const getLeafs = (errs, leafs = []) => {
-
-                        errs.forEach((err) => {
-
-                            if (err.context.reason && err.type !== 'override') {
-                                getLeafs(err.context.reason, leafs);
-                            }
-                            else {
-                                leafs.push(err);
-                            }
-                        });
-
-                        return leafs;
-                    };
-
-                    return getLeafs(errors).join(' | ');
-                });
-
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
-                expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('"c" must be a positive integer');
-                expect(err.details).to.equal([
-                    {
-                        message: '"c" must be a positive integer',
-                        path: ['b', 'c'],
-                        type: 'number.min',
-                        context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
-                    },
-                    {
-                        message: '"c" must be a positive integer',
-                        path: ['b', 'c'],
-                        type: 'number.integer',
-                        context: { value: -1.5, key: 'c', label: 'c' }
+                        context: { value: -1.5, key: 'c', label: 'b.c' }
                     }
                 ]);
             });
@@ -3123,13 +3029,13 @@ describe('any', () => {
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
                 expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('child "b" fails because [child "c" fails because [Moar numbers !]]');
+                expect(err.message).to.equal('Moar numbers !');
                 expect(err.details).to.equal([
                     {
                         message: 'Moar numbers !',
                         path: ['b', 'c'],
                         type: 'override',
-                        context: { value: -1.5, key: 'c', label: 'c' }
+                        context: { value: -1.5, key: 'c', label: 'b.c' }
                     }
                 ]);
             });
@@ -3150,13 +3056,13 @@ describe('any', () => {
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
                 expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('child "b" fails because [child "c" fails because [Moar numbers !]]');
+                expect(err.message).to.equal('Moar numbers !');
                 expect(err.details).to.equal([
                     {
                         message: 'Moar numbers !',
                         path: ['b', 'c'],
                         type: 'override',
-                        context: { value: -1.5, key: 'c', label: 'c' }
+                        context: { value: -1.5, key: 'c', label: 'b.c' }
                     }
                 ]);
             });
@@ -3177,13 +3083,13 @@ describe('any', () => {
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
                 expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" oops, I received -1.5]]');
+                expect(err.message).to.equal('"b.c" oops, I received -1.5');
                 expect(err.details).to.equal([
                     {
-                        message: '"c" oops, I received -1.5',
+                        message: '"b.c" oops, I received -1.5',
                         path: ['b', 'c'],
                         type: 'override',
-                        context: { value: -1.5, key: 'c', label: 'c' }
+                        context: { value: -1.5, key: 'c', label: 'b.c' }
                     }
                 ]);
             });
@@ -3199,19 +3105,19 @@ describe('any', () => {
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
                 expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('child "b" fails because [child "c" fails because ["c" must be larger than or equal to 0, "c" must be an integer]]');
+                expect(err.message).to.equal('"b.c" must be larger than or equal to 0. "b.c" must be an integer');
                 expect(err.details).to.equal([
                     {
-                        message: '"c" must be larger than or equal to 0',
+                        message: '"b.c" must be larger than or equal to 0',
                         path: ['b', 'c'],
                         type: 'number.min',
-                        context: { limit: 0, value: -1.5, key: 'c', label: 'c' }
+                        context: { limit: 0, value: -1.5, key: 'c', label: 'b.c' }
                     },
                     {
-                        message: '"c" must be an integer',
+                        message: '"b.c" must be an integer',
                         path: ['b', 'c'],
                         type: 'number.integer',
-                        context: { value: -1.5, key: 'c', label: 'c' }
+                        context: { value: -1.5, key: 'c', label: 'b.c' }
                     }
                 ]);
             });
@@ -3279,7 +3185,7 @@ describe('any', () => {
                     });
 
                     const outsideErr = await expect(schema.validate({})).to.reject();
-                    expect(outsideErr.message).to.equal('child "a" fails because [Must provide a]');
+                    expect(outsideErr.message).to.equal('Must provide a');
                     expect(outsideErr.details).to.equal([{
                         message: 'Must provide a',
                         path: ['a'],
@@ -3288,12 +3194,12 @@ describe('any', () => {
                     }]);
 
                     const insideErr = await expect(schema.validate({ a: { b: 'x' } })).to.reject();
-                    expect(insideErr.message).to.equal('child "a" fails because [child "b" fails because [Really wanted a number!]]');
+                    expect(insideErr.message).to.equal('Really wanted a number!');
                     expect(insideErr.details).to.equal([{
                         message: 'Really wanted a number!',
                         path: ['a', 'b'],
                         type: 'number.base',
-                        context: { value: 'x', key: 'b', label: 'b' }
+                        context: { value: 'x', key: 'b', label: 'a.b' }
                     }]);
                 });
 
@@ -3306,7 +3212,7 @@ describe('any', () => {
                     });
 
                     const outsideErr = await expect(schema.validate({})).to.reject();
-                    expect(outsideErr.message).to.equal('child "a" fails because [Must provide a]');
+                    expect(outsideErr.message).to.equal('Must provide a');
                     expect(outsideErr.details).to.equal([{
                         message: 'Must provide a',
                         path: ['a'],
@@ -3315,12 +3221,12 @@ describe('any', () => {
                     }]);
 
                     const insideErr = await expect(schema.validate({ a: ['x'] })).to.reject();
-                    expect(insideErr.message).to.equal('child "a" fails because ["a" at position 0 fails because [Really wanted a number!]]');
+                    expect(insideErr.message).to.equal('Really wanted a number!');
                     expect(insideErr.details).to.equal([{
                         message: 'Really wanted a number!',
                         path: ['a', 0],
                         type: 'number.base',
-                        context: { value: 'x', key: 0, label: 0 }
+                        context: { value: 'x', key: 0, label: 'a[0]' }
                     }]);
                 });
             });

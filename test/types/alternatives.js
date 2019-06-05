@@ -29,7 +29,6 @@ describe('alternatives', () => {
         expect(err.details).to.equal([
             {
                 context: {
-                    key: undefined,
                     label: 'value'
                 },
                 message: '"value" not matching any of the allowed alternatives',
@@ -108,13 +107,13 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be a string]',
+                    message: '"value" must be a boolean, "p" must be a boolean, "p" must be a string',
                     details: [
                         {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined, value: { p: 1 } }
+                            context: { label: 'value', value: { p: 1 } }
                         },
                         {
                             message: '"p" must be a boolean',
@@ -131,13 +130,13 @@ describe('alternatives', () => {
                     ]
                 }],
                 [{ p: '...' }, false, null, {
-                    message: '"value" must be a boolean, child "p" fails because ["p" must be a boolean, "p" must be one of [foo, bar]]',
+                    message: '"value" must be a boolean, "p" must be a boolean, "p" must be one of [foo, bar]',
                     details: [
                         {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined, value: { p: '...' } }
+                            context: { label: 'value', value: { p: '...' } }
                         },
                         {
                             message: '"p" must be a boolean',
@@ -160,13 +159,13 @@ describe('alternatives', () => {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined, value: 1 }
+                            context: { label: 'value', value: 1 }
                         },
                         {
                             message: '"value" must be an object',
                             path: [],
                             type: 'object.base',
-                            context: { label: 'value', key: undefined, value: 1 }
+                            context: { label: 'value', value: 1 }
                         }
                     ]
                 }]
@@ -187,13 +186,13 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be a string',
+                    message: '"value" must be a boolean, "p" must be a boolean, "p" must be a string',
                     details: [
                         {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined, value: { p: 1 } }
+                            context: { label: 'value', value: { p: 1 } }
                         },
                         {
                             message: '"p" must be a boolean',
@@ -210,13 +209,13 @@ describe('alternatives', () => {
                     ]
                 }],
                 [{ p: '...' }, false, null, {
-                    message: '"value" must be a boolean, child "p" fails because "p" must be a boolean, "p" must be one of foo, bar',
+                    message: '"value" must be a boolean, "p" must be a boolean, "p" must be one of foo, bar',
                     details: [
                         {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined, value: { p: '...' } }
+                            context: { label: 'value', value: { p: '...' } }
                         },
                         {
                             message: '"p" must be a boolean',
@@ -239,13 +238,13 @@ describe('alternatives', () => {
                             message: '"value" must be a boolean',
                             path: [],
                             type: 'boolean.base',
-                            context: { label: 'value', key: undefined, value: 1 }
+                            context: { label: 'value', value: 1 }
                         },
                         {
                             message: '"value" must be an object',
                             path: [],
                             type: 'object.base',
-                            context: { label: 'value', key: undefined, value: 1 }
+                            context: { label: 'value', value: 1 }
                         }
                     ]
                 }]
@@ -286,7 +285,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5 }, true],
                     [{ a: 'x', b: 6 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        message: '"a" must be one of [y]',
                         details: [{
                             message: '"a" must be one of [y]',
                             path: ['a'],
@@ -295,7 +294,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y', b: 5 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -305,7 +304,7 @@ describe('alternatives', () => {
                     }],
                     [{ a: 'y', b: 6 }, true],
                     [{ a: 'z', b: 5 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -314,7 +313,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'z', b: 6 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        message: '"a" must be one of [y]',
                         details: [{
                             message: '"a" must be one of [y]',
                             path: ['a'],
@@ -343,7 +342,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: true, b: 'x' }, true],
                     [{ a: true, b: 5 }, false, null, {
-                        message: 'child "b" fails because ["b" must be a string]',
+                        message: '"b" must be a string',
                         details: [{
                             message: '"b" must be a string',
                             path: ['b'],
@@ -352,7 +351,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: true }, false, null, {
-                        message: 'child "b" fails because ["b" is required]',
+                        message: '"b" is required',
                         details: [{
                             message: '"b" is required',
                             path: ['b'],
@@ -361,7 +360,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: true, c: 5 }, false, null, {
-                        message: 'child "b" fails because ["b" is required]',
+                        message: '"b" is required',
                         details: [{
                             message: '"b" is required',
                             path: ['b'],
@@ -370,7 +369,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: true, c: 'x' }, false, null, {
-                        message: 'child "b" fails because ["b" is required]',
+                        message: '"b" is required',
                         details: [{
                             message: '"b" is required',
                             path: ['b'],
@@ -380,7 +379,7 @@ describe('alternatives', () => {
                     }],
 
                     [{ a: false, b: 'x' }, false, null, {
-                        message: 'child "c" fails because ["c" is required]',
+                        message: '"c" is required',
                         details: [{
                             message: '"c" is required',
                             path: ['c'],
@@ -389,7 +388,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: false, b: 5 }, false, null, {
-                        message: 'child "c" fails because ["c" is required]',
+                        message: '"c" is required',
                         details: [{
                             message: '"c" is required',
                             path: ['c'],
@@ -398,7 +397,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: false }, false, null, {
-                        message: 'child "c" fails because ["c" is required]',
+                        message: '"c" is required',
                         details: [{
                             message: '"c" is required',
                             path: ['c'],
@@ -407,7 +406,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: false, c: 5 }, false, null, {
-                        message: 'child "c" fails because ["c" must be a string]',
+                        message: '"c" must be a string',
                         details: [{
                             message: '"c" must be a string',
                             path: ['c'],
@@ -437,7 +436,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: true, b: 'x' }, true],
                     [{ a: true, b: 5 }, false, null, {
-                        message: 'child "b" fails because ["b" must be a string]',
+                        message: '"b" must be a string',
                         details: [{
                             message: '"b" must be a string',
                             path: ['b'],
@@ -446,7 +445,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: true }, false, null, {
-                        message: 'child "b" fails because ["b" is required]',
+                        message: '"b" is required',
                         details: [{
                             message: '"b" is required',
                             path: ['b'],
@@ -455,7 +454,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: true, c: 5 }, false, null, {
-                        message: 'child "b" fails because ["b" is required]',
+                        message: '"b" is required',
                         details: [{
                             message: '"b" is required',
                             path: ['b'],
@@ -464,7 +463,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: true, c: 'x' }, false, null, {
-                        message: 'child "b" fails because ["b" is required]',
+                        message: '"b" is required',
                         details: [{
                             message: '"b" is required',
                             path: ['b'],
@@ -474,7 +473,7 @@ describe('alternatives', () => {
                     }],
 
                     [{ a: false, b: 'x' }, false, null, {
-                        message: 'child "c" fails because ["c" is required]',
+                        message: '"c" is required',
                         details: [{
                             message: '"c" is required',
                             path: ['c'],
@@ -483,7 +482,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: false, b: 5 }, false, null, {
-                        message: 'child "c" fails because ["c" is required]',
+                        message: '"c" is required',
                         details: [{
                             message: '"c" is required',
                             path: ['c'],
@@ -492,7 +491,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: false }, false, null, {
-                        message: 'child "c" fails because ["c" is required]',
+                        message: '"c" is required',
                         details: [{
                             message: '"c" is required',
                             path: ['c'],
@@ -501,7 +500,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: false, c: 5 }, false, null, {
-                        message: 'child "c" fails because ["c" must be a string]',
+                        message: '"c" must be a string',
                         details: [{
                             message: '"c" must be a string',
                             path: ['c'],
@@ -525,7 +524,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: 'x', '': 5 }, true],
                     [{ a: 'x', '': 6 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        message: '"a" must be one of [y]',
                         details: [{
                             message: '"a" must be one of [y]',
                             path: ['a'],
@@ -534,7 +533,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y', '': 5 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -544,7 +543,7 @@ describe('alternatives', () => {
                     }],
                     [{ a: 'y', '': 6 }, true],
                     [{ a: 'z', '': 5 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -553,7 +552,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'z', '': 6 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        message: '"a" must be one of [y]',
                         details: [{
                             message: '"a" must be one of [y]',
                             path: ['a'],
@@ -576,7 +575,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5 }, true],
                     [{ a: 'x', b: 6 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [z]]',
+                        message: '"a" must be one of [z]',
                         details: [{
                             message: '"a" must be one of [z]',
                             path: ['a'],
@@ -585,7 +584,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y', b: 5 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -594,7 +593,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y', b: 6 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [z]]',
+                        message: '"a" must be one of [z]',
                         details: [{
                             message: '"a" must be one of [z]',
                             path: ['a'],
@@ -603,7 +602,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'z', b: 5 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -626,7 +625,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [z]]',
+                        message: '"a" must be one of [z]',
                         details: [{
                             message: '"a" must be one of [z]',
                             path: ['a'],
@@ -635,7 +634,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'x', b: 6 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        message: '"a" must be one of [y]',
                         details: [{
                             message: '"a" must be one of [y]',
                             path: ['a'],
@@ -644,7 +643,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y', b: 5 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [z]]',
+                        message: '"a" must be one of [z]',
                         details: [{
                             message: '"a" must be one of [z]',
                             path: ['a'],
@@ -655,7 +654,7 @@ describe('alternatives', () => {
                     [{ a: 'y', b: 6 }, true],
                     [{ a: 'z', b: 5 }, true],
                     [{ a: 'z', b: 6 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [y]]',
+                        message: '"a" must be one of [y]',
                         details: [{
                             message: '"a" must be one of [y]',
                             path: ['a'],
@@ -678,7 +677,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 1, b: 1, c: 0 }, false, null, {
-                        message: 'child "c" fails because ["c" must be larger than or equal to 1]',
+                        message: '"c" must be larger than or equal to 1',
                         details: [{
                             message: '"c" must be larger than or equal to 1',
                             path: ['c'],
@@ -702,7 +701,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: 1 }, true],
                     [{ a: 'y' }, false, null, {
-                        message: 'child "a" fails because ["a" must be a number]',
+                        message: '"a" must be a number',
                         details: [{
                             message: '"a" must be a number',
                             path: ['a'],
@@ -712,7 +711,7 @@ describe('alternatives', () => {
                     }],
                     [{ a: 'x', b: null }, true],
                     [{ a: 'y', b: null }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -721,7 +720,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 1, b: null }, false, null, {
-                        message: 'child "a" fails because ["a" must be a string]',
+                        message: '"a" must be a string',
                         details: [{
                             message: '"a" must be a string',
                             path: ['a'],
@@ -743,7 +742,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5, c: '5' }, true],
                     [{ a: 'x', b: 5, c: '1' }, false, null, {
-                        message: 'child "a" fails because ["a" not matching any of the allowed alternatives]',
+                        message: '"a" not matching any of the allowed alternatives',
                         details: [{
                             message: '"a" not matching any of the allowed alternatives',
                             path: ['a'],
@@ -752,7 +751,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'x', b: '5', c: '5' }, false, null, {
-                        message: 'child "a" fails because ["a" not matching any of the allowed alternatives]',
+                        message: '"a" not matching any of the allowed alternatives',
                         details: [{
                             message: '"a" not matching any of the allowed alternatives',
                             path: ['a'],
@@ -761,7 +760,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y', b: 5, c: 5 }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -770,7 +769,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y' }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -794,7 +793,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: 'x', b: date, c: date }, true],
                     [{ a: 'x', b: date, c: Date.now() }, false, null, {
-                        message: 'child "a" fails because ["a" not matching any of the allowed alternatives]',
+                        message: '"a" not matching any of the allowed alternatives',
                         details: [{
                             message: '"a" not matching any of the allowed alternatives',
                             path: ['a'],
@@ -803,7 +802,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y', b: date, c: date }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -812,7 +811,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y' }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -845,7 +844,7 @@ describe('alternatives', () => {
                     [{ a: 'x', b: date, c: date }, true],
                     [{ a: 'x', b: date, c: now }, true, null, { a: 'x', b: date, c: new Date(now) }],
                     [{ a: 'y', b: date, c: date }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -854,7 +853,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y' }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [x]]',
+                        message: '"a" must be one of [x]',
                         details: [{
                             message: '"a" must be one of [x]',
                             path: ['a'],
@@ -876,7 +875,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5, c: '1' }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                        message: '"a" must be one of [ref:c]',
                         details: [{
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
@@ -886,7 +885,7 @@ describe('alternatives', () => {
                     }],
                     [{ a: 1, b: 5, c: '1' }, true],
                     [{ a: '1', b: 5, c: '1' }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                        message: '"a" must be one of [ref:c]',
                         details: [{
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
@@ -908,7 +907,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5, c: '1' }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                        message: '"a" must be one of [ref:c]',
                         details: [{
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
@@ -918,7 +917,7 @@ describe('alternatives', () => {
                     }],
                     [{ a: 1, b: 5, c: '1' }, true],
                     [{ a: '1', b: 5, c: '1' }, false, null, {
-                        message: 'child "a" fails because ["a" must be one of [ref:c]]',
+                        message: '"a" must be one of [ref:c]',
                         details: [{
                             message: '"a" must be one of [ref:c]',
                             path: ['a'],
@@ -956,7 +955,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: 1 }, true],
                     [{}, false, null, {
-                        message: 'child "a" fails because ["a" is required]',
+                        message: '"a" is required',
                         details: [{
                             message: '"a" is required',
                             path: ['a'],
@@ -965,7 +964,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ b: 1 }, false, null, {
-                        message: 'child "a" fails because ["a" is required]',
+                        message: '"a" is required',
                         details: [{
                             message: '"a" is required',
                             path: ['a'],
@@ -976,7 +975,7 @@ describe('alternatives', () => {
                     [{ a: 1, b: 1 }, true],
                     [{ a: 1, b: 5 }, true],
                     [{ b: 5 }, false, null, {
-                        message: 'child "a" fails because ["a" is required]',
+                        message: '"a" is required',
                         details: [{
                             message: '"a" is required',
                             path: ['a'],
@@ -1012,7 +1011,7 @@ describe('alternatives', () => {
                     [{ a: 0, b: 0, c: 789 }, true],
                     [{ a: 123, b: 456, c: 456 }, true],
                     [{ a: 0, b: 0, c: 456 }, false, null, {
-                        message: 'child "c" fails because ["c" must be one of [789]]',
+                        message: '"c" must be one of [789]',
                         details: [{
                             message: '"c" must be one of [789]',
                             path: ['c'],
@@ -1021,7 +1020,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 123, b: 456, c: 789 }, false, null, {
-                        message: 'child "c" fails because ["c" must be one of [456]]',
+                        message: '"c" must be one of [456]',
                         details: [{
                             message: '"c" must be one of [456]',
                             path: ['c'],
@@ -1046,7 +1045,7 @@ describe('alternatives', () => {
                             message: '"value" must be larger than or equal to 10',
                             path: [],
                             type: 'number.min',
-                            context: { limit: 10, value: 1, key: undefined, label: 'value' }
+                            context: { limit: 10, value: 1, label: 'value' }
                         }]
                     }],
                     [10, true, null, 10]
@@ -1066,7 +1065,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ foo: 'whatever' }, true, null, { foo: 'whatever' }],
                     [{ foo: 'hasBar' }, false, null, {
-                        message: 'child "bar" fails because ["bar" is required]',
+                        message: '"bar" is required',
                         details: [{
                             message: '"bar" is required',
                             path: ['bar'],
@@ -1100,7 +1099,7 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: true, b: 1 }, false, null, {
-                    message: 'child "Label b" fails because ["Label b" must be a string]',
+                    message: '"Label b" must be a string',
                     details: [{
                         message: '"Label b" must be a string',
                         path: ['b'],
@@ -1109,7 +1108,7 @@ describe('alternatives', () => {
                     }]
                 }],
                 [{ a: false, b: 1, d: 1 }, false, null, {
-                    message: 'child "Label d" fails because ["Label d" must be a string]',
+                    message: '"Label d" must be a string',
                     details: [{
                         message: '"Label d" must be a string',
                         path: ['d'],
@@ -1118,7 +1117,7 @@ describe('alternatives', () => {
                     }]
                 }],
                 [{ a: false, b: 1, c: 1 }, false, null, {
-                    message: 'child "Label c" fails because ["Label c" must be a string]',
+                    message: '"Label c" must be a string',
                     details: [{
                         message: '"Label c" must be a string',
                         path: ['c'],
@@ -1436,6 +1435,34 @@ describe('alternatives', () => {
             };
 
             expect(Joi.describe(schema)).to.equal(outcome);
+        });
+    });
+
+    describe('error()', () => {
+
+        it('overrides error', async () => {
+
+            const schema = Joi.object({
+                x: Joi.alternatives([
+                    Joi.number(),
+                    Joi.string().error(new Error('failed!'), { self: true })
+                ])
+            });
+
+            await expect(schema.validate({ x: [] })).to.reject('failed!');
+        });
+
+        it('ignores top level error', async () => {
+
+            const schema = Joi.object({
+                x: Joi.alternatives([
+                    Joi.number(),
+                    Joi.string()
+                ])
+                    .error(new Error('failed!'), { self: true })
+            });
+
+            await expect(schema.validate({ x: [] })).to.reject('"x" must be a number, "x" must be a string');
         });
     });
 });

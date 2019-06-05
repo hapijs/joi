@@ -213,17 +213,17 @@ describe('ref', () => {
                     },
                     h: 4
                 }, false, null, {
-                    message: 'child "a" fails because [child "b" fails because [child "ix" fails because ["ix" must be one of [ref:...i]]]]',
+                    message: '"a.b.ix" must be one of [ref:...i]',
                     details: [
                         {
-                            message: '"ix" must be one of [ref:...i]',
+                            message: '"a.b.ix" must be one of [ref:...i]',
                             path: ['a', 'b', 'ix'],
                             type: 'any.allowOnly',
                             context: {
                                 value: 5,
                                 valids: [ix],
                                 key: 'ix',
-                                label: 'ix'
+                                label: 'a.b.ix'
                             }
                         }
                     ]
@@ -302,17 +302,17 @@ describe('ref', () => {
                     },
                     h: 4
                 }, false, null, {
-                    message: 'child "a" fails because [child "b" fails because [child "ix" fails because ["ix" must be one of [ref:...i]]]]',
+                    message: '"a.b.ix" must be one of [ref:...i]',
                     details: [
                         {
-                            message: '"ix" must be one of [ref:...i]',
+                            message: '"a.b.ix" must be one of [ref:...i]',
                             path: ['a', 'b', 'ix'],
                             type: 'any.allowOnly',
                             context: {
                                 value: 5,
                                 valids: [ix],
                                 key: 'ix',
-                                label: 'ix'
+                                label: 'a.b.ix'
                             }
                         }
                     ]
@@ -362,17 +362,17 @@ describe('ref', () => {
             [{ x: [1] }, true],
             [{ x: [2, 2] }, true],
             [{ x: [2, 2, 2] }, false, null, {
-                message: 'child "x" fails because ["x" at position 0 fails because ["0" must be one of [ref:length]]]',
+                message: '"x[0]" must be one of [ref:length]',
                 details: [
                     {
-                        message: '"0" must be one of [ref:length]',
+                        message: '"x[0]" must be one of [ref:length]',
                         path: ['x', 0],
                         type: 'any.allowOnly',
                         context: {
                             value: 2,
                             valids: [ref],
                             key: 0,
-                            label: 0
+                            label: 'x[0]'
                         }
                     }
                 ]
@@ -394,13 +394,13 @@ describe('ref', () => {
             [{ x: [7, 7, 7] }, true],
             [{ x: [2, 2] }, true],
             [{ x: [2, 2, 2] }, false, null, {
-                message: 'child "x" fails because ["x" at position 0 fails because ["0" must be one of [7]]]',
+                message: '"x[0]" must be one of [7]',
                 details: [
                     {
-                        message: '"0" must be one of [7]',
+                        message: '"x[0]" must be one of [7]',
                         path: ['x', 0],
                         type: 'any.allowOnly',
-                        context: { value: 2, valids: [7], key: 0, label: 0 }
+                        context: { value: 2, valids: [7], key: 0, label: 'x[0]' }
                     }
                 ]
             }]
@@ -416,13 +416,13 @@ describe('ref', () => {
             [[1, 2], true],
             [[10, 20], true],
             [[10, 5], false, null, {
-                message: '"value" at position 1 fails because ["1" must be larger than or equal to ref:0]',
+                message: '"[1]" must be larger than or equal to ref:0',
                 details: [
                     {
-                        message: '"1" must be larger than or equal to ref:0',
+                        message: '"[1]" must be larger than or equal to ref:0',
                         path: [1],
                         type: 'number.min',
-                        context: { limit: ref, value: 5, key: 1, label: 1 }
+                        context: { limit: ref, value: 5, key: 1, label: '[1]' }
                     }
                 ]
             }]
@@ -451,7 +451,6 @@ describe('ref', () => {
                         path: [],
                         type: 'object.length',
                         context: {
-                            key: undefined,
                             value: { length: 2, x: 3, y: 4 },
                             limit: ref,
                             label: 'value'
@@ -472,7 +471,7 @@ describe('ref', () => {
 
         const err = await expect(schema.validate({ a: 5, b: 6 })).to.reject();
 
-        expect(err).to.be.an.error('child "a" fails because ["a" must be one of [ref:b]]');
+        expect(err).to.be.an.error('"a" must be one of [ref:b]');
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:b]',
             path: ['a'],
@@ -482,7 +481,7 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{ a: 5 }, false, null, {
-                message: 'child "a" fails because ["a" must be one of [ref:b]]',
+                message: '"a" must be one of [ref:b]',
                 details: [{
                     message: '"a" must be one of [ref:b]',
                     path: ['a'],
@@ -510,7 +509,7 @@ describe('ref', () => {
             [{ a: 10, b: 5 }, true],
             [{ a: 10, b: '5' }, true],
             [{ a: 5 }, false, null, {
-                message: 'child "a" fails because ["a" must be one of [ref:b]]',
+                message: '"a" must be one of [ref:b]',
                 details: [{
                     message: '"a" must be one of [ref:b]',
                     path: ['a'],
@@ -519,7 +518,7 @@ describe('ref', () => {
                 }]
             }],
             [{ a: 5, b: 5 }, false, null, {
-                message: 'child "a" fails because ["a" must be one of [ref:b]]',
+                message: '"a" must be one of [ref:b]',
                 details: [{
                     message: '"a" must be one of [ref:b]',
                     path: ['a'],
@@ -562,7 +561,7 @@ describe('ref', () => {
         });
 
         const err = await expect(schema.validate({ a: 5, '': 6 })).to.reject();
-        expect(err).to.be.an.error('child "a" fails because ["a" must be one of [ref:]]');
+        expect(err).to.be.an.error('"a" must be one of [ref:]');
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:]',
             path: ['a'],
@@ -572,7 +571,7 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{ a: 5 }, false, null, {
-                message: 'child "a" fails because ["a" must be one of [ref:]]',
+                message: '"a" must be one of [ref:]',
                 details: [{
                     message: '"a" must be one of [ref:]',
                     path: ['a'],
@@ -598,7 +597,7 @@ describe('ref', () => {
 
         const err = await expect(schema.validate({ a: 5, b: { c: 6 } })).to.reject();
 
-        expect(err).to.be.an.error('child "a" fails because ["a" must be one of [ref:b.c]]');
+        expect(err).to.be.an.error('"a" must be one of [ref:b.c]');
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:b.c]',
             path: ['a'],
@@ -608,7 +607,7 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{ a: 5 }, false, null, {
-                message: 'child "a" fails because ["a" must be one of [ref:b.c]]',
+                message: '"a" must be one of [ref:b.c]',
                 details: [{
                     message: '"a" must be one of [ref:b.c]',
                     path: ['a'],
@@ -618,7 +617,7 @@ describe('ref', () => {
             }],
             [{ b: { c: 5 } }, true],
             [{ a: 5, b: 5 }, false, null, {
-                message: 'child "b" fails because ["b" must be an object]',
+                message: '"b" must be an object',
                 details: [{
                     message: '"b" must be an object',
                     path: ['b'],
@@ -743,7 +742,7 @@ describe('ref', () => {
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
                 details: [
                     {
                         message: '"b" must be one of [ref:a.c]',
@@ -766,7 +765,7 @@ describe('ref', () => {
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
                 details: [
                     {
                         message: '"b" must be one of [ref:a.c]',
@@ -789,7 +788,7 @@ describe('ref', () => {
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
                 details: [
                     {
                         message: '"b" must be one of [ref:a.c]',
@@ -812,7 +811,7 @@ describe('ref', () => {
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
                 details: [
                     {
                         message: '"b" must be one of [ref:a.c]',
@@ -835,7 +834,7 @@ describe('ref', () => {
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
                 details: [
                     {
                         message: '"b" must be one of [ref:a.c]',
@@ -858,7 +857,7 @@ describe('ref', () => {
             [{ a: { c: '5' }, b: 5 }, true],
             [{ a: { c: '5' }, b: 6, c: '6' }, true],
             [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: 'child "b" fails because ["b" must be one of [ref:a.c], "b" must be one of [ref:c]]',
+                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
                 details: [
                     {
                         message: '"b" must be one of [ref:a.c]',
@@ -908,7 +907,7 @@ describe('ref', () => {
         });
 
         const err = await expect(Joi.validate({ a: 5, b: 6 }, schema, { context: { x: 22 } })).to.reject();
-        expect(err).to.be.an.error('child "a" fails because ["a" must be one of [context:x]]');
+        expect(err).to.be.an.error('"a" must be one of [context:x]');
         expect(err.details).to.equal([{
             message: '"a" must be one of [context:x]',
             path: ['a'],
@@ -918,7 +917,7 @@ describe('ref', () => {
 
         Helper.validateOptions(schema, [
             [{ a: 5 }, false, null, {
-                message: 'child "a" fails because ["a" must be one of [context:x]]',
+                message: '"a" must be one of [context:x]',
                 details: [{
                     message: '"a" must be one of [context:x]',
                     path: ['a'],
@@ -930,7 +929,7 @@ describe('ref', () => {
             [{ b: 5 }, true],
             [{ a: 22, b: 5 }, true],
             [{ a: '22', b: '5' }, false, null, {
-                message: 'child "a" fails because ["a" must be one of [context:x]]',
+                message: '"a" must be one of [context:x]',
                 details: [{
                     message: '"a" must be one of [context:x]',
                     path: ['a'],
@@ -950,7 +949,7 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{}, true],
             [{ a: 'x' }, false, null, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -959,7 +958,7 @@ describe('ref', () => {
                 }]
             }],
             [{ a: true }, false, null, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -969,7 +968,7 @@ describe('ref', () => {
             }],
             [{}, true, { context: {} }],
             [{ a: 'x' }, false, { context: {} }, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -978,7 +977,7 @@ describe('ref', () => {
                 }]
             }],
             [{ a: true }, false, { context: {} }, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -988,7 +987,7 @@ describe('ref', () => {
             }],
             [{}, true, { context: { x: 1 } }],
             [{ a: 'x' }, false, { context: { x: 1 } }, {
-                message: 'child "a" fails because ["a" must be a boolean]',
+                message: '"a" must be a boolean',
                 details: [{
                     message: '"a" must be a boolean',
                     path: ['a'],
@@ -1009,7 +1008,7 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{}, true],
             [{ a: 'x' }, false, null, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -1018,7 +1017,7 @@ describe('ref', () => {
                 }]
             }],
             [{ a: true }, false, null, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -1028,7 +1027,7 @@ describe('ref', () => {
             }],
             [{}, true, { context: {} }],
             [{ a: 'x' }, false, { context: {} }, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -1037,7 +1036,7 @@ describe('ref', () => {
                 }]
             }],
             [{ a: true }, false, { context: {} }, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -1047,7 +1046,7 @@ describe('ref', () => {
             }],
             [{}, true, { context: { x: 1 } }],
             [{ a: 'x' }, false, { context: { x: 1 } }, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -1056,7 +1055,7 @@ describe('ref', () => {
                 }]
             }],
             [{ a: true }, false, { context: { x: 1 } }, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -1066,7 +1065,7 @@ describe('ref', () => {
             }],
             [{}, true, { context: { x: {} } }],
             [{ a: 'x' }, false, { context: { x: {} } }, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -1075,7 +1074,7 @@ describe('ref', () => {
                 }]
             }],
             [{ a: true }, false, { context: { x: {} } }, {
-                message: 'child "a" fails because ["a" is not allowed]',
+                message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
                     path: ['a'],
@@ -1085,7 +1084,7 @@ describe('ref', () => {
             }],
             [{}, true, { context: { x: { y: 1 } } }],
             [{ a: 'x' }, false, { context: { x: { y: 1 } } }, {
-                message: 'child "a" fails because ["a" must be a boolean]',
+                message: '"a" must be a boolean',
                 details: [{
                     message: '"a" must be a boolean',
                     path: ['a'],

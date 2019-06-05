@@ -39,7 +39,7 @@ describe('number', () => {
                     message: '"value" must be a number',
                     path: [],
                     type: 'number.base',
-                    context: { label: 'value', key: undefined, value: true }
+                    context: { label: 'value', value: true }
                 }]
             }],
             [false, false, null, {
@@ -48,7 +48,7 @@ describe('number', () => {
                     message: '"value" must be a number',
                     path: [],
                     type: 'number.base',
-                    context: { label: 'value', key: undefined, value: false }
+                    context: { label: 'value', value: false }
                 }]
             }]
         ]);
@@ -72,7 +72,7 @@ describe('number', () => {
                         message: '"value" is required',
                         path: [],
                         type: 'any.required',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value' }
                     }]
                 }]
             ]);
@@ -98,7 +98,7 @@ describe('number', () => {
                 message: '"value" contains an invalid value',
                 path: [],
                 type: 'any.invalid',
-                context: { value: 50, invalids: [Infinity, -Infinity, 50], label: 'value', key: undefined }
+                context: { value: 50, invalids: [Infinity, -Infinity, 50], label: 'value' }
             }]);
         });
 
@@ -115,7 +115,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }],
                 [1.02, false, null, {
@@ -124,7 +124,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 1.02, label: 'value', key: undefined }
+                        context: { value: 1.02, label: 'value' }
                     }]
                 }],
                 [0.01, false, null, {
@@ -133,7 +133,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 0.01, label: 'value', key: undefined }
+                        context: { value: 0.01, label: 'value' }
                     }]
                 }]
             ]);
@@ -149,7 +149,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: Infinity, invalids: [Infinity, -Infinity], label: 'value', key: undefined }
+                        context: { value: Infinity, invalids: [Infinity, -Infinity], label: 'value' }
                     }]
                 }],
                 [-Infinity, false, null, {
@@ -158,7 +158,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: -Infinity, invalids: [Infinity, -Infinity], label: 'value', key: undefined }
+                        context: { value: -Infinity, invalids: [Infinity, -Infinity], label: 'value' }
                     }]
                 }]
             ]);
@@ -202,7 +202,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: '1 some text' }
+                        context: { label: 'value', value: '1 some text' }
                     }]
                 }],
                 ['\t\r', false, null, {
@@ -211,7 +211,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: '\t\r' }
+                        context: { label: 'value', value: '\t\r' }
                     }]
                 }],
                 [' ', false, null, {
@@ -220,7 +220,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: ' ' }
+                        context: { label: 'value', value: ' ' }
                     }]
                 }],
                 [' 2', true],
@@ -232,7 +232,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: '' }
+                        context: { label: 'value', value: '' }
                     }]
                 }]
             ]);
@@ -248,7 +248,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: NaN }
+                        context: { label: 'value', value: NaN }
                     }]
                 }],
                 ['100', true]
@@ -277,7 +277,7 @@ describe('number', () => {
                 message: '"value" must be a number',
                 path: [],
                 type: 'number.base',
-                context: { label: 'value', key: undefined, value: null }
+                context: { label: 'value', value: null }
             }]);
         });
 
@@ -291,7 +291,7 @@ describe('number', () => {
                         message: '"value" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value', key: undefined }
+                        context: { limit: 8, value: 1, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -300,7 +300,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -311,7 +311,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -327,7 +327,7 @@ describe('number', () => {
                         message: '"value" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value', key: undefined }
+                        context: { limit: 8, value: 1, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -336,7 +336,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -356,7 +356,7 @@ describe('number', () => {
                         message: '"value" must be a positive number',
                         path: [],
                         type: 'number.positive',
-                        context: { value: -2, label: 'value', key: undefined }
+                        context: { value: -2, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -366,7 +366,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -383,7 +383,7 @@ describe('number', () => {
                         message: '"value" must be a positive number',
                         path: [],
                         type: 'number.positive',
-                        context: { value: -2, label: 'value', key: undefined }
+                        context: { value: -2, label: 'value' }
                     }]
                 }],
                 [8, false, null, {
@@ -392,7 +392,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 5',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 5, value: 8, label: 'value', key: undefined }
+                        context: { limit: 5, value: 8, label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -401,7 +401,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -417,7 +417,7 @@ describe('number', () => {
                         message: '"value" must be a negative number',
                         path: [],
                         type: 'number.negative',
-                        context: { value: 4, label: 'value', key: undefined }
+                        context: { value: 4, label: 'value' }
                     }]
                 }],
                 [-2, true],
@@ -427,7 +427,7 @@ describe('number', () => {
                         message: '"value" must be larger than or equal to -3',
                         path: [],
                         type: 'number.min',
-                        context: { limit: -3, value: -4, label: 'value', key: undefined }
+                        context: { limit: -3, value: -4, label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -436,7 +436,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -452,7 +452,7 @@ describe('number', () => {
                         message: '"value" must be a negative number',
                         path: [],
                         type: 'number.negative',
-                        context: { value: 4, label: 'value', key: undefined }
+                        context: { value: 4, label: 'value' }
                     }]
                 }],
                 [-2, false, null, {
@@ -461,7 +461,7 @@ describe('number', () => {
                         message: '"value" must be a positive number',
                         path: [],
                         type: 'number.positive',
-                        context: { value: -2, label: 'value', key: undefined }
+                        context: { value: -2, label: 'value' }
                     }]
                 }],
                 [0, false, null, {
@@ -470,7 +470,7 @@ describe('number', () => {
                         message: '"value" must be a negative number',
                         path: [],
                         type: 'number.negative',
-                        context: { value: 0, label: 'value', key: undefined }
+                        context: { value: 0, label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -479,7 +479,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -497,7 +497,7 @@ describe('number', () => {
                         message: '"value" must be a negative number',
                         path: [],
                         type: 'number.negative',
-                        context: { value: 8, label: 'value', key: undefined }
+                        context: { value: 8, label: 'value' }
                     }]
                 }],
                 [0, false, null, {
@@ -506,7 +506,7 @@ describe('number', () => {
                         message: '"value" must be a negative number',
                         path: [],
                         type: 'number.negative',
-                        context: { value: 0, label: 'value', key: undefined }
+                        context: { value: 0, label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -515,7 +515,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -534,7 +534,7 @@ describe('number', () => {
                         message: '"value" must be a positive number',
                         path: [],
                         type: 'number.positive',
-                        context: { value: -10, label: 'value', key: undefined }
+                        context: { value: -10, label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -543,7 +543,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -562,7 +562,7 @@ describe('number', () => {
                         message: '"value" must be a positive number',
                         path: [],
                         type: 'number.positive',
-                        context: { value: -10, label: 'value', key: undefined }
+                        context: { value: -10, label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -581,7 +581,7 @@ describe('number', () => {
                         message: '"value" must be a negative number',
                         path: [],
                         type: 'number.negative',
-                        context: { value: 8, label: 'value', key: undefined }
+                        context: { value: 8, label: 'value' }
                     }]
                 }],
                 [0, false, null, {
@@ -590,7 +590,7 @@ describe('number', () => {
                         message: '"value" must be a negative number',
                         path: [],
                         type: 'number.negative',
-                        context: { value: 0, label: 'value', key: undefined }
+                        context: { value: 0, label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -607,7 +607,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 1, invalids: [Infinity, -Infinity, 1], label: 'value', key: undefined }
+                        context: { value: 1, invalids: [Infinity, -Infinity, 1], label: 'value' }
                     }]
                 }],
                 [-1, true],
@@ -618,7 +618,7 @@ describe('number', () => {
                         message: '"value" must be a positive number',
                         path: [],
                         type: 'number.positive',
-                        context: { value: -10, label: 'value', key: undefined }
+                        context: { value: -10, label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -637,7 +637,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: -5, invalids: [Infinity, -Infinity, -5], label: 'value', key: undefined }
+                        context: { value: -5, invalids: [Infinity, -Infinity, -5], label: 'value' }
                     }]
                 }],
                 [8, false, null, {
@@ -646,7 +646,7 @@ describe('number', () => {
                         message: '"value" must be a negative number',
                         path: [],
                         type: 'number.negative',
-                        context: { value: 8, label: 'value', key: undefined }
+                        context: { value: 8, label: 'value' }
                     }]
                 }],
                 [0, false, null, {
@@ -655,7 +655,7 @@ describe('number', () => {
                         message: '"value" must be a negative number',
                         path: [],
                         type: 'number.negative',
-                        context: { value: 0, label: 'value', key: undefined }
+                        context: { value: 0, label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -673,7 +673,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -684,7 +684,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -701,7 +701,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -721,7 +721,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -731,7 +731,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 9, invalids: [Infinity, -Infinity, 9], label: 'value', key: undefined }
+                        context: { value: 9, invalids: [Infinity, -Infinity, 9], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -740,7 +740,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -757,7 +757,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -767,7 +767,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 9, invalids: [Infinity, -Infinity, 9], label: 'value', key: undefined }
+                        context: { value: 9, invalids: [Infinity, -Infinity, 9], label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -784,7 +784,7 @@ describe('number', () => {
                         message: '"value" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value', key: undefined }
+                        context: { limit: 8, value: 1, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -793,7 +793,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -804,7 +804,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 9.1, label: 'value', key: undefined }
+                        context: { value: 9.1, label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -813,7 +813,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -829,7 +829,7 @@ describe('number', () => {
                         message: '"value" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value', key: undefined }
+                        context: { limit: 8, value: 1, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -838,7 +838,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -850,7 +850,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 9.2, label: 'value', key: undefined }
+                        context: { value: 9.2, label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -859,7 +859,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -875,7 +875,7 @@ describe('number', () => {
                         message: '"value" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value', key: undefined }
+                        context: { limit: 8, value: 1, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -884,7 +884,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, false, null, {
@@ -893,7 +893,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 8, invalids: [Infinity, -Infinity, 8], label: 'value', key: undefined }
+                        context: { value: 8, invalids: [Infinity, -Infinity, 8], label: 'value' }
                     }]
                 }],
                 [9, true],
@@ -904,7 +904,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 9.2, label: 'value', key: undefined }
+                        context: { value: 9.2, label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -913,7 +913,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -929,7 +929,7 @@ describe('number', () => {
                         message: '"value" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value', key: undefined }
+                        context: { limit: 8, value: 1, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -938,7 +938,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, false, null, {
@@ -947,7 +947,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 8, invalids: [Infinity, -Infinity, 8], label: 'value', key: undefined }
+                        context: { value: 8, invalids: [Infinity, -Infinity, 8], label: 'value' }
                     }]
                 }],
                 [9, true],
@@ -958,7 +958,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 9.2, label: 'value', key: undefined }
+                        context: { value: 9.2, label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -977,7 +977,7 @@ describe('number', () => {
                         message: '"value" must have no more than 1 decimal places',
                         path: [],
                         type: 'number.precision',
-                        context: { limit: 1, value: 9.21, label: 'value', key: undefined }
+                        context: { limit: 1, value: 9.21, label: 'value' }
                     }]
                 }],
                 [9.9999, false, null, {
@@ -986,7 +986,7 @@ describe('number', () => {
                         message: '"value" must have no more than 1 decimal places',
                         path: [],
                         type: 'number.precision',
-                        context: { limit: 1, value: 9.9999, label: 'value', key: undefined }
+                        context: { limit: 1, value: 9.9999, label: 'value' }
                     }]
                 }],
                 [9.9e-99, false, null, {
@@ -995,7 +995,7 @@ describe('number', () => {
                         message: '"value" must have no more than 1 decimal places',
                         path: [],
                         type: 'number.precision',
-                        context: { limit: 1, value: 9.9e-99, label: 'value', key: undefined }
+                        context: { limit: 1, value: 9.9e-99, label: 'value' }
                     }]
                 }],
                 [9.9e3, true],
@@ -1005,7 +1005,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -1021,7 +1021,7 @@ describe('number', () => {
                         message: '"value" must be larger than or equal to 8',
                         path: [],
                         type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value', key: undefined }
+                        context: { limit: 8, value: 1, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -1030,7 +1030,7 @@ describe('number', () => {
                         message: '"value" must be less than or equal to 10',
                         path: [],
                         type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [8, false, null, {
@@ -1039,7 +1039,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 8, invalids: [Infinity, -Infinity, 8], label: 'value', key: undefined }
+                        context: { value: 8, invalids: [Infinity, -Infinity, 8], label: 'value' }
                     }]
                 }],
                 [9, true],
@@ -1050,7 +1050,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 9.11, label: 'value', key: undefined }
+                        context: { value: 9.11, label: 'value' }
                     }]
                 }],
                 [9.2, false, null, {
@@ -1059,7 +1059,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 9.2, label: 'value', key: undefined }
+                        context: { value: 9.2, label: 'value' }
                     }]
                 }],
                 [9.22, false, null, {
@@ -1068,7 +1068,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 9.22, label: 'value', key: undefined }
+                        context: { value: 9.22, label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -1085,7 +1085,7 @@ describe('number', () => {
                         message: '"value" must be greater than 5',
                         path: [],
                         type: 'number.greater',
-                        context: { limit: 5, value: 0, label: 'value', key: undefined }
+                        context: { limit: 5, value: 0, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -1094,7 +1094,7 @@ describe('number', () => {
                         message: '"value" must be less than 10',
                         path: [],
                         type: 'number.less',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [5, false, null, {
@@ -1103,7 +1103,7 @@ describe('number', () => {
                         message: '"value" must be greater than 5',
                         path: [],
                         type: 'number.greater',
-                        context: { limit: 5, value: 5, label: 'value', key: undefined }
+                        context: { limit: 5, value: 5, label: 'value' }
                     }]
                 }],
                 [10, false, null, {
@@ -1112,7 +1112,7 @@ describe('number', () => {
                         message: '"value" must be less than 10',
                         path: [],
                         type: 'number.less',
-                        context: { limit: 10, value: 10, label: 'value', key: undefined }
+                        context: { limit: 10, value: 10, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -1124,7 +1124,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -1140,7 +1140,7 @@ describe('number', () => {
                         message: '"value" must be greater than 5',
                         path: [],
                         type: 'number.greater',
-                        context: { limit: 5, value: 0, label: 'value', key: undefined }
+                        context: { limit: 5, value: 0, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -1149,7 +1149,7 @@ describe('number', () => {
                         message: '"value" must be less than 10',
                         path: [],
                         type: 'number.less',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [5, false, null, {
@@ -1158,7 +1158,7 @@ describe('number', () => {
                         message: '"value" must be greater than 5',
                         path: [],
                         type: 'number.greater',
-                        context: { limit: 5, value: 5, label: 'value', key: undefined }
+                        context: { limit: 5, value: 5, label: 'value' }
                     }]
                 }],
                 [10, false, null, {
@@ -1167,7 +1167,7 @@ describe('number', () => {
                         message: '"value" must be less than 10',
                         path: [],
                         type: 'number.less',
-                        context: { limit: 10, value: 10, label: 'value', key: undefined }
+                        context: { limit: 10, value: 10, label: 'value' }
                     }]
                 }],
                 [6, true],
@@ -1178,7 +1178,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 5.01, label: 'value', key: undefined }
+                        context: { value: 5.01, label: 'value' }
                     }]
                 }],
                 [9.99, false, null, {
@@ -1187,7 +1187,7 @@ describe('number', () => {
                         message: '"value" must be an integer',
                         path: [],
                         type: 'number.integer',
-                        context: { value: 9.99, label: 'value', key: undefined }
+                        context: { value: 9.99, label: 'value' }
                     }]
                 }]
             ]);
@@ -1203,7 +1203,7 @@ describe('number', () => {
                         message: '"value" must be greater than 5',
                         path: [],
                         type: 'number.greater',
-                        context: { limit: 5, value: 0, label: 'value', key: undefined }
+                        context: { limit: 5, value: 0, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -1212,7 +1212,7 @@ describe('number', () => {
                         message: '"value" must be less than 10',
                         path: [],
                         type: 'number.less',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [5, false, null, {
@@ -1221,7 +1221,7 @@ describe('number', () => {
                         message: '"value" must be greater than 5',
                         path: [],
                         type: 'number.greater',
-                        context: { limit: 5, value: 5, label: 'value', key: undefined }
+                        context: { limit: 5, value: 5, label: 'value' }
                     }]
                 }],
                 [10, false, null, {
@@ -1230,7 +1230,7 @@ describe('number', () => {
                         message: '"value" must be less than 10',
                         path: [],
                         type: 'number.less',
-                        context: { limit: 10, value: 10, label: 'value', key: undefined }
+                        context: { limit: 10, value: 10, label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -1250,7 +1250,7 @@ describe('number', () => {
                         message: '"value" must be greater than 5',
                         path: [],
                         type: 'number.greater',
-                        context: { limit: 5, value: 0, label: 'value', key: undefined }
+                        context: { limit: 5, value: 0, label: 'value' }
                     }]
                 }],
                 [11, false, null, {
@@ -1259,7 +1259,7 @@ describe('number', () => {
                         message: '"value" must be less than 10',
                         path: [],
                         type: 'number.less',
-                        context: { limit: 10, value: 11, label: 'value', key: undefined }
+                        context: { limit: 10, value: 11, label: 'value' }
                     }]
                 }],
                 [5, false, null, {
@@ -1268,7 +1268,7 @@ describe('number', () => {
                         message: '"value" must be greater than 5',
                         path: [],
                         type: 'number.greater',
-                        context: { limit: 5, value: 5, label: 'value', key: undefined }
+                        context: { limit: 5, value: 5, label: 'value' }
                     }]
                 }],
                 [10, false, null, {
@@ -1277,7 +1277,7 @@ describe('number', () => {
                         message: '"value" must be less than 10',
                         path: [],
                         type: 'number.less',
-                        context: { limit: 10, value: 10, label: 'value', key: undefined }
+                        context: { limit: 10, value: 10, label: 'value' }
                     }]
                 }],
                 [6, false, null, {
@@ -1286,7 +1286,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 6, invalids: [Infinity, -Infinity, 6], label: 'value', key: undefined }
+                        context: { value: 6, invalids: [Infinity, -Infinity, 6], label: 'value' }
                     }]
                 }],
                 [8, true],
@@ -1299,7 +1299,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -1350,7 +1350,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: '9007199254740981.1', key: undefined, label: 'value' }
+                        context: { value: '9007199254740981.1', label: 'value' }
                     }]
                 }],
                 ['90071992547409811e-1', false, null, {
@@ -1359,7 +1359,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: '90071992547409811e-1', key: undefined, label: 'value' }
+                        context: { value: '90071992547409811e-1', label: 'value' }
                     }]
                 }],
                 ['9007199254740992', false, null, {
@@ -1368,7 +1368,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: 9007199254740992, key: undefined, label: 'value' }
+                        context: { value: 9007199254740992, label: 'value' }
                     }]
                 }],
                 ['-9007199254740992', false, null, {
@@ -1377,7 +1377,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: -9007199254740992, key: undefined, label: 'value' }
+                        context: { value: -9007199254740992, label: 'value' }
                     }]
                 }],
                 ['90.071992549e+15', false, null, {
@@ -1386,7 +1386,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: 90071992549000000, key: undefined, label: 'value' }
+                        context: { value: 90071992549000000, label: 'value' }
                     }]
                 }],
                 [9007199254740992, false, null, {
@@ -1395,7 +1395,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: 9007199254740992, key: undefined, label: 'value' }
+                        context: { value: 9007199254740992, label: 'value' }
                     }]
                 }],
                 [-9007199254740992, false, null, {
@@ -1404,7 +1404,7 @@ describe('number', () => {
                         message: '"value" must be a safe number',
                         path: [],
                         type: 'number.unsafe',
-                        context: { value: -9007199254740992, key: undefined, label: 'value' }
+                        context: { value: -9007199254740992, label: 'value' }
                     }]
                 }]
             ]);
@@ -1471,7 +1471,7 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 42, b: 1337 }, true],
                 [{ a: 1337, b: 42 }, false, null, {
-                    message: 'child "b" fails because ["b" must be larger than or equal to ref:a]',
+                    message: '"b" must be larger than or equal to ref:a',
                     details: [{
                         message: '"b" must be larger than or equal to ref:a',
                         path: ['b'],
@@ -1480,7 +1480,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: '1337', b: 42 }, false, null, {
-                    message: 'child "b" fails because ["b" must be larger than or equal to ref:a]',
+                    message: '"b" must be larger than or equal to ref:a',
                     details: [{
                         message: '"b" must be larger than or equal to ref:a',
                         path: ['b'],
@@ -1491,7 +1491,7 @@ describe('number', () => {
                 [{ a: 2.4, b: 4.2 }, true],
                 [{ a: 4.2, b: 4.20000001 }, true],
                 [{ a: 4.20000001, b: 4.2 }, false, null, {
-                    message: 'child "b" fails because ["b" must be larger than or equal to ref:a]',
+                    message: '"b" must be larger than or equal to ref:a',
                     details: [{
                         message: '"b" must be larger than or equal to ref:a',
                         path: ['b'],
@@ -1500,7 +1500,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: 4.2, b: 2.4 }, false, null, {
-                    message: 'child "b" fails because ["b" must be larger than or equal to ref:a]',
+                    message: '"b" must be larger than or equal to ref:a',
                     details: [{
                         message: '"b" must be larger than or equal to ref:a',
                         path: ['b'],
@@ -1527,7 +1527,7 @@ describe('number', () => {
                 [{ a: 1, b: 1, c: 0 }, true],
                 [{ a: 2, b: 1, c: 0 }, true],
                 [{ a: 1, b: 1, c: 42 }, false, null, {
-                    message: 'child "c" fails because ["c" must be one of [0]]',
+                    message: '"c" must be one of [0]',
                     details: [{
                         message: '"c" must be one of [0]',
                         path: ['c'],
@@ -1536,7 +1536,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: 2, b: 1, c: 42 }, false, null, {
-                    message: 'child "c" fails because ["c" must be one of [0]]',
+                    message: '"c" must be one of [0]',
                     details: [{
                         message: '"c" must be one of [0]',
                         path: ['c'],
@@ -1555,7 +1555,7 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ b: 1337 }, true, { context: { a: 42 } }],
                 [{ b: 42 }, false, { context: { a: 1337 } }, {
-                    message: 'child "b" fails because ["b" must be larger than or equal to context:a]',
+                    message: '"b" must be larger than or equal to context:a',
                     details: [{
                         message: '"b" must be larger than or equal to context:a',
                         path: ['b'],
@@ -1566,7 +1566,7 @@ describe('number', () => {
                 [{ b: 4.2 }, true, { context: { a: 2.4 } }],
                 [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
                 [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, {
-                    message: 'child "b" fails because ["b" must be larger than or equal to context:a]',
+                    message: '"b" must be larger than or equal to context:a',
                     details: [{
                         message: '"b" must be larger than or equal to context:a',
                         path: ['b'],
@@ -1575,7 +1575,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ b: 2.4 }, false, { context: { a: 4.2 } }, {
-                    message: 'child "b" fails because ["b" must be larger than or equal to context:a]',
+                    message: '"b" must be larger than or equal to context:a',
                     details: [{
                         message: '"b" must be larger than or equal to context:a',
                         path: ['b'],
@@ -1593,7 +1593,7 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -1611,7 +1611,7 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -1641,7 +1641,7 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 1337, b: 42 }, true],
                 [{ a: 42, b: 1337 }, false, null, {
-                    message: 'child "b" fails because ["b" must be less than or equal to ref:a]',
+                    message: '"b" must be less than or equal to ref:a',
                     details: [{
                         message: '"b" must be less than or equal to ref:a',
                         path: ['b'],
@@ -1650,7 +1650,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: '42', b: 1337 }, false, null, {
-                    message: 'child "b" fails because ["b" must be less than or equal to ref:a]',
+                    message: '"b" must be less than or equal to ref:a',
                     details: [{
                         message: '"b" must be less than or equal to ref:a',
                         path: ['b'],
@@ -1660,7 +1660,7 @@ describe('number', () => {
                 }],
                 [{ a: 4.2, b: 2.4 }, true],
                 [{ a: 4.2, b: 4.20000001 }, false, null, {
-                    message: 'child "b" fails because ["b" must be less than or equal to ref:a]',
+                    message: '"b" must be less than or equal to ref:a',
                     details: [{
                         message: '"b" must be less than or equal to ref:a',
                         path: ['b'],
@@ -1670,7 +1670,7 @@ describe('number', () => {
                 }],
                 [{ a: 4.20000001, b: 4.2 }, true],
                 [{ a: 2.4, b: 4.2 }, false, null, {
-                    message: 'child "b" fails because ["b" must be less than or equal to ref:a]',
+                    message: '"b" must be less than or equal to ref:a',
                     details: [{
                         message: '"b" must be less than or equal to ref:a',
                         path: ['b'],
@@ -1689,7 +1689,7 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ b: 42 }, true, { context: { a: 1337 } }],
                 [{ b: 1337 }, false, { context: { a: 42 } }, {
-                    message: 'child "b" fails because ["b" must be less than or equal to context:a]',
+                    message: '"b" must be less than or equal to context:a',
                     details: [{
                         message: '"b" must be less than or equal to context:a',
                         path: ['b'],
@@ -1699,7 +1699,7 @@ describe('number', () => {
                 }],
                 [{ b: 2.4 }, true, { context: { a: 4.2 } }],
                 [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, {
-                    message: 'child "b" fails because ["b" must be less than or equal to context:a]',
+                    message: '"b" must be less than or equal to context:a',
                     details: [{
                         message: '"b" must be less than or equal to context:a',
                         path: ['b'],
@@ -1709,7 +1709,7 @@ describe('number', () => {
                 }],
                 [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
                 [{ b: 4.2 }, false, { context: { a: 2.4 } }, {
-                    message: 'child "b" fails because ["b" must be less than or equal to context:a]',
+                    message: '"b" must be less than or equal to context:a',
                     details: [{
                         message: '"b" must be less than or equal to context:a',
                         path: ['b'],
@@ -1727,7 +1727,7 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -1745,7 +1745,7 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -1775,7 +1775,7 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 1337, b: 42 }, true],
                 [{ a: 42, b: 1337 }, false, null, {
-                    message: 'child "b" fails because ["b" must be less than ref:a]',
+                    message: '"b" must be less than ref:a',
                     details: [{
                         message: '"b" must be less than ref:a',
                         path: ['b'],
@@ -1784,7 +1784,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: '42', b: 1337 }, false, null, {
-                    message: 'child "b" fails because ["b" must be less than ref:a]',
+                    message: '"b" must be less than ref:a',
                     details: [{
                         message: '"b" must be less than ref:a',
                         path: ['b'],
@@ -1794,7 +1794,7 @@ describe('number', () => {
                 }],
                 [{ a: 4.2, b: 2.4 }, true],
                 [{ a: 4.2, b: 4.20000001 }, false, null, {
-                    message: 'child "b" fails because ["b" must be less than ref:a]',
+                    message: '"b" must be less than ref:a',
                     details: [{
                         message: '"b" must be less than ref:a',
                         path: ['b'],
@@ -1804,7 +1804,7 @@ describe('number', () => {
                 }],
                 [{ a: 4.20000001, b: 4.2 }, true],
                 [{ a: 2.4, b: 4.2 }, false, null, {
-                    message: 'child "b" fails because ["b" must be less than ref:a]',
+                    message: '"b" must be less than ref:a',
                     details: [{
                         message: '"b" must be less than ref:a',
                         path: ['b'],
@@ -1823,7 +1823,7 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ b: 42 }, true, { context: { a: 1337 } }],
                 [{ b: 1337 }, false, { context: { a: 42 } }, {
-                    message: 'child "b" fails because ["b" must be less than context:a]',
+                    message: '"b" must be less than context:a',
                     details: [{
                         message: '"b" must be less than context:a',
                         path: ['b'],
@@ -1833,7 +1833,7 @@ describe('number', () => {
                 }],
                 [{ b: 2.4 }, true, { context: { a: 4.2 } }],
                 [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, {
-                    message: 'child "b" fails because ["b" must be less than context:a]',
+                    message: '"b" must be less than context:a',
                     details: [{
                         message: '"b" must be less than context:a',
                         path: ['b'],
@@ -1843,7 +1843,7 @@ describe('number', () => {
                 }],
                 [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
                 [{ b: 4.2 }, false, { context: { a: 2.4 } }, {
-                    message: 'child "b" fails because ["b" must be less than context:a]',
+                    message: '"b" must be less than context:a',
                     details: [{
                         message: '"b" must be less than context:a',
                         path: ['b'],
@@ -1861,7 +1861,7 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -1879,7 +1879,7 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: null, b: 42 }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -1897,7 +1897,7 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -1927,7 +1927,7 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 42, b: 1337 }, true],
                 [{ a: 1337, b: 42 }, false, null, {
-                    message: 'child "b" fails because ["b" must be greater than ref:a]',
+                    message: '"b" must be greater than ref:a',
                     details: [{
                         message: '"b" must be greater than ref:a',
                         path: ['b'],
@@ -1936,7 +1936,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: '1337', b: 42 }, false, null, {
-                    message: 'child "b" fails because ["b" must be greater than ref:a]',
+                    message: '"b" must be greater than ref:a',
                     details: [{
                         message: '"b" must be greater than ref:a',
                         path: ['b'],
@@ -1950,7 +1950,7 @@ describe('number', () => {
                     a: 4.20000001,
                     b: 4.2
                 }, false, null, {
-                    message: 'child "b" fails because ["b" must be greater than ref:a]',
+                    message: '"b" must be greater than ref:a',
                     details: [{
                         message: '"b" must be greater than ref:a',
                         path: ['b'],
@@ -1959,7 +1959,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: 4.2, b: 2.4 }, false, null, {
-                    message: 'child "b" fails because ["b" must be greater than ref:a]',
+                    message: '"b" must be greater than ref:a',
                     details: [{
                         message: '"b" must be greater than ref:a',
                         path: ['b'],
@@ -1978,7 +1978,7 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ b: 1337 }, true, { context: { a: 42 } }],
                 [{ b: 42 }, false, { context: { a: 1337 } }, {
-                    message: 'child "b" fails because ["b" must be greater than context:a]',
+                    message: '"b" must be greater than context:a',
                     details: [{
                         message: '"b" must be greater than context:a',
                         path: ['b'],
@@ -1989,7 +1989,7 @@ describe('number', () => {
                 [{ b: 4.2 }, true, { context: { a: 2.4 } }],
                 [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
                 [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, {
-                    message: 'child "b" fails because ["b" must be greater than context:a]',
+                    message: '"b" must be greater than context:a',
                     details: [{
                         message: '"b" must be greater than context:a',
                         path: ['b'],
@@ -1998,7 +1998,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ b: 2.4 }, false, { context: { a: 4.2 } }, {
-                    message: 'child "b" fails because ["b" must be greater than context:a]',
+                    message: '"b" must be greater than context:a',
                     details: [{
                         message: '"b" must be greater than context:a',
                         path: ['b'],
@@ -2016,7 +2016,7 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -2034,7 +2034,7 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -2063,7 +2063,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: 'abc' }
+                        context: { label: 'value', value: 'abc' }
                     }]
                 }],
                 [NaN, false, null, {
@@ -2072,7 +2072,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: NaN }
+                        context: { label: 'value', value: NaN }
                     }]
                 }]
             ]);
@@ -2128,7 +2128,7 @@ describe('number', () => {
                         message: '"value" must be a multiple of 3',
                         path: [],
                         type: 'number.multiple',
-                        context: { multiple: 3, value: 4, label: 'value', key: undefined }
+                        context: { multiple: 3, value: 4, label: 'value' }
                     }]
                 }],
                 [9, true],
@@ -2138,7 +2138,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: 'a' }
+                        context: { label: 'value', value: 'a' }
                     }]
                 }],
                 [9.1, false, null, {
@@ -2147,7 +2147,7 @@ describe('number', () => {
                         message: '"value" must be a multiple of 3',
                         path: [],
                         type: 'number.multiple',
-                        context: { multiple: 3, value: 9.1, label: 'value', key: undefined }
+                        context: { multiple: 3, value: 9.1, label: 'value' }
                     }]
                 }],
                 [8.9, false, null, {
@@ -2156,7 +2156,7 @@ describe('number', () => {
                         message: '"value" must be a multiple of 3',
                         path: [],
                         type: 'number.multiple',
-                        context: { multiple: 3, value: 8.9, label: 'value', key: undefined }
+                        context: { multiple: 3, value: 8.9, label: 'value' }
                     }]
                 }]
             ]);
@@ -2174,7 +2174,7 @@ describe('number', () => {
                         message: '"value" must be a multiple of 3.5',
                         path: [],
                         type: 'number.multiple',
-                        context: { multiple: 3.5, value: 3.6, label: 'value', key: undefined }
+                        context: { multiple: 3.5, value: 3.6, label: 'value' }
                     }]
                 }],
                 [10.5, true],
@@ -2184,7 +2184,7 @@ describe('number', () => {
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: 'a' }
+                        context: { label: 'value', value: 'a' }
                     }]
                 }],
                 [10.501, false, null, {
@@ -2193,7 +2193,7 @@ describe('number', () => {
                         message: '"value" must be a multiple of 3.5',
                         path: [],
                         type: 'number.multiple',
-                        context: { multiple: 3.5, value: 10.501, label: 'value', key: undefined }
+                        context: { multiple: 3.5, value: 10.501, label: 'value' }
                     }]
                 }],
                 [10.499, false, null, {
@@ -2202,7 +2202,7 @@ describe('number', () => {
                         message: '"value" must be a multiple of 3.5',
                         path: [],
                         type: 'number.multiple',
-                        context: { multiple: 3.5, value: 10.499, label: 'value', key: undefined }
+                        context: { multiple: 3.5, value: 10.499, label: 'value' }
                     }]
                 }]
             ]);
@@ -2216,7 +2216,7 @@ describe('number', () => {
                 [{ a: 2, b: 32 }, true],
                 [{ a: 43, b: 0 }, true],
                 [{ a: 4, b: 25 }, false, null, {
-                    message: 'child "b" fails because ["b" must be a multiple of ref:a]',
+                    message: '"b" must be a multiple of ref:a',
                     details: [{
                         message: '"b" must be a multiple of ref:a',
                         path: ['b'],
@@ -2225,7 +2225,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: 0, b: 0 }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -2252,7 +2252,7 @@ describe('number', () => {
                 [{ a: 2, b: 4, c: 42 }, true],
                 [{ a: 4, b: 2, c: 0 }, true],
                 [{ a: 4, b: 2, c: 42 }, false, null, {
-                    message: 'child "c" fails because ["c" must be one of [0]]',
+                    message: '"c" must be one of [0]',
                     details: [{
                         message: '"c" must be one of [0]',
                         path: ['c'],
@@ -2269,7 +2269,7 @@ describe('number', () => {
             const schema = Joi.object({ a: Joi.string(), b: Joi.number().multiple(ref) });
             Helper.validate(schema, [
                 [{ a: 'test', b: 32 }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -2278,7 +2278,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: 'test', b: 0 }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -2287,7 +2287,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: 'test', b: NaN }, false, null, {
-                    message: 'child "b" fails because ["b" must be a number]',
+                    message: '"b" must be a number',
                     details: [{
                         message: '"b" must be a number',
                         path: ['b'],
@@ -2306,7 +2306,7 @@ describe('number', () => {
                 [{ b: 32 }, true, { context: { a: 2 } }],
                 [{ b: 0 }, true, { context: { a: 43 } }],
                 [{ b: 25 }, false, { context: { a: 4 } }, {
-                    message: 'child "b" fails because ["b" must be a multiple of context:a]',
+                    message: '"b" must be a multiple of context:a',
                     details: [{
                         message: '"b" must be a multiple of context:a',
                         path: ['b'],
@@ -2315,7 +2315,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ b: 31 }, false, { context: { a: 0 } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -2324,7 +2324,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ b: 0 }, false, { context: { a: 0 } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -2333,7 +2333,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ b: 32 }, false, { context: { a: 'test' } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -2342,7 +2342,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ b: 0 }, false, { context: { a: 'test' } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -2351,7 +2351,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ b: 0 }, false, { context: { a: NaN } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -2372,7 +2372,7 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ port: 1337 }, true],
                 [{ port: -1 }, false, null, {
-                    message: 'child "port" fails because ["port" must be a valid port]',
+                    message: '"port" must be a valid port',
                     details: [{
                         message: '"port" must be a valid port',
                         path: ['port'],
@@ -2381,7 +2381,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ port: 65536 }, false, null, {
-                    message: 'child "port" fails because ["port" must be a valid port]',
+                    message: '"port" must be a valid port',
                     details: [{
                         message: '"port" must be a valid port',
                         path: ['port'],
@@ -2390,7 +2390,7 @@ describe('number', () => {
                     }]
                 }],
                 [{ port: 8.88 }, false, null, {
-                    message: 'child "port" fails because ["port" must be a valid port]',
+                    message: '"port" must be a valid port',
                     details: [{
                         message: '"port" must be a valid port',
                         path: ['port'],

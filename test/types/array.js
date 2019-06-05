@@ -24,9 +24,7 @@ describe('array', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(
-            () => Joi.array('invalid argument.')
-        ).to.throw('Joi.array() does not allow arguments.');
+        expect(() => Joi.array('invalid argument.')).to.throw('Joi.array() does not allow arguments.');
     });
 
     it('converts a string to an array', async () => {
@@ -48,7 +46,7 @@ describe('array', () => {
             message: '"value" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value' }
         }]);
     });
 
@@ -59,7 +57,7 @@ describe('array', () => {
             message: '"value" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value' }
         }]);
     });
 
@@ -70,7 +68,7 @@ describe('array', () => {
             message: '"value" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value' }
         }]);
     });
 
@@ -81,7 +79,7 @@ describe('array', () => {
             message: '"value" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value', key: undefined }
+            context: { label: 'value' }
         }]);
     });
 
@@ -138,12 +136,12 @@ describe('array', () => {
             const input = { test: [{ foo: 'a' }, { bar: 2 }] };
 
             const err = await expect(schema.validate(input)).to.reject();
-            expect(err.message).to.equal('child "test" fails because ["test" at position 1 fails because [child "foo" fails because ["foo" is required]]]');
+            expect(err.message).to.equal('"test[1].foo" is required');
             expect(err.details).to.equal([{
-                message: '"foo" is required',
+                message: '"test[1].foo" is required',
                 path: ['test', 1, 'foo'],
                 type: 'any.required',
-                context: { label: 'foo', key: 'foo' }
+                context: { label: 'test[1].foo', key: 'foo' }
             }]);
         });
 
@@ -168,15 +166,15 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[1, 2, 'a'], true, null, [1, 2, 'a']],
                 [[1, { foo: 'bar' }, 'a', 2], false, null, {
-                    message: '"value" at position 1 does not match any of the allowed types',
+                    message: '"[1]" does not match any of the allowed types',
                     details: [{
                         context: {
                             key: 1,
-                            label: 'value',
+                            label: '[1]',
                             pos: 1,
                             value: { foo: 'bar' }
                         },
-                        message: '"value" at position 1 does not match any of the allowed types',
+                        message: '"[1]" does not match any of the allowed types',
                         path: [1],
                         type: 'array.includes'
                     }]
@@ -199,12 +197,12 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.string().valid('four').forbidden(), Joi.string());
             const input = ['one', 'two', 'three', 'four'];
 
-            const err = await expect(schema.validate(input)).to.reject('"value" at position 3 contains an excluded value');
+            const err = await expect(schema.validate(input)).to.reject('"[3]" contains an excluded value');
             expect(err.details).to.equal([{
-                message: '"value" at position 3 contains an excluded value',
+                message: '"[3]" contains an excluded value',
                 path: [3],
                 type: 'array.excludes',
-                context: { pos: 3, value: 'four', label: 'value', key: 3 }
+                context: { pos: 3, value: 'four', label: '[3]', key: 3 }
             }]);
         });
 
@@ -220,12 +218,12 @@ describe('array', () => {
                 value: 'four'
             };
 
-            const err = await expect(schema.validate(input)).to.reject('child "array" fails because ["array" at position 3 contains an excluded value]');
+            const err = await expect(schema.validate(input)).to.reject('"array[3]" contains an excluded value');
             expect(err.details).to.equal([{
-                message: '"array" at position 3 contains an excluded value',
+                message: '"array[3]" contains an excluded value',
                 path: ['array', 3],
                 type: 'array.excludes',
-                context: { pos: 3, value: 'four', label: 'array', key: 3 }
+                context: { pos: 3, value: 'four', label: 'array[3]', key: 3 }
             }]);
         });
 
@@ -241,12 +239,12 @@ describe('array', () => {
                 value: '4'
             };
 
-            const err = await expect(schema.validate(input)).to.reject('child "array" fails because ["array" at position 3 contains an excluded value]');
+            const err = await expect(schema.validate(input)).to.reject('"array[3]" contains an excluded value');
             expect(err.details).to.equal([{
-                message: '"array" at position 3 contains an excluded value',
+                message: '"array[3]" contains an excluded value',
                 path: ['array', 3],
                 type: 'array.excludes',
-                context: { pos: 3, value: 4, label: 'array', key: 3 }
+                context: { pos: 3, value: 4, label: 'array[3]', key: 3 }
             }]);
         });
 
@@ -260,7 +258,7 @@ describe('array', () => {
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
                 type: 'array.includesRequiredUnknowns',
-                context: { unknownMisses: 1, label: 'value', key: undefined }
+                context: { unknownMisses: 1, label: 'value' }
             }]);
         });
 
@@ -274,7 +272,7 @@ describe('array', () => {
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
                 type: 'array.includesRequiredUnknowns',
-                context: { unknownMisses: 1, label: 'value', key: undefined }
+                context: { unknownMisses: 1, label: 'value' }
             }]);
         });
 
@@ -292,12 +290,12 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.boolean().required(), Joi.number());
             const input = ['one', 'two', 'three', 'four', 'four', 'four'];
 
-            const err = await expect(schema.validate(input)).to.reject('"value" at position 0 does not match any of the allowed types');
+            const err = await expect(schema.validate(input)).to.reject('"[0]" does not match any of the allowed types');
             expect(err.details).to.equal([{
-                message: '"value" at position 0 does not match any of the allowed types',
+                message: '"[0]" does not match any of the allowed types',
                 path: [0],
                 type: 'array.includes',
-                context: { pos: 0, value: 'one', label: 'value', key: 0 }
+                context: { pos: 0, value: 'one', label: '[0]', key: 0 }
             }]);
         });
 
@@ -311,7 +309,7 @@ describe('array', () => {
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
                 type: 'array.includesRequiredUnknowns',
-                context: { unknownMisses: 1, label: 'value', key: undefined }
+                context: { unknownMisses: 1, label: 'value' }
             }]);
         });
 
@@ -343,7 +341,7 @@ describe('array', () => {
                 message: '"value" does not contain [required string]',
                 path: [],
                 type: 'array.includesRequiredKnowns',
-                context: { knownMisses: ['required string'], label: 'value', key: undefined }
+                context: { knownMisses: ['required string'], label: 'value' }
             }]);
         });
 
@@ -360,8 +358,7 @@ describe('array', () => {
                 context: {
                     knownMisses: ['required string'],
                     unknownMisses: 1,
-                    label: 'value',
-                    key: undefined
+                    label: 'value'
                 }
             }]);
         });
@@ -387,7 +384,7 @@ describe('array', () => {
                         message: '"value" must contain at least 2 items',
                         path: [],
                         type: 'array.min',
-                        context: { limit: 2, value: [1], label: 'value', key: undefined }
+                        context: { limit: 2, value: [1], label: 'value' }
                     }]
                 }]
             ]);
@@ -442,7 +439,7 @@ describe('array', () => {
                     limit: 2,
                     arr: [1]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" must contain at least ref:limit items]',
+                    message: '"arr" must contain at least ref:limit items',
                     details: [{
                         message: '"arr" must contain at least ref:limit items',
                         path: ['arr'],
@@ -486,7 +483,7 @@ describe('array', () => {
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
+                    message: '"arr" references "ref:limit" which is not a positive integer',
                     details: [{
                         message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
@@ -498,7 +495,7 @@ describe('array', () => {
                     limit: 'I like turtles',
                     arr: [1]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
+                    message: '"arr" references "ref:limit" which is not a positive integer',
                     details: [{
                         message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
@@ -522,7 +519,7 @@ describe('array', () => {
                         message: '"value" must contain less than or equal to 1 items',
                         path: [],
                         type: 'array.max',
-                        context: { limit: 1, value: [1, 2], label: 'value', key: undefined }
+                        context: { limit: 1, value: [1, 2], label: 'value' }
                     }]
                 }],
                 [[1], true]
@@ -540,26 +537,17 @@ describe('array', () => {
 
         it('throws when limit is not a number', () => {
 
-            expect(() => {
-
-                Joi.array().max('a');
-            }).to.throw('limit must be a positive integer or reference');
+            expect(() => Joi.array().max('a')).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is not an integer', () => {
 
-            expect(() => {
-
-                Joi.array().max(1.2);
-            }).to.throw('limit must be a positive integer or reference');
+            expect(() => Joi.array().max(1.2)).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is negative', () => {
 
-            expect(() => {
-
-                Joi.array().max(-1);
-            }).to.throw('limit must be a positive integer or reference');
+            expect(() => Joi.array().max(-1)).to.throw('limit must be a positive integer or reference');
         });
 
         it('validates array size when a reference', () => {
@@ -578,7 +566,7 @@ describe('array', () => {
                     limit: 2,
                     arr: [1, 2, 3]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" must contain less than or equal to ref:limit items]',
+                    message: '"arr" must contain less than or equal to ref:limit items',
                     details: [{
                         message: '"arr" must contain less than or equal to ref:limit items',
                         path: ['arr'],
@@ -622,7 +610,7 @@ describe('array', () => {
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
+                    message: '"arr" references "ref:limit" which is not a positive integer',
                     details: [{
                         message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
@@ -634,7 +622,7 @@ describe('array', () => {
                     limit: 'I like turtles',
                     arr: [1]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
+                    message: '"arr" references "ref:limit" which is not a positive integer',
                     details: [{
                         message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
@@ -644,7 +632,6 @@ describe('array', () => {
                 }]
             ]);
         });
-
     });
 
     describe('length()', () => {
@@ -660,7 +647,7 @@ describe('array', () => {
                         message: '"value" must contain 2 items',
                         path: [],
                         type: 'array.length',
-                        context: { limit: 2, value: [1], label: 'value', key: undefined }
+                        context: { limit: 2, value: [1], label: 'value' }
                     }]
                 }]
             ]);
@@ -677,7 +664,7 @@ describe('array', () => {
                         message: '"value" must contain 1 items',
                         path: [],
                         type: 'array.length',
-                        context: { limit: 1, value: [1, 2], label: 'value', key: undefined }
+                        context: { limit: 1, value: [1, 2], label: 'value' }
                     }]
                 }]
             ]);
@@ -685,26 +672,17 @@ describe('array', () => {
 
         it('throws when limit is not a number', () => {
 
-            expect(() => {
-
-                Joi.array().length('a');
-            }).to.throw('limit must be a positive integer or reference');
+            expect(() => Joi.array().length('a')).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is not an integer', () => {
 
-            expect(() => {
-
-                Joi.array().length(1.2);
-            }).to.throw('limit must be a positive integer or reference');
+            expect(() => Joi.array().length(1.2)).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is negative', () => {
 
-            expect(() => {
-
-                Joi.array().length(-1);
-            }).to.throw('limit must be a positive integer or reference');
+            expect(() => Joi.array().length(-1)).to.throw('limit must be a positive integer or reference');
         });
 
         it('validates array size when a reference', () => {
@@ -723,7 +701,7 @@ describe('array', () => {
                     limit: 2,
                     arr: [1]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" must contain ref:limit items]',
+                    message: '"arr" must contain ref:limit items',
                     details: [{
                         message: '"arr" must contain ref:limit items',
                         path: ['arr'],
@@ -767,7 +745,7 @@ describe('array', () => {
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
+                    message: '"arr" references "ref:limit" which is not a positive integer',
                     details: [{
                         message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
@@ -779,7 +757,7 @@ describe('array', () => {
                     limit: 'I like turtles',
                     arr: [1]
                 }, false, null, {
-                    message: 'child "arr" fails because ["arr" references "ref:limit" which is not a positive integer]',
+                    message: '"arr" references "ref:limit" which is not a positive integer',
                     details: [{
                         message: '"arr" references "ref:limit" which is not a positive integer',
                         path: ['arr'],
@@ -811,10 +789,7 @@ describe('array', () => {
 
         it('shows errors in schema', () => {
 
-            expect(() => {
-
-                Joi.array().has(undefined);
-            }).to.throw(Error, 'Invalid schema content: ');
+            expect(() => Joi.array().has(undefined)).to.throw(Error, 'Invalid schema content: ');
         });
 
         it('works with object.assert', () => {
@@ -854,7 +829,7 @@ describe('array', () => {
                         message: '"value" does not contain at least one required match',
                         path: [],
                         type: 'array.hasUnknown',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value' }
                     }]
                 }]
             ]);
@@ -870,7 +845,7 @@ describe('array', () => {
                         message: '"value" does not contain at least one required match for type "foo"',
                         path: [],
                         type: 'array.hasKnown',
-                        context: { label: 'value', key: undefined, patternLabel: 'foo' }
+                        context: { label: 'value', patternLabel: 'foo' }
                     }]
                 }]
             ]);
@@ -883,7 +858,7 @@ describe('array', () => {
             });
             Helper.validate(schema, [
                 [{ arr: [0] }, false, null, {
-                    message: 'child "arr" fails because ["arr" does not contain at least one required match]',
+                    message: '"arr" does not contain at least one required match',
                     details: [{
                         message: '"arr" does not contain at least one required match',
                         path: ['arr'],
@@ -918,7 +893,7 @@ describe('array', () => {
                 [{ array: [10, 1, 11, 5] }, true],
                 [{ array: [10, 1, 2, 5, 12] }, true],
                 [{ array: [10, 1, 2, 5, 1] }, false, null, {
-                    message: 'child "array" fails because ["array" does not contain at least one required match]',
+                    message: '"array" does not contain at least one required match',
                     details: [{
                         message: '"array" does not contain at least one required match',
                         path: ['array'],
@@ -938,12 +913,12 @@ describe('array', () => {
             });
             Helper.validate(schema, [
                 [{ arr: [{ foo: [0] }] }, false, null, {
-                    message: 'child "arr" fails because ["arr" at position 0 fails because [child "foo" fails because ["foo" does not contain at least one required match]]]',
+                    message: '"arr[0].foo" does not contain at least one required match',
                     details: [{
-                        message: '"foo" does not contain at least one required match',
+                        message: '"arr[0].foo" does not contain at least one required match',
                         path: ['arr', 0, 'foo'],
                         type: 'array.hasUnknown',
-                        context: { label: 'foo', key: 'foo' }
+                        context: { label: 'arr[0].foo', key: 'foo' }
                     }]
                 }]
             ]);
@@ -963,7 +938,7 @@ describe('array', () => {
                         message: '"value" does not contain at least one required match',
                         path: [],
                         type: 'array.hasUnknown',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value' }
                     }]
                 }]
             ]);
@@ -1002,7 +977,7 @@ describe('array', () => {
                         message: '"value" is required',
                         path: [],
                         type: 'any.required',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value' }
                     }]
                 }]
             ]);
@@ -1020,21 +995,21 @@ describe('array', () => {
 
             Helper.validate(Joi.array().items(Joi.string().forbidden()), [
                 [['2', '1'], false, null, {
-                    message: '"value" at position 0 contains an excluded value',
+                    message: '"[0]" contains an excluded value',
                     details: [{
-                        message: '"value" at position 0 contains an excluded value',
+                        message: '"[0]" contains an excluded value',
                         path: [0],
                         type: 'array.excludes',
-                        context: { pos: 0, value: '2', label: 'value', key: 0 }
+                        context: { pos: 0, value: '2', label: '[0]', key: 0 }
                     }]
                 }],
                 [['1'], false, null, {
-                    message: '"value" at position 0 contains an excluded value',
+                    message: '"[0]" contains an excluded value',
                     details: [{
-                        message: '"value" at position 0 contains an excluded value',
+                        message: '"[0]" contains an excluded value',
                         path: [0],
                         type: 'array.excludes',
-                        context: { pos: 0, value: '1', label: 'value', key: 0 }
+                        context: { pos: 0, value: '1', label: '[0]', key: 0 }
                     }]
                 }],
                 [[2], true]
@@ -1046,12 +1021,12 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.number().forbidden());
 
             const n = [1, 2, 'hippo'];
-            const err = await expect(schema.validate(n)).to.reject('"value" at position 0 contains an excluded value');
+            const err = await expect(schema.validate(n)).to.reject('"[0]" contains an excluded value');
             expect(err.details).to.equal([{
-                message: '"value" at position 0 contains an excluded value',
+                message: '"[0]" contains an excluded value',
                 path: [0],
                 type: 'array.excludes',
-                context: { pos: 0, value: 1, label: 'value', key: 0 }
+                context: { pos: 0, value: 1, label: '[0]', key: 0 }
             }]);
 
             const m = ['x', 'y', 'z'];
@@ -1064,12 +1039,12 @@ describe('array', () => {
                 [[1, 2, 3], true],
                 [[50, 100, 1000], true],
                 [['a', 1, 2], false, null, {
-                    message: '"value" at position 0 fails because ["0" must be a number]',
+                    message: '"[0]" must be a number',
                     details: [{
-                        message: '"0" must be a number',
+                        message: '"[0]" must be a number',
                         path: [0],
                         type: 'number.base',
-                        context: { label: 0, key: 0, value: 'a' }
+                        context: { label: '[0]', key: 0, value: 'a' }
                     }]
                 }],
                 [['1', '2', 4], true]
@@ -1091,21 +1066,21 @@ describe('array', () => {
             Helper.validate(Joi.array().items(Joi.object({ h1: Joi.number().required() })), [
                 [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
                 [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false, null, {
-                    message: '"value" at position 0 fails because [child "h1" fails because ["h1" is required]]',
+                    message: '"[0].h1" is required',
                     details: [{
-                        message: '"h1" is required',
+                        message: '"[0].h1" is required',
                         path: [0, 'h1'],
                         type: 'any.required',
-                        context: { label: 'h1', key: 'h1' }
+                        context: { label: '[0].h1', key: 'h1' }
                     }]
                 }],
                 [[1, 2, [1]], false, null, {
-                    message: '"value" at position 0 fails because ["0" must be an object]',
+                    message: '"[0]" must be an object',
                     details: [{
-                        message: '"0" must be an object',
+                        message: '"[0]" must be an object',
                         path: [0],
                         type: 'object.base',
-                        context: { label: 0, key: 0, value: 1 }
+                        context: { label: '[0]', key: 0, value: 1 }
                     }]
                 }]
             ]);
@@ -1116,12 +1091,12 @@ describe('array', () => {
             Helper.validate(Joi.array().items(Joi.number()), [
                 [[1, 2, 3], true],
                 [[1, 2, [1]], false, null, {
-                    message: '"value" at position 2 fails because ["2" must be a number]',
+                    message: '"[2]" must be a number',
                     details: [{
-                        message: '"2" must be a number',
+                        message: '"[2]" must be a number',
                         path: [2],
                         type: 'number.base',
-                        context: { label: 2, key: 2, value: [1] }
+                        context: { label: '[2]', key: 2, value: [1] }
                     }]
                 }]
             ]);
@@ -1134,12 +1109,12 @@ describe('array', () => {
             });
 
             const input = { arr: [1, 2, 2.1] };
-            const err = await expect(schema.validate(input)).to.reject('child "arr" fails because ["arr" at position 2 fails because ["2" must be an integer]]');
+            const err = await expect(schema.validate(input)).to.reject('"arr[2]" must be an integer');
             expect(err.details).to.equal([{
-                message: '"2" must be an integer',
+                message: '"arr[2]" must be an integer',
                 path: ['arr', 2],
                 type: 'number.integer',
-                context: { value: 2.1, label: 2, key: 2 }
+                context: { value: 2.1, label: 'arr[2]', key: 2 }
             }]);
         });
 
@@ -1152,12 +1127,12 @@ describe('array', () => {
             Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
                 [{ array: ['1'] }, false, null, {
-                    message: 'child "array" fails because ["array" at position 0 does not match any of the allowed types]',
+                    message: '"array[0]" does not match any of the allowed types',
                     details: [{
-                        message: '"array" at position 0 does not match any of the allowed types',
+                        message: '"array[0]" does not match any of the allowed types',
                         path: ['array', 0],
                         type: 'array.includes',
-                        context: { pos: 0, value: '1', label: 'array', key: 0 }
+                        context: { pos: 0, value: '1', label: 'array[0]', key: 0 }
                     }]
                 }],
                 [{ array: [3] }, true],
@@ -1181,33 +1156,33 @@ describe('array', () => {
             const input = [1, undefined, true, 'a'];
 
             const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject();
-            expect(err).to.be.an.error('"value" must not be a sparse array. "value" at position 2 contains an excluded value. "value" at position 3 does not match any of the allowed types');
+            expect(err).to.be.an.error('"[1]" must not be a sparse array item. "[2]" contains an excluded value. "[3]" does not match any of the allowed types');
             expect(err.details).to.equal([{
-                message: '"value" must not be a sparse array',
+                message: '"[1]" must not be a sparse array item',
                 path: [1],
                 type: 'array.sparse',
                 context: {
                     key: 1,
-                    label: 'value'
+                    label: '[1]'
                 }
             }, {
-                message: '"value" at position 2 contains an excluded value',
+                message: '"[2]" contains an excluded value',
                 path: [2],
                 type: 'array.excludes',
                 context: {
                     pos: 2,
                     key: 2,
-                    label: 'value',
+                    label: '[2]',
                     value: true
                 }
             }, {
-                message: '"value" at position 3 does not match any of the allowed types',
+                message: '"[3]" does not match any of the allowed types',
                 path: [3],
                 type: 'array.includes',
                 context: {
                     pos: 3,
                     key: 3,
-                    label: 'value',
+                    label: '[3]',
                     value: 'a'
                 }
             }]);
@@ -1232,14 +1207,14 @@ describe('array', () => {
                 }
             ];
 
-            const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject('"value" at position 1 fails because [child "hello" fails because ["hello" is required]]. "value" position 1 contains a duplicate value');
+            const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject('"[1].hello" is required. "[1]" contains a duplicate value');
             expect(err.details).to.equal([
                 {
                     context: {
                         key: 'hello',
-                        label: 'hello'
+                        label: '[1].hello'
                     },
-                    message: '"hello" is required',
+                    message: '"[1].hello" is required',
                     path: [1, 'hello'],
                     type: 'any.required'
                 },
@@ -1251,14 +1226,14 @@ describe('array', () => {
                             test: 'test'
                         },
                         key: 1,
-                        label: 'value',
+                        label: '[1]',
                         path: 'test',
                         pos: 1,
                         value: {
                             test: 'test'
                         }
                     },
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     path: [1],
                     type: 'array.unique'
                 }
@@ -1348,9 +1323,9 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[2, 2], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1358,15 +1333,15 @@ describe('array', () => {
                             value: 2,
                             dupePos: 0,
                             dupeValue: 2,
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [[0x2, 2], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1374,15 +1349,15 @@ describe('array', () => {
                             value: 2,
                             dupePos: 0,
                             dupeValue: 0x2,
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [['duplicate', 'duplicate'], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1390,15 +1365,15 @@ describe('array', () => {
                             value: 'duplicate',
                             dupePos: 0,
                             dupeValue: 'duplicate',
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [[{ a: 'b' }, { a: 'b' }], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1406,15 +1381,15 @@ describe('array', () => {
                             value: { a: 'b' },
                             dupePos: 0,
                             dupeValue: { a: 'b' },
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [[buffer, buffer], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1422,15 +1397,15 @@ describe('array', () => {
                             value: buffer,
                             dupePos: 0,
                             dupeValue: buffer,
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [[func, func], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1438,15 +1413,15 @@ describe('array', () => {
                             value: func,
                             dupePos: 0,
                             dupeValue: func,
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [[now, now], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1454,15 +1429,15 @@ describe('array', () => {
                             value: now,
                             dupePos: 0,
                             dupeValue: now,
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [[true, true], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1470,15 +1445,15 @@ describe('array', () => {
                             value: true,
                             dupePos: 0,
                             dupeValue: true,
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [[undefined, undefined], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1486,7 +1461,7 @@ describe('array', () => {
                             value: undefined,
                             dupePos: 0,
                             dupeValue: undefined,
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
@@ -1497,65 +1472,65 @@ describe('array', () => {
         it('errors with the correct details', () => {
 
             let error = Joi.array().items(Joi.number()).unique().validate([1, 2, 3, 1, 4]).error;
-            expect(error).to.be.an.error('"value" position 3 contains a duplicate value');
+            expect(error).to.be.an.error('"[3]" contains a duplicate value');
             expect(error.details).to.equal([{
                 context: {
                     key: 3,
-                    label: 'value',
+                    label: '[3]',
                     pos: 3,
                     value: 1,
                     dupePos: 0,
                     dupeValue: 1
                 },
-                message: '"value" position 3 contains a duplicate value',
+                message: '"[3]" contains a duplicate value',
                 path: [3],
                 type: 'array.unique'
             }]);
 
             error = Joi.array().items(Joi.number()).unique((a, b) => a === b).validate([1, 2, 3, 1, 4]).error;
-            expect(error).to.be.an.error('"value" position 3 contains a duplicate value');
+            expect(error).to.be.an.error('"[3]" contains a duplicate value');
             expect(error.details).to.equal([{
                 context: {
                     key: 3,
-                    label: 'value',
+                    label: '[3]',
                     pos: 3,
                     value: 1,
                     dupePos: 0,
                     dupeValue: 1
                 },
-                message: '"value" position 3 contains a duplicate value',
+                message: '"[3]" contains a duplicate value',
                 path: [3],
                 type: 'array.unique'
             }]);
 
             error = Joi.object({ a: Joi.array().items(Joi.number()).unique() }).validate({ a: [1, 2, 3, 1, 4] }).error;
-            expect(error).to.be.an.error('child "a" fails because ["a" position 3 contains a duplicate value]');
+            expect(error).to.be.an.error('"a[3]" contains a duplicate value');
             expect(error.details).to.equal([{
                 context: {
                     key: 3,
-                    label: 'a',
+                    label: 'a[3]',
                     pos: 3,
                     value: 1,
                     dupePos: 0,
                     dupeValue: 1
                 },
-                message: '"a" position 3 contains a duplicate value',
+                message: '"a[3]" contains a duplicate value',
                 path: ['a', 3],
                 type: 'array.unique'
             }]);
 
             error = Joi.object({ a: Joi.array().items(Joi.number()).unique((a, b) => a === b) }).validate({ a: [1, 2, 3, 1, 4] }).error;
-            expect(error).to.be.an.error('child "a" fails because ["a" position 3 contains a duplicate value]');
+            expect(error).to.be.an.error('"a[3]" contains a duplicate value');
             expect(error.details).to.equal([{
                 context: {
                     key: 3,
-                    label: 'a',
+                    label: 'a[3]',
                     pos: 3,
                     value: 1,
                     dupePos: 0,
                     dupeValue: 1
                 },
-                message: '"a" position 3 contains a duplicate value',
+                message: '"a[3]" contains a duplicate value',
                 path: ['a', 3],
                 type: 'array.unique'
             }]);
@@ -1599,9 +1574,9 @@ describe('array', () => {
                 [[{ a: 'b' }, { a: 'c' }], true],
                 [[{ a: 'b', c: 'd' }, { a: 'c', c: 'd' }], true],
                 [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1609,15 +1584,15 @@ describe('array', () => {
                             value: { a: 'b', c: 'd' },
                             dupePos: 0,
                             dupeValue: { a: 'b', c: 'd' },
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1625,7 +1600,7 @@ describe('array', () => {
                             value: { a: 'b', c: 'd' },
                             dupePos: 0,
                             dupeValue: { a: 'b', c: 'c' },
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
@@ -1657,9 +1632,9 @@ describe('array', () => {
                 [[{ a: 'b' }, 'c'], true],
                 [[{ a: 'b' }, 'c', { a: 'd' }, 'e'], true],
                 [[{ a: 'b' }, { a: 'b' }], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1667,15 +1642,15 @@ describe('array', () => {
                             value: { a: 'b' },
                             dupePos: 0,
                             dupeValue: { a: 'b' },
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
                 }],
                 [[{ a: 'b' }, 'b'], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1683,7 +1658,7 @@ describe('array', () => {
                             value: 'b',
                             dupePos: 0,
                             dupeValue: { a: 'b' },
-                            label: 'value',
+                            label: '[1]',
                             key: 1
                         }
                     }]
@@ -1699,35 +1674,35 @@ describe('array', () => {
                 [[{ id: 1 }, { id: 2 }, { id: 3 }], true],
                 [[{ id: 1 }, { id: 2 }, {}], true],
                 [[{ id: 1 }, { id: 2 }, { id: 1 }], false, null, {
-                    message: '"value" position 2 contains a duplicate value',
+                    message: '"[2]" contains a duplicate value',
                     details: [{
                         context: {
                             dupePos: 0,
                             dupeValue: { id: 1 },
                             key: 2,
-                            label: 'value',
+                            label: '[2]',
                             path: 'id',
                             pos: 2,
                             value: { id: 1 }
                         },
-                        message: '"value" position 2 contains a duplicate value',
+                        message: '"[2]" contains a duplicate value',
                         path: [2],
                         type: 'array.unique'
                     }]
                 }],
                 [[{ id: 1 }, { id: 2 }, {}, { id: 3 }, {}], false, null, {
-                    message: '"value" position 4 contains a duplicate value',
+                    message: '"[4]" contains a duplicate value',
                     details: [{
                         context: {
                             dupePos: 2,
                             dupeValue: {},
                             key: 4,
-                            label: 'value',
+                            label: '[4]',
                             path: 'id',
                             pos: 4,
                             value: {}
                         },
-                        message: '"value" position 4 contains a duplicate value',
+                        message: '"[4]" contains a duplicate value',
                         path: [4],
                         type: 'array.unique'
                     }]
@@ -1740,35 +1715,35 @@ describe('array', () => {
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 3 } }], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, null, {
-                    message: '"value" position 2 contains a duplicate value',
+                    message: '"[2]" contains a duplicate value',
                     details: [{
                         context: {
                             dupePos: 0,
                             dupeValue: { nested: { id: 1 } },
                             key: 2,
-                            label: 'value',
+                            label: '[2]',
                             path: 'nested.id',
                             pos: 2,
                             value: { nested: { id: 1 } }
                         },
-                        message: '"value" position 2 contains a duplicate value',
+                        message: '"[2]" contains a duplicate value',
                         path: [2],
                         type: 'array.unique'
                     }]
                 }],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, null, {
-                    message: '"value" position 4 contains a duplicate value',
+                    message: '"[4]" contains a duplicate value',
                     details: [{
                         context: {
                             dupePos: 2,
                             dupeValue: {},
                             key: 4,
-                            label: 'value',
+                            label: '[4]',
                             path: 'nested.id',
                             pos: 4,
                             value: {}
                         },
-                        message: '"value" position 4 contains a duplicate value',
+                        message: '"[4]" contains a duplicate value',
                         path: [4],
                         type: 'array.unique'
                     }]
@@ -1781,35 +1756,35 @@ describe('array', () => {
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 3 } }], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, null, {
-                    message: '"value" position 2 contains a duplicate value',
+                    message: '"[2]" contains a duplicate value',
                     details: [{
                         context: {
                             dupePos: 0,
                             dupeValue: { nested: { id: 1 } },
                             key: 2,
-                            label: 'value',
+                            label: '[2]',
                             path: 'nested',
                             pos: 2,
                             value: { nested: { id: 1 } }
                         },
-                        message: '"value" position 2 contains a duplicate value',
+                        message: '"[2]" contains a duplicate value',
                         path: [2],
                         type: 'array.unique'
                     }]
                 }],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, null, {
-                    message: '"value" position 4 contains a duplicate value',
+                    message: '"[4]" contains a duplicate value',
                     details: [{
                         context: {
                             dupePos: 2,
                             dupeValue: {},
                             key: 4,
-                            label: 'value',
+                            label: '[4]',
                             path: 'nested',
                             pos: 4,
                             value: {}
                         },
-                        message: '"value" position 4 contains a duplicate value',
+                        message: '"[4]" contains a duplicate value',
                         path: [4],
                         type: 'array.unique'
                     }]
@@ -1825,9 +1800,9 @@ describe('array', () => {
                 [[{ a: 'b' }, { a: 'c' }], true],
                 [[{ c: 'd' }, { c: 'd' }], true],
                 [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1835,16 +1810,16 @@ describe('array', () => {
                             value: { a: 'b', c: 'd' },
                             dupePos: 0,
                             dupeValue: { a: 'b', c: 'd' },
-                            label: 'value',
+                            label: '[1]',
                             key: 1,
                             path: 'a'
                         }
                     }]
                 }],
                 [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, null, {
-                    message: '"value" position 1 contains a duplicate value',
+                    message: '"[1]" contains a duplicate value',
                     details: [{
-                        message: '"value" position 1 contains a duplicate value',
+                        message: '"[1]" contains a duplicate value',
                         path: [1],
                         type: 'array.unique',
                         context: {
@@ -1852,7 +1827,7 @@ describe('array', () => {
                             value: { a: 'b', c: 'd' },
                             dupePos: 0,
                             dupeValue: { a: 'b', c: 'c' },
-                            label: 'value',
+                            label: '[1]',
                             key: 1,
                             path: 'a'
                         }
@@ -1863,22 +1838,13 @@ describe('array', () => {
 
         it('fails with invalid configs', () => {
 
-            expect(() => {
-
-                Joi.array().unique('id', 'invalid configs');
-            }).to.throw(Error, 'configs must be an object');
-            expect(() => {
-
-                Joi.array().unique('id', {});
-            }).to.not.throw();
+            expect(() => Joi.array().unique('id', 'invalid configs')).to.throw(Error, 'configs must be an object');
+            expect(() => Joi.array().unique('id', {})).to.not.throw();
         });
 
         it('fails with invalid comparator', () => {
 
-            expect(() => {
-
-                Joi.array().unique({});
-            }).to.throw(Error, 'comparator must be a function or a string');
+            expect(() => Joi.array().unique({})).to.throw(Error, 'comparator must be a function or a string');
         });
 
         it('handles period in key names', async () => {
@@ -1898,21 +1864,21 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[undefined], false, null, {
-                    message: '"value" must not be a sparse array',
+                    message: '"[0]" must not be a sparse array item',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { label: 'value', key: 0 }
+                        context: { label: '[0]', key: 0 }
                     }]
                 }],
                 [[2, undefined], false, null, {
-                    message: '"value" must not be a sparse array',
+                    message: '"[1]" must not be a sparse array item',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[1]" must not be a sparse array item',
                         path: [1],
                         type: 'array.sparse',
-                        context: { label: 'value', key: 1 }
+                        context: { label: '[1]', key: 1 }
                     }]
                 }]
             ]);
@@ -1924,12 +1890,12 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{ a: 1 }, {}, { c: 3 }], false, null, {
-                    message: '"value" must not be a sparse array',
+                    message: '"[1]" must not be a sparse array item',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[1]" must not be a sparse array item',
                         path: [1],
                         type: 'array.sparse',
-                        context: { label: 'value', key: 1 }
+                        context: { label: '[1]', key: 1 }
                     }]
                 }]
             ]);
@@ -1941,19 +1907,19 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{ a: 1 }, {}, 3], false, null, {
-                    message: '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be an object]',
+                    message: '"[1]" must not be a sparse array item. "[2]" must be an object',
                     details: [
                         {
-                            message: '"value" must not be a sparse array',
+                            message: '"[1]" must not be a sparse array item',
                             path: [1],
                             type: 'array.sparse',
-                            context: { label: 'value', key: 1 }
+                            context: { label: '[1]', key: 1 }
                         },
                         {
-                            message: '"2" must be an object',
+                            message: '"[2]" must be an object',
                             path: [2],
                             type: 'object.base',
-                            context: { label: 2, key: 2, value: 3 }
+                            context: { label: '[2]', key: 2, value: 3 }
                         }
                     ]
                 }]
@@ -1966,12 +1932,12 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, null, {
-                    message: '"value" at position 0 fails because ["0" is required]',
+                    message: '"[0]" is required',
                     details: [{
-                        message: '"0" is required',
+                        message: '"[0]" is required',
                         path: [0],
                         type: 'any.required',
-                        context: { label: 0, key: 0 }
+                        context: { label: '[0]', key: 0 }
                     }]
                 }]
             ]);
@@ -1996,12 +1962,12 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, null, {
-                    message: '"value" must not be a sparse array',
+                    message: '"[0]" must not be a sparse array item',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { label: 'value', key: 0 }
+                        context: { label: '[0]', key: 0 }
                     }]
                 }]
             ]);
@@ -2026,19 +1992,19 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, null, {
-                    message: '"value" must not be a sparse array. "value" must not be a sparse array',
+                    message: '"[0]" must not be a sparse array item. "[1]" must not be a sparse array item',
                     details: [
                         {
-                            message: '"value" must not be a sparse array',
+                            message: '"[0]" must not be a sparse array item',
                             path: [0],
                             type: 'array.sparse',
-                            context: { label: 'value', key: 0 }
+                            context: { label: '[0]', key: 0 }
                         },
                         {
-                            message: '"value" must not be a sparse array',
+                            message: '"[1]" must not be a sparse array item',
                             path: [1],
                             type: 'array.sparse',
-                            context: { label: 'value', key: 1 }
+                            context: { label: '[1]', key: 1 }
                         }
                     ]
                 }]
@@ -2051,25 +2017,25 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{}, 3], false, null, {
-                    message: '"value" at position 0 fails because ["0" is required]. "value" at position 1 fails because ["1" must be an object]. "value" does not contain 1 required value(s)',
+                    message: '"[0]" is required. "[1]" must be an object. "value" does not contain 1 required value(s)',
                     details: [
                         {
-                            message: '"0" is required',
+                            message: '"[0]" is required',
                             path: [0],
                             type: 'any.required',
-                            context: { label: 0, key: 0 }
+                            context: { label: '[0]', key: 0 }
                         },
                         {
-                            message: '"1" must be an object',
+                            message: '"[1]" must be an object',
                             path: [1],
                             type: 'object.base',
-                            context: { label: 1, key: 1, value: 3 }
+                            context: { label: '[1]', key: 1, value: 3 }
                         },
                         {
                             message: '"value" does not contain 1 required value(s)',
                             path: [],
                             type: 'array.includesRequiredUnknowns',
-                            context: { unknownMisses: 1, label: 'value', key: undefined }
+                            context: { unknownMisses: 1, label: 'value' }
                         }
                     ]
                 }]
@@ -2082,12 +2048,12 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{}], false, null, {
-                    message: '"value" must not be a sparse array',
+                    message: '"[0]" must not be a sparse array item',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { label: 'value', key: 0 }
+                        context: { label: '[0]', key: 0 }
                     }]
                 }]
             ]);
@@ -2099,19 +2065,19 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{}, 3], false, null, {
-                    message: '"value" must not be a sparse array. "value" at position 1 fails because array must contain at most 1 items',
+                    message: '"[0]" must not be a sparse array item. "value" must contain at most 1 items',
                     details: [
                         {
-                            message: '"value" must not be a sparse array',
+                            message: '"[0]" must not be a sparse array item',
                             path: [0],
                             type: 'array.sparse',
-                            context: { label: 'value', key: 0 }
+                            context: { label: '[0]', key: 0 }
                         },
                         {
-                            message: '"value" at position 1 fails because array must contain at most 1 items',
-                            path: [1],
+                            message: '"value" must contain at most 1 items',
+                            path: [],
                             type: 'array.orderedLength',
-                            context: { pos: 1, limit: 1, label: 'value', key: 1 }
+                            context: { pos: 1, limit: 1, label: 'value' }
                         }
                     ]
                 }]
@@ -2143,12 +2109,12 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{ a: 1 }, {}, { c: 3 }], false, null, {
-                    message: '"value" at position 1 fails because ["1" is required]',
+                    message: '"[1]" is required',
                     details: [{
-                        message: '"1" is required',
+                        message: '"[1]" is required',
                         path: [1],
                         type: 'any.required',
-                        context: { label: 1, key: 1 }
+                        context: { label: '[1]', key: 1 }
                     }]
                 }]
             ]);
@@ -2210,30 +2176,30 @@ describe('array', () => {
                 [[1, 2, 3], true],
                 [1, true],
                 [['a'], false, null, {
-                    message: '"value" at position 0 fails because ["0" must be a number]',
+                    message: '"[0]" must be a number',
                     details: [{
-                        message: '"0" must be a number',
+                        message: '"[0]" must be a number',
                         path: [0],
                         type: 'number.base',
-                        context: { label: 0, key: 0, value: 'a' }
+                        context: { label: '[0]', key: 0, value: 'a' }
                     }]
                 }],
                 ['a', false, null, {
-                    message: 'single value of "value" fails because ["value" must be a number]',
+                    message: '"value" must be a number',
                     details: [{
                         message: '"value" must be a number',
                         path: [],
                         type: 'number.base',
-                        context: { label: 'value', key: undefined, value: 'a' }
+                        context: { label: 'value', value: 'a' }
                     }]
                 }],
                 [true, false, null, {
-                    message: 'single value of "value" contains an excluded value',
+                    message: '"value" contains an excluded value',
                     details: [{
-                        message: 'single value of "value" contains an excluded value',
+                        message: '"value" contains an excluded value',
                         path: [],
-                        type: 'array.excludesSingle',
-                        context: { pos: 0, value: true, label: 'value', key: undefined }
+                        type: 'array.excludes',
+                        context: { pos: 0, value: true, label: 'value' }
                     }]
                 }]
             ]);
@@ -2249,12 +2215,12 @@ describe('array', () => {
                 [[1, 'a'], true],
                 ['a', true],
                 [true, false, null, {
-                    message: 'single value of "value" does not match any of the allowed types',
+                    message: '"value" does not match any of the allowed types',
                     details: [{
-                        message: 'single value of "value" does not match any of the allowed types',
+                        message: '"value" does not match any of the allowed types',
                         path: [],
-                        type: 'array.includesSingle',
-                        context: { pos: 0, value: true, label: 'value', key: undefined }
+                        type: 'array.includes',
+                        context: { pos: 0, value: true, label: 'value' }
                     }]
                 }]
             ]);
@@ -2307,7 +2273,7 @@ describe('array', () => {
         it('ignores stripUnknown when true', async () => {
 
             const schema = Joi.array().items(Joi.string()).options({ stripUnknown: true });
-            await expect(schema.validate(['one', 'two', 3, 4, true, false])).to.reject('"value" at position 2 fails because ["2" must be a string]');
+            await expect(schema.validate(['one', 'two', 3, 4, true, false])).to.reject('"[2]" must be a string');
         });
 
         it('respects stripUnknown (as an object)', async () => {
@@ -2397,12 +2363,12 @@ describe('array', () => {
 
             const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
             const input = ['s1', 2];
-            const err = await expect(schema.validate(input)).to.reject('"value" at position 0 fails because ["0" must be a number]');
+            const err = await expect(schema.validate(input)).to.reject('"[0]" must be a number');
             expect(err.details).to.equal([{
-                message: '"0" must be a number',
+                message: '"[0]" must be a number',
                 path: [0],
                 type: 'number.base',
-                context: { label: 0, key: 0, value: 's1' }
+                context: { label: '[0]', key: 0, value: 's1' }
             }]);
         });
 
@@ -2410,12 +2376,12 @@ describe('array', () => {
 
             const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
             const input = [1, 's2', 3];
-            const err = await expect(schema.validate(input)).to.reject('"value" at position 2 fails because array must contain at most 2 items');
+            const err = await expect(schema.validate(input)).to.reject('"value" must contain at most 2 items');
             expect(err.details).to.equal([{
-                message: '"value" at position 2 fails because array must contain at most 2 items',
-                path: [2],
+                message: '"value" must contain at most 2 items',
+                path: [],
                 type: 'array.orderedLength',
-                context: { pos: 2, limit: 2, label: 'value', key: 2 }
+                context: { pos: 2, limit: 2, label: 'value' }
             }]);
         });
 
@@ -2424,32 +2390,20 @@ describe('array', () => {
             const schema = Joi.array().ordered(Joi.string(), Joi.number()).options({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
             const err = await expect(schema.validate(input)).to.reject();
-            expect(err).to.be.an.error('"value" at position 0 fails because ["0" must be a string]. "value" at position 2 fails because array must contain at most 2 items. "value" at position 3 fails because array must contain at most 2 items. "value" at position 4 fails because array must contain at most 2 items');
-            expect(err.details).to.have.length(4);
+            expect(err).to.be.an.error('"[0]" must be a string. "value" must contain at most 2 items');
+            expect(err.details).to.have.length(2);
             expect(err.details).to.equal([
                 {
-                    message: '"0" must be a string',
+                    message: '"[0]" must be a string',
                     path: [0],
                     type: 'string.base',
-                    context: { value: 1, label: 0, key: 0 }
+                    context: { value: 1, label: '[0]', key: 0 }
                 },
                 {
-                    message: '"value" at position 2 fails because array must contain at most 2 items',
-                    path: [2],
+                    message: '"value" must contain at most 2 items',
+                    path: [],
                     type: 'array.orderedLength',
-                    context: { pos: 2, limit: 2, label: 'value', key: 2 }
-                },
-                {
-                    message: '"value" at position 3 fails because array must contain at most 2 items',
-                    path: [3],
-                    type: 'array.orderedLength',
-                    context: { pos: 3, limit: 2, label: 'value', key: 3 }
-                },
-                {
-                    message: '"value" at position 4 fails because array must contain at most 2 items',
-                    path: [4],
-                    type: 'array.orderedLength',
-                    context: { pos: 4, limit: 2, label: 'value', key: 4 }
+                    context: { pos: 2, limit: 2, label: 'value' }
                 }
             ]);
         });
@@ -2463,7 +2417,7 @@ describe('array', () => {
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
                 type: 'array.includesRequiredUnknowns',
-                context: { unknownMisses: 1, label: 'value', key: undefined }
+                context: { unknownMisses: 1, label: 'value' }
             }]);
         });
 
@@ -2471,12 +2425,12 @@ describe('array', () => {
 
             const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number()).options({ abortEarly: false });
             const input = ['s1', 2, 3, 4, 's5'];
-            const err = await expect(schema.validate(input)).to.reject('"value" at position 4 fails because ["4" must be a number]');
+            const err = await expect(schema.validate(input)).to.reject('"[4]" must be a number');
             expect(err.details).to.equal([{
-                message: '"4" must be a number',
+                message: '"[4]" must be a number',
                 path: [4],
                 type: 'number.base',
-                context: { label: 4, key: 4, value: 's5' }
+                context: { label: '[4]', key: 4, value: 's5' }
             }]);
         });
 
@@ -2484,12 +2438,12 @@ describe('array', () => {
 
             const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.number()).options({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
-            const err = await expect(schema.validate(input)).to.reject('"value" at position 0 fails because ["0" must be a string]');
+            const err = await expect(schema.validate(input)).to.reject('"[0]" must be a string');
             expect(err.details).to.equal([{
-                message: '"0" must be a string',
+                message: '"[0]" must be a string',
                 path: [0],
                 type: 'string.base',
-                context: { value: 1, label: 0, key: 0 }
+                context: { value: 1, label: '[0]', key: 0 }
             }]);
         });
 
@@ -2498,32 +2452,32 @@ describe('array', () => {
             const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.string()).options({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
             const err = await expect(schema.validate(input)).to.reject();
-            expect(err).to.be.an.error('"value" at position 0 fails because ["0" must be a string]. "value" at position 2 fails because ["2" must be a string]. "value" at position 3 fails because ["3" must be a string]. "value" at position 4 fails because ["4" must be a string]');
+            expect(err).to.be.an.error('"[0]" must be a string. "[2]" must be a string. "[3]" must be a string. "[4]" must be a string');
             expect(err.details).to.have.length(4);
             expect(err.details).to.equal([
                 {
-                    message: '"0" must be a string',
+                    message: '"[0]" must be a string',
                     path: [0],
                     type: 'string.base',
-                    context: { value: 1, label: 0, key: 0 }
+                    context: { value: 1, label: '[0]', key: 0 }
                 },
                 {
-                    message: '"2" must be a string',
+                    message: '"[2]" must be a string',
                     path: [2],
                     type: 'string.base',
-                    context: { value: 3, label: 2, key: 2 }
+                    context: { value: 3, label: '[2]', key: 2 }
                 },
                 {
-                    message: '"3" must be a string',
+                    message: '"[3]" must be a string',
                     path: [3],
                     type: 'string.base',
-                    context: { value: 4, label: 3, key: 3 }
+                    context: { value: 4, label: '[3]', key: 3 }
                 },
                 {
-                    message: '"4" must be a string',
+                    message: '"[4]" must be a string',
                     path: [4],
                     type: 'string.base',
-                    context: { value: 5, label: 4, key: 4 }
+                    context: { value: 5, label: '[4]', key: 4 }
                 }
             ]);
         });
@@ -2533,20 +2487,20 @@ describe('array', () => {
             const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required()).options({ abortEarly: false });
             const input = ['s1', 2];
             const err = await expect(schema.validate(input)).to.reject();
-            expect(err).to.be.an.error('"value" at position 0 fails because ["0" must be a number]. "value" at position 1 fails because ["1" must be a string]');
+            expect(err).to.be.an.error('"[0]" must be a number. "[1]" must be a string');
             expect(err.details).to.have.length(2);
             expect(err.details).to.equal([
                 {
-                    message: '"0" must be a number',
+                    message: '"[0]" must be a number',
                     path: [0],
                     type: 'number.base',
-                    context: { label: 0, key: 0, value: 's1' }
+                    context: { label: '[0]', key: 0, value: 's1' }
                 },
                 {
-                    message: '"1" must be a string',
+                    message: '"[1]" must be a string',
                     path: [1],
                     type: 'string.base',
-                    context: { value: 2, label: 1, key: 1 }
+                    context: { value: 2, label: '[1]', key: 1 }
                 }
             ]);
         });
@@ -2563,36 +2517,36 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[0, 'ab', 0, 'ab'], true],
                 [[undefined, 'foo', 2, 'bar'], false, null, {
-                    message: '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be less than or equal to 0]',
+                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: 'value' }
+                        context: { key: 0, label: '[0]' }
                     }, {
-                        message: '"2" must be less than or equal to 0',
+                        message: '"[2]" must be less than or equal to 0',
                         path: [2],
                         type: 'number.max',
-                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
                     }]
                 }],
                 [[undefined, 'foo', 2, undefined], false, null, {
-                    message: '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be less than or equal to 0]. "value" must not be a sparse array',
+                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: 'value' }
+                        context: { key: 0, label: '[0]' }
                     }, {
-                        message: '"2" must be less than or equal to 0',
+                        message: '"[2]" must be less than or equal to 0',
                         path: [2],
                         type: 'number.max',
-                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
                     }, {
-                        message: '"value" must not be a sparse array',
+                        message: '"[3]" must not be a sparse array item',
                         path: [3],
                         type: 'array.sparse',
-                        context: { key: 3, label: 'value' }
+                        context: { key: 3, label: '[3]' }
                     }]
                 }]
             ]);
@@ -2610,60 +2564,60 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[0, 'ab', 0, 'ab'], true],
                 [[undefined, 'foo', 2, 'bar'], false, null, {
-                    message: '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be less than or equal to 0]',
+                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: 'value' }
+                        context: { key: 0, label: '[0]' }
                     }, {
-                        message: '"2" must be less than or equal to 0',
+                        message: '"[2]" must be less than or equal to 0',
                         path: [2],
                         type: 'number.max',
-                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
                     }]
                 }],
                 [[undefined, 'foo', 2, undefined], false, null, {
-                    message: '"value" must not be a sparse array. "value" at position 2 fails because ["2" must be less than or equal to 0]. "value" must not be a sparse array',
+                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: 'value' }
+                        context: { key: 0, label: '[0]' }
                     }, {
-                        message: '"2" must be less than or equal to 0',
+                        message: '"[2]" must be less than or equal to 0',
                         path: [2],
                         type: 'number.max',
-                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
                     }, {
-                        message: '"value" must not be a sparse array',
+                        message: '"[3]" must not be a sparse array item',
                         path: [3],
                         type: 'array.sparse',
-                        context: { key: 3, label: 'value' }
+                        context: { key: 3, label: '[3]' }
                     }]
                 }],
                 [[undefined, false, 2, undefined], false, null, {
-                    message: '"value" must not be a sparse array. "value" at position 1 contains an excluded value. "value" at position 2 fails because ["2" must be less than or equal to 0]. "value" must not be a sparse array',
+                    message: '"[0]" must not be a sparse array item. "[1]" contains an excluded value. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
                     details: [{
-                        message: '"value" must not be a sparse array',
+                        message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: 'value' }
+                        context: { key: 0, label: '[0]' }
                     }, {
-                        message: '"value" at position 1 contains an excluded value',
+                        message: '"[1]" contains an excluded value',
                         path: [1],
                         type: 'array.excludes',
-                        context: { key: 1, label: 'value', pos: 1, value: false }
+                        context: { key: 1, label: '[1]', pos: 1, value: false }
                     }, {
-                        message: '"2" must be less than or equal to 0',
+                        message: '"[2]" must be less than or equal to 0',
                         path: [2],
                         type: 'number.max',
-                        context: { key: 2, label: 2, limit: 0, value: 2 }
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
                     }, {
-                        message: '"value" must not be a sparse array',
+                        message: '"[3]" must not be a sparse array item',
                         path: [3],
                         type: 'array.sparse',
-                        context: { key: 3, label: 'value' }
+                        context: { key: 3, label: '[3]' }
                     }]
                 }]
             ]);

@@ -52,7 +52,7 @@ describe('binary', () => {
                     message: '"value" must be one of [hello]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value', key: undefined }
+                    context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
                 }]
             }],
             [Buffer.from('goodbye'), false, null, {
@@ -61,7 +61,7 @@ describe('binary', () => {
                     message: '"value" must be one of [hello]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value', key: undefined }
+                    context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
                 }]
             }],
             [Buffer.from('HELLO'), false, null, {
@@ -70,7 +70,7 @@ describe('binary', () => {
                     message: '"value" must be one of [hello]',
                     path: [],
                     type: 'any.allowOnly',
-                    context: { value: Buffer.from('HELLO'), valids: [hello], label: 'value', key: undefined }
+                    context: { value: Buffer.from('HELLO'), valids: [hello], label: 'value' }
                 }]
             }]
         ]);
@@ -85,7 +85,7 @@ describe('binary', () => {
                 message: '"value" must be a buffer or a string',
                 path: [],
                 type: 'binary.base',
-                context: { label: 'value', key: undefined }
+                context: { label: 'value' }
             }]);
         });
 
@@ -146,7 +146,7 @@ describe('binary', () => {
                         message: '"value" must be at least 5 bytes',
                         path: [],
                         type: 'binary.min',
-                        context: { limit: 5, value: Buffer.from('test'), label: 'value', key: undefined }
+                        context: { limit: 5, value: Buffer.from('test'), label: 'value' }
                     }]
                 }]
             ]);
@@ -184,8 +184,7 @@ describe('binary', () => {
                         context: {
                             limit: 5,
                             value: Buffer.from('testing'),
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -226,8 +225,7 @@ describe('binary', () => {
                         context: {
                             limit: 4,
                             value: Buffer.from('testing'),
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]

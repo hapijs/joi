@@ -14,11 +14,7 @@ const internals = {
     endString: '<!-- errorsstop -->',
     ignoredLanguage: ['root', 'key', 'messages'],
     ignoredCodes: [
-        '`alternatives.child`',
-        '`array.includesOne`',
-        '`array.includesOneSingle`',
-        '`array.ordered`',
-        '`object.child`'
+        '`alternatives.child`'
     ]
 };
 

@@ -24,9 +24,7 @@ describe('symbol', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(
-            () => Joi.symbol('invalid argument.')
-        ).to.throw('Joi.symbol() does not allow arguments.');
+        expect(() => Joi.symbol('invalid argument.')).to.throw('Joi.symbol() does not allow arguments.');
     });
 
     describe('validate()', () => {
@@ -44,7 +42,7 @@ describe('symbol', () => {
                         message: '"value" must be a symbol',
                         path: [],
                         type: 'symbol.base',
-                        context: { label: 'value', key: undefined, value: 1 }
+                        context: { label: 'value', value: 1 }
                     }]
                 }]
             ]);
@@ -64,7 +62,7 @@ describe('symbol', () => {
                         message: '"value" must be one of [Symbol(1), Symbol(2)]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: otherSymbol, label: 'value', valids: symbols, key: undefined }
+                        context: { value: otherSymbol, label: 'value', valids: symbols }
                     }]
                 }]
             ]);
@@ -87,7 +85,7 @@ describe('symbol', () => {
                             message: `"value" must be one of Map { 1 => Symbol(1), 'two' => Symbol(2) }`,
                             path: [],
                             type: 'symbol.map',
-                            context: { label: 'value', key: undefined, value: '1', map }
+                            context: { label: 'value', value: '1', map }
                         }]
                     }],
                     ['two', true, null, symbols[1]],
@@ -97,7 +95,7 @@ describe('symbol', () => {
                             message: '"value" must be one of [Symbol(1), Symbol(2)]',
                             path: [],
                             type: 'any.allowOnly',
-                            context: { value: otherSymbol, label: 'value', valids: symbols, key: undefined }
+                            context: { value: otherSymbol, label: 'value', valids: symbols }
                         }]
                     }]
                 ]);
@@ -118,7 +116,7 @@ describe('symbol', () => {
                             message: '"value" must be one of [Symbol(one), Symbol(two)]',
                             path: [],
                             type: 'any.allowOnly',
-                            context: { value: otherSymbol, label: 'value', valids: symbols, key: undefined }
+                            context: { value: otherSymbol, label: 'value', valids: symbols }
                         }]
                     }],
                     ['toString', false, null, {
@@ -127,7 +125,7 @@ describe('symbol', () => {
                             message: `"value" must be one of Map { 'one' => Symbol(one), 'two' => Symbol(two) }`,
                             path: [],
                             type: 'symbol.map',
-                            context: { label: 'value', key: undefined, value: 'toString', map: new Map([['one', symbols[0]], ['two', symbols[1]]]) }
+                            context: { label: 'value', value: 'toString', map: new Map([['one', symbols[0]], ['two', symbols[1]]]) }
                         }]
                     }]
                 ]);
@@ -147,7 +145,7 @@ describe('symbol', () => {
                             message: '"value" must be one of [Symbol(1), Symbol(2)]',
                             path: [],
                             type: 'any.allowOnly',
-                            context: { value: otherSymbol, label: 'value', valids: symbols, key: undefined }
+                            context: { value: otherSymbol, label: 'value', valids: symbols }
                         }]
                     }]
                 ]);
@@ -180,7 +178,7 @@ describe('symbol', () => {
                 ).to.throw('Key must not be an object, function, or Symbol');
 
                 expect(
-                    () => Joi.symbol().map([[() => {}, Symbol()]])
+                    () => Joi.symbol().map([[() => { }, Symbol()]])
                 ).to.throw('Key must not be an object, function, or Symbol');
 
                 expect(
@@ -207,7 +205,7 @@ describe('symbol', () => {
                 message: '"value" must be a symbol',
                 path: [],
                 type: 'symbol.base',
-                context: { label: 'value', key: undefined, value: 1 }
+                context: { label: 'value', value: 1 }
             }]);
         });
 

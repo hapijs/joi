@@ -48,7 +48,7 @@ describe('boolean', () => {
                     message: '"value" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined, value: 'true' }
+                    context: { label: 'value', value: 'true' }
                 }]
             }],
             ['false', false, null, {
@@ -57,7 +57,7 @@ describe('boolean', () => {
                     message: '"value" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined, value: 'false' }
+                    context: { label: 'value', value: 'false' }
                 }]
             }],
             ['TrUe', false, null, {
@@ -66,7 +66,7 @@ describe('boolean', () => {
                     message: '"value" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined, value: 'TrUe' }
+                    context: { label: 'value', value: 'TrUe' }
                 }]
             }],
             ['FalSe', false, null, {
@@ -75,7 +75,7 @@ describe('boolean', () => {
                     message: '"value" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined, value: 'FalSe' }
+                    context: { label: 'value', value: 'FalSe' }
                 }]
             }]
         ]);
@@ -90,7 +90,7 @@ describe('boolean', () => {
                     message: '"value" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined, value: 1 }
+                    context: { label: 'value', value: 1 }
                 }]
             }],
             [0, false, null, {
@@ -99,7 +99,7 @@ describe('boolean', () => {
                     message: '"value" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined, value: 0 }
+                    context: { label: 'value', value: 0 }
                 }]
             }],
             [2, false, null, {
@@ -108,7 +108,7 @@ describe('boolean', () => {
                     message: '"value" must be a boolean',
                     path: [],
                     type: 'boolean.base',
-                    context: { label: 'value', key: undefined, value: 2 }
+                    context: { label: 'value', value: 2 }
                 }]
             }]
         ]);
@@ -149,7 +149,7 @@ describe('boolean', () => {
                 message: '"value" must be a boolean',
                 path: [],
                 type: 'boolean.base',
-                context: { label: 'value', key: undefined, value: 'y' }
+                context: { label: 'value', value: 'y' }
             }]);
         });
 
@@ -175,7 +175,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'TrUe' }
+                        context: { label: 'value', value: 'TrUe' }
                     }]
                 }],
                 ['FalSe', false, null, {
@@ -184,7 +184,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'FalSe' }
+                        context: { label: 'value', value: 'FalSe' }
                     }]
                 }]
             ]);
@@ -204,7 +204,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: '1234' }
+                        context: { label: 'value', value: '1234' }
                     }]
                 }],
                 [false, true],
@@ -215,7 +215,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }],
                 ['on', false, null, {
@@ -224,7 +224,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'on' }
+                        context: { label: 'value', value: 'on' }
                     }]
                 }],
                 ['off', false, null, {
@@ -233,7 +233,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'off' }
+                        context: { label: 'value', value: 'off' }
                     }]
                 }],
                 ['yes', false, null, {
@@ -242,7 +242,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'yes' }
+                        context: { label: 'value', value: 'yes' }
                     }]
                 }],
                 ['no', false, null, {
@@ -251,7 +251,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'no' }
+                        context: { label: 'value', value: 'no' }
                     }]
                 }],
                 ['1', false, null, {
@@ -260,7 +260,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: '1' }
+                        context: { label: 'value', value: '1' }
                     }]
                 }],
                 ['0', false, null, {
@@ -269,7 +269,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: '0' }
+                        context: { label: 'value', value: '0' }
                     }]
                 }]
             ]);
@@ -285,7 +285,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: '1234' }
+                        context: { label: 'value', value: '1234' }
                     }]
                 }],
                 [false, true],
@@ -296,7 +296,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -312,7 +312,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: '1234' }
+                        context: { label: 'value', value: '1234' }
                     }]
                 }],
                 [false, true],
@@ -322,7 +322,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -338,7 +338,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: '1234' }
+                        context: { label: 'value', value: '1234' }
                     }]
                 }],
                 [false, false, null, {
@@ -347,7 +347,7 @@ describe('boolean', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: false, invalids: [false], label: 'value', key: undefined }
+                        context: { value: false, invalids: [false], label: 'value' }
                     }]
                 }],
                 [true, true],
@@ -357,7 +357,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -373,7 +373,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: '1234' }
+                        context: { label: 'value', value: '1234' }
                     }]
                 }],
                 [false, false, null, {
@@ -382,7 +382,7 @@ describe('boolean', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: false, invalids: [false], label: 'value', key: undefined }
+                        context: { value: false, invalids: [false], label: 'value' }
                     }]
                 }],
                 [true, true],
@@ -400,7 +400,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: '1234' }
+                        context: { label: 'value', value: '1234' }
                     }]
                 }],
                 [false, true],
@@ -410,7 +410,7 @@ describe('boolean', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: true, invalids: [true], label: 'value', key: undefined }
+                        context: { value: true, invalids: [true], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -419,7 +419,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -435,7 +435,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: '1234' }
+                        context: { label: 'value', value: '1234' }
                     }]
                 }],
                 [false, true],
@@ -445,7 +445,7 @@ describe('boolean', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: true, invalids: [true], label: 'value', key: undefined }
+                        context: { value: true, invalids: [true], label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -465,7 +465,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'N' }
+                        context: { label: 'value', value: 'N' }
                     }]
                 }],
                 [null, false, null, {
@@ -474,7 +474,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -494,7 +494,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'N' }
+                        context: { label: 'value', value: 'N' }
                     }]
                 }],
                 [null, false, null, {
@@ -503,7 +503,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -520,7 +520,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'Y' }
+                        context: { label: 'value', value: 'Y' }
                     }]
                 }],
                 [true, true],
@@ -531,7 +531,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }]
             ]);
@@ -549,7 +549,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'Y' }
+                        context: { label: 'value', value: 'Y' }
                     }]
                 }],
                 [null, false, null, {
@@ -558,7 +558,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: null }
+                        context: { label: 'value', value: null }
                     }]
                 }],
                 [true, true],
@@ -586,7 +586,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'M' }
+                        context: { label: 'value', value: 'M' }
                     }]
                 }],
                 ['Yes', false, null, {
@@ -595,7 +595,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'Yes' }
+                        context: { label: 'value', value: 'Yes' }
                     }]
                 }]
             ]);
@@ -614,7 +614,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'no' }
+                        context: { label: 'value', value: 'no' }
                     }]
                 }]
             ]);
@@ -627,7 +627,7 @@ describe('boolean', () => {
                         message: '"value" must be a boolean',
                         path: [],
                         type: 'boolean.base',
-                        context: { label: 'value', key: undefined, value: 'yes' }
+                        context: { label: 'value', value: 'yes' }
                     }]
                 }]
             ]);

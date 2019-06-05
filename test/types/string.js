@@ -42,7 +42,7 @@ describe('string', () => {
                     message: '"value" must be a string',
                     path: [],
                     type: 'string.base',
-                    context: { value: true, label: 'value', key: undefined }
+                    context: { value: true, label: 'value' }
                 }]
             }],
             [false, false, null, {
@@ -51,7 +51,7 @@ describe('string', () => {
                     message: '"value" must be a string',
                     path: [],
                     type: 'string.base',
-                    context: { value: false, label: 'value', key: undefined }
+                    context: { value: false, label: 'value' }
                 }]
             }]
         ]);
@@ -67,7 +67,7 @@ describe('string', () => {
                     message: '"value" must be a string',
                     path: [],
                     type: 'string.base',
-                    context: { value: 123, label: 'value', key: undefined }
+                    context: { value: 123, label: 'value' }
                 }]
             }],
             [0, false, null, {
@@ -76,7 +76,7 @@ describe('string', () => {
                     message: '"value" must be a string',
                     path: [],
                     type: 'string.base',
-                    context: { value: 0, label: 'value', key: undefined }
+                    context: { value: 0, label: 'value' }
                 }]
             }],
             ['123', true],
@@ -121,7 +121,7 @@ describe('string', () => {
                         message: '"value" must be one of [a, b]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'A', valids: ['a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'A', valids: ['a', 'b'], label: 'value' }
                     }]
                 }],
                 ['B', false, null, {
@@ -130,7 +130,7 @@ describe('string', () => {
                         message: '"value" must be one of [a, b]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'B', valids: ['a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'B', valids: ['a', 'b'], label: 'value' }
                     }]
                 }]
             ]);
@@ -149,7 +149,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: 4, label: 'value', key: undefined }
+                        context: { value: 4, label: 'value' }
                     }]
                 }]
             ]);
@@ -168,7 +168,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: 4, label: 'value', key: undefined }
+                        context: { value: 4, label: 'value' }
                     }]
                 }],
                 [5, true],
@@ -188,7 +188,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'a', invalids: ['', 'a', 'b'], label: 'value' }
                     }]
                 }],
                 ['b', false, null, {
@@ -197,7 +197,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b', invalids: ['', 'a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'b', invalids: ['', 'a', 'b'], label: 'value' }
                     }]
                 }],
                 ['A', true],
@@ -214,7 +214,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'a', invalids: ['', 'a', 'b'], label: 'value' }
                     }]
                 }],
                 ['b', false, null, {
@@ -223,7 +223,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b', invalids: ['', 'a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'b', invalids: ['', 'a', 'b'], label: 'value' }
                     }]
                 }],
                 ['A', false, null, {
@@ -232,7 +232,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'A', invalids: ['', 'a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'A', invalids: ['', 'a', 'b'], label: 'value' }
                     }]
                 }],
                 ['B', false, null, {
@@ -241,7 +241,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'B', invalids: ['', 'a', 'b'], label: 'value', key: undefined }
+                        context: { value: 'B', invalids: ['', 'a', 'b'], label: 'value' }
                     }]
                 }]
             ]);
@@ -289,8 +289,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'a',
                             encoding: 'utf8',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -304,7 +303,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
                 [{ a: 2, b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" length must be at least ref:a characters long]',
+                    message: '"b" length must be at least ref:a characters long',
                     details: [{
                         message: '"b" length must be at least ref:a characters long',
                         path: ['b'],
@@ -336,7 +335,7 @@ describe('string', () => {
                 [{ a: 'abc', b: 4, c: 42 }, true],
                 [{ a: 'abc', b: 3, c: 0 }, true],
                 [{ a: 'abc', b: 3, c: 42 }, false, null, {
-                    message: 'child "c" fails because ["c" must be one of [0]]',
+                    message: '"c" must be one of [0]',
                     details: [{
                         message: '"c" must be one of [0]',
                         path: ['c'],
@@ -354,7 +353,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
                 [{ b: 'a' }, false, { context: { a: 2 } }, {
-                    message: 'child "b" fails because ["b" length must be at least context:a characters long]',
+                    message: '"b" length must be at least context:a characters long',
                     details: [{
                         message: '"b" length must be at least context:a characters long',
                         path: ['b'],
@@ -378,7 +377,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -396,7 +395,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -444,7 +443,7 @@ describe('string', () => {
                         message: '"value" length must be less than or equal to 1 characters long',
                         path: [],
                         type: 'string.max',
-                        context: { limit: 1, value: '\u00bd', encoding: 'utf8', label: 'value', key: undefined }
+                        context: { limit: 1, value: '\u00bd', encoding: 'utf8', label: 'value' }
                     }]
                 }],
                 ['a', true]
@@ -458,7 +457,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
                 [{ a: 2, b: 'three' }, false, null, {
-                    message: 'child "b" fails because ["b" length must be less than or equal to ref:a characters long]',
+                    message: '"b" length must be less than or equal to ref:a characters long',
                     details: [{
                         message: '"b" length must be less than or equal to ref:a characters long',
                         path: ['b'],
@@ -482,7 +481,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
                 [{ b: 'three' }, false, { context: { a: 2 } }, {
-                    message: 'child "b" fails because ["b" length must be less than or equal to context:a characters long]',
+                    message: '"b" length must be less than or equal to context:a characters long',
                     details: [{
                         message: '"b" length must be less than or equal to context:a characters long',
                         path: ['b'],
@@ -506,7 +505,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -524,7 +523,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -570,7 +569,7 @@ describe('string', () => {
                         message: '"value" must be a credit card',
                         path: [],
                         type: 'string.creditCard',
-                        context: { value: '4111111111111112', label: 'value', key: undefined }
+                        context: { value: '4111111111111112', label: 'value' }
                     }]
                 }],
                 ['411111111111111X', false, null, {
@@ -579,7 +578,7 @@ describe('string', () => {
                         message: '"value" must be a credit card',
                         path: [],
                         type: 'string.creditCard',
-                        context: { value: '411111111111111X', label: 'value', key: undefined }
+                        context: { value: '411111111111111X', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -588,7 +587,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -632,7 +631,7 @@ describe('string', () => {
                         message: '"value" length must be 2 characters long',
                         path: [],
                         type: 'string.length',
-                        context: { limit: 2, value: 'a', encoding: 'utf8', label: 'value', key: undefined }
+                        context: { limit: 2, value: 'a', encoding: 'utf8', label: 'value' }
                     }]
                 }]
             ]);
@@ -645,7 +644,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
                 [{ a: 2, b: 'a' }, false, null, {
-                    message: 'child "b" fails because ["b" length must be ref:a characters long]',
+                    message: '"b" length must be ref:a characters long',
                     details: [{
                         message: '"b" length must be ref:a characters long',
                         path: ['b'],
@@ -663,7 +662,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
                 [{ b: 'a' }, false, { context: { a: 2 } }, {
-                    message: 'child "b" fails because ["b" length must be context:a characters long]',
+                    message: '"b" length must be context:a characters long',
                     details: [{
                         message: '"b" length must be context:a characters long',
                         path: ['b'],
@@ -672,7 +671,7 @@ describe('string', () => {
                     }]
                 }],
                 [{ b: 'a' }, false, { context: { a: 2 } }, {
-                    message: 'child "b" fails because ["b" length must be context:a characters long]',
+                    message: '"b" length must be context:a characters long',
                     details: [{
                         message: '"b" length must be context:a characters long',
                         path: ['b'],
@@ -690,7 +689,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: 'child "b" fails because ["b" references "ref:a" which is not a number]',
+                    message: '"b" references "ref:a" which is not a number',
                     details: [{
                         message: '"b" references "ref:a" which is not a number',
                         path: ['b'],
@@ -708,7 +707,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: 'child "b" fails because ["b" references "context:a" which is not a number]',
+                    message: '"b" references "context:a" which is not a number',
                     details: [{
                         message: '"b" references "context:a" which is not a number',
                         path: ['b'],
@@ -760,7 +759,7 @@ describe('string', () => {
                         message: '"value" must contain a valid domain name',
                         path: [],
                         type: 'string.domain',
-                        context: { value: 'com', label: 'value', key: undefined }
+                        context: { value: 'com', label: 'value' }
                     }]
                 }],
                 ['"example.com', false, null, {
@@ -769,7 +768,7 @@ describe('string', () => {
                         message: '"value" must contain a valid domain name',
                         path: [],
                         type: 'string.domain',
-                        context: { value: '"example.com', label: 'value', key: undefined }
+                        context: { value: '"example.com', label: 'value' }
                     }]
                 }]
             ]);
@@ -787,7 +786,7 @@ describe('string', () => {
                         message: '"value" must contain a valid domain name',
                         path: [],
                         type: 'string.domain',
-                        context: { value: 'example.edu', label: 'value', key: undefined }
+                        context: { value: 'example.edu', label: 'value' }
                     }]
                 }]
             ]);
@@ -803,7 +802,7 @@ describe('string', () => {
                         message: '"value" must contain a valid domain name',
                         path: [],
                         type: 'string.domain',
-                        context: { value: 'example.com', label: 'value', key: undefined }
+                        context: { value: 'example.com', label: 'value' }
                     }]
                 }],
                 ['www.example.com', false, null, {
@@ -812,7 +811,7 @@ describe('string', () => {
                         message: '"value" must contain a valid domain name',
                         path: [],
                         type: 'string.domain',
-                        context: { value: 'www.example.com', label: 'value', key: undefined }
+                        context: { value: 'www.example.com', label: 'value' }
                     }]
                 }],
                 ['sub.www.example.com', true]
@@ -823,7 +822,7 @@ describe('string', () => {
 
             const schema = { item: Joi.string().domain() };
             const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
-            expect(err).to.be.an.error('child "item" fails because ["item" must contain a valid domain name]');
+            expect(err).to.be.an.error('"item" must contain a valid domain name');
             expect(err.details).to.equal([{
                 message: '"item" must contain a valid domain name',
                 path: ['item'],
@@ -883,7 +882,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: '"joe"@example.com', label: 'value', key: undefined }
+                        context: { value: '"joe"@example.com', label: 'value' }
                     }]
                 }],
                 ['example@io', false, null, {
@@ -892,7 +891,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'example@io', label: 'value', key: undefined }
+                        context: { value: 'example@io', label: 'value' }
                     }]
                 }],
                 ['@iaminvalid.com', false, null, {
@@ -901,7 +900,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: '@iaminvalid.com', label: 'value', key: undefined }
+                        context: { value: '@iaminvalid.com', label: 'value' }
                     }]
                 }],
                 ['joe@[IPv6:2a00:1450:4001:c02::1b]', false, null, {
@@ -910,7 +909,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'joe@[IPv6:2a00:1450:4001:c02::1b]', label: 'value', key: undefined }
+                        context: { value: 'joe@[IPv6:2a00:1450:4001:c02::1b]', label: 'value' }
                     }]
                 }],
                 ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false, null, {
@@ -919,7 +918,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: '12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', label: 'value', key: undefined }
+                        context: { value: '12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', label: 'value' }
                     }]
                 }],
                 ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', false, null, {
@@ -928,7 +927,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: '123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', label: 'value', key: undefined }
+                        context: { value: '123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', label: 'value' }
                     }]
                 }]
             ]);
@@ -946,7 +945,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'joe@example.edu', label: 'value', key: undefined }
+                        context: { value: 'joe@example.edu', label: 'value' }
                     }]
                 }]
             ]);
@@ -962,7 +961,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'joe@example.com', label: 'value', key: undefined }
+                        context: { value: 'joe@example.com', label: 'value' }
                     }]
                 }],
                 ['joe@www.example.com', false, null, {
@@ -971,7 +970,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'joe@www.example.com', label: 'value', key: undefined }
+                        context: { value: 'joe@www.example.com', label: 'value' }
                     }]
                 }],
                 ['joe@sub.www.example.com', true]
@@ -982,7 +981,7 @@ describe('string', () => {
 
             const schema = { item: Joi.string().email() };
             const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
-            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid email]');
+            expect(err).to.be.an.error('"item" must be a valid email');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid email',
                 path: ['item'],
@@ -1008,7 +1007,7 @@ describe('string', () => {
                         message: '"value" must be a valid hostname',
                         path: [],
                         type: 'string.hostname',
-                        context: { value: 'host:name', label: 'value', key: undefined }
+                        context: { value: 'host:name', label: 'value' }
                     }]
                 }],
                 ['-', false, null, {
@@ -1017,7 +1016,7 @@ describe('string', () => {
                         message: '"value" must be a valid hostname',
                         path: [],
                         type: 'string.hostname',
-                        context: { value: '-', label: 'value', key: undefined }
+                        context: { value: '-', label: 'value' }
                     }]
                 }],
                 ['2387628', true],
@@ -1027,7 +1026,7 @@ describe('string', () => {
                         message: '"value" must be a valid hostname',
                         path: [],
                         type: 'string.hostname',
-                        context: { value: '01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', label: 'value', key: undefined }
+                        context: { value: '01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', label: 'value' }
                     }]
                 }],
                 ['::1', true],
@@ -1038,7 +1037,7 @@ describe('string', () => {
                         message: '"value" must be a valid hostname',
                         path: [],
                         type: 'string.hostname',
-                        context: { value: '0:?:0:0:0:0:0:1', label: 'value', key: undefined }
+                        context: { value: '0:?:0:0:0:0:0:1', label: 'value' }
                     }]
                 }]
             ]);
@@ -1082,8 +1081,7 @@ describe('string', () => {
                         context: {
                             form: 'NFC',
                             value: normalizations.original,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1105,8 +1103,7 @@ describe('string', () => {
                         context: {
                             form: 'NFD',
                             value: normalizations.original,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1128,8 +1125,7 @@ describe('string', () => {
                         context: {
                             form: 'NFKC',
                             value: normalizations.original,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1151,8 +1147,7 @@ describe('string', () => {
                         context: {
                             form: 'NFKD',
                             value: normalizations.original,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1211,8 +1206,7 @@ describe('string', () => {
                     limit: 2,
                     value: '\u00F1',
                     encoding: undefined,
-                    label: 'value',
-                    key: undefined
+                    label: 'value'
                 }
             }]);
         });
@@ -1234,8 +1228,7 @@ describe('string', () => {
                     limit: 1,
                     value: 'n\u0303',
                     encoding: undefined,
-                    label: 'value',
-                    key: undefined
+                    label: 'value'
                 }
             }]);
         });
@@ -1255,8 +1248,7 @@ describe('string', () => {
                             limit: 2,
                             value: '\u00F1',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1270,8 +1262,7 @@ describe('string', () => {
                             limit: 2,
                             value: '\u00F1',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1296,8 +1287,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'n\u0303n\u0303',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1311,8 +1301,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'n\u0303n\u0303',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1326,8 +1315,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'n\u0303n\u0303',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1374,7 +1362,7 @@ describe('string', () => {
                         message: '"value" must only contain lowercase characters',
                         path: [],
                         type: 'string.lowercase',
-                        context: { value: 'Uppercase', label: 'value', key: undefined }
+                        context: { value: 'Uppercase', label: 'value' }
                     }]
                 }],
                 ['MixEd cAsE', false, null, {
@@ -1383,7 +1371,7 @@ describe('string', () => {
                         message: '"value" must only contain lowercase characters',
                         path: [],
                         type: 'string.lowercase',
-                        context: { value: 'MixEd cAsE', label: 'value', key: undefined }
+                        context: { value: 'MixEd cAsE', label: 'value' }
                     }]
                 }],
                 [1, false, null, {
@@ -1392,7 +1380,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: 1, label: 'value', key: undefined }
+                        context: { value: 1, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -1418,7 +1406,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: 1, label: 'value', key: undefined }
+                        context: { value: 1, label: 'value' }
                     }]
                 }]
             ]);
@@ -1437,7 +1425,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: 1, label: 'value', key: undefined }
+                        context: { value: 1, label: 'value' }
                     }]
                 }]
             ]);
@@ -1459,7 +1447,7 @@ describe('string', () => {
                         message: '"value" must only contain uppercase characters',
                         path: [],
                         type: 'string.uppercase',
-                        context: { value: 'lOWERCASE', label: 'value', key: undefined }
+                        context: { value: 'lOWERCASE', label: 'value' }
                     }]
                 }],
                 ['MixEd cAsE', false, null, {
@@ -1468,7 +1456,7 @@ describe('string', () => {
                         message: '"value" must only contain uppercase characters',
                         path: [],
                         type: 'string.uppercase',
-                        context: { value: 'MixEd cAsE', label: 'value', key: undefined }
+                        context: { value: 'MixEd cAsE', label: 'value' }
                     }]
                 }],
                 [1, false, null, {
@@ -1477,7 +1465,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: 1, label: 'value', key: undefined }
+                        context: { value: 1, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -1503,7 +1491,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: 1, label: 'value', key: undefined }
+                        context: { value: 1, label: 'value' }
                     }]
                 }]
             ]);
@@ -1522,7 +1510,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: 1, label: 'value', key: undefined }
+                        context: { value: 1, label: 'value' }
                     }]
                 }]
             ]);
@@ -1553,7 +1541,7 @@ describe('string', () => {
                         message: '"value" must not have leading or trailing whitespace',
                         path: [],
                         type: 'string.trim',
-                        context: { value: ' something', label: 'value', key: undefined }
+                        context: { value: ' something', label: 'value' }
                     }]
                 }],
                 ['something ', false, null, {
@@ -1562,7 +1550,7 @@ describe('string', () => {
                         message: '"value" must not have leading or trailing whitespace',
                         path: [],
                         type: 'string.trim',
-                        context: { value: 'something ', label: 'value', key: undefined }
+                        context: { value: 'something ', label: 'value' }
                     }]
                 }],
                 ['something\n', false, null, {
@@ -1571,7 +1559,7 @@ describe('string', () => {
                         message: '"value" must not have leading or trailing whitespace',
                         path: [],
                         type: 'string.trim',
-                        context: { value: 'something\n', label: 'value', key: undefined }
+                        context: { value: 'something\n', label: 'value' }
                     }]
                 }],
                 ['some thing', true],
@@ -1589,7 +1577,7 @@ describe('string', () => {
                         message: '"value" must not have leading or trailing whitespace',
                         path: [],
                         type: 'string.trim',
-                        context: { value: ' something', label: 'value', key: undefined }
+                        context: { value: ' something', label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -1628,8 +1616,7 @@ describe('string', () => {
                             limit: 4,
                             value: 'a',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1643,8 +1630,7 @@ describe('string', () => {
                             limit: 4,
                             value: 'abc',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1666,8 +1652,7 @@ describe('string', () => {
                             limit: 4,
                             value: 'abcde',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1690,8 +1675,7 @@ describe('string', () => {
                             limit: 4,
                             value: 'ab',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1705,8 +1689,7 @@ describe('string', () => {
                             limit: 4,
                             value: 'abc',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1798,8 +1781,7 @@ describe('string', () => {
                             limit: 4,
                             value: ' a ',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1831,8 +1813,7 @@ describe('string', () => {
                             limit: 5,
                             value: 'a bc',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -1857,8 +1838,7 @@ describe('string', () => {
                     name: undefined,
                     pattern: /[0-9]+/,
                     value: 'abcd',
-                    label: 'value',
-                    key: undefined
+                    label: 'value'
                 }
             }]);
         });
@@ -1876,8 +1856,7 @@ describe('string', () => {
                     name: 'numbers',
                     pattern: /[0-9]+/,
                     value: 'abcd',
-                    label: 'value',
-                    key: undefined
+                    label: 'value'
                 }
             }]);
         });
@@ -1895,8 +1874,7 @@ describe('string', () => {
                     name: 'numbers',
                     pattern: /[0-9]+/,
                     value: 'abcd',
-                    label: 'value',
-                    key: undefined
+                    label: 'value'
                 }
             }]);
         });
@@ -1916,8 +1894,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /[a-z]/,
                             value: 'abcdefg',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -1942,8 +1919,7 @@ describe('string', () => {
                             name: 'lowercase',
                             pattern: /[a-z]/,
                             value: 'abcdefg',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -1968,8 +1944,7 @@ describe('string', () => {
                             const context = {
                                 value: ip,
                                 cidr: /(\w+) CIDR/.exec(message)[1],
-                                label: 'value',
-                                key: undefined
+                                label: 'value'
                             };
 
                             if (/versions/.test(message)) {
@@ -2242,7 +2217,7 @@ describe('string', () => {
 
             const schema = { item: Joi.string().ip() };
             const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
-            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address with a optional CIDR]');
+            expect(err).to.be.an.error('"item" must be a valid ip address with a optional CIDR');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid ip address with a optional CIDR',
                 path: ['item'],
@@ -2260,7 +2235,7 @@ describe('string', () => {
 
             const schema = { item: Joi.string().ip({ cidr: 'required' }) };
             const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
-            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address with a required CIDR]');
+            expect(err).to.be.an.error('"item" must be a valid ip address with a required CIDR');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid ip address with a required CIDR',
                 path: ['item'],
@@ -2278,7 +2253,7 @@ describe('string', () => {
 
             const schema = { item: Joi.string().ip({ version: 'ipv4', cidr: 'required' }) };
             const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
-            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR]');
+            expect(err).to.be.an.error('"item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR',
                 path: ['item'],
@@ -2606,7 +2581,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'https://example.com?abc[]=123&abc[]=456', label: 'value', key: undefined }
+                        context: { value: 'https://example.com?abc[]=123&abc[]=456', label: 'value' }
                     }]
                 }],
                 ['urn:example:animal:ferret:nose', true],
@@ -2619,7 +2594,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'ldap://2001:db8::7/c=GB?objectClass?one', label: 'value', key: undefined }
+                        context: { value: 'ldap://2001:db8::7/c=GB?objectClass?one', label: 'value' }
                     }]
                 }],
                 ['mailto:John.Doe@example.com', true],
@@ -2641,7 +2616,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'http://a:b:c:d:e::1.2.3.4', label: 'value', key: undefined }
+                        context: { value: 'http://a:b:c:d:e::1.2.3.4', label: 'value' }
                     }]
                 }],
                 ['coap://FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', false, null, {
@@ -2650,7 +2625,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'coap://FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', label: 'value', key: undefined }
+                        context: { value: 'coap://FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', label: 'value' }
                     }]
                 }],
                 ['http://1080:0:0:0:8:800:200C:417A', false, null, {
@@ -2659,7 +2634,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'http://1080:0:0:0:8:800:200C:417A', label: 'value', key: undefined }
+                        context: { value: 'http://1080:0:0:0:8:800:200C:417A', label: 'value' }
                     }]
                 }],
                 ['http://127.0.0.1:8000/foo?bar', true],
@@ -2697,7 +2672,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'http://fe80::1/a/b?a=b#abc', label: 'value', key: undefined }
+                        context: { value: 'http://fe80::1/a/b?a=b#abc', label: 'value' }
                     }]
                 }],
                 ['http://user:password@[3ffe:2a00:100:7031::1]:8080', true],
@@ -2708,7 +2683,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'coap://1080:0:0:0:8:800:200C:417A:61616/', label: 'value', key: undefined }
+                        context: { value: 'coap://1080:0:0:0:8:800:200C:417A:61616/', label: 'value' }
                     }]
                 }],
                 ['git+http://github.com/joyent/node.git', true],
@@ -2756,7 +2731,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'qwerty', label: 'value', key: undefined }
+                        context: { value: 'qwerty', label: 'value' }
                     }]
                 }],
                 ['invalid uri', false, null, {
@@ -2765,7 +2740,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'invalid uri', label: 'value', key: undefined }
+                        context: { value: 'invalid uri', label: 'value' }
                     }]
                 }],
                 ['1http://google.com', false, null, {
@@ -2774,7 +2749,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: '1http://google.com', label: 'value', key: undefined }
+                        context: { value: '1http://google.com', label: 'value' }
                     }]
                 }],
                 ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, {
@@ -2783,7 +2758,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', label: 'value', key: undefined }
+                        context: { value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -2792,7 +2767,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 ['(╯°□°)╯︵ ┻━┻', false, null, {
@@ -2801,7 +2776,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: '(╯°□°)╯︵ ┻━┻', label: 'value', key: undefined }
+                        context: { value: '(╯°□°)╯︵ ┻━┻', label: 'value' }
                     }]
                 }],
                 ['one/two/three?value=abc&value2=123#david-rules', false, null, {
@@ -2810,7 +2785,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'one/two/three?value=abc&value2=123#david-rules', label: 'value', key: undefined }
+                        context: { value: 'one/two/three?value=abc&value2=123#david-rules', label: 'value' }
                     }]
                 }],
                 ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', false, null, {
@@ -2819,7 +2794,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: '//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', label: 'value', key: undefined }
+                        context: { value: '//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', label: 'value' }
                     }]
                 }],
                 ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, {
@@ -2828,7 +2803,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f', label: 'value', key: undefined }
+                        context: { value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f', label: 'value' }
                     }]
                 }],
                 ['/absolute', false, null, {
@@ -2837,7 +2812,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: '/absolute', label: 'value', key: undefined }
+                        context: { value: '/absolute', label: 'value' }
                     }]
                 }]
             ]);
@@ -2860,8 +2835,7 @@ describe('string', () => {
                         context: {
                             scheme: 'http',
                             value: 'https://google.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -2874,8 +2848,7 @@ describe('string', () => {
                         context: {
                             scheme: 'http',
                             value: 'ftp://google.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -2888,8 +2861,7 @@ describe('string', () => {
                         context: {
                             scheme: 'http',
                             value: 'file:/asdf',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -2902,8 +2874,7 @@ describe('string', () => {
                         context: {
                             scheme: 'http',
                             value: '/path?query=value#hash',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -2928,8 +2899,7 @@ describe('string', () => {
                         context: {
                             scheme: 'https?',
                             value: 'ftp://google.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -2942,8 +2912,7 @@ describe('string', () => {
                         context: {
                             scheme: 'https?',
                             value: 'file:/asdf',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -2956,8 +2925,7 @@ describe('string', () => {
                         context: {
                             scheme: 'https?',
                             value: '/path?query=value#hash',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -2985,8 +2953,7 @@ describe('string', () => {
                         context: {
                             scheme: 'https?|ftp|file|git\\+http',
                             value: '/path?query=value#hash',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -3111,8 +3078,7 @@ describe('string', () => {
                         type: 'string.domain',
                         context: {
                             value: 'google.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3124,8 +3090,7 @@ describe('string', () => {
                         type: 'string.domain',
                         context: {
                             value: 'test.google.net',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -3230,7 +3195,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'invalid uri', label: 'value', key: undefined }
+                        context: { value: 'invalid uri', label: 'value' }
                     }]
                 }],
                 ['1http://google.com', false, null, {
@@ -3239,7 +3204,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: '1http://google.com', label: 'value', key: undefined }
+                        context: { value: '1http://google.com', label: 'value' }
                     }]
                 }],
                 ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, {
@@ -3248,7 +3213,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', label: 'value', key: undefined }
+                        context: { value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -3257,7 +3222,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 ['(╯°□°)╯︵ ┻━┻', false, null, {
@@ -3266,7 +3231,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: '(╯°□°)╯︵ ┻━┻', label: 'value', key: undefined }
+                        context: { value: '(╯°□°)╯︵ ┻━┻', label: 'value' }
                     }]
                 }],
                 ['one/two/three?value=abc&value2=123#david-rules', true],
@@ -3277,7 +3242,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f', label: 'value', key: undefined }
+                        context: { value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f', label: 'value' }
                     }]
                 }],
                 ['/absolute', true],
@@ -3287,7 +3252,7 @@ describe('string', () => {
                         message: '"value" must be a valid uri',
                         path: [],
                         type: 'string.uri',
-                        context: { value: 'http://', label: 'value', key: undefined }
+                        context: { value: 'http://', label: 'value' }
                     }]
                 }]
             ]);
@@ -3305,8 +3270,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'foo://example.com:8042/over/there?name=ferret#nose',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3318,8 +3282,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'urn:example:animal:ferret:nose',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3331,8 +3294,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'ftp://ftp.is.co.za/rfc/rfc1808.txt',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3344,8 +3306,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://www.ietf.org/rfc/rfc2396.txt',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3357,8 +3318,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'ldap://[2001:db8::7]/c=GB?objectClass?one',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3370,8 +3330,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'mailto:John.Doe@example.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3383,8 +3342,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'news:comp.infosystems.www.servers.unix',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3396,8 +3354,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'tel:+1-816-555-1212',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3409,8 +3366,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'telnet://192.0.2.16:80/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3422,8 +3378,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'urn:oasis:names:specification:docbook:dtd:xml:4.1.2',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3435,8 +3390,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'file:///example.txt',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3448,8 +3402,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3461,8 +3414,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://asdf@localhost:8000',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3474,8 +3426,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://[v1.09azAZ-._~!$&\'()*+,;=:]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3487,8 +3438,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://[a:b:c:d:e::1.2.3.4]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3500,8 +3450,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3513,8 +3462,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://[1080:0:0:0:8:800:200C:417A]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3526,8 +3474,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://127.0.0.1:8000/foo?bar',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3539,8 +3486,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://asdf:qwer@localhost:8000',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3552,8 +3498,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://user:pass%3A@localhost:80',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3565,8 +3510,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://localhost:123',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3578,8 +3522,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'https://localhost:123',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3591,8 +3534,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'file:///whatever',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3604,8 +3546,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'mailto:asdf@asdf.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3617,8 +3558,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'ftp://www.example.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3630,8 +3570,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'javascript:alert(\'hello\');',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }], // eslint-disable-line no-script-url
@@ -3643,8 +3582,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'xmpp:isaacschlueter@jabber.org',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3656,8 +3594,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'f://some.host/path',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3669,8 +3606,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://localhost:18/asdf',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3682,8 +3618,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://localhost:42/asdf?qwer=zxcv',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3695,8 +3630,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'HTTP://www.example.com/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3708,8 +3642,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'HTTP://www.example.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3721,8 +3654,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://www.ExAmPlE.com/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3734,8 +3666,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://user:pw@www.ExAmPlE.com/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3747,8 +3678,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://USER:PW@www.ExAmPlE.com/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3760,8 +3690,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://user@www.example.com/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3773,8 +3702,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://user%3Apw@www.example.com/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3786,8 +3714,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://x.com/path?that%27s#all,%20folks',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3799,8 +3726,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'HTTP://X.COM/Y',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3812,8 +3738,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://www.narwhaljs.org/blog/categories?id=news',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3825,8 +3750,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3838,8 +3762,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3851,8 +3774,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3864,8 +3786,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://_jabber._tcp.google.com:80/test',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3877,8 +3798,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://user:pass@_jabber._tcp.google.com:80/test',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3890,8 +3810,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://[fe80::1]/a/b?a=b#abc',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3903,8 +3822,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://user:password@[3ffe:2a00:100:7031::1]:8080',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3916,8 +3834,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'coap://[1080:0:0:0:8:800:200C:417A]:61616/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3929,8 +3846,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'git+http://github.com/joyent/node.git',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3942,8 +3858,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://bucket_name.s3.amazonaws.com/image.jpg',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3955,8 +3870,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'dot.test://foo/bar',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3968,8 +3882,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'svn+ssh://foo/bar',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3981,8 +3894,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'dash-test://foo/bar',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -3994,8 +3906,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'xmpp:isaacschlueter@jabber.org',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4007,8 +3918,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4020,8 +3930,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'javascript:alert(\'hello\');',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }], // eslint-disable-line no-script-url
@@ -4033,8 +3942,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'file://localhost/etc/node/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4046,8 +3954,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'file:///etc/node/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4059,8 +3966,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://USER:PW@www.ExAmPlE.com/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4072,8 +3978,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'mailto:local1@domain1?query1',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4085,8 +3990,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://example/a/b?c/../d',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4098,8 +4002,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://example/x%2Fabc',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4111,8 +4014,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/d;p=1/g;x=1/y',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4124,8 +4026,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/g#s/../x',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4137,8 +4038,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/.foo',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4150,8 +4050,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://example.com/b//c//d;p?q#blarg',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4163,8 +4062,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'g:h',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4176,8 +4074,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/g',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4189,8 +4086,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/g/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4202,8 +4098,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/g',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4215,8 +4110,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://g',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4228,8 +4122,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/d;p?y',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4241,8 +4134,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/g?y',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4254,8 +4146,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/d;p?q#s',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4267,8 +4158,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/g#s',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4280,8 +4170,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/g?y#s',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4293,8 +4182,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/;x',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4306,8 +4194,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/g;x',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4319,8 +4206,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/g;x?y#s',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4332,8 +4218,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/d;p?q',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4345,8 +4230,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/c/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4358,8 +4242,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4371,8 +4254,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/b/g',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4384,8 +4266,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4397,8 +4278,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/g',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4410,8 +4290,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a/g',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4423,8 +4302,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'file:/asda',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4437,8 +4315,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'invalid uri',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4450,8 +4327,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: '1http://google.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4463,8 +4339,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4474,7 +4349,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 ['(╯°□°)╯︵ ┻━┻', false, null, {
@@ -4485,8 +4360,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: '(╯°□°)╯︵ ┻━┻',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4500,8 +4374,7 @@ describe('string', () => {
                         type: 'string.uriRelativeOnly',
                         context: {
                             value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4608,7 +4481,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }]
             ]);
@@ -4623,7 +4496,7 @@ describe('string', () => {
                         message: '"value" is required',
                         path: [],
                         type: 'any.required',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -4632,7 +4505,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }]
             ]);
@@ -4646,7 +4519,7 @@ describe('string', () => {
                 message: '"value" is not allowed to be empty',
                 path: [],
                 type: 'any.empty',
-                context: { value: '', invalids: [''], label: 'value', key: undefined }
+                context: { value: '', invalids: [''], label: 'value' }
             }]);
         });
 
@@ -4659,7 +4532,7 @@ describe('string', () => {
                 message: '"value" is not allowed to be empty',
                 path: [],
                 type: 'any.empty',
-                context: { value: '', invalids: [''], label: 'value', key: undefined }
+                context: { value: '', invalids: [''], label: 'value' }
             }]);
         });
 
@@ -4675,7 +4548,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -4692,7 +4565,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a', 'b', 'c'], label: 'value', key: undefined }
+                        context: { value: 'a', invalids: ['', 'a', 'b', 'c'], label: 'value' }
                     }]
                 }],
                 ['c', false, null, {
@@ -4701,7 +4574,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'c', invalids: ['', 'a', 'b', 'c'], label: 'value', key: undefined }
+                        context: { value: 'c', invalids: ['', 'a', 'b', 'c'], label: 'value' }
                     }]
                 }]
             ]);
@@ -4717,7 +4590,7 @@ describe('string', () => {
                         message: '"value" must be one of [a, b, c]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'x', valids: ['a', 'b', 'c'], label: 'value', key: undefined }
+                        context: { value: 'x', valids: ['a', 'b', 'c'], label: 'value' }
                     }]
                 }],
                 ['a', true],
@@ -4735,7 +4608,7 @@ describe('string', () => {
                         message: '"value" must be one of [a, b, c]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'x', valids: ['a', 'b', 'c'], label: 'value', key: undefined }
+                        context: { value: 'x', valids: ['a', 'b', 'c'], label: 'value' }
                     }]
                 }],
                 ['a', true],
@@ -4758,8 +4631,7 @@ describe('string', () => {
                             limit: 3,
                             value: '0',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4769,7 +4641,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -4786,7 +4658,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }],
                 [undefined, false, null, {
@@ -4795,7 +4667,7 @@ describe('string', () => {
                         message: '"value" is required',
                         path: [],
                         type: 'any.required',
-                        context: { label: 'value', key: undefined }
+                        context: { label: 'value' }
                     }]
                 }]
             ]);
@@ -4811,7 +4683,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -4839,8 +4711,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'test',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4851,7 +4722,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -4879,8 +4750,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'test',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4894,8 +4764,7 @@ describe('string', () => {
                             limit: 3,
                             value: '0',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4905,7 +4774,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }],
                 ['abc', true]
@@ -4926,8 +4795,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^[0-9][-][a-z]+$/,
                             value: 'van',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -4952,7 +4820,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric and underscore characters',
                         path: [],
                         type: 'string.token',
-                        context: { value: 'w0rld of_w4lm4rtl4bs', label: 'value', key: undefined }
+                        context: { value: 'w0rld of_w4lm4rtl4bs', label: 'value' }
                     }]
                 }],
                 ['abcd#f?h1j orly?', false, null, {
@@ -4961,7 +4829,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric and underscore characters',
                         path: [],
                         type: 'string.token',
-                        context: { value: 'abcd#f?h1j orly?', label: 'value', key: undefined }
+                        context: { value: 'abcd#f?h1j orly?', label: 'value' }
                     }]
                 }]
             ]);
@@ -4977,7 +4845,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric characters',
                         path: [],
                         type: 'string.alphanum',
-                        context: { value: 'w0rld of w4lm4rtl4bs', label: 'value', key: undefined }
+                        context: { value: 'w0rld of w4lm4rtl4bs', label: 'value' }
                     }]
                 }],
                 ['w0rldofw4lm4rtl4bs', true],
@@ -4987,7 +4855,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric characters',
                         path: [],
                         type: 'string.alphanum',
-                        context: { value: 'abcd#f?h1j orly?', label: 'value', key: undefined }
+                        context: { value: 'abcd#f?h1j orly?', label: 'value' }
                     }]
                 }]
             ]);
@@ -5047,8 +4915,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5059,7 +4926,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5068,7 +4935,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5090,8 +4957,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5101,7 +4967,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5110,7 +4976,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5130,8 +4996,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5144,7 +5009,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5166,8 +5031,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5178,7 +5042,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5200,8 +5064,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5211,7 +5074,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -5232,8 +5095,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5248,8 +5110,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5260,7 +5121,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5269,7 +5130,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5289,8 +5150,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5305,8 +5165,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5318,7 +5177,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5338,8 +5197,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5354,8 +5212,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5366,7 +5223,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5375,7 +5232,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5395,8 +5252,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5410,8 +5266,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '123',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5425,8 +5280,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5440,8 +5294,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '12',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5457,8 +5310,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'abcd',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5468,7 +5320,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5477,7 +5329,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5497,8 +5349,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5512,8 +5363,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '123',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5527,8 +5377,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5542,8 +5391,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '12',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5559,8 +5407,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'abcd',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5571,7 +5418,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5591,8 +5438,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5606,8 +5452,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '123',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5621,8 +5466,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5636,8 +5480,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '12',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5653,8 +5496,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'abcd',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5664,7 +5506,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5673,7 +5515,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5693,8 +5535,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5709,8 +5550,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5727,8 +5567,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'abcd',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5738,7 +5577,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric characters',
                         path: [],
                         type: 'string.alphanum',
-                        context: { value: '*ab', label: 'value', key: undefined }
+                        context: { value: '*ab', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -5747,7 +5586,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5756,7 +5595,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5776,8 +5615,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5792,8 +5630,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5810,8 +5647,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'abcd',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5821,7 +5657,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric characters',
                         path: [],
                         type: 'string.alphanum',
-                        context: { value: '*ab', label: 'value', key: undefined }
+                        context: { value: '*ab', label: 'value' }
                     }]
                 }],
                 ['', true],
@@ -5831,7 +5667,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5851,8 +5687,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5867,8 +5702,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5885,8 +5719,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'abcd',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5896,7 +5729,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric characters',
                         path: [],
                         type: 'string.alphanum',
-                        context: { value: '*ab', label: 'value', key: undefined }
+                        context: { value: '*ab', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -5905,7 +5738,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5914,7 +5747,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -5934,8 +5767,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5949,8 +5781,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '123',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5964,8 +5795,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5979,8 +5809,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '12',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -5997,8 +5826,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'abcd',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6008,7 +5836,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric characters',
                         path: [],
                         type: 'string.alphanum',
-                        context: { value: '*ab', label: 'value', key: undefined }
+                        context: { value: '*ab', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -6017,7 +5845,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6026,7 +5854,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6046,8 +5874,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6061,8 +5888,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '123',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6076,8 +5902,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6091,8 +5916,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '12',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6109,8 +5933,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'abcd',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6120,7 +5943,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric characters',
                         path: [],
                         type: 'string.alphanum',
-                        context: { value: '*ab', label: 'value', key: undefined }
+                        context: { value: '*ab', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -6129,7 +5952,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6138,7 +5961,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6158,8 +5981,7 @@ describe('string', () => {
                             limit: 2,
                             value: 'x',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6173,8 +5995,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '123',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6188,8 +6009,7 @@ describe('string', () => {
                             limit: 3,
                             value: '1234',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6203,8 +6023,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^a/,
                             value: '12',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6221,8 +6040,7 @@ describe('string', () => {
                             limit: 3,
                             value: 'abcd',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6232,7 +6050,7 @@ describe('string', () => {
                         message: '"value" must only contain alpha-numeric characters',
                         path: [],
                         type: 'string.alphanum',
-                        context: { value: '*ab', label: 'value', key: undefined }
+                        context: { value: '*ab', label: 'value' }
                     }]
                 }],
                 ['', true],
@@ -6242,7 +6060,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6262,8 +6080,7 @@ describe('string', () => {
                             limit: 8,
                             value: 'x@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6274,7 +6091,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6283,7 +6100,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6303,8 +6120,7 @@ describe('string', () => {
                             limit: 8,
                             value: 'x@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6320,8 +6136,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6331,7 +6146,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6340,7 +6155,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6360,8 +6175,7 @@ describe('string', () => {
                             limit: 8,
                             value: 'x@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6371,7 +6185,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '123@x.com', invalids: ['', '123@x.com'], label: 'value', key: undefined }
+                        context: { value: '123@x.com', invalids: ['', '123@x.com'], label: 'value' }
                     }]
                 }],
                 ['1234@x.com', true],
@@ -6385,8 +6199,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6396,7 +6209,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: ['', '123@x.com'], label: 'value', key: undefined }
+                        context: { value: '', invalids: ['', '123@x.com'], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6405,7 +6218,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6428,8 +6241,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6439,7 +6251,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6448,7 +6260,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6465,7 +6277,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '123@x.com', invalids: ['', '123@x.com'], label: 'value', key: undefined }
+                        context: { value: '123@x.com', invalids: ['', '123@x.com'], label: 'value' }
                     }]
                 }],
                 ['1234@x.com', true],
@@ -6479,8 +6291,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6490,7 +6301,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: ['', '123@x.com'], label: 'value', key: undefined }
+                        context: { value: '', invalids: ['', '123@x.com'], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6499,7 +6310,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6516,7 +6327,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '123@x.com', invalids: ['123@x.com'], label: 'value', key: undefined }
+                        context: { value: '123@x.com', invalids: ['123@x.com'], label: 'value' }
                     }]
                 }],
                 ['1234@x.com', true],
@@ -6530,8 +6341,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6542,7 +6352,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6565,8 +6375,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6577,7 +6386,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6594,7 +6403,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '123@x.com', invalids: ['', '123@x.com'], label: 'value', key: undefined }
+                        context: { value: '123@x.com', invalids: ['', '123@x.com'], label: 'value' }
                     }]
                 }],
                 ['1234@x.com', true],
@@ -6608,8 +6417,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6619,7 +6427,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: ['', '123@x.com'], label: 'value', key: undefined }
+                        context: { value: '', invalids: ['', '123@x.com'], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6628,7 +6436,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6645,7 +6453,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '123@x.com', invalids: ['123@x.com'], label: 'value', key: undefined }
+                        context: { value: '123@x.com', invalids: ['123@x.com'], label: 'value' }
                     }]
                 }],
                 ['1234@x.com', true],
@@ -6659,8 +6467,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6671,7 +6478,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6691,8 +6498,7 @@ describe('string', () => {
                             limit: 8,
                             value: 'x@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6708,8 +6514,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6720,7 +6525,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6740,8 +6545,7 @@ describe('string', () => {
                             limit: 8,
                             value: 'x@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6755,8 +6559,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^1234/,
                             value: '123@x.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6771,8 +6574,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6782,7 +6584,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6791,7 +6593,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6811,8 +6613,7 @@ describe('string', () => {
                             limit: 8,
                             value: 'x@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6826,8 +6627,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^1234/,
                             value: '123@x.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6842,8 +6642,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6854,7 +6653,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6874,8 +6673,7 @@ describe('string', () => {
                             limit: 8,
                             value: 'x@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6889,8 +6687,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^1234/,
                             value: '123@x.com',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6905,8 +6702,7 @@ describe('string', () => {
                             limit: 10,
                             value: '12345@x.com',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -6916,7 +6712,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6925,7 +6721,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -6942,7 +6738,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '002013-06-07T14:21:46.295Z', label: 'value', key: undefined }
+                        context: { value: '002013-06-07T14:21:46.295Z', label: 'value' }
                     }]
                 }],
                 ['+2013-06-07T14:21:46.295Z', false, null, {
@@ -6951,7 +6747,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '+2013-06-07T14:21:46.295Z', label: 'value', key: undefined }
+                        context: { value: '+2013-06-07T14:21:46.295Z', label: 'value' }
                     }]
                 }],
                 ['-2013-06-07T14:21:46.295Z', false, null, {
@@ -6960,7 +6756,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '-2013-06-07T14:21:46.295Z', label: 'value', key: undefined }
+                        context: { value: '-2013-06-07T14:21:46.295Z', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295Z', true],
@@ -6970,7 +6766,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -6980,7 +6776,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', true],
@@ -6991,7 +6787,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', true],
@@ -7001,7 +6797,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46-07:00', true],
@@ -7013,7 +6809,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
@@ -7023,7 +6819,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', true],
@@ -7033,7 +6829,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', true],
@@ -7043,7 +6839,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14.2334,4', true],
@@ -7053,7 +6849,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14,23:34', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14,23:34', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T24', false, null, {
@@ -7062,7 +6858,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T24', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T24', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T24:00', true],
@@ -7072,7 +6868,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T24:21', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T24:21', label: 'value' }
                     }]
                 }],
                 ['2013-06-07 142146.295', true],
@@ -7082,7 +6878,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07 146946.295', label: 'value', key: undefined }
+                        context: { value: '2013-06-07 146946.295', label: 'value' }
                     }]
                 }],
                 ['2013-06-07 1421,44', true],
@@ -7094,7 +6890,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-W2311', label: 'value', key: undefined }
+                        context: { value: '2013-W2311', label: 'value' }
                     }]
                 }],
                 ['2013-W231', true],
@@ -7104,7 +6900,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-M231', label: 'value', key: undefined }
+                        context: { value: '2013-M231', label: 'value' }
                     }]
                 }],
                 ['2013-W23-1T14:21', true],
@@ -7114,7 +6910,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-W23-1T14:21:', label: 'value', key: undefined }
+                        context: { value: '2013-W23-1T14:21:', label: 'value' }
                     }]
                 }],
                 ['2013-W23-1T14:21:46+07:00', true],
@@ -7124,7 +6920,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-W23-1T14:21:46+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-W23-1T14:21:46+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-W23-1T14:21:46-07:00', true],
@@ -7135,7 +6931,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-1841', label: 'value', key: undefined }
+                        context: { value: '2013-1841', label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -7144,8 +6940,8 @@ describe('string', () => {
         it('validates isoDate with a friendly error message', async () => {
 
             const schema = { item: Joi.string().isoDate() };
-            await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject('child "item" fails because ["item" must be a valid ISO 8601 date]');
-            await expect(Joi.compile(schema).validate({ item: 'something' }, { convert: false })).to.reject('child "item" fails because ["item" must be a valid ISO 8601 date]');
+            await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject('"item" must be a valid ISO 8601 date');
+            await expect(Joi.compile(schema).validate({ item: 'something' }, { convert: false })).to.reject('"item" must be a valid ISO 8601 date');
         });
 
         it('validates combination of isoDate and min', () => {
@@ -7159,7 +6955,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -7169,7 +6965,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', true],
@@ -7183,8 +6979,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7194,7 +6989,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', true],
@@ -7209,8 +7004,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7224,8 +7018,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7235,7 +7028,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', false, null, {
@@ -7248,8 +7041,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7259,7 +7051,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -7272,8 +7064,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7283,7 +7074,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -7296,8 +7087,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7307,7 +7097,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -7316,7 +7106,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -7325,7 +7115,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -7345,8 +7135,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7356,7 +7145,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', false, null, {
@@ -7369,8 +7158,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7380,7 +7168,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -7393,8 +7181,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7405,7 +7192,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -7418,8 +7205,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7433,8 +7219,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7446,7 +7231,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
@@ -7456,7 +7241,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -7469,8 +7254,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7480,7 +7264,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -7493,8 +7277,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7504,7 +7287,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -7513,7 +7296,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -7522,7 +7305,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -7542,8 +7325,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7553,7 +7335,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', false, null, {
@@ -7566,8 +7348,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7577,7 +7358,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -7590,8 +7371,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7602,7 +7382,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -7615,8 +7395,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7630,8 +7409,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7642,7 +7420,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '2013-06-07T14:21+07:00', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:00', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21+07:000', false, null, {
@@ -7651,7 +7429,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
@@ -7661,7 +7439,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -7674,8 +7452,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7685,7 +7462,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -7698,8 +7475,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7709,7 +7485,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -7718,7 +7494,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value', key: undefined }
+                        context: { value: '', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -7727,7 +7503,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -7747,8 +7523,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7758,7 +7533,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -7768,7 +7543,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -7781,8 +7556,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7793,7 +7567,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -7806,8 +7580,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7821,8 +7594,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7834,7 +7606,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
@@ -7844,7 +7616,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -7857,8 +7629,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7868,7 +7639,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -7881,8 +7652,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7892,7 +7662,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -7901,7 +7671,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -7910,7 +7680,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -7930,8 +7700,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7941,7 +7710,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -7951,7 +7720,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -7964,8 +7733,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -7976,7 +7744,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -7989,8 +7757,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8004,8 +7771,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8016,7 +7782,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '2013-06-07T14:21+07:00', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:00', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21+07:000', false, null, {
@@ -8025,7 +7791,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
@@ -8035,7 +7801,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -8048,8 +7814,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8059,7 +7824,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -8072,8 +7837,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8083,7 +7847,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -8092,7 +7856,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value', key: undefined }
+                        context: { value: '', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -8101,7 +7865,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -8121,8 +7885,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8132,7 +7895,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -8142,7 +7905,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -8155,8 +7918,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8167,7 +7929,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -8180,8 +7942,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8195,8 +7956,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8207,7 +7967,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '2013-06-07T14:21+07:00', invalids: ['2013-06-07T14:21+07:00'], label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:00', invalids: ['2013-06-07T14:21+07:00'], label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21+07:000', false, null, {
@@ -8216,7 +7976,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
@@ -8226,7 +7986,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -8239,8 +7999,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8250,7 +8009,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -8263,8 +8022,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8274,7 +8032,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', true],
@@ -8284,7 +8042,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -8304,8 +8062,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8315,7 +8072,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -8325,7 +8082,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -8338,8 +8095,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8350,7 +8106,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -8363,8 +8119,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8378,8 +8133,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8391,7 +8145,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
@@ -8401,7 +8155,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -8414,8 +8168,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8425,7 +8178,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -8438,8 +8191,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8449,7 +8201,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', true],
@@ -8459,7 +8211,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -8479,8 +8231,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8490,7 +8241,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -8500,7 +8251,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -8513,8 +8264,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8525,7 +8275,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -8538,8 +8288,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8553,8 +8302,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8564,7 +8312,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '2013-06-07T14:21Z', invalids: ['', '2013-06-07T14:21Z'], label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z', invalids: ['', '2013-06-07T14:21Z'], label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21+07:00', false, null, {
@@ -8577,8 +8325,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21+07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8588,7 +8335,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', false, null, {
@@ -8601,8 +8348,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21-07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8612,7 +8358,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -8625,8 +8371,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8636,7 +8381,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -8649,8 +8394,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8660,7 +8404,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -8669,7 +8413,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: ['', '2013-06-07T14:21Z'], label: 'value', key: undefined }
+                        context: { value: '', invalids: ['', '2013-06-07T14:21Z'], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -8678,7 +8422,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -8698,8 +8442,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8709,7 +8452,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
@@ -8719,7 +8462,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -8732,8 +8475,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8744,7 +8486,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -8757,8 +8499,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8772,8 +8513,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8783,7 +8523,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '2013-06-07T14:21Z', invalids: ['2013-06-07T14:21Z'], label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z', invalids: ['2013-06-07T14:21Z'], label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21+07:00', false, null, {
@@ -8796,8 +8536,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21+07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8807,7 +8546,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', false, null, {
@@ -8820,8 +8559,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21-07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8831,7 +8569,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -8844,8 +8582,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8855,7 +8592,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -8868,8 +8605,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8879,7 +8615,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', true],
@@ -8889,7 +8625,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -8909,8 +8645,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8920,7 +8655,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', false, null, {
@@ -8933,8 +8668,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8944,7 +8678,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -8957,8 +8691,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8969,7 +8702,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -8982,8 +8715,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -8997,8 +8729,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9010,7 +8741,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
@@ -9020,7 +8751,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -9033,8 +8764,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9044,7 +8774,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -9057,8 +8787,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9068,7 +8797,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', true],
@@ -9078,7 +8807,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -9098,8 +8827,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9109,7 +8837,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', false, null, {
@@ -9122,8 +8850,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9133,7 +8860,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -9146,8 +8873,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9158,7 +8884,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -9171,8 +8897,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9186,8 +8911,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9202,8 +8926,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21+07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9213,7 +8936,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', false, null, {
@@ -9226,8 +8949,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21-07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9237,7 +8959,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -9250,8 +8972,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9261,7 +8982,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -9274,8 +8995,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9285,7 +9005,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -9294,7 +9014,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -9303,7 +9023,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -9323,8 +9043,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9334,7 +9053,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', false, null, {
@@ -9347,8 +9066,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9358,7 +9076,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -9371,8 +9089,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9383,7 +9100,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -9396,8 +9113,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9411,8 +9127,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9427,8 +9142,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21+07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9438,7 +9152,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', false, null, {
@@ -9451,8 +9165,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21-07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9462,7 +9175,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -9475,8 +9188,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9486,7 +9198,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -9499,8 +9211,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9510,7 +9221,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', true],
@@ -9520,7 +9231,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -9540,8 +9251,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295Z',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9551,7 +9261,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', false, null, {
@@ -9564,8 +9274,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9575,7 +9284,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', false, null, {
@@ -9588,8 +9297,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46.295-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9600,7 +9308,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21:46Z0', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', false, null, {
@@ -9613,8 +9321,7 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46+07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9628,8 +9335,8 @@ describe('string', () => {
                             limit: 23,
                             value: '2013-06-07T14:21:46-07:00',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
+
                         }
                     }]
                 }],
@@ -9644,8 +9351,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21+07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9655,7 +9361,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21+07:000', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', false, null, {
@@ -9668,8 +9374,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /Z$/,
                             value: '2013-06-07T14:21-07:00',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9679,7 +9384,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
                     }]
                 }],
                 ['2013-06-07', false, null, {
@@ -9692,8 +9397,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9703,7 +9407,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-06-07T', label: 'value', key: undefined }
+                        context: { value: '2013-06-07T', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21', false, null, {
@@ -9716,8 +9420,7 @@ describe('string', () => {
                             limit: 17,
                             value: '2013-06-07T14:21',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9727,7 +9430,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '1-1-2013', label: 'value', key: undefined }
+                        context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -9736,7 +9439,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -9745,7 +9448,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ], { convert: false });
@@ -9774,7 +9477,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 date',
                         path: [],
                         type: 'string.isoDate',
-                        context: { value: '2013-184', label: 'value', key: undefined }
+                        context: { value: '2013-184', label: 'value' }
                     }]
                 }]
             ], { convert: true });
@@ -9800,7 +9503,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 duration',
                         path: [],
                         type: 'string.isoDuration',
-                        context: { value: 'P30S', label: 'value', key: undefined }
+                        context: { value: 'P30S', label: 'value' }
                     }]
                 }],
                 ['P30', false, null, {
@@ -9809,7 +9512,7 @@ describe('string', () => {
                         message: '"value" must be a valid ISO 8601 duration',
                         path: [],
                         type: 'string.isoDuration',
-                        context: { value: 'P30', label: 'value', key: undefined }
+                        context: { value: 'P30', label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -9818,7 +9521,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -9827,7 +9530,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -9858,7 +9561,7 @@ describe('string', () => {
                         message: '"value" must only contain hexadecimal characters',
                         path: [],
                         type: 'string.hex',
-                        context: { value: '123afg', label: 'value', key: undefined }
+                        context: { value: '123afg', label: 'value' }
                     }]
                 }]
             ]);
@@ -9875,7 +9578,7 @@ describe('string', () => {
                         message: '"value" hex decoded representation must be byte aligned',
                         path: [],
                         type: 'string.hexAlign',
-                        context: { value: '123456789abcdef', label: 'value', key: undefined }
+                        context: { value: '123456789abcdef', label: 'value' }
                     }]
                 }],
                 ['0123afg', false, null, {
@@ -9884,7 +9587,7 @@ describe('string', () => {
                         message: '"value" must only contain hexadecimal characters',
                         path: [],
                         type: 'string.hex',
-                        context: { value: '0123afg', label: 'value', key: undefined }
+                        context: { value: '0123afg', label: 'value' }
                     }]
                 }]
             ]);
@@ -9902,7 +9605,7 @@ describe('string', () => {
                         message: '"value" must only contain hexadecimal characters',
                         path: [],
                         type: 'string.hex',
-                        context: { value: '00123afg', label: 'value', key: undefined }
+                        context: { value: '00123afg', label: 'value' }
                     }]
                 }],
                 ['00123afg', false, null, {
@@ -9911,7 +9614,7 @@ describe('string', () => {
                         message: '"value" must only contain hexadecimal characters',
                         path: [],
                         type: 'string.hex',
-                        context: { value: '00123afg', label: 'value', key: undefined }
+                        context: { value: '00123afg', label: 'value' }
                     }]
                 }]
             ]);
@@ -9938,8 +9641,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: '=YW55IGNhcm5hbCBwbGVhc3VyZS4',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9951,8 +9653,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm5hb-_wbGVhc3VyZS4=',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9964,8 +9665,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9977,8 +9677,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -9990,8 +9689,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'Y=',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10003,8 +9701,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'Y===',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10016,8 +9713,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10030,8 +9726,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW5',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10044,8 +9739,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: '$#%#$^$^)(*&^%',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -10065,8 +9759,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: '=YW55IGNhcm5hbCBwbGVhc3VyZS4',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10078,8 +9771,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10091,8 +9783,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10104,8 +9795,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'Y=',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10117,8 +9807,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'Y===',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10130,8 +9819,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10144,8 +9832,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW5',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10158,8 +9845,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: '$#%#$^$^)(*&^%',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -10179,8 +9865,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10193,8 +9878,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: '=YW55IGNhcm5hbCBwbGVhc3VyZS4',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10206,8 +9890,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10219,8 +9902,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IG==cm5hbCBwbGVhc3VyZS4=',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10232,8 +9914,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'Y$',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10245,8 +9926,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'Y',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10258,8 +9938,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'Y===',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10275,8 +9954,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: '$#%#$^$^)(*&^%',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -10296,8 +9974,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: '=YW55IGNhcm5-_CBwbGVhc3VyZS4',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10309,8 +9986,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm5+/CBwbGVhc3VyZS4=',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -10333,8 +10009,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm5hbCBwbGVhc3VyZS4==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10346,8 +10021,7 @@ describe('string', () => {
                         type: 'string.base64',
                         context: {
                             value: 'YW55IGNhcm-_bCBwbGVhc3VyZS4==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -10367,8 +10041,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10381,8 +10054,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10394,8 +10066,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10407,8 +10078,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10431,8 +10101,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10445,8 +10114,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10458,8 +10126,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10471,8 +10138,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10495,8 +10161,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10509,8 +10174,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10522,8 +10186,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10535,8 +10198,7 @@ describe('string', () => {
                         type: 'string.dataUri',
                         context: {
                             value: 'data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10556,7 +10218,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'X', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: 'X', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['123', false, null, {
@@ -10565,7 +10227,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: '123', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: '123', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['1234', false, null, {
@@ -10574,7 +10236,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: '1234', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: '1234', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['12', false, null, {
@@ -10583,7 +10245,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: '12', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: '12', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['ab', true],
@@ -10593,7 +10255,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'ABC', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: 'ABC', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['a2c', false, null, {
@@ -10602,7 +10264,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'A2C', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: 'A2C', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['abcd', false, null, {
@@ -10611,7 +10273,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'ABCD', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: 'ABCD', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['*ab', false, null, {
@@ -10620,7 +10282,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: '*AB', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: '*AB', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['', false, null, {
@@ -10629,7 +10291,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 ['bc', true],
@@ -10640,7 +10302,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'DE', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: 'DE', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['ABc', false, null, {
@@ -10649,7 +10311,7 @@ describe('string', () => {
                         message: '"value" must be one of [AB, BC]',
                         path: [],
                         type: 'any.allowOnly',
-                        context: { value: 'ABC', valids: ['AB', 'BC'], label: 'value', key: undefined }
+                        context: { value: 'ABC', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['AB', true],
@@ -10659,7 +10321,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -10704,8 +10366,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10717,8 +10378,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10730,8 +10390,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10743,8 +10402,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10756,8 +10414,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10769,8 +10426,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10782,8 +10438,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10795,8 +10450,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -10822,8 +10476,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10835,8 +10488,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-1CD4-C05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10848,8 +10500,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-1E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10861,8 +10512,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10874,8 +10524,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10887,8 +10536,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10900,8 +10548,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D:B27D-1CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10913,8 +10560,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D:1CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10926,8 +10572,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-1CD4:A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10939,8 +10584,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-1CD4-A05E:EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -10966,8 +10610,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10979,8 +10622,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-2CD4-C05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -10992,8 +10634,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-2E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11005,8 +10646,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11018,8 +10658,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11031,8 +10670,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11044,8 +10682,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D:B27D-2CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11057,8 +10694,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D:2CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11070,8 +10706,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-2CD4:A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11083,8 +10718,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-2CD4-A05E:EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -11110,8 +10744,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11123,8 +10756,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-3CD4-C05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11136,8 +10768,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-3E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11149,8 +10780,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11162,8 +10792,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11175,8 +10804,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11188,8 +10816,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D:B27D-3CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11201,8 +10828,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D:3CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11214,8 +10840,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-3CD4:A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11227,8 +10852,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-3CD4-A05E:EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -11254,8 +10878,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11267,8 +10890,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-C05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11280,8 +10902,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11293,8 +10914,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11306,8 +10926,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11319,8 +10938,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11332,8 +10950,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11345,8 +10962,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11358,8 +10974,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11371,8 +10986,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -11398,8 +11012,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11411,8 +11024,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11424,8 +11036,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-5E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11437,8 +11048,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11450,8 +11060,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11463,8 +11072,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11476,8 +11084,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11489,8 +11096,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11502,8 +11108,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11515,8 +11120,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -11544,8 +11148,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11557,8 +11160,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11570,8 +11172,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-5E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11583,8 +11184,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11596,8 +11196,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11609,8 +11208,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11622,8 +11220,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11635,8 +11232,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11648,8 +11244,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11661,8 +11256,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }]
@@ -11673,7 +11267,7 @@ describe('string', () => {
 
             const schema = { item: Joi.string().guid() };
             const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
-            expect(err).to.be.an.error('child "item" fails because ["item" must be a valid GUID]');
+            expect(err).to.be.an.error('"item" must be a valid GUID');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid GUID',
                 path: ['item'],
@@ -11697,8 +11291,7 @@ describe('string', () => {
                             limit: 36,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11713,8 +11306,7 @@ describe('string', () => {
                             limit: 36,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11729,8 +11321,7 @@ describe('string', () => {
                             limit: 36,
                             value: '{7e9081b59a6d4cc1a8c347f69fb4198d}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11745,8 +11336,7 @@ describe('string', () => {
                             limit: 36,
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11758,8 +11348,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11771,8 +11360,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11784,8 +11372,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11795,7 +11382,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -11804,7 +11391,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -11824,8 +11411,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11840,8 +11426,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11856,8 +11441,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11872,8 +11456,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11886,8 +11469,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11899,8 +11481,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11912,8 +11493,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11923,7 +11503,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -11932,7 +11512,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -11952,8 +11532,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11968,8 +11547,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -11984,8 +11562,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12000,8 +11577,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12011,7 +11587,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value', key: undefined }
+                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
@@ -12022,8 +11598,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12035,8 +11610,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12048,8 +11622,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12059,7 +11632,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value', key: undefined }
+                        context: { value: '', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -12068,7 +11641,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -12088,8 +11661,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12104,8 +11676,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12120,8 +11691,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12136,8 +11706,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12150,8 +11719,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12164,8 +11732,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12175,7 +11742,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -12184,7 +11751,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -12204,8 +11771,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12220,8 +11786,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12236,8 +11801,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12252,8 +11816,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12263,7 +11826,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value', key: undefined }
+                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
@@ -12274,8 +11837,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12288,8 +11850,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12299,7 +11860,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value', key: undefined }
+                        context: { value: '', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -12308,7 +11869,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -12328,8 +11889,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12344,8 +11904,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12360,8 +11919,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12376,8 +11934,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12387,7 +11944,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value', key: undefined }
+                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
@@ -12398,8 +11955,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12412,8 +11968,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12424,7 +11979,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -12444,8 +11999,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12460,8 +12014,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12476,8 +12029,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12492,8 +12044,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12506,8 +12057,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12520,8 +12070,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12532,7 +12081,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -12552,8 +12101,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12567,8 +12115,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e908/,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12582,8 +12129,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12597,8 +12143,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e908/,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12612,8 +12157,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12628,8 +12172,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12639,7 +12182,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value', key: undefined }
+                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
@@ -12650,8 +12193,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12664,8 +12206,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12675,7 +12216,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value', key: undefined }
+                        context: { value: '', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -12684,7 +12225,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -12704,8 +12245,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12719,8 +12259,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e908/,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12734,8 +12273,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12749,8 +12287,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e908/,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12764,8 +12301,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12780,8 +12316,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12791,7 +12326,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value', key: undefined }
+                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
@@ -12802,8 +12337,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12816,8 +12350,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12828,7 +12361,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -12848,8 +12381,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12864,8 +12396,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12880,8 +12411,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12896,8 +12426,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12910,8 +12439,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12923,8 +12451,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12936,8 +12463,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12948,7 +12474,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -12968,8 +12494,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12983,8 +12508,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e9081/i,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -12998,8 +12522,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13013,8 +12536,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e9081/i,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13028,8 +12550,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13044,8 +12565,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13059,8 +12579,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e9081/i,
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13072,8 +12591,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13085,8 +12603,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13098,8 +12615,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13109,7 +12625,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -13118,7 +12634,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -13138,8 +12654,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13153,8 +12668,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e9081/i,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13168,8 +12682,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13183,8 +12696,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e9081/i,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13198,8 +12710,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13214,8 +12725,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13229,8 +12739,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e9081/i,
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13242,8 +12751,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13255,8 +12763,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13268,8 +12775,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13280,7 +12786,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
@@ -13300,8 +12806,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13315,8 +12820,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e9081/i,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13330,8 +12834,7 @@ describe('string', () => {
                             limit: 34,
                             value: '69593D62-71EA-4548-85E4-04FC71357423',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13345,8 +12848,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e9081/i,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13360,8 +12862,7 @@ describe('string', () => {
                             limit: 34,
                             value: '{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13376,8 +12877,7 @@ describe('string', () => {
                             limit: 34,
                             value: '0c74f13f-fa83-4c48-9b33-68921dd72463',
                             encoding: undefined,
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13391,8 +12891,7 @@ describe('string', () => {
                             name: undefined,
                             pattern: /^{7e9081/i,
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13404,8 +12903,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{283B67B2-430F-4E6F-97E6-19041992-C1B0}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13417,8 +12915,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: '{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13430,8 +12927,7 @@ describe('string', () => {
                         type: 'string.guid',
                         context: {
                             value: 'D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}',
-                            label: 'value',
-                            key: undefined
+                            label: 'value'
                         }
                     }]
                 }],
@@ -13441,7 +12937,7 @@ describe('string', () => {
                         message: '"value" is not allowed to be empty',
                         path: [],
                         type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value', key: undefined }
+                        context: { value: '', invalids: [''], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -13450,7 +12946,7 @@ describe('string', () => {
                         message: '"value" must be a string',
                         path: [],
                         type: 'string.base',
-                        context: { value: null, label: 'value', key: undefined }
+                        context: { value: null, label: 'value' }
                     }]
                 }]
             ]);
