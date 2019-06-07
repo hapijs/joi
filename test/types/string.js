@@ -144,12 +144,12 @@ describe('string', () => {
                 ['A', true],
                 ['B', true],
                 [4, false, null, {
-                    message: '"value" must be a string',
+                    message: '"value" must be one of [a, b]',
                     details: [{
-                        message: '"value" must be a string',
+                        message: '"value" must be one of [a, b]',
                         path: [],
-                        type: 'string.base',
-                        context: { value: 4, label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: 4, valids: ['a', 'b'], label: 'value' }
                     }]
                 }]
             ]);
@@ -157,18 +157,19 @@ describe('string', () => {
 
         it('validates case insensitive values with non-strings', () => {
 
-            Helper.validate(Joi.string().valid('a', 'b', 5, Buffer.from('c')).insensitive(), [
+            const valids = ['a', 'b', 5, Buffer.from('c')];
+            Helper.validate(Joi.string().valid(...valids).insensitive(), [
                 ['a', true],
                 ['b', true],
                 ['A', true],
                 ['B', true],
                 [4, false, null, {
-                    message: '"value" must be a string',
+                    message: '"value" must be one of [a, b, 5, c]',
                     details: [{
-                        message: '"value" must be a string',
+                        message: '"value" must be one of [a, b, 5, c]',
                         path: [],
-                        type: 'string.base',
-                        context: { value: 4, label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: 4, valids, label: 'value' }
                     }]
                 }],
                 [5, true],
@@ -10316,12 +10317,12 @@ describe('string', () => {
                 }],
                 ['AB', true],
                 [null, false, null, {
-                    message: '"value" must be a string',
+                    message: '"value" must be one of [AB, BC]',
                     details: [{
-                        message: '"value" must be a string',
+                        message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'string.base',
-                        context: { value: null, label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: null, valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }]
             ]);

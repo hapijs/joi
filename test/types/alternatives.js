@@ -107,7 +107,7 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"value" must be a boolean, "p" must be a boolean, "p" must be a string',
+                    message: '"value" must be a boolean, "p" must be a boolean, "p" must be one of [foo, bar]',
                     details: [
                         {
                             message: '"value" must be a boolean',
@@ -122,10 +122,10 @@ describe('alternatives', () => {
                             context: { label: 'p', key: 'p', value: 1 }
                         },
                         {
-                            message: '"p" must be a string',
+                            message: '"p" must be one of [foo, bar]',
                             path: ['p'],
-                            type: 'string.base',
-                            context: { value: 1, label: 'p', key: 'p' }
+                            type: 'any.allowOnly',
+                            context: { value: 1, valids: ['foo', 'bar'], label: 'p', key: 'p' }
                         }
                     ]
                 }],
@@ -186,7 +186,7 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"value" must be a boolean, "p" must be a boolean, "p" must be a string',
+                    message: '"value" must be a boolean, "p" must be a boolean, "p" must be one of foo, bar',
                     details: [
                         {
                             message: '"value" must be a boolean',
@@ -201,10 +201,10 @@ describe('alternatives', () => {
                             context: { label: 'p', key: 'p', value: 1 }
                         },
                         {
-                            message: '"p" must be a string',
+                            message: '"p" must be one of foo, bar',
                             path: ['p'],
-                            type: 'string.base',
-                            context: { value: 1, label: 'p', key: 'p' }
+                            type: 'any.allowOnly',
+                            context: { value: 1, valids: ['foo', 'bar'], label: 'p', key: 'p' }
                         }
                     ]
                 }],
@@ -720,12 +720,12 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 1, b: null }, false, null, {
-                        message: '"a" must be a string',
+                        message: '"a" must be one of [x]',
                         details: [{
-                            message: '"a" must be a string',
+                            message: '"a" must be one of [x]',
                             path: ['a'],
-                            type: 'string.base',
-                            context: { value: 1, label: 'a', key: 'a' }
+                            type: 'any.allowOnly',
+                            context: { value: 1, valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }]
                 ]);

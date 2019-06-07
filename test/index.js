@@ -86,12 +86,12 @@ describe('Joi', () => {
             }],
             ['b', true],
             [5, false, null, {
-                message: '"value" must be a string',
+                message: '"value" must be one of [b]',
                 details: [{
-                    message: '"value" must be a string',
+                    message: '"value" must be one of [b]',
                     path: [],
-                    type: 'string.base',
-                    context: { value: 5, label: 'value' }
+                    type: 'any.allowOnly',
+                    context: { value: 5, valids: ['b'], label: 'value' }
                 }]
             }]
         ]);
@@ -201,7 +201,7 @@ describe('Joi', () => {
             ['key', true],
             [5, true],
             ['other', false, null, {
-                message: '"value" must be one of [key], "value" must be a number, "value" must be an object',
+                message: '"value" must be one of [key], "value" must be one of [5], "value" must be an object',
                 details: [
                     {
                         message: '"value" must be one of [key]',
@@ -210,10 +210,10 @@ describe('Joi', () => {
                         context: { value: 'other', valids: ['key'], label: 'value' }
                     },
                     {
-                        message: '"value" must be a number',
+                        message: '"value" must be one of [5]',
                         path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'other' }
+                        type: 'any.allowOnly',
+                        context: { value: 'other', valids: [5], label: 'value' }
                     },
                     {
                         message: '"value" must be an object',
@@ -224,13 +224,13 @@ describe('Joi', () => {
                 ]
             }],
             [6, false, null, {
-                message: '"value" must be a string, "value" must be one of [5], "value" must be an object',
+                message: '"value" must be one of [key], "value" must be one of [5], "value" must be an object',
                 details: [
                     {
-                        message: '"value" must be a string',
+                        message: '"value" must be one of [key]',
                         path: [],
-                        type: 'string.base',
-                        context: { value: 6, label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: 6, valids: ['key'], label: 'value' }
                     },
                     {
                         message: '"value" must be one of [5]',
@@ -247,19 +247,19 @@ describe('Joi', () => {
                 ]
             }],
             [{ c: 5 }, false, null, {
-                message: '"value" must be a string, "value" must be a number, "c" is not allowed',
+                message: '"value" must be one of [key], "value" must be one of [5], "c" is not allowed',
                 details: [
                     {
-                        message: '"value" must be a string',
+                        message: '"value" must be one of [key]',
                         path: [],
-                        type: 'string.base',
-                        context: { value: { c: 5 }, label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: { c: 5 }, valids: ['key'], label: 'value' }
                     },
                     {
-                        message: '"value" must be a number',
+                        message: '"value" must be one of [5]',
                         path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: { c: 5 } }
+                        type: 'any.allowOnly',
+                        context: { value: { c: 5 }, valids: [5], label: 'value' }
                     },
                     {
                         message: '"c" is not allowed',
@@ -273,25 +273,25 @@ describe('Joi', () => {
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
             [{ a: 5, b: 'a' }, false, null, {
-                message: '"value" must be a string, "value" must be a number, "a" must be a boolean',
+                message: '"value" must be one of [key], "value" must be one of [5], "a" must be one of [true]',
                 details: [
                     {
-                        message: '"value" must be a string',
+                        message: '"value" must be one of [key]',
                         path: [],
-                        type: 'string.base',
-                        context: { value: { a: 5, b: 'a' }, label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
                     },
                     {
-                        message: '"value" must be a number',
+                        message: '"value" must be one of [5]',
                         path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: { a: 5, b: 'a' } }
+                        type: 'any.allowOnly',
+                        context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
                     },
                     {
-                        message: '"a" must be a boolean',
+                        message: '"a" must be one of [true]',
                         path: ['a'],
-                        type: 'boolean.base',
-                        context: { label: 'a', key: 'a', value: 5 }
+                        type: 'any.allowOnly',
+                        context: { label: 'a', key: 'a', value: 5, valids: [true] }
                     }
                 ]
             }]
@@ -305,7 +305,7 @@ describe('Joi', () => {
             ['key', true],
             [5, true],
             ['other', false, null, {
-                message: '"value" must be one of [key], "value" must be a number, "value" must be an object',
+                message: '"value" must be one of [key], "value" must be one of [5], "value" must be an object',
                 details: [
                     {
                         message: '"value" must be one of [key]',
@@ -314,10 +314,10 @@ describe('Joi', () => {
                         context: { value: 'other', valids: ['key'], label: 'value' }
                     },
                     {
-                        message: '"value" must be a number',
+                        message: '"value" must be one of [5]',
                         path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'other' }
+                        type: 'any.allowOnly',
+                        context: { value: 'other', valids: [5], label: 'value' }
                     },
                     {
                         message: '"value" must be an object',
@@ -328,13 +328,13 @@ describe('Joi', () => {
                 ]
             }],
             [6, false, null, {
-                message: '"value" must be a string, "value" must be one of [5], "value" must be an object',
+                message: '"value" must be one of [key], "value" must be one of [5], "value" must be an object',
                 details: [
                     {
-                        message: '"value" must be a string',
+                        message: '"value" must be one of [key]',
                         path: [],
-                        type: 'string.base',
-                        context: { value: 6, label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: 6, valids: ['key'], label: 'value' }
                     },
                     {
                         message: '"value" must be one of [5]',
@@ -351,19 +351,19 @@ describe('Joi', () => {
                 ]
             }],
             [{ c: 5 }, false, null, {
-                message: '"value" must be a string, "value" must be a number, "c" is not allowed',
+                message: '"value" must be one of [key], "value" must be one of [5], "c" is not allowed',
                 details: [
                     {
-                        message: '"value" must be a string',
+                        message: '"value" must be one of [key]',
                         path: [],
-                        type: 'string.base',
-                        context: { value: { c: 5 }, label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: { c: 5 }, valids: ['key'], label: 'value' }
                     },
                     {
-                        message: '"value" must be a number',
+                        message: '"value" must be one of [5]',
                         path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: { c: 5 } }
+                        type: 'any.allowOnly',
+                        context: { value: { c: 5 }, valids: [5], label: 'value' }
                     },
                     {
                         message: '"c" is not allowed',
@@ -377,25 +377,25 @@ describe('Joi', () => {
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
             [{ a: 5, b: 'a' }, false, null, {
-                message: '"value" must be a string, "value" must be a number, "a" must be a boolean',
+                message: '"value" must be one of [key], "value" must be one of [5], "a" must be one of [true]',
                 details: [
                     {
-                        message: '"value" must be a string',
+                        message: '"value" must be one of [key]',
                         path: [],
-                        type: 'string.base',
-                        context: { value: { a: 5, b: 'a' }, label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
                     },
                     {
-                        message: '"value" must be a number',
+                        message: '"value" must be one of [5]',
                         path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: { a: 5, b: 'a' } }
+                        type: 'any.allowOnly',
+                        context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
                     },
                     {
-                        message: '"a" must be a boolean',
+                        message: '"a" must be one of [true]',
                         path: ['a'],
-                        type: 'boolean.base',
-                        context: { label: 'a', key: 'a', value: 5 }
+                        type: 'any.allowOnly',
+                        context: { label: 'a', key: 'a', value: 5, valids: [true] }
                     }
                 ]
             }]

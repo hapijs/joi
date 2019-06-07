@@ -200,12 +200,12 @@ describe('symbol', () => {
             const symbols = [Symbol(1), Symbol(2)];
             const schema = Joi.symbol().map([[1, symbols[0]], ['two', symbols[1]]]).options({ convert: false });
             const err = await expect(schema.validate(1)).to.reject();
-            expect(err).to.be.an.error('"value" must be a symbol');
+            expect(err).to.be.an.error('"value" must be one of [Symbol(1), Symbol(2)]');
             expect(err.details).to.equal([{
-                message: '"value" must be a symbol',
+                message: '"value" must be one of [Symbol(1), Symbol(2)]',
                 path: [],
-                type: 'symbol.base',
-                context: { label: 'value', value: 1 }
+                type: 'any.allowOnly',
+                context: { value: 1, valids: symbols, label: 'value' }
             }]);
         });
 

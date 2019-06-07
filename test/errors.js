@@ -455,7 +455,7 @@ describe('errors', () => {
             };
 
             const err = await expect(Joi.validate(object, schema, { abortEarly: false })).to.reject();
-            expect(err).to.be.an.error('"a" must be one of [a, b, c, d]. "y.u" is required. "y.b" must be a string');
+            expect(err).to.be.an.error('"a" must be one of [a, b, c, d]. "y.u" is required. "y.b" must be one of [i, j, false]. "y.b" must be a string');
             expect(err.details).to.equal([
                 {
                     message: '"a" must be one of [a, b, c, d]',
@@ -470,13 +470,20 @@ describe('errors', () => {
                     context: { label: 'y.u', key: 'u' }
                 },
                 {
+                    message: '"y.b" must be one of [i, j, false]',
+                    path: ['y', 'b'],
+                    type: 'any.allowOnly',
+                    context: { value: { c: 10 }, label: 'y.b', key: 'b', valids: ['i', 'j', false] }
+                },
+                {
                     message: '"y.b" must be a string',
                     path: ['y', 'b'],
                     type: 'string.base',
                     context: { value: { c: 10 }, label: 'y.b', key: 'b' }
                 }
             ]);
-            expect(err.annotate()).to.equal('{\n  "y": {\n    "b" \u001b[31m[3]\u001b[0m: {\n      "c": 10\n    },\n    \u001b[41m"u"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  "a" \u001b[31m[1]\u001b[0m: "m"\n}\n\u001b[31m\n[1] "a" must be one of [a, b, c, d]\n[2] "y.u" is required\n[3] "y.b" must be a string\u001b[0m');
+
+            expect(err.annotate()).to.equal('{\n  "y": {\n    "b" \u001b[31m[3, 4]\u001b[0m: {\n      "c": 10\n    },\n    \u001b[41m"u"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  "a" \u001b[31m[1]\u001b[0m: "m"\n}\n\u001b[31m\n[1] "a" must be one of [a, b, c, d]\n[2] "y.u" is required\n[3] "y.b" must be one of [i, j, false]\n[4] "y.b" must be a string\u001b[0m');
         });
 
         it('annotates error without colors if requested', async () => {
