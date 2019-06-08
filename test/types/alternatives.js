@@ -1458,7 +1458,7 @@ describe('alternatives', () => {
                 notes: ['f'],
                 tags: ['g'],
                 meta: ['b', 'c'],
-                examples: [{ value: 'a' }],
+                examples: ['a'],
                 alternatives: [{
                     type: 'string',
                     flags: {

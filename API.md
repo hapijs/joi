@@ -893,37 +893,12 @@ const schema = Joi.any().meta({ index: true });
 #### `any.example(...values)`
 
 Adds examples to the schema where:
-- `values` - each argument is either an example value, or an array of the shape `[value, options]`:
-  - `value` - single value example.
-  - `options` - optional object argument to pass options to the validation:
-    - `parent` - parent value in case you used normal references in your schema.
-    - `context` - context of the validation in case you used context references in your schema.
+- `values` - each argument is an example value.
 
-If any of the examples fail to pass validation, the function will throw.
-
-Calling this function again will override the previous examples.
+Note that no validation is performed on the provided examples. Calling this function again will override the previous examples.
 
 ```js
-// Valid examples
 const schema = Joi.string().min(4).example('abcd');
-
-const refSchema = Joi.number().min(Joi.ref('sibling')).example([42, { parent: { sibling: 10 } }]);
-
-const contextSchema = Joi.number().min(Joi.ref('$threshold')).example([42, { context: { $threshold: 10 } }]);
-
-// Invalid examples
-const invalidSchema = Joi.string().min(4).example('abc');
-
-const invalidRefSchema = Joi.number().min(Joi.ref('sibling')).example([42, { parent: { sibling: 50 } }]);
-
-const invalidContextSchema = Joi.number().min(Joi.ref('$threshold')).example([42, { context: { $threshold: 50 } }]);
-
-// Multiple examples
-const after = Joi.date().min(Joi.ref('before'))
-                    .example(
-                        ['2016-01-01', { parent: { before: '2015-01-01' } }],
-                        ['2016-01-01', { parent: { before: '2015-12-31' } }]
-                    )
 ```
 
 #### `any.unit(name)`
@@ -1185,7 +1160,7 @@ Overrides the default joi error with a custom error if the rule fails where:
   - an instance of `Error` - the override error.
   - a `function(errors)`, taking an array of errors as argument, where it must either:
     - return a `string` - substitutes the error message with this text
-    - return a single `object` or an `Array` of it, where:
+    - return a single object or an array of objects, where each contains:
       - `type` - optional parameter providing the type of the error (eg. `number.min`).
       - `message` - optional parameter if `template` is provided, containing the text of the error.
       - `template` - optional parameter if `message` is provided, containing a template string,
