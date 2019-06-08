@@ -362,7 +362,7 @@ describe('any', () => {
         it('can describe a label', () => {
 
             const schema = Joi.object().label('lbl').describe();
-            expect(schema).to.equal({ type: 'object', label: 'lbl', flags: {} });
+            expect(schema).to.equal({ type: 'object', label: 'lbl' });
         });
 
         it('does not leak into sub objects', async () => {
@@ -701,154 +701,6 @@ describe('any', () => {
 
             const value = await schema.validate({ a: true });
             expect(value.b).to.equal(false);
-        });
-
-        it('sets value based on multiple conditions (without otherwise)', () => {
-
-            const schema = Joi.object({
-                a: Joi.number().required(),
-                b: Joi.number()
-                    .when('a', { is: 0, then: Joi.valid(1) })
-                    .when('a', { is: 1, then: Joi.valid(2) })
-                    .when('a', { is: 2, then: Joi.valid(3) })
-            });
-
-            Helper.validate(schema, [
-                [{ a: 0, b: 1 }, true],
-                [{ a: 0, b: 2 }, false, null, {
-                    message: '"b" must be one of [1]',
-                    details: [{
-                        message: '"b" must be one of [1]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 2, valids: [1], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 1, b: 2 }, true],
-                [{ a: 1, b: 3 }, false, null, {
-                    message: '"b" must be one of [2]',
-                    details: [{
-                        message: '"b" must be one of [2]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 3, valids: [2], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 2, b: 3 }, true],
-                [{ a: 2, b: 4 }, false, null, {
-                    message: '"b" must be one of [3]',
-                    details: [{
-                        message: '"b" must be one of [3]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 4, valids: [3], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 42, b: 128 }, true]
-            ]);
-        });
-
-        it('sets value based on multiple conditions (with otherwise)', () => {
-
-            const schema = Joi.object({
-                a: Joi.number().required(),
-                b: Joi.number()
-                    .when('a', { is: 0, then: Joi.valid(1) })
-                    .when('a', { is: 1, otherwise: Joi.valid(2) })
-                    .when('a', { is: 2, then: Joi.valid(3) })
-            });
-
-            Helper.validate(schema, [
-                [{ a: 0, b: 1 }, true],
-                [{ a: 0, b: 2 }, false, null, {
-                    message: '"b" must be one of [1]',
-                    details: [{
-                        message: '"b" must be one of [1]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 2, valids: [1], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 1, b: 2 }, true],
-                [{ a: 1, b: 3 }, true],
-                [{ a: 2, b: 3 }, false, null, {
-                    message: '"b" must be one of [2]',
-                    details: [{
-                        message: '"b" must be one of [2]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 3, valids: [2], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 2, b: 2 }, true],
-                [{ a: 42, b: 128 }, false, null, {
-                    message: '"b" must be one of [2]',
-                    details: [{
-                        message: '"b" must be one of [2]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 128, valids: [2], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 42, b: 2 }, true]
-            ]);
-        });
-
-        it('sets value based on multiple conditions (with base rules)', () => {
-
-            const schema = Joi.object({
-                a: Joi.number().required(),
-                b: Joi.number().valid(10)
-                    .when('a', { is: 0, then: Joi.valid(1) })
-                    .when('a', { is: 1, then: Joi.valid(2) })
-                    .when('a', { is: 2, then: Joi.valid(3) })
-            });
-
-            Helper.validate(schema, [
-                [{ a: 0, b: 1 }, true],
-                [{ a: 0, b: 2 }, false, null, {
-                    message: '"b" must be one of [10, 1]',
-                    details: [{
-                        message: '"b" must be one of [10, 1]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 2, valids: [10, 1], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 0, b: 10 }, true],
-                [{ a: 1, b: 2 }, true],
-                [{ a: 1, b: 3 }, false, null, {
-                    message: '"b" must be one of [10, 2]',
-                    details: [{
-                        message: '"b" must be one of [10, 2]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 3, valids: [10, 2], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 1, b: 10 }, true],
-                [{ a: 2, b: 3 }, true],
-                [{ a: 2, b: 4 }, false, null, {
-                    message: '"b" must be one of [10, 3]',
-                    details: [{
-                        message: '"b" must be one of [10, 3]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 4, valids: [10, 3], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 2, b: 10 }, true],
-                [{ a: 42, b: 128 }, false, null, {
-                    message: '"b" must be one of [10]',
-                    details: [{
-                        message: '"b" must be one of [10]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 128, valids: [10], label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 42, b: 10 }, true]
-            ]);
         });
 
         it('creates deep defaults', () => {
@@ -2162,6 +2014,20 @@ describe('any', () => {
             }).to.throw('Invalid options');
         });
 
+        it('throws on multiple whens', () => {
+
+            expect(() => {
+
+                Joi.object({
+                    value: Joi.number()
+                        .when('min', { is: true, then: Joi.number().min(10) })
+                        .when('max', { is: true, then: Joi.number().max(100) }),
+                    min: Joi.boolean(),
+                    max: Joi.boolean()
+                });
+            }).to.throw('Cannot chain multiple when conditions on non-alternatives root');
+        });
+
         it('forks type into alternatives', () => {
 
             const schema = {
@@ -2385,75 +2251,6 @@ describe('any', () => {
                         path: ['b'],
                         type: 'any.allowOnly',
                         context: { value: 'a', valids: ['x'], label: 'b', key: 'b' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('forks type into alternatives (with a schema as condition)', () => {
-
-            const schema = Joi.object({
-                a: Joi.string(),
-                b: Joi.number(),
-                c: Joi.boolean()
-            })
-                .when(Joi.object({ a: Joi.string().min(2).required() }).unknown(), {
-                    then: Joi.object({ b: Joi.required() })
-                })
-                .when(Joi.object({ b: Joi.number().required().min(5), c: Joi.only(true).required() }).unknown(), {
-                    then: Joi.object({ a: Joi.string().required().min(3) })
-                });
-
-            Helper.validate(schema, [
-                [{ a: 0 }, false, null, {
-                    message: '"a" must be a string',
-                    details: [{
-                        message: '"a" must be a string',
-                        path: ['a'],
-                        type: 'string.base',
-                        context: { value: 0, key: 'a', label: 'a' }
-                    }]
-                }],
-                [{ a: 'a' }, true],
-                [{ a: 'a', b: 'b' }, false, null, {
-                    message: '"b" must be a number',
-                    details: [{
-                        message: '"b" must be a number',
-                        path: ['b'],
-                        type: 'number.base',
-                        context: { key: 'b', label: 'b', value: 'b' }
-                    }]
-                }],
-                [{ a: 'a', b: 0 }, true],
-                [{ a: 'a', b: 0, c: true }, true],
-                [{ a: 'a', b: 0, c: 'c' }, false, null, {
-                    message: '"c" must be a boolean',
-                    details: [{
-                        message: '"c" must be a boolean',
-                        path: ['c'],
-                        type: 'boolean.base',
-                        context: { key: 'c', label: 'c', value: 'c' }
-                    }]
-                }],
-                [{ a: 'aa' }, false, null, {
-                    message: '"b" is required',
-                    details: [{
-                        message: '"b" is required',
-                        path: ['b'],
-                        type: 'any.required',
-                        context: { key: 'b', label: 'b' }
-                    }]
-                }],
-                [{ a: 'aa', b: 0 }, true],
-                [{ a: 'aa', b: 10 }, true],
-                [{ a: 'a', b: 10 }, true],
-                [{ a: 'a', b: 10, c: true }, false, null, {
-                    message: '"a" length must be at least 3 characters long',
-                    details: [{
-                        message: '"a" length must be at least 3 characters long',
-                        path: ['a'],
-                        type: 'string.min',
-                        context: { encoding: undefined, limit: 3, value: 'a', key: 'a', label: 'a' }
                     }]
                 }]
             ]);
@@ -2713,7 +2510,7 @@ describe('any', () => {
 
             expect(() => {
 
-                Joi.any().valid(true, 1, 'hello', new Date(), Symbol('foo'), () => {}, {});
+                Joi.any().valid(true, 1, 'hello', new Date(), Symbol('foo'), () => { }, {});
             }).not.to.throw();
         });
 
@@ -2775,12 +2572,12 @@ describe('any', () => {
                 context: { value: o, valids: [o], label: 'value' }
             }]);
 
-            const f = () => {};
+            const f = () => { };
             expect(Joi.valid(f).validate(f).error).to.be.null();
-            const otherFunction = () => {};
-            expect(Joi.valid(f).validate(otherFunction).error).to.be.an.error('"value" must be one of [() => {}]');
+            const otherFunction = () => { };
+            expect(Joi.valid(f).validate(otherFunction).error).to.be.an.error('"value" must be one of [() => { }]');
             expect(Joi.valid(f).validate(otherFunction).error.details).to.equal([{
-                message: '"value" must be one of [() => {}]',
+                message: '"value" must be one of [() => { }]',
                 path: [],
                 type: 'any.allowOnly',
                 context: { value: otherFunction, valids: [f], label: 'value' }

@@ -93,6 +93,18 @@ describe('alternatives', () => {
             }).to.throw('Missing alternative schemas');
         });
 
+        it('throws on unreachable condition', () => {
+
+            expect(() => {
+
+                Joi.object({
+
+                    a: Joi.alternatives().when('b', { is: 6, then: 7, otherwise: 0 }).try(5),
+                    b: Joi.any()
+                });
+            }).to.throw('Unreachable condition');
+        });
+
         it('validates deep alternatives', () => {
 
             const schema = Joi.alternatives().try([
@@ -271,14 +283,25 @@ describe('alternatives', () => {
             }).to.throw('Invalid condition: 5');
         });
 
+        it('throws on unreachable condition', () => {
+
+            expect(() => {
+
+                Joi.object({
+
+                    a: Joi.alternatives().when('b', { is: 6, then: 7, otherwise: 0 }).when('b', { is: 6, then: 7 }),
+                    b: Joi.any()
+                });
+            }).to.throw('Unreachable condition');
+        });
+
         describe('with ref', () => {
 
             it('validates conditional alternatives', () => {
 
                 const schema = {
                     a: Joi.alternatives()
-                        .when('b', { is: 5, then: 'x', otherwise: 'y' })
-                        .try('z'),
+                        .when('b', { is: 5, then: 'x', otherwise: 'y' }),
                     b: Joi.any()
                 };
 
@@ -516,8 +539,7 @@ describe('alternatives', () => {
 
                 const schema = {
                     a: Joi.alternatives()
-                        .when('', { is: 5, then: 'x', otherwise: 'y' })
-                        .try('z'),
+                        .when('', { is: 5, then: 'x', otherwise: 'y' }),
                     '': Joi.any()
                 };
 
@@ -670,9 +692,9 @@ describe('alternatives', () => {
                 const schema = Joi.object({
                     a: Joi.number(),
                     b: Joi.number(),
-                    c: Joi.number()
+                    c: Joi.alternatives()
                         .when('a', { is: 1, otherwise: Joi.number().min(1) })
-                        .when('b', { is: 1, then: Joi.number().min(1) })
+                        .when('b', { is: 1, then: Joi.number().min(1), otherwise: Joi.number() })
                 });
 
                 Helper.validate(schema, [
@@ -1202,7 +1224,8 @@ describe('alternatives', () => {
 
             const schema = {
                 a: Joi.alternatives()
-                    .when('b', { is: 5, then: 'x', otherwise: 'y' })
+                    .when('b', { is: 5, then: 'x' })
+                    .when('b', { is: 6, otherwise: 'y' })
                     .try('z'),
                 b: Joi.any()
             };
@@ -1235,6 +1258,19 @@ describe('alternatives', () => {
                                     },
                                     valids: ['x'],
                                     invalids: ['']
+                                }
+                            },
+                            {
+                                ref: { type: 'ref', key: 'b', path: ['b'] },
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true,
+                                        presence: 'required',
+                                        unsafe: false
+                                    },
+                                    valids: [6],
+                                    invalids: [Infinity, -Infinity]
                                 },
                                 otherwise: {
                                     type: 'string',
@@ -1384,7 +1420,6 @@ describe('alternatives', () => {
                 alternatives: [{
                     peek: {
                         type: 'string',
-                        flags: {},
                         label: 'foo',
                         invalids: ['']
                     },

@@ -1713,7 +1713,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().trim(42);
-            }).to.throw('option must be a boolean');
+            }).to.throw('enabled must be a boolean');
         });
     });
 
@@ -9542,7 +9542,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().hex('a');
-            }).to.throw('options must be an object');
+            }).to.throw('Options must be an object');
 
             expect(() => {
 
