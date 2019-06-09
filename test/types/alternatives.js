@@ -25,13 +25,13 @@ describe('alternatives', () => {
     it('fails when no alternatives are provided', async () => {
 
         const err = await expect(Joi.alternatives().validate('a')).to.reject();
-        expect(err.message).to.equal('"value" not matching any of the allowed alternatives');
+        expect(err.message).to.equal('"value" does not match any of the allowed types');
         expect(err.details).to.equal([
             {
                 context: {
                     label: 'value'
                 },
-                message: '"value" not matching any of the allowed alternatives',
+                message: '"value" does not match any of the allowed types',
                 path: [],
                 type: 'alternatives.base'
             }
@@ -764,18 +764,18 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5, c: '5' }, true],
                     [{ a: 'x', b: 5, c: '1' }, false, null, {
-                        message: '"a" not matching any of the allowed alternatives',
+                        message: '"a" does not match any of the allowed types',
                         details: [{
-                            message: '"a" not matching any of the allowed alternatives',
+                            message: '"a" does not match any of the allowed types',
                             path: ['a'],
                             type: 'alternatives.base',
                             context: { label: 'a', key: 'a' }
                         }]
                     }],
                     [{ a: 'x', b: '5', c: '5' }, false, null, {
-                        message: '"a" not matching any of the allowed alternatives',
+                        message: '"a" does not match any of the allowed types',
                         details: [{
-                            message: '"a" not matching any of the allowed alternatives',
+                            message: '"a" does not match any of the allowed types',
                             path: ['a'],
                             type: 'alternatives.base',
                             context: { label: 'a', key: 'a' }
@@ -815,9 +815,9 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [{ a: 'x', b: date, c: date }, true],
                     [{ a: 'x', b: date, c: Date.now() }, false, null, {
-                        message: '"a" not matching any of the allowed alternatives',
+                        message: '"a" does not match any of the allowed types',
                         details: [{
-                            message: '"a" not matching any of the allowed alternatives',
+                            message: '"a" does not match any of the allowed types',
                             path: ['a'],
                             type: 'alternatives.base',
                             context: { label: 'a', key: 'a' }
@@ -1475,29 +1475,29 @@ describe('alternatives', () => {
 
     describe('error()', () => {
 
-        it('overrides error', async () => {
+        it('overrides single try error', async () => {
 
             const schema = Joi.object({
                 x: Joi.alternatives([
                     Joi.number(),
-                    Joi.string().error(new Error('failed!'), { self: true })
+                    Joi.string().error(new Error('failed!'))
                 ])
             });
 
             await expect(schema.validate({ x: [] })).to.reject('failed!');
         });
 
-        it('ignores top level error', async () => {
+        it('overrides top level error', async () => {
 
             const schema = Joi.object({
                 x: Joi.alternatives([
                     Joi.number(),
                     Joi.string()
                 ])
-                    .error(new Error('failed!'), { self: true })
+                    .error(new Error('failed!'))
             });
 
-            await expect(schema.validate({ x: [] })).to.reject('"x" must be a number, "x" must be a string');
+            await expect(schema.validate({ x: [] })).to.reject('failed!');
         });
     });
 });

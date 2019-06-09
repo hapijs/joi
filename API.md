@@ -1153,7 +1153,7 @@ schema = schema.empty();
 schema.validate(''); // returns { error: "value" is not allowed to be empty, value: '' }
 ```
 
-#### `any.error(err, [options])`
+#### `any.error(err)`
 
 Overrides the default joi error with a custom error if the rule fails where:
 - `err` can be:
@@ -1168,10 +1168,6 @@ Overrides the default joi error with a custom error if the rule fails where:
       - `context` - optional parameter, to provide context to your error if you are using the `template`.
     - return an `Error` - same as when you directly provide an `Error`, but you can customize the
       error message based on the errors.
-- `options`:
-  - `self` - Boolean value indicating whether the error handler should be used for all errors or
-    only for errors occurring on this property (`true` value). This concept only makes sense for
-    `array` or `object` schemas as other values don't have children. Defaults to `false`.
 
 Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any of the
 normal joi error properties. If validation fails and another error is found before the error
@@ -1179,29 +1175,29 @@ override, that error will be returned and the override will be ignored (unless t
 option has been set to `false`).
 
 ```js
-let schema = Joi.string().error(new Error('Was REALLY expecting a string'));
+const schema = Joi.string().error(new Error('Was REALLY expecting a string'));
 schema.validate(3);     // returns error.message === 'Was REALLY expecting a string'
+```
 
-let schema = Joi.object({
+```js
+const schema = Joi.object({
     foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
 });
 schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a positive number'
+```
 
-let schema = Joi.object({
-    foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
-}).required().error(() => 'root object is required', { self: true });
-schema.validate();               // returns error.message === 'root object is required'
-schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a positive number'
-
-let schema = Joi.object({
+```js
+const schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
 
         return 'found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and ');
     })
 });
 schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
+```
 
-let schema = Joi.object({
+```js
+const schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
 
         return {

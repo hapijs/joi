@@ -898,7 +898,7 @@ describe('any', () => {
             ]);
         });
 
-        it('should void values with trim enabled', () => {
+        it('should void values with trim', () => {
 
             const schema = Joi.string().empty('').trim();
             Helper.validate(schema, [
@@ -916,6 +916,13 @@ describe('any', () => {
                         context: { value: 42, label: 'value' }
                     }]
                 }]
+            ]);
+
+            Helper.validate(schema.trim(false), [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', true, null, undefined],
+                [' ', true, null, ' ']
             ]);
         });
 
@@ -1483,7 +1490,7 @@ describe('any', () => {
                         c: Joi.number().error()
                     }
                 });
-            }).to.throw('Must provide a valid Error object or a function');
+            }).to.throw('Missing error');
 
         });
 
@@ -1710,100 +1717,6 @@ describe('any', () => {
                 expect(err).to.be.an.error('error of type number.min');
                 expect(err.isJoi).to.not.exist();
                 expect(err.details).to.not.exist();
-            });
-        });
-
-        describe('with self true', () => {
-
-            it('does not hide nested errors for objects', async () => {
-
-                const schema = Joi.object({
-                    a: Joi.object({
-                        b: Joi.number().error(new Error('Really wanted a number!'))
-                    }).required().error(new Error('Must provide a'), { self: true })
-                });
-
-                const outsideErr = await expect(schema.validate({})).to.reject();
-                expect(outsideErr.message).to.equal('Must provide a');
-                expect(outsideErr.details).to.not.exist();
-
-                const insideErr = await expect(schema.validate({ a: { b: 'x' } })).to.reject();
-                expect(insideErr.message).to.equal('Really wanted a number!');
-                expect(insideErr.details).to.not.exist();
-            });
-
-            it('does not hide nested errors for arrays', async () => {
-
-                const schema = Joi.object({
-                    a: Joi.array().required()
-                        .items(Joi.number().error(new Error('Really wanted a number!')))
-                        .error(new Error('Must provide a'), { self: true })
-                });
-
-                const outsideErr = await expect(schema.validate({})).to.reject();
-                expect(outsideErr.message).to.equal('Must provide a');
-                expect(outsideErr.details).to.not.exist();
-
-                const insideErr = await expect(schema.validate({ a: ['x'] })).to.reject();
-                expect(insideErr.message).to.equal('Really wanted a number!');
-                expect(insideErr.details).to.not.exist();
-            });
-
-            describe('with a function', () => {
-
-                it('does not hide nested errors for objects', async () => {
-
-                    const schema = Joi.object({
-                        a: Joi.object({
-                            b: Joi.number().error(() => 'Really wanted a number!')
-                        }).required().error(() => 'Must provide a', { self: true })
-                    });
-
-                    const outsideErr = await expect(schema.validate({})).to.reject();
-                    expect(outsideErr.message).to.equal('Must provide a');
-                    expect(outsideErr.details).to.equal([{
-                        message: 'Must provide a',
-                        path: ['a'],
-                        type: 'any.required',
-                        context: { key: 'a', label: 'a' }
-                    }]);
-
-                    const insideErr = await expect(schema.validate({ a: { b: 'x' } })).to.reject();
-                    expect(insideErr.message).to.equal('Really wanted a number!');
-                    expect(insideErr.details).to.equal([{
-                        message: 'Really wanted a number!',
-                        path: ['a', 'b'],
-                        type: 'number.base',
-                        context: { value: 'x', key: 'b', label: 'a.b' }
-                    }]);
-                });
-
-                it('does not hide nested errors for arrays', async () => {
-
-                    const schema = Joi.object({
-                        a: Joi.array().required()
-                            .items(Joi.number().error(() => 'Really wanted a number!'))
-                            .error(() => 'Must provide a', { self: true })
-                    });
-
-                    const outsideErr = await expect(schema.validate({})).to.reject();
-                    expect(outsideErr.message).to.equal('Must provide a');
-                    expect(outsideErr.details).to.equal([{
-                        message: 'Must provide a',
-                        path: ['a'],
-                        type: 'any.required',
-                        context: { key: 'a', label: 'a' }
-                    }]);
-
-                    const insideErr = await expect(schema.validate({ a: ['x'] })).to.reject();
-                    expect(insideErr.message).to.equal('Really wanted a number!');
-                    expect(insideErr.details).to.equal([{
-                        message: 'Really wanted a number!',
-                        path: ['a', 0],
-                        type: 'number.base',
-                        context: { value: 'x', key: 0, label: 'a[0]' }
-                    }]);
-                });
             });
         });
     });
