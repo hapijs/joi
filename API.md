@@ -639,13 +639,12 @@ validate(params, value, state, options) {
 }
 ```
 
-Any of the `coerce`, `pre` and `validate` functions should use `this.createError(type, context, state, options[, flags])` to create and return errors.
+Any of the `coerce`, `pre` and `validate` functions should use `this.createError(type, context, state, options)` to create and return errors.
 This function potentially takes 5 arguments:
 * `type` - the dotted type of the error matching predefined language elements or the ones defined in your extension. **Required**.
 * `context` - a free-form object that can contain anything you want to provide context on regarding the error. This object's properties are inserted in the error message where bracketted placeholders are. **Required**.
 * `state` - state that the validation was in, which contains the current key, path, parent if any, or reference if any. Usually you just have to pass the state you were given. **Required**.
 * `options` - options that were used for the validation. Usually you just have to pass the options you were given. **Required**.
-* `flags` - optional flags that you want to be shown for the error. Defaults to the schema's current flags.
 
 #### npm note
 
