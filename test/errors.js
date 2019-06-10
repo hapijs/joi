@@ -1,8 +1,8 @@
 'use strict';
 
 const Code = require('@hapi/code');
-const Lab = require('@hapi/lab');
 const Joi = require('..');
+const Lab = require('@hapi/lab');
 
 
 const internals = {};
@@ -682,28 +682,17 @@ describe('errors', () => {
             };
 
             const err = await expect(Joi.validate({ x: true }, schema)).to.reject();
-            expect(err).to.be.an.error('"x" must be a string, "x" must be a number, "x" must be a number of milliseconds or valid date string');
+            expect(err).to.be.an.error('"x" must be one of [string, number, date]');
             expect(err.details).to.equal([
                 {
-                    message: '"x" must be a string',
+                    message: '"x" must be one of [string, number, date]',
                     path: ['x'],
-                    type: 'string.base',
-                    context: { value: true, label: 'x', key: 'x' }
-                },
-                {
-                    message: '"x" must be a number',
-                    path: ['x'],
-                    type: 'number.base',
-                    context: { label: 'x', key: 'x', value: true }
-                },
-                {
-                    message: '"x" must be a number of milliseconds or valid date string',
-                    path: ['x'],
-                    type: 'date.base',
-                    context: { label: 'x', key: 'x', value: true }
+                    type: 'alternatives.types',
+                    context: { types: ['string', 'number', 'date'], label: 'x', key: 'x', value: true }
                 }
             ]);
-            expect(err.annotate()).to.equal('{\n  "x" \u001b[31m[1, 2, 3]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be a string\n[2] "x" must be a number\n[3] "x" must be a number of milliseconds or valid date string\u001b[0m');
+
+            expect(err.annotate()).to.equal('{\n  "x" \u001b[31m[1]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be one of [string, number, date]\u001b[0m');
         });
 
         it('annotates circular input', async () => {
@@ -938,6 +927,19 @@ describe('errors', () => {
             }]);
 
             expect(() => err.annotate(true)).to.not.throw();
+        });
+
+        it('annotates joi schema error', async () => {
+
+            const schema = Joi.object({
+                _type: 'string'
+            })
+                .unknown();
+
+            const value = Joi.number().min(1);
+            const err = await expect(schema.validate(value)).to.reject('"_type" must be one of [string]');
+            expect(err.annotate()).to.contain('"_type" must be one of [string]');
+            expect(value).to.equal(Joi.number().min(1));
         });
     });
 });

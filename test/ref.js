@@ -322,6 +322,83 @@ describe('ref', () => {
         ]);
     });
 
+    it('reaches own key value', () => {
+
+        const object = Joi.object().schema('object');
+        const schema = {
+            key: Joi.object().when('key', {
+                is: Joi.object().schema(),
+                then: object,
+                otherwise: Joi.object().pattern(/.*/, object)
+            })
+                .required()
+        };
+
+        Helper.validate(schema, [
+            [{ key: object }, true],
+            [{ key: 1 }, false, null, {
+                message: '"key" must be an object',
+                details: [
+                    {
+                        message: '"key" must be an object',
+                        type: 'object.base',
+                        path: ['key'],
+                        context: {
+                            key: 'key',
+                            label: 'key',
+                            value: 1
+                        }
+                    }
+                ]
+            }],
+            [{ key: Joi.number() }, false, null, {
+                message: '"key" must be a Joi schema of object type',
+                details: [
+                    {
+                        message: '"key" must be a Joi schema of object type',
+                        type: 'object.schema',
+                        path: ['key'],
+                        context: {
+                            key: 'key',
+                            label: 'key',
+                            type: 'object'
+                        }
+                    }
+                ]
+            }],
+            [{ key: { a: 1 } }, false, null, {
+                message: '"key.a" must be an object',
+                details: [
+                    {
+                        message: '"key.a" must be an object',
+                        type: 'object.base',
+                        path: ['key', 'a'],
+                        context: {
+                            key: 'a',
+                            label: 'key.a',
+                            value: 1
+                        }
+                    }
+                ]
+            }],
+            [{ key: { a: {} } }, false, null, {
+                message: '"key.a" must be a Joi schema of object type',
+                details: [
+                    {
+                        message: '"key.a" must be a Joi schema of object type',
+                        type: 'object.schema',
+                        path: ['key', 'a'],
+                        context: {
+                            key: 'a',
+                            label: 'key.a',
+                            type: 'object'
+                        }
+                    }
+                ]
+            }]
+        ]);
+    });
+
     it('throws on prefix + ancestor option)', () => {
 
         expect(() => Joi.ref('..x', { ancestor: 0 })).to.throw('Cannot combine prefix with ancestor option');
@@ -737,143 +814,42 @@ describe('ref', () => {
         const b = [ref1, ref2];
         const c = Joi.number();
 
-        Helper.validate({ a, b, c }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
-                details: [
-                    {
-                        message: '"b" must be one of [ref:a.c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
-                    },
-                    {
-                        message: '"b" must be one of [ref:c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
-                    }
-                ]
-            }]
-        ]);
-
-        Helper.validate({ b, a, c }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
-                details: [
-                    {
-                        message: '"b" must be one of [ref:a.c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
-                    },
-                    {
-                        message: '"b" must be one of [ref:c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
-                    }
-                ]
-            }]
-        ]);
-
-        Helper.validate({ b, c, a }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
-                details: [
-                    {
-                        message: '"b" must be one of [ref:a.c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
-                    },
-                    {
-                        message: '"b" must be one of [ref:c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
-                    }
-                ]
-            }]
-        ]);
-
-        Helper.validate({ a, c, b }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
-                details: [
-                    {
-                        message: '"b" must be one of [ref:a.c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
-                    },
-                    {
-                        message: '"b" must be one of [ref:c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
-                    }
-                ]
-            }]
-        ]);
-
-        Helper.validate({ c, a, b }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
-                details: [
-                    {
-                        message: '"b" must be one of [ref:a.c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
-                    },
-                    {
-                        message: '"b" must be one of [ref:c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
-                    }
-                ]
-            }]
-        ]);
-
-        Helper.validate({ c, b, a }, [
-            [{ a: {} }, true],
-            [{ a: { c: '5' }, b: 5 }, true],
-            [{ a: { c: '5' }, b: 6, c: '6' }, true],
-            [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
-                details: [
-                    {
-                        message: '"b" must be one of [ref:a.c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
-                    },
-                    {
-                        message: '"b" must be one of [ref:c]',
-                        path: ['b'],
-                        type: 'any.allowOnly',
-                        context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
-                    }
-                ]
-            }]
-        ]);
+        for (const value of [{ a, b, c }, { b, a, c }, { b, c, a }, { a, c, b }, { c, a, b }, { c, b, a }]) {
+            Helper.validate(value, [
+                [{ a: {} }, true],
+                [{ a: { c: '5' }, b: 5 }, true],
+                [{ a: { c: '5' }, b: 6, c: '6' }, true],
+                [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
+                    message: '"b" does not match any of the allowed types',
+                    details: [
+                        {
+                            message: '"b" does not match any of the allowed types',
+                            type: 'alternatives.match',
+                            path: ['b'],
+                            context: {
+                                key: 'b',
+                                label: 'b',
+                                message: '"b" must be one of [ref:a.c]. "b" must be one of [ref:c]',
+                                details: [
+                                    {
+                                        message: '"b" must be one of [ref:a.c]',
+                                        path: ['b'],
+                                        type: 'any.allowOnly',
+                                        context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
+                                    },
+                                    {
+                                        message: '"b" must be one of [ref:c]',
+                                        path: ['b'],
+                                        type: 'any.allowOnly',
+                                        context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }]
+            ]);
+        }
     });
 
     it('uses context as default value', async () => {

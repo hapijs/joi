@@ -201,71 +201,104 @@ describe('Joi', () => {
             ['key', true],
             [5, true],
             ['other', false, null, {
-                message: '"value" must be one of [key], "value" must be one of [5], "value" must be an object',
+                message: '"value" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"value" must be one of [key]',
+                        message: '"value" does not match any of the allowed types',
                         path: [],
-                        type: 'any.allowOnly',
-                        context: { value: 'other', valids: ['key'], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be one of [5]',
-                        path: [],
-                        type: 'any.allowOnly',
-                        context: { value: 'other', valids: [5], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be an object',
-                        path: [],
-                        type: 'object.base',
-                        context: { label: 'value', value: 'other' }
+                        type: 'alternatives.match',
+                        context: {
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
+                            label: 'value',
+                            details: [
+                                {
+                                    message: '"value" must be one of [key]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: 'other', valids: ['key'], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be one of [5]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: 'other', valids: [5], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be an object',
+                                    path: [],
+                                    type: 'object.base',
+                                    context: { label: 'value', value: 'other' }
+                                }
+                            ]
+                        }
                     }
                 ]
             }],
             [6, false, null, {
-                message: '"value" must be one of [key], "value" must be one of [5], "value" must be an object',
+                message: '"value" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"value" must be one of [key]',
+                        message: '"value" does not match any of the allowed types',
                         path: [],
-                        type: 'any.allowOnly',
-                        context: { value: 6, valids: ['key'], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be one of [5]',
-                        path: [],
-                        type: 'any.allowOnly',
-                        context: { value: 6, valids: [5], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be an object',
-                        path: [],
-                        type: 'object.base',
-                        context: { label: 'value', value: 6 }
+                        type: 'alternatives.match',
+                        context: {
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
+                            label: 'value',
+                            details: [
+                                {
+                                    message: '"value" must be one of [key]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: 6, valids: ['key'], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be one of [5]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: 6, valids: [5], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be an object',
+                                    path: [],
+                                    type: 'object.base',
+                                    context: { label: 'value', value: 6 }
+                                }
+                            ]
+                        }
                     }
                 ]
             }],
             [{ c: 5 }, false, null, {
-                message: '"value" must be one of [key], "value" must be one of [5], "c" is not allowed',
+                message: '"value" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"value" must be one of [key]',
+                        message: '"value" does not match any of the allowed types',
                         path: [],
-                        type: 'any.allowOnly',
-                        context: { value: { c: 5 }, valids: ['key'], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be one of [5]',
-                        path: [],
-                        type: 'any.allowOnly',
-                        context: { value: { c: 5 }, valids: [5], label: 'value' }
-                    },
-                    {
-                        message: '"c" is not allowed',
-                        path: ['c'],
-                        type: 'object.allowUnknown',
-                        context: { child: 'c', label: 'c', key: 'c', value: 5 }
+                        type: 'alternatives.match',
+                        context: {
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "c" is not allowed',
+                            label: 'value',
+                            details: [
+                                {
+                                    message: '"value" must be one of [key]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: { c: 5 }, valids: ['key'], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be one of [5]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: { c: 5 }, valids: [5], label: 'value' }
+                                },
+                                {
+                                    message: '"c" is not allowed',
+                                    path: ['c'],
+                                    type: 'object.allowUnknown',
+                                    context: { child: 'c', label: 'c', key: 'c', value: 5 }
+                                }
+                            ]
+                        }
                     }
                 ]
             }],
@@ -273,25 +306,36 @@ describe('Joi', () => {
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
             [{ a: 5, b: 'a' }, false, null, {
-                message: '"value" must be one of [key], "value" must be one of [5], "a" must be one of [true]',
+                message: '"value" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"value" must be one of [key]',
+                        message: '"value" does not match any of the allowed types',
                         path: [],
-                        type: 'any.allowOnly',
-                        context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be one of [5]',
-                        path: [],
-                        type: 'any.allowOnly',
-                        context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
-                    },
-                    {
-                        message: '"a" must be one of [true]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { label: 'a', key: 'a', value: 5, valids: [true] }
+                        type: 'alternatives.match',
+                        context: {
+                            label: 'value',
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "a" must be one of [true]',
+                            details: [
+                                {
+                                    message: '"value" must be one of [key]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be one of [5]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
+                                },
+                                {
+                                    message: '"a" must be one of [true]',
+                                    path: ['a'],
+                                    type: 'any.allowOnly',
+                                    context: { label: 'a', key: 'a', value: 5, valids: [true] }
+                                }
+                            ]
+                        }
                     }
                 ]
             }]
@@ -305,71 +349,104 @@ describe('Joi', () => {
             ['key', true],
             [5, true],
             ['other', false, null, {
-                message: '"value" must be one of [key], "value" must be one of [5], "value" must be an object',
+                message: '"value" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"value" must be one of [key]',
+                        message: '"value" does not match any of the allowed types',
                         path: [],
-                        type: 'any.allowOnly',
-                        context: { value: 'other', valids: ['key'], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be one of [5]',
-                        path: [],
-                        type: 'any.allowOnly',
-                        context: { value: 'other', valids: [5], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be an object',
-                        path: [],
-                        type: 'object.base',
-                        context: { label: 'value', value: 'other' }
+                        type: 'alternatives.match',
+                        context: {
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
+                            label: 'value',
+                            details: [
+                                {
+                                    message: '"value" must be one of [key]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: 'other', valids: ['key'], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be one of [5]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: 'other', valids: [5], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be an object',
+                                    path: [],
+                                    type: 'object.base',
+                                    context: { label: 'value', value: 'other' }
+                                }
+                            ]
+                        }
                     }
                 ]
             }],
             [6, false, null, {
-                message: '"value" must be one of [key], "value" must be one of [5], "value" must be an object',
+                message: '"value" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"value" must be one of [key]',
+                        message: '"value" does not match any of the allowed types',
                         path: [],
-                        type: 'any.allowOnly',
-                        context: { value: 6, valids: ['key'], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be one of [5]',
-                        path: [],
-                        type: 'any.allowOnly',
-                        context: { value: 6, valids: [5], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be an object',
-                        path: [],
-                        type: 'object.base',
-                        context: { label: 'value', value: 6 }
+                        type: 'alternatives.match',
+                        context: {
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
+                            label: 'value',
+                            details: [
+                                {
+                                    message: '"value" must be one of [key]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: 6, valids: ['key'], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be one of [5]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: 6, valids: [5], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be an object',
+                                    path: [],
+                                    type: 'object.base',
+                                    context: { label: 'value', value: 6 }
+                                }
+                            ]
+                        }
                     }
                 ]
             }],
             [{ c: 5 }, false, null, {
-                message: '"value" must be one of [key], "value" must be one of [5], "c" is not allowed',
+                message: '"value" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"value" must be one of [key]',
+                        message: '"value" does not match any of the allowed types',
                         path: [],
-                        type: 'any.allowOnly',
-                        context: { value: { c: 5 }, valids: ['key'], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be one of [5]',
-                        path: [],
-                        type: 'any.allowOnly',
-                        context: { value: { c: 5 }, valids: [5], label: 'value' }
-                    },
-                    {
-                        message: '"c" is not allowed',
-                        path: ['c'],
-                        type: 'object.allowUnknown',
-                        context: { child: 'c', label: 'c', key: 'c', value: 5 }
+                        type: 'alternatives.match',
+                        context: {
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "c" is not allowed',
+                            label: 'value',
+                            details: [
+                                {
+                                    message: '"value" must be one of [key]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: { c: 5 }, valids: ['key'], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be one of [5]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: { c: 5 }, valids: [5], label: 'value' }
+                                },
+                                {
+                                    message: '"c" is not allowed',
+                                    path: ['c'],
+                                    type: 'object.allowUnknown',
+                                    context: { child: 'c', label: 'c', key: 'c', value: 5 }
+                                }
+                            ]
+                        }
                     }
                 ]
             }],
@@ -377,25 +454,36 @@ describe('Joi', () => {
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
             [{ a: 5, b: 'a' }, false, null, {
-                message: '"value" must be one of [key], "value" must be one of [5], "a" must be one of [true]',
+                message: '"value" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"value" must be one of [key]',
+                        message: '"value" does not match any of the allowed types',
                         path: [],
-                        type: 'any.allowOnly',
-                        context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
-                    },
-                    {
-                        message: '"value" must be one of [5]',
-                        path: [],
-                        type: 'any.allowOnly',
-                        context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
-                    },
-                    {
-                        message: '"a" must be one of [true]',
-                        path: ['a'],
-                        type: 'any.allowOnly',
-                        context: { label: 'a', key: 'a', value: 5, valids: [true] }
+                        type: 'alternatives.match',
+                        context: {
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "a" must be one of [true]',
+                            label: 'value',
+                            details: [
+                                {
+                                    message: '"value" must be one of [key]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
+                                },
+                                {
+                                    message: '"value" must be one of [5]',
+                                    path: [],
+                                    type: 'any.allowOnly',
+                                    context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
+                                },
+                                {
+                                    message: '"a" must be one of [true]',
+                                    path: ['a'],
+                                    type: 'any.allowOnly',
+                                    context: { label: 'a', key: 'a', value: 5, valids: [true] }
+                                }
+                            ]
+                        }
                     }
                 ]
             }]
@@ -1246,9 +1334,8 @@ describe('Joi', () => {
             ]
         });
 
-        const err = await expect(schema.validate({ auth: { mode: 'none' } })).to.reject();
-        expect(err).to.be.an.error('"auth.mode" must be one of [required, optional, try, null], "auth" must be a string, "auth" must be a boolean');
-        expect(err.details).to.equal([
+        const err = await expect(schema.validate({ auth: { mode: 'none' } })).to.reject('"auth" does not match any of the allowed types');
+        expect(err.details[0].context.details).to.equal([
             {
                 message: '"auth.mode" must be one of [required, optional, try, null]',
                 path: ['auth', 'mode'],
@@ -1281,25 +1368,37 @@ describe('Joi', () => {
                 }]
             }],
             [{ auth: { something: undefined } }, false, null, {
-                message: '"auth.something" is not allowed, "auth" must be a string, "auth" must be a boolean',
+                message: '"auth" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"auth.something" is not allowed',
-                        path: ['auth', 'something'],
-                        type: 'object.allowUnknown',
-                        context: { child: 'something', label: 'auth.something', key: 'something', value: undefined }
-                    },
-                    {
-                        message: '"auth" must be a string',
+                        message: '"auth" does not match any of the allowed types',
                         path: ['auth'],
-                        type: 'string.base',
-                        context: { value: { something: undefined }, label: 'auth', key: 'auth' }
-                    },
-                    {
-                        message: '"auth" must be a boolean',
-                        path: ['auth'],
-                        type: 'boolean.base',
-                        context: { label: 'auth', key: 'auth', value: { something: undefined } }
+                        type: 'alternatives.match',
+                        context: {
+                            message: '"auth.something" is not allowed. "auth" must be a string. "auth" must be a boolean',
+                            label: 'auth',
+                            key: 'auth',
+                            details: [
+                                {
+                                    message: '"auth.something" is not allowed',
+                                    path: ['auth', 'something'],
+                                    type: 'object.allowUnknown',
+                                    context: { child: 'something', label: 'auth.something', key: 'something', value: undefined }
+                                },
+                                {
+                                    message: '"auth" must be a string',
+                                    path: ['auth'],
+                                    type: 'string.base',
+                                    context: { value: { something: undefined }, label: 'auth', key: 'auth' }
+                                },
+                                {
+                                    message: '"auth" must be a boolean',
+                                    path: ['auth'],
+                                    type: 'boolean.base',
+                                    context: { label: 'auth', key: 'auth', value: { something: undefined } }
+                                }
+                            ]
+                        }
                     }
                 ]
             }],
@@ -1308,25 +1407,13 @@ describe('Joi', () => {
             [{}, true],
             [{ auth: true }, true],
             [{ auth: 123 }, false, null, {
-                message: '"auth" must be an object, "auth" must be a string, "auth" must be a boolean',
+                message: '"auth" must be one of [object, string, boolean]',
                 details: [
                     {
-                        message: '"auth" must be an object',
+                        message: '"auth" must be one of [object, string, boolean]',
                         path: ['auth'],
-                        type: 'object.base',
-                        context: { label: 'auth', key: 'auth', value: 123 }
-                    },
-                    {
-                        message: '"auth" must be a string',
-                        path: ['auth'],
-                        type: 'string.base',
-                        context: { value: 123, label: 'auth', key: 'auth' }
-                    },
-                    {
-                        message: '"auth" must be a boolean',
-                        path: ['auth'],
-                        type: 'boolean.base',
-                        context: { label: 'auth', key: 'auth', value: 123 }
+                        type: 'alternatives.types',
+                        context: { types: ['object', 'string', 'boolean'], label: 'auth', key: 'auth', value: 123 }
                     }
                 ]
             }]
@@ -1345,9 +1432,8 @@ describe('Joi', () => {
             ])
         });
 
-        const err = await expect(schema.validate({ auth: { mode: 'none' } })).to.reject();
-        expect(err).to.be.an.error('"auth.mode" must be one of [required, optional, try, null], "auth" must be a string, "auth" must be a boolean');
-        expect(err.details).to.equal([
+        const err = await expect(schema.validate({ auth: { mode: 'none' } })).to.reject('"auth" does not match any of the allowed types');
+        expect(err.details[0].context.details).to.equal([
             {
                 message: '"auth.mode" must be one of [required, optional, try, null]',
                 path: ['auth', 'mode'],
@@ -1380,25 +1466,37 @@ describe('Joi', () => {
                 }]
             }],
             [{ auth: { something: undefined } }, false, null, {
-                message: '"auth.something" is not allowed, "auth" must be a string, "auth" must be a boolean',
+                message: '"auth" does not match any of the allowed types',
                 details: [
                     {
-                        message: '"auth.something" is not allowed',
-                        path: ['auth', 'something'],
-                        type: 'object.allowUnknown',
-                        context: { child: 'something', label: 'auth.something', key: 'something', value: undefined }
-                    },
-                    {
-                        message: '"auth" must be a string',
+                        message: '"auth" does not match any of the allowed types',
                         path: ['auth'],
-                        type: 'string.base',
-                        context: { value: { something: undefined }, label: 'auth', key: 'auth' }
-                    },
-                    {
-                        message: '"auth" must be a boolean',
-                        path: ['auth'],
-                        type: 'boolean.base',
-                        context: { label: 'auth', key: 'auth', value: { something: undefined } }
+                        type: 'alternatives.match',
+                        context: {
+                            message: '"auth.something" is not allowed. "auth" must be a string. "auth" must be a boolean',
+                            key: 'auth',
+                            label: 'auth',
+                            details: [
+                                {
+                                    message: '"auth.something" is not allowed',
+                                    path: ['auth', 'something'],
+                                    type: 'object.allowUnknown',
+                                    context: { child: 'something', label: 'auth.something', key: 'something', value: undefined }
+                                },
+                                {
+                                    message: '"auth" must be a string',
+                                    path: ['auth'],
+                                    type: 'string.base',
+                                    context: { value: { something: undefined }, label: 'auth', key: 'auth' }
+                                },
+                                {
+                                    message: '"auth" must be a boolean',
+                                    path: ['auth'],
+                                    type: 'boolean.base',
+                                    context: { label: 'auth', key: 'auth', value: { something: undefined } }
+                                }
+                            ]
+                        }
                     }
                 ]
             }],
@@ -1407,25 +1505,13 @@ describe('Joi', () => {
             [{}, true],
             [{ auth: true }, true],
             [{ auth: 123 }, false, null, {
-                message: '"auth" must be an object, "auth" must be a string, "auth" must be a boolean',
+                message: '"auth" must be one of [object, string, boolean]',
                 details: [
                     {
-                        message: '"auth" must be an object',
+                        message: '"auth" must be one of [object, string, boolean]',
                         path: ['auth'],
-                        type: 'object.base',
-                        context: { label: 'auth', key: 'auth', value: 123 }
-                    },
-                    {
-                        message: '"auth" must be a string',
-                        path: ['auth'],
-                        type: 'string.base',
-                        context: { value: 123, label: 'auth', key: 'auth' }
-                    },
-                    {
-                        message: '"auth" must be a boolean',
-                        path: ['auth'],
-                        type: 'boolean.base',
-                        context: { label: 'auth', key: 'auth', value: 123 }
+                        type: 'alternatives.types',
+                        context: { types: ['object', 'string', 'boolean'], label: 'auth', key: 'auth', value: 123 }
                     }
                 ]
             }]
@@ -1443,19 +1529,13 @@ describe('Joi', () => {
 
         Helper.validate(schema, [
             [{ a: null }, false, null, {
-                message: '"a" must be a string, "a" must be a boolean',
+                message: '"a" must be one of [string, boolean]',
                 details: [
                     {
-                        message: '"a" must be a string',
+                        message: '"a" must be one of [string, boolean]',
                         path: ['a'],
-                        type: 'string.base',
-                        context: { value: null, label: 'a', key: 'a' }
-                    },
-                    {
-                        message: '"a" must be a boolean',
-                        path: ['a'],
-                        type: 'boolean.base',
-                        context: { label: 'a', key: 'a', value: null }
+                        type: 'alternatives.types',
+                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: null }
                     }
                 ]
             }],
@@ -1464,36 +1544,24 @@ describe('Joi', () => {
             [{ a: true }, true],
             [{ a: 'true' }, true],
             [{ a: 123 }, false, null, {
-                message: '"a" must be a string, "a" must be a boolean',
+                message: '"a" must be one of [string, boolean]',
                 details: [
                     {
-                        message: '"a" must be a string',
+                        message: '"a" must be one of [string, boolean]',
                         path: ['a'],
-                        type: 'string.base',
-                        context: { value: 123, label: 'a', key: 'a' }
-                    },
-                    {
-                        message: '"a" must be a boolean',
-                        path: ['a'],
-                        type: 'boolean.base',
-                        context: { label: 'a', key: 'a', value: 123 }
+                        type: 'alternatives.types',
+                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: 123 }
                     }
                 ]
             }],
             [{ a: { c: 1 } }, false, null, {
-                message: '"a" must be a string, "a" must be a boolean',
+                message: '"a" must be one of [string, boolean]',
                 details: [
                     {
-                        message: '"a" must be a string',
+                        message: '"a" must be one of [string, boolean]',
                         path: ['a'],
-                        type: 'string.base',
-                        context: { value: { c: 1 }, label: 'a', key: 'a' }
-                    },
-                    {
-                        message: '"a" must be a boolean',
-                        path: ['a'],
-                        type: 'boolean.base',
-                        context: { label: 'a', key: 'a', value: { c: 1 } }
+                        type: 'alternatives.types',
+                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: { c: 1 } }
                     }
                 ]
             }],
@@ -1520,19 +1588,13 @@ describe('Joi', () => {
 
         Helper.validate(schema, [
             [{ a: null }, false, null, {
-                message: '"a" must be a string, "a" must be a boolean',
+                message: '"a" must be one of [string, boolean]',
                 details: [
                     {
-                        message: '"a" must be a string',
+                        message: '"a" must be one of [string, boolean]',
                         path: ['a'],
-                        type: 'string.base',
-                        context: { value: null, label: 'a', key: 'a' }
-                    },
-                    {
-                        message: '"a" must be a boolean',
-                        path: ['a'],
-                        type: 'boolean.base',
-                        context: { label: 'a', key: 'a', value: null }
+                        type: 'alternatives.types',
+                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: null }
                     }
                 ]
             }],
@@ -1541,36 +1603,24 @@ describe('Joi', () => {
             [{ a: true }, true],
             [{ a: 'true' }, true],
             [{ a: 123 }, false, null, {
-                message: '"a" must be a string, "a" must be a boolean',
+                message: '"a" must be one of [string, boolean]',
                 details: [
                     {
-                        message: '"a" must be a string',
+                        message: '"a" must be one of [string, boolean]',
                         path: ['a'],
-                        type: 'string.base',
-                        context: { value: 123, label: 'a', key: 'a' }
-                    },
-                    {
-                        message: '"a" must be a boolean',
-                        path: ['a'],
-                        type: 'boolean.base',
-                        context: { label: 'a', key: 'a', value: 123 }
+                        type: 'alternatives.types',
+                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: 123 }
                     }
                 ]
             }],
             [{ a: { c: 1 } }, false, null, {
-                message: '"a" must be a string, "a" must be a boolean',
+                message: '"a" must be one of [string, boolean]',
                 details: [
                     {
-                        message: '"a" must be a string',
+                        message: '"a" must be one of [string, boolean]',
                         path: ['a'],
-                        type: 'string.base',
-                        context: { value: { c: 1 }, label: 'a', key: 'a' }
-                    },
-                    {
-                        message: '"a" must be a boolean',
-                        path: ['a'],
-                        type: 'boolean.base',
-                        context: { label: 'a', key: 'a', value: { c: 1 } }
+                        type: 'alternatives.types',
+                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: { c: 1 } }
                     }
                 ]
             }],
@@ -1756,9 +1806,8 @@ describe('Joi', () => {
 
         await Joi.compile(config).validate({ module: 'test' });
 
-        const err2 = await expect(Joi.compile(config).validate({ module: {} })).to.reject();
-        expect(err2.message).to.contain('"module.compile" is required');
-        expect(err2.message).to.contain('"module" must be a string');
+        const err2 = await expect(Joi.compile(config).validate({ module: {} })).to.reject('"module" does not match any of the allowed types');
+        expect(err2.details[0].context.message).to.equal('"module.compile" is required. "module" must be a string');
 
         await Joi.compile(config).validate({ module: { compile: function () { } } });
     });
@@ -2716,18 +2765,12 @@ describe('Joi', () => {
                 a: '{"c":"string"}'
             };
 
-            expect(() => {
-
-                Joi.attempt(input, schema);
-            }).to.throw(/\"a.c\" is not allowed/);
+            expect(() => Joi.attempt(input, schema)).to.throw(/\"a.c\" is not allowed/);
         });
 
         it('throws a custom error from the schema if provided', () => {
 
-            expect(() => {
-
-                Joi.attempt('x', Joi.number().error(new Error('Oh noes !')));
-            }).to.throw('Oh noes !');
+            expect(() => Joi.attempt('x', Joi.number().error(new Error('Oh noes !')))).to.throw('Oh noes !');
         });
 
         it('throws an error with combined messages', () => {
@@ -2869,7 +2912,7 @@ describe('Joi', () => {
             it('must have a Joi schema as base when present', () => {
 
                 expect(() => Joi.extend({ base: true })).to.throw(/"base" must be an object/);
-                expect(() => Joi.extend({ base: { isJoi: true } })).to.throw(/"base" must be an instance of "Joi object"/);
+                expect(() => Joi.extend({ base: { isJoi: true } })).to.throw(/"base" must be a Joi schema of any type/);
             });
 
             it('must have valid coerce function', () => {
@@ -2911,7 +2954,8 @@ describe('Joi', () => {
                 expect(() => {
 
                     Joi.extend({
-                        name: 'a', rules: [{
+                        name: 'a',
+                        rules: [{
                             name: 'foo',
                             validate() { }
                         }]
@@ -2926,7 +2970,8 @@ describe('Joi', () => {
                 expect(() => {
 
                     Joi.extend({
-                        name: 'a', rules: [{
+                        name: 'a',
+                        rules: [{
                             name: 'foo',
                             setup() { }
                         }]
@@ -2936,7 +2981,8 @@ describe('Joi', () => {
                 expect(() => {
 
                     Joi.extend({
-                        name: 'a', rules: [{
+                        name: 'a',
+                        rules: [{
                             name: 'foo',
                             validate(a, b, c, d) { },
                             params: {
@@ -2949,7 +2995,8 @@ describe('Joi', () => {
                 expect(() => {
 
                     Joi.extend({
-                        name: 'a', rules: [{
+                        name: 'a',
+                        rules: [{
                             name: 'foo',
                             validate(a, b, c, d) { },
                             params: {
@@ -2957,12 +3004,13 @@ describe('Joi', () => {
                             }
                         }]
                     });
-                }).to.throw(/"rules\[0\].params.foo" must be an instance of "Joi object"/);
+                }).to.throw(/"rules\[0\].params.foo" must be a Joi schema of any type/);
 
                 expect(() => {
 
                     Joi.extend({
-                        name: 'a', rules: [{
+                        name: 'a',
+                        rules: [{
                             name: 'foo',
                             validate(a, b, c, d) { },
                             params: {
@@ -2970,18 +3018,19 @@ describe('Joi', () => {
                             }
                         }]
                     });
-                }).to.throw(/"rules\[0\].params.foo" must be an instance of "Joi object"/);
+                }).to.throw(/"rules\[0\].params.foo" must be a Joi schema of any type/);
 
                 expect(() => {
 
                     Joi.extend({
-                        name: 'a', rules: [{
+                        name: 'a',
+                        rules: [{
                             name: 'foo',
                             validate(a, b, c, d) { },
                             params: Joi.number()
                         }]
                     });
-                }).to.throw(/"rules\[0\].params" must be an instance of "Joi object"/);
+                }).to.throw(/"rules\[0\].params" must be a Joi schema of object type/);
             });
         });
 

@@ -15,7 +15,7 @@
   - [`ref(key, [options])`](#refkey-options)
     - [Relative references](#relative-references)
   - [`isRef(ref)`](#isrefref)
-  - [`isRef(ref)`](#isrefref-1)
+  - [`isSchema(schema)`](#isschemaschema)
   - [`reach(schema, path)`](#reachschema-path)
   - [`defaults(fn)`](#defaultsfn)
   - [`bind()`](#bind)
@@ -49,7 +49,7 @@
     - [`any.label(name)`](#anylabelname)
     - [`any.raw(isRaw)`](#anyrawisraw)
     - [`any.empty(schema)`](#anyemptyschema)
-    - [`any.error(err, [options])`](#anyerrorerr-options)
+    - [`any.error(err)`](#anyerrorerr)
     - [`any.describe()`](#anydescribe)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.sparse([enabled])`](#arraysparseenabled)
@@ -155,6 +155,8 @@
 - [Errors](#errors)
   - [List of errors](#list-of-errors)
     - [`alternatives.base`](#alternativesbase)
+    - [`alternatives.types`](#alternativestypes)
+    - [`alternatives.match`](#alternativesmatch)
     - [`any.allowOnly`](#anyallowonly)
     - [`any.default`](#anydefault)
     - [`any.failover`](#anyfailover)
@@ -784,7 +786,7 @@ const schema = {
 };
 ```
 
-💥 Possible validation errors:[`any.allowOnly`](#anyallowonly)
+💥 Possible validation errors: [`any.allowOnly`](#anyallowonly)
 
 #### `any.invalid(...values)` - aliases: `disallow`, `not`
 
@@ -799,7 +801,7 @@ const schema = {
 };
 ```
 
-💥 Possible validation errors:[`any.invalid`](#anyinvalid)
+💥 Possible validation errors: [`any.invalid`](#anyinvalid)
 
 #### `any.required()` - aliases: `exist`
 
@@ -809,7 +811,7 @@ Marks a key as required which will not allow `undefined` as value. All keys are 
 const schema = Joi.any().required();
 ```
 
-💥 Possible validation errors:[`any.required`](#anyrequired)
+💥 Possible validation errors: [`any.required`](#anyrequired)
 
 #### `any.optional()`
 
@@ -831,7 +833,7 @@ const schema = {
 };
 ```
 
-💥 Possible validation errors:[`any.unknown`](#anyunknown)
+💥 Possible validation errors: [`any.unknown`](#anyunknown)
 
 #### `any.strip()`
 
@@ -969,7 +971,7 @@ Joi.validate({
 });
 ```
 
-💥 Possible validation errors:[`any.default`](#anydefault)
+💥 Possible validation errors: [`any.default`](#anydefault)
 
 #### `any.failover([value, [description]])`
 
@@ -991,7 +993,7 @@ change the reference and any future assignment.
 Additionally, when specifying a method you must either have a `description` property on your method
 or the second parameter is required.
 
-💥 Possible validation errors:[`any.failover`](#anyfailover)
+💥 Possible validation errors: [`any.failover`](#anyfailover)
 
 #### `any.concat(schema)`
 
@@ -1158,19 +1160,10 @@ schema.validate(''); // returns { error: "value" is not allowed to be empty, val
 Overrides the default joi error with a custom error if the rule fails where:
 - `err` can be:
   - an instance of `Error` - the override error.
-  - a `function(errors)`, taking an array of errors as argument, where it must either:
-    - return a `string` - substitutes the error message with this text
-    - return a single object or an array of objects, where each contains:
-      - `type` - optional parameter providing the type of the error (eg. `number.min`).
-      - `message` - optional parameter if `template` is provided, containing the text of the error.
-      - `template` - optional parameter if `message` is provided, containing a template string,
-        using the same format as usual joi language errors.
-      - `context` - optional parameter, to provide context to your error if you are using the `template`.
-    - return an `Error` - same as when you directly provide an `Error`, but you can customize the
-      error message based on the errors.
+  - a function with the signature `function(errors)`, where `errors` is an array of errors and it returns a single `Error`.
 
-Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any of the
-normal joi error properties. If validation fails and another error is found before the error
+Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any
+of the normal error properties. If validation fails and another error is found before the error
 override, that error will be returned and the override will be ignored (unless the `abortEarly`
 option has been set to `false`).
 
@@ -1181,7 +1174,7 @@ schema.validate(3);     // returns error.message === 'Was REALLY expecting a str
 
 ```js
 const schema = Joi.object({
-    foo: Joi.number().min(0).error(() => '"foo" requires a positive number')
+    foo: Joi.number().min(0).error((errors) => new Error('"foo" requires a positive number'))
 });
 schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a positive number'
 ```
@@ -1190,31 +1183,11 @@ schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a 
 const schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
 
-        return 'found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and ');
+        return new Error('found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and '));
     })
 });
 schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
 ```
-
-```js
-const schema = Joi.object({
-    foo: Joi.number().min(0).error((errors) => {
-
-        return {
-            template: 'contains {{errors}} errors, here is the list : {{codes}}',
-            context: {
-                errors: errors.length,
-                codes: errors.map((err) => err.type)
-            }
-        };
-    })
-});
-schema.validate({ foo: -2 });    // returns error.message === '"foo" contains 1 errors, here is the list : [number.min]'
-```
-
-Note that if you want to intercept errors on nested structures such as objects and arrays, you will also get a nested structure to explore the children errors, going one level down through the `err.context.reason` property.
-
-If you want a full substitution of the error system, you can hook at the root and render that `errors` array with whatever templating system you want, just be aware that you will have to crawl the nested errors for the information you want to actually show.
 
 #### `any.describe()`
 
@@ -1247,7 +1220,7 @@ const array = Joi.array().items(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], (err, value) => { });
 ```
 
-💥 Possible validation errors:[`array.base`](#arraybase)
+💥 Possible validation errors: [`array.base`](#arraybase)
 
 #### `array.sparse([enabled])`
 
@@ -1258,7 +1231,7 @@ let schema = Joi.array().sparse(); // undefined values are now allowed
 schema = schema.sparse(false); // undefined values are now denied
 ```
 
-💥 Possible validation errors:[`array.sparse`](#arraysparse)
+💥 Possible validation errors: [`array.sparse`](#arraysparse)
 
 #### `array.single([enabled])`
 
@@ -1272,7 +1245,7 @@ schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
 schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
 ```
 
-💥 Possible validation errors:[`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes)
+💥 Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes)
 
 #### `array.items(...types)`
 
@@ -1291,7 +1264,7 @@ const schema = Joi.array().items(Joi.string().valid('not allowed').forbidden(), 
 const schema = Joi.array().items(Joi.string().label('My string').required(), Joi.number().required()); // If this fails it can result in `[ValidationError: "value" does not contain [My string] and 1 other required value(s)]`
 ```
 
-💥 Possible validation errors:[`array.excludes`](#arrayexcludes), [`array.includesRequiredBoth`], [`array.includesRequiredKnowns`], [`array.includesRequiredUnknowns`], [`array.includes`](#arrayincludes)
+💥 Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includesRequiredBoth`], [`array.includesRequiredKnowns`], [`array.includesRequiredUnknowns`], [`array.includes`](#arrayincludes)
 
 #### `array.ordered(...type)`
 
@@ -1307,7 +1280,7 @@ const schema = Joi.array().ordered(Joi.string().required()).items(Joi.number().r
 const schema = Joi.array().ordered(Joi.string().required(), Joi.number()); // array must have first item as string and optionally second item as number
 ```
 
-💥 Possible validation errors:[`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes), [`array.orderedLength`](#arrayorderedlength)
+💥 Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes), [`array.orderedLength`](#arrayorderedlength)
 
 #### `array.min(limit)`
 
@@ -1325,7 +1298,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`array.min`](#arraymin), [`array.ref`](#arrayref)
+💥 Possible validation errors: [`array.min`](#arraymin), [`array.ref`](#arrayref)
 
 #### `array.max(limit)`
 
@@ -1343,7 +1316,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`array.max`](#arraymax), [`array.ref`](#arrayref)
+💥 Possible validation errors: [`array.max`](#arraymax), [`array.ref`](#arrayref)
 
 #### `array.length(limit)`
 
@@ -1361,7 +1334,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`array.length`](#arraylength), [`array.ref`](#arrayref)
+💥 Possible validation errors: [`array.length`](#arraylength), [`array.ref`](#arrayref)
 
 #### `array.unique([comparator, [options]])`
 
@@ -1406,7 +1379,7 @@ schema.validate([{}, {}]);
 // error: null
 ```
 
-💥 Possible validation errors:[`array.unique`](#arrayunique)
+💥 Possible validation errors: [`array.unique`](#arrayunique)
 
 #### `array.has(schema)`
 
@@ -1423,7 +1396,7 @@ const schema = Joi.array().items(
 ).has(Joi.object({ a: Joi.string().valid('a'), b: Joi.number() }))
 ```
 
-💥 Possible validation errors:[`array.hasKnown`](#arrayhasknown), [`array.hasUnknown`](#arrayhasunknown)
+💥 Possible validation errors: [`array.hasKnown`](#arrayhasknown), [`array.hasUnknown`](#arrayhasunknown)
 
 
 ### `boolean` - inherits from `Any`
@@ -1440,7 +1413,7 @@ boolean.validate(true, (err, value) => { }); // Valid
 boolean.validate(1, (err, value) => { }); // Invalid
 ```
 
-💥 Possible validation errors:[`boolean.base`](#booleanbase)
+💥 Possible validation errors: [`boolean.base`](#booleanbase)
 
 #### `boolean.truthy(...values)`
 
@@ -1488,7 +1461,7 @@ Supports the same methods of the [`any()`](#any) type.
 const schema = Joi.binary();
 ```
 
-💥 Possible validation errors:[`binary.base`](#binarybase)
+💥 Possible validation errors: [`binary.base`](#binarybase)
 
 #### `binary.encoding(encoding)`
 
@@ -1508,7 +1481,7 @@ Specifies the minimum length of the buffer where:
 const schema = Joi.binary().min(2);
 ```
 
-💥 Possible validation errors:[`binary.min`](#binarymin), [`binary.ref`](#binaryref)
+💥 Possible validation errors: [`binary.min`](#binarymin), [`binary.ref`](#binaryref)
 
 #### `binary.max(limit)`
 
@@ -1519,7 +1492,7 @@ Specifies the maximum length of the buffer where:
 const schema = Joi.binary().max(10);
 ```
 
-💥 Possible validation errors:[`binary.max`](#binarymax), [`binary.ref`](#binaryref)
+💥 Possible validation errors: [`binary.max`](#binarymax), [`binary.ref`](#binaryref)
 
 #### `binary.length(limit)`
 
@@ -1530,7 +1503,7 @@ Specifies the exact length of the buffer:
 const schema = Joi.binary().length(5);
 ```
 
-💥 Possible validation errors:[`binary.length`](#binarylength), [`binary.ref`](#binaryref)
+💥 Possible validation errors: [`binary.length`](#binarylength), [`binary.ref`](#binaryref)
 
 ### `date` - inherits from `Any`
 
@@ -1544,7 +1517,7 @@ const date = Joi.date();
 date.validate('12-21-2012', (err, value) => { });
 ```
 
-💥 Possible validation errors:[`date.base`](#datebase), [`date.strict`](#datestrict)
+💥 Possible validation errors: [`date.base`](#datebase), [`date.strict`](#datestrict)
 
 #### `date.min(date)`
 
@@ -1568,7 +1541,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`date.min`](#datemin), [`date.ref`](#dateref)
+💥 Possible validation errors: [`date.min`](#datemin), [`date.ref`](#dateref)
 
 #### `date.max(date)`
 
@@ -1592,7 +1565,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`date.max`](#datemax), [`date.ref`](#dateref)
+💥 Possible validation errors: [`date.max`](#datemax), [`date.ref`](#dateref)
 
 #### `date.greater(date)`
 
@@ -1615,7 +1588,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`date.greater`](#dategreater), [`date.ref`](#dateref)
+💥 Possible validation errors: [`date.greater`](#dategreater), [`date.ref`](#dateref)
 
 #### `date.less(date)`
 
@@ -1637,7 +1610,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`date.less`](#dateless), [`date.ref`](#dateref)
+💥 Possible validation errors: [`date.less`](#dateless), [`date.ref`](#dateref)
 
 #### `date.iso()`
 
@@ -1647,7 +1620,7 @@ Requires the string value to be in valid ISO 8601 date format.
 const schema = Joi.date().iso();
 ```
 
-💥 Possible validation errors:[`date.isoDate`](#dateisodate)
+💥 Possible validation errors: [`date.isoDate`](#dateisodate)
 
 #### `date.timestamp([type])`
 
@@ -1661,7 +1634,7 @@ const schema = Joi.date().timestamp('javascript'); // also, for javascript times
 const schema = Joi.date().timestamp('unix'); // for unix timestamp (seconds)
 ```
 
-💥 Possible validation errors:[`date.timestamp.javascript`](#datetimestampjavascript), [`date.timestamp.unix`](#datetimestampunix)
+💥 Possible validation errors: [`date.timestamp.javascript`](#datetimestampjavascript), [`date.timestamp.unix`](#datetimestampunix)
 
 ### `func` - inherits from `Any`
 
@@ -1676,7 +1649,7 @@ const func = Joi.func();
 func.validate(function () {}, (err, value) => { });
 ```
 
-💥 Possible validation errors:[`function.base`](#functionbase)
+💥 Possible validation errors: [`function.base`](#functionbase)
 
 #### `func.arity(n)`
 
@@ -1687,7 +1660,7 @@ Specifies the arity of the function where:
 const schema = Joi.func().arity(2);
 ```
 
-💥 Possible validation errors:[`function.arity`](#functionarity)
+💥 Possible validation errors: [`function.arity`](#functionarity)
 
 #### `func.minArity(n)`
 
@@ -1698,7 +1671,7 @@ Specifies the minimal arity of the function where:
 const schema = Joi.func().minArity(1);
 ```
 
-💥 Possible validation errors:[`function.minArity`](#functionminarity)
+💥 Possible validation errors: [`function.minArity`](#functionminarity)
 
 #### `func.maxArity(n)`
 
@@ -1709,7 +1682,7 @@ Specifies the maximal arity of the function where:
 const schema = Joi.func().maxArity(3);
 ```
 
-💥 Possible validation errors:[`function.maxArity`](#functionmaxarity)
+💥 Possible validation errors: [`function.maxArity`](#functionmaxarity)
 
 #### `func.class()`
 
@@ -1719,7 +1692,7 @@ Requires the function to be a class.
 const schema = Joi.func().class();
 ```
 
-💥 Possible validation errors:[`function.class`](#functionclass)
+💥 Possible validation errors: [`function.class`](#functionclass)
 
 ### `number` - inherits from `Any`
 
@@ -1739,7 +1712,7 @@ const number = Joi.number();
 number.validate(5, (err, value) => { });
 ```
 
-💥 Possible validation errors:[`number.base`](#numberbase)
+💥 Possible validation errors: [`number.base`](#numberbase)
 
 #### `number.unsafe([enabled])`
 
@@ -1759,7 +1732,7 @@ unsafeNumber.validate(90071992547409924);
 // value -> 90071992547409920
 ```
 
-💥 Possible validation errors:[`number.unsafe`](#numberunsafe)
+💥 Possible validation errors: [`number.unsafe`](#numberunsafe)
 
 #### `number.min(limit)`
 
@@ -1777,7 +1750,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`number.min`](#numbermin), [`number.ref`](#numberref)
+💥 Possible validation errors: [`number.min`](#numbermin), [`number.ref`](#numberref)
 
 #### `number.max(limit)`
 
@@ -1795,7 +1768,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`number.max`](#numbermax), [`number.ref`](#numberref)
+💥 Possible validation errors: [`number.max`](#numbermax), [`number.ref`](#numberref)
 
 #### `number.greater(limit)`
 
@@ -1812,7 +1785,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`number.greater`](#numbergreater), [`number.ref`](#numberref)
+💥 Possible validation errors: [`number.greater`](#numbergreater), [`number.ref`](#numberref)
 
 #### `number.less(limit)`
 
@@ -1829,7 +1802,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`number.less`](#numberless), [`number.ref`](#numberref)
+💥 Possible validation errors: [`number.less`](#numberless), [`number.ref`](#numberref)
 
 #### `number.integer()`
 
@@ -1839,7 +1812,7 @@ Requires the number to be an integer (no floating point).
 const schema = Joi.number().integer();
 ```
 
-💥 Possible validation errors:[`number.base`](#numberbase)
+💥 Possible validation errors: [`number.base`](#numberbase)
 
 #### `number.precision(limit)`
 
@@ -1850,7 +1823,7 @@ Specifies the maximum number of decimal places where:
 const schema = Joi.number().precision(2);
 ```
 
-💥 Possible validation errors:[`number.integer`](#numberinteger-1)
+💥 Possible validation errors: [`number.integer`](#numberinteger-1)
 
 #### `number.multiple(base)`
 
@@ -1863,7 +1836,7 @@ const schema = Joi.number().multiple(3);
 Notes: `Joi.number.multiple(base)` _uses the modulo operator (%) to determine if a number is multiple of another number.
 Therefore, it has the normal limitations of Javascript modulo operator. The results with decimal/floats may be incorrect._
 
-💥 Possible validation errors:[`number.multiple`](#numbermultiple), [`number.ref`](#numberref)
+💥 Possible validation errors: [`number.multiple`](#numbermultiple), [`number.ref`](#numberref)
 
 #### `number.positive()`
 
@@ -1873,7 +1846,7 @@ Requires the number to be positive.
 const schema = Joi.number().positive();
 ```
 
-💥 Possible validation errors:[`number.positive`](#numberpositive-1)
+💥 Possible validation errors: [`number.positive`](#numberpositive-1)
 
 #### `number.negative()`
 
@@ -1883,7 +1856,7 @@ Requires the number to be negative.
 const schema = Joi.number().negative();
 ```
 
-💥 Possible validation errors:[`number.negative`](#numbernegative-1)
+💥 Possible validation errors: [`number.negative`](#numbernegative-1)
 
 #### `number.port()`
 
@@ -1893,7 +1866,7 @@ Requires the number to be a TCP port, so between 0 and 65535.
 const schema = Joi.number().port();
 ```
 
-💥 Possible validation errors:[`number.port`](#numberport-1)
+💥 Possible validation errors: [`number.port`](#numberport-1)
 
 ### `object` - inherits from `Any`
 
@@ -1912,7 +1885,7 @@ const object = Joi.object().keys({
 object.validate({ a: 5 }, (err, value) => { });
 ```
 
-💥 Possible validation errors:[`object.base`](#objectbase)
+💥 Possible validation errors: [`object.base`](#objectbase)
 
 #### `object.keys([schema])`
 
@@ -1957,7 +1930,7 @@ const schema = Joi.object().keys({
 });
 ```
 
-💥 Possible validation errors:[`object.allowUnknown`](#objectallowunknown)
+💥 Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
 
 While all these three objects defined above will result in the same validation object, there are some differences in using one or another:
 
@@ -2035,7 +2008,7 @@ Specifies the maximum number of keys in the object where:
 const schema = Joi.object().max(10);
 ```
 
-💥 Possible validation errors:[`object.max`](#objectmax), [`object.ref`](#objectref)
+💥 Possible validation errors: [`object.max`](#objectmax), [`object.ref`](#objectref)
 
 #### `object.length(limit)`
 
@@ -2046,7 +2019,7 @@ Specifies the exact number of keys in the object where or a reference:
 const schema = Joi.object().length(5);
 ```
 
-💥 Possible validation errors:[`object.length`](#objectlength), [`object.ref`](#objectref)
+💥 Possible validation errors: [`object.length`](#objectlength), [`object.ref`](#objectref)
 
 #### `object.pattern(pattern, schema)`
 
@@ -2081,7 +2054,7 @@ const schema = Joi.object().keys({
 }).and('a', 'b');
 ```
 
-💥 Possible validation errors:[`object.and`](#objectand)
+💥 Possible validation errors: [`object.and`](#objectand)
 
 #### `object.nand(...peers, [options])`
 
@@ -2097,7 +2070,7 @@ const schema = Joi.object().keys({
 }).nand('a', 'b');
 ```
 
-💥 Possible validation errors:[`object.nand`](#objectnand)
+💥 Possible validation errors: [`object.nand`](#objectnand)
 
 #### `object.or(...peers, [options])`
 
@@ -2114,7 +2087,7 @@ const schema = Joi.object().keys({
 }).or('a', 'b');
 ```
 
-💥 Possible validation errors:[`object.missing`](#objectmissing)
+💥 Possible validation errors: [`object.missing`](#objectmissing)
 
 #### `object.xor(...peers, [options])`
 
@@ -2131,7 +2104,7 @@ const schema = Joi.object().keys({
 }).xor('a', 'b');
 ```
 
-💥 Possible validation errors:[`object.xor`](#objectxor), [`object.missing`](#objectmissing)
+💥 Possible validation errors: [`object.xor`](#objectxor), [`object.missing`](#objectmissing)
 
 #### `object.oxor(...peers, [options])`
 
@@ -2148,7 +2121,7 @@ const schema = Joi.object().keys({
 }).oxor('a', 'b');
 ```
 
-💥 Possible validation errors:[`object.oxor`](#objectoxor)
+💥 Possible validation errors: [`object.oxor`](#objectoxor)
 
 #### `object.with(key, peers, [options])`
 
@@ -2169,7 +2142,7 @@ const schema = Joi.object().keys({
 }).with('a', 'b');
 ```
 
-💥 Possible validation errors:[`object.with`](#objectwith)
+💥 Possible validation errors: [`object.with`](#objectwith)
 
 #### `object.without(key, peers, [options])`
 
@@ -2187,7 +2160,7 @@ const schema = Joi.object().keys({
 }).without('a', ['b']);
 ```
 
-💥 Possible validation errors:[`object.without`](#objectwithout)
+💥 Possible validation errors: [`object.without`](#objectwithout)
 
 #### `object.ref()`
 
@@ -2197,7 +2170,7 @@ Requires the object to be a Joi reference.
 const schema = Joi.object().ref();
 ```
 
-💥 Possible validation errors:[`object.refType`](#objectreftype)
+💥 Possible validation errors: [`object.refType`](#objectreftype)
 
 #### `object.rename(from, to, [options])`
 
@@ -2232,7 +2205,7 @@ const schema = Joi.object().keys({
 schema.validate({ FooBar: 'a'}, (err, value) => {});
 ```
 
-💥 Possible validation errors:[`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride), [`object.rename.regex.multiple`](#objectrenameregexmultiple), [`object.rename.regex.override`](#objectrenameregexoverride)
+💥 Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride), [`object.rename.regex.multiple`](#objectrenameregexmultiple), [`object.rename.regex.override`](#objectrenameregexoverride)
 
 #### `object.assert(ref, schema, [message])`
 
@@ -2254,7 +2227,7 @@ const schema = Joi.object().keys({
 }).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
 ```
 
-💥 Possible validation errors:[`object.assert`](#objectassert)
+💥 Possible validation errors: [`object.assert`](#objectassert)
 
 #### `object.unknown([allow])`
 
@@ -2265,7 +2238,7 @@ Overrides the handling of unknown keys for the scope of the current object only 
 const schema = Joi.object({ a: Joi.any() }).unknown();
 ```
 
-💥 Possible validation errors:[`object.allowUnknown`](#objectallowunknown)
+💥 Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
 
 #### `object.type(constructor, [name])`
 
@@ -2277,17 +2250,18 @@ Requires the object to be an instance of a given constructor where:
 const schema = Joi.object().type(RegExp);
 ```
 
-💥 Possible validation errors:[`object.type`](#objecttype)
+💥 Possible validation errors: [`object.type`](#objecttype)
 
-#### `object.schema()`
+#### `object.schema([type])`
 
-Requires the object to be a Joi schema instance.
+Requires the object to be a Joi schema instance where:
+- `type` - optional joi type to require.
 
 ```js
 const schema = Joi.object().schema();
 ```
 
-💥 Possible validation errors:[`object.schema`](#objectschema-1)
+💥 Possible validation errors: [`object.schema`](#objectschema-1)
 
 #### `object.requiredKeys(...children)`
 
@@ -2342,7 +2316,7 @@ const schema = Joi.string().min(1).max(10);
 schema.validate('12345', (err, value) => { });
 ```
 
-💥 Possible validation errors:[`string.base`](#stringbase), [`any.empty`](#anyempty)
+💥 Possible validation errors: [`string.base`](#stringbase), [`any.empty`](#anyempty)
 
 #### `string.insensitive()`
 
@@ -2369,7 +2343,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`string.min`](#stringmin), [`string.ref`](#stringref)
+💥 Possible validation errors: [`string.min`](#stringmin), [`string.ref`](#stringref)
 
 #### `string.max(limit, [encoding])`
 
@@ -2388,7 +2362,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`string.max`](#stringmax), [`string.ref`](#stringref)
+💥 Possible validation errors: [`string.max`](#stringmax), [`string.ref`](#stringref)
 
 #### `string.truncate([enabled])`
 
@@ -2410,7 +2384,7 @@ Algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)).
 const schema = Joi.string().creditCard();
 ```
 
-💥 Possible validation errors:[`string.creditCard`](#stringcreditcard-1)
+💥 Possible validation errors: [`string.creditCard`](#stringcreditcard-1)
 
 #### `string.length(limit, [encoding])`
 
@@ -2429,7 +2403,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`string.length`](#stringlength), [`string.ref`](#stringref)
+💥 Possible validation errors: [`string.length`](#stringlength), [`string.ref`](#stringref)
 
 #### `string.regex(pattern, [name | options])`
 
@@ -2456,7 +2430,7 @@ const invertedNamedSchema = Joi.string().regex(/^[a-z]+$/, { name: 'alpha', inve
 invertedNamedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted alpha pattern
 ```
 
-💥 Possible validation errors:[`string.regex.base`](#stringregexbase), [`string.regex.invert.base`](#stringregexinvertbase), [`string.regex.invert.name`](#stringregexinvertname), [`string.regex.name`](#stringregexname)
+💥 Possible validation errors: [`string.regex.base`](#stringregexbase), [`string.regex.invert.base`](#stringregexinvertbase), [`string.regex.invert.name`](#stringregexinvertname), [`string.regex.name`](#stringregexname)
 
 #### `string.replace(pattern, replacement)`
 
@@ -2483,7 +2457,7 @@ Requires the string value to only contain a-z, A-Z, and 0-9.
 const schema = Joi.string().alphanum();
 ```
 
-💥 Possible validation errors:[`string.alphanum`](#stringalphanum-1)
+💥 Possible validation errors: [`string.alphanum`](#stringalphanum-1)
 
 #### `string.token()`
 
@@ -2493,7 +2467,7 @@ Requires the string value to only contain a-z, A-Z, 0-9, and underscore _.
 const schema = Joi.string().token();
 ```
 
-💥 Possible validation errors:[`string.token`](#stringtoken-1)
+💥 Possible validation errors: [`string.token`](#stringtoken-1)
 
 #### `string.domain([options])`
 
@@ -2518,7 +2492,7 @@ Requires the string value to be a valid domain name.
 const schema = Joi.string().domain();
 ```
 
-💥 Possible validation errors:[`string.domain`](#stringdomain)
+💥 Possible validation errors: [`string.domain`](#stringdomain)
 
 #### `string.email([options])`
 
@@ -2545,7 +2519,7 @@ Requires the string value to be a valid email address.
 const schema = Joi.string().email();
 ```
 
-💥 Possible validation errors:[`string.email`](#stringemail)
+💥 Possible validation errors: [`string.email`](#stringemail)
 
 #### `string.ip([options])`
 
@@ -2566,7 +2540,7 @@ const schema = Joi.string().ip({
 });
 ```
 
-💥 Possible validation errors:[`string.ip`](#stringip), [`string.ipVersion`](#stringipversion)
+💥 Possible validation errors: [`string.ip`](#stringip), [`string.ipVersion`](#stringipversion)
 
 #### `string.uri([options])`
 
@@ -2589,7 +2563,7 @@ const schema = Joi.string().uri({
 });
 ```
 
-💥 Possible validation errors:[`string.uri`](#stringuri), [`string.uriCustomScheme`](#stringuricustomscheme), [`string.uriRelativeOnly`](#stringurirelativeonly), [`string.domain`](#stringdomain)
+💥 Possible validation errors: [`string.uri`](#stringuri), [`string.uriCustomScheme`](#stringuricustomscheme), [`string.uriRelativeOnly`](#stringurirelativeonly), [`string.domain`](#stringdomain)
 
 #### `string.guid()` - aliases: `uuid`
 
@@ -2609,7 +2583,7 @@ const schema = Joi.string().guid({
 });
 ```
 
-💥 Possible validation errors:[`string.guid`](#stringguid)
+💥 Possible validation errors: [`string.guid`](#stringguid)
 
 #### `string.hex([options])`
 
@@ -2621,7 +2595,7 @@ Requires the string value to be a valid hexadecimal string.
 const schema = Joi.string().hex();
 ```
 
-💥 Possible validation errors:[`string.hex`](#stringhex), [`string.hexAlign`](#stringhexalign)
+💥 Possible validation errors: [`string.hex`](#stringhex), [`string.hexAlign`](#stringhexalign)
 
 #### `string.base64([options])`
 
@@ -2647,7 +2621,7 @@ paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM'); // No Error
 paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
-💥 Possible validation errors:[`string.base64`](#stringbase64)
+💥 Possible validation errors: [`string.base64`](#stringbase64)
 
 #### `string.dataUri([options])`
 
@@ -2662,7 +2636,7 @@ schema.validate('VE9PTUFOWVNFQ1JFVFM='); // ValidationError: "value" must be a v
 schema.validate('data:image/png;base64,VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
-💥 Possible validation errors:[`string.dataUri`](#stringdatauri)
+💥 Possible validation errors: [`string.dataUri`](#stringdatauri)
 
 #### `string.hostname()`
 
@@ -2672,7 +2646,7 @@ Requires the string value to be a valid hostname as per [RFC1123](http://tools.i
 const schema = Joi.string().hostname();
 ```
 
-💥 Possible validation errors:[`string.hostname`](#stringhostname-1)
+💥 Possible validation errors: [`string.hostname`](#stringhostname-1)
 
 #### `string.normalize([form])`
 
@@ -2689,7 +2663,7 @@ const schema = Joi.string().normalize('NFKC'); // compatibility composition
 const schema = Joi.string().normalize('NFKD'); // compatibility decomposition
 ```
 
-💥 Possible validation errors:[`string.normalize`](#stringnormalize)
+💥 Possible validation errors: [`string.normalize`](#stringnormalize)
 
 #### `string.lowercase()`
 
@@ -2700,7 +2674,7 @@ will be forced to lowercase.
 const schema = Joi.string().lowercase();
 ```
 
-💥 Possible validation errors:[`string.lowercase`](#stringlowercase-1)
+💥 Possible validation errors: [`string.lowercase`](#stringlowercase-1)
 
 #### `string.uppercase()`
 
@@ -2711,7 +2685,7 @@ will be forced to uppercase.
 const schema = Joi.string().uppercase();
 ```
 
-💥 Possible validation errors:[`string.uppercase`](#stringuppercase-1)
+💥 Possible validation errors: [`string.uppercase`](#stringuppercase-1)
 
 #### `string.trim([enabled])`
 
@@ -2726,7 +2700,7 @@ const schema = Joi.string().trim();
 const schema = Joi.string().trim(false); // disable trim flag
 ```
 
-💥 Possible validation errors:[`string.trim`](#stringtrim)
+💥 Possible validation errors: [`string.trim`](#stringtrim)
 
 #### `string.isoDate()`
 
@@ -2744,7 +2718,7 @@ schema.validate('20181-11-28T18:25:32+00:00'); // ValidationError: must be a val
 schema.validate(''); // ValidationError: must be a valid 8601 date
 ```
 
-💥 Possible validation errors:[`string.isoDate`](#stringisodate-1)
+💥 Possible validation errors: [`string.isoDate`](#stringisodate-1)
 
 #### `string.isoDuration()`
 
@@ -2757,7 +2731,7 @@ schema.validate('2018-11-28T18:25:32+00:00'); // ValidationError: must be a vali
 schema.validate(''); // ValidationError: must be a valid ISO 8601 duration
 ```
 
-💥 Possible validation errors:[`string.isoDuration`](#stringisoduration-1)
+💥 Possible validation errors: [`string.isoDuration`](#stringisoduration-1)
 
 ### `symbol` - inherits from `Any`
 
@@ -2772,7 +2746,7 @@ const schema = Joi.symbol().map({ 'foo': Symbol('foo'), 'bar': Symbol('bar') });
 schema.validate('foo', (err, value) => { });
 ```
 
-💥 Possible validation errors:[`symbol.base`](#symbolbase)
+💥 Possible validation errors: [`symbol.base`](#symbolbase)
 
 #### `symbol.map(map)`
 
@@ -2789,7 +2763,7 @@ const schema = Joi.symbol().map([
 ]);
 ```
 
-💥 Possible validation errors:[`symbol.map`](#symbolmap)
+💥 Possible validation errors: [`symbol.map`](#symbolmap)
 
 ### `alternatives` - inherits from `Any`
 
@@ -2805,7 +2779,7 @@ const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
 // Same as [Joi.number(), Joi.string()]
 ```
 
-💥 Possible validation errors:[`alternatives.base`](#alternativesbase)
+💥 Possible validation errors: [`alternatives.base`](#alternativesbase), [`alternatives.types`](#alternativestypes), [`alternatives.match`](#alternativesmatch)
 
 #### `alternatives.try(schemas)`
 
@@ -2890,7 +2864,7 @@ const Person = Joi.object({
 });
 ```
 
-💥 Possible validation errors:[`lazy.base`](#lazybase), [`lazy.schema`](#lazyschema)
+💥 Possible validation errors: [`lazy.base`](#lazybase), [`lazy.schema`](#lazyschema)
 
 ## Errors
 
@@ -2925,13 +2899,45 @@ Check if an Error is a Joi `ValidationError` like:
 
 **Description**
 
-No alternative matched the input.
+No alternative was found to test against the input due to try criteria.
 
 **Context**
 ```ts
 {
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string // Label if defined, otherwise it's the key
+}
+```
+
+#### `alternatives.types`
+
+**Description**
+
+The provided input did not match any of the allowed types.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    types: Array<string>, // The list of expected types
+    value: any // Value being validated
+}
+```
+
+#### `alternatives.match`
+
+**Description**
+
+No alternative matched the input due to specific matching rules for at least one of the alternatives.
+
+**Context**
+```ts
+{
+    key: string, // Last element of the path accessing the value, `undefined` if at the root
+    label: string, // Label if defined, otherwise it's the key
+    details: Array<object>, // An array of details for each error found while trying to match to each of the alternatives
+    message: string // The combined error messages
 }
 ```
 
@@ -4076,7 +4082,8 @@ The object was not a joi schema.
 ```ts
 {
     key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string // Label if defined, otherwise it's the key
+    label: string, // Label if defined, otherwise it's the key
+    type: string // The required schema type
 }
 ```
 

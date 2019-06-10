@@ -822,19 +822,31 @@ describe('any', () => {
                 [{ a: { c: '5' }, b: 5 }, true],
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
                 [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                    message: '"b" must be one of [ref:a.c], "b" must be one of [ref:c]',
+                    message: '"b" does not match any of the allowed types',
                     details: [
                         {
-                            message: '"b" must be one of [ref:a.c]',
+                            message: '"b" does not match any of the allowed types',
+                            type: 'alternatives.match',
                             path: ['b'],
-                            type: 'any.allowOnly',
-                            context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
-                        },
-                        {
-                            message: '"b" must be one of [ref:c]',
-                            path: ['b'],
-                            type: 'any.allowOnly',
-                            context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
+                            context: {
+                                key: 'b',
+                                label: 'b',
+                                message: '"b" must be one of [ref:a.c]. "b" must be one of [ref:c]',
+                                details: [
+                                    {
+                                        message: '"b" must be one of [ref:a.c]',
+                                        path: ['b'],
+                                        type: 'any.allowOnly',
+                                        context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
+                                    },
+                                    {
+                                        message: '"b" must be one of [ref:c]',
+                                        path: ['b'],
+                                        type: 'any.allowOnly',
+                                        context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
+                                    }
+                                ]
+                            }
                         }
                     ]
                 }]
@@ -1501,19 +1513,13 @@ describe('any', () => {
                 const schema = Joi.object({
                     a: Joi.string(),
                     b: {
-                        c: Joi.number().strict().error(() => 'Really wanted a number!')
+                        c: Joi.number().strict().error(() => new Error('Really wanted a number!'))
                     }
                 });
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: 'x' } }, schema)).to.reject();
-                expect(err.isJoi).to.exist();
+                expect(err.isJoi).to.not.exist();
                 expect(err.message).to.equal('Really wanted a number!');
-                expect(err.details).to.equal([{
-                    message: 'Really wanted a number!',
-                    path: ['b', 'c'],
-                    type: 'number.base',
-                    context: { key: 'c', label: 'b.c', value: 'x' }
-                }]);
             });
 
             it('should be able to combine several error messages', async () => {
@@ -1523,28 +1529,14 @@ describe('any', () => {
                     b: {
                         c: Joi.number().min(0).integer().strict().error((errors) => {
 
-                            return errors.join(' and '); // Automatic toString() of each error on join
+                            return new Error(errors.join(' and ')); // Automatic toString() of each error on join
                         })
                     }
                 });
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
-                expect(err.isJoi).to.exist();
+                expect(err.isJoi).to.not.exist();
                 expect(err.message).to.equal('"b.c" must be larger than or equal to 0 and "b.c" must be an integer');
-                expect(err.details).to.equal([
-                    {
-                        message: '"b.c" must be larger than or equal to 0 and "b.c" must be an integer',
-                        path: ['b', 'c'],
-                        type: 'number.min',
-                        context: { limit: 0, value: -1.5, key: 'c', label: 'b.c' }
-                    },
-                    {
-                        message: '"b.c" must be larger than or equal to 0 and "b.c" must be an integer',
-                        path: ['b', 'c'],
-                        type: 'number.integer',
-                        context: { value: -1.5, key: 'c', label: 'b.c' }
-                    }
-                ]);
             });
 
             it('should be able to combine several error messages using context', async () => {
@@ -1554,7 +1546,7 @@ describe('any', () => {
                     b: {
                         c: Joi.number().min(0).integer().strict().error((errors) => {
 
-                            return errors.reduce((memo, error) => {
+                            const message = errors.reduce((memo, error) => {
 
                                 let text = memo ? ' && ' : '';
                                 switch (error.type) {
@@ -1571,140 +1563,18 @@ describe('any', () => {
 
                                 return memo + text;
                             }, '');
+
+                            return new Error(message);
                         })
                     }
                 });
 
                 const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
-                expect(err.isJoi).to.exist();
+                expect(err.isJoi).to.not.exist();
                 expect(err.message).to.equal('"c" > 0 && "c" ∈ ℤ');
-                expect(err.details).to.equal([
-                    {
-                        message: '"c" > 0 && "c" ∈ ℤ',
-                        path: ['b', 'c'],
-                        type: 'number.min',
-                        context: { limit: 0, value: -1.5, key: 'c', label: 'b.c' }
-                    },
-                    {
-                        message: '"c" > 0 && "c" ∈ ℤ',
-                        path: ['b', 'c'],
-                        type: 'number.integer',
-                        context: { value: -1.5, key: 'c', label: 'b.c' }
-                    }
-                ]);
             });
 
-            it('should be able to create an error out of nowhere', async () => {
-
-                const schema = Joi.object({
-                    a: Joi.string(),
-                    b: {
-                        c: Joi.number().min(0).integer().strict().error((errors) => ({
-                            type: 'override',
-                            message: 'Moar numbers !',
-                            context: {
-                                value: errors[0].context.value
-                            }
-                        }))
-                    }
-                });
-
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
-                expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('Moar numbers !');
-                expect(err.details).to.equal([
-                    {
-                        message: 'Moar numbers !',
-                        path: ['b', 'c'],
-                        type: 'override',
-                        context: { value: -1.5, key: 'c', label: 'b.c' }
-                    }
-                ]);
-            });
-
-            it('should be able to create an error out of nowhere without giving a type', async () => {
-
-                const schema = Joi.object({
-                    a: Joi.string(),
-                    b: {
-                        c: Joi.number().min(0).integer().strict().error((errors) => ({
-                            message: 'Moar numbers !',
-                            context: {
-                                value: errors[0].context.value
-                            }
-                        }))
-                    }
-                });
-
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
-                expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('Moar numbers !');
-                expect(err.details).to.equal([
-                    {
-                        message: 'Moar numbers !',
-                        path: ['b', 'c'],
-                        type: 'override',
-                        context: { value: -1.5, key: 'c', label: 'b.c' }
-                    }
-                ]);
-            });
-
-            it('should be able to create an error with a template', async () => {
-
-                const schema = Joi.object({
-                    a: Joi.string(),
-                    b: {
-                        c: Joi.number().min(0).integer().strict().error((errors) => ({
-                            template: 'oops, I received {{value}}',
-                            context: {
-                                value: errors[0].context.value
-                            }
-                        }))
-                    }
-                });
-
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
-                expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('"b.c" oops, I received -1.5');
-                expect(err.details).to.equal([
-                    {
-                        message: '"b.c" oops, I received -1.5',
-                        path: ['b', 'c'],
-                        type: 'override',
-                        context: { value: -1.5, key: 'c', label: 'b.c' }
-                    }
-                ]);
-            });
-
-            it('should be able to do a no-op on errors', async () => {
-
-                const schema = Joi.object({
-                    a: Joi.string(),
-                    b: {
-                        c: Joi.number().min(0).integer().strict().error((errors) => errors)
-                    }
-                });
-
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
-                expect(err.isJoi).to.exist();
-                expect(err.message).to.equal('"b.c" must be larger than or equal to 0. "b.c" must be an integer');
-                expect(err.details).to.equal([
-                    {
-                        message: '"b.c" must be larger than or equal to 0',
-                        path: ['b', 'c'],
-                        type: 'number.min',
-                        context: { limit: 0, value: -1.5, key: 'c', label: 'b.c' }
-                    },
-                    {
-                        message: '"b.c" must be an integer',
-                        path: ['b', 'c'],
-                        type: 'number.integer',
-                        context: { value: -1.5, key: 'c', label: 'b.c' }
-                    }
-                ]);
-            });
-
-            it('should be able to throw a javascript Error', async () => {
+            it('should be able to return a javascript Error', async () => {
 
                 const schema = Joi.object({
                     a: Joi.string(),

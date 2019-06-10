@@ -3390,27 +3390,61 @@ describe('object', () => {
             const schema = Joi.object().schema();
             Helper.validate(schema, [
                 [{}, false, null, {
-                    message: '"value" must be a Joi instance',
+                    message: '"value" must be a Joi schema of any type',
                     details: [{
-                        message: '"value" must be a Joi instance',
+                        message: '"value" must be a Joi schema of any type',
                         path: [],
                         type: 'object.schema',
-                        context: { label: 'value' }
+                        context: { label: 'value', type: 'any' }
                     }]
                 }],
                 [{ isJoi: true }, false, null, {
-                    message: '"value" must be a Joi instance',
+                    message: '"value" must be a Joi schema of any type',
                     details: [{
-                        message: '"value" must be a Joi instance',
+                        message: '"value" must be a Joi schema of any type',
                         path: [],
                         type: 'object.schema',
-                        context: { label: 'value' }
+                        context: { label: 'value', type: 'any' }
                     }]
                 }],
                 [Joi.number().max(2), true]
             ]);
         });
 
+        it('validated schema type', () => {
+
+            const schema = Joi.object().schema('number');
+            Helper.validate(schema, [
+                [Joi.number().max(2), true],
+                [{}, false, null, {
+                    message: '"value" must be a Joi schema of number type',
+                    details: [{
+                        message: '"value" must be a Joi schema of number type',
+                        path: [],
+                        type: 'object.schema',
+                        context: { label: 'value', type: 'number' }
+                    }]
+                }],
+                [{ isJoi: true }, false, null, {
+                    message: '"value" must be a Joi schema of number type',
+                    details: [{
+                        message: '"value" must be a Joi schema of number type',
+                        path: [],
+                        type: 'object.schema',
+                        context: { label: 'value', type: 'number' }
+                    }]
+                }],
+                [Joi.string(), false, null, {
+                    message: '"value" must be a Joi schema of number type',
+                    details: [{
+                        message: '"value" must be a Joi schema of number type',
+                        path: [],
+                        type: 'object.schema',
+                        context: { label: 'value', type: 'number' }
+                    }]
+                }]
+            ]);
+        });
     });
 
     describe('requiredKeys()', () => {

@@ -13,9 +13,7 @@ const internals = {
     startString: '<!-- errors -->',
     endString: '<!-- errorsstop -->',
     ignoredLanguage: ['root', 'key', 'messages'],
-    ignoredCodes: [
-        '`alternatives.child`'
-    ]
+    ignoredCodes: []
 };
 
 internals.parseTitles = function (markdown) {
