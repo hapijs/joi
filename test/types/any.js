@@ -1764,7 +1764,10 @@ describe('any', () => {
 
         it('does not leak into sub objects from an array', async () => {
 
-            const schema = Joi.array().items(Joi.object({ a: Joi.number() }).label('foo')).label('bar');
+            const schema = Joi.array().items(
+                Joi.object({ a: Joi.number() }).label('foo')
+            ).label('bar');
+
             const err = await expect(schema.validate([{ a: 'a' }])).to.reject();
             expect(err).to.exist();
             expect(err.message).to.equal('"[0].a" must be a number');

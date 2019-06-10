@@ -1163,7 +1163,9 @@ describe('array', () => {
                 type: 'array.sparse',
                 context: {
                     key: 1,
-                    label: '[1]'
+                    label: '[1]',
+                    path: [1],
+                    pos: 1
                 }
             }, {
                 message: '"[2]" contains an excluded value',
@@ -1869,7 +1871,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { label: '[0]', key: 0 }
+                        context: { label: '[0]', key: 0, path: [0], pos: 0 }
                     }]
                 }],
                 [[2, undefined], false, null, {
@@ -1878,7 +1880,7 @@ describe('array', () => {
                         message: '"[1]" must not be a sparse array item',
                         path: [1],
                         type: 'array.sparse',
-                        context: { label: '[1]', key: 1 }
+                        context: { label: '[1]', key: 1, path: [1], pos: 1 }
                     }]
                 }]
             ]);
@@ -1895,7 +1897,7 @@ describe('array', () => {
                         message: '"[1]" must not be a sparse array item',
                         path: [1],
                         type: 'array.sparse',
-                        context: { label: '[1]', key: 1 }
+                        context: { label: '[1]', key: 1, path: [1], pos: 1 }
                     }]
                 }]
             ]);
@@ -1913,7 +1915,7 @@ describe('array', () => {
                             message: '"[1]" must not be a sparse array item',
                             path: [1],
                             type: 'array.sparse',
-                            context: { label: '[1]', key: 1 }
+                            context: { label: '[1]', key: 1, path: [1], pos: 1 }
                         },
                         {
                             message: '"[2]" must be an object',
@@ -1967,7 +1969,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { label: '[0]', key: 0 }
+                        context: { label: '[0]', key: 0, path: [0], pos: 0 }
                     }]
                 }]
             ]);
@@ -1998,13 +2000,13 @@ describe('array', () => {
                             message: '"[0]" must not be a sparse array item',
                             path: [0],
                             type: 'array.sparse',
-                            context: { label: '[0]', key: 0 }
+                            context: { label: '[0]', key: 0, path: [0], pos: 0 }
                         },
                         {
                             message: '"[1]" must not be a sparse array item',
                             path: [1],
                             type: 'array.sparse',
-                            context: { label: '[1]', key: 1 }
+                            context: { label: '[1]', key: 1, path: [1], pos: 1 }
                         }
                     ]
                 }]
@@ -2053,7 +2055,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { label: '[0]', key: 0 }
+                        context: { label: '[0]', key: 0, path: [0], pos: 0 }
                     }]
                 }]
             ]);
@@ -2071,7 +2073,7 @@ describe('array', () => {
                             message: '"[0]" must not be a sparse array item',
                             path: [0],
                             type: 'array.sparse',
-                            context: { label: '[0]', key: 0 }
+                            context: { label: '[0]', key: 0, path: [0], pos: 0 }
                         },
                         {
                             message: '"value" must contain at most 1 items',
@@ -2522,7 +2524,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]' }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
                     }, {
                         message: '"[2]" must be less than or equal to 0',
                         path: [2],
@@ -2536,7 +2538,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]' }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
                     }, {
                         message: '"[2]" must be less than or equal to 0',
                         path: [2],
@@ -2546,7 +2548,7 @@ describe('array', () => {
                         message: '"[3]" must not be a sparse array item',
                         path: [3],
                         type: 'array.sparse',
-                        context: { key: 3, label: '[3]' }
+                        context: { key: 3, label: '[3]', path: [3], pos: 3 }
                     }]
                 }]
             ]);
@@ -2569,7 +2571,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]' }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
                     }, {
                         message: '"[2]" must be less than or equal to 0',
                         path: [2],
@@ -2583,7 +2585,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]' }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
                     }, {
                         message: '"[2]" must be less than or equal to 0',
                         path: [2],
@@ -2593,7 +2595,7 @@ describe('array', () => {
                         message: '"[3]" must not be a sparse array item',
                         path: [3],
                         type: 'array.sparse',
-                        context: { key: 3, label: '[3]' }
+                        context: { key: 3, label: '[3]', path: [3], pos: 3 }
                     }]
                 }],
                 [[undefined, false, 2, undefined], false, null, {
@@ -2602,7 +2604,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]' }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
                     }, {
                         message: '"[1]" contains an excluded value',
                         path: [1],
@@ -2617,7 +2619,7 @@ describe('array', () => {
                         message: '"[3]" must not be a sparse array item',
                         path: [3],
                         type: 'array.sparse',
-                        context: { key: 3, label: '[3]' }
+                        context: { key: 3, label: '[3]', path: [3], pos: 3 }
                     }]
                 }]
             ]);
