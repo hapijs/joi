@@ -1720,6 +1720,18 @@ describe('any', () => {
         });
     });
 
+    describe('keep()', () => {
+
+        it('retains both unique rule instances', () => {
+
+            const schema = Joi.number()
+                .min(10).keep()
+                .min(100);
+
+            expect(schema.validate(1, { abortEarly: false }).error).to.be.an.error('"value" must be larger than or equal to 10. "value" must be larger than or equal to 100');
+        });
+    });
+
     describe('label()', () => {
 
         it('adds to existing options', async () => {
@@ -2196,6 +2208,19 @@ describe('any', () => {
 
             expect(() => custom.ext().big().rule({})).to.not.throw();
             expect(() => custom.ext().big().rule({}).big()).to.not.throw();
+        });
+
+        describe('keep', () => {
+
+            it('retains both unique rule instances', () => {
+
+                const schema = Joi.number()
+                    .min(10).rule({ message: 'way too small', keep: true })
+                    .min(100).message('still too small');
+
+                expect(schema.validate(1).error).to.be.an.error('way too small');
+                expect(schema.validate(90).error).to.be.an.error('still too small');
+            });
         });
 
         describe('message', () => {
