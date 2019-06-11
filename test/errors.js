@@ -51,25 +51,15 @@ describe('errors', () => {
         };
 
         const lang = {
-            any: {
-                empty: '3'
-            },
-            date: {
-                base: '18'
-            },
-            string: {
-                base: '13',
-                min: '14',
-                max: '15',
-                alphanum: '16',
-                email: '19'
-            },
-            object: {
-                without: '7',
-                rename: {
-                    override: '11'
-                }
-            }
+            'any.empty': '3',
+            'date.base': '18',
+            'string.base': '13',
+            'string.min': '14',
+            'string.max': '15',
+            'string.alphanum': '16',
+            'string.email': '19',
+            'object.without': '7',
+            'object.rename.override': '11'
         };
 
         const error = await expect(Joi.validate(input, schema, { abortEarly: false, language: lang })).to.reject();
@@ -161,7 +151,7 @@ describe('errors', () => {
 
     it('does not prefix with key when language uses context.key', async () => {
 
-        const schema = Joi.valid('sad').options({ language: { any: { allowOnly: 'my hero "{{label}}" is not {{valids}}' } } });
+        const schema = Joi.valid('sad').options({ language: { 'any.allowOnly': 'my hero "{{label}}" is not {{valids}}' } });
         const err = await expect(schema.validate(5)).to.reject();
         expect(err).to.be.an.error('my hero "value" is not [sad]');
         expect(err.details).to.equal([{
@@ -357,7 +347,7 @@ describe('errors', () => {
 
     it('overrides wrapArrays', async () => {
 
-        const schema = Joi.array().items(Joi.boolean()).options({ language: { messages: { wrapArrays: false } } });
+        const schema = Joi.array().items(Joi.boolean()).options({ language: { 'messages.wrapArrays': false } });
         const err = await expect(schema.validate([4])).to.reject();
         expect(err).to.be.an.error('"[0]" must be a boolean');
         expect(err.details).to.equal([{

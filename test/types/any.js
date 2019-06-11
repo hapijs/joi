@@ -1794,6 +1794,19 @@ describe('any', () => {
         });
     });
 
+    describe('message', () => {
+
+        it('overrides message', () => {
+
+            const schema = Joi.number()
+                .min(10).message('way too small')
+                .max(100).message('way too big');
+
+            expect(schema.validate(1).error).to.be.an.error('way too small');
+            expect(schema.validate(1000).error).to.be.an.error('way too big');
+        });
+    });
+
     describe('meta()', () => {
 
         it('sets the meta', () => {
@@ -2044,8 +2057,8 @@ describe('any', () => {
             const baseSchema = Joi.any();
             expect(baseSchema.describe().options).to.undefined();
 
-            const languageSchema = baseSchema.options({ language: { type: { foo: 'foo' } } });
-            expect(languageSchema.describe().options).to.equal({ language: { type: { foo: 'foo' } } });
+            const languageSchema = baseSchema.options({ language: { 'type.foo': 'foo' } });
+            expect(languageSchema.describe().options).to.equal({ language: { 'type.foo': 'foo' } });
 
             const normalOptionSchema = baseSchema.options({ abortEarly: true });
             expect(normalOptionSchema.describe().options).to.equal({ abortEarly: true });
@@ -2054,32 +2067,29 @@ describe('any', () => {
             expect(normalOptionsOverLanguageSchema.describe().options).to.equal({
                 abortEarly: true,
                 language: {
-                    type: {
-                        foo: 'foo'
-                    }
+                    'type.foo': 'foo'
                 }
             });
 
-            const languageOptionsOverNormalOptionsSchema = normalOptionSchema.options({ language: { type: { foo: 'foo' } } });
+            const languageOptionsOverNormalOptionsSchema = normalOptionSchema.options({ language: { 'type.foo': 'foo' } });
             expect(languageOptionsOverNormalOptionsSchema.describe().options).to.equal({
                 abortEarly: true,
                 language: {
-                    type: {
-                        foo: 'foo'
-                    }
+                    'type.foo': 'foo'
                 }
             });
 
             const languageOptionsOverLanguageOptionsSchema = languageSchema.options({
                 language: {
-                    type: { bar: 'bar' },
-                    type2: { foo: 'foo' }
+                    'type.bar': 'bar',
+                    'type2.foo': 'foo'
                 }
             });
             expect(languageOptionsOverLanguageOptionsSchema.describe().options).to.equal({
                 language: {
-                    type: { foo: 'foo', bar: 'bar' },
-                    type2: { foo: 'foo' }
+                    'type.foo': 'foo',
+                    'type.bar': 'bar',
+                    'type2.foo': 'foo'
                 }
             });
         });
@@ -2155,6 +2165,10 @@ describe('any', () => {
 
             expect(() => Joi.number().ruleset.min(10).concat(Joi.any().ruleset).rule({})).to.throw('Cannot concatenate onto a schema with open ruleset');
             expect(() => Joi.number().min(10).concat(Joi.number().$.max(11).rule({})).rule({})).to.throw('Cannot apply rules to empty ruleset');
+
+            expect(() => Joi.string().insensitive().rule({})).to.throw('Cannot apply rules to empty ruleset');
+            expect(() => Joi.string().lowercase().insensitive().rule({})).to.throw('Cannot apply rules to empty ruleset');
+            expect(() => Joi.string().$.lowercase().insensitive()).to.throw('Cannot set flag inside a ruleset');
         });
 
         it('handles extension rules', () => {
@@ -2182,6 +2196,58 @@ describe('any', () => {
 
             expect(() => custom.ext().big().rule({})).to.not.throw();
             expect(() => custom.ext().big().rule({}).big()).to.not.throw();
+        });
+
+        describe('message', () => {
+
+            it('overrides message', () => {
+
+                expect(Joi.number().min(10).rule({ message: 'way too small' }).validate(1).error).to.be.an.error('way too small');
+                expect(Joi.number().min(10).rule({ message: { 'number.min': 'way too small' } }).validate(1).error).to.be.an.error('way too small');
+                expect(Joi.number().min(10).rule({ message: { 'number.max': 'way too big' } }).validate(1).error).to.be.an.error('"value" must be larger than or equal to 10');
+            });
+
+            it('overrides ruleset with single message', () => {
+
+                const schema = Joi.number().$.max(100).min(10).rule({ message: 'number out of bound' });
+                expect(schema.validate(1).error).to.be.an.error('number out of bound');
+                expect(schema.validate(101).error).to.be.an.error('number out of bound');
+            });
+
+            it('overrides ruleset messages', () => {
+
+                const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': 'way too big', 'number.min': 'way too small' } });
+                expect(schema.validate(1).error).to.be.an.error('way too small');
+                expect(schema.validate(101).error).to.be.an.error('way too big');
+            });
+
+            it('overrides template', () => {
+
+                expect(Joi.number().min(10).rule({ message: '{{label}} way too small' }).validate(1).error).to.be.an.error('value way too small');
+                expect(Joi.number().min(10).rule({ message: { 'number.min': '{{label}} way too small' } }).validate(1).error).to.be.an.error('value way too small');
+                expect(Joi.number().min(10).rule({ message: { 'number.max': '{{label}} way too big' } }).validate(1).error).to.be.an.error('"value" must be larger than or equal to 10');
+            });
+
+            it('overrides ruleset with single template', () => {
+
+                const schema = Joi.number().$.max(100).min(10).rule({ message: '{{label}} number out of bound' });
+                expect(schema.validate(1).error).to.be.an.error('value number out of bound');
+                expect(schema.validate(101).error).to.be.an.error('value number out of bound');
+            });
+
+            it('overrides ruleset templates', () => {
+
+                const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': '{{label}} way too big', 'number.min': '{{label}} way too small' } });
+                expect(schema.validate(1).error).to.be.an.error('value way too small');
+                expect(schema.validate(101).error).to.be.an.error('value way too big');
+            });
+
+            it('overrides ruleset with both message and template', () => {
+
+                const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': 'way too big', 'number.min': '{{label}} way too small' } });
+                expect(schema.validate(1).error).to.be.an.error('value way too small');
+                expect(schema.validate(101).error).to.be.an.error('way too big');
+            });
         });
     });
 

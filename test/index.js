@@ -3119,7 +3119,7 @@ describe('Joi', () => {
             const customJoi = Joi.extend({
                 name: 'myType',
                 language: {
-                    bar: 'oh no bar !'
+                    'myType.bar': 'oh no bar !'
                 },
                 rules: [
                     {
@@ -3182,7 +3182,7 @@ describe('Joi', () => {
             const customJoi = Joi.extend({
                 name: 'myType',
                 language: {
-                    bar: 'oh no bar !'
+                    'myType.bar': 'oh no bar !'
                 },
                 rules: [
                     {
@@ -3494,9 +3494,7 @@ describe('Joi', () => {
 
             const base = Joi.any().options({
                 language: {
-                    myType: {
-                        foo: 'original'
-                    }
+                    'myType.foo': 'original'
                 }
             });
 
@@ -3504,7 +3502,7 @@ describe('Joi', () => {
                 base,
                 name: 'myType',
                 language: {
-                    foo: 'modified'
+                    'myType.foo': 'modified'
                 },
                 rules: [
                     {
@@ -3518,7 +3516,7 @@ describe('Joi', () => {
             });
 
             // Checks for a language leak in the base
-            expect(base._settings.language.myType.foo).to.equal('original');
+            expect(base._settings.language['myType.foo']).to.equal('original');
 
             const schema = customJoi.myType().foo();
             const result = schema.validate({});
@@ -3536,7 +3534,7 @@ describe('Joi', () => {
                 base,
                 name: 'myType',
                 language: {
-                    foo: 'foo'
+                    'myType.foo': 'foo'
                 },
                 rules: [
                     {
@@ -4078,7 +4076,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    language: { foo: 'foo' },
+                    language: { 'number.foo': 'foo' },
                     rules: [{
                         name: 'foo',
                         validate(params, value, state, options) {
@@ -4090,7 +4088,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    language: { bar: 'bar' },
+                    language: { 'number.bar': 'bar' },
                     rules: [{
                         name: 'bar',
                         validate(params, value, state, options) {
@@ -4108,7 +4106,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    language: { foo: 'foo' },
+                    language: { 'number.foo': 'foo' },
                     rules: [{
                         name: 'foo',
                         validate(params, value, state, options) {
@@ -4148,7 +4146,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    language: { bar: 'bar' },
+                    language: { 'number.bar': 'bar' },
                     rules: [{
                         name: 'bar',
                         validate(params, value, state, options) {

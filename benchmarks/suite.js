@@ -76,7 +76,7 @@ module.exports = [
                 .pattern(/a/, Joi.lazy(() => Joi.any()))
                 .pattern(/b/, Joi.when('a', {
                     is: true,
-                    then: Joi.options({ language: { any: { required: 'oops' } } })
+                    then: Joi.options({ language: { 'any.required': 'oops' } })
                 }))
                 .meta('foo')
                 .strip()

@@ -1,24 +1,22 @@
 'use strict';
 
-// Load modules
-
 const Fs = require('fs');
 const Path = require('path');
+
 const Language = require('../lib/language');
 
-// Declare internals
 
 const internals = {
     API: Fs.readFileSync(Path.join(__dirname, '../API.md'), 'utf8'),
     startString: '<!-- errors -->',
     endString: '<!-- errorsstop -->',
-    ignoredLanguage: ['root', 'key', 'messages'],
-    ignoredCodes: []
+    ignoredCodes: ['root', 'key', 'messages.wrapArrays']
 };
+
 
 internals.parseTitles = function (markdown) {
 
-    const re = /^#### (.*)$/gm;
+    const re = /^#### `(.*)`$/gm;
     const matches = [];
     let match;
     while (match = re.exec(markdown)) {
@@ -28,44 +26,15 @@ internals.parseTitles = function (markdown) {
     return matches;
 };
 
-internals.generateCurrentErrorCodes = function (obj = Language.errors, path = [], result = []) {
-
-    for (const key of Object.keys(obj)) {
-        if (obj === Language.errors) {
-            if (internals.ignoredLanguage.includes(key)) {
-                continue;
-            }
-        }
-
-        const value = obj[key];
-        if (value === null || typeof value === 'string') {
-            const code = '`' + path.concat(key).join('.') + '`';
-            if (!internals.ignoredCodes.includes(code)) {
-                result.push(code);
-            }
-
-            continue;
-        }
-
-        internals.generateCurrentErrorCodes(value, path.concat(key), result);
-    }
-
-    return result;
-};
 
 internals.checkMissing = function (titles) {
 
-    const table = [];
-    const currentCodes = internals.generateCurrentErrorCodes();
-    currentCodes.forEach((code) => {
-
-        if (!titles.includes(code)) {
-            table.push(code);
-        }
-    });
-    table.sort();
-    return table;
+    return Object.keys(Language.errors)
+        .filter((code) => !internals.ignoredCodes.includes(code))
+        .filter((code) => !titles.includes(code))
+        .sort();
 };
+
 
 internals.updateTable = function () {
 
@@ -93,5 +62,6 @@ ${missing.map((m) => `#### ${m}
         process.exit(1);
     }
 };
+
 
 internals.updateTable();
