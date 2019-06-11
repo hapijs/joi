@@ -26,31 +26,35 @@
     - [Examples](#examples)
   - [`any`](#any)
     - [`schemaType`](#schematype)
-    - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
     - [`any.allow(...values)`](#anyallowvalues)
-    - [`any.valid(...values)` - aliases: `only`, `equal`](#anyvalidvalues---aliases-only-equal)
-    - [`any.invalid(...values)` - aliases: `disallow`, `not`](#anyinvalidvalues---aliases-disallow-not)
-    - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
-    - [`any.optional()`](#anyoptional)
-    - [`any.forbidden()`](#anyforbidden)
-    - [`any.strip()`](#anystrip)
-    - [`any.description(desc)`](#anydescriptiondesc)
-    - [`any.notes(notes)`](#anynotesnotes)
-    - [`any.tags(tags)`](#anytagstags)
-    - [`any.meta(meta)`](#anymetameta)
-    - [`any.example(...values)`](#anyexamplevalues)
-    - [`any.unit(name)`](#anyunitname)
-    - [`any.options(options)`](#anyoptionsoptions)
-    - [`any.strict(isStrict)`](#anystrictisstrict)
-    - [`any.default([value, [description]])`](#anydefaultvalue-description)
-    - [`any.failover([value, [description]])`](#anyfailovervalue-description)
     - [`any.concat(schema)`](#anyconcatschema)
-    - [`any.when(condition, options)`](#anywhencondition-options)
-    - [`any.label(name)`](#anylabelname)
-    - [`any.raw(isRaw)`](#anyrawisraw)
+    - [`any.default([value, [description]])`](#anydefaultvalue-description)
+    - [`any.describe()`](#anydescribe)
+    - [`any.description(desc)`](#anydescriptiondesc)
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
-    - [`any.describe()`](#anydescribe)
+    - [`any.example(...values)`](#anyexamplevalues)
+    - [`any.failover([value, [description]])`](#anyfailovervalue-description)
+    - [`any.forbidden()`](#anyforbidden)
+    - [`any.invalid(...values)` - aliases: `disallow`, `not`](#anyinvalidvalues---aliases-disallow-not)
+    - [`any.keep()`](#anykeep)
+    - [`any.label(name)`](#anylabelname)
+    - [`any.message(message)`](#anymessagemessage)
+    - [`any.meta(meta)`](#anymetameta)
+    - [`any.notes(notes)`](#anynotesnotes)
+    - [`any.optional()`](#anyoptional)
+    - [`any.options(options)`](#anyoptionsoptions)
+    - [`any.raw(isRaw)`](#anyrawisraw)
+    - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
+    - [`any.rule(options)`](#anyruleoptions)
+    - [`any.ruleset` - aliases: `$`](#anyruleset---aliases-)
+    - [`any.strict(isStrict)`](#anystrictisstrict)
+    - [`any.strip()`](#anystrip)
+    - [`any.tags(tags)`](#anytagstags)
+    - [`any.unit(name)`](#anyunitname)
+    - [`any.valid(...values)` - aliases: `only`, `equal`](#anyvalidvalues---aliases-only-equal)
+    - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
+    - [`any.when(condition, options)`](#anywhencondition-options)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.sparse([enabled])`](#arraysparseenabled)
     - [`array.single([enabled])`](#arraysingleenabled)
@@ -726,35 +730,6 @@ const schema = Joi.string();
 schema.schemaType === 'string';   // === true
 ```
 
-#### `any.validate(value, [options], [callback])`
-
-Validates a value using the schema and options where:
-- `value` - the value being validated.
-- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
-- `callback` - an optional synchronous callback method using the the same signature as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
-
-```js
-const schema = Joi.object({
-    a: Joi.number()
-});
-
-const value = {
-    a: '123'
-};
-
-schema.validate(value, (err, value) => { });
-// err -> null
-// value.a -> 123 (number, not string)
-
-// or
-const result = schema.validate(value);
-// result.error -> null
-// result.value -> { "a" : 123 }
-
-// or
-const promise = schema.validate(value);
-```
-
 #### `any.allow(...values)`
 
 Allows values where:
@@ -771,162 +746,15 @@ const schema = {
 };
 ```
 
-#### `any.valid(...values)` - aliases: `only`, `equal`
+#### `any.concat(schema)`
 
-Adds the provided values into the allowed whitelist and marks them as the only valid values allowed
-where:
-- `values` - one or more allowed values which can be of any type and will be matched against the
-  validated value before applying any other rules. Supports [references](#refkey-options).
+Returns a new type that is the result of adding the rules of one type to another where:
+- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the context type or `any`. If applied to an `any` type, the schema can be any other schema.
 
 ```js
-const schema = {
-    a: Joi.any().valid('a'),
-    b: Joi.any().valid('b', 'B')
-};
-```
-
-💥 Possible validation errors: [`any.allowOnly`](#anyallowonly)
-
-#### `any.invalid(...values)` - aliases: `disallow`, `not`
-
-Disallows values where:
-- `values` - the forbidden values which can be of any type and will be matched against the
-  validated value before applying any other rules. Supports [references](#refkey-options).
-
-```js
-const schema = {
-    a: Joi.any().invalid('a'),
-    b: Joi.any().invalid('b', 'B')
-};
-```
-
-💥 Possible validation errors: [`any.invalid`](#anyinvalid)
-
-#### `any.required()` - aliases: `exist`
-
-Marks a key as required which will not allow `undefined` as value. All keys are optional by default.
-
-```js
-const schema = Joi.any().required();
-```
-
-💥 Possible validation errors: [`any.required`](#anyrequired)
-
-#### `any.optional()`
-
-Marks a key as optional which will allow `undefined` as values. Used to annotate the schema for readability as all keys are optional by default.
-
-Note: this does not allow a `null` value. To do that, use [`any.allow(value)`](#anyallowvalue). Or both!
-
-```js
-const schema = Joi.any().optional();
-```
-
-#### `any.forbidden()`
-
-Marks a key as forbidden which will not allow any value except `undefined`. Used to explicitly forbid keys.
-
-```js
-const schema = {
-    a: Joi.any().forbidden()
-};
-```
-
-💥 Possible validation errors: [`any.unknown`](#anyunknown)
-
-#### `any.strip()`
-
-Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
-
-```js
-const schema = Joi.object({
-    username: Joi.string(),
-    password: Joi.string().strip()
-});
-
-schema.validate({ username: 'test', password: 'hunter2' }, (err, value) => {
-    // value = { username: 'test' }
-});
-
-const schema = Joi.array().items(Joi.string(), Joi.any().strip());
-
-schema.validate(['one', 'two', true, false, 1, 2], (err, value) => {
-    // value = ['one', 'two']
-});
-```
-
-#### `any.description(desc)`
-
-Annotates the key where:
-- `desc` - the description string.
-
-```js
-const schema = Joi.any().description('this key will match anything you give it');
-```
-
-#### `any.notes(notes)`
-
-Annotates the key where:
-- `notes` - the notes string or array of strings.
-
-```js
-const schema = Joi.any().notes(['this is special', 'this is important']);
-```
-
-#### `any.tags(tags)`
-
-Annotates the key where:
-- `tags` - the tag string or array of strings.
-
-```js
-const schema = Joi.any().tags(['api', 'user']);
-```
-
-#### `any.meta(meta)`
-
-Attaches metadata to the key where:
-- `meta` - the meta object to attach.
-
-```js
-const schema = Joi.any().meta({ index: true });
-```
-
-#### `any.example(...values)`
-
-Adds examples to the schema where:
-- `values` - each argument is an example value.
-
-Note that no validation is performed on the provided examples. Calling this function again will override the previous examples.
-
-```js
-const schema = Joi.string().min(4).example('abcd');
-```
-
-#### `any.unit(name)`
-
-Annotates the key where:
-- `name` - the unit name of the value.
-
-```js
-const schema = Joi.number().unit('milliseconds');
-```
-
-#### `any.options(options)`
-
-Overrides the global `validate()` options for the current key and any sub-key where:
-- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
-
-```js
-const schema = Joi.any().options({ convert: false });
-```
-
-#### `any.strict(isStrict)`
-
-Strict mode sets the `options.convert` options to `false` which prevent type casting for the current key and any child keys.
-- `isStrict` - whether strict mode is enabled or not. Defaults to true.
-
-```js
-const schema = Joi.any().strict();
+const a = Joi.string().valid('a');
+const b = Joi.string().valid('b');
+const ab = a.concat(b);
 ```
 
 #### `any.default([value, [description]])`
@@ -972,6 +800,90 @@ Joi.validate({
 
 💥 Possible validation errors: [`any.default`](#anydefault)
 
+#### `any.describe()`
+
+Behaves the same as [`describe(schema)`](#describeschema) and returns an object that represents the internal configuration of the **joi** schema.
+
+```js
+const schema = Joi.any().valid([ 'foo', 'bar' ]);
+
+console.log(schema.describe());
+```
+
+Results in:
+
+```
+{ type: 'any',
+  flags: { allowOnly: true },
+  valids: [ 'foo', 'bar' ] }
+```
+
+#### `any.description(desc)`
+
+Annotates the key where:
+- `desc` - the description string.
+
+```js
+const schema = Joi.any().description('this key will match anything you give it');
+```
+
+#### `any.empty(schema)`
+
+Considers anything that matches the schema to be empty (`undefined`).
+- `schema` - any object or joi schema to match. An undefined schema unsets that rule.
+
+```js
+let schema = Joi.string().empty('');
+schema.validate(''); // returns { error: null, value: undefined }
+schema = schema.empty();
+schema.validate(''); // returns { error: "value" is not allowed to be empty, value: '' }
+```
+
+#### `any.error(err)`
+
+Overrides the default joi error with a custom error if the rule fails where:
+- `err` can be:
+  - an instance of `Error` - the override error.
+  - a function with the signature `function(errors)`, where `errors` is an array of errors and it returns a single `Error`.
+
+Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any
+of the normal error properties. If validation fails and another error is found before the error
+override, that error will be returned and the override will be ignored (unless the `abortEarly`
+option has been set to `false`).
+
+```js
+const schema = Joi.string().error(new Error('Was REALLY expecting a string'));
+schema.validate(3);     // returns error.message === 'Was REALLY expecting a string'
+```
+
+```js
+const schema = Joi.object({
+    foo: Joi.number().min(0).error((errors) => new Error('"foo" requires a positive number'))
+});
+schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a positive number'
+```
+
+```js
+const schema = Joi.object({
+    foo: Joi.number().min(0).error((errors) => {
+
+        return new Error('found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and '));
+    })
+});
+schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
+```
+
+#### `any.example(...values)`
+
+Adds examples to the schema where:
+- `values` - each argument is an example value.
+
+Note that no validation is performed on the provided examples. Calling this function again will override the previous examples.
+
+```js
+const schema = Joi.string().min(4).example('abcd');
+```
+
 #### `any.failover([value, [description]])`
 
 Sets a failover value if the original value failes passing validation where:
@@ -994,15 +906,239 @@ or the second parameter is required.
 
 💥 Possible validation errors: [`any.failover`](#anyfailover)
 
-#### `any.concat(schema)`
+#### `any.forbidden()`
 
-Returns a new type that is the result of adding the rules of one type to another where:
-- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the context type or `any`. If applied to an `any` type, the schema can be any other schema.
+Marks a key as forbidden which will not allow any value except `undefined`. Used to explicitly forbid keys.
 
 ```js
-const a = Joi.string().valid('a');
-const b = Joi.string().valid('b');
-const ab = a.concat(b);
+const schema = {
+    a: Joi.any().forbidden()
+};
+```
+
+💥 Possible validation errors: [`any.unknown`](#anyunknown)
+
+#### `any.invalid(...values)` - aliases: `disallow`, `not`
+
+Disallows values where:
+- `values` - the forbidden values which can be of any type and will be matched against the
+  validated value before applying any other rules. Supports [references](#refkey-options).
+
+```js
+const schema = {
+    a: Joi.any().invalid('a'),
+    b: Joi.any().invalid('b', 'B')
+};
+```
+
+💥 Possible validation errors: [`any.invalid`](#anyinvalid)
+
+#### `any.keep()`
+
+Same as [`rule({ keep: true })`](#anyruleoptions).
+
+Note that `keep()` will terminate the current ruleset and cannot be followed by another
+rule option. Use [`rule()`](#anyruleoptions) to apply multiple rule options.
+
+#### `any.label(name)`
+
+Overrides the key name in error messages.
+- `name` - the name of the key.
+
+```js
+const schema = {
+    first_name: Joi.string().label('First Name')
+};
+```
+
+#### `any.message(message)`
+
+Same as [`rule({ message })`](#anyruleoptions).
+
+Note that `message()` will terminate the current ruleset and cannot be followed by another
+rule option. Use [`rule()`](#anyruleoptions) to apply multiple rule options.
+
+#### `any.meta(meta)`
+
+Attaches metadata to the key where:
+- `meta` - the meta object to attach.
+
+```js
+const schema = Joi.any().meta({ index: true });
+```
+
+#### `any.notes(notes)`
+
+Annotates the key where:
+- `notes` - the notes string or array of strings.
+
+```js
+const schema = Joi.any().notes(['this is special', 'this is important']);
+```
+
+#### `any.optional()`
+
+Marks a key as optional which will allow `undefined` as values. Used to annotate the schema for readability as all keys are optional by default.
+
+Note: this does not allow a `null` value. To do that, use [`any.allow(value)`](#anyallowvalue). Or both!
+
+```js
+const schema = Joi.any().optional();
+```
+
+#### `any.options(options)`
+
+Overrides the global `validate()` options for the current key and any sub-key where:
+- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+
+```js
+const schema = Joi.any().options({ convert: false });
+```
+
+#### `any.raw(isRaw)`
+
+Outputs the original untouched value instead of the casted value.
+- `isRaw` - whether to enable raw mode or not. Defaults to true.
+
+```js
+const timestampSchema = Joi.date().timestamp();
+timestampSchema.validate('12376834097810'); // { error: null, value: Sat Mar 17 2362 04:28:17 GMT-0500 (CDT) }
+
+const rawTimestampSchema = Joi.date().timestamp().raw();
+rawTimestampSchema.validate('12376834097810'); // { error: null, value: '12376834097810' }
+```
+
+#### `any.required()` - aliases: `exist`
+
+Marks a key as required which will not allow `undefined` as value. All keys are optional by default.
+
+```js
+const schema = Joi.any().required();
+```
+
+💥 Possible validation errors: [`any.required`](#anyrequired)
+
+
+#### `any.rule(options)`
+
+Applies a set of rule options to the current ruleset or last rule added where:
+- `options` - the rules to apply where:
+  - `keep` - if `true`, the rules will not be replaced by the same unqiue rule later. For example,
+    `Joi.number().min(1).rule({ keep: true }).min(2)` will keep both `min()` rules instead of the later
+    rule overriding the first. Defaults to `false`.
+  - `message` - a single message string or a `language` object where each key is an error code and
+    corresponding message string as value. The `language` object is the same as the one used as an
+    option in [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+    The strings can be plain messages or a message template.
+
+When applying rule options, the last rule (e.g. `min()`) is used unless there is an active ruleset defined
+(e.g. `$.min().max()`) in which case the options are applied to all the provided rules. Once `rules()` is
+called, the previous rules can no longer be modified and any active ruleset is terminated.
+
+#### `any.ruleset` - aliases: `$`
+
+Starts a ruleset in order to apply multiple [rule options](#anyruleoptions). The set ends when
+[`rule()`](#anyruleoptions) is called.
+
+```js
+const schema = Joi.number().ruleset.min(1).max(10).rule({ message: 'Number must be between 1 and 10' });
+```
+
+```js
+const schema = Joi.number().$.min(1).max(10).rule({ message: 'Number must be between 1 and 10' });
+```
+
+#### `any.strict(isStrict)`
+
+Strict mode sets the `options.convert` options to `false` which prevent type casting for the current key and any child keys.
+- `isStrict` - whether strict mode is enabled or not. Defaults to true.
+
+```js
+const schema = Joi.any().strict();
+```
+
+#### `any.strip()`
+
+Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
+
+```js
+const schema = Joi.object({
+    username: Joi.string(),
+    password: Joi.string().strip()
+});
+
+schema.validate({ username: 'test', password: 'hunter2' }, (err, value) => {
+    // value = { username: 'test' }
+});
+
+const schema = Joi.array().items(Joi.string(), Joi.any().strip());
+
+schema.validate(['one', 'two', true, false, 1, 2], (err, value) => {
+    // value = ['one', 'two']
+});
+```
+
+#### `any.tags(tags)`
+
+Annotates the key where:
+- `tags` - the tag string or array of strings.
+
+```js
+const schema = Joi.any().tags(['api', 'user']);
+```
+
+#### `any.unit(name)`
+
+Annotates the key where:
+- `name` - the unit name of the value.
+
+```js
+const schema = Joi.number().unit('milliseconds');
+```
+
+#### `any.valid(...values)` - aliases: `only`, `equal`
+
+Adds the provided values into the allowed whitelist and marks them as the only valid values allowed
+where:
+- `values` - one or more allowed values which can be of any type and will be matched against the
+  validated value before applying any other rules. Supports [references](#refkey-options).
+
+```js
+const schema = {
+    a: Joi.any().valid('a'),
+    b: Joi.any().valid('b', 'B')
+};
+```
+
+💥 Possible validation errors: [`any.allowOnly`](#anyallowonly)
+
+#### `any.validate(value, [options], [callback])`
+
+Validates a value using the schema and options where:
+- `value` - the value being validated.
+- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+- `callback` - an optional synchronous callback method using the the same signature as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+
+```js
+const schema = Joi.object({
+    a: Joi.number()
+});
+
+const value = {
+    a: '123'
+};
+
+schema.validate(value, (err, value) => { });
+// err -> null
+// value.a -> 123 (number, not string)
+
+// or
+const result = schema.validate(value);
+// result.error -> null
+// result.value -> { "a" : 123 }
+
+// or
+const promise = schema.validate(value);
 ```
 
 #### `any.when(condition, options)`
@@ -1116,94 +1252,6 @@ const schema = Joi.object().keys({
         then: Joi.number().greater(Joi.ref('min')),
     }),
 });
-```
-
-#### `any.label(name)`
-
-Overrides the key name in error messages.
-- `name` - the name of the key.
-
-```js
-const schema = {
-    first_name: Joi.string().label('First Name')
-};
-```
-
-#### `any.raw(isRaw)`
-
-Outputs the original untouched value instead of the casted value.
-- `isRaw` - whether to enable raw mode or not. Defaults to true.
-
-```js
-const timestampSchema = Joi.date().timestamp();
-timestampSchema.validate('12376834097810'); // { error: null, value: Sat Mar 17 2362 04:28:17 GMT-0500 (CDT) }
-
-const rawTimestampSchema = Joi.date().timestamp().raw();
-rawTimestampSchema.validate('12376834097810'); // { error: null, value: '12376834097810' }
-```
-
-#### `any.empty(schema)`
-
-Considers anything that matches the schema to be empty (`undefined`).
-- `schema` - any object or joi schema to match. An undefined schema unsets that rule.
-
-```js
-let schema = Joi.string().empty('');
-schema.validate(''); // returns { error: null, value: undefined }
-schema = schema.empty();
-schema.validate(''); // returns { error: "value" is not allowed to be empty, value: '' }
-```
-
-#### `any.error(err)`
-
-Overrides the default joi error with a custom error if the rule fails where:
-- `err` can be:
-  - an instance of `Error` - the override error.
-  - a function with the signature `function(errors)`, where `errors` is an array of errors and it returns a single `Error`.
-
-Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any
-of the normal error properties. If validation fails and another error is found before the error
-override, that error will be returned and the override will be ignored (unless the `abortEarly`
-option has been set to `false`).
-
-```js
-const schema = Joi.string().error(new Error('Was REALLY expecting a string'));
-schema.validate(3);     // returns error.message === 'Was REALLY expecting a string'
-```
-
-```js
-const schema = Joi.object({
-    foo: Joi.number().min(0).error((errors) => new Error('"foo" requires a positive number'))
-});
-schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a positive number'
-```
-
-```js
-const schema = Joi.object({
-    foo: Joi.number().min(0).error((errors) => {
-
-        return new Error('found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and '));
-    })
-});
-schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
-```
-
-#### `any.describe()`
-
-Behaves the same as [`describe(schema)`](#describeschema) and returns an object that represents the internal configuration of the **joi** schema.
-
-```js
-const schema = Joi.any().valid([ 'foo', 'bar' ]);
-
-console.log(schema.describe());
-```
-
-Results in:
-
-```
-{ type: 'any',
-  flags: { allowOnly: true },
-  valids: [ 'foo', 'bar' ] }
 ```
 
 ### `array` - inherits from `Any`
