@@ -76,7 +76,7 @@ describe('errors', () => {
                 message: '"email" 19',
                 path: ['email'],
                 type: 'string.email',
-                context: { value: 'invalid-email', label: 'email', key: 'email' }
+                context: { value: 'invalid-email', invalids: ['invalid-email'], label: 'email', key: 'email' }
             },
             {
                 message: '"date" 18',

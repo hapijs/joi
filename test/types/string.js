@@ -835,15 +835,6 @@ describe('string', () => {
 
     describe('email()', () => {
 
-        it('validates unsupported options', () => {
-
-            expect(() => Joi.string().email({ checkDNS: true })).to.throw('checkDNS option is not supported');
-            expect(() => Joi.string().email({ errorLevel: 1 })).to.throw('errorLevel option is not supported');
-            expect(() => Joi.string().email({ minDomainAtoms: 1 })).to.throw('minDomainAtoms option is not supported, use minDomainSegments instead');
-            expect(() => Joi.string().email({ tldWhitelist: ['com'] })).to.throw('tldWhitelist option is not supported, use tlds.allow instead');
-            expect(() => Joi.string().email({ tldBlacklist: ['com'] })).to.throw('tldBlacklist option is not supported, use tlds.deny instead');
-        });
-
         it('validates options', () => {
 
             expect(() => Joi.string().email({})).to.not.throw();
@@ -889,7 +880,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: '"joe"@example.com', label: 'value' }
+                        context: { value: '"joe"@example.com', invalids: ['"joe"@example.com'], label: 'value' }
                     }]
                 }],
                 ['example@io', false, null, {
@@ -898,7 +889,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'example@io', label: 'value' }
+                        context: { value: 'example@io', invalids: ['example@io'], label: 'value' }
                     }]
                 }],
                 ['@iaminvalid.com', false, null, {
@@ -907,7 +898,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: '@iaminvalid.com', label: 'value' }
+                        context: { value: '@iaminvalid.com', invalids: ['@iaminvalid.com'], label: 'value' }
                     }]
                 }],
                 ['joe@[IPv6:2a00:1450:4001:c02::1b]', false, null, {
@@ -916,7 +907,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'joe@[IPv6:2a00:1450:4001:c02::1b]', label: 'value' }
+                        context: { value: 'joe@[IPv6:2a00:1450:4001:c02::1b]', invalids: ['joe@[IPv6:2a00:1450:4001:c02::1b]'], label: 'value' }
                     }]
                 }],
                 ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false, null, {
@@ -925,7 +916,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: '12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', label: 'value' }
+                        context: { value: '12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', invalids: ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com'], label: 'value' }
                     }]
                 }],
                 ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', false, null, {
@@ -934,7 +925,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: '123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', label: 'value' }
+                        context: { value: '123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', invalids: ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com'], label: 'value' }
                     }]
                 }]
             ]);
@@ -952,7 +943,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'joe@example.edu', label: 'value' }
+                        context: { value: 'joe@example.edu', invalids: ['joe@example.edu'], label: 'value' }
                     }]
                 }]
             ]);
@@ -968,7 +959,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'joe@example.com', label: 'value' }
+                        context: { value: 'joe@example.com', invalids: ['joe@example.com'], label: 'value' }
                     }]
                 }],
                 ['joe@www.example.com', false, null, {
@@ -977,7 +968,7 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'joe@www.example.com', label: 'value' }
+                        context: { value: 'joe@www.example.com', invalids: ['joe@www.example.com'], label: 'value' }
                     }]
                 }],
                 ['joe@sub.www.example.com', true]
@@ -998,7 +989,27 @@ describe('string', () => {
                         message: '"value" must be a valid email',
                         path: [],
                         type: 'string.email',
-                        context: { value: 'joe@example, joe@com', label: 'value', key: undefined }
+                        context: { value: 'joe@example.com, joe@example, joe@example.org, joe@com', invalids: ['joe@example', 'joe@com'], label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates email with multiple (separator)', () => {
+
+            const schema = Joi.string().email({ multiple: true, separator: ';' });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@example.com; joe@example.org; joe@example.com', true],
+                ['joe@example.com ; joe@example.org ;joe@example.com', true],
+                ['joe@example.com  ; joe@example.org ;  joe@example.com', true],
+                ['joe@example.com; joe@example; joe@example.org; joe@com', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe@example.com; joe@example; joe@example.org; joe@com', invalids: ['joe@example', 'joe@com'], label: 'value' }
                     }]
                 }]
             ]);
@@ -1013,7 +1024,7 @@ describe('string', () => {
                 message: '"item" must be a valid email',
                 path: ['item'],
                 type: 'string.email',
-                context: { value: 'something', label: 'item', key: 'item' }
+                context: { value: 'something', invalids: ['something'], label: 'item', key: 'item' }
             }]);
         });
     });

@@ -1743,7 +1743,7 @@ describe('any', () => {
                 message: '"Custom label" must be a valid email',
                 path: ['b'],
                 type: 'string.email',
-                context: { value: 'not_a_valid_email', label: 'Custom label', key: 'b' }
+                context: { value: 'not_a_valid_email', invalids: ['not_a_valid_email'], label: 'Custom label', key: 'b' }
             });
         });
 

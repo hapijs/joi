@@ -2452,6 +2452,7 @@ describe('Joi', () => {
         const schema = Joi.object({
             sub: {
                 email: Joi.string().email(),
+                domain: Joi.string().domain(),
                 date: Joi.date(),
                 child: Joi.object({
                     alphanum: Joi.string().alphanum()
@@ -2482,7 +2483,12 @@ describe('Joi', () => {
                         email: {
                             type: 'string',
                             invalids: [''],
-                            rules: [{ name: 'email' }]
+                            rules: [{ name: 'email', arg: {} }]
+                        },
+                        domain: {
+                            type: 'string',
+                            invalids: [''],
+                            rules: [{ name: 'domain' }]
                         },
                         date: {
                             type: 'date'

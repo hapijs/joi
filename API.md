@@ -2550,6 +2550,10 @@ Requires the string value to be a valid email address.
     - `minDomainSegments` - Number of segments required for the domain. The default setting excludes
       single segment domains such as `example@io` which is a valid email but very uncommon. Defaults
       to `2`.
+    - `multiple` - if `true`, allows multiple email addresses in a single string, separated by `,`
+      or the `separator` characters. Defaults to `false`.
+    - `separator` - when `multiple` is `true`, overrides the default `,` separator. String can be
+      a single character or multiple separator characters. Defaults to `','`.
     - `tlds` - options for TLD (top level domain) validation. By default, the TLD must be a valid
       name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt). To
       disable validation, set `tlds` to `false`. To customize how TLDs are validated, set one of
