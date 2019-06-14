@@ -173,6 +173,14 @@ describe('number', () => {
             ]);
         });
 
+        it('should return true for decimal numbers', () => {
+
+            const t = Joi.number();
+            Helper.validate(t, [
+                [0.00000001, true, null, 0.00000001]
+            ]);
+        });
+
         it('can accept string numbers', () => {
 
             const t = Joi.number();
@@ -195,6 +203,7 @@ describe('number', () => {
                 ['-00100e-003', true, null, -0.1],
                 ['-001231.0133210e003', true, null, -1231013.321],
                 ['+001231.0133210e003', true, null, 1231013.321],
+                ['0.00000095', true, null, 0.00000095],
                 ['.5', true, null, 0.5],
                 ['1 some text', false, null, {
                     message: '"value" must be a number',
