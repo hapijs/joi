@@ -846,6 +846,7 @@ describe('string', () => {
 
         it('validates options', () => {
 
+            expect(() => Joi.string().email({})).to.not.throw();
             expect(() => Joi.string().email({ minDomainSegments: 1 })).to.not.throw();
             expect(() => Joi.string().email({ minDomainSegments: '1' })).to.throw('minDomainSegments must be a positive integer');
             expect(() => Joi.string().email({ minDomainSegments: 0 })).to.throw('minDomainSegments must be a positive integer');
@@ -869,6 +870,11 @@ describe('string', () => {
             expect(() => Joi.string().email({ tlds: { deny: false } })).to.throw('tlds.deny must be an array or Set');
             expect(() => Joi.string().email({ tlds: { deny: 'com' } })).to.throw('tlds.deny must be an array or Set');
             expect(() => Joi.string().email({ tlds: { deny: { com: true } } })).to.throw('tlds.deny must be an array or Set');
+
+            expect(() => Joi.string().email({ multiple: true })).to.not.throw();
+            expect(() => Joi.string().email({ multiple: false })).to.not.throw();
+            expect(() => Joi.string().email({ multiple: {} })).to.throw('multiple option must be an boolean');
+            expect(() => Joi.string().email({ multiple: 'abc' })).to.throw('multiple option must be an boolean');
         });
 
         it('validates email', () => {
@@ -975,6 +981,26 @@ describe('string', () => {
                     }]
                 }],
                 ['joe@sub.www.example.com', true]
+            ]);
+        });
+
+        it('validates email with multiple', () => {
+
+            const schema = Joi.string().email({ multiple: true });
+            Helper.validate(schema, [
+                ['joe@example.com', true],
+                ['joe@example.com, joe@example.org, joe@example.com', true],
+                ['joe@example.com , joe@example.org ,joe@example.com', true],
+                ['joe@example.com  , joe@example.org ,  joe@example.com', true],
+                ['joe@example.com, joe@example, joe@example.org, joe@com', false, null, {
+                    message: '"value" must be a valid email',
+                    details: [{
+                        message: '"value" must be a valid email',
+                        path: [],
+                        type: 'string.email',
+                        context: { value: 'joe@example, joe@com', label: 'value', key: undefined }
+                    }]
+                }]
             ]);
         });
 
