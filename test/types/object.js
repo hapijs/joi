@@ -722,13 +722,14 @@ describe('object', () => {
 
     it('should be able to use rename safely with a fake hasOwnProperty', async () => {
 
-        const input = { a: 1, hasOwnProperty: 'foo' };
-        const schema = Joi.object().rename('b', 'a');
+        const schema = Joi.object()
+            .rename('b', 'a');
 
-        const err = await expect(Joi.validate(input, schema)).to.reject();
-        expect(err).to.be.an.error('"value" cannot rename child "b" because override is disabled and target "a" exists');
+        const input = { b: 2, a: 1, hasOwnProperty: 'foo' };
+
+        const err = await expect(Joi.validate(input, schema)).to.reject('"value" cannot rename "b" because override is disabled and target "a" exists');
         expect(err.details).to.equal([{
-            message: '"value" cannot rename child "b" because override is disabled and target "a" exists',
+            message: '"value" cannot rename "b" because override is disabled and target "a" exists',
             path: [],
             type: 'object.rename.override',
             context: { from: 'b', to: 'a', label: 'value' }
@@ -1093,6 +1094,268 @@ describe('object', () => {
 
     describe('rename()', () => {
 
+        it('allows renaming multiple times with multiple enabled', async () => {
+
+            const schema = Joi.object({
+                test: Joi.string()
+            }).rename('test1', 'test').rename('test2', 'test', { multiple: true });
+
+            await Joi.compile(schema).validate({ test1: 'a', test2: 'b' });
+        });
+
+        it('errors renaming multiple times with multiple disabled', async () => {
+
+            const schema = Joi.object({
+                test: Joi.string()
+            }).rename('test1', 'test').rename('test2', 'test');
+
+            const err = await expect(Joi.compile(schema).validate({ test1: 'a', test2: 'b' })).to.reject();
+            expect(err).to.be.an.error('"value" cannot rename "test2" because multiple renames are disabled and another key was already renamed to "test"');
+            expect(err.details).to.equal([{
+                message: '"value" cannot rename "test2" because multiple renames are disabled and another key was already renamed to "test"',
+                path: [],
+                type: 'object.rename.multiple',
+                context: { from: 'test2', to: 'test', label: 'value' }
+            }]);
+        });
+
+        it('errors multiple times when abortEarly is false', async () => {
+
+            const schema = Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').options({ abortEarly: false });
+            const err = await expect(schema.validate({ a: 1, c: 1, d: 1 })).to.reject();
+            expect(err).to.be.an.error('"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"');
+            expect(err.details).to.equal([
+                {
+                    message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
+                    path: [],
+                    type: 'object.rename.multiple',
+                    context: { from: 'c', to: 'b', label: 'value' }
+                },
+                {
+                    message: '"value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"',
+                    path: [],
+                    type: 'object.rename.multiple',
+                    context: { from: 'd', to: 'b', label: 'value' }
+                }
+            ]);
+        });
+
+        it('aliases a key', async () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.number()
+            }).rename('a', 'b', { alias: true });
+
+            const obj = { a: 10 };
+
+            const value = await Joi.compile(schema).validate(obj);
+            expect(value.a).to.equal(10);
+            expect(value.b).to.equal(10);
+        });
+
+        it('with override disabled should not allow overwriting existing value', async () => {
+
+            const schema = Joi.object({
+                test1: Joi.string()
+            }).rename('test', 'test1');
+
+            const err = await expect(schema.validate({ test: 'b', test1: 'a' })).to.reject();
+            expect(err).to.be.an.error('"value" cannot rename "test" because override is disabled and target "test1" exists');
+            expect(err.details).to.equal([{
+                message: '"value" cannot rename "test" because override is disabled and target "test1" exists',
+                path: [],
+                type: 'object.rename.override',
+                context: { from: 'test', to: 'test1', label: 'value' }
+            }]);
+        });
+
+        it('with override enabled should allow overwriting existing value', async () => {
+
+            const schema = Joi.object({
+                test1: Joi.string()
+            }).rename('test', 'test1', { override: true });
+
+            await schema.validate({ test: 'b', test1: 'a' });
+        });
+
+        it('renames when data is nested in an array via items', async () => {
+
+            const schema = {
+                arr: Joi.array().items(Joi.object({
+                    one: Joi.string(),
+                    two: Joi.string()
+                }).rename('uno', 'one').rename('dos', 'two'))
+            };
+
+            const data = { arr: [{ uno: '1', dos: '2' }] };
+            const value = await Joi.object(schema).validate(data);
+            expect(value.arr[0].one).to.equal('1');
+            expect(value.arr[0].two).to.equal('2');
+        });
+
+        it('applies rename and validation in the correct order regardless of key order', async () => {
+
+            const schema1 = Joi.object({
+                a: Joi.number()
+            }).rename('b', 'a');
+
+            const input1 = { b: '5' };
+
+            const value1 = await schema1.validate(input1);
+            expect(value1.b).to.not.exist();
+            expect(value1.a).to.equal(5);
+
+            const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
+            const input2 = { b: '5' };
+
+            const value2 = await schema2.validate(input2);
+            expect(value2.b).to.not.exist();
+            expect(value2.a).to.equal(5);
+        });
+
+        it('sets the default value after key is renamed', async () => {
+
+            const schema = Joi.object({
+                foo2: Joi.string().default('test')
+            }).rename('foo', 'foo2');
+
+            const input = {};
+
+            const value = await Joi.validate(input, schema);
+            expect(value.foo2).to.equal('test');
+        });
+
+        it('renames keys that are empty strings', async () => {
+
+            const schema = Joi.object().rename('', 'notEmpty');
+            const input = {
+                '': 'something'
+            };
+
+            const value = await schema.validate(input);
+            expect(value['']).to.not.exist();
+            expect(value.notEmpty).to.equal('something');
+        });
+
+        it('should not create new keys when the key in question does not exist', async () => {
+
+            const schema = Joi.object()
+                .rename('b', '_b');
+
+            const input = {
+                a: 'something'
+            };
+
+            const value = await schema.validate(input);
+            expect(value).to.to.equal(input);
+        });
+
+        it('ignores a key with ignoredUndefined if from does not exist', async () => {
+
+            const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true });
+
+            const input = {
+                a: 'something'
+            };
+
+            const value = await schema.validate(input);
+            expect(value).to.equal({ a: 'something' });
+        });
+
+        it('deletes a key with override and ignoredUndefined if from exists', async () => {
+
+            const schema = Joi.object()
+                .rename('b', 'a', { ignoreUndefined: true, override: true });
+
+            const input = {
+                a: 'something',
+                b: 'something else'
+            };
+
+            const value = await schema.validate(input);
+            expect(value).to.equal({ a: 'something else' });
+        });
+
+        it('deletes a key with override if present and undefined', async () => {
+
+            const schema = Joi.object()
+                .rename('b', 'a', { override: true });
+
+            const input = {
+                a: 'something',
+                b: undefined
+            };
+
+            const value = await schema.validate(input);
+            expect(value).to.equal({});
+        });
+
+        it('leaves target if source is present and undefined and ignoreUndefined is set', async () => {
+
+            const schema = Joi.object()
+                .rename('b', 'a', { override: true, ignoreUndefined: true });
+
+            const input = {
+                a: 'something',
+                b: undefined
+            };
+
+            const value = await schema.validate(input);
+            expect(value).to.equal(input);
+        });
+
+        it('should fulfill describe() with defaults', () => {
+
+            const schema = Joi.object().rename('b', 'a');
+            const desc = schema.describe();
+
+            expect(desc).to.equal({
+                type: 'object',
+                renames: [{
+                    from: 'b',
+                    to: 'a',
+                    options: {
+                        alias: false,
+                        multiple: false,
+                        override: false
+                    }
+                }]
+            });
+        });
+
+        it('should fulfill describe() with non-defaults', () => {
+
+            const schema = Joi.object().rename('b', 'a', { alias: true, multiple: true, override: true });
+            const desc = schema.describe();
+
+            expect(desc).to.equal({
+                type: 'object',
+                renames: [{
+                    from: 'b',
+                    to: 'a',
+                    options: {
+                        alias: true,
+                        multiple: true,
+                        override: true
+                    }
+                }]
+            });
+        });
+
+        it('should leave key if from does not exist regardless of override', async () => {
+
+            const schema = Joi.object()
+                .rename('b', 'a', { override: true });
+
+            const input = {
+                a: 'something'
+            };
+
+            const value = await schema.validate(input);
+            expect(value).to.equal(input);
+        });
+
         describe('using regex', () => {
 
             it('renames using a regular expression', async () => {
@@ -1123,20 +1386,38 @@ describe('object', () => {
                 expect(value.c).to.equal(50);
             });
 
+            it('deletes a key with override if present and undefined', async () => {
+
+                const schema = Joi.object()
+                    .rename(/b/, 'a', { override: true });
+
+                const input = {
+                    a: 'something',
+                    b: undefined
+                };
+
+                const value = await schema.validate(input);
+                expect(value).to.equal({});
+            });
+
             it('with override disabled it should not allow overwriting existing value', async () => {
 
-                const regex = /^test1$/i;
                 const schema = Joi.object({
                     test1: Joi.string()
-                }).rename(regex, 'test1');
+                })
+                    .rename(/^test1$/i, 'test');
 
-                const err = await expect(Joi.compile(schema).validate({ test: 'b', test1: 'a' })).to.reject();
-                expect(err.message).to.equal('"value" cannot rename children [test1] because override is disabled and target "test1" exists');
+                const item = {
+                    test: 'b',
+                    test1: 'a'
+                };
+
+                const err = await expect(Joi.compile(schema).validate(item)).to.reject('"value" cannot rename "test1" because override is disabled and target "test" exists');
                 expect(err.details).to.equal([{
-                    message: '"value" cannot rename children [test1] because override is disabled and target "test1" exists',
+                    message: '"value" cannot rename "test1" because override is disabled and target "test" exists',
                     path: [],
-                    type: 'object.rename.regex.override',
-                    context: { from: ['test1'], to: 'test1', label: 'value' }
+                    type: 'object.rename.override',
+                    context: { from: 'test1', to: 'test', label: 'value' }
                 }]);
             });
 
@@ -1215,11 +1496,10 @@ describe('object', () => {
                 expect(value.foo2).to.equal('test');
             });
 
-            it('should not create new keys when they key in question does not exist', async () => {
+            it('should not create new keys when the key in question does not exist', async () => {
 
-                const regex = /^b$/i;
-
-                const schema = Joi.object().rename(regex, '_b');
+                const schema = Joi.object()
+                    .rename(/^b$/i, '_b');
 
                 const input = {
                     a: 'something'
@@ -1230,28 +1510,26 @@ describe('object', () => {
                 expect(value.a).to.equal('something');
             });
 
-            it('should remove a key with override if from does not exist', async () => {
+            it('should leave key if from does not exist regardless of override', async () => {
 
-                const regex = /^b$/i;
-
-                const schema = Joi.object().rename(regex, 'a', { override: true });
+                const schema = Joi.object()
+                    .rename(/^b$/i, 'a', { override: true });
 
                 const input = {
                     a: 'something'
                 };
 
                 const value = await schema.validate(input);
-                expect(value).to.equal({});
+                expect(value).to.equal(input);
             });
 
             it('skips when all matches are undefined and ignoredUndefined is true', async () => {
 
-                const regex = /^b$/i;
-
                 const schema = Joi.object().keys({
                     a: Joi.any(),
                     b: Joi.any()
-                }).rename(regex, 'a', { ignoreUndefined: true });
+                })
+                    .rename(/^b$/i, 'a', { ignoreUndefined: true });
 
                 const input = {
                     b: undefined
@@ -1261,31 +1539,13 @@ describe('object', () => {
                 expect(value).to.equal({ b: undefined });
             });
 
-            it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', async () => {
-
-                const regex = /^b$/i;
+            it('deletes a key with override and ignoredUndefined if from exists', async () => {
 
                 const schema = Joi.object().keys({
                     c: Joi.any(),
                     a: Joi.any()
-                }).rename(regex, 'a', { ignoreUndefined: true, override: true });
-
-                const input = {
-                    a: 'something'
-                };
-
-                const value = await schema.validate(input);
-                expect(value).to.equal({ a: 'something' });
-            });
-
-            it('should delete a key with override and ignoredUndefined if from exists', async () => {
-
-                const regex = /^b$/i;
-
-                const schema = Joi.object().keys({
-                    c: Joi.any(),
-                    a: Joi.any()
-                }).rename(regex, 'a', { ignoreUndefined: true, override: true });
+                })
+                    .rename(/^b$/, 'a', { ignoreUndefined: true, override: true });
 
                 const input = {
                     a: 'something',
@@ -1340,11 +1600,9 @@ describe('object', () => {
 
             it('allows renaming multiple times with multiple enabled', async () => {
 
-                const regex = /foobar/i;
-
                 const schema = Joi.object({
                     fooBar: Joi.string()
-                }).rename(regex, 'fooBar', { multiple: true });
+                }).rename(/foobar/i, 'fooBar', { multiple: true });
 
                 const value = await Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' });
                 expect(value.fooBar).to.equal('b');
@@ -1352,39 +1610,39 @@ describe('object', () => {
 
             it('errors renaming multiple times with multiple disabled', async () => {
 
-                const regex = /foobar/i;
-
                 const schema = Joi.object({
                     fooBar: Joi.string()
-                }).rename(regex, 'fooBar').rename(/foobar/i, 'fooBar');
+                })
+                    .rename(/foobar/i, 'fooBar')
+                    .rename(/foobar/i, 'fooBar');
 
                 const err = await expect(Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' })).to.reject();
-                expect(err.message).to.equal('"value" cannot rename children [fooBar] because multiple renames are disabled and another key was already renamed to "fooBar"');
+                expect(err.message).to.equal('"value" cannot rename "FooBar" because multiple renames are disabled and another key was already renamed to "fooBar"');
                 expect(err.details).to.equal([{
-                    message: '"value" cannot rename children [fooBar] because multiple renames are disabled and another key was already renamed to "fooBar"',
+                    message: '"value" cannot rename "FooBar" because multiple renames are disabled and another key was already renamed to "fooBar"',
                     path: [],
-                    type: 'object.rename.regex.multiple',
-                    context: { from: ['fooBar'], to: 'fooBar', label: 'value' }
+                    type: 'object.rename.multiple',
+                    context: { from: 'FooBar', to: 'fooBar', label: 'value' }
                 }]);
             });
 
             it('errors multiple times when abortEarly is false', async () => {
 
-                const schema = Joi.object().keys({ z: Joi.string() }).rename(/a/i, 'b').rename(/c/i, 'b').rename(/z/i, 'z').options({ abortEarly: false });
-                const err = await expect(schema.validate({ a: 1, c: 1, d: 1, z: 1 })).to.reject();
-                expect(err.message).to.equal('"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename children [z] because override is disabled and target "z" exists. "z" must be a string. "d" is not allowed. "b" is not allowed');
+                const schema = Joi.object({
+                    z: Joi.string()
+                })
+                    .rename(/a/i, 'b')
+                    .rename(/c/i, 'b')
+                    .rename(/z/i, 'z')
+                    .options({ abortEarly: false });
+
+                const err = await expect(schema.validate({ a: 1, c: 1, d: 1, z: 1 })).to.reject('"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "z" must be a string. "d" is not allowed. "b" is not allowed');
                 expect(err.details).to.equal([
                     {
-                        message: '"value" cannot rename children [c] because multiple renames are disabled and another key was already renamed to "b"',
+                        message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
                         path: [],
-                        type: 'object.rename.regex.multiple',
-                        context: { from: ['c'], to: 'b', label: 'value' }
-                    },
-                    {
-                        message: '"value" cannot rename children [z] because override is disabled and target "z" exists',
-                        path: [],
-                        type: 'object.rename.regex.override',
-                        context: { from: ['z'], to: 'z', label: 'value' }
+                        type: 'object.rename.multiple',
+                        context: { from: 'c', to: 'b', label: 'value' }
                     },
                     {
                         message: '"z" must be a string',
@@ -1405,264 +1663,6 @@ describe('object', () => {
                         context: { child: 'b', key: 'b', label: 'b', value: 1 }
                     }
                 ]);
-            });
-        });
-
-        it('allows renaming multiple times with multiple enabled', async () => {
-
-            const schema = Joi.object({
-                test: Joi.string()
-            }).rename('test1', 'test').rename('test2', 'test', { multiple: true });
-
-            await Joi.compile(schema).validate({ test1: 'a', test2: 'b' });
-        });
-
-        it('errors renaming multiple times with multiple disabled', async () => {
-
-            const schema = Joi.object({
-                test: Joi.string()
-            }).rename('test1', 'test').rename('test2', 'test');
-
-            const err = await expect(Joi.compile(schema).validate({ test1: 'a', test2: 'b' })).to.reject();
-            expect(err).to.be.an.error('"value" cannot rename child "test2" because multiple renames are disabled and another key was already renamed to "test"');
-            expect(err.details).to.equal([{
-                message: '"value" cannot rename child "test2" because multiple renames are disabled and another key was already renamed to "test"',
-                path: [],
-                type: 'object.rename.multiple',
-                context: { from: 'test2', to: 'test', label: 'value' }
-            }]);
-        });
-
-        it('errors multiple times when abortEarly is false', async () => {
-
-            const schema = Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').options({ abortEarly: false });
-            const err = await expect(schema.validate({ a: 1, c: 1, d: 1 })).to.reject();
-            expect(err).to.be.an.error('"value" cannot rename child "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename child "d" because multiple renames are disabled and another key was already renamed to "b"');
-            expect(err.details).to.equal([
-                {
-                    message: '"value" cannot rename child "c" because multiple renames are disabled and another key was already renamed to "b"',
-                    path: [],
-                    type: 'object.rename.multiple',
-                    context: { from: 'c', to: 'b', label: 'value' }
-                },
-                {
-                    message: '"value" cannot rename child "d" because multiple renames are disabled and another key was already renamed to "b"',
-                    path: [],
-                    type: 'object.rename.multiple',
-                    context: { from: 'd', to: 'b', label: 'value' }
-                }
-            ]);
-        });
-
-        it('aliases a key', async () => {
-
-            const schema = Joi.object({
-                a: Joi.number(),
-                b: Joi.number()
-            }).rename('a', 'b', { alias: true });
-
-            const obj = { a: 10 };
-
-            const value = await Joi.compile(schema).validate(obj);
-            expect(value.a).to.equal(10);
-            expect(value.b).to.equal(10);
-        });
-
-        it('with override disabled should not allow overwriting existing value', async () => {
-
-            const schema = Joi.object({
-                test1: Joi.string()
-            }).rename('test', 'test1');
-
-            const err = await expect(schema.validate({ test: 'b', test1: 'a' })).to.reject();
-            expect(err).to.be.an.error('"value" cannot rename child "test" because override is disabled and target "test1" exists');
-            expect(err.details).to.equal([{
-                message: '"value" cannot rename child "test" because override is disabled and target "test1" exists',
-                path: [],
-                type: 'object.rename.override',
-                context: { from: 'test', to: 'test1', label: 'value' }
-            }]);
-        });
-
-        it('with override enabled should allow overwriting existing value', async () => {
-
-            const schema = Joi.object({
-                test1: Joi.string()
-            }).rename('test', 'test1', { override: true });
-
-            await schema.validate({ test: 'b', test1: 'a' });
-        });
-
-        it('renames when data is nested in an array via items', async () => {
-
-            const schema = {
-                arr: Joi.array().items(Joi.object({
-                    one: Joi.string(),
-                    two: Joi.string()
-                }).rename('uno', 'one').rename('dos', 'two'))
-            };
-
-            const data = { arr: [{ uno: '1', dos: '2' }] };
-            const value = await Joi.object(schema).validate(data);
-            expect(value.arr[0].one).to.equal('1');
-            expect(value.arr[0].two).to.equal('2');
-        });
-
-        it('applies rename and validation in the correct order regardless of key order', async () => {
-
-            const schema1 = Joi.object({
-                a: Joi.number()
-            }).rename('b', 'a');
-
-            const input1 = { b: '5' };
-
-            const value1 = await schema1.validate(input1);
-            expect(value1.b).to.not.exist();
-            expect(value1.a).to.equal(5);
-
-            const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
-            const input2 = { b: '5' };
-
-            const value2 = await schema2.validate(input2);
-            expect(value2.b).to.not.exist();
-            expect(value2.a).to.equal(5);
-        });
-
-        it('sets the default value after key is renamed', async () => {
-
-            const schema = Joi.object({
-                foo2: Joi.string().default('test')
-            }).rename('foo', 'foo2');
-
-            const input = {};
-
-            const value = await Joi.validate(input, schema);
-            expect(value.foo2).to.equal('test');
-        });
-
-        it('should be able to rename keys that are empty strings', async () => {
-
-            const schema = Joi.object().rename('', 'notEmpty');
-            const input = {
-                '': 'something'
-            };
-
-            const value = await schema.validate(input);
-            expect(value['']).to.not.exist();
-            expect(value.notEmpty).to.equal('something');
-        });
-
-        it('should not create new keys when they key in question does not exist', async () => {
-
-            const schema = Joi.object().rename('b', '_b');
-
-            const input = {
-                a: 'something'
-            };
-
-            const value = await schema.validate(input);
-            expect(Object.keys(value)).to.include('a');
-            expect(value.a).to.equal('something');
-        });
-
-        it('should remove a key with override if from does not exist', async () => {
-
-            const schema = Joi.object().rename('b', 'a', { override: true });
-
-            const input = {
-                a: 'something'
-            };
-
-            const value = await schema.validate(input);
-            expect(value).to.equal({});
-        });
-
-        it('should ignore a key with ignoredUndefined if from does not exist', async () => {
-
-            const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true });
-
-            const input = {
-                a: 'something'
-            };
-
-            const value = await schema.validate(input);
-            expect(value).to.equal({ a: 'something' });
-        });
-
-        it('using regex it should ignore a key with ignoredUndefined if from does not exist', async () => {
-
-            const regex = /^b$/i;
-
-            const schema = Joi.object().rename(regex, 'a', { ignoreUndefined: true });
-
-            const input = {
-                a: 'something'
-            };
-
-            const value = await schema.validate(input);
-            expect(value).to.equal({ a: 'something' });
-        });
-
-        it('shouldn\'t delete a key with override and ignoredUndefined if from does not exist', async () => {
-
-            const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true, override: true });
-
-            const input = {
-                a: 'something'
-            };
-
-            const value = await schema.validate(input);
-            expect(value).to.equal({ a: 'something' });
-        });
-
-        it('should delete a key with override and ignoredUndefined if from exists', async () => {
-
-            const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true, override: true });
-
-            const input = {
-                a: 'something',
-                b: 'something else'
-            };
-
-            const value = await schema.validate(input);
-            expect(value).to.equal({ a: 'something else' });
-        });
-
-        it('should fulfill describe() with defaults', () => {
-
-            const schema = Joi.object().rename('b', 'a');
-            const desc = schema.describe();
-
-            expect(desc).to.equal({
-                type: 'object',
-                renames: [{
-                    from: 'b',
-                    to: 'a',
-                    options: {
-                        alias: false,
-                        multiple: false,
-                        override: false
-                    }
-                }]
-            });
-        });
-
-        it('should fulfill describe() with non-defaults', () => {
-
-            const schema = Joi.object().rename('b', 'a', { alias: true, multiple: true, override: true });
-            const desc = schema.describe();
-
-            expect(desc).to.equal({
-                type: 'object',
-                renames: [{
-                    from: 'b',
-                    to: 'a',
-                    options: {
-                        alias: true,
-                        multiple: true,
-                        override: true
-                    }
-                }]
             });
         });
     });

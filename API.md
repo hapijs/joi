@@ -232,8 +232,6 @@
     - [`object.refType`](#objectreftype)
     - [`object.rename.multiple`](#objectrenamemultiple)
     - [`object.rename.override`](#objectrenameoverride)
-    - [`object.rename.regex.multiple`](#objectrenameregexmultiple)
-    - [`object.rename.regex.override`](#objectrenameregexoverride)
     - [`object.schema`](#objectschema)
     - [`object.type`](#objecttype)
     - [`object.with`](#objectwith)
@@ -2252,7 +2250,7 @@ const schema = Joi.object().keys({
 schema.validate({ FooBar: 'a'}, (err, value) => {});
 ```
 
-💥 Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride), [`object.rename.regex.multiple`](#objectrenameregexmultiple), [`object.rename.regex.override`](#objectrenameregexoverride)
+💥 Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride)
 
 #### `object.assert(ref, schema, [message])`
 
@@ -4071,7 +4069,8 @@ Another rename was already done to the same target property.
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
     from: string, // Origin property name of the rename
-    to: string // Target property of the rename
+    to: string, // Target property of the rename
+    pattern: boolean // Indicates if the rename source was a pattern (regular expression)
 }
 ```
 
@@ -4087,39 +4086,8 @@ The target property already exists and you disallowed overrides.
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
     from: string, // Origin property name of the rename
-    to: string // Target property of the rename
-}
-```
-
-#### `object.rename.regex.multiple`
-
-**Description**
-
-The target property already exists and you disallowed overrides.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    from: Array<string>, // List of property names that matched the regex
-    to: string // Target property of the rename
-}
-```
-
-#### `object.rename.regex.override`
-
-**Description**
-
-The target property already exists and you disallowed overrides.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    from: Array<string>, // List of property names that matched the regex
-    to: string // Target property of the rename
+    to: string, // Target property of the rename
+    pattern: boolean // Indicates if the rename source was a pattern (regular expression)
 }
 ```
 
@@ -4323,7 +4291,8 @@ The string is not a valid e-mail.
 {
     key: string, // Last element of the path accessing the value, `undefined` if at the root
     label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
+    value: string, // Input value
+    invalids: [string] // Array of invalid emails
 }
 ```
 
