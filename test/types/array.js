@@ -46,7 +46,7 @@ describe('array', () => {
             message: '"value" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value' }
+            context: { label: 'value', value: '{ "something": false }' }
         }]);
     });
 
@@ -57,7 +57,7 @@ describe('array', () => {
             message: '"value" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value' }
+            context: { label: 'value', value: 3 }
         }]);
     });
 
@@ -68,7 +68,7 @@ describe('array', () => {
             message: '"value" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value' }
+            context: { label: 'value', value: '3' }
         }]);
     });
 
@@ -79,7 +79,7 @@ describe('array', () => {
             message: '"value" must be an array',
             path: [],
             type: 'array.base',
-            context: { label: 'value' }
+            context: { label: 'value', value: 'asdf' }
         }]);
     });
 
@@ -161,7 +161,7 @@ describe('array', () => {
 
         it('validates multiple types with stripUnknown', () => {
 
-            const schema = Joi.array().items(Joi.number(), Joi.string()).options({ stripUnknown: true });
+            const schema = Joi.array().items(Joi.number(), Joi.string()).prefs({ stripUnknown: true });
 
             Helper.validate(schema, [
                 [[1, 2, 'a'], true, null, [1, 2, 'a']],
@@ -184,7 +184,7 @@ describe('array', () => {
 
         it('validates multiple types with stripUnknown (as an object)', () => {
 
-            const schema = Joi.array().items(Joi.number(), Joi.string()).options({ stripUnknown: { arrays: true, objects: false } });
+            const schema = Joi.array().items(Joi.number(), Joi.string()).prefs({ stripUnknown: { arrays: true, objects: false } });
 
             Helper.validate(schema, [
                 [[1, 2, 'a'], true, null, [1, 2, 'a']],
@@ -258,13 +258,13 @@ describe('array', () => {
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
                 type: 'array.includesRequiredUnknowns',
-                context: { unknownMisses: 1, label: 'value' }
+                context: { unknownMisses: 1, label: 'value', value: input }
             }]);
         });
 
         it('validates that a required value exists with abortEarly = false', async () => {
 
-            const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string()).options({ abortEarly: false });
+            const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string()).prefs({ abortEarly: false });
             const input = ['one', 'two', 'three'];
 
             const err = await expect(schema.validate(input)).to.reject('"value" does not contain 1 required value(s)');
@@ -272,7 +272,7 @@ describe('array', () => {
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
                 type: 'array.includesRequiredUnknowns',
-                context: { unknownMisses: 1, label: 'value' }
+                context: { unknownMisses: 1, label: 'value', value: input }
             }]);
         });
 
@@ -309,7 +309,7 @@ describe('array', () => {
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
                 type: 'array.includesRequiredUnknowns',
-                context: { unknownMisses: 1, label: 'value' }
+                context: { unknownMisses: 1, label: 'value', value: input }
             }]);
         });
 
@@ -341,7 +341,7 @@ describe('array', () => {
                 message: '"value" does not contain [required string]',
                 path: [],
                 type: 'array.includesRequiredKnowns',
-                context: { knownMisses: ['required string'], label: 'value' }
+                context: { knownMisses: ['required string'], label: 'value', value: input }
             }]);
         });
 
@@ -358,7 +358,8 @@ describe('array', () => {
                 context: {
                     knownMisses: ['required string'],
                     unknownMisses: 1,
-                    label: 'value'
+                    label: 'value',
+                    value: input
                 }
             }]);
         });
@@ -829,7 +830,7 @@ describe('array', () => {
                         message: '"value" does not contain at least one required match',
                         path: [],
                         type: 'array.hasUnknown',
-                        context: { label: 'value' }
+                        context: { label: 'value', value: [0] }
                     }]
                 }]
             ]);
@@ -845,7 +846,7 @@ describe('array', () => {
                         message: '"value" does not contain at least one required match for type "foo"',
                         path: [],
                         type: 'array.hasKnown',
-                        context: { label: 'value', patternLabel: 'foo' }
+                        context: { label: 'value', patternLabel: 'foo', value: [0] }
                     }]
                 }]
             ]);
@@ -863,7 +864,7 @@ describe('array', () => {
                         message: '"arr" does not contain at least one required match',
                         path: ['arr'],
                         type: 'array.hasUnknown',
-                        context: { label: 'arr', key: 'arr' }
+                        context: { label: 'arr', key: 'arr', value: [0] }
                     }]
                 }]
             ]);
@@ -898,7 +899,7 @@ describe('array', () => {
                         message: '"array" does not contain at least one required match',
                         path: ['array'],
                         type: 'array.hasUnknown',
-                        context: { label: 'array', key: 'array' }
+                        context: { label: 'array', key: 'array', value: [10, 1, 2, 5, 1] }
                     }]
                 }]
             ]);
@@ -918,7 +919,7 @@ describe('array', () => {
                         message: '"arr[0].foo" does not contain at least one required match',
                         path: ['arr', 0, 'foo'],
                         type: 'array.hasUnknown',
-                        context: { label: 'arr[0].foo', key: 'foo' }
+                        context: { label: 'arr[0].foo', key: 'foo', value: [0] }
                     }]
                 }]
             ]);
@@ -938,7 +939,7 @@ describe('array', () => {
                         message: '"value" does not contain at least one required match',
                         path: [],
                         type: 'array.hasUnknown',
-                        context: { label: 'value' }
+                        context: { label: 'value', value: ['foo'] }
                     }]
                 }]
             ]);
@@ -1122,7 +1123,7 @@ describe('array', () => {
 
             const schema = Joi.object({
                 array: Joi.array().items(Joi.string().min(5), Joi.number().min(3))
-            }).options({ convert: false });
+            }).prefs({ convert: false });
 
             Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
@@ -1165,7 +1166,8 @@ describe('array', () => {
                     key: 1,
                     label: '[1]',
                     path: [1],
-                    pos: 1
+                    pos: 1,
+                    value: undefined
                 }
             }, {
                 message: '"[2]" contains an excluded value',
@@ -1460,11 +1462,11 @@ describe('array', () => {
                         type: 'array.unique',
                         context: {
                             pos: 1,
-                            value: undefined,
                             dupePos: 0,
                             dupeValue: undefined,
                             label: '[1]',
-                            key: 1
+                            key: 1,
+                            value: undefined
                         }
                     }]
                 }]
@@ -1871,7 +1873,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { label: '[0]', key: 0, path: [0], pos: 0 }
+                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
                     }]
                 }],
                 [[2, undefined], false, null, {
@@ -1880,7 +1882,7 @@ describe('array', () => {
                         message: '"[1]" must not be a sparse array item',
                         path: [1],
                         type: 'array.sparse',
-                        context: { label: '[1]', key: 1, path: [1], pos: 1 }
+                        context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
                     }]
                 }]
             ]);
@@ -1897,7 +1899,7 @@ describe('array', () => {
                         message: '"[1]" must not be a sparse array item',
                         path: [1],
                         type: 'array.sparse',
-                        context: { label: '[1]', key: 1, path: [1], pos: 1 }
+                        context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
                     }]
                 }]
             ]);
@@ -1905,7 +1907,7 @@ describe('array', () => {
 
         it('errors on undefined value after validation with abortEarly false', () => {
 
-            const schema = Joi.array().items(Joi.object().empty({})).options({ abortEarly: false });
+            const schema = Joi.array().items(Joi.object().empty({})).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
                 [[{ a: 1 }, {}, 3], false, null, {
@@ -1915,7 +1917,7 @@ describe('array', () => {
                             message: '"[1]" must not be a sparse array item',
                             path: [1],
                             type: 'array.sparse',
-                            context: { label: '[1]', key: 1, path: [1], pos: 1 }
+                            context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
                         },
                         {
                             message: '"[2]" must be an object',
@@ -1969,7 +1971,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { label: '[0]', key: 0, path: [0], pos: 0 }
+                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
                     }]
                 }]
             ]);
@@ -1990,7 +1992,7 @@ describe('array', () => {
                 ]
             });
 
-            const schema = Joi.array().items(customJoi.myType().foo().required()).options({ abortEarly: false });
+            const schema = Joi.array().items(customJoi.myType().foo().required()).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, null, {
@@ -2000,13 +2002,13 @@ describe('array', () => {
                             message: '"[0]" must not be a sparse array item',
                             path: [0],
                             type: 'array.sparse',
-                            context: { label: '[0]', key: 0, path: [0], pos: 0 }
+                            context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
                         },
                         {
                             message: '"[1]" must not be a sparse array item',
                             path: [1],
                             type: 'array.sparse',
-                            context: { label: '[1]', key: 1, path: [1], pos: 1 }
+                            context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
                         }
                     ]
                 }]
@@ -2015,7 +2017,7 @@ describe('array', () => {
 
         it('errors on undefined value after validation with required and abortEarly false', () => {
 
-            const schema = Joi.array().items(Joi.object().empty({}).required()).options({ abortEarly: false });
+            const schema = Joi.array().items(Joi.object().empty({}).required()).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
                 [[{}, 3], false, null, {
@@ -2037,7 +2039,7 @@ describe('array', () => {
                             message: '"value" does not contain 1 required value(s)',
                             path: [],
                             type: 'array.includesRequiredUnknowns',
-                            context: { unknownMisses: 1, label: 'value' }
+                            context: { unknownMisses: 1, label: 'value', value: [{}, 3] }
                         }
                     ]
                 }]
@@ -2055,7 +2057,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { label: '[0]', key: 0, path: [0], pos: 0 }
+                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
                     }]
                 }]
             ]);
@@ -2063,7 +2065,7 @@ describe('array', () => {
 
         it('errors on undefined value after validation with ordered and abortEarly false', () => {
 
-            const schema = Joi.array().ordered(Joi.object().empty({})).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.object().empty({})).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
                 [[{}, 3], false, null, {
@@ -2073,13 +2075,13 @@ describe('array', () => {
                             message: '"[0]" must not be a sparse array item',
                             path: [0],
                             type: 'array.sparse',
-                            context: { label: '[0]', key: 0, path: [0], pos: 0 }
+                            context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
                         },
                         {
                             message: '"value" must contain at most 1 items',
                             path: [],
                             type: 'array.orderedLength',
-                            context: { pos: 1, limit: 1, label: 'value' }
+                            context: { pos: 1, limit: 1, label: 'value', value: [{}, 3] }
                         }
                     ]
                 }]
@@ -2274,13 +2276,13 @@ describe('array', () => {
 
         it('ignores stripUnknown when true', async () => {
 
-            const schema = Joi.array().items(Joi.string()).options({ stripUnknown: true });
+            const schema = Joi.array().items(Joi.string()).prefs({ stripUnknown: true });
             await expect(schema.validate(['one', 'two', 3, 4, true, false])).to.reject('"[2]" must be a string');
         });
 
         it('respects stripUnknown (as an object)', async () => {
 
-            const schema = Joi.array().items(Joi.string()).options({ stripUnknown: { arrays: true, objects: false } });
+            const schema = Joi.array().items(Joi.string()).prefs({ stripUnknown: { arrays: true, objects: false } });
             const value = await schema.validate(['one', 'two', 3, 4, true, false]);
             expect(value).to.equal(['one', 'two']);
         });
@@ -2383,13 +2385,13 @@ describe('array', () => {
                 message: '"value" must contain at most 2 items',
                 path: [],
                 type: 'array.orderedLength',
-                context: { pos: 2, limit: 2, label: 'value' }
+                context: { pos: 2, limit: 2, label: 'value', value: input }
             }]);
         });
 
         it('errors when input has more items than ordered items with abortEarly = false', async () => {
 
-            const schema = Joi.array().ordered(Joi.string(), Joi.number()).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.string(), Joi.number()).prefs({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
             const err = await expect(schema.validate(input)).to.reject();
             expect(err).to.be.an.error('"[0]" must be a string. "value" must contain at most 2 items');
@@ -2405,7 +2407,7 @@ describe('array', () => {
                     message: '"value" must contain at most 2 items',
                     path: [],
                     type: 'array.orderedLength',
-                    context: { pos: 2, limit: 2, label: 'value' }
+                    context: { pos: 2, limit: 2, label: 'value', value: input }
                 }
             ]);
         });
@@ -2419,13 +2421,13 @@ describe('array', () => {
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
                 type: 'array.includesRequiredUnknowns',
-                context: { unknownMisses: 1, label: 'value' }
+                context: { unknownMisses: 1, label: 'value', value: input }
             }]);
         });
 
         it('errors when input matches ordered items but not matches regular items', async () => {
 
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number()).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number()).prefs({ abortEarly: false });
             const input = ['s1', 2, 3, 4, 's5'];
             const err = await expect(schema.validate(input)).to.reject('"[4]" must be a number');
             expect(err.details).to.equal([{
@@ -2438,7 +2440,7 @@ describe('array', () => {
 
         it('errors when input does not match ordered items but matches regular items', async () => {
 
-            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.number()).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.number()).prefs({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
             const err = await expect(schema.validate(input)).to.reject('"[0]" must be a string');
             expect(err.details).to.equal([{
@@ -2451,7 +2453,7 @@ describe('array', () => {
 
         it('errors when input does not match ordered items not matches regular items', async () => {
 
-            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.string()).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.string()).prefs({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
             const err = await expect(schema.validate(input)).to.reject();
             expect(err).to.be.an.error('"[0]" must be a string. "[2]" must be a string. "[3]" must be a string. "[4]" must be a string');
@@ -2486,7 +2488,7 @@ describe('array', () => {
 
         it('errors but continues when abortEarly is set to false', async () => {
 
-            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required()).options({ abortEarly: false });
+            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required()).prefs({ abortEarly: false });
             const input = ['s1', 2];
             const err = await expect(schema.validate(input)).to.reject();
             expect(err).to.be.an.error('"[0]" must be a number. "[1]" must be a string');
@@ -2514,7 +2516,8 @@ describe('array', () => {
                 Joi.string().min(2),
                 Joi.number().max(0),
                 Joi.string().max(3)
-            ).options({ abortEarly: false });
+            )
+                .prefs({ abortEarly: false });
 
             Helper.validate(schema, [
                 [[0, 'ab', 0, 'ab'], true],
@@ -2524,7 +2527,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
                     }, {
                         message: '"[2]" must be less than or equal to 0',
                         path: [2],
@@ -2538,7 +2541,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
                     }, {
                         message: '"[2]" must be less than or equal to 0',
                         path: [2],
@@ -2548,7 +2551,7 @@ describe('array', () => {
                         message: '"[3]" must not be a sparse array item',
                         path: [3],
                         type: 'array.sparse',
-                        context: { key: 3, label: '[3]', path: [3], pos: 3 }
+                        context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
                     }]
                 }]
             ]);
@@ -2561,7 +2564,7 @@ describe('array', () => {
                 Joi.string().min(2),
                 Joi.number().max(0),
                 Joi.string().max(3)
-            ).options({ abortEarly: false });
+            ).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
                 [[0, 'ab', 0, 'ab'], true],
@@ -2571,7 +2574,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
                     }, {
                         message: '"[2]" must be less than or equal to 0',
                         path: [2],
@@ -2585,7 +2588,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
                     }, {
                         message: '"[2]" must be less than or equal to 0',
                         path: [2],
@@ -2595,7 +2598,7 @@ describe('array', () => {
                         message: '"[3]" must not be a sparse array item',
                         path: [3],
                         type: 'array.sparse',
-                        context: { key: 3, label: '[3]', path: [3], pos: 3 }
+                        context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
                     }]
                 }],
                 [[undefined, false, 2, undefined], false, null, {
@@ -2604,7 +2607,7 @@ describe('array', () => {
                         message: '"[0]" must not be a sparse array item',
                         path: [0],
                         type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0 }
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
                     }, {
                         message: '"[1]" contains an excluded value',
                         path: [1],
@@ -2619,7 +2622,7 @@ describe('array', () => {
                         message: '"[3]" must not be a sparse array item',
                         path: [3],
                         type: 'array.sparse',
-                        context: { key: 3, label: '[3]', path: [3], pos: 3 }
+                        context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
                     }]
                 }]
             ]);

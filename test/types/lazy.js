@@ -33,7 +33,7 @@ describe('lazy', () => {
                 message: 'schema error: lazy schema must be set',
                 path: [],
                 type: 'lazy.base',
-                context: { label: 'value' }
+                context: { label: 'value', value: 'bar' }
             }]);
         });
 
@@ -46,19 +46,19 @@ describe('lazy', () => {
                 message: 'schema error: lazy schema function must return a schema',
                 path: [],
                 type: 'lazy.schema',
-                context: { label: 'value', schema: true }
+                context: { label: 'value', schema: true, value: 'bar' }
             }]);
         });
 
         it('should check options', () => {
 
-            expect(() => Joi.lazy(() => {}, false)).to.throw('Options must be an object');
-            expect(() => Joi.lazy(() => {}, true)).to.throw('Options must be an object');
-            expect(() => Joi.lazy(() => {}, [])).to.throw('Options must be an object');
-            expect(() => Joi.lazy(() => {}, { oce: true })).to.throw('Options contain unknown keys: oce');
-            expect(() => Joi.lazy(() => {}, { once: 'foo' })).to.throw('Option "once" must be a boolean');
-            expect(() => Joi.lazy(() => {}, {})).to.not.throw();
-            expect(() => Joi.lazy(() => {}, { once: true })).to.not.throw();
+            expect(() => Joi.lazy(() => { }, false)).to.throw('Options must be an object');
+            expect(() => Joi.lazy(() => { }, true)).to.throw('Options must be an object');
+            expect(() => Joi.lazy(() => { }, [])).to.throw('Options must be an object');
+            expect(() => Joi.lazy(() => { }, { oce: true })).to.throw('Options contain unknown keys: oce');
+            expect(() => Joi.lazy(() => { }, { once: 'foo' })).to.throw('Option "once" must be a boolean');
+            expect(() => Joi.lazy(() => { }, {})).to.not.throw();
+            expect(() => Joi.lazy(() => { }, { once: true })).to.not.throw();
         });
     });
 

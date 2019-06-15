@@ -85,7 +85,7 @@ describe('binary', () => {
                 message: '"value" must be a buffer or a string',
                 path: [],
                 type: 'binary.base',
-                context: { label: 'value' }
+                context: { label: 'value', value: 5 }
             }]);
         });
 

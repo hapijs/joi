@@ -16,7 +16,7 @@ exports.validate = function (schema, config) {
 };
 
 
-exports.validateOptions = function (schema, config, options, callback) {
+exports.validateOptions = function (schema, config, options) {
 
     try {
         const compiled = Joi.compile(schema);
@@ -39,11 +39,15 @@ exports.validateOptions = function (schema, config, options, callback) {
             const err = result.error;
             const value = result.value;
 
-            if (err !== null && shouldValidate) {
+            if (err !== null &&
+                shouldValidate) {
+
                 console.log(err);
             }
 
-            if (err === null && !shouldValidate) {
+            if (err === null &&
+                !shouldValidate) {
+
                 console.log(input);
             }
 
@@ -72,13 +76,11 @@ exports.validateOptions = function (schema, config, options, callback) {
     catch (err) {
 
         console.error(err.stack);
-        // Reframe the error location, we don't care about the helper
-        err.at = internals.thrownAt();
+        err.at = internals.thrownAt();      // Reframe the error location since we don't care about the helper
         throw err;
     }
 };
 
-// Imported from Code
 
 internals.thrownAt = function () {
 

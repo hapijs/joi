@@ -29,7 +29,8 @@ describe('alternatives', () => {
         expect(err.details).to.equal([
             {
                 context: {
-                    label: 'value'
+                    label: 'value',
+                    value: 'a'
                 },
                 message: '"value" does not match any of the allowed types',
                 path: [],
@@ -128,6 +129,7 @@ describe('alternatives', () => {
                             context: {
                                 label: 'value',
                                 message: '"value" must be a boolean. "p" does not match any of the allowed types',
+                                value: { p: 1 },
                                 details: [
                                     {
                                         message: '"value" must be a boolean',
@@ -143,6 +145,7 @@ describe('alternatives', () => {
                                             key: 'p',
                                             label: 'p',
                                             message: '"p" must be a boolean. "p" must be one of [foo, bar]',
+                                            value: 1,
                                             details: [
                                                 {
                                                     message: '"p" must be a boolean',
@@ -174,6 +177,7 @@ describe('alternatives', () => {
                             context: {
                                 label: 'value',
                                 message: '"value" must be a boolean. "p" does not match any of the allowed types',
+                                value: { p: '...' },
                                 details: [
                                     {
                                         message: '"value" must be a boolean',
@@ -189,6 +193,7 @@ describe('alternatives', () => {
                                             key: 'p',
                                             label: 'p',
                                             message: '"p" must be a boolean. "p" must be one of [foo, bar]',
+                                            value: '...',
                                             details: [
                                                 {
                                                     message: '"p" must be a boolean',
@@ -234,7 +239,7 @@ describe('alternatives', () => {
                         Joi.string().valid('foo', 'bar')
                     ])
                 })
-            ]).options({ language: { 'messages.wrapArrays': false } });
+            ]).prefs({ language: { 'messages.wrapArrays': false } });
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
@@ -247,6 +252,7 @@ describe('alternatives', () => {
                             context: {
                                 label: 'value',
                                 message: '"value" must be a boolean. "p" does not match any of the allowed types',
+                                value: { p: 1 },
                                 details: [
                                     {
                                         message: '"value" must be a boolean',
@@ -262,6 +268,7 @@ describe('alternatives', () => {
                                             key: 'p',
                                             label: 'p',
                                             message: '"p" must be a boolean. "p" must be one of foo, bar',
+                                            value: 1,
                                             details: [
                                                 {
                                                     message: '"p" must be a boolean',
@@ -293,6 +300,7 @@ describe('alternatives', () => {
                             context: {
                                 label: 'value',
                                 message: '"value" must be a boolean. "p" does not match any of the allowed types',
+                                value: { p: '...' },
                                 details: [
                                     {
                                         message: '"value" must be a boolean',
@@ -308,6 +316,7 @@ describe('alternatives', () => {
                                             key: 'p',
                                             label: 'p',
                                             message: '"p" must be a boolean. "p" must be one of foo, bar',
+                                            value: '...',
                                             details: [
                                                 {
                                                     message: '"p" must be a boolean',
@@ -849,7 +858,7 @@ describe('alternatives', () => {
                             message: '"a" does not match any of the allowed types',
                             path: ['a'],
                             type: 'alternatives.base',
-                            context: { label: 'a', key: 'a' }
+                            context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'x', b: '5', c: '5' }, false, null, {
@@ -858,7 +867,7 @@ describe('alternatives', () => {
                             message: '"a" does not match any of the allowed types',
                             path: ['a'],
                             type: 'alternatives.base',
-                            context: { label: 'a', key: 'a' }
+                            context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'y', b: 5, c: 5 }, false, null, {
@@ -900,7 +909,7 @@ describe('alternatives', () => {
                             message: '"a" does not match any of the allowed types',
                             path: ['a'],
                             type: 'alternatives.base',
-                            context: { label: 'a', key: 'a' }
+                            context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
                     [{ a: 'y', b: date, c: date }, false, null, {
@@ -1250,7 +1259,7 @@ describe('alternatives', () => {
                         falsy: [false],
                         valids: [true]
                     },
-                    ref: { type: 'ref', key: 'a', path: ['a'] },
+                    ref: { ref: 'value', key: 'a', path: ['a'] },
                     then: {
                         type: 'string',
                         flags: {
@@ -1279,7 +1288,7 @@ describe('alternatives', () => {
                         falsy: [false],
                         valids: [true]
                     },
-                    ref: { type: 'ref', key: 'a', path: ['a'] },
+                    ref: { ref: 'value', key: 'a', path: ['a'] },
                     then: {
                         type: 'string',
                         flags: {
@@ -1320,7 +1329,7 @@ describe('alternatives', () => {
                         type: 'alternatives',
                         alternatives: [
                             {
-                                ref: { type: 'ref', key: 'b', path: ['b'] },
+                                ref: { ref: 'value', key: 'b', path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -1341,7 +1350,7 @@ describe('alternatives', () => {
                                 }
                             },
                             {
-                                ref: { type: 'ref', key: 'b', path: ['b'] },
+                                ref: { ref: 'value', key: 'b', path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -1396,7 +1405,7 @@ describe('alternatives', () => {
                         type: 'alternatives',
                         alternatives: [
                             {
-                                ref: { type: 'ref', key: 'b', path: ['b'] },
+                                ref: { ref: 'value', key: 'b', path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -1451,7 +1460,7 @@ describe('alternatives', () => {
                         type: 'alternatives',
                         alternatives: [
                             {
-                                ref: { type: 'ref', key: 'b', path: ['b'] },
+                                ref: { ref: 'value', key: 'b', path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -1558,6 +1567,7 @@ describe('alternatives', () => {
         it('overrides single try error', async () => {
 
             const override = new Error('failed!');
+
             const schema = Joi.object({
                 x: Joi.alternatives([
                     Joi.number(),

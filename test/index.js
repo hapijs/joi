@@ -210,6 +210,7 @@ describe('Joi', () => {
                         context: {
                             message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
                             label: 'value',
+                            value: 'other',
                             details: [
                                 {
                                     message: '"value" must be one of [key]',
@@ -244,6 +245,7 @@ describe('Joi', () => {
                         context: {
                             message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
                             label: 'value',
+                            value: 6,
                             details: [
                                 {
                                     message: '"value" must be one of [key]',
@@ -278,6 +280,7 @@ describe('Joi', () => {
                         context: {
                             message: '"value" must be one of [key]. "value" must be one of [5]. "c" is not allowed',
                             label: 'value',
+                            value: { c: 5 },
                             details: [
                                 {
                                     message: '"value" must be one of [key]',
@@ -315,6 +318,7 @@ describe('Joi', () => {
                         context: {
                             label: 'value',
                             message: '"value" must be one of [key]. "value" must be one of [5]. "a" must be one of [true]',
+                            value: { a: 5, b: 'a' },
                             details: [
                                 {
                                     message: '"value" must be one of [key]',
@@ -358,6 +362,7 @@ describe('Joi', () => {
                         context: {
                             message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
                             label: 'value',
+                            value: 'other',
                             details: [
                                 {
                                     message: '"value" must be one of [key]',
@@ -392,6 +397,7 @@ describe('Joi', () => {
                         context: {
                             message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
                             label: 'value',
+                            value: 6,
                             details: [
                                 {
                                     message: '"value" must be one of [key]',
@@ -426,6 +432,7 @@ describe('Joi', () => {
                         context: {
                             message: '"value" must be one of [key]. "value" must be one of [5]. "c" is not allowed',
                             label: 'value',
+                            value: { c: 5 },
                             details: [
                                 {
                                     message: '"value" must be one of [key]',
@@ -463,6 +470,7 @@ describe('Joi', () => {
                         context: {
                             message: '"value" must be one of [key]. "value" must be one of [5]. "a" must be one of [true]',
                             label: 'value',
+                            value: { a: 5, b: 'a' },
                             details: [
                                 {
                                     message: '"value" must be one of [key]',
@@ -527,7 +535,8 @@ describe('Joi', () => {
                 peer: 'upc',
                 peerWithLabel: 'upc',
                 label: 'txt',
-                key: 'txt'
+                key: 'txt',
+                value: { txt: 'a' }
             }
         }]);
 
@@ -545,7 +554,8 @@ describe('Joi', () => {
                         peer: 'upc',
                         peerWithLabel: 'upc',
                         label: 'txt',
-                        key: 'txt'
+                        key: 'txt',
+                        value: { txt: 'test' }
                     }
                 }]
             }],
@@ -579,7 +589,8 @@ describe('Joi', () => {
                         peer: 'upc',
                         peerWithLabel: 'upc',
                         label: 'txt',
-                        key: 'txt'
+                        key: 'txt',
+                        value: { txt: 'test', upc: undefined }
                     }
                 }]
             }],
@@ -606,7 +617,8 @@ describe('Joi', () => {
                 peer: 'upc',
                 peerWithLabel: 'upc',
                 label: 'txt',
-                key: 'txt'
+                key: 'txt',
+                value: { txt: 'a', upc: 'b' }
             }
         }]);
 
@@ -644,7 +656,8 @@ describe('Joi', () => {
                         peer: 'upc',
                         peerWithLabel: 'upc',
                         label: 'txt',
-                        key: 'txt'
+                        key: 'txt',
+                        value: { txt: 'test', upc: 'test' }
                     }
                 }]
             }]
@@ -667,7 +680,8 @@ describe('Joi', () => {
             context: {
                 peers: ['txt', 'upc'],
                 peersWithLabels: ['txt', 'upc'],
-                label: 'value'
+                label: 'value',
+                value: {}
             }
         }]);
 
@@ -759,7 +773,8 @@ describe('Joi', () => {
                         peersWithLabels: ['txt', 'upc'],
                         present: ['txt', 'upc'],
                         presentWithLabels: ['txt', 'upc'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test', upc: 'test' }
                     }
                 }]
             }]
@@ -786,7 +801,8 @@ describe('Joi', () => {
                     context: {
                         peers: ['txt', 'upc', 'code'],
                         peersWithLabels: ['txt', 'upc', 'code'],
-                        label: 'value'
+                        label: 'value',
+                        value: {}
                     }
                 }]
             }]
@@ -814,7 +830,8 @@ describe('Joi', () => {
                         peersWithLabels: ['code', 'upc'],
                         present: ['code', 'upc'],
                         presentWithLabels: ['code', 'upc'],
-                        label: 'value'
+                        label: 'value',
+                        value: { code: 456, upc: 123 }
                     }
                 }]
             }],
@@ -827,7 +844,8 @@ describe('Joi', () => {
                     context: {
                         peers: ['code', 'upc'],
                         peersWithLabels: ['code', 'upc'],
-                        label: 'value'
+                        label: 'value',
+                        value: {}
                     }
                 }]
             }]
@@ -856,7 +874,8 @@ describe('Joi', () => {
                         peersWithLabels: ['code', 'upc'],
                         present: ['code', 'upc'],
                         presentWithLabels: ['code', 'upc'],
-                        label: 'value'
+                        label: 'value',
+                        value: { code: '456', upc: '' }
                     }
                 }]
             }],
@@ -869,7 +888,8 @@ describe('Joi', () => {
                     context: {
                         peers: ['code', 'upc'],
                         peersWithLabels: ['code', 'upc'],
-                        label: 'value'
+                        label: 'value',
+                        value: {}
                     }
                 }]
             }]
@@ -893,7 +913,8 @@ describe('Joi', () => {
             context: {
                 peers: ['txt', 'upc', 'code'],
                 peersWithLabels: ['txt', 'upc', 'code'],
-                label: 'value'
+                label: 'value',
+                value: {}
             }
         }]);
 
@@ -1004,7 +1025,8 @@ describe('Joi', () => {
                 presentWithLabels: ['txt'],
                 missing: ['upc', 'code'],
                 missingWithLabels: ['upc', 'code'],
-                label: 'value'
+                label: 'value',
+                value: { txt: 'x' }
             }
         }]);
 
@@ -1021,7 +1043,8 @@ describe('Joi', () => {
                         presentWithLabels: ['upc'],
                         missing: ['txt', 'code'],
                         missingWithLabels: ['txt', 'code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { upc: null }
                     }
                 }]
             }],
@@ -1036,7 +1059,8 @@ describe('Joi', () => {
                         presentWithLabels: ['upc'],
                         missing: ['txt', 'code'],
                         missingWithLabels: ['txt', 'code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { upc: 'test' }
                     }
                 }]
             }],
@@ -1060,7 +1084,8 @@ describe('Joi', () => {
                         presentWithLabels: ['txt'],
                         missing: ['upc', 'code'],
                         missingWithLabels: ['upc', 'code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test' }
                     }
                 }]
             }],
@@ -1084,7 +1109,8 @@ describe('Joi', () => {
                         presentWithLabels: ['code'],
                         missing: ['txt', 'upc'],
                         missingWithLabels: ['txt', 'upc'],
-                        label: 'value'
+                        label: 'value',
+                        value: { code: 123 }
                     }
                 }]
             }],
@@ -1099,7 +1125,8 @@ describe('Joi', () => {
                         presentWithLabels: ['txt', 'upc'],
                         missing: ['code'],
                         missingWithLabels: ['code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test', upc: null }
                     }
                 }]
             }],
@@ -1114,7 +1141,8 @@ describe('Joi', () => {
                         presentWithLabels: ['txt', 'upc'],
                         missing: ['code'],
                         missingWithLabels: ['code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test', upc: '' }
                     }
                 }]
             }],
@@ -1147,7 +1175,8 @@ describe('Joi', () => {
                         presentWithLabels: ['upc'],
                         missing: ['txt', 'code'],
                         missingWithLabels: ['txt', 'code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: undefined, upc: 'test' }
                     }
                 }]
             }],
@@ -1162,7 +1191,8 @@ describe('Joi', () => {
                         presentWithLabels: ['txt'],
                         missing: ['upc', 'code'],
                         missingWithLabels: ['upc', 'code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test', upc: undefined }
                     }
                 }]
             }],
@@ -1177,7 +1207,8 @@ describe('Joi', () => {
                         presentWithLabels: ['txt', 'upc'],
                         missing: ['code'],
                         missingWithLabels: ['code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test', upc: '' }
                     }
                 }]
             }],
@@ -1192,7 +1223,8 @@ describe('Joi', () => {
                         presentWithLabels: ['txt', 'upc'],
                         missing: ['code'],
                         missingWithLabels: ['code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test', upc: null }
                     }
                 }]
             }],
@@ -1243,7 +1275,8 @@ describe('Joi', () => {
                         presentWithLabels: ['txt', 'upc'],
                         missing: ['code'],
                         missingWithLabels: ['code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test', upc: 'test' }
                     }
                 }]
             }],
@@ -1271,7 +1304,8 @@ describe('Joi', () => {
                 mainWithLabel: 'txt',
                 peers: ['upc', 'code'],
                 peersWithLabels: ['upc', 'code'],
-                label: 'value'
+                label: 'value',
+                value: { txt: 'x', upc: 'y', code: 123 }
             }
         }]);
 
@@ -1300,7 +1334,8 @@ describe('Joi', () => {
                         mainWithLabel: 'txt',
                         peers: ['upc', 'code'],
                         peersWithLabels: ['upc', 'code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test', upc: 'test', code: 322 }
                     }
                 }]
             }],
@@ -1315,7 +1350,8 @@ describe('Joi', () => {
                         mainWithLabel: 'txt',
                         peers: ['upc', 'code'],
                         peersWithLabels: ['upc', 'code'],
-                        label: 'value'
+                        label: 'value',
+                        value: { txt: 'test', upc: null, code: 322 }
                     }
                 }]
             }]
@@ -1364,7 +1400,7 @@ describe('Joi', () => {
                     message: '"something" is not allowed',
                     path: ['something'],
                     type: 'object.allowUnknown',
-                    context: { child: 'something', label: 'something', key: 'something', value: undefined }
+                    context: { child: 'something', label: 'something', key: 'something' }
                 }]
             }],
             [{ auth: { something: undefined } }, false, null, {
@@ -1378,12 +1414,13 @@ describe('Joi', () => {
                             message: '"auth.something" is not allowed. "auth" must be a string. "auth" must be a boolean',
                             label: 'auth',
                             key: 'auth',
+                            value: { something: undefined },
                             details: [
                                 {
                                     message: '"auth.something" is not allowed',
                                     path: ['auth', 'something'],
                                     type: 'object.allowUnknown',
-                                    context: { child: 'something', label: 'auth.something', key: 'something', value: undefined }
+                                    context: { child: 'something', label: 'auth.something', key: 'something' }
                                 },
                                 {
                                     message: '"auth" must be a string',
@@ -1462,7 +1499,7 @@ describe('Joi', () => {
                     message: '"something" is not allowed',
                     path: ['something'],
                     type: 'object.allowUnknown',
-                    context: { child: 'something', label: 'something', key: 'something', value: undefined }
+                    context: { child: 'something', label: 'something', key: 'something' }
                 }]
             }],
             [{ auth: { something: undefined } }, false, null, {
@@ -1476,12 +1513,13 @@ describe('Joi', () => {
                             message: '"auth.something" is not allowed. "auth" must be a string. "auth" must be a boolean',
                             key: 'auth',
                             label: 'auth',
+                            value: { something: undefined },
                             details: [
                                 {
                                     message: '"auth.something" is not allowed',
                                     path: ['auth', 'something'],
                                     type: 'object.allowUnknown',
-                                    context: { child: 'something', label: 'auth.something', key: 'something', value: undefined }
+                                    context: { child: 'something', label: 'auth.something', key: 'something' }
                                 },
                                 {
                                     message: '"auth" must be a string',
@@ -1571,7 +1609,7 @@ describe('Joi', () => {
                     message: '"b" is not allowed',
                     path: ['b'],
                     type: 'object.allowUnknown',
-                    context: { child: 'b', label: 'b', key: 'b', value: undefined }
+                    context: { child: 'b', label: 'b', key: 'b' }
                 }]
             }]
         ]);
@@ -1630,7 +1668,7 @@ describe('Joi', () => {
                     message: '"b" is not allowed',
                     path: ['b'],
                     type: 'object.allowUnknown',
-                    context: { child: 'b', label: 'b', key: 'b', value: undefined }
+                    context: { child: 'b', label: 'b', key: 'b' }
                 }]
             }]
         ]);
@@ -2122,7 +2160,8 @@ describe('Joi', () => {
                 presentWithLabels: ['a'],
                 missing: ['b'],
                 missingWithLabels: ['b'],
-                label: 'value'
+                label: 'value',
+                value: { a: 1 }
             }
         }]);
     });
@@ -2132,7 +2171,8 @@ describe('Joi', () => {
         const schema = Joi.object({
             a: Joi.number(),
             b: Joi.string()
-        }).and('a', 'b');
+        })
+            .and('a', 'b');
 
         const obj = {
             a: 1,
@@ -2150,7 +2190,8 @@ describe('Joi', () => {
                 presentWithLabels: ['a'],
                 missing: ['b'],
                 missingWithLabels: ['b'],
-                label: 'value'
+                label: 'value',
+                value: { a: 1 }
             }
         }]);
     });
@@ -2212,7 +2253,7 @@ describe('Joi', () => {
         const localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c')
-        }).options({ allowUnknown: true });
+        }).prefs({ allowUnknown: true });
 
         const obj = {
             a: 1,
@@ -2232,7 +2273,7 @@ describe('Joi', () => {
         const localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c')
-        }).options({ stripUnknown: true, allowUnknown: true });
+        }).prefs({ stripUnknown: true, allowUnknown: true });
 
         const obj = {
             a: 1,
@@ -2252,7 +2293,7 @@ describe('Joi', () => {
         const localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c')
-        }).options({ stripUnknown: { arrays: false, objects: true }, allowUnknown: true });
+        }).prefs({ stripUnknown: { arrays: false, objects: true }, allowUnknown: true });
 
         const obj = {
             a: 1,
@@ -2269,7 +2310,7 @@ describe('Joi', () => {
 
     it('should work when the skipFunctions setting is enabled', async () => {
 
-        const schema = Joi.object({ username: Joi.string() }).options({ skipFunctions: true });
+        const schema = Joi.object({ username: Joi.string() }).prefs({ skipFunctions: true });
         const input = { username: 'test', func: function () { } };
         await Joi.validate(input, schema);
     });
@@ -2469,7 +2510,7 @@ describe('Joi', () => {
             defaultFn: Joi.string().default(defaultFn, 'not here'),
             defaultDescribedFn: Joi.string().default(defaultDescribedFn, 'described test')
         })
-            .options({ abortEarly: false, convert: false })
+            .prefs({ abortEarly: false, convert: false })
             .rename('renamed', 'required')
             .without('required', 'xor')
             .without('xor', 'required');
@@ -2576,7 +2617,7 @@ describe('Joi', () => {
                     type: 'string',
                     flags: {
                         default: {
-                            type: 'ref',
+                            ref: 'value',
                             key: 'xor',
                             path: ['xor']
                         }
@@ -2637,7 +2678,7 @@ describe('Joi', () => {
 
             const description = schema.describe();
             expect(description).to.equal(result);
-            expect(description.children.defaultRef.flags.default).to.equal({ type: 'ref', key: 'xor', path: ['xor'] });
+            expect(description.children.defaultRef.flags.default).to.equal({ ref: 'value', key: 'xor', path: ['xor'] });
             expect(description.children.defaultFn.flags.default.description).to.equal('testing');
             expect(description.children.defaultDescribedFn.flags.default.description).to.equal('described test');
         });
@@ -3130,16 +3171,16 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'foo',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
                             return null; // Valid
                         }
                     },
                     {
                         name: 'bar',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('myType.bar', null, state, options);
+                            return this.createError('myType.bar', value, null, state, prefs);
                         }
                     }
                 ]
@@ -3165,7 +3206,7 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'test',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
                             return null; // Valid
                         }
@@ -3193,9 +3234,9 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'foo',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('myType.bar', { v: value }, state, options);
+                            return this.createError('myType.bar', value, null, state, prefs);
                         }
                     }
                 ]
@@ -3209,7 +3250,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 name: 'myType',
-                pre(value, state, options) {
+                pre(value, state, prefs) {
 
                     return this._flags.foo;
                 },
@@ -3238,7 +3279,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 name: 'myType',
-                pre(value, state, options) {
+                pre(value, state, prefs) {
 
                     return 'baz';
                 },
@@ -3262,7 +3303,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 name: 'myType',
-                pre(value, state, options) {
+                pre(value, state, prefs) {
 
                     return Joi.number();
                 },
@@ -3299,7 +3340,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 name: 'myType',
-                pre(value, state, options) {
+                pre(value, state, prefs) {
 
                     return value + this._flags.add;
                 },
@@ -3313,7 +3354,7 @@ describe('Joi', () => {
 
                             this._flags.add = params.factor;
                         },
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
                             return value + params.factor;
                         }
@@ -3341,7 +3382,7 @@ describe('Joi', () => {
                             newSchema._flags.add = params.factor;
                             return newSchema;
                         },
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
                             return value + params.factor;
                         }
@@ -3365,7 +3406,7 @@ describe('Joi', () => {
                             q: Joi.number().required(),
                             currency: Joi.string()
                         },
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
                             const v = value * params.q;
                             return params.currency ? params.currency + v : v;
@@ -3395,7 +3436,7 @@ describe('Joi', () => {
                             q: Joi.number().required(),
                             currency: Joi.string()
                         }),
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
                             const v = value * params.q;
                             return params.currency ? params.currency + v : v;
@@ -3424,9 +3465,9 @@ describe('Joi', () => {
                             q: Joi.object().ref(),
                             currency: Joi.string()
                         },
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            const q = params.q.resolve(value, state, options) || 0;
+                            const q = params.q.resolve(value, state, prefs) || 0;
                             const v = value * q;
                             return params.currency ? params.currency + v : v;
                         }
@@ -3457,7 +3498,7 @@ describe('Joi', () => {
                             q: Joi.number().required(),
                             currency: Joi.string().default('$')
                         },
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
                             const v = value * params.q;
                             return params.currency + v;
@@ -3481,7 +3522,7 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'double',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
                             return value * 2;
                         }
@@ -3498,7 +3539,7 @@ describe('Joi', () => {
 
         it('does not override a predefined language', () => {
 
-            const base = Joi.any().options({
+            const base = Joi.any().prefs({
                 language: {
                     'myType.foo': 'original'
                 }
@@ -3513,16 +3554,16 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'foo',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('myType.foo', null, state, options);
+                            return this.createError('myType.foo', value, null, state, prefs);
                         }
                     }
                 ]
             });
 
             // Checks for a language leak in the base
-            expect(base._settings.language['myType.foo']).to.equal('original');
+            expect(base._preferences.language['myType.foo']).to.equal('original');
 
             const schema = customJoi.myType().foo();
             const result = schema.validate({});
@@ -3532,7 +3573,7 @@ describe('Joi', () => {
 
         it('does not change predefined options', () => {
 
-            const base = Joi.number().options({
+            const base = Joi.number().prefs({
                 abortEarly: false
             });
 
@@ -3545,9 +3586,9 @@ describe('Joi', () => {
                 rules: [
                     {
                         name: 'foo',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('myType.foo', null, state, options);
+                            return this.createError('myType.foo', value, null, state, prefs);
                         }
                     }
                 ]
@@ -3563,7 +3604,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 base: Joi.string(),
-                coerce(value, state, options) {
+                coerce(value, state, prefs) {
 
                     return 'foobar';
                 },
@@ -3580,7 +3621,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 base: Joi.string(),
-                coerce(value, state, options) {
+                coerce(value, state, prefs) {
 
                     return 'foobar';
                 },
@@ -3597,7 +3638,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 base: Joi.string(),
-                coerce(value, state, options) {
+                coerce(value, state, prefs) {
 
                     return 'foobar';
                 },
@@ -3606,7 +3647,7 @@ describe('Joi', () => {
 
             const customJoi2 = customJoi.extend({
                 base: customJoi.myType(),
-                coerce(value, state, options) {
+                coerce(value, state, prefs) {
 
                     expect(value).to.equal('foobar');
                     return 'baz';
@@ -3624,16 +3665,16 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 base: Joi.string(),
-                coerce(value, state, options) {
+                coerce(value, state, prefs) {
 
-                    return this.createError('any.invalid', null, state, options);
+                    return this.createError('any.invalid', value, null, state, prefs);
                 },
                 name: 'myType'
             });
 
             const customJoi2 = customJoi.extend({
                 base: customJoi.myType(),
-                coerce(value, state, options) {
+                coerce(value, state, prefs) {
 
                     expect(value).to.equal('foobar');
                     return 'baz';
@@ -3650,7 +3691,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 base: Joi.string(),
-                pre(value, state, options) {
+                pre(value, state, prefs) {
 
                     return Symbol(value);
                 },
@@ -3668,11 +3709,11 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 base: Joi.bool(),
-                coerce(value, state, options) {
+                coerce(value, state, prefs) {
 
                     return true;
                 },
-                pre(value, state, options) {
+                pre(value, state, prefs) {
 
                     return value.toString();
                 },
@@ -3688,9 +3729,9 @@ describe('Joi', () => {
         it('defines a custom type with a failing coerce', () => {
 
             const customJoi = Joi.extend({
-                coerce(value, state, options) {
+                coerce(value, state, prefs) {
 
-                    return this.createError('any.invalid', null, state, options);
+                    return this.createError('any.invalid', value, null, state, prefs);
                 },
                 name: 'myType'
             });
@@ -3704,9 +3745,9 @@ describe('Joi', () => {
         it('defines a custom type with a failing pre', () => {
 
             const customJoi = Joi.extend({
-                pre(value, state, options) {
+                pre(value, state, prefs) {
 
-                    return this.createError('any.invalid', null, state, options);
+                    return this.createError('any.invalid', value, null, state, prefs);
                 },
                 name: 'myType'
             });
@@ -3720,7 +3761,7 @@ describe('Joi', () => {
         it('defines a custom type with a non-modifying coerce', () => {
 
             const customJoi = Joi.extend({
-                coerce(value, state, options) {
+                coerce(value, state, prefs) {
 
                     return value;
                 },
@@ -3736,7 +3777,7 @@ describe('Joi', () => {
         it('defines a custom type with a non-modifying pre', () => {
 
             const customJoi = Joi.extend({
-                pre(value, state, options) {
+                pre(value, state, prefs) {
 
                     return value;
                 },
@@ -3753,7 +3794,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 base: Joi.number(),
-                pre(value, state, options) {
+                pre(value, state, prefs) {
 
                     throw new Error('should not reach here');
                 },
@@ -3802,11 +3843,11 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'foo',
-                            validate(params, value, state, options) { }
+                            validate(params, value, state, prefs) { }
                         },
                         {
                             name: 'bar',
-                            validate(params, value, state, options) { }
+                            validate(params, value, state, prefs) { }
                         }
                     ]
                 });
@@ -3834,7 +3875,7 @@ describe('Joi', () => {
                                 qux: Joi.object().ref(),
                                 quux: Joi.object().ref()
                             },
-                            validate(params, value, state, options) { }
+                            validate(params, value, state, prefs) { }
                         }
                     ]
                 });
@@ -3843,7 +3884,7 @@ describe('Joi', () => {
                 expect(schema.describe()).to.equal({
                     type: 'myType',
                     rules: [
-                        { name: 'foo', arg: { bar: 'bar', baz: 42, qux: { type: 'ref', key: 'a.b', path: ['a', 'b'] }, quux: { type: 'context', key: 'c.d', path: ['c', 'd'] } } }
+                        { name: 'foo', arg: { bar: 'bar', baz: 42, qux: { ref: 'value', key: 'a.b', path: ['a', 'b'] }, quux: { ref: 'global', key: 'c.d', path: ['c', 'd'] } } }
                     ]
                 });
             });
@@ -3859,7 +3900,7 @@ describe('Joi', () => {
                                 bar: Joi.string()
                             },
                             description: 'something',
-                            validate(params, value, state, options) { }
+                            validate(params, value, state, prefs) { }
                         },
                         {
                             name: 'bar',
@@ -3871,7 +3912,7 @@ describe('Joi', () => {
                                 expect(params).to.equal({ baz: 'baz' });
                                 return 'whatever';
                             },
-                            validate(params, value, state, options) { }
+                            validate(params, value, state, prefs) { }
                         }
                     ]
                 });
@@ -3910,7 +3951,7 @@ describe('Joi', () => {
                                 bar: Joi.string()
                             },
                             description: 'something',
-                            validate(params, value, state, options) { }
+                            validate(params, value, state, prefs) { }
                         },
                         {
                             name: 'bar',
@@ -3922,7 +3963,7 @@ describe('Joi', () => {
                                 expect(params).to.equal({ baz: 'baz' });
                                 return 'whatever';
                             },
-                            validate(params, value, state, options) { }
+                            validate(params, value, state, prefs) { }
                         }
                     ]
                 });
@@ -3992,7 +4033,7 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'foo',
-                            validate(params, value, state, options) {
+                            validate(params, value, state, prefs) {
 
                                 return 1;
                             }
@@ -4005,7 +4046,7 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'bar',
-                            validate(params, value, state, options) {
+                            validate(params, value, state, prefs) {
 
                                 return 2;
                             }
@@ -4027,7 +4068,7 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'foo',
-                            validate(params, value, state, options) {
+                            validate(params, value, state, prefs) {
 
                                 return 1;
                             }
@@ -4040,7 +4081,7 @@ describe('Joi', () => {
                     rules: [
                         {
                             name: 'bar',
-                            validate(params, value, state, options) {
+                            validate(params, value, state, prefs) {
 
                                 return 2;
                             }
@@ -4059,9 +4100,9 @@ describe('Joi', () => {
                 name: 'myType',
                 rules: [{
                     name: 'foo',
-                    validate(params, value, state, options) {
+                    validate(params, value, state, prefs) {
 
-                        return this.createError('myType.foo', null, state, options);
+                        return this.createError('myType.foo', value, null, state, prefs);
                     }
                 }]
             });
@@ -4072,7 +4113,7 @@ describe('Joi', () => {
                 message: 'Error code "myType.foo" is not defined, your custom type is missing the correct language definition',
                 path: [],
                 type: 'myType.foo',
-                context: { label: 'value' }
+                context: { label: 'value', value: {} }
             }]);
         });
 
@@ -4085,9 +4126,9 @@ describe('Joi', () => {
                     language: { 'number.foo': 'foo' },
                     rules: [{
                         name: 'foo',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('number.foo', null, state, options);
+                            return this.createError('number.foo', value, null, state, prefs);
                         }
                     }]
                 }),
@@ -4097,9 +4138,9 @@ describe('Joi', () => {
                     language: { 'number.bar': 'bar' },
                     rules: [{
                         name: 'bar',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('number.bar', null, state, options);
+                            return this.createError('number.bar', value, null, state, prefs);
                         }
                     }]
                 })
@@ -4115,9 +4156,9 @@ describe('Joi', () => {
                     language: { 'number.foo': 'foo' },
                     rules: [{
                         name: 'foo',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('number.foo', null, state, options);
+                            return this.createError('number.foo', value, null, state, prefs);
                         }
                     }]
                 }),
@@ -4126,9 +4167,9 @@ describe('Joi', () => {
                     name: 'number',
                     rules: [{
                         name: 'bar',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('number.base', null, state, options);
+                            return this.createError('number.base', value, null, state, prefs);
                         }
                     }]
                 })
@@ -4143,9 +4184,9 @@ describe('Joi', () => {
                     name: 'number',
                     rules: [{
                         name: 'foo',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('number.base', null, state, options);
+                            return this.createError('number.base', value, null, state, prefs);
                         }
                     }]
                 }),
@@ -4155,9 +4196,9 @@ describe('Joi', () => {
                     language: { 'number.bar': 'bar' },
                     rules: [{
                         name: 'bar',
-                        validate(params, value, state, options) {
+                        validate(params, value, state, prefs) {
 
-                            return this.createError('number.bar', null, state, options);
+                            return this.createError('number.bar', value, null, state, prefs);
                         }
                     }]
                 })

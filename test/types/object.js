@@ -604,7 +604,7 @@ describe('object', () => {
 
     it('errors on unknown keys when functions allows', async () => {
 
-        const schema = Joi.object({ a: Joi.number() }).options({ skipFunctions: true });
+        const schema = Joi.object({ a: Joi.number() }).prefs({ skipFunctions: true });
         const obj = { a: 5, b: 'value' };
         const err = await expect(schema.validate(obj)).to.reject('"b" is not allowed');
         expect(err.details).to.equal([{
@@ -635,7 +635,8 @@ describe('object', () => {
                         peer: 'second',
                         peerWithLabel: 'second',
                         label: 'first',
-                        key: 'first'
+                        key: 'first',
+                        value: { first: 'value' }
                     }
                 }]
             }]
@@ -653,27 +654,27 @@ describe('object', () => {
             [{ foo: 'bar' }, true, { context: { x: 'bar' } }],
             [{ foo: 'bar' }, true, { context: { x: ['baz', 'bar'] } }],
             [{ foo: 'bar' }, false, { context: { x: 'baz' } }, {
-                message: '"foo" must be one of [context:x]',
+                message: '"foo" must be one of [ref:global:x]',
                 details: [{
-                    message: '"foo" must be one of [context:x]',
+                    message: '"foo" must be one of [ref:global:x]',
                     path: ['foo'],
                     type: 'any.allowOnly',
                     context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
                 }]
             }],
             [{ foo: 'bar' }, false, { context: { x: ['baz', 'qux'] } }, {
-                message: '"foo" must be one of [context:x]',
+                message: '"foo" must be one of [ref:global:x]',
                 details: [{
-                    message: '"foo" must be one of [context:x]',
+                    message: '"foo" must be one of [ref:global:x]',
                     path: ['foo'],
                     type: 'any.allowOnly',
                     context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
                 }]
             }],
             [{ foo: 'bar' }, false, null, {
-                message: '"foo" must be one of [context:x]',
+                message: '"foo" must be one of [ref:global:x]',
                 details: [{
-                    message: '"foo" must be one of [context:x]',
+                    message: '"foo" must be one of [ref:global:x]',
                     path: ['foo'],
                     type: 'any.allowOnly',
                     context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
@@ -732,7 +733,7 @@ describe('object', () => {
             message: '"value" cannot rename "b" because override is disabled and target "a" exists',
             path: [],
             type: 'object.rename.override',
-            context: { from: 'b', to: 'a', label: 'value' }
+            context: { from: 'b', to: 'a', label: 'value', pattern: false, value: input }
         }]);
     });
 
@@ -765,7 +766,8 @@ describe('object', () => {
                     peer: 'b',
                     peerWithLabel: 'b',
                     label: 'a',
-                    key: 'a'
+                    key: 'a',
+                    value: input
                 }
             }
         ]);
@@ -789,7 +791,8 @@ describe('object', () => {
                 peer: 'b.c',
                 peerWithLabel: 'second',
                 label: 'a',
-                key: 'a'
+                key: 'a',
+                value: { a: 1, b: { d: 2 } }
             }
         }]);
     });
@@ -1037,7 +1040,7 @@ describe('object', () => {
                 a: Joi.object({
                     b: Joi.number()
                 }).unknown()
-            }).options({ allowUnknown: false });
+            }).prefs({ allowUnknown: false });
 
             Helper.validate(schema, [
                 [{ a: { b: 5 } }, true],
@@ -1072,7 +1075,7 @@ describe('object', () => {
                         d: Joi.number()
                     })
                 }).unknown()
-            }).options({ allowUnknown: false, stripUnknown: true });
+            }).prefs({ allowUnknown: false, stripUnknown: true });
 
             Helper.validate(schema, [
                 [{ a: { b: 5 } }, true, null, { a: { b: 5 } }],
@@ -1115,13 +1118,18 @@ describe('object', () => {
                 message: '"value" cannot rename "test2" because multiple renames are disabled and another key was already renamed to "test"',
                 path: [],
                 type: 'object.rename.multiple',
-                context: { from: 'test2', to: 'test', label: 'value' }
+                context: { from: 'test2', to: 'test', label: 'value', pattern: false, value: { test: 'a', test2: 'b' } }
             }]);
         });
 
         it('errors multiple times when abortEarly is false', async () => {
 
-            const schema = Joi.object().rename('a', 'b').rename('c', 'b').rename('d', 'b').options({ abortEarly: false });
+            const schema = Joi.object()
+                .rename('a', 'b')
+                .rename('c', 'b')
+                .rename('d', 'b')
+                .prefs({ abortEarly: false });
+
             const err = await expect(schema.validate({ a: 1, c: 1, d: 1 })).to.reject();
             expect(err).to.be.an.error('"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"');
             expect(err.details).to.equal([
@@ -1129,13 +1137,13 @@ describe('object', () => {
                     message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
                     path: [],
                     type: 'object.rename.multiple',
-                    context: { from: 'c', to: 'b', label: 'value' }
+                    context: { from: 'c', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
                 },
                 {
                     message: '"value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"',
                     path: [],
                     type: 'object.rename.multiple',
-                    context: { from: 'd', to: 'b', label: 'value' }
+                    context: { from: 'd', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
                 }
             ]);
         });
@@ -1166,7 +1174,7 @@ describe('object', () => {
                 message: '"value" cannot rename "test" because override is disabled and target "test1" exists',
                 path: [],
                 type: 'object.rename.override',
-                context: { from: 'test', to: 'test1', label: 'value' }
+                context: { from: 'test', to: 'test1', label: 'value', pattern: false, value: { test: 'b', test1: 'a' } }
             }]);
         });
 
@@ -1417,7 +1425,7 @@ describe('object', () => {
                     message: '"value" cannot rename "test1" because override is disabled and target "test" exists',
                     path: [],
                     type: 'object.rename.override',
-                    context: { from: 'test1', to: 'test', label: 'value' }
+                    context: { from: 'test1', to: 'test', label: 'value', pattern: true, value: item }
                 }]);
             });
 
@@ -1622,7 +1630,7 @@ describe('object', () => {
                     message: '"value" cannot rename "FooBar" because multiple renames are disabled and another key was already renamed to "fooBar"',
                     path: [],
                     type: 'object.rename.multiple',
-                    context: { from: 'FooBar', to: 'fooBar', label: 'value' }
+                    context: { from: 'FooBar', to: 'fooBar', label: 'value', pattern: true, value: { FooBar: 'b', fooBar: 'a' } }
                 }]);
             });
 
@@ -1634,7 +1642,7 @@ describe('object', () => {
                     .rename(/a/i, 'b')
                     .rename(/c/i, 'b')
                     .rename(/z/i, 'z')
-                    .options({ abortEarly: false });
+                    .prefs({ abortEarly: false });
 
                 const err = await expect(schema.validate({ a: 1, c: 1, d: 1, z: 1 })).to.reject('"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "z" must be a string. "d" is not allowed. "b" is not allowed');
                 expect(err.details).to.equal([
@@ -1642,7 +1650,7 @@ describe('object', () => {
                         message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
                         path: [],
                         type: 'object.rename.multiple',
-                        context: { from: 'c', to: 'b', label: 'value' }
+                        context: { from: 'c', to: 'b', label: 'value', pattern: true, value: { b: 1, d: 1, z: 1 } }
                     },
                     {
                         message: '"z" must be a string',
@@ -2171,7 +2179,8 @@ describe('object', () => {
                     peer: 'b',
                     peerWithLabel: 'second',
                     label: 'a',
-                    key: 'a'
+                    key: 'a',
+                    value: { a: 1 }
                 }
             }]);
         });
@@ -2198,7 +2207,8 @@ describe('object', () => {
                             peer: 'b.c',
                             peerWithLabel: 'b.c',
                             key: 'a',
-                            label: 'a'
+                            label: 'a',
+                            value: { a: 'test', b: { d: 80 } }
                         }
                     }]
                 }]
@@ -2223,7 +2233,8 @@ describe('object', () => {
                             peer: 'b.c',
                             peerWithLabel: 'b.c',
                             key: 'b',
-                            label: 'a.b'
+                            label: 'a.b',
+                            value: { a: { b: 'test' }, b: {} }
                         }
                     }]
                 }]
@@ -2239,24 +2250,25 @@ describe('object', () => {
             }).with('a', 'b.c');
 
             Helper.validate(schema, [
-                [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, true],
-                [{ a: 'test', b: Object.assign(() => { }, { d: 80 }) }, false, null, {
-                    message: '"a" missing required peer "b.c"',
-                    details: [{
-                        message: '"a" missing required peer "b.c"',
-                        path: ['a'],
-                        type: 'object.with',
-                        context: {
-                            main: 'a',
-                            mainWithLabel: 'a',
-                            peer: 'b.c',
-                            peerWithLabel: 'b.c',
-                            key: 'a',
-                            label: 'a'
-                        }
-                    }]
-                }]
+                [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, true]
             ]);
+
+            const error = schema.validate({ a: 'test', b: Object.assign(() => { }, { d: 80 }) }).error;
+            expect(error).to.be.an.error('"a" missing required peer "b.c"');
+            expect(error.details).to.equal([{
+                message: '"a" missing required peer "b.c"',
+                path: ['a'],
+                type: 'object.with',
+                context: {
+                    main: 'a',
+                    mainWithLabel: 'a',
+                    peer: 'b.c',
+                    peerWithLabel: 'b.c',
+                    key: 'a',
+                    label: 'a',
+                    value: error.details[0].context.value
+                }
+            }]);
         });
 
         it('should apply labels with nested objects', () => {
@@ -2277,7 +2289,8 @@ describe('object', () => {
                     peer: 'b.c',
                     peerWithLabel: 'second',
                     label: 'a',
-                    key: 'a'
+                    key: 'a',
+                    value: { a: 1, b: { d: 2 } }
                 }
             }]);
 
@@ -2297,7 +2310,8 @@ describe('object', () => {
                     peer: 'b.c',
                     peerWithLabel: 'second',
                     label: 'a.b',
-                    key: 'b'
+                    key: 'b',
+                    value: { a: { b: 'test' }, b: {} }
                 }
             }]);
         });
@@ -2379,7 +2393,8 @@ describe('object', () => {
                     peer: 'b',
                     peerWithLabel: 'second',
                     label: 'a',
-                    key: 'a'
+                    key: 'a',
+                    value: { a: 1, b: 'b' }
                 }
             }]);
         });
@@ -2410,7 +2425,8 @@ describe('object', () => {
                     peer: 'b.d',
                     peerWithLabel: 'b.d',
                     key: 'a',
-                    label: 'a'
+                    label: 'a',
+                    value: sampleObject2
                 }
             }]);
         });
@@ -2442,7 +2458,8 @@ describe('object', () => {
                     peer: 'b.d',
                     peerWithLabel: 'b.d',
                     key: 'a',
-                    label: 'a'
+                    label: 'a',
+                    value: error2.details[0].context.value
                 }
             }]);
         });
@@ -2465,7 +2482,8 @@ describe('object', () => {
                     peer: 'b.c',
                     peerWithLabel: 'second',
                     label: 'a',
-                    key: 'a'
+                    key: 'a',
+                    value: { a: 1, b: { c: 'c' } }
                 }
             }]);
         });
@@ -2512,7 +2530,8 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b'],
                     peersWithLabels: ['first', 'second'],
-                    label: 'value'
+                    label: 'value',
+                    value: {}
                 }
             }]);
         });
@@ -2534,7 +2553,8 @@ describe('object', () => {
                     peersWithLabels: ['first', 'second'],
                     present: ['a', 'b'],
                     presentWithLabels: ['first', 'second'],
-                    label: 'value'
+                    label: 'value',
+                    value: { a: 1, b: 'b' }
                 }
             }]);
         });
@@ -2558,7 +2578,8 @@ describe('object', () => {
                     peersWithLabels: ['first', 'second', 'third', 'fourth'],
                     present: ['a', 'b', 'd'],
                     presentWithLabels: ['first', 'second', 'fourth'],
-                    label: 'value'
+                    label: 'value',
+                    value: { a: 1, b: 'b', d: 'd' }
                 }
             }]);
         });
@@ -2588,7 +2609,8 @@ describe('object', () => {
                     peersWithLabels: ['a', 'b.c'],
                     present: ['a', 'b.c'],
                     presentWithLabels: ['a', 'b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: sampleObject2
                 }
             }]);
         });
@@ -2618,7 +2640,8 @@ describe('object', () => {
                     peersWithLabels: ['a', 'b.c'],
                     present: ['a', 'b.c'],
                     presentWithLabels: ['a', 'b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: error2.details[0].context.value
                 }
             }]);
         });
@@ -2638,7 +2661,8 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b.c'],
                     peersWithLabels: ['first', 'second'],
-                    label: 'value'
+                    label: 'value',
+                    value: {}
                 }
             }]);
         });
@@ -2660,7 +2684,8 @@ describe('object', () => {
                     peersWithLabels: ['first', 'second'],
                     present: ['a', 'b.c'],
                     presentWithLabels: ['first', 'second'],
-                    label: 'value'
+                    label: 'value',
+                    value: { a: 1, b: { c: 'c' } }
                 }
             }]);
         });
@@ -2732,7 +2757,8 @@ describe('object', () => {
                     peersWithLabels: ['first', 'second'],
                     present: ['a', 'b'],
                     presentWithLabels: ['first', 'second'],
-                    label: 'value'
+                    label: 'value',
+                    value: { a: 1, b: 'b' }
                 }
             }]);
         });
@@ -2762,7 +2788,8 @@ describe('object', () => {
                     peersWithLabels: ['a', 'b.c'],
                     present: ['a', 'b.c'],
                     presentWithLabels: ['a', 'b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: sampleObject2
                 }
             }]);
         });
@@ -2792,7 +2819,8 @@ describe('object', () => {
                     peersWithLabels: ['a', 'b.c'],
                     present: ['a', 'b.c'],
                     presentWithLabels: ['a', 'b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: error2.details[0].context.value
                 }
             }]);
         });
@@ -2841,7 +2869,8 @@ describe('object', () => {
                     peers: ['x', 'y'],
                     peersWithLabels: ['x', 'y'],
                     label: 'a.b',
-                    key: 'b'
+                    key: 'b',
+                    value: { c: 1 }
                 }
             }]);
         });
@@ -2861,7 +2890,8 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b'],
                     peersWithLabels: ['first', 'second'],
-                    label: 'value'
+                    label: 'value',
+                    value: {}
                 }
             }]);
         });
@@ -2889,7 +2919,8 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b.c'],
                     peersWithLabels: ['a', 'b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: sampleObject2
                 }
             }]);
         });
@@ -2917,7 +2948,8 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b.c'],
                     peersWithLabels: ['a', 'b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: sampleObject2
                 }
             }]);
         });
@@ -2937,7 +2969,8 @@ describe('object', () => {
                 context: {
                     peers: ['a', 'b.c'],
                     peersWithLabels: ['first', 'second'],
-                    label: 'value'
+                    label: 'value',
+                    value: {}
                 }
             }]);
         });
@@ -2962,7 +2995,8 @@ describe('object', () => {
                     presentWithLabels: ['first'],
                     missing: ['b'],
                     missingWithLabels: ['second'],
-                    label: 'value'
+                    label: 'value',
+                    value: { a: 1 }
                 }
             }]);
         });
@@ -2992,7 +3026,8 @@ describe('object', () => {
                     presentWithLabels: ['a'],
                     missing: ['b.c'],
                     missingWithLabels: ['b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: sampleObject2
                 }
             }]);
         });
@@ -3022,7 +3057,8 @@ describe('object', () => {
                     presentWithLabels: ['a'],
                     missing: ['b.c'],
                     missingWithLabels: ['b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: error2.details[0].context.value
                 }
             }]);
         });
@@ -3044,7 +3080,8 @@ describe('object', () => {
                     presentWithLabels: ['first'],
                     missing: ['b.c'],
                     missingWithLabels: ['second'],
-                    label: 'value'
+                    label: 'value',
+                    value: { a: 1 }
                 }
             }]);
         });
@@ -3066,7 +3103,8 @@ describe('object', () => {
                     presentWithLabels: ['first'],
                     missing: ['c.d'],
                     missingWithLabels: ['c.d'],
-                    label: 'value'
+                    label: 'value',
+                    value: { a: 1, b: { d: 1 } }
                 }
             }]);
         });
@@ -3091,7 +3129,8 @@ describe('object', () => {
                     mainWithLabel: 'first',
                     peers: ['b'],
                     peersWithLabels: ['second'],
-                    label: 'value'
+                    label: 'value',
+                    value: { a: 1, b: 'b' }
                 }
             }]);
         });
@@ -3121,7 +3160,8 @@ describe('object', () => {
                     mainWithLabel: 'a',
                     peers: ['b.c'],
                     peersWithLabels: ['b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: sampleObject2
                 }
             }]);
         });
@@ -3132,7 +3172,8 @@ describe('object', () => {
                 a: Joi.string(),
                 b: Joi.func().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
-            }).nand('a', 'b.c');
+            })
+                .nand('a', 'b.c');
 
             const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
             const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
@@ -3151,7 +3192,8 @@ describe('object', () => {
                     mainWithLabel: 'a',
                     peers: ['b.c'],
                     peersWithLabels: ['b.c'],
-                    label: 'value'
+                    label: 'value',
+                    value: error2.details[0].context.value
                 }
             }]);
         });
@@ -3173,7 +3215,8 @@ describe('object', () => {
                     mainWithLabel: 'first',
                     peers: ['b.c'],
                     peersWithLabels: ['second'],
-                    label: 'value'
+                    label: 'value',
+                    value: { a: 1, b: { c: 'c' } }
                 }
             }]);
         });
@@ -3243,7 +3286,7 @@ describe('object', () => {
                 message: '"value" is invalid because "d.e" failed to equal to a.c',
                 path: [],
                 type: 'object.assert',
-                context: { ref: 'd.e', message: 'equal to a.c', label: 'value' }
+                context: { ref: 'd.e', message: 'equal to a.c', label: 'value', value: { a: { b: 'x', c: 5 }, d: { e: 6 } } }
             }]);
 
             Helper.validate(schema, [
@@ -3304,7 +3347,8 @@ describe('object', () => {
                 context: {
                     ref: 'd.e',
                     message: 'pass the assertion test',
-                    label: 'value'
+                    label: 'value',
+                    value: { d: { e: [] } }
                 }
             }]);
         });
@@ -3395,7 +3439,7 @@ describe('object', () => {
                         message: '"value" must be a Joi schema of any type',
                         path: [],
                         type: 'object.schema',
-                        context: { label: 'value', type: 'any' }
+                        context: { label: 'value', type: 'any', value: {} }
                     }]
                 }],
                 [{ isJoi: true }, false, null, {
@@ -3404,7 +3448,7 @@ describe('object', () => {
                         message: '"value" must be a Joi schema of any type',
                         path: [],
                         type: 'object.schema',
-                        context: { label: 'value', type: 'any' }
+                        context: { label: 'value', type: 'any', value: { isJoi: true } }
                     }]
                 }],
                 [Joi.number().max(2), true]
@@ -3422,7 +3466,7 @@ describe('object', () => {
                         message: '"value" must be a Joi schema of number type',
                         path: [],
                         type: 'object.schema',
-                        context: { label: 'value', type: 'number' }
+                        context: { label: 'value', type: 'number', value: {} }
                     }]
                 }],
                 [{ isJoi: true }, false, null, {
@@ -3431,7 +3475,7 @@ describe('object', () => {
                         message: '"value" must be a Joi schema of number type',
                         path: [],
                         type: 'object.schema',
-                        context: { label: 'value', type: 'number' }
+                        context: { label: 'value', type: 'number', value: { isJoi: true } }
                     }]
                 }],
                 [Joi.string(), false, null, {
@@ -3440,7 +3484,7 @@ describe('object', () => {
                         message: '"value" must be a Joi schema of number type',
                         path: [],
                         type: 'object.schema',
-                        context: { label: 'value', type: 'number' }
+                        context: { label: 'value', type: 'number', value: Joi.string() }
                     }]
                 }]
             ]);
@@ -3600,7 +3644,7 @@ describe('object', () => {
                         message: '"a" is not allowed',
                         path: ['a'],
                         type: 'any.unknown',
-                        context: { label: 'a', key: 'a' }
+                        context: { label: 'a', key: 'a', value: 0 }
                     }]
                 }],
                 [{ b: 0 }, false, null, {
@@ -3609,7 +3653,7 @@ describe('object', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'any.unknown',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: 0 }
                     }]
                 }]
             ]);

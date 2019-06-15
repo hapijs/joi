@@ -119,7 +119,7 @@ describe('date', () => {
 
     it('errors on invalid input and convert disabled', async () => {
 
-        const err = await expect(Joi.date().options({ convert: false }).validate('1-1-2013 UTC')).to.reject();
+        const err = await expect(Joi.date().prefs({ convert: false }).validate('1-1-2013 UTC')).to.reject();
         expect(err).to.be.an.error('"value" must be a valid date');
         expect(err.details).to.equal([{
             message: '"value" must be a valid date',
@@ -284,9 +284,9 @@ describe('date', () => {
                     [{ b: now }, true, { context: { a: now } }],
                     [{ b: now + 1e3 }, true, { context: { a: now } }],
                     [{ b: now - 1e3 }, false, { context: { a: now } }, {
-                        message: '"b" must be larger than or equal to "context:a"',
+                        message: '"b" must be larger than or equal to "ref:global:a"',
                         details: [{
-                            message: '"b" must be larger than or equal to "context:a"',
+                            message: '"b" must be larger than or equal to "ref:global:a"',
                             path: ['b'],
                             type: 'date.min',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
@@ -332,18 +332,18 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: '"b" references "context:a" which is not a date',
+                        message: '"b" references "ref:global:a" which is not a date',
                         details: [{
-                            message: '"b" references "context:a" which is not a date',
+                            message: '"b" references "ref:global:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
                             context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
-                        message: '"b" must be larger than or equal to "context:a"',
+                        message: '"b" must be larger than or equal to "ref:global:a"',
                         details: [{
-                            message: '"b" must be larger than or equal to "context:a"',
+                            message: '"b" must be larger than or equal to "ref:global:a"',
                             path: ['b'],
                             type: 'date.min',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
@@ -448,9 +448,9 @@ describe('date', () => {
                 Helper.validate(schema, [
                     [{ b: now }, true, { context: { a: now } }],
                     [{ b: now + 1e3 }, false, { context: { a: now } }, {
-                        message: '"b" must be less than or equal to "context:a"',
+                        message: '"b" must be less than or equal to "ref:global:a"',
                         details: [{
-                            message: '"b" must be less than or equal to "context:a"',
+                            message: '"b" must be less than or equal to "ref:global:a"',
                             path: ['b'],
                             type: 'date.max',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
@@ -497,9 +497,9 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: '"b" references "context:a" which is not a date',
+                        message: '"b" references "ref:global:a" which is not a date',
                         details: [{
-                            message: '"b" references "context:a" which is not a date',
+                            message: '"b" references "ref:global:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
                             context: { ref, label: 'b', key: 'b', value: 'abc' }
@@ -507,9 +507,9 @@ describe('date', () => {
                     }],
                     [{ b: now }, true, { context: { a: '100000000000000' } }],
                     [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
-                        message: '"b" must be less than or equal to "context:a"',
+                        message: '"b" must be less than or equal to "ref:global:a"',
                         details: [{
-                            message: '"b" must be less than or equal to "context:a"',
+                            message: '"b" must be less than or equal to "ref:global:a"',
                             path: ['b'],
                             type: 'date.max',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
@@ -664,9 +664,9 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: now } }, {
-                        message: '"b" must be greater than "context:a"',
+                        message: '"b" must be greater than "ref:global:a"',
                         details: [{
-                            message: '"b" must be greater than "context:a"',
+                            message: '"b" must be greater than "ref:global:a"',
                             path: ['b'],
                             type: 'date.greater',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
@@ -674,9 +674,9 @@ describe('date', () => {
                     }],
                     [{ b: now + 1e3 }, true, { context: { a: now } }],
                     [{ b: now - 1e3 }, false, { context: { a: now } }, {
-                        message: '"b" must be greater than "context:a"',
+                        message: '"b" must be greater than "ref:global:a"',
                         details: [{
-                            message: '"b" must be greater than "context:a"',
+                            message: '"b" must be greater than "ref:global:a"',
                             path: ['b'],
                             type: 'date.greater',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
@@ -722,18 +722,18 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: '"b" references "context:a" which is not a date',
+                        message: '"b" references "ref:global:a" which is not a date',
                         details: [{
-                            message: '"b" references "context:a" which is not a date',
+                            message: '"b" references "ref:global:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
                             context: { ref, label: 'b', key: 'b', value: 'abc' }
                         }]
                     }],
                     [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
-                        message: '"b" must be greater than "context:a"',
+                        message: '"b" must be greater than "ref:global:a"',
                         details: [{
-                            message: '"b" must be greater than "context:a"',
+                            message: '"b" must be greater than "ref:global:a"',
                             path: ['b'],
                             type: 'date.greater',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
@@ -869,18 +869,18 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: now } }, {
-                        message: '"b" must be less than "context:a"',
+                        message: '"b" must be less than "ref:global:a"',
                         details: [{
-                            message: '"b" must be less than "context:a"',
+                            message: '"b" must be less than "ref:global:a"',
                             path: ['b'],
                             type: 'date.less',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                         }]
                     }],
                     [{ b: now + 1e3 }, false, { context: { a: now } }, {
-                        message: '"b" must be less than "context:a"',
+                        message: '"b" must be less than "ref:global:a"',
                         details: [{
-                            message: '"b" must be less than "context:a"',
+                            message: '"b" must be less than "ref:global:a"',
                             path: ['b'],
                             type: 'date.less',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
@@ -927,9 +927,9 @@ describe('date', () => {
 
                 Helper.validate(schema, [
                     [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: '"b" references "context:a" which is not a date',
+                        message: '"b" references "ref:global:a" which is not a date',
                         details: [{
-                            message: '"b" references "context:a" which is not a date',
+                            message: '"b" references "ref:global:a" which is not a date',
                             path: ['b'],
                             type: 'date.ref',
                             context: { ref, label: 'b', key: 'b', value: 'abc' }
@@ -937,9 +937,9 @@ describe('date', () => {
                     }],
                     [{ b: now }, true, { context: { a: '100000000000000' } }],
                     [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
-                        message: '"b" must be less than "context:a"',
+                        message: '"b" must be less than "ref:global:a"',
                         details: [{
-                            message: '"b" must be less than "context:a"',
+                            message: '"b" must be less than "ref:global:a"',
                             path: ['b'],
                             type: 'date.less',
                             context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }

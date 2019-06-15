@@ -354,9 +354,9 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
                 [{ b: 'a' }, false, { context: { a: 2 } }, {
-                    message: '"b" length must be at least context:a characters long',
+                    message: '"b" length must be at least ref:global:a characters long',
                     details: [{
-                        message: '"b" length must be at least context:a characters long',
+                        message: '"b" length must be at least ref:global:a characters long',
                         path: ['b'],
                         type: 'string.min',
                         context: {
@@ -396,9 +396,9 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
                         context: { ref, label: 'b', key: 'b', value: 'Hi there' }
@@ -482,9 +482,9 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
                 [{ b: 'three' }, false, { context: { a: 2 } }, {
-                    message: '"b" length must be less than or equal to context:a characters long',
+                    message: '"b" length must be less than or equal to ref:global:a characters long',
                     details: [{
-                        message: '"b" length must be less than or equal to context:a characters long',
+                        message: '"b" length must be less than or equal to ref:global:a characters long',
                         path: ['b'],
                         type: 'string.max',
                         context: {
@@ -524,9 +524,9 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
                         context: { ref, label: 'b', key: 'b', value: 'Hi there' }
@@ -663,18 +663,18 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, true, { context: { a: 2 } }],
                 [{ b: 'a' }, false, { context: { a: 2 } }, {
-                    message: '"b" length must be context:a characters long',
+                    message: '"b" length must be ref:global:a characters long',
                     details: [{
-                        message: '"b" length must be context:a characters long',
+                        message: '"b" length must be ref:global:a characters long',
                         path: ['b'],
                         type: 'string.length',
                         context: { limit: ref, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
                     }]
                 }],
                 [{ b: 'a' }, false, { context: { a: 2 } }, {
-                    message: '"b" length must be context:a characters long',
+                    message: '"b" length must be ref:global:a characters long',
                     details: [{
-                        message: '"b" length must be context:a characters long',
+                        message: '"b" length must be ref:global:a characters long',
                         path: ['b'],
                         type: 'string.length',
                         context: { limit: ref, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
@@ -708,9 +708,9 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'string.ref',
                         context: { ref, label: 'b', key: 'b', value: 'Hi there' }

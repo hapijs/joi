@@ -10,10 +10,10 @@ const Joi = require('../');
 const internals = {};
 
 
-const schema = Joi.object().options({ abortEarly: false }).keys({
+const schema = Joi.object().prefs({ abortEarly: false }).keys({
     email: Joi.string().email().required().label('User Email'),
     password: Joi.string().min(8).required(),
-    password_confirmation: Joi.any().valid(Joi.ref('password')).required().options({ language: { 'any.allowOnly': 'must match password' } }).label('Password Confirmation'),
+    password_confirmation: Joi.any().valid(Joi.ref('password')).required().prefs({ language: { 'any.allowOnly': 'must match password' } }).label('Password Confirmation'),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
     company: Joi.string().optional()

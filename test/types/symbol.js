@@ -190,7 +190,7 @@ describe('symbol', () => {
         it('handles plain symbols when convert is disabled', async () => {
 
             const symbols = [Symbol(1), Symbol(2)];
-            const schema = Joi.symbol().map([[1, symbols[0]], ['two', symbols[1]]]).options({ convert: false });
+            const schema = Joi.symbol().map([[1, symbols[0]], ['two', symbols[1]]]).prefs({ convert: false });
             const result = await schema.validate(symbols[1]);
             expect(result).to.equal(symbols[1]);
         });
@@ -198,7 +198,7 @@ describe('symbol', () => {
         it('errors on mapped input and convert is disabled', async () => {
 
             const symbols = [Symbol(1), Symbol(2)];
-            const schema = Joi.symbol().map([[1, symbols[0]], ['two', symbols[1]]]).options({ convert: false });
+            const schema = Joi.symbol().map([[1, symbols[0]], ['two', symbols[1]]]).prefs({ convert: false });
             const err = await expect(schema.validate(1)).to.reject();
             expect(err).to.be.an.error('"value" must be one of [Symbol(1), Symbol(2)]');
             expect(err.details).to.equal([{

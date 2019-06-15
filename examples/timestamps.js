@@ -7,7 +7,7 @@ const now = new Date();
 const javascriptTimestamp = now.getTime();
 const unixTimestamp = now.getTime() / 1000;
 
-const schema = Joi.object().options({ abortEarly: false }).keys({
+const schema = Joi.object().prefs({ abortEarly: false }).keys({
   javascript1: Joi.date().timestamp(),
   javascript2: Joi.date().timestamp('javascript'),
   unix: Joi.date().timestamp('unix')

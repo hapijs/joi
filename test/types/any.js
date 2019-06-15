@@ -95,8 +95,8 @@ describe('any', () => {
 
         it('merges two schemas (settings)', () => {
 
-            const a = Joi.number().options({ convert: true });
-            const b = Joi.options({ convert: false });
+            const a = Joi.number().prefs({ convert: true });
+            const b = Joi.prefs({ convert: false });
 
             Helper.validate(a, [
                 [1, true],
@@ -832,6 +832,7 @@ describe('any', () => {
                                 key: 'b',
                                 label: 'b',
                                 message: '"b" must be one of [ref:a.c]. "b" must be one of [ref:c]',
+                                value: 7,
                                 details: [
                                     {
                                         message: '"b" must be one of [ref:a.c]',
@@ -1017,7 +1018,8 @@ describe('any', () => {
                         context: {
                             peers: ['a', 'b'],
                             peersWithLabels: ['a', 'b'],
-                            label: 'value'
+                            label: 'value',
+                            value: {}
                         }
                     }]
                 }],
@@ -1030,7 +1032,8 @@ describe('any', () => {
                         context: {
                             peers: ['a', 'b'],
                             peersWithLabels: ['a', 'b'],
-                            label: 'value'
+                            label: 'value',
+                            value: {}
                         }
                     }]
                 }],
@@ -1265,7 +1268,7 @@ describe('any', () => {
                 message: '"value" threw an error when running default method',
                 path: [],
                 type: 'any.default',
-                context: { error, label: 'value' }
+                context: { error, label: 'value', value: null }
             }]);
         });
 
@@ -1450,7 +1453,7 @@ describe('any', () => {
                 b: {
                     c: Joi.number().error(new Error('Really wanted a number!'))
                 }
-            }).options({ abortEarly: false });
+            }).prefs({ abortEarly: false });
 
             const err = await expect(Joi.validate({ a: 22, b: { c: 'x' } }, schema)).to.reject();
             expect(err.isJoi).to.not.exist();
@@ -1508,7 +1511,7 @@ describe('any', () => {
 
         describe('with a function', () => {
 
-            it('should replace the error message with a string', async () => {
+            it('replaces the error message with an error', async () => {
 
                 const schema = Joi.object({
                     a: Joi.string(),
@@ -1549,15 +1552,15 @@ describe('any', () => {
                             const message = errors.reduce((memo, error) => {
 
                                 let text = memo ? ' && ' : '';
-                                switch (error.type) {
+                                switch (error.code) {
                                     case 'number.base':
-                                        text += `"${error.context.key}" ∈ ℝ`;
+                                        text += `"${error.local.key}" ∈ ℝ`;
                                         break;
                                     case 'number.min':
-                                        text += `"${error.context.key}" > ${error.context.limit}`;
+                                        text += `"${error.local.key}" > ${error.local.limit}`;
                                         break;
                                     case 'number.integer':
-                                        text += `"${error.context.key}" ∈ ℤ`;
+                                        text += `"${error.local.key}" ∈ ℤ`;
                                         break;
                                 }
 
@@ -1579,7 +1582,7 @@ describe('any', () => {
                 const schema = Joi.object({
                     a: Joi.string(),
                     b: {
-                        c: Joi.number().min(0).integer().strict().error((errors) => new Error(`error of type ${errors[0].type}`))
+                        c: Joi.number().min(0).integer().strict().error((errors) => new Error(`error of type ${errors[0].code}`))
                     }
                 });
 
@@ -1661,7 +1664,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'any.unknown',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: 6 }
                     }]
                 }],
                 [{ a: 'a' }, false, null, {
@@ -1681,7 +1684,7 @@ describe('any', () => {
                         message: '"b" is not allowed',
                         path: ['b'],
                         type: 'any.unknown',
-                        context: { label: 'b', key: 'b' }
+                        context: { label: 'b', key: 'b', value: null }
                     }]
                 }]
             ]);
@@ -1897,7 +1900,7 @@ describe('any', () => {
                 c: {
                     d: Joi.any()
                 }
-            }).options({ presence: 'required' });
+            }).prefs({ presence: 'required' });
 
             Helper.validate(schema, [
                 [{ a: 5 }, false, null, {
@@ -1961,7 +1964,7 @@ describe('any', () => {
         it('does not modify provided options', () => {
 
             const options = { convert: true };
-            const schema = Joi.object().options(options);
+            const schema = Joi.object().prefs(options);
             schema.validate({});
             expect(options).to.equal({ convert: true });
 
@@ -1973,7 +1976,7 @@ describe('any', () => {
 
         it('adds to existing options', async () => {
 
-            const schema = Joi.object({ b: Joi.number().strict().options({ convert: true }) });
+            const schema = Joi.object({ b: Joi.number().strict().prefs({ convert: true }) });
             const input = { b: '2' };
             const value = await schema.validate(input);
             expect(value.b).to.equal(2);
@@ -1983,7 +1986,7 @@ describe('any', () => {
 
             expect(() => {
 
-                Joi.any().options({ foo: 'bar' });
+                Joi.any().prefs({ foo: 'bar' });
             }).to.throw('"foo" is not allowed');
         });
 
@@ -1991,7 +1994,7 @@ describe('any', () => {
 
             expect(() => {
 
-                Joi.any().options({ convert: 'yes' });
+                Joi.any().prefs({ convert: 'yes' });
             }).to.throw('"convert" must be a boolean');
         });
 
@@ -1999,7 +2002,7 @@ describe('any', () => {
 
             expect(() => {
 
-                Joi.any().options({ presence: 'yes' });
+                Joi.any().prefs({ presence: 'yes' });
             }).to.throw('"presence" must be one of [required, optional, forbidden, ignore]');
         });
 
@@ -2007,13 +2010,13 @@ describe('any', () => {
 
             expect(() => {
 
-                Joi.any().options({ presence: 'optional', noDefaults: true });
+                Joi.any().prefs({ presence: 'optional', noDefaults: true });
             }).to.not.throw();
         });
 
         it('describes a schema with options', () => {
 
-            const schema = Joi.any().options({ abortEarly: false, convert: false });
+            const schema = Joi.any().prefs({ abortEarly: false, convert: false });
             const description = schema.describe();
 
             expect(description).to.equal({ type: 'any', options: { abortEarly: false, convert: false } });
@@ -2021,7 +2024,7 @@ describe('any', () => {
 
         it('describes an alternatives schema with options', () => {
 
-            const schema = Joi.number().min(10).when('a', { is: 5, then: Joi.number().max(20).required() }).options({ abortEarly: false, convert: false }).describe();
+            const schema = Joi.number().min(10).when('a', { is: 5, then: Joi.number().max(20).required() }).prefs({ abortEarly: false, convert: false }).describe();
             expect(schema).to.equal({
                 type: 'alternatives',
                 flags: {
@@ -2040,7 +2043,7 @@ describe('any', () => {
                     ]
                 },
                 alternatives: [{
-                    ref: { type: 'ref', key: 'a', path: ['a'] },
+                    ref: { ref: 'value', key: 'a', path: ['a'] },
                     is: {
                         type: 'number',
                         flags: {
@@ -2069,13 +2072,13 @@ describe('any', () => {
             const baseSchema = Joi.any();
             expect(baseSchema.describe().options).to.undefined();
 
-            const languageSchema = baseSchema.options({ language: { 'type.foo': 'foo' } });
+            const languageSchema = baseSchema.prefs({ language: { 'type.foo': 'foo' } });
             expect(languageSchema.describe().options).to.equal({ language: { 'type.foo': 'foo' } });
 
-            const normalOptionSchema = baseSchema.options({ abortEarly: true });
+            const normalOptionSchema = baseSchema.prefs({ abortEarly: true });
             expect(normalOptionSchema.describe().options).to.equal({ abortEarly: true });
 
-            const normalOptionsOverLanguageSchema = languageSchema.options({ abortEarly: true });
+            const normalOptionsOverLanguageSchema = languageSchema.prefs({ abortEarly: true });
             expect(normalOptionsOverLanguageSchema.describe().options).to.equal({
                 abortEarly: true,
                 language: {
@@ -2083,7 +2086,7 @@ describe('any', () => {
                 }
             });
 
-            const languageOptionsOverNormalOptionsSchema = normalOptionSchema.options({ language: { 'type.foo': 'foo' } });
+            const languageOptionsOverNormalOptionsSchema = normalOptionSchema.prefs({ language: { 'type.foo': 'foo' } });
             expect(languageOptionsOverNormalOptionsSchema.describe().options).to.equal({
                 abortEarly: true,
                 language: {
@@ -2091,7 +2094,7 @@ describe('any', () => {
                 }
             });
 
-            const languageOptionsOverLanguageOptionsSchema = languageSchema.options({
+            const languageOptionsOverLanguageOptionsSchema = languageSchema.prefs({
                 language: {
                     'type.bar': 'bar',
                     'type2.foo': 'foo'
@@ -2200,7 +2203,7 @@ describe('any', () => {
                                 return value;
                             }
 
-                            return this.createError('ext.big', { value }, state, options);
+                            return this.createError('ext.big', value, null, state, options);
                         }
                     }
                 ]
@@ -2248,28 +2251,28 @@ describe('any', () => {
 
             it('overrides template', () => {
 
-                expect(Joi.number().min(10).rule({ message: '{{label}} way too small' }).validate(1).error).to.be.an.error('value way too small');
-                expect(Joi.number().min(10).rule({ message: { 'number.min': '{{label}} way too small' } }).validate(1).error).to.be.an.error('value way too small');
-                expect(Joi.number().min(10).rule({ message: { 'number.max': '{{label}} way too big' } }).validate(1).error).to.be.an.error('"value" must be larger than or equal to 10');
+                expect(Joi.number().min(10).rule({ message: '{{#label}} way too small' }).validate(1).error).to.be.an.error('value way too small');
+                expect(Joi.number().min(10).rule({ message: { 'number.min': '{{#label}} way too small' } }).validate(1).error).to.be.an.error('value way too small');
+                expect(Joi.number().min(10).rule({ message: { 'number.max': '{{#label}} way too big' } }).validate(1).error).to.be.an.error('"value" must be larger than or equal to 10');
             });
 
             it('overrides ruleset with single template', () => {
 
-                const schema = Joi.number().$.max(100).min(10).rule({ message: '{{label}} number out of bound' });
+                const schema = Joi.number().$.max(100).min(10).rule({ message: '{{#label}} number out of bound' });
                 expect(schema.validate(1).error).to.be.an.error('value number out of bound');
                 expect(schema.validate(101).error).to.be.an.error('value number out of bound');
             });
 
             it('overrides ruleset templates', () => {
 
-                const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': '{{label}} way too big', 'number.min': '{{label}} way too small' } });
+                const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': '{{#label}} way too big', 'number.min': '{{#label}} way too small' } });
                 expect(schema.validate(1).error).to.be.an.error('value way too small');
                 expect(schema.validate(101).error).to.be.an.error('value way too big');
             });
 
             it('overrides ruleset with both message and template', () => {
 
-                const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': 'way too big', 'number.min': '{{label}} way too small' } });
+                const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': 'way too big', 'number.min': '{{#label}} way too small' } });
                 expect(schema.validate(1).error).to.be.an.error('value way too small');
                 expect(schema.validate(101).error).to.be.an.error('way too big');
             });
@@ -2354,7 +2357,7 @@ describe('any', () => {
 
         it('adds to existing options', async () => {
 
-            const schema = Joi.object({ b: Joi.number().options({ convert: true }).strict() });
+            const schema = Joi.object({ b: Joi.number().prefs({ convert: true }).strict() });
             const input = { b: '2' };
             const err = await expect(schema.validate(input)).to.reject();
             expect(err.message).to.equal('"b" must be a number');
@@ -2893,7 +2896,7 @@ describe('any', () => {
                     ]
                 },
                 alternatives: [{
-                    ref: { type: 'ref', key: 'a', path: ['a'] },
+                    ref: { ref: 'value', key: 'a', path: ['a'] },
                     is: {
                         type: 'number',
                         flags: {

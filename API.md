@@ -43,7 +43,7 @@
     - [`any.meta(meta)`](#anymetameta)
     - [`any.notes(notes)`](#anynotesnotes)
     - [`any.optional()`](#anyoptional)
-    - [`any.options(options)`](#anyoptionsoptions)
+    - [`any.prefs(options)` = aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
     - [`any.raw(isRaw)`](#anyrawisraw)
     - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
     - [`any.rule(options)`](#anyruleoptions)
@@ -289,11 +289,11 @@ Validates a value using the given schema and options where:
   - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
-    `validate()` and not using `any.options()`.
+    `validate()` and not using `any.prefs()`.
   - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
-  - `escapeHtml` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
+  - `escapeErrors` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
   - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
-    - variables are put between curly braces like `{{var}}`, if prefixed by a `!` like `{{!var}}`, it will be html escaped if the option `escapeHtml` is also set to `true`
+    - variables are put between curly braces like `{var}`, or `{{var}}` to be html escaped if the option `escapeErrors` is also set to `true`
     - strings are always preceded by the key name, unless a `{{label}}` is found elsewhere or if the string is prefixed by a `!!`
     - to better understand the structure of the language, it's advised to have a look at the existing messages you want to override [here](lib/language.js)
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
@@ -426,14 +426,16 @@ References support the following arguments:
   which is looked up in the `context` option object. The `key` can start with one or more separator
   characters to indicate a [relative starting point](#Relative-references).
 - `options` - optional settings:
-    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
-    - `contextPrefix` - overrides the default `$` context prefix signifier.
-    - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined
-      with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
     - `adjust` - a function with the signature `function(value)` where `value` is the resolved reference value and the return
       value is the adjusted value to use. For example `(value) => value + 5` will add 5 to the resolved value. Note that the
       `adjust` feature will not perform any type validation on the adjusted value and it must match the value expected by the
       rule it is used in.
+    - `prefix` - overrides default prefix characters for:
+      - `global` - references to the globally provided `context` preference. Defaults to `'$'`.
+      - `local` - references to error-specific or rule specific context. Defaults to `'#'`.
+    - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
+    - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined
+      with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
 (parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
@@ -599,8 +601,9 @@ The extension makes use of some common structures that need to be described prio
 * `state` - an object containing the current context of validation.
   * `key` - the key of the current value.
   * `path` - the full path of the current value.
-  * `parent` - the potential parent of the current value.
-* `options` - options object provided through [`any().options()`](#anyoptionsoptions) or [`Joi.validate()`](#validatevalue-schema-options-callback).
+  * `ancestors` - an array of the potential parents of the current value.
+  * `flags` - a reference to the schema's internal flags.
+* `prefs` - preferences object provided through [`any().prefs()`](#anyprefsoptions--aliases-preferences-options) or [`Joi.validate()`](#validatevalue-schema-options-callback).
 
 #### Extension
 
@@ -612,15 +615,15 @@ The extension makes use of some common structures that need to be described prio
 Extension objects use the following parameters :
 * `name` - name of the new type you are defining, this can be an existing type. **Required**.
 * `base` - an existing Joi schema to base your type upon. Defaults to `Joi.any()`.
-* `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `options`.
-* `pre` - an optional function that runs first in the validation chain, usually serves when you need to cast values. It takes 3 arguments `value`, `state` and `options`.
+* `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `prefs`.
+* `pre` - an optional function that runs first in the validation chain, usually serves when you need to cast values. It takes 3 arguments `value`, `state` and `prefs`.
 * `language` - an optional object to add error definitions. Every key will be prefixed by the type name.
 * `describe` - an optional function taking the fully formed description to post-process it.
 * `rules` - an optional array of rules to add.
   * `name` - name of the new rule. **Required**.
   * `params` - an optional object containing Joi schemas of each parameter ordered. You can also pass a single Joi schema as long as it is a `Joi.object()`, of course some methods such as `pattern` or `rename` won't be useful or won't work at all in this given context.
   * `setup` - an optional function that takes an object with the provided parameters to allow for internals manipulation of the schema when a rule is set, you can optionally return a new Joi schema that will be taken as the new schema instance. At least one of `setup` or `validate` **must** be provided.
-  * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `options`. At least one of `setup` or `validate` **must** be provided.
+  * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `prefs`. At least one of `setup` or `validate` **must** be provided.
   * `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
 
 Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended joi being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
@@ -632,21 +635,23 @@ params: { options: Joi.object({ param1: Joi.number().required(), param2: Joi.str
 
 To resolve referenced `params` in you `validate` or `setup` functions, you can use the following approach:
 ```js
-validate(params, value, state, options) {
-  let {foo} = params;
-  if (Joi.isRef(foo)) {
-    foo = foo.resolve(value, state, options);
-  }
+validate(params, value, state, prefs) {
+
+    let {foo} = params;
+    if (Joi.isRef(foo)) {
+        foo = foo.resolve(value, state, prefs);
+    }
   //...
 }
 ```
 
-Any of the `coerce`, `pre` and `validate` functions should use `this.createError(type, context, state, options)` to create and return errors.
-This function potentially takes 5 arguments:
-* `type` - the dotted type of the error matching predefined language elements or the ones defined in your extension. **Required**.
-* `context` - a free-form object that can contain anything you want to provide context on regarding the error. This object's properties are inserted in the error message where bracketted placeholders are. **Required**.
-* `state` - state that the validation was in, which contains the current key, path, parent if any, or reference if any. Usually you just have to pass the state you were given. **Required**.
-* `options` - options that were used for the validation. Usually you just have to pass the options you were given. **Required**.
+Any of the `coerce`, `pre` and `validate` functions should use `this.createError(code, value, local, state, prefs)` to create and return errors.
+This function potentially takes 5 required arguments:
+- `code` - the dotted type of the error matching predefined language elements or the ones defined in your extension.
+- `value` - the value responsible for the error.
+- `local` - a free-form object that can contain anything you want to provide context on regarding the error. This object's properties are inserted in the error message where bracketted placeholders are.
+- `state` - state that the validation was in, which contains the current key, path, parent if any, or reference if any. Usually you just have to pass the `state` you were given.
+- `prefs` - preferences that were used for the validation. Usually you just have to pass the `prefs` you were given.
 
 #### npm note
 
@@ -663,9 +668,9 @@ const customJoi = Joi.extend((joi) => ({
         round: 'needs to be a rounded number', // Used below as 'number.round'
         dividable: 'needs to be dividable by {{q}}'
     },
-    pre(value, state, options) {
+    pre(value, state, prefs) {
 
-        if (options.convert && this._flags.round) {
+        if (prefs.convert && this._flags.round) {
             return Math.round(value); // Change the value
         }
 
@@ -678,11 +683,11 @@ const customJoi = Joi.extend((joi) => ({
 
                 this._flags.round = true;    // Set a flag for later use
             },
-            validate(params, value, state, options) {
+            validate(params, value, state, prefs) {
 
                 if (value % 1 !== 0) {
-                    // Generate an error, state and options need to be passed
-                    return this.createError('number.round', { v: value }, state, options);
+                    // Generate an error, state and prefs need to be passed
+                    return this.createError('number.round', value, {}, state, prefs);
                 }
 
                 return value; // Everything is OK
@@ -693,11 +698,11 @@ const customJoi = Joi.extend((joi) => ({
             params: {
                 q: joi.alternatives([joi.number().required(), joi.func().ref()])
             },
-            validate(params, value, state, options) {
+            validate(params, value, state, prefs) {
 
                 if (value % params.q !== 0) {
-                    // Generate an error, state and options need to be passed, q is used in the language
-                    return this.createError('number.dividable', { v: value, q: params.q }, state, options);
+                    // Generate an error, state and prefs need to be passed, q is used in the language
+                    return this.createError('number.dividable', value, { q: params.q }, state, prefs);
                 }
 
                 return value; // Everything is OK
@@ -865,7 +870,7 @@ schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a 
 const schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
 
-        return new Error('found errors with ' + errors.map((err) => `${err.type}(${err.context.limit}) with value ${err.context.value}`).join(' and '));
+        return new Error('found errors with ' + errors.map((err) => `${err.type}(${err.local.limit}) with value ${err.local.value}`).join(' and '));
     })
 });
 schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
@@ -984,13 +989,13 @@ Note: this does not allow a `null` value. To do that, use [`any.allow(value)`](#
 const schema = Joi.any().optional();
 ```
 
-#### `any.options(options)`
+#### `any.prefs(options)` = aliases: `preferences`, `options`
 
 Overrides the global `validate()` options for the current key and any sub-key where:
 - `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
 
 ```js
-const schema = Joi.any().options({ convert: false });
+const schema = Joi.any().prefs({ convert: false });
 ```
 
 #### `any.raw(isRaw)`
@@ -2008,7 +2013,8 @@ Another benefits of using `Joi.object([schema])` instead of a plain JS object is
 const schema = Joi.object({
     arg: Joi.string().valid('firstname', 'lastname', 'title', 'company', 'jobtitle'),
     value: Joi.string(),
-}).pattern(/firstname|lastname/, Joi.string().min(2));
+})
+    .pattern(/firstname|lastname/, Joi.string().min(2));
 ```
 
 ##### `Joi.object().keys([schema]) notation`
@@ -2924,9 +2930,11 @@ Joi throws `ValidationError`s containing :
     - `message` - string with a description of the error.
     - `path` - ordered array where each element is the accessor to the value where the error happened.
     - `type` - type of the error.
-    - `context` - object providing context of the error containing at least:
+    - `local` - object providing context of the error containing:
         - `key` - key of the value that errored, equivalent to the last element of `details.path`.
         - `label` - label of the value that errored, or the `key` if any, or the default `language.root`.
+        - `value` - the value that failed validation.
+        - other error specific properties as described for each error code.
 - `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occurred. Takes an optional parameter that, if truthy, will strip the colors out of the output.
 - `_object` - the original object to validate.
 
@@ -2950,27 +2958,16 @@ Check if an Error is a Joi `ValidationError` like:
 
 No alternative was found to test against the input due to try criteria.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string // Label if defined, otherwise it's the key
-}
-```
-
 #### `alternatives.types`
 
 **Description**
 
 The provided input did not match any of the allowed types.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    types: Array<string>, // The list of expected types
-    value: any // Value being validated
+    types: Array<string> // The list of expected types
 }
 ```
 
@@ -2980,11 +2977,9 @@ The provided input did not match any of the allowed types.
 
 No alternative matched the input due to specific matching rules for at least one of the alternatives.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     details: Array<object>, // An array of details for each error found while trying to match to each of the alternatives
     message: string // The combined error messages
 }
@@ -2996,11 +2991,9 @@ No alternative matched the input due to specific matching rules for at least one
 
 Only some values were allowed, the input didn't match any of them.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     valids: Array<any> // Contains the list of the valid values that were expected
 }
 ```
@@ -3011,7 +3004,7 @@ Only some values were allowed, the input didn't match any of them.
 
 If your [`any.default()`](#anydefaultvalue-description) generator function throws error, you will have it here.
 
-**Context**
+Additional local context properties:
 ```ts
 {
     error: Error // Error generated during the default value function call
@@ -3024,7 +3017,7 @@ If your [`any.default()`](#anydefaultvalue-description) generator function throw
 
 If your [`any.failover()`](#anyfailovervalue-description) generator function throws error, you will have it here.
 
-**Context**
+Additional local context properties:
 ```ts
 {
     error: Error // Error generated during the failover value function call
@@ -3037,12 +3030,9 @@ If your [`any.failover()`](#anyfailovervalue-description) generator function thr
 
 When an empty string is found and denied by invalid values.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: '', // Empty string
     invalids: Array<any> // Contains the list of the invalid values that should be rejected
 }
 ```
@@ -3053,12 +3043,9 @@ When an empty string is found and denied by invalid values.
 
 The value matched a value listed in the invalid values.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any, // Value being validated
     invalids: Array<any> // Contains the list of the invalid values that should be rejected
 }
 ```
@@ -3069,27 +3056,11 @@ The value matched a value listed in the invalid values.
 
 A required value wasn't present.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string // Label if defined, otherwise it's the key
-}
-```
-
 #### `any.unknown`
 
 **Description**
 
 A value was present while it wasn't expected.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string // Label if defined, otherwise it's the key
-}
-```
 
 #### `array.base`
 
@@ -3097,27 +3068,16 @@ A value was present while it wasn't expected.
 
 The value is not of Array type or could not be cast to an Array from a string.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string // Label if defined, otherwise it's the key
-}
-```
-
 #### `array.excludes`
 
 **Description**
 
 The array contains a value that is part of the exclusion list.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    pos: number, // Index where the value was found in the array
-    value: any // Value that matched an exclude condition
+    pos: number // Index where the value was found in the array
 }
 ```
 
@@ -3127,11 +3087,9 @@ The array contains a value that is part of the exclusion list.
 
 Some values were expected to be present in the array and are missing. This error happens when we have a mix of labelled and unlabelled schemas.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     knownMisses: Array<string>, // Labels of all the missing values
     unknownMisees: number // Count of missing values that didn't have a label
 }
@@ -3143,11 +3101,9 @@ Some values were expected to be present in the array and are missing. This error
 
 Some values were expected to be present in the array and are missing. This error happens when we only have labelled schemas.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     knownMisses: Array<string> // Labels of all the missing values
 }
 ```
@@ -3158,11 +3114,9 @@ Some values were expected to be present in the array and are missing. This error
 
 Some values were expected to be present in the array and are missing. This error happens when we only have unlabelled schemas.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     unknownMisees: number // Count of missing values that didn't have a label
 }
 ```
@@ -3173,13 +3127,10 @@ Some values were expected to be present in the array and are missing. This error
 
 The value didn't match any of the allowed types for that array.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    pos: number, // Index where the value was found in the array
-    value: any // Value that failed all the schemas
+    pos: number // Index where the value was found in the array
 }
 ```
 
@@ -3189,13 +3140,10 @@ The value didn't match any of the allowed types for that array.
 
 The array is not of the expected length.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Length that was expected for this array
-    value: Array<any> // The array itself
+    limit: number // Length that was expected for this array
 }
 ```
 
@@ -3205,13 +3153,10 @@ The array is not of the expected length.
 
 The array has more elements than the maximum allowed.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Maximum length that was expected for this array
-    value: Array<any> // The array itself
+    limit: number // Maximum length that was expected for this array
 }
 ```
 
@@ -3221,13 +3166,10 @@ The array has more elements than the maximum allowed.
 
 The array has less elements than the minimum allowed.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Minimum length that was expected for this array
-    value: Array<any> // The array itself
+    limit: number // Minimum length that was expected for this array
 }
 ```
 
@@ -3237,11 +3179,9 @@ The array has less elements than the minimum allowed.
 
 Given an [`array.ordered()`](#arrayorderedtype), that array has more elements than it should.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     pos: number, // Index where the value was found in the array
     limit: number // Maximum length that was expected for this array
 }
@@ -3253,13 +3193,10 @@ Given an [`array.ordered()`](#arrayorderedtype), that array has more elements th
 
 A reference was used in one of [`array.min()`](#arrayminlimit), [`array.max()`](#arraymaxlimit) or [`array.length()`](#arraylengthlimit) and the value pointed to by that reference in the input is not a valid number for those rules.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    ref: Reference, // Reference used
-    value: any // Value found using the reference
+    ref: Reference // Reference used
 }
 ```
 
@@ -3269,11 +3206,9 @@ A reference was used in one of [`array.min()`](#arrayminlimit), [`array.max()`](
 
 An `undefined` value was found in an array that shouldn't be sparse.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     pos: number // Index where an undefined value was found in the array
 }
 ```
@@ -3284,13 +3219,10 @@ An `undefined` value was found in an array that shouldn't be sparse.
 
 A duplicate value was found in an array.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     pos: number, // Index where the duplicate value was found in the array
-    value: any, // Value that is duplicated
     dupePos: number, // Index where the first appearance of the duplicate value was found in the array
     dupeValue: any // Value with which the duplicate was met
 }
@@ -3302,11 +3234,9 @@ A duplicate value was found in an array.
 
 The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is labelled.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     patternLabel: string // Label of assertion schema
 }
 ```
@@ -3317,27 +3247,11 @@ The schema on an [`array.has()`](#arrayhas) was not found in the array. This err
 
 The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is unlabelled.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-}
-```
-
 #### `binary.base`
 
 **Description**
 
 The value is either not a Buffer or could not be cast to a Buffer from a string.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string // Label if defined, otherwise it's the key
-}
-```
 
 #### `binary.length`
 
@@ -3345,13 +3259,10 @@ The value is either not a Buffer or could not be cast to a Buffer from a string.
 
 The buffer was not of the specified length.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Length that was expected for this buffer
-    value: Buffer // The buffer itself
+    limit: number // Length that was expected for this buffer
 }
 ```
 
@@ -3361,13 +3272,10 @@ The buffer was not of the specified length.
 
 The buffer contains more bytes than expected.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Maximum length that was expected for this buffer
-    value: Buffer // The buffer itself
+    limit: number // Maximum length that was expected for this buffer
 }
 ```
 
@@ -3377,13 +3285,10 @@ The buffer contains more bytes than expected.
 
 The buffer contains less bytes than expected.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Minimum length that was expected for this buffer
-    value: Buffer // The buffer itself
+    limit: number // Minimum length that was expected for this buffer
 }
 ```
 
@@ -3393,13 +3298,10 @@ The buffer contains less bytes than expected.
 
 A reference was used in one of [`binary.min()`](#binaryminlimit), [`binary.max()`](#binarymaxlimit), [`binary.length()`](#binarylengthlimit) and the value pointed to by that reference in the input is not a valid number.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    ref: Reference, // Reference used
-    value: any // Value found using the reference
+    ref: Reference // Reference used
 }
 ```
 
@@ -3409,29 +3311,11 @@ A reference was used in one of [`binary.min()`](#binaryminlimit), [`binary.max()
 
 The value is either not a boolean or could not be cast to a boolean from one of the truthy or falsy values.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
-
 #### `date.base`
 
 **Description**
 
 The value is either not a date or could not be cast to a date from a string or a number.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
 
 #### `date.greater`
 
@@ -3439,13 +3323,10 @@ The value is either not a date or could not be cast to a date from a string or a
 
 The date is over the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: Date, // Maximum date
-    value: Date // Input value as Date
+    limit: Date // Maximum date
 }
 ```
 
@@ -3455,28 +3336,16 @@ The date is over the limit that you set.
 
 The date does not match the ISO 8601 format.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
-
 #### `date.less`
 
 **Description**
 
 The date is under the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: Date, // Minimum date
-    value: Date // Input value as Date
+    limit: Date // Minimum date
 }
 ```
 
@@ -3486,13 +3355,10 @@ The date is under the limit that you set.
 
 The date is over or equal to the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: Date, // Maximum date
-    value: Date // Input value as Date
+    limit: Date // Maximum date
 }
 ```
 
@@ -3502,13 +3368,10 @@ The date is over or equal to the limit that you set.
 
 The date is under or equal to the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: Date, // Minimum date
-    value: Date // Input value as Date
+    limit: Date // Minimum date
 }
 ```
 
@@ -3518,13 +3381,10 @@ The date is under or equal to the limit that you set.
 
 A reference was used in one of [`date.min()`](#datemindate), [`date.max()`](#datemaxdate), [`date.less()`](#datelessdate) or [`date.greater()`](#dategreaterdate) and the value pointed to by that reference in the input is not a valid date.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    ref: Reference, // Reference used
-    value: any // Value found using the reference
+    ref: Reference // Reference used
 }
 ```
 
@@ -3534,29 +3394,11 @@ A reference was used in one of [`date.min()`](#datemindate), [`date.max()`](#dat
 
 Occurs when the input is not a Date type and `convert` is disabled.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Value
-}
-```
-
 #### `date.timestamp.javascript`
 
 **Description**
 
 Failed to be converted from a string or a number to a date as JavaScript timestamp.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
 
 #### `date.timestamp.unix`
 
@@ -3564,26 +3406,15 @@ Failed to be converted from a string or a number to a date as JavaScript timesta
 
 Failed to be converted from a string or a number to a date as Unix timestamp.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
-
 #### `function.arity`
 
 **Description**
 
 The number of arguments for the function doesn't match the required number.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     n: number // Expected arity
 }
 ```
@@ -3594,29 +3425,11 @@ The number of arguments for the function doesn't match the required number.
 
 The input is not a function.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
-
 #### `function.class`
 
 **Description**
 
 The input is not a JavaScript class.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
 
 #### `function.maxArity`
 
@@ -3624,11 +3437,9 @@ The input is not a JavaScript class.
 
 The number of arguments for the function is over the required number.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     n: number // Maximum expected arity
 }
 ```
@@ -3639,11 +3450,9 @@ The number of arguments for the function is over the required number.
 
 The number of arguments for the function is under the required number.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     n: number // Minimum expected arity
 }
 ```
@@ -3654,25 +3463,15 @@ The number of arguments for the function is under the required number.
 
 The lazy function is not set.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string // Label if defined, otherwise it's the key
-}
-```
-
 #### `lazy.schema`
 
 **Description**
 
 The lazy function didn't return a joi schema.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     schema: any // The value return by the generator function
 }
 ```
@@ -3683,28 +3482,16 @@ The lazy function didn't return a joi schema.
 
 The value is not a number or could not be cast to a number.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
-
 #### `number.greater`
 
 **Description**
 
 The number is lower or equal to the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Minimum value that was expected for this number
-    value: number // The number itself
+    limit: number // Minimum value that was expected for this number
 }
 ```
 
@@ -3714,28 +3501,16 @@ The number is lower or equal to the limit that you set.
 
 The number is not a valid integer.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: number // Value that failed, likely a floating number
-}
-```
-
 #### `number.less`
 
 **Description**
 
 The number is higher or equal to the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Maximum value that was expected for this number
-    value: number // The number itself
+    limit: number // Maximum value that was expected for this number
 }
 ```
 
@@ -3745,13 +3520,10 @@ The number is higher or equal to the limit that you set.
 
 The number is higher than the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Maximum value that was expected for this number
-    value: number // The number itself
+    limit: number // Maximum value that was expected for this number
 }
 ```
 
@@ -3761,13 +3533,10 @@ The number is higher than the limit that you set.
 
 The number is lower than the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Minimum value that was expected for this number
-    value: number // The number itself
+    limit: number // Minimum value that was expected for this number
 }
 ```
 
@@ -3777,13 +3546,10 @@ The number is lower than the limit that you set.
 
 The number could not be divided by the multiple you provided.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    multiple: number, // The number of which the input is supposed to be a multiple of
-    value: number // The number itself
+    multiple: number // The number of which the input is supposed to be a multiple of
 }
 ```
 
@@ -3793,29 +3559,11 @@ The number could not be divided by the multiple you provided.
 
 The number was positive.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: number // The number itself
-}
-```
-
 #### `number.port`
 
 **Description**
 
 The number didn't look like a port number.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: number // The number itself 
-}
-```
 
 #### `number.positive`
 
@@ -3823,28 +3571,16 @@ The number didn't look like a port number.
 
 The number was negative.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: number // The number itself
-}
-```
-
 #### `number.precision`
 
 **Description**
 
 The number didn't have the required precision.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // The precision that it should have had
-    value: number // The number itself
+    limit: number // The precision that it should have had
 }
 ```
 
@@ -3854,30 +3590,11 @@ The number didn't have the required precision.
 
 A reference was used in one of [`number.min()`](#numberminlimit), [`number.max()`](#numbermaxlimit), [`number.less()`](#numberlesslimit), [`number.greater()`](#numbergreaterlimit), or [`number.multiple()`](#numbermultiplebase) and the value pointed to by that reference in the input is not a valid number.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    ref: Reference, // Reference used
-    value: any // Value found using the reference
-}
-```
-
 #### `number.unsafe`
 
 **Description**
 
 The number is not within the safe range of JavaScript numbers.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
 
 #### `object.allowUnknown`
 
@@ -3885,13 +3602,10 @@ The number is not within the safe range of JavaScript numbers.
 
 An unexpected property was found in the object.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    child: string, // Property that is unexpected
-    value: any // Value of that property
+    child: string // Property that is unexpected
 }
 ```
 
@@ -3901,11 +3615,9 @@ An unexpected property was found in the object.
 
 The AND condition between the properties you specified was not satisfied in that object.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     present: Array<string>, // List of properties that are set
     presentWithLabels: Array<string>, // List of labels for the properties that are set
     missing: Array<string>, // List of properties that are not set
@@ -3919,11 +3631,9 @@ The AND condition between the properties you specified was not satisfied in that
 
 The schema on an [`object.assert()`](#objectassertref-schema-message) failed to validate.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     ref: string, // Dotted path to the property that was checked
     message: string // Custom message or default one
 }
@@ -3935,28 +3645,16 @@ The schema on an [`object.assert()`](#objectassertref-schema-message) failed to 
 
 The value is not of object type or could not be cast to an object from a string.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
-
 #### `object.length`
 
 **Description**
 
 The number of keys for this object is not of the expected length.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Number of keys that was expected for this object
-    value: object // The object itself
+    limit: number // Number of keys that was expected for this object
 }
 ```
 
@@ -3966,13 +3664,10 @@ The number of keys for this object is not of the expected length.
 
 The number of keys for this object is over or equal to the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Maximum number of keys
-    value: object // Input value
+    limit: number // Maximum number of keys
 }
 ```
 
@@ -3982,13 +3677,10 @@ The number of keys for this object is over or equal to the limit that you set.
 
 The number of keys for this object is under or equal to the limit that you set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    limit: number, // Minimum number of keys
-    value: object // Input value
+    limit: number // Minimum number of keys
 }
 ```
 
@@ -3998,11 +3690,9 @@ The number of keys for this object is under or equal to the limit that you set.
 
 The OR or XOR condition between the properties you specified was not satisfied in that object, none of it were set.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     peers: Array<string>, // List of properties were none of it was set
     peersWithLabels: Array<string> // List of labels for the properties were none of it was set
 }
@@ -4014,11 +3704,9 @@ The OR or XOR condition between the properties you specified was not satisfied i
 
 The NAND condition between the properties you specified was not satisfied in that object.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     main: string, // One of the properties that was present
     mainWithLabel: string, // The label of the `main` property
     peers: Array<string>, // List of the other properties that were present
@@ -4032,13 +3720,10 @@ The NAND condition between the properties you specified was not satisfied in tha
 
 A reference was used in one of [`object.min()`](#objectminlimit), [`object.max()`](#objectmaxlimit), [`object.length()`](#objectlengthlimit) and the value pointed to by that reference in the input is not a valid number.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    ref: Reference, // Reference used
-    value: any // Value found using the reference
+    ref: Reference // Reference used
 }
 ```
 
@@ -4048,26 +3733,15 @@ A reference was used in one of [`object.min()`](#objectminlimit), [`object.max()
 
 The object is not a [`Joi.ref()`](#refkey-options).
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: function // Input value
-}
-```
-
 #### `object.rename.multiple`
 
 **Description**
 
 Another rename was already done to the same target property.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     from: string, // Origin property name of the rename
     to: string, // Target property of the rename
     pattern: boolean // Indicates if the rename source was a pattern (regular expression)
@@ -4080,11 +3754,9 @@ Another rename was already done to the same target property.
 
 The target property already exists and you disallowed overrides.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     from: string, // Origin property name of the rename
     to: string, // Target property of the rename
     pattern: boolean // Indicates if the rename source was a pattern (regular expression)
@@ -4097,11 +3769,9 @@ The target property already exists and you disallowed overrides.
 
 The object was not a joi schema.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     type: string // The required schema type
 }
 ```
@@ -4112,13 +3782,10 @@ The object was not a joi schema.
 
 The object is not of the type you specified.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    type: string, // Type name the object should have been
-    value: object // Input value
+    type: string // Type name the object should have been
 }
 ```
 
@@ -4128,11 +3795,9 @@ The object is not of the type you specified.
 
 Property that should have been present at the same time as another one was missing.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     main: string, // Property that triggered the check
     mainWithLabel: string, // Label of the property that triggered the check
     peer: string, // Property that was missing
@@ -4146,11 +3811,9 @@ Property that should have been present at the same time as another one was missi
 
 Property that should have been absent at the same time as another one was present.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     main: string, // Property that triggered the check
     mainWithLabel: string, // Label of the property that triggered the check
     peer: string, // Property that was present
@@ -4164,11 +3827,9 @@ Property that should have been absent at the same time as another one was presen
 
 The XOR condition between the properties you specified was not satisfied in that object.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     peers: Array<string>, // List of properties where none of it or too many of it was set
     peersWithLabels: Array<string> // List of labels for the properties where none of it or too many of it was set
 }
@@ -4180,11 +3841,9 @@ The XOR condition between the properties you specified was not satisfied in that
 
 The optional XOR condition between the properties you specified was not satisfied in that object.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     peers: Array<string>, // List of properties where too many of it was set
     peersWithLabels: Array<string> // List of labels for the properties where too many of it was set
 }
@@ -4196,29 +3855,11 @@ The optional XOR condition between the properties you specified was not satisfie
 
 The string doesn't only contain alphanumeric characters.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
-
 #### `string.base64`
 
 **Description**
 
 The string isn't a valid base64 string.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
 
 #### `string.base`
 
@@ -4226,29 +3867,11 @@ The string isn't a valid base64 string.
 
 The input is not a string.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-}
-```
-
 #### `string.creditCard`
 
 **Description**
 
 The string is not a valid credit card number.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
 
 #### `string.dataUri`
 
@@ -4256,29 +3879,11 @@ The string is not a valid credit card number.
 
 The string is not a valid data URI.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
-
 #### `string.domain`
 
 **Description**
 
 The string is not a valid domain name.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
 
 #### `string.email`
 
@@ -4286,12 +3891,9 @@ The string is not a valid domain name.
 
 The string is not a valid e-mail.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string, // Input value
     invalids: [string] // Array of invalid emails
 }
 ```
@@ -4302,29 +3904,11 @@ The string is not a valid e-mail.
 
 The string is not a valid GUID.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
-
 #### `string.hexAlign`
 
 **Description**
 
 The string contains hexadecimal characters but they are not byte-aligned.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
 
 #### `string.hex`
 
@@ -4332,29 +3916,11 @@ The string contains hexadecimal characters but they are not byte-aligned.
 
 The string is not a valid hexadecimal string.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
-
 #### `string.hostname`
 
 **Description**
 
 The string is not a valid hostname.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
 
 #### `string.ipVersion`
 
@@ -4362,14 +3928,11 @@ The string is not a valid hostname.
 
 The string is not a valid IP address considering the provided constraints.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     cidr: string, // CIDR used for the validation
-    version: Array<string>, // List of IP version accepted
-    value: string // Input value
+    version: Array<string> // List of IP version accepted
 }
 ```
 
@@ -4379,13 +3942,10 @@ The string is not a valid IP address considering the provided constraints.
 
 The string is not a valid IP address.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    cidr: string, // CIDR used for the validation
-    value: string // Input value
+    cidr: string // CIDR used for the validation
 }
 ```
 
@@ -4395,29 +3955,11 @@ The string is not a valid IP address.
 
 The string is not a valid ISO date string.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
-
 #### `string.isoDuration`
 
 **Description**
 
 The string must be a valid ISO 8601 duration.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
 
 #### `string.length`
 
@@ -4425,14 +3967,11 @@ The string must be a valid ISO 8601 duration.
 
 The string is not of the expected length.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     limit: number, // Length that was expected for this string
-    encoding: undefined | string, // Encoding specified for the check if any
-    value: string // Input value
+    encoding: undefined | string // Encoding specified for the check if any
 }
 ```
 
@@ -4442,29 +3981,17 @@ The string is not of the expected length.
 
 The string isn't all lower-cased.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
-
 #### `string.max`
 
 **Description**
 
 The string is larger than expected.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     limit: number, // Maximum length that was expected for this string
-    encoding: undefined | string, // Encoding specified for the check if any
-    value: string // Input value
+    encoding: undefined | string // Encoding specified for the check if any
 }
 ```
 
@@ -4474,14 +4001,11 @@ The string is larger than expected.
 
 The string is smaller than expected.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     limit: number, // Minimum length that was expected for this string
-    encoding: undefined | string, // Encoding specified for the check if any
-    value: string // Input value
+    encoding: undefined | string // Encoding specified for the check if any
 }
 ```
 
@@ -4491,13 +4015,10 @@ The string is smaller than expected.
 
 The string isn't valid in regards of the normalization form expected.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    form: string, // Normalization form that is expected
-    value: string // Input value
+    form: string // Normalization form that is expected
 }
 ```
 
@@ -4507,13 +4028,10 @@ The string isn't valid in regards of the normalization form expected.
 
 A reference was used in one of [`string.min()`](#stringminlimit-encoding), [`string.max()`](#stringmaxlimit-encoding) or [`string.length()`](#stringlengthlimit-encoding) and the value pointed to by that reference in the input is not a valid number for those rules.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    ref: Reference, // Reference used
-    value: any // Value found using the reference
+    ref: Reference // Reference used
 }
 ```
 
@@ -4523,14 +4041,11 @@ A reference was used in one of [`string.min()`](#stringminlimit-encoding), [`str
 
 The string didn't match the regular expression.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     name: undefined, // Undefined since the regular expression has no name
-    pattern: string, // Regular expression
-    value: string // Input value
+    pattern: string // Regular expression
 }
 ```
 
@@ -4540,14 +4055,11 @@ The string didn't match the regular expression.
 
 The string didn't match the named regular expression.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     name: string, // Name of the regular expression
-    pattern: string, // Regular expression
-    value: string // Input value
+    pattern: string // Regular expression
 }
 ```
 
@@ -4557,14 +4069,11 @@ The string didn't match the named regular expression.
 
 The string matched the regular expression while it shouldn't.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     name: undefined, // Undefined since the regular expression has no name
-    pattern: string, // Regular expression
-    value: string // Input value
+    pattern: string // Regular expression
 }
 ```
 
@@ -4574,14 +4083,11 @@ The string matched the regular expression while it shouldn't.
 
 The string matched the named regular expression while it shouldn't.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
     name: string, // Name of the regular expression
-    pattern: string, // Regular expression
-    value: string // Input value
+    pattern: string // Regular expression
 }
 ```
 
@@ -4591,29 +4097,11 @@ The string matched the named regular expression while it shouldn't.
 
 The string isn't a token.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
-
 #### `string.trim`
 
 **Description**
 
 The string contains whitespaces around it.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
 
 #### `string.uppercase`
 
@@ -4621,29 +4109,11 @@ The string contains whitespaces around it.
 
 The string isn't all upper-cased.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
-
 #### `string.uri`
 
 **Description**
 
 The string isn't a valid URI.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
 
 #### `string.uriCustomScheme`
 
@@ -4651,13 +4121,10 @@ The string isn't a valid URI.
 
 The string isn't a valid URI considering the custom schemes.
 
-**Context**
+Additional local context properties:
 ```ts
 {
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    scheme: string, // Scheme prefix that is expected in the URI
-    value: string // Input value
+    scheme: string // Scheme prefix that is expected in the URI
 }
 ```
 
@@ -4667,30 +4134,11 @@ The string isn't a valid URI considering the custom schemes.
 
 The string is a valid relative URI.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: string // Input value
-}
-```
-
 #### `symbol.base`
 
 **Description**
 
 The input is not a Symbol.
-
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-    ...
-}
-```
 
 #### `symbol.map`
 
@@ -4698,13 +4146,4 @@ The input is not a Symbol.
 
 The input is not a Symbol or could not be converted to one.
 
-**Context**
-```ts
-{
-    key: string, // Last element of the path accessing the value, `undefined` if at the root
-    label: string, // Label if defined, otherwise it's the key
-    value: any // Input value
-    ...
-}
-```
 <!-- errorsstop -->

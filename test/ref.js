@@ -33,6 +33,12 @@ describe('ref', () => {
 
     it('reaches self', () => {
 
+        const schema = Joi.number().min(10).message('is {.} and that is not good enough');
+        expect(schema.validate(1).error).to.be.an.error('"value" is 1 and that is not good enough');
+    });
+
+    it('reaches own property', () => {
+
         const schema = Joi.object({
             x: Joi.alternatives([
                 Joi.number(),
@@ -361,7 +367,8 @@ describe('ref', () => {
                         context: {
                             key: 'key',
                             label: 'key',
-                            type: 'object'
+                            type: 'object',
+                            value: Joi.number()
                         }
                     }
                 ]
@@ -391,7 +398,8 @@ describe('ref', () => {
                         context: {
                             key: 'a',
                             label: 'key.a',
-                            type: 'object'
+                            type: 'object',
+                            value: {}
                         }
                     }
                 ]
@@ -618,7 +626,7 @@ describe('ref', () => {
                     flags: { allowOnly: true },
                     valids: [
                         {
-                            type: 'ref',
+                            ref: 'value',
                             key: 'b',
                             path: ['b'],
                             adjust
@@ -830,6 +838,7 @@ describe('ref', () => {
                                 key: 'b',
                                 label: 'b',
                                 message: '"b" must be one of [ref:a.c]. "b" must be one of [ref:c]',
+                                value: 7,
                                 details: [
                                     {
                                         message: '"b" must be one of [ref:a.c]',
@@ -866,7 +875,7 @@ describe('ref', () => {
     it('uses context as default value with custom prefix', async () => {
 
         const schema = Joi.object({
-            a: Joi.default(Joi.ref('%x', { contextPrefix: '%' })),
+            a: Joi.default(Joi.ref('%x', { prefix: { global: '%' } })),
             b: Joi.any()
         });
 
@@ -883,9 +892,9 @@ describe('ref', () => {
         });
 
         const err = await expect(Joi.validate({ a: 5, b: 6 }, schema, { context: { x: 22 } })).to.reject();
-        expect(err).to.be.an.error('"a" must be one of [context:x]');
+        expect(err).to.be.an.error('"a" must be one of [ref:global:x]');
         expect(err.details).to.equal([{
-            message: '"a" must be one of [context:x]',
+            message: '"a" must be one of [ref:global:x]',
             path: ['a'],
             type: 'any.allowOnly',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -893,9 +902,9 @@ describe('ref', () => {
 
         Helper.validateOptions(schema, [
             [{ a: 5 }, false, null, {
-                message: '"a" must be one of [context:x]',
+                message: '"a" must be one of [ref:global:x]',
                 details: [{
-                    message: '"a" must be one of [context:x]',
+                    message: '"a" must be one of [ref:global:x]',
                     path: ['a'],
                     type: 'any.allowOnly',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -905,9 +914,9 @@ describe('ref', () => {
             [{ b: 5 }, true],
             [{ a: 22, b: 5 }, true],
             [{ a: '22', b: '5' }, false, null, {
-                message: '"a" must be one of [context:x]',
+                message: '"a" must be one of [ref:global:x]',
                 details: [{
-                    message: '"a" must be one of [context:x]',
+                    message: '"a" must be one of [ref:global:x]',
                     path: ['a'],
                     type: 'any.allowOnly',
                     context: { value: '22', valids: [ref], label: 'a', key: 'a' }
@@ -930,7 +939,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, false, null, {
@@ -939,7 +948,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: true }
                 }]
             }],
             [{}, true, { context: {} }],
@@ -949,7 +958,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, false, { context: {} }, {
@@ -958,7 +967,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: true }
                 }]
             }],
             [{}, true, { context: { x: 1 } }],
@@ -989,7 +998,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, false, null, {
@@ -998,7 +1007,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: true }
                 }]
             }],
             [{}, true, { context: {} }],
@@ -1008,7 +1017,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, false, { context: {} }, {
@@ -1017,7 +1026,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: true }
                 }]
             }],
             [{}, true, { context: { x: 1 } }],
@@ -1027,7 +1036,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, false, { context: { x: 1 } }, {
@@ -1036,7 +1045,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: true }
                 }]
             }],
             [{}, true, { context: { x: {} } }],
@@ -1046,7 +1055,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
             [{ a: true }, false, { context: { x: {} } }, {
@@ -1055,7 +1064,7 @@ describe('ref', () => {
                     message: '"a" is not allowed',
                     path: ['a'],
                     type: 'any.unknown',
-                    context: { label: 'a', key: 'a' }
+                    context: { label: 'a', key: 'a', value: true }
                 }]
             }],
             [{}, true, { context: { x: { y: 1 } } }],
@@ -1094,46 +1103,46 @@ describe('ref', () => {
                 type: 'any',
                 flags: {
                     allowOnly: true,
-                    default: { type: 'ref', key: 'a.b', path: ['a', 'b'] }
+                    default: { ref: 'value', key: 'a.b', path: ['a', 'b'] }
                 },
-                invalids: [{ type: 'context', key: 'b.c', path: ['b', 'c'] }],
-                valids: [{ type: 'ref', key: 'a.b', path: ['a', 'b'] }]
+                invalids: [{ ref: 'global', key: 'b.c', path: ['b', 'c'] }],
+                valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }]
             },
             alternatives: [{
-                ref: { type: 'ref', key: 'a.b', path: ['a', 'b'] },
+                ref: { ref: 'value', key: 'a.b', path: ['a', 'b'] },
                 is: {
                     type: 'date',
                     rules: [
-                        { name: 'min', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
-                        { name: 'max', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } }
+                        { name: 'min', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
+                        { name: 'max', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } }
                     ]
                 },
                 then: {
                     type: 'number',
-                    flags: { allowOnly: true, default: { type: 'ref', key: 'a.b', path: ['a', 'b'] }, unsafe: false },
-                    valids: [{ type: 'ref', key: 'a.b', path: ['a', 'b'] }],
-                    invalids: [{ type: 'context', key: 'b.c', path: ['b', 'c'] }, Infinity, -Infinity],
+                    flags: { allowOnly: true, default: { ref: 'value', key: 'a.b', path: ['a', 'b'] }, unsafe: false },
+                    valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }],
+                    invalids: [{ ref: 'global', key: 'b.c', path: ['b', 'c'] }, Infinity, -Infinity],
                     rules: [
-                        { name: 'min', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
-                        { name: 'max', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
-                        { name: 'greater', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
-                        { name: 'less', arg: { type: 'ref', key: 'a.b', path: ['a', 'b'] } }
+                        { name: 'min', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
+                        { name: 'max', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
+                        { name: 'greater', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
+                        { name: 'less', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } }
                     ]
                 },
                 otherwise: {
                     type: 'object',
-                    flags: { allowOnly: true, default: { type: 'ref', key: 'a.b', path: ['a', 'b'] } },
-                    valids: [{ type: 'ref', key: 'a.b', path: ['a', 'b'] }],
-                    invalids: [{ type: 'context', key: 'b.c', path: ['b', 'c'] }],
+                    flags: { allowOnly: true, default: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
+                    valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }],
+                    invalids: [{ ref: 'global', key: 'b.c', path: ['b', 'c'] }],
                     rules: [{
                         name: 'assert',
                         arg: {
                             schema: {
                                 type: 'any',
                                 flags: { allowOnly: true },
-                                valids: [{ type: 'ref', key: 'a.b', path: ['a', 'b'] }]
+                                valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }]
                             },
-                            ref: { type: 'ref', key: 'a.b', path: ['a', 'b'] }
+                            ref: { ref: 'value', key: 'a.b', path: ['a', 'b'] }
                         }
                     }],
                     children: {
@@ -1141,9 +1150,9 @@ describe('ref', () => {
                             type: 'string',
                             invalids: [''],
                             rules: [
-                                { name: 'min', arg: { limit: { type: 'ref', key: 'b.c', path: ['b', 'c'] } } },
-                                { name: 'max', arg: { limit: { type: 'ref', key: 'b.c', path: ['b', 'c'] } } },
-                                { name: 'length', arg: { limit: { type: 'ref', key: 'b.c', path: ['b', 'c'] } } }
+                                { name: 'min', arg: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } },
+                                { name: 'max', arg: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } },
+                                { name: 'length', arg: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } }
                             ]
                         }
                     },

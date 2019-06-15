@@ -976,7 +976,7 @@ describe('number', () => {
 
         it('handles limiting the number of decimal places', () => {
 
-            const rule = Joi.number().precision(1).options({ convert: false });
+            const rule = Joi.number().precision(1).prefs({ convert: false });
             Helper.validate(rule, [
                 [1, true],
                 [9.1, true],
@@ -1022,7 +1022,7 @@ describe('number', () => {
 
         it('handles combination of min, max, integer, allow, invalid, null allowed and precision', () => {
 
-            const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1).options({ convert: false });
+            const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1).prefs({ convert: false });
             Helper.validate(rule, [
                 [1, false, null, {
                     message: '"value" must be larger than or equal to 8',
@@ -1564,9 +1564,9 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ b: 1337 }, true, { context: { a: 42 } }],
                 [{ b: 42 }, false, { context: { a: 1337 } }, {
-                    message: '"b" must be larger than or equal to context:a',
+                    message: '"b" must be larger than or equal to ref:global:a',
                     details: [{
-                        message: '"b" must be larger than or equal to context:a',
+                        message: '"b" must be larger than or equal to ref:global:a',
                         path: ['b'],
                         type: 'number.min',
                         context: { limit: ref, value: 42, label: 'b', key: 'b' }
@@ -1575,18 +1575,18 @@ describe('number', () => {
                 [{ b: 4.2 }, true, { context: { a: 2.4 } }],
                 [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
                 [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, {
-                    message: '"b" must be larger than or equal to context:a',
+                    message: '"b" must be larger than or equal to ref:global:a',
                     details: [{
-                        message: '"b" must be larger than or equal to context:a',
+                        message: '"b" must be larger than or equal to ref:global:a',
                         path: ['b'],
                         type: 'number.min',
                         context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                     }]
                 }],
                 [{ b: 2.4 }, false, { context: { a: 4.2 } }, {
-                    message: '"b" must be larger than or equal to context:a',
+                    message: '"b" must be larger than or equal to ref:global:a',
                     details: [{
-                        message: '"b" must be larger than or equal to context:a',
+                        message: '"b" must be larger than or equal to ref:global:a',
                         path: ['b'],
                         type: 'number.min',
                         context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
@@ -1620,9 +1620,9 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'number.ref',
                         context: { ref, label: 'b', key: 'b', value: 'abc' }
@@ -1698,9 +1698,9 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ b: 42 }, true, { context: { a: 1337 } }],
                 [{ b: 1337 }, false, { context: { a: 42 } }, {
-                    message: '"b" must be less than or equal to context:a',
+                    message: '"b" must be less than or equal to ref:global:a',
                     details: [{
-                        message: '"b" must be less than or equal to context:a',
+                        message: '"b" must be less than or equal to ref:global:a',
                         path: ['b'],
                         type: 'number.max',
                         context: { limit: ref, value: 1337, label: 'b', key: 'b' }
@@ -1708,9 +1708,9 @@ describe('number', () => {
                 }],
                 [{ b: 2.4 }, true, { context: { a: 4.2 } }],
                 [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, {
-                    message: '"b" must be less than or equal to context:a',
+                    message: '"b" must be less than or equal to ref:global:a',
                     details: [{
-                        message: '"b" must be less than or equal to context:a',
+                        message: '"b" must be less than or equal to ref:global:a',
                         path: ['b'],
                         type: 'number.max',
                         context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
@@ -1718,9 +1718,9 @@ describe('number', () => {
                 }],
                 [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
                 [{ b: 4.2 }, false, { context: { a: 2.4 } }, {
-                    message: '"b" must be less than or equal to context:a',
+                    message: '"b" must be less than or equal to ref:global:a',
                     details: [{
-                        message: '"b" must be less than or equal to context:a',
+                        message: '"b" must be less than or equal to ref:global:a',
                         path: ['b'],
                         type: 'number.max',
                         context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
@@ -1754,9 +1754,9 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'number.ref',
                         context: { ref, label: 'b', key: 'b', value: 'abc' }
@@ -1832,9 +1832,9 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ b: 42 }, true, { context: { a: 1337 } }],
                 [{ b: 1337 }, false, { context: { a: 42 } }, {
-                    message: '"b" must be less than context:a',
+                    message: '"b" must be less than ref:global:a',
                     details: [{
-                        message: '"b" must be less than context:a',
+                        message: '"b" must be less than ref:global:a',
                         path: ['b'],
                         type: 'number.less',
                         context: { limit: ref, value: 1337, label: 'b', key: 'b' }
@@ -1842,9 +1842,9 @@ describe('number', () => {
                 }],
                 [{ b: 2.4 }, true, { context: { a: 4.2 } }],
                 [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, {
-                    message: '"b" must be less than context:a',
+                    message: '"b" must be less than ref:global:a',
                     details: [{
-                        message: '"b" must be less than context:a',
+                        message: '"b" must be less than ref:global:a',
                         path: ['b'],
                         type: 'number.less',
                         context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
@@ -1852,9 +1852,9 @@ describe('number', () => {
                 }],
                 [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
                 [{ b: 4.2 }, false, { context: { a: 2.4 } }, {
-                    message: '"b" must be less than context:a',
+                    message: '"b" must be less than ref:global:a',
                     details: [{
-                        message: '"b" must be less than context:a',
+                        message: '"b" must be less than ref:global:a',
                         path: ['b'],
                         type: 'number.less',
                         context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
@@ -1906,9 +1906,9 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'number.ref',
                         context: { ref, label: 'b', key: 'b', value: 'abc' }
@@ -1987,9 +1987,9 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ b: 1337 }, true, { context: { a: 42 } }],
                 [{ b: 42 }, false, { context: { a: 1337 } }, {
-                    message: '"b" must be greater than context:a',
+                    message: '"b" must be greater than ref:global:a',
                     details: [{
-                        message: '"b" must be greater than context:a',
+                        message: '"b" must be greater than ref:global:a',
                         path: ['b'],
                         type: 'number.greater',
                         context: { limit: ref, value: 42, label: 'b', key: 'b' }
@@ -1998,18 +1998,18 @@ describe('number', () => {
                 [{ b: 4.2 }, true, { context: { a: 2.4 } }],
                 [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
                 [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, {
-                    message: '"b" must be greater than context:a',
+                    message: '"b" must be greater than ref:global:a',
                     details: [{
-                        message: '"b" must be greater than context:a',
+                        message: '"b" must be greater than ref:global:a',
                         path: ['b'],
                         type: 'number.greater',
                         context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                     }]
                 }],
                 [{ b: 2.4 }, false, { context: { a: 4.2 } }, {
-                    message: '"b" must be greater than context:a',
+                    message: '"b" must be greater than ref:global:a',
                     details: [{
-                        message: '"b" must be greater than context:a',
+                        message: '"b" must be greater than ref:global:a',
                         path: ['b'],
                         type: 'number.greater',
                         context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
@@ -2043,9 +2043,9 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'number.ref',
                         context: { ref, label: 'b', key: 'b', value: 'abc' }
@@ -2315,54 +2315,54 @@ describe('number', () => {
                 [{ b: 32 }, true, { context: { a: 2 } }],
                 [{ b: 0 }, true, { context: { a: 43 } }],
                 [{ b: 25 }, false, { context: { a: 4 } }, {
-                    message: '"b" must be a multiple of context:a',
+                    message: '"b" must be a multiple of ref:global:a',
                     details: [{
-                        message: '"b" must be a multiple of context:a',
+                        message: '"b" must be a multiple of ref:global:a',
                         path: ['b'],
                         type: 'number.multiple',
                         context: { multiple: ref, value: 25, label: 'b', key: 'b' }
                     }]
                 }],
                 [{ b: 31 }, false, { context: { a: 0 } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'number.ref',
                         context: { ref, key: 'b', label: 'b', value: 0 }
                     }]
                 }],
                 [{ b: 0 }, false, { context: { a: 0 } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'number.ref',
                         context: { ref, key: 'b', label: 'b', value: 0 }
                     }]
                 }],
                 [{ b: 32 }, false, { context: { a: 'test' } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'number.ref',
                         context: { ref, label: 'b', key: 'b', value: 'test' }
                     }]
                 }],
                 [{ b: 0 }, false, { context: { a: 'test' } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'number.ref',
                         context: { ref, label: 'b', key: 'b', value: 'test' }
                     }]
                 }],
                 [{ b: 0 }, false, { context: { a: NaN } }, {
-                    message: '"b" references "context:a" which is not a number',
+                    message: '"b" references "ref:global:a" which is not a number',
                     details: [{
-                        message: '"b" references "context:a" which is not a number',
+                        message: '"b" references "ref:global:a" which is not a number',
                         path: ['b'],
                         type: 'number.ref',
                         context: { ref, label: 'b', key: 'b', value: NaN }

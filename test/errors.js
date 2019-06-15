@@ -38,7 +38,7 @@ describe('errors', () => {
             .without('required', 'xor')
             .without('xor', 'required');
 
-        const input = {
+        const value = {
             email: 'invalid-email',
             date: 'invalid-date',
             alphanum: '\b\n\f\r\t',
@@ -62,7 +62,11 @@ describe('errors', () => {
             'object.rename.override': '11'
         };
 
-        const error = await expect(Joi.validate(input, schema, { abortEarly: false, language: lang })).to.reject();
+        const error = await expect(Joi.validate(value, schema, { abortEarly: false, language: lang })).to.reject();
+
+        value.required = value.renamed;
+        delete value.renamed;
+
         expect(error).to.be.an.error('"value" 11. "email" 19. "date" 18. "alphanum" 16. "min" 14. "max" 15. "notEmpty" 3. "required" 7. "xor" 7');
         expect(error.name).to.equal('ValidationError');
         expect(error.details).to.equal([
@@ -70,7 +74,7 @@ describe('errors', () => {
                 message: '"value" 11',
                 path: [],
                 type: 'object.rename.override',
-                context: { from: 'renamed', to: 'required', label: 'value' }
+                context: { from: 'renamed', to: 'required', label: 'value', pattern: false, value }
             },
             {
                 message: '"email" 19',
@@ -130,7 +134,8 @@ describe('errors', () => {
                     peer: 'xor',
                     peerWithLabel: 'xor',
                     label: 'required',
-                    key: 'required'
+                    key: 'required',
+                    value
                 }
             },
             {
@@ -143,7 +148,8 @@ describe('errors', () => {
                     peer: 'required',
                     peerWithLabel: 'required',
                     label: 'xor',
-                    key: 'xor'
+                    key: 'xor',
+                    value
                 }
             }
         ]);
@@ -151,7 +157,7 @@ describe('errors', () => {
 
     it('does not prefix with key when language uses context.key', async () => {
 
-        const schema = Joi.valid('sad').options({ language: { 'any.allowOnly': 'my hero "{{label}}" is not {{valids}}' } });
+        const schema = Joi.valid('sad').prefs({ language: { 'any.allowOnly': 'my hero "{{#label}}" is not {{#valids}}' } });
         const err = await expect(schema.validate(5)).to.reject();
         expect(err).to.be.an.error('my hero "value" is not [sad]');
         expect(err.details).to.equal([{
@@ -164,7 +170,7 @@ describe('errors', () => {
 
     it('accepts an empty key', async () => {
 
-        const schema = Joi.valid('sad').options({ language: { key: '' } });
+        const schema = Joi.valid('sad').prefs({ language: { key: '' } });
         const err = await expect(schema.validate(5)).to.reject();
         expect(err).to.be.an.error('must be one of [sad]');
         expect(err.details).to.equal([{
@@ -181,7 +187,7 @@ describe('errors', () => {
             'a()': Joi.number()
         };
 
-        const err = await expect(Joi.validate({ 'a()': 'x' }, schema, { escapeHtml: true })).to.reject();
+        const err = await expect(Joi.validate({ 'a()': 'x' }, schema, { escapeErrors: true })).to.reject();
         expect(err).to.be.an.error('"a&#x28;&#x29;" must be a number');
         expect(err.details).to.equal([{
             message: '"a&#x28;&#x29;" must be a number',
@@ -190,7 +196,7 @@ describe('errors', () => {
             context: { label: 'a()', key: 'a()', value: 'x' }
         }]);
 
-        const err2 = await expect(Joi.validate({ 'b()': 'x' }, schema, { escapeHtml: true })).to.reject();
+        const err2 = await expect(Joi.validate({ 'b()': 'x' }, schema, { escapeErrors: true })).to.reject();
         expect(err2).to.be.an.error('"b&#x28;&#x29;" is not allowed');
         expect(err2.details).to.equal([{
             message: '"b&#x28;&#x29;" is not allowed',
@@ -321,7 +327,7 @@ describe('errors', () => {
 
     it('overrides root key language', async () => {
 
-        const schema = Joi.string().options({ language: { root: 'blah' } });
+        const schema = Joi.string().prefs({ language: { root: 'blah' } });
         const err = await expect(schema.validate(4)).to.reject();
         expect(err).to.be.an.error('"blah" must be a string');
         expect(err.details).to.equal([{
@@ -334,7 +340,7 @@ describe('errors', () => {
 
     it('overrides label key language', async () => {
 
-        const schema = Joi.string().options({ language: { key: 'my own {{!label}} ' } });
+        const schema = Joi.string().prefs({ language: { key: 'my own {#label} ' } });
         const err = await expect(schema.validate(4)).to.reject();
         expect(err).to.be.an.error('my own value must be a string');
         expect(err.details).to.equal([{
@@ -347,7 +353,7 @@ describe('errors', () => {
 
     it('overrides wrapArrays', async () => {
 
-        const schema = Joi.array().items(Joi.boolean()).options({ language: { 'messages.wrapArrays': false } });
+        const schema = Joi.array().items(Joi.boolean()).prefs({ language: { 'messages.wrapArrays': false } });
         const err = await expect(schema.validate([4])).to.reject();
         expect(err).to.be.an.error('"[0]" must be a boolean');
         expect(err.details).to.equal([{
@@ -360,7 +366,7 @@ describe('errors', () => {
 
     it('allows html escaping', async () => {
 
-        const schema = Joi.string().options({ language: { root: 'blah' } }).label('bleh');
+        const schema = Joi.string().prefs({ language: { root: 'blah' } }).label('bleh');
         const err = await expect(schema.validate(4)).to.reject();
         expect(err).to.be.an.error('"bleh" must be a string');
         expect(err.details).to.equal([{
@@ -570,6 +576,7 @@ describe('errors', () => {
                     context: { limit: 2, value: 4, label: 'a[2]', key: 2 }
                 }
             ]);
+
             expect(err.annotate()).to.equal('{\n  "a": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] "a[0]" must be larger than or equal to 4\n[2] "a[1]" must be larger than or equal to 4\n[3] "a[1]" must be less than or equal to 2\n[4] "a[2]" must be less than or equal to 2\u001b[0m');
         });
 
@@ -912,7 +919,8 @@ describe('errors', () => {
                     ref: 'options.stripUnknown',
                     message: 'meet requirement of having peer modify set to true',
                     label: 'response',
-                    key: 'response'
+                    key: 'response',
+                    value: object.response
                 }
             }]);
 

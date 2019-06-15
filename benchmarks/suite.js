@@ -21,14 +21,14 @@ module.exports = [
         }
     ],
     [
-        'Simple object with inlined options',
+        'Simple object with inlined prefs',
         () => [
             Joi.object({
                 id: Joi.string().required(),
                 level: Joi.string()
                     .valid(['debug', 'info', 'notice'])
                     .required()
-            }).unknown(false).options({ convert: false }),
+            }).unknown(false).prefs({ convert: false }),
             { id: '1', level: 'info' },
             { id: '2', level: 'warning' }
         ],
@@ -76,7 +76,7 @@ module.exports = [
                 .pattern(/a/, Joi.lazy(() => Joi.any()))
                 .pattern(/b/, Joi.when('a', {
                     is: true,
-                    then: Joi.options({ language: { 'any.required': 'oops' } })
+                    then: Joi.prefs({ language: { 'any.required': 'oops' } })
                 }))
                 .meta('foo')
                 .strip()
