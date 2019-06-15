@@ -15,6 +15,8 @@
   - [`ref(key, [options])`](#refkey-options)
     - [Relative references](#relative-references)
   - [`isRef(ref)`](#isrefref)
+  - [`template(template, [options])`](#templatetemplate-options)
+    - [Template syntax](#template-syntax)
   - [`isSchema(schema)`](#isschemaschema)
   - [`reach(schema, path)`](#reachschema-path)
   - [`defaults(fn)`](#defaultsfn)
@@ -359,7 +361,7 @@ const schema = Joi.compile(definition);
 const schema = Joi.alternatives().try([
     Joi.string().valid('key'),
     Joi.number().valid(5),
-    Joi.object().keys({
+    Joi.object({
         a: Joi.boolean().valid(true),
         b: Joi.alternatives().try([
             Joi.string().regex(/^a/),
@@ -441,7 +443,7 @@ Note that references can only be used where explicitly supported such as in `val
 (parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: Joi.ref('b.c'),
     b: {
         c: Joi.any()
@@ -532,6 +534,27 @@ It's especially useful if you want to post-process error messages.
 const ref = Joi.ref('a');
 Joi.isRef(ref); // returns true
 ```
+
+### `template(template, [options])`
+
+Generates a template from a string where:
+- `template` - the template string using the [template syntax](#template-syntax).
+- `options` - optional settings used when creating internal references. Supports the same options
+  as [`ref()`](#refkey-options).
+
+#### Template syntax
+
+The template syntax uses `{}` and `{{}}` enclosed variables to indicate that these values should be
+replace with the actual referenced values at rendering time. Single braces `{}` leave the value
+as-is, while double braces `{{}}` HTML-escape the result (unless the template is used for error messages
+and the `escapeErrors` preference flag is set to `false`).
+
+The variable names can have one of the following prefixes:
+- `#` - indicates the variable references a local context value. For example, in errors this is the
+  error context, while in rename operations, it is the regular expression matching groups.
+- `$` - indicates the variable references a global context value from the `context` preference object
+  provided as an option to the validation function or set using [`any.prefs()`](#anyprefsoptions--aliases-preferences-options).
+- any other variable references a key within the current value being validated.
 
 ### `isSchema(schema)`
 
@@ -1229,7 +1252,7 @@ If you need to validate a child key inside a nested object based on a sibling's 
 so like this:
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: Joi.boolean().required(),
     b: Joi.object()
         .keys({
@@ -1248,7 +1271,7 @@ If you want to validate one key based on the existence of another key, you can d
 following (notice the use of `required()`):
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     min: Joi.number(),
     max: Joi.number().when('min', {
         is: Joi.number().required(),
@@ -1927,7 +1950,7 @@ an `object` if specified via `JSON.parse()`.
 Supports the same methods of the [`any()`](#any) type.
 
 ```js
-const object = Joi.object().keys({
+const object = Joi.object({
     a: Joi.number().min(1).max(10).integer(),
     b: 'some string'
 });
@@ -2030,7 +2053,7 @@ Appends the allowed object keys where:
 
 ```js
 // Validate key a
-const base = Joi.object().keys({
+const base = Joi.object({
     a: Joi.number()
 });
 // Validate keys a, b.
@@ -2099,7 +2122,7 @@ them are required as well where:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: Joi.any(),
     b: Joi.any()
 }).and('a', 'b');
@@ -2115,7 +2138,7 @@ Defines a relationship between keys where not all peers can be present at the sa
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: Joi.any(),
     b: Joi.any()
 }).nand('a', 'b');
@@ -2132,7 +2155,7 @@ allowed) where:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: Joi.any(),
     b: Joi.any()
 }).or('a', 'b');
@@ -2149,7 +2172,7 @@ the same time where:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: Joi.any(),
     b: Joi.any()
 }).xor('a', 'b');
@@ -2166,7 +2189,7 @@ required where:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: Joi.any(),
     b: Joi.any()
 }).oxor('a', 'b');
@@ -2187,7 +2210,7 @@ Note that unlike [`object.and()`](#objectandpeers-options), `with()` creates a d
 between the `peers` themselves.
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: Joi.any(),
     b: Joi.any()
 }).with('a', 'b');
@@ -2205,7 +2228,7 @@ Forbids the presence of other keys whenever the specified is present where:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: Joi.any(),
     b: Joi.any()
 }).without('a', ['b']);
@@ -2227,7 +2250,10 @@ const schema = Joi.object().ref();
 
 Renames a key to another name (deletes the renamed key) where:
 - `from` - the original key name or a regular expression matching keys.
-- `to` - the new key name.
+- `to` - the new key name. `to` can be set to a [`template`](#templatetemplate-options) which is
+  rendered at runtime using the current value, global context, and local context if `from` is a
+  regular expression (e.g. the expression `/^(\d+)$/` will match any all-digits keys with a capture
+  group that is accessible in the template via `{#1}`).
 - `options` - an optional object with the following optional keys:
     - `alias` - if `true`, does not delete the old key name, keeping both the new and old keys in place. Defaults to `false`.
     - `multiple` - if `true`, allows renaming multiple keys to the same destination where the last rename wins. Defaults to `false`.
@@ -2237,23 +2263,41 @@ Renames a key to another name (deletes the renamed key) where:
 Keys are renamed before any other validation rules are applied.
 
 ```js
-const object = Joi.object().keys({
+const object = Joi.object({
     a: Joi.number()
 }).rename('b', 'a');
 
 object.validate({ b: 5 }, (err, value) => { });
 ```
 
-It can also rename keys using a regular expression:
+Using a regular expression:
 
 ```js
 const regex = /^foobar$/i;
 
-const schema = Joi.object().keys({
+const schema = Joi.object({
   fooBar: Joi.string()
 }).rename(regex, 'fooBar');
 
 schema.validate({ FooBar: 'a'}, (err, value) => {});
+```
+
+Using a regular expression with template:
+
+```js
+const schema = Joi.object()
+    .rename(/^(\d+)$/, Joi.template('x{#1}x'))
+    .pattern(/^x\d+x$/, Joi.any());
+
+const input = {
+    123: 'x',
+    1: 'y',
+    0: 'z',
+    x4x: 'test'
+};
+
+const value = await Joi.compile(schema).validate(input);
+// value === { x123x: 'x', x1x: 'y', x0x: 'z', x4x: 'test' }
 ```
 
 💥 Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride)
@@ -2267,7 +2311,7 @@ Verifies an assertion where:
 - `message` - optional human-readable message used when the assertion fails. Defaults to 'failed to pass the assertion test'.
 
 ```js
-const schema = Joi.object().keys({
+const schema = Joi.object({
     a: {
         b: Joi.string(),
         c: Joi.number()
@@ -2320,7 +2364,7 @@ Sets the specified children to required.
 - `children` - the keys to specified as required.
 
 ```js
-const schema = Joi.object().keys({ a: { b: Joi.number() }, c: { d: Joi.string() } });
+const schema = Joi.object({ a: { b: Joi.number() }, c: { d: Joi.string() } });
 const requiredSchema = schema.requiredKeys('', 'a.b', 'c', 'c.d');
 ```
 
@@ -2332,7 +2376,7 @@ Sets the specified children to optional.
 - `children` - the keys to specified as optional.
 
 ```js
-const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
+const schema = Joi.object({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
 const optionalSchema = schema.optionalKeys('a.b', 'c.d');
 ```
 
@@ -2344,7 +2388,7 @@ Sets the specified children to forbidden.
 - `children` - the keys specified as forbidden.
 
 ```js
-const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
+const schema = Joi.object({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
 const optionalSchema = schema.forbiddenKeys('a.b', 'c.d');
 ```
 

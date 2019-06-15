@@ -219,7 +219,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should validate count when min is set', () => {
+    it('validates count when min is set', () => {
 
         const schema = Joi.object().min(3);
         Helper.validate(schema, [
@@ -258,7 +258,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should validate count when max is set', () => {
+    it('validates count when max is set', () => {
 
         const schema = Joi.object().max(2);
         Helper.validate(schema, [
@@ -289,7 +289,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should validate count when min and max is set', () => {
+    it('validates count when min and max is set', () => {
 
         const schema = Joi.object().max(3).min(2);
         Helper.validate(schema, [
@@ -339,7 +339,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should validate count when length is set', () => {
+    it('validates count when length is set', () => {
 
         const schema = Joi.object().length(2);
         Helper.validate(schema, [
@@ -378,7 +378,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should validate constructor when type is set', () => {
+    it('validates constructor when type is set', () => {
 
         const schema = Joi.object().type(RegExp);
         const d = new Date();
@@ -1394,6 +1394,90 @@ describe('object', () => {
                 expect(value.c).to.equal(50);
             });
 
+            it('uses template', async () => {
+
+                const schema = Joi.object()
+                    .rename(/^(\d+)$/, Joi.template('x{#1}x'))
+                    .pattern(/^x\d+x$/, Joi.any());
+
+                const input = {
+                    123: 'x',
+                    1: 'y',
+                    0: 'z',
+                    x4x: 'test'
+                };
+
+                const value = await Joi.compile(schema).validate(input);
+                expect(value).to.equal({
+                    x123x: 'x',
+                    x1x: 'y',
+                    x0x: 'z',
+                    x4x: 'test'
+                });
+
+                expect(schema.describe()).to.equal({
+                    type: 'object',
+                    patterns: [{
+                        regex: '/^x\\d+x$/',
+                        rule: { type: 'any' }
+                    }],
+                    renames: [{
+                        from: { regex: '/^(\\d+)$/' },
+                        to: {
+                            template: 'x{#1}x',
+                            options: {}
+                        },
+                        options: {
+                            alias: false,
+                            multiple: false,
+                            override: false
+                        }
+                    }]
+                });
+            });
+
+            it('uses template with prefix override', async () => {
+
+                const schema = Joi.object()
+                    .rename(/^(\d+)$/, Joi.template('x{%1}x', { prefix: { local: '%' } }))
+                    .pattern(/^x\d+x$/, Joi.any());
+
+                const input = {
+                    123: 'x',
+                    1: 'y',
+                    0: 'z',
+                    x4x: 'test'
+                };
+
+                const value = await Joi.compile(schema).validate(input);
+                expect(value).to.equal({
+                    x123x: 'x',
+                    x1x: 'y',
+                    x0x: 'z',
+                    x4x: 'test'
+                });
+
+                expect(schema.describe()).to.equal({
+                    type: 'object',
+                    patterns: [{
+                        regex: '/^x\\d+x$/',
+                        rule: { type: 'any' }
+                    }],
+                    renames: [{
+                        from: { regex: '/^(\\d+)$/' },
+                        to: {
+                            template: 'x{%1}x',
+                            options: { prefix: { local: '%' } }
+                        },
+                        options: {
+                            alias: false,
+                            multiple: false,
+                            override: false
+                        }
+                    }]
+                });
+            });
+
             it('deletes a key with override if present and undefined', async () => {
 
                 const schema = Joi.object()
@@ -1574,7 +1658,7 @@ describe('object', () => {
                 expect(desc).to.equal({
                     type: 'object',
                     renames: [{
-                        from: regex,
+                        from: { regex: regex.toString() },
                         to: 'a',
                         options: {
                             alias: true,
@@ -1595,7 +1679,7 @@ describe('object', () => {
                 expect(desc).to.equal({
                     type: 'object',
                     renames: [{
-                        from: regex,
+                        from: { regex: regex.toString() },
                         to: 'a',
                         options: {
                             alias: false,
@@ -2153,7 +2237,7 @@ describe('object', () => {
             expect(error).to.equal(true);
         });
 
-        it('should validate correctly when key is an empty string', () => {
+        it('validates correctly when key is an empty string', () => {
 
             const schema = Joi.object().with('', 'b');
             Helper.validate(schema, [
@@ -2355,7 +2439,7 @@ describe('object', () => {
             expect(error).to.equal(true);
         });
 
-        it('should validate correctly when key is an empty string', () => {
+        it('validates correctly when key is an empty string', () => {
 
             const schema = Joi.object().without('', 'b');
             Helper.validate(schema, [
@@ -2363,7 +2447,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should validate correctly when key is stripped', () => {
+        it('validates correctly when key is stripped', () => {
 
             const schema = Joi.object({
                 a: Joi.any().strip(),
