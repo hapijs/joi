@@ -1542,6 +1542,22 @@ describe('any', () => {
                 expect(err.message).to.equal('"b.c" must be larger than or equal to 0 and "b.c" must be an integer');
             });
 
+            it('uses selected date format', async () => {
+
+                const min = new Date('1974-05-07');
+
+                const schema = Joi.object({
+                    a: Joi.date().min(min).greater(min).error((errors) => {
+
+                        return new Error(errors.join(' and ')); // Automatic toString() of each error on join
+                    })
+                });
+
+                const err = await expect(Joi.validate({ a: new Date('1973-01-01') }, schema, { dateErrorFormat: 'date', abortEarly: false })).to.reject();
+                expect(err.isJoi).to.not.exist();
+                expect(err.message).to.equal(`"a" must be larger than or equal to "${min.toDateString()}" and "a" must be greater than "${min.toDateString()}"`);
+            });
+
             it('should be able to combine several error messages using context', async () => {
 
                 const schema = Joi.object({
@@ -2471,9 +2487,9 @@ describe('any', () => {
 
             const d = new Date();
             expect(Joi.valid(d).validate(new Date(d.getTime())).error).to.be.null();
-            expect(Joi.valid(d).validate(new Date(d.getTime() + 1)).error).to.be.an.error(`"value" must be one of [${d}]`);
+            expect(Joi.valid(d).validate(new Date(d.getTime() + 1)).error).to.be.an.error(`"value" must be one of [${d.toISOString()}]`);
             expect(Joi.valid(d).validate(new Date(d.getTime() + 1)).error.details).to.equal([{
-                message: `"value" must be one of [${d}]`,
+                message: `"value" must be one of [${d.toISOString()}]`,
                 path: [],
                 type: 'any.allowOnly',
                 context: { value: new Date(d.getTime() + 1), valids: [d], label: 'value' }

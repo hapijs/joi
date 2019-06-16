@@ -183,9 +183,9 @@ describe('Joi', () => {
             [new Date(now), true],
             [now, true],
             [now * 2, false, null, {
-                message: `"value" must be one of [${dnow}]`,
+                message: `"value" must be one of [${dnow.toISOString()}]`,
                 details: [{
-                    message: `"value" must be one of [${dnow}]`,
+                    message: `"value" must be one of [${dnow.toISOString()}]`,
                     path: [],
                     type: 'any.allowOnly',
                     context: { value: new Date(now * 2), valids: [dnow], label: 'value' }

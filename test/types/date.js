@@ -150,7 +150,7 @@ describe('date', () => {
             it('validates min', () => {
 
                 const d = new Date('1-1-2000 UTC');
-                const message = `"value" must be larger than or equal to "${d}"`;
+                const message = `"value" must be larger than or equal to "${d.toISOString()}"`;
                 Helper.validate(Joi.date().min('1-1-2000 UTC'), [
                     ['1-1-2001 UTC', true],
                     ['1-1-2000 UTC', true],
@@ -358,7 +358,7 @@ describe('date', () => {
             it('validates max', () => {
 
                 const d = new Date('1-1-1970 UTC');
-                const message = `"value" must be less than or equal to "${d}"`;
+                const message = `"value" must be less than or equal to "${d.toISOString()}"`;
                 Helper.validate(Joi.date().max('1-1-1970 UTC'), [
                     ['1-1-1971 UTC', false, null, {
                         message,
@@ -524,7 +524,7 @@ describe('date', () => {
             it('validates greater', () => {
 
                 const d = new Date('1-1-2000 UTC');
-                const message = `"value" must be greater than "${d}"`;
+                const message = `"value" must be greater than "${d.toISOString()}"`;
                 Helper.validate(Joi.date().greater('1-1-2000 UTC'), [
                     ['1-1-2001 UTC', true],
                     ['1-1-2000 UTC', false, null, {
@@ -749,7 +749,7 @@ describe('date', () => {
 
                 const d = new Date('1-1-1970 UTC');
                 const message = `"value" must be less than "${d}"`;
-                Helper.validate(Joi.date().less('1-1-1970 UTC'), [
+                Helper.validate(Joi.date().less('1-1-1970 UTC').prefs({ dateErrorFormat: 'string' }), [
                     ['1-1-1971 UTC', false, null, {
                         message,
                         details: [{
