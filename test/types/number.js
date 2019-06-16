@@ -451,49 +451,6 @@ describe('number', () => {
             ]);
         });
 
-        it('handles combination of negative and positive', () => {
-
-            const rule = Joi.number().negative().positive();
-            Helper.validate(rule, [
-                [4, false, null, {
-                    message: '"value" must be a negative number',
-                    details: [{
-                        message: '"value" must be a negative number',
-                        path: [],
-                        type: 'number.negative',
-                        context: { value: 4, label: 'value' }
-                    }]
-                }],
-                [-2, false, null, {
-                    message: '"value" must be a positive number',
-                    details: [{
-                        message: '"value" must be a positive number',
-                        path: [],
-                        type: 'number.positive',
-                        context: { value: -2, label: 'value' }
-                    }]
-                }],
-                [0, false, null, {
-                    message: '"value" must be a negative number',
-                    details: [{
-                        message: '"value" must be a negative number',
-                        path: [],
-                        type: 'number.negative',
-                        context: { value: 0, label: 'value' }
-                    }]
-                }],
-                [null, false, null, {
-                    message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
-                }]
-            ]);
-        });
-
         it('handles combination of negative and allow', () => {
 
             const rule = Joi.number().negative().allow(1);
