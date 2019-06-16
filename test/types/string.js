@@ -2197,10 +2197,7 @@ describe('string', () => {
 
         it('throws when options is not an object', () => {
 
-            expect(() => {
-
-                Joi.string().ip(42);
-            }).to.throw('options must be an object');
+            expect(() => Joi.string().ip(42)).to.throw('Options must be an object');
         });
 
         it('throws when options.cidr is not a string', () => {
@@ -3035,7 +3032,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().uri('http');
-            }).to.throw(Error, 'options must be an object');
+            }).to.throw(Error, 'Options must be an object');
         });
 
         it('validates uri requires scheme to be a RegExp, String, or Array with a friendly error message', () => {
@@ -4423,7 +4420,7 @@ describe('string', () => {
 
         it('errors on unknown options', () => {
 
-            expect(() => Joi.string().uri({ foo: 'bar', baz: 'qux' })).to.throw('options contain unknown keys: foo,baz');
+            expect(() => Joi.string().uri({ foo: 'bar', baz: 'qux' })).to.throw('Options contain unknown keys: foo,baz');
         });
     });
 
@@ -9652,7 +9649,7 @@ describe('string', () => {
 
         it('validates the base64 options', () => {
 
-            expect(() => Joi.string().base64('a')).to.throw('options must be an object');
+            expect(() => Joi.string().base64('a')).to.throw('Options must be an object');
             expect(() => Joi.string().base64({ paddingRequired: 'a' })).to.throw('paddingRequired must be boolean');
             expect(() => Joi.string().base64({ urlSafe: 'a' })).to.throw('urlSafe must be boolean');
         });

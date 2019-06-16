@@ -2642,7 +2642,7 @@ describe('array', () => {
 
         it('fails with invalid configs', () => {
 
-            expect(() => Joi.array().unique('id', 'invalid configs')).to.throw(Error, 'configs must be an object');
+            expect(() => Joi.array().unique('id', 'invalid configs')).to.throw('Options must be an object');
             expect(() => Joi.array().unique('id', {})).to.not.throw();
         });
 

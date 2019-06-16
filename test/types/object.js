@@ -1818,7 +1818,7 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string()
-            }).pattern(Joi.string().uuid('uuidv4'), Joi.boolean());
+            }).pattern(Joi.string().uuid({ version: 'uuidv4' }), Joi.boolean());
 
             expect(schema.describe()).to.equal({
                 type: 'object',
@@ -1833,7 +1833,7 @@ describe('object', () => {
                         schema: {
                             invalids: [''],
                             rules: [{
-                                arg: 'uuidv4',
+                                arg: { version: 'uuidv4' },
                                 name: 'guid'
                             }],
                             type: 'string'

@@ -2624,10 +2624,7 @@ describe('any', () => {
 
         it('throws when options are invalid', () => {
 
-            expect(() => {
-
-                Joi.when('a');
-            }).to.throw('Invalid options');
+            expect(() => Joi.when('a')).to.throw('Options must be an object');
         });
 
         it('throws on multiple whens', () => {
