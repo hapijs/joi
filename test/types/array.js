@@ -83,6 +83,266 @@ describe('array', () => {
         }]);
     });
 
+    describe('describe()', () => {
+
+        it('returns an empty description when no rules are applied', () => {
+
+            const schema = Joi.array();
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'array',
+                flags: { sparse: false }
+            });
+        });
+
+        it('returns an updated description when sparse rule is applied', () => {
+
+            const schema = Joi.array().sparse();
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'array',
+                flags: { sparse: true }
+            });
+        });
+
+        it('returns an items array only if items are specified', () => {
+
+            const schema = Joi.array().items().max(5);
+            const desc = schema.describe();
+            expect(desc.items).to.not.exist();
+        });
+
+        it('returns a recursively defined array of items when specified', () => {
+
+            const schema = Joi.array()
+                .items(Joi.number(), Joi.string())
+                .items(Joi.boolean().forbidden())
+                .ordered(Joi.number(), Joi.string())
+                .ordered(Joi.string().required());
+            const desc = schema.describe();
+            expect(desc.items).to.have.length(3);
+            expect(desc).to.equal({
+                type: 'array',
+                flags: { sparse: false },
+                orderedItems: [
+                    { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
+                    { type: 'string', invalids: [''] },
+                    { type: 'string', invalids: [''], flags: { presence: 'required' } }
+                ],
+                items: [
+                    { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
+                    { type: 'string', invalids: [''] },
+                    { type: 'boolean', flags: { presence: 'forbidden', insensitive: true }, truthy: [true], falsy: [false] }
+                ]
+            });
+        });
+
+        it('describes an array with array items', () => {
+
+            const schema = Joi.array().items(Joi.array());
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'array',
+                flags: { sparse: false },
+                items: [
+                    {
+                        type: 'array',
+                        flags: { sparse: false }
+                    }
+                ]
+            });
+        });
+    });
+
+    describe('has()', () => {
+
+        it('shows path to errors in schema', () => {
+
+            expect(() => {
+
+                Joi.array().has({
+                    a: {
+                        b: {
+                            c: {
+                                d: undefined
+                            }
+                        }
+                    }
+                });
+            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+        });
+
+        it('shows errors in schema', () => {
+
+            expect(() => Joi.array().has(undefined)).to.throw(Error, 'Invalid schema content: ');
+        });
+
+        it('works with object.assert', () => {
+
+            const schema = Joi.array().items(
+                Joi.object().keys({
+                    a: {
+                        b: Joi.string(),
+                        c: Joi.number()
+                    },
+                    d: {
+                        e: Joi.any()
+                    }
+                })
+            ).has(Joi.object().assert('d.e', Joi.ref('a.c'), 'equal to a.c'));
+
+            Helper.validate(schema, [
+                [[{ a: { b: 'x', c: 5 }, d: { e: 5 } }], true]
+            ]);
+        });
+
+        it('does not throw if assertion passes', () => {
+
+            const schema = Joi.array().has(Joi.string());
+            Helper.validate(schema, [
+                [['foo'], true]
+            ]);
+        });
+
+        it('throws with proper message if assertion fails on unknown schema', () => {
+
+            const schema = Joi.array().has(Joi.string());
+            Helper.validate(schema, [
+                [[0], false, null, {
+                    message: '"value" does not contain at least one required match',
+                    details: [{
+                        message: '"value" does not contain at least one required match',
+                        path: [],
+                        type: 'array.hasUnknown',
+                        context: { label: 'value', value: [0] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('throws with proper message if assertion fails on known schema', () => {
+
+            const schema = Joi.array().has(Joi.string().label('foo'));
+            Helper.validate(schema, [
+                [[0], false, null, {
+                    message: '"value" does not contain at least one required match for type "foo"',
+                    details: [{
+                        message: '"value" does not contain at least one required match for type "foo"',
+                        path: [],
+                        type: 'array.hasKnown',
+                        context: { label: 'value', patternLabel: 'foo', value: [0] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('shows correct path for error', () => {
+
+            const schema = Joi.object({
+                arr: Joi.array().has(Joi.string())
+            });
+            Helper.validate(schema, [
+                [{ arr: [0] }, false, null, {
+                    message: '"arr" does not contain at least one required match',
+                    details: [{
+                        message: '"arr" does not contain at least one required match',
+                        path: ['arr'],
+                        type: 'array.hasUnknown',
+                        context: { label: 'arr', key: 'arr', value: [0] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('supports nested arrays', () => {
+
+            const schema = Joi.object({
+                arr: Joi.array().items(
+                    Joi.object({ foo: Joi.array().has(Joi.string()) })
+                )
+            });
+            Helper.validate(schema, [
+                [{ arr: [{ foo: ['bar'] }] }, true]
+            ]);
+        });
+
+        it('supports peer item references', () => {
+
+            const schema = Joi.object({
+                array: Joi.array()
+                    .items(Joi.number())
+                    .has(Joi.number().greater(Joi.ref('..0')))
+            });
+
+            Helper.validate(schema, [
+                [{ array: [10, 1, 11, 5] }, true],
+                [{ array: [10, 1, 2, 5, 12] }, true],
+                [{ array: [10, 1, 2, 5, 1] }, false, null, {
+                    message: '"array" does not contain at least one required match',
+                    details: [{
+                        message: '"array" does not contain at least one required match',
+                        path: ['array'],
+                        type: 'array.hasUnknown',
+                        context: { label: 'array', key: 'array', value: [10, 1, 2, 5, 1] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('provides accurate error message for nested arrays', () => {
+
+            const schema = Joi.object({
+                arr: Joi.array().items(
+                    Joi.object({ foo: Joi.array().has(Joi.string()) })
+                )
+            });
+            Helper.validate(schema, [
+                [{ arr: [{ foo: [0] }] }, false, null, {
+                    message: '"arr[0].foo" does not contain at least one required match',
+                    details: [{
+                        message: '"arr[0].foo" does not contain at least one required match',
+                        path: ['arr', 0, 'foo'],
+                        type: 'array.hasUnknown',
+                        context: { label: 'arr[0].foo', key: 'foo', value: [0] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('handles multiple assertions', () => {
+
+            const schema = Joi.array().has(Joi.string()).has(Joi.number());
+            Helper.validate(schema, [
+                [['foo', 0], true]
+            ]);
+
+            Helper.validate(schema, [
+                [['foo'], false, null, {
+                    message: '"value" does not contain at least one required match',
+                    details: [{
+                        message: '"value" does not contain at least one required match',
+                        path: [],
+                        type: 'array.hasUnknown',
+                        context: { label: 'value', value: ['foo'] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('describes the pattern schema', () => {
+
+            const schema = Joi.array().has(Joi.string()).has(Joi.number());
+            expect(schema.describe()).to.equal({
+                type: 'array',
+                flags: { sparse: false },
+                rules: [
+                    { name: 'has', arg: { type: 'string', invalids: [''] } },
+                    { name: 'has', arg: { type: 'number', flags: { unsafe: false }, invalids: [Infinity, -Infinity] } }
+                ]
+            });
+        });
+    });
+
     describe('items()', () => {
 
         it('converts members', async () => {
@@ -372,19 +632,19 @@ describe('array', () => {
         });
     });
 
-    describe('min()', () => {
+    describe('length()', () => {
 
         it('validates array size', () => {
 
-            const schema = Joi.array().min(2);
+            const schema = Joi.array().length(2);
             Helper.validate(schema, [
                 [[1, 2], true],
                 [[1], false, null, {
-                    message: '"value" must contain at least 2 items',
+                    message: '"value" must contain 2 items',
                     details: [{
-                        message: '"value" must contain at least 2 items',
+                        message: '"value" must contain 2 items',
                         path: [],
-                        type: 'array.min',
+                        type: 'array.length',
                         context: { limit: 2, value: [1], label: 'value' }
                     }]
                 }]
@@ -393,35 +653,34 @@ describe('array', () => {
 
         it('overrides rule when called multiple times', () => {
 
-            const schema = Joi.array().min(2).min(1);
+            const schema = Joi.array().length(2).length(1);
             Helper.validate(schema, [
-                [[1, 2], true],
-                [[1], true]
+                [[1], true],
+                [[1, 2], false, null, {
+                    message: '"value" must contain 1 items',
+                    details: [{
+                        message: '"value" must contain 1 items',
+                        path: [],
+                        type: 'array.length',
+                        context: { limit: 1, value: [1, 2], label: 'value' }
+                    }]
+                }]
             ]);
         });
 
         it('throws when limit is not a number', () => {
 
-            expect(() => {
-
-                Joi.array().min('a');
-            }).to.throw('limit must be a positive integer or reference');
+            expect(() => Joi.array().length('a')).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is not an integer', () => {
 
-            expect(() => {
-
-                Joi.array().min(1.2);
-            }).to.throw('limit must be a positive integer or reference');
+            expect(() => Joi.array().length(1.2)).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is negative', () => {
 
-            expect(() => {
-
-                Joi.array().min(-1);
-            }).to.throw('limit must be a positive integer or reference');
+            expect(() => Joi.array().length(-1)).to.throw('limit must be a positive integer or reference');
         });
 
         it('validates array size when a reference', () => {
@@ -429,7 +688,7 @@ describe('array', () => {
             const ref = Joi.ref('limit');
             const schema = Joi.object().keys({
                 limit: Joi.any(),
-                arr: Joi.array().min(ref)
+                arr: Joi.array().length(ref)
             });
             Helper.validate(schema, [
                 [{
@@ -440,11 +699,11 @@ describe('array', () => {
                     limit: 2,
                     arr: [1]
                 }, false, null, {
-                    message: '"arr" must contain at least ref:limit items',
+                    message: '"arr" must contain ref:limit items',
                     details: [{
-                        message: '"arr" must contain at least ref:limit items',
+                        message: '"arr" must contain ref:limit items',
                         path: ['arr'],
-                        type: 'array.min',
+                        type: 'array.length',
                         context: { limit: ref, value: [1], label: 'arr', key: 'arr' }
                     }]
                 }]
@@ -457,7 +716,7 @@ describe('array', () => {
                 limit: Joi.any(),
                 arr: Joi.array(),
                 arr2: Joi.when('arr', {
-                    is: Joi.array().min(Joi.ref('limit')),
+                    is: Joi.array().length(Joi.ref('limit')),
                     then: Joi.array()
                 })
             });
@@ -476,7 +735,7 @@ describe('array', () => {
             const ref = Joi.ref('limit');
             const schema = Joi.object().keys({
                 limit: Joi.any(),
-                arr: Joi.array().min(ref)
+                arr: Joi.array().length(ref)
             });
 
             Helper.validate(schema, [
@@ -635,19 +894,19 @@ describe('array', () => {
         });
     });
 
-    describe('length()', () => {
+    describe('min()', () => {
 
         it('validates array size', () => {
 
-            const schema = Joi.array().length(2);
+            const schema = Joi.array().min(2);
             Helper.validate(schema, [
                 [[1, 2], true],
                 [[1], false, null, {
-                    message: '"value" must contain 2 items',
+                    message: '"value" must contain at least 2 items',
                     details: [{
-                        message: '"value" must contain 2 items',
+                        message: '"value" must contain at least 2 items',
                         path: [],
-                        type: 'array.length',
+                        type: 'array.min',
                         context: { limit: 2, value: [1], label: 'value' }
                     }]
                 }]
@@ -656,34 +915,35 @@ describe('array', () => {
 
         it('overrides rule when called multiple times', () => {
 
-            const schema = Joi.array().length(2).length(1);
+            const schema = Joi.array().min(2).min(1);
             Helper.validate(schema, [
-                [[1], true],
-                [[1, 2], false, null, {
-                    message: '"value" must contain 1 items',
-                    details: [{
-                        message: '"value" must contain 1 items',
-                        path: [],
-                        type: 'array.length',
-                        context: { limit: 1, value: [1, 2], label: 'value' }
-                    }]
-                }]
+                [[1, 2], true],
+                [[1], true]
             ]);
         });
 
         it('throws when limit is not a number', () => {
 
-            expect(() => Joi.array().length('a')).to.throw('limit must be a positive integer or reference');
+            expect(() => {
+
+                Joi.array().min('a');
+            }).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is not an integer', () => {
 
-            expect(() => Joi.array().length(1.2)).to.throw('limit must be a positive integer or reference');
+            expect(() => {
+
+                Joi.array().min(1.2);
+            }).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is negative', () => {
 
-            expect(() => Joi.array().length(-1)).to.throw('limit must be a positive integer or reference');
+            expect(() => {
+
+                Joi.array().min(-1);
+            }).to.throw('limit must be a positive integer or reference');
         });
 
         it('validates array size when a reference', () => {
@@ -691,7 +951,7 @@ describe('array', () => {
             const ref = Joi.ref('limit');
             const schema = Joi.object().keys({
                 limit: Joi.any(),
-                arr: Joi.array().length(ref)
+                arr: Joi.array().min(ref)
             });
             Helper.validate(schema, [
                 [{
@@ -702,11 +962,11 @@ describe('array', () => {
                     limit: 2,
                     arr: [1]
                 }, false, null, {
-                    message: '"arr" must contain ref:limit items',
+                    message: '"arr" must contain at least ref:limit items',
                     details: [{
-                        message: '"arr" must contain ref:limit items',
+                        message: '"arr" must contain at least ref:limit items',
                         path: ['arr'],
-                        type: 'array.length',
+                        type: 'array.min',
                         context: { limit: ref, value: [1], label: 'arr', key: 'arr' }
                     }]
                 }]
@@ -719,7 +979,7 @@ describe('array', () => {
                 limit: Joi.any(),
                 arr: Joi.array(),
                 arr2: Joi.when('arr', {
-                    is: Joi.array().length(Joi.ref('limit')),
+                    is: Joi.array().min(Joi.ref('limit')),
                     then: Joi.array()
                 })
             });
@@ -738,7 +998,7 @@ describe('array', () => {
             const ref = Joi.ref('limit');
             const schema = Joi.object().keys({
                 limit: Joi.any(),
-                arr: Joi.array().length(ref)
+                arr: Joi.array().min(ref)
             });
 
             Helper.validate(schema, [
@@ -770,13 +1030,29 @@ describe('array', () => {
         });
     });
 
-    describe('has()', () => {
+    describe('options()', () => {
 
-        it('shows path to errors in schema', () => {
+        it('ignores stripUnknown when true', async () => {
+
+            const schema = Joi.array().items(Joi.string()).prefs({ stripUnknown: true });
+            await expect(schema.validate(['one', 'two', 3, 4, true, false])).to.reject('"[2]" must be a string');
+        });
+
+        it('respects stripUnknown (as an object)', async () => {
+
+            const schema = Joi.array().items(Joi.string()).prefs({ stripUnknown: { arrays: true, objects: false } });
+            const value = await schema.validate(['one', 'two', 3, 4, true, false]);
+            expect(value).to.equal(['one', 'two']);
+        });
+    });
+
+    describe('ordered()', () => {
+
+        it('shows path to errors in array ordered items', () => {
 
             expect(() => {
 
-                Joi.array().has({
+                Joi.array().ordered({
                     a: {
                         b: {
                             c: {
@@ -785,261 +1061,365 @@ describe('array', () => {
                         }
                     }
                 });
-            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+            }).to.throw(Error, 'Invalid schema content: (0.a.b.c.d)');
+
+            expect(() => {
+
+                Joi.array().ordered({ foo: 'bar' }, undefined);
+            }).to.throw(Error, 'Invalid schema content: (1)');
         });
 
-        it('shows errors in schema', () => {
+        it('validates input against items in order', async () => {
 
-            expect(() => Joi.array().has(undefined)).to.throw(Error, 'Invalid schema content: ');
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required());
+            const input = ['s1', 2];
+            const value = await schema.validate(input);
+            expect(value).to.equal(['s1', 2]);
         });
 
-        it('works with object.assert', () => {
+        it('validates input with optional item', async () => {
 
-            const schema = Joi.array().items(
-                Joi.object().keys({
-                    a: {
-                        b: Joi.string(),
-                        c: Joi.number()
-                    },
-                    d: {
-                        e: Joi.any()
-                    }
-                })
-            ).has(Joi.object().assert('d.e', Joi.ref('a.c'), 'equal to a.c'));
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number());
+            const input = ['s1', 2, 3];
 
-            Helper.validate(schema, [
-                [[{ a: { b: 'x', c: 5 }, d: { e: 5 } }], true]
+            const value = await schema.validate(input);
+            expect(value).to.equal(['s1', 2, 3]);
+        });
+
+        it('validates input without optional item', async () => {
+
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number());
+            const input = ['s1', 2];
+
+            const value = await schema.validate(input);
+            expect(value).to.equal(['s1', 2]);
+        });
+
+        it('validates input without optional item', async () => {
+
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number()).sparse(true);
+            const input = ['s1', 2, undefined];
+
+            const value = await schema.validate(input);
+            expect(value).to.equal(['s1', 2, undefined]);
+        });
+
+        it('validates input without optional item in a sparse array', async () => {
+
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number(), Joi.number().required()).sparse(true);
+            const input = ['s1', undefined, 3];
+
+            const value = await schema.validate(input);
+            expect(value).to.equal(['s1', undefined, 3]);
+        });
+
+        it('validates when input matches ordered items and matches regular items', async () => {
+
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number());
+            const input = ['s1', 2, 3, 4, 5];
+            const value = await schema.validate(input);
+            expect(value).to.equal(['s1', 2, 3, 4, 5]);
+        });
+
+        it('errors when input does not match ordered items', async () => {
+
+            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
+            const input = ['s1', 2];
+            const err = await expect(schema.validate(input)).to.reject('"[0]" must be a number');
+            expect(err.details).to.equal([{
+                message: '"[0]" must be a number',
+                path: [0],
+                type: 'number.base',
+                context: { label: '[0]', key: 0, value: 's1' }
+            }]);
+        });
+
+        it('errors when input has more items than ordered items', async () => {
+
+            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
+            const input = [1, 's2', 3];
+            const err = await expect(schema.validate(input)).to.reject('"value" must contain at most 2 items');
+            expect(err.details).to.equal([{
+                message: '"value" must contain at most 2 items',
+                path: [],
+                type: 'array.orderedLength',
+                context: { pos: 2, limit: 2, label: 'value', value: input }
+            }]);
+        });
+
+        it('errors when input has more items than ordered items with abortEarly = false', async () => {
+
+            const schema = Joi.array().ordered(Joi.string(), Joi.number()).prefs({ abortEarly: false });
+            const input = [1, 2, 3, 4, 5];
+            const err = await expect(schema.validate(input)).to.reject();
+            expect(err).to.be.an.error('"[0]" must be a string. "value" must contain at most 2 items');
+            expect(err.details).to.have.length(2);
+            expect(err.details).to.equal([
+                {
+                    message: '"[0]" must be a string',
+                    path: [0],
+                    type: 'string.base',
+                    context: { value: 1, label: '[0]', key: 0 }
+                },
+                {
+                    message: '"value" must contain at most 2 items',
+                    path: [],
+                    type: 'array.orderedLength',
+                    context: { pos: 2, limit: 2, label: 'value', value: input }
+                }
             ]);
         });
 
-        it('does not throw if assertion passes', () => {
+        it('errors when input has less items than ordered items', async () => {
 
-            const schema = Joi.array().has(Joi.string());
-            Helper.validate(schema, [
-                [['foo'], true]
+            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
+            const input = [1];
+            const err = await expect(schema.validate(input)).to.reject('"value" does not contain 1 required value(s)');
+            expect(err.details).to.equal([{
+                message: '"value" does not contain 1 required value(s)',
+                path: [],
+                type: 'array.includesRequiredUnknowns',
+                context: { unknownMisses: 1, label: 'value', value: input }
+            }]);
+        });
+
+        it('errors when input matches ordered items but not matches regular items', async () => {
+
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number()).prefs({ abortEarly: false });
+            const input = ['s1', 2, 3, 4, 's5'];
+            const err = await expect(schema.validate(input)).to.reject('"[4]" must be a number');
+            expect(err.details).to.equal([{
+                message: '"[4]" must be a number',
+                path: [4],
+                type: 'number.base',
+                context: { label: '[4]', key: 4, value: 's5' }
+            }]);
+        });
+
+        it('errors when input does not match ordered items but matches regular items', async () => {
+
+            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.number()).prefs({ abortEarly: false });
+            const input = [1, 2, 3, 4, 5];
+            const err = await expect(schema.validate(input)).to.reject('"[0]" must be a string');
+            expect(err.details).to.equal([{
+                message: '"[0]" must be a string',
+                path: [0],
+                type: 'string.base',
+                context: { value: 1, label: '[0]', key: 0 }
+            }]);
+        });
+
+        it('errors when input does not match ordered items not matches regular items', async () => {
+
+            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.string()).prefs({ abortEarly: false });
+            const input = [1, 2, 3, 4, 5];
+            const err = await expect(schema.validate(input)).to.reject();
+            expect(err).to.be.an.error('"[0]" must be a string. "[2]" must be a string. "[3]" must be a string. "[4]" must be a string');
+            expect(err.details).to.have.length(4);
+            expect(err.details).to.equal([
+                {
+                    message: '"[0]" must be a string',
+                    path: [0],
+                    type: 'string.base',
+                    context: { value: 1, label: '[0]', key: 0 }
+                },
+                {
+                    message: '"[2]" must be a string',
+                    path: [2],
+                    type: 'string.base',
+                    context: { value: 3, label: '[2]', key: 2 }
+                },
+                {
+                    message: '"[3]" must be a string',
+                    path: [3],
+                    type: 'string.base',
+                    context: { value: 4, label: '[3]', key: 3 }
+                },
+                {
+                    message: '"[4]" must be a string',
+                    path: [4],
+                    type: 'string.base',
+                    context: { value: 5, label: '[4]', key: 4 }
+                }
             ]);
         });
 
-        it('throws with proper message if assertion fails on unknown schema', () => {
+        it('errors but continues when abortEarly is set to false', async () => {
 
-            const schema = Joi.array().has(Joi.string());
+            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required()).prefs({ abortEarly: false });
+            const input = ['s1', 2];
+            const err = await expect(schema.validate(input)).to.reject();
+            expect(err).to.be.an.error('"[0]" must be a number. "[1]" must be a string');
+            expect(err.details).to.have.length(2);
+            expect(err.details).to.equal([
+                {
+                    message: '"[0]" must be a number',
+                    path: [0],
+                    type: 'number.base',
+                    context: { label: '[0]', key: 0, value: 's1' }
+                },
+                {
+                    message: '"[1]" must be a string',
+                    path: [1],
+                    type: 'string.base',
+                    context: { value: 2, label: '[1]', key: 1 }
+                }
+            ]);
+        });
+
+        it('errors on sparse arrays and continues when abortEarly is set to false', () => {
+
+            const schema = Joi.array().ordered(
+                Joi.number().min(0),
+                Joi.string().min(2),
+                Joi.number().max(0),
+                Joi.string().max(3)
+            )
+                .prefs({ abortEarly: false });
+
             Helper.validate(schema, [
-                [[0], false, null, {
-                    message: '"value" does not contain at least one required match',
+                [[0, 'ab', 0, 'ab'], true],
+                [[undefined, 'foo', 2, 'bar'], false, null, {
+                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0',
                     details: [{
-                        message: '"value" does not contain at least one required match',
-                        path: [],
-                        type: 'array.hasUnknown',
-                        context: { label: 'value', value: [0] }
+                        message: '"[0]" must not be a sparse array item',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
+                    }, {
+                        message: '"[2]" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
+                    }]
+                }],
+                [[undefined, 'foo', 2, undefined], false, null, {
+                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
+                    details: [{
+                        message: '"[0]" must not be a sparse array item',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
+                    }, {
+                        message: '"[2]" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
+                    }, {
+                        message: '"[3]" must not be a sparse array item',
+                        path: [3],
+                        type: 'array.sparse',
+                        context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
                     }]
                 }]
             ]);
         });
 
-        it('throws with proper message if assertion fails on known schema', () => {
+        it('errors on forbidden items and continues when abortEarly is set to false', () => {
 
-            const schema = Joi.array().has(Joi.string().label('foo'));
+            const schema = Joi.array().items(Joi.bool().forbidden()).ordered(
+                Joi.number().min(0),
+                Joi.string().min(2),
+                Joi.number().max(0),
+                Joi.string().max(3)
+            ).prefs({ abortEarly: false });
+
             Helper.validate(schema, [
-                [[0], false, null, {
-                    message: '"value" does not contain at least one required match for type "foo"',
+                [[0, 'ab', 0, 'ab'], true],
+                [[undefined, 'foo', 2, 'bar'], false, null, {
+                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0',
                     details: [{
-                        message: '"value" does not contain at least one required match for type "foo"',
-                        path: [],
-                        type: 'array.hasKnown',
-                        context: { label: 'value', patternLabel: 'foo', value: [0] }
+                        message: '"[0]" must not be a sparse array item',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
+                    }, {
+                        message: '"[2]" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
+                    }]
+                }],
+                [[undefined, 'foo', 2, undefined], false, null, {
+                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
+                    details: [{
+                        message: '"[0]" must not be a sparse array item',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
+                    }, {
+                        message: '"[2]" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
+                    }, {
+                        message: '"[3]" must not be a sparse array item',
+                        path: [3],
+                        type: 'array.sparse',
+                        context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
+                    }]
+                }],
+                [[undefined, false, 2, undefined], false, null, {
+                    message: '"[0]" must not be a sparse array item. "[1]" contains an excluded value. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
+                    details: [{
+                        message: '"[0]" must not be a sparse array item',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
+                    }, {
+                        message: '"[1]" contains an excluded value',
+                        path: [1],
+                        type: 'array.excludes',
+                        context: { key: 1, label: '[1]', pos: 1, value: false }
+                    }, {
+                        message: '"[2]" must be less than or equal to 0',
+                        path: [2],
+                        type: 'number.max',
+                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
+                    }, {
+                        message: '"[3]" must not be a sparse array item',
+                        path: [3],
+                        type: 'array.sparse',
+                        context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
                     }]
                 }]
             ]);
         });
 
-        it('shows correct path for error', () => {
+        it('strips item', async () => {
 
-            const schema = Joi.object({
-                arr: Joi.array().has(Joi.string())
-            });
-            Helper.validate(schema, [
-                [{ arr: [0] }, false, null, {
-                    message: '"arr" does not contain at least one required match',
-                    details: [{
-                        message: '"arr" does not contain at least one required match',
-                        path: ['arr'],
-                        type: 'array.hasUnknown',
-                        context: { label: 'arr', key: 'arr', value: [0] }
-                    }]
-                }]
-            ]);
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().strip(), Joi.number().required());
+            const input = ['s1', 2, 3];
+            const value = await schema.validate(input);
+            expect(value).to.equal(['s1', 3]);
         });
 
-        it('supports nested arrays', () => {
+        it('strips multiple items', async () => {
 
-            const schema = Joi.object({
-                arr: Joi.array().items(
-                    Joi.object({ foo: Joi.array().has(Joi.string()) })
-                )
-            });
-            Helper.validate(schema, [
-                [{ arr: [{ foo: ['bar'] }] }, true]
-            ]);
+            const schema = Joi.array().ordered(Joi.string().strip(), Joi.number(), Joi.number().strip());
+            const input = ['s1', 2, 3];
+            const value = await schema.validate(input);
+            expect(value).to.equal([2]);
         });
 
-        it('supports peer item references', () => {
+        it('references array members', async () => {
 
-            const schema = Joi.object({
-                array: Joi.array()
-                    .items(Joi.number())
-                    .has(Joi.number().greater(Joi.ref('..0')))
-            });
-
-            Helper.validate(schema, [
-                [{ array: [10, 1, 11, 5] }, true],
-                [{ array: [10, 1, 2, 5, 12] }, true],
-                [{ array: [10, 1, 2, 5, 1] }, false, null, {
-                    message: '"array" does not contain at least one required match',
-                    details: [{
-                        message: '"array" does not contain at least one required match',
-                        path: ['array'],
-                        type: 'array.hasUnknown',
-                        context: { label: 'array', key: 'array', value: [10, 1, 2, 5, 1] }
-                    }]
-                }]
-            ]);
-        });
-
-        it('provides accurate error message for nested arrays', () => {
-
-            const schema = Joi.object({
-                arr: Joi.array().items(
-                    Joi.object({ foo: Joi.array().has(Joi.string()) })
-                )
-            });
-            Helper.validate(schema, [
-                [{ arr: [{ foo: [0] }] }, false, null, {
-                    message: '"arr[0].foo" does not contain at least one required match',
-                    details: [{
-                        message: '"arr[0].foo" does not contain at least one required match',
-                        path: ['arr', 0, 'foo'],
-                        type: 'array.hasUnknown',
-                        context: { label: 'arr[0].foo', key: 'foo', value: [0] }
-                    }]
-                }]
-            ]);
-        });
-
-        it('handles multiple assertions', () => {
-
-            const schema = Joi.array().has(Joi.string()).has(Joi.number());
-            Helper.validate(schema, [
-                [['foo', 0], true]
-            ]);
-
-            Helper.validate(schema, [
-                [['foo'], false, null, {
-                    message: '"value" does not contain at least one required match',
-                    details: [{
-                        message: '"value" does not contain at least one required match',
-                        path: [],
-                        type: 'array.hasUnknown',
-                        context: { label: 'value', value: ['foo'] }
-                    }]
-                }]
-            ]);
-        });
-
-        it('describes the pattern schema', () => {
-
-            const schema = Joi.array().has(Joi.string()).has(Joi.number());
-            expect(schema.describe()).to.equal({
-                type: 'array',
-                flags: { sparse: false },
-                rules: [
-                    { name: 'has', arg: { type: 'string', invalids: [''] } },
-                    { name: 'has', arg: { type: 'number', flags: { unsafe: false }, invalids: [Infinity, -Infinity] } }
-                ]
-            });
+            const schema = Joi.array().ordered(Joi.number(), Joi.number().greater(Joi.ref('..0')));
+            expect(await schema.validate([1, 2])).to.equal([1, 2]);
+            await expect(schema.validate([1, 0])).to.reject();
         });
     });
 
-    describe('validate()', () => {
+    describe('single()', () => {
 
-        it('should, by default, allow undefined, allow empty array', () => {
+        it('allows a single element', () => {
 
-            Helper.validate(Joi.array(), [
-                [undefined, true],
-                [[], true]
-            ]);
-        });
+            const schema = Joi.array().items(Joi.number()).items(Joi.boolean().forbidden()).single();
 
-        it('should, when .required(), deny undefined', () => {
-
-            Helper.validate(Joi.array().required(), [
-                [undefined, false, null, {
-                    message: '"value" is required',
-                    details: [{
-                        message: '"value" is required',
-                        path: [],
-                        type: 'any.required',
-                        context: { label: 'value' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('allows empty arrays', () => {
-
-            Helper.validate(Joi.array(), [
-                [undefined, true],
-                [[], true]
-            ]);
-        });
-
-        it('excludes values when items are forbidden', () => {
-
-            Helper.validate(Joi.array().items(Joi.string().forbidden()), [
-                [['2', '1'], false, null, {
-                    message: '"[0]" contains an excluded value',
-                    details: [{
-                        message: '"[0]" contains an excluded value',
-                        path: [0],
-                        type: 'array.excludes',
-                        context: { pos: 0, value: '2', label: '[0]', key: 0 }
-                    }]
-                }],
-                [['1'], false, null, {
-                    message: '"[0]" contains an excluded value',
-                    details: [{
-                        message: '"[0]" contains an excluded value',
-                        path: [0],
-                        type: 'array.excludes',
-                        context: { pos: 0, value: '1', label: '[0]', key: 0 }
-                    }]
-                }],
-                [[2], true]
-            ]);
-        });
-
-        it('allows types to be forbidden', async () => {
-
-            const schema = Joi.array().items(Joi.number().forbidden());
-
-            const n = [1, 2, 'hippo'];
-            const err = await expect(schema.validate(n)).to.reject('"[0]" contains an excluded value');
-            expect(err.details).to.equal([{
-                message: '"[0]" contains an excluded value',
-                path: [0],
-                type: 'array.excludes',
-                context: { pos: 0, value: 1, label: '[0]', key: 0 }
-            }]);
-
-            const m = ['x', 'y', 'z'];
-            await schema.validate(m);
-        });
-
-        it('validates array of Numbers', () => {
-
-            Helper.validate(Joi.array().items(Joi.number()), [
+            Helper.validate(schema, [
                 [[1, 2, 3], true],
-                [[50, 100, 1000], true],
-                [['a', 1, 2], false, null, {
+                [1, true],
+                [['a'], false, null, {
                     message: '"[0]" must be a number',
                     details: [{
                         message: '"[0]" must be a number',
@@ -1048,216 +1428,658 @@ describe('array', () => {
                         context: { label: '[0]', key: 0, value: 'a' }
                     }]
                 }],
-                [['1', '2', 4], true]
-            ]);
-        });
-
-        it('validates array of mixed Numbers & Strings', () => {
-
-            Helper.validate(Joi.array().items(Joi.number(), Joi.string()), [
-                [[1, 2, 3], true],
-                [[50, 100, 1000], true],
-                [[1, 'a', 5, 10], true],
-                [['joi', 'everydaylowprices', 5000], true]
-            ]);
-        });
-
-        it('validates array of objects with schema', () => {
-
-            Helper.validate(Joi.array().items(Joi.object({ h1: Joi.number().required() })), [
-                [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
-                [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false, null, {
-                    message: '"[0].h1" is required',
+                ['a', false, null, {
+                    message: '"value" must be a number',
                     details: [{
-                        message: '"[0].h1" is required',
-                        path: [0, 'h1'],
-                        type: 'any.required',
-                        context: { label: '[0].h1', key: 'h1' }
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', value: 'a' }
                     }]
                 }],
-                [[1, 2, [1]], false, null, {
-                    message: '"[0]" must be an object',
+                [true, false, null, {
+                    message: '"value" contains an excluded value',
                     details: [{
-                        message: '"[0]" must be an object',
-                        path: [0],
-                        type: 'object.base',
-                        context: { label: '[0]', key: 0, value: 1 }
+                        message: '"value" contains an excluded value',
+                        path: [],
+                        type: 'array.excludes',
+                        context: { pos: 0, value: true, label: 'value' }
                     }]
                 }]
             ]);
         });
 
-        it('errors on array of unallowed mixed types (Array)', () => {
+        it('allows a single element with multiple types', () => {
 
-            Helper.validate(Joi.array().items(Joi.number()), [
-                [[1, 2, 3], true],
-                [[1, 2, [1]], false, null, {
-                    message: '"[2]" must be a number',
-                    details: [{
-                        message: '"[2]" must be a number',
-                        path: [2],
-                        type: 'number.base',
-                        context: { label: '[2]', key: 2, value: [1] }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors on invalid number rule using includes', async () => {
-
-            const schema = Joi.object({
-                arr: Joi.array().items(Joi.number().integer())
-            });
-
-            const input = { arr: [1, 2, 2.1] };
-            const err = await expect(schema.validate(input)).to.reject('"arr[2]" must be an integer');
-            expect(err.details).to.equal([{
-                message: '"arr[2]" must be an integer',
-                path: ['arr', 2],
-                type: 'number.integer',
-                context: { value: 2.1, label: 'arr[2]', key: 2 }
-            }]);
-        });
-
-        it('validates an array within an object', () => {
-
-            const schema = Joi.object({
-                array: Joi.array().items(Joi.string().min(5), Joi.number().min(3))
-            }).prefs({ convert: false });
+            const schema = Joi.array().items(Joi.number(), Joi.string()).single();
 
             Helper.validate(schema, [
-                [{ array: ['12345'] }, true],
-                [{ array: ['1'] }, false, null, {
-                    message: '"array[0]" does not match any of the allowed types',
+                [[1, 2, 3], true],
+                [1, true],
+                [[1, 'a'], true],
+                ['a', true],
+                [true, false, null, {
+                    message: '"value" does not match any of the allowed types',
                     details: [{
-                        message: '"array[0]" does not match any of the allowed types',
-                        path: ['array', 0],
+                        message: '"value" does not match any of the allowed types',
+                        path: [],
                         type: 'array.includes',
-                        context: { pos: 0, value: '1', label: 'array[0]', key: 0 }
+                        context: { pos: 0, value: true, label: 'value' }
                     }]
-                }],
-                [{ array: [3] }, true],
-                [{ array: ['12345', 3] }, true]
+                }]
             ]);
         });
 
-        it('should not change original value', async () => {
+        it('errors on single with array items', () => {
 
-            const schema = Joi.array().items(Joi.number()).unique();
-            const input = ['1', '2'];
+            expect(() => Joi.array().items(Joi.array()).single()).to.throw('Cannot specify single rule when array has array items');
+            expect(() => Joi.array().items(Joi.alternatives([Joi.array()])).single()).to.throw('Cannot specify single rule when array has array items');
 
-            const value = await schema.validate(input);
-            expect(value).to.equal([1, 2]);
-            expect(input).to.equal(['1', '2']);
+            expect(() => Joi.array().single().items(Joi.array())).to.throw('Cannot specify array item with single rule enabled');
+            expect(() => Joi.array().single().items(Joi.alternatives([Joi.array()]))).to.throw('Cannot specify array item with single rule enabled');
+
+            expect(() => Joi.array().ordered(Joi.array()).single()).to.throw('Cannot specify single rule when array has array items');
+            expect(() => Joi.array().ordered(Joi.alternatives([Joi.array()])).single()).to.throw('Cannot specify single rule when array has array items');
+
+            expect(() => Joi.array().single().ordered(Joi.array())).to.throw('Cannot specify array item with single rule enabled');
+            expect(() => Joi.array().single().ordered(Joi.alternatives([Joi.array()]))).to.throw('Cannot specify array item with single rule enabled');
         });
 
-        it('returns multiple errors if abort early is false', async () => {
+        it('switches the single flag with explicit value', () => {
 
-            const schema = Joi.array().items(Joi.number(), Joi.object()).items(Joi.boolean().forbidden());
-            const input = [1, undefined, true, 'a'];
-
-            const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject();
-            expect(err).to.be.an.error('"[1]" must not be a sparse array item. "[2]" contains an excluded value. "[3]" does not match any of the allowed types');
-            expect(err.details).to.equal([{
-                message: '"[1]" must not be a sparse array item',
-                path: [1],
-                type: 'array.sparse',
-                context: {
-                    key: 1,
-                    label: '[1]',
-                    path: [1],
-                    pos: 1,
-                    value: undefined
-                }
-            }, {
-                message: '"[2]" contains an excluded value',
-                path: [2],
-                type: 'array.excludes',
-                context: {
-                    pos: 2,
-                    key: 2,
-                    label: '[2]',
-                    value: true
-                }
-            }, {
-                message: '"[3]" does not match any of the allowed types',
-                path: [3],
-                type: 'array.includes',
-                context: {
-                    pos: 3,
-                    key: 3,
-                    label: '[3]',
-                    value: 'a'
-                }
-            }]);
-        });
-
-        it('returns multiple errors if abort early is false across items() and unique()', async () => {
-
-            const item = Joi.object({
-                test: Joi.string(),
-                hello: Joi.string().required()
-            });
-
-            const schema = Joi.array().items(item).unique('test');
-
-            const input = [
-                {
-                    test: 'test',
-                    hello: 'world'
-                },
-                {
-                    test: 'test'
-                }
-            ];
-
-            const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject('"[1].hello" is required. "[1]" contains a duplicate value');
-            expect(err.details).to.equal([
-                {
-                    context: {
-                        key: 'hello',
-                        label: '[1].hello'
-                    },
-                    message: '"[1].hello" is required',
-                    path: [1, 'hello'],
-                    type: 'any.required'
-                },
-                {
-                    context: {
-                        dupePos: 0,
-                        dupeValue: {
-                            hello: 'world',
-                            test: 'test'
-                        },
-                        key: 1,
-                        label: '[1]',
-                        path: 'test',
-                        pos: 1,
-                        value: {
-                            test: 'test'
-                        }
-                    },
-                    message: '"[1]" contains a duplicate value',
-                    path: [1],
-                    type: 'array.unique'
-                }
-            ]);
-        });
-    });
-
-    describe('describe()', () => {
-
-        it('returns an empty description when no rules are applied', () => {
-
-            const schema = Joi.array();
+            const schema = Joi.array().single(true);
             const desc = schema.describe();
             expect(desc).to.equal({
                 type: 'array',
-                flags: { sparse: false }
+                flags: { sparse: false, single: true }
             });
         });
 
-        it('returns an updated description when sparse rule is applied', () => {
+        it('switches the single flag back', () => {
+
+            const schema = Joi.array().single().single(false);
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'array',
+                flags: { sparse: false, single: false }
+            });
+        });
+
+        it('avoids unnecessary cloning when called twice', () => {
+
+            const schema = Joi.array().single();
+            expect(schema.single()).to.shallow.equal(schema);
+        });
+    });
+
+    describe('sort()', () => {
+
+        it('validates array sorts order', () => {
+
+            const schema = Joi.array().sort().prefs({ convert: false });
+
+            Helper.validate(schema, [
+                [[1, 2], true],
+                [['a', 'b'], true],
+                [['a', 'b', null], true],
+                [['a', 'b', null, null], true],
+                [['a', 'b', undefined], true],
+                [['a', 'b', undefined, undefined], true],
+                [[1, 0], false, null, {
+                    message: '"value" must be sorted in ascending order by value',
+                    details: [{
+                        message: '"value" must be sorted in ascending order by value',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'ascending',
+                            by: 'value',
+                            label: 'value',
+                            value: [1, 0]
+                        }
+                    }]
+                }],
+                [['1', '0'], false, null, {
+                    message: '"value" must be sorted in ascending order by value',
+                    details: [{
+                        message: '"value" must be sorted in ascending order by value',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'ascending',
+                            by: 'value',
+                            label: 'value',
+                            value: ['1', '0']
+                        }
+                    }]
+                }],
+                [[null, 1, 2], false, null, {
+                    message: '"value" must be sorted in ascending order by value',
+                    details: [{
+                        message: '"value" must be sorted in ascending order by value',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'ascending',
+                            by: 'value',
+                            label: 'value',
+                            value: [null, 1, 2]
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates array sorts order (ascending)', () => {
+
+            const schema = Joi.array().sort({ order: 'ascending' }).prefs({ convert: false });
+
+            Helper.validate(schema, [
+                [[1, 2], true],
+                [['a', 'b'], true],
+                [['a', 'b', null], true],
+                [['a', 'b', null, null], true],
+                [['a', 'b', undefined], true],
+                [['a', 'b', undefined, undefined], true],
+                [['a', 'b', null, undefined], true],
+                [[1, 0], false, null, {
+                    message: '"value" must be sorted in ascending order by value',
+                    details: [{
+                        message: '"value" must be sorted in ascending order by value',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'ascending',
+                            by: 'value',
+                            label: 'value',
+                            value: [1, 0]
+                        }
+                    }]
+                }],
+                [['1', '0'], false, null, {
+                    message: '"value" must be sorted in ascending order by value',
+                    details: [{
+                        message: '"value" must be sorted in ascending order by value',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'ascending',
+                            by: 'value',
+                            label: 'value',
+                            value: ['1', '0']
+                        }
+                    }]
+                }],
+                [[null, 1, 2], false, null, {
+                    message: '"value" must be sorted in ascending order by value',
+                    details: [{
+                        message: '"value" must be sorted in ascending order by value',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'ascending',
+                            by: 'value',
+                            label: 'value',
+                            value: [null, 1, 2]
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates array sorts order (descending)', () => {
+
+            const schema = Joi.array().sort({ order: 'descending' }).prefs({ convert: false });
+
+            Helper.validate(schema, [
+                [[2, 1], true],
+                [['b', 'a'], true],
+                [[null, 'b', 'a'], true],
+                [[null, null, 'b', 'a'], true],
+                [['b', 'a', undefined], true],
+                [['b', 'a', undefined, undefined], true],
+                [[null, 'b', 'a', undefined], true],
+                [[0, 1], false, null, {
+                    message: '"value" must be sorted in descending order by value',
+                    details: [{
+                        message: '"value" must be sorted in descending order by value',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'descending',
+                            by: 'value',
+                            label: 'value',
+                            value: [0, 1]
+                        }
+                    }]
+                }],
+                [['0', '1'], false, null, {
+                    message: '"value" must be sorted in descending order by value',
+                    details: [{
+                        message: '"value" must be sorted in descending order by value',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'descending',
+                            by: 'value',
+                            label: 'value',
+                            value: ['0', '1']
+                        }
+                    }]
+                }],
+                [[2, 1, null], false, null, {
+                    message: '"value" must be sorted in descending order by value',
+                    details: [{
+                        message: '"value" must be sorted in descending order by value',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'descending',
+                            by: 'value',
+                            label: 'value',
+                            value: [2, 1, null]
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates array sorts order (object key)', () => {
+
+            const schema = Joi.array().sort({ by: 'x' }).prefs({ convert: false });
+
+            Helper.validate(schema, [
+                [[{ x: 1 }, { x: 2 }], true],
+                [[{ x: 'a' }, { x: 'b' }], true],
+                [[{ x: 'a' }, { x: 'b' }, { x: null }], true],
+                [[{ x: 'a' }, { x: 'b' }, { x: null }, { x: null }], true],
+                [[{ x: 'a' }, { x: 'b' }, undefined], true],
+                [[{ x: 'a' }, { x: 'b' }, undefined, undefined], true],
+                [[{ x: 'a' }, { x: 'b' }, { x: null }, {}, null, undefined, undefined], true],
+                [[{ x: 1 }, { x: 0 }], false, null, {
+                    message: '"value" must be sorted in ascending order by x',
+                    details: [{
+                        message: '"value" must be sorted in ascending order by x',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'ascending',
+                            by: 'x',
+                            label: 'value',
+                            value: [{ x: 1 }, { x: 0 }]
+                        }
+                    }]
+                }],
+                [[{ x: '1' }, { x: '0' }], false, null, {
+                    message: '"value" must be sorted in ascending order by x',
+                    details: [{
+                        message: '"value" must be sorted in ascending order by x',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'ascending',
+                            by: 'x',
+                            label: 'value',
+                            value: [{ x: '1' }, { x: '0' }]
+                        }
+                    }]
+                }],
+                [[{ x: null }, { x: 1 }, { x: 2 }], false, null, {
+                    message: '"value" must be sorted in ascending order by x',
+                    details: [{
+                        message: '"value" must be sorted in ascending order by x',
+                        path: [],
+                        type: 'array.sort',
+                        context: {
+                            order: 'ascending',
+                            by: 'x',
+                            label: 'value',
+                            value: [{ x: null }, { x: 1 }, { x: 2 }]
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('sorts array (ascending)', () => {
+
+            const schema = Joi.array().sort({ order: 'ascending' });
+
+            Helper.validate(schema, [
+                [[2, 1], true, null, [1, 2]],
+                [['b', 'a'], true, null, ['a', 'b']],
+                [[null, 'a', 'b'], true, null, ['a', 'b', null]],
+                [[null, 'b', 'a'], true, null, ['a', 'b', null]],
+                [['a', null, 'b'], true, null, ['a', 'b', null]],
+                [[null, 'a', null, 'b'], true, null, ['a', 'b', null, null]],
+                [['b', 'a', undefined], true, null, ['a', 'b', undefined]],
+                [['b', undefined, 'a'], true, null, ['a', 'b', undefined]],
+                [[0, '1'], false, null, {
+                    message: '"value" cannot be sorted due to mismatching types',
+                    details: [{
+                        message: '"value" cannot be sorted due to mismatching types',
+                        path: [],
+                        type: 'array.sort.mismatching',
+                        context: {
+                            label: 'value',
+                            value: [0, '1']
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('sorts array (object key)', () => {
+
+            const schema = Joi.array().sort({ by: 'x' });
+
+            Helper.validate(schema, [
+                [[{ x: 1 }, { x: 2 }], true, null, [{ x: 1 }, { x: 2 }]],
+                [[{ x: 'b' }, { x: 'a' }], true, null, [{ x: 'a' }, { x: 'b' }]],
+                [[{ x: 'b' }, { x: null }, { x: 'a' }], true, null, [{ x: 'a' }, { x: 'b' }, { x: null }]],
+                [[{}, { x: 'b' }, undefined, null, { x: null }, { x: 'a' }, undefined], true, null, [{ x: 'a' }, { x: 'b' }, { x: null }, {}, null, undefined, undefined]],
+                [[{ x: 0 }, { x: '1' }], false, null, {
+                    message: '"value" cannot be sorted due to mismatching types',
+                    details: [{
+                        message: '"value" cannot be sorted due to mismatching types',
+                        path: [],
+                        type: 'array.sort.mismatching',
+                        context: {
+                            label: 'value',
+                            value: [{ x: 0 }, { x: '1' }]
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on unsupported type', async () => {
+
+            const schema = Joi.array().sort().prefs({ convert: false });
+            await expect(schema.validate([{}, {}])).to.reject('"value" cannot be sorted due to unsupported type object');
+        });
+
+        it('errors on mismatching types', async () => {
+
+            const schema = Joi.array().sort().prefs({ convert: false });
+            await expect(schema.validate([1, 'x'])).to.reject('"value" cannot be sorted due to mismatching types');
+        });
+    });
+
+    describe('sparse()', () => {
+
+        it('errors on undefined value', () => {
+
+            const schema = Joi.array().items(Joi.number());
+
+            Helper.validate(schema, [
+                [[undefined], false, null, {
+                    message: '"[0]" must not be a sparse array item',
+                    details: [{
+                        message: '"[0]" must not be a sparse array item',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
+                    }]
+                }],
+                [[2, undefined], false, null, {
+                    message: '"[1]" must not be a sparse array item',
+                    details: [{
+                        message: '"[1]" must not be a sparse array item',
+                        path: [1],
+                        type: 'array.sparse',
+                        context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on undefined value after validation', () => {
+
+            const schema = Joi.array().items(Joi.object().empty({}));
+
+            Helper.validate(schema, [
+                [[{ a: 1 }, {}, { c: 3 }], false, null, {
+                    message: '"[1]" must not be a sparse array item',
+                    details: [{
+                        message: '"[1]" must not be a sparse array item',
+                        path: [1],
+                        type: 'array.sparse',
+                        context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on undefined value after validation with abortEarly false', () => {
+
+            const schema = Joi.array().items(Joi.object().empty({})).prefs({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[{ a: 1 }, {}, 3], false, null, {
+                    message: '"[1]" must not be a sparse array item. "[2]" must be an object',
+                    details: [
+                        {
+                            message: '"[1]" must not be a sparse array item',
+                            path: [1],
+                            type: 'array.sparse',
+                            context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
+                        },
+                        {
+                            message: '"[2]" must be an object',
+                            path: [2],
+                            type: 'object.base',
+                            context: { label: '[2]', key: 2, value: 3 }
+                        }
+                    ]
+                }]
+            ]);
+        });
+
+        it('errors on undefined value after validation with required', () => {
+
+            const schema = Joi.array().items(Joi.object().empty({}).required());
+
+            Helper.validate(schema, [
+                [[{}, { c: 3 }], false, null, {
+                    message: '"[0]" is required',
+                    details: [{
+                        message: '"[0]" is required',
+                        path: [0],
+                        type: 'any.required',
+                        context: { label: '[0]', key: 0 }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on undefined value after custom validation with required', () => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return undefined;
+                        }
+                    }
+                ]
+            });
+
+            const schema = Joi.array().items(customJoi.myType().foo().required());
+
+            Helper.validate(schema, [
+                [[{}, { c: 3 }], false, null, {
+                    message: '"[0]" must not be a sparse array item',
+                    details: [{
+                        message: '"[0]" must not be a sparse array item',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on undefined value after custom validation with required and abortEarly false', () => {
+
+            const customJoi = Joi.extend({
+                name: 'myType',
+                rules: [
+                    {
+                        name: 'foo',
+                        validate(params, value, state, options) {
+
+                            return undefined;
+                        }
+                    }
+                ]
+            });
+
+            const schema = Joi.array().items(customJoi.myType().foo().required()).prefs({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[{}, { c: 3 }], false, null, {
+                    message: '"[0]" must not be a sparse array item. "[1]" must not be a sparse array item',
+                    details: [
+                        {
+                            message: '"[0]" must not be a sparse array item',
+                            path: [0],
+                            type: 'array.sparse',
+                            context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
+                        },
+                        {
+                            message: '"[1]" must not be a sparse array item',
+                            path: [1],
+                            type: 'array.sparse',
+                            context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
+                        }
+                    ]
+                }]
+            ]);
+        });
+
+        it('errors on undefined value after validation with required and abortEarly false', () => {
+
+            const schema = Joi.array().items(Joi.object().empty({}).required()).prefs({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[{}, 3], false, null, {
+                    message: '"[0]" is required. "[1]" must be an object. "value" does not contain 1 required value(s)',
+                    details: [
+                        {
+                            message: '"[0]" is required',
+                            path: [0],
+                            type: 'any.required',
+                            context: { label: '[0]', key: 0 }
+                        },
+                        {
+                            message: '"[1]" must be an object',
+                            path: [1],
+                            type: 'object.base',
+                            context: { label: '[1]', key: 1, value: 3 }
+                        },
+                        {
+                            message: '"value" does not contain 1 required value(s)',
+                            path: [],
+                            type: 'array.includesRequiredUnknowns',
+                            context: { unknownMisses: 1, label: 'value', value: [{}, 3] }
+                        }
+                    ]
+                }]
+            ]);
+        });
+
+        it('errors on undefined value after validation with ordered', () => {
+
+            const schema = Joi.array().ordered(Joi.object().empty({}));
+
+            Helper.validate(schema, [
+                [[{}], false, null, {
+                    message: '"[0]" must not be a sparse array item',
+                    details: [{
+                        message: '"[0]" must not be a sparse array item',
+                        path: [0],
+                        type: 'array.sparse',
+                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on undefined value after validation with ordered and abortEarly false', () => {
+
+            const schema = Joi.array().ordered(Joi.object().empty({})).prefs({ abortEarly: false });
+
+            Helper.validate(schema, [
+                [[{}, 3], false, null, {
+                    message: '"[0]" must not be a sparse array item. "value" must contain at most 1 items',
+                    details: [
+                        {
+                            message: '"[0]" must not be a sparse array item',
+                            path: [0],
+                            type: 'array.sparse',
+                            context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
+                        },
+                        {
+                            message: '"value" must contain at most 1 items',
+                            path: [],
+                            type: 'array.orderedLength',
+                            context: { pos: 1, limit: 1, label: 'value', value: [{}, 3] }
+                        }
+                    ]
+                }]
+            ]);
+        });
+
+        it('validates on undefined value with sparse', () => {
+
+            const schema = Joi.array().items(Joi.number()).sparse();
+
+            Helper.validate(schema, [
+                [[undefined], true],
+                [[2, undefined], true]
+            ]);
+        });
+
+        it('validates on undefined value after validation', () => {
+
+            const schema = Joi.array().items(Joi.object().empty({})).sparse();
+
+            Helper.validate(schema, [
+                [[{ a: 1 }, {}, { c: 3 }], true, null, [{ a: 1 }, undefined, { c: 3 }]]
+            ]);
+        });
+
+        it('validates on undefined value after validation with required', () => {
+
+            const schema = Joi.array().items(Joi.object().empty({}).required()).sparse();
+
+            Helper.validate(schema, [
+                [[{ a: 1 }, {}, { c: 3 }], false, null, {
+                    message: '"[1]" is required',
+                    details: [{
+                        message: '"[1]" is required',
+                        path: [1],
+                        type: 'any.required',
+                        context: { label: '[1]', key: 1 }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates on undefined value after validation with ordered', () => {
+
+            const schema = Joi.array().ordered(Joi.object().empty({})).sparse();
+
+            Helper.validate(schema, [
+                [[{}], true, null, [undefined]]
+            ]);
+        });
+
+        it('switches the sparse flag', () => {
 
             const schema = Joi.array().sparse();
             const desc = schema.describe();
@@ -1267,52 +2089,30 @@ describe('array', () => {
             });
         });
 
-        it('returns an items array only if items are specified', () => {
+        it('switches the sparse flag with explicit value', () => {
 
-            const schema = Joi.array().items().max(5);
-            const desc = schema.describe();
-            expect(desc.items).to.not.exist();
-        });
-
-        it('returns a recursively defined array of items when specified', () => {
-
-            const schema = Joi.array()
-                .items(Joi.number(), Joi.string())
-                .items(Joi.boolean().forbidden())
-                .ordered(Joi.number(), Joi.string())
-                .ordered(Joi.string().required());
-            const desc = schema.describe();
-            expect(desc.items).to.have.length(3);
-            expect(desc).to.equal({
-                type: 'array',
-                flags: { sparse: false },
-                orderedItems: [
-                    { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
-                    { type: 'string', invalids: [''] },
-                    { type: 'string', invalids: [''], flags: { presence: 'required' } }
-                ],
-                items: [
-                    { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
-                    { type: 'string', invalids: [''] },
-                    { type: 'boolean', flags: { presence: 'forbidden', insensitive: true }, truthy: [true], falsy: [false] }
-                ]
-            });
-        });
-
-        it('describes an array with array items', () => {
-
-            const schema = Joi.array().items(Joi.array());
+            const schema = Joi.array().sparse(true);
             const desc = schema.describe();
             expect(desc).to.equal({
                 type: 'array',
-                flags: { sparse: false },
-                items: [
-                    {
-                        type: 'array',
-                        flags: { sparse: false }
-                    }
-                ]
+                flags: { sparse: true }
             });
+        });
+
+        it('switches the sparse flag back', () => {
+
+            const schema = Joi.array().sparse().sparse(false);
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'array',
+                flags: { sparse: false }
+            });
+        });
+
+        it('avoids unnecessary cloning when called twice', () => {
+
+            const schema = Joi.array().sparse();
+            expect(schema.sparse()).to.shallow.equal(schema);
         });
     });
 
@@ -1860,326 +2660,87 @@ describe('array', () => {
         });
     });
 
-    describe('sparse()', () => {
+    describe('validate()', () => {
 
-        it('errors on undefined value', () => {
+        it('should, by default, allow undefined, allow empty array', () => {
 
-            const schema = Joi.array().items(Joi.number());
+            Helper.validate(Joi.array(), [
+                [undefined, true],
+                [[], true]
+            ]);
+        });
 
-            Helper.validate(schema, [
-                [[undefined], false, null, {
-                    message: '"[0]" must not be a sparse array item',
+        it('should, when .required(), deny undefined', () => {
+
+            Helper.validate(Joi.array().required(), [
+                [undefined, false, null, {
+                    message: '"value" is required',
                     details: [{
-                        message: '"[0]" must not be a sparse array item',
+                        message: '"value" is required',
+                        path: [],
+                        type: 'any.required',
+                        context: { label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('allows empty arrays', () => {
+
+            Helper.validate(Joi.array(), [
+                [undefined, true],
+                [[], true]
+            ]);
+        });
+
+        it('excludes values when items are forbidden', () => {
+
+            Helper.validate(Joi.array().items(Joi.string().forbidden()), [
+                [['2', '1'], false, null, {
+                    message: '"[0]" contains an excluded value',
+                    details: [{
+                        message: '"[0]" contains an excluded value',
                         path: [0],
-                        type: 'array.sparse',
-                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
+                        type: 'array.excludes',
+                        context: { pos: 0, value: '2', label: '[0]', key: 0 }
                     }]
                 }],
-                [[2, undefined], false, null, {
-                    message: '"[1]" must not be a sparse array item',
+                [['1'], false, null, {
+                    message: '"[0]" contains an excluded value',
                     details: [{
-                        message: '"[1]" must not be a sparse array item',
-                        path: [1],
-                        type: 'array.sparse',
-                        context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors on undefined value after validation', () => {
-
-            const schema = Joi.array().items(Joi.object().empty({}));
-
-            Helper.validate(schema, [
-                [[{ a: 1 }, {}, { c: 3 }], false, null, {
-                    message: '"[1]" must not be a sparse array item',
-                    details: [{
-                        message: '"[1]" must not be a sparse array item',
-                        path: [1],
-                        type: 'array.sparse',
-                        context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors on undefined value after validation with abortEarly false', () => {
-
-            const schema = Joi.array().items(Joi.object().empty({})).prefs({ abortEarly: false });
-
-            Helper.validate(schema, [
-                [[{ a: 1 }, {}, 3], false, null, {
-                    message: '"[1]" must not be a sparse array item. "[2]" must be an object',
-                    details: [
-                        {
-                            message: '"[1]" must not be a sparse array item',
-                            path: [1],
-                            type: 'array.sparse',
-                            context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
-                        },
-                        {
-                            message: '"[2]" must be an object',
-                            path: [2],
-                            type: 'object.base',
-                            context: { label: '[2]', key: 2, value: 3 }
-                        }
-                    ]
-                }]
-            ]);
-        });
-
-        it('errors on undefined value after validation with required', () => {
-
-            const schema = Joi.array().items(Joi.object().empty({}).required());
-
-            Helper.validate(schema, [
-                [[{}, { c: 3 }], false, null, {
-                    message: '"[0]" is required',
-                    details: [{
-                        message: '"[0]" is required',
+                        message: '"[0]" contains an excluded value',
                         path: [0],
-                        type: 'any.required',
-                        context: { label: '[0]', key: 0 }
+                        type: 'array.excludes',
+                        context: { pos: 0, value: '1', label: '[0]', key: 0 }
                     }]
-                }]
+                }],
+                [[2], true]
             ]);
         });
 
-        it('errors on undefined value after custom validation with required', () => {
+        it('allows types to be forbidden', async () => {
 
-            const customJoi = Joi.extend({
-                name: 'myType',
-                rules: [
-                    {
-                        name: 'foo',
-                        validate(params, value, state, options) {
+            const schema = Joi.array().items(Joi.number().forbidden());
 
-                            return undefined;
-                        }
-                    }
-                ]
-            });
+            const n = [1, 2, 'hippo'];
+            const err = await expect(schema.validate(n)).to.reject('"[0]" contains an excluded value');
+            expect(err.details).to.equal([{
+                message: '"[0]" contains an excluded value',
+                path: [0],
+                type: 'array.excludes',
+                context: { pos: 0, value: 1, label: '[0]', key: 0 }
+            }]);
 
-            const schema = Joi.array().items(customJoi.myType().foo().required());
-
-            Helper.validate(schema, [
-                [[{}, { c: 3 }], false, null, {
-                    message: '"[0]" must not be a sparse array item',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
-                    }]
-                }]
-            ]);
+            const m = ['x', 'y', 'z'];
+            await schema.validate(m);
         });
 
-        it('errors on undefined value after custom validation with required and abortEarly false', () => {
+        it('validates array of Numbers', () => {
 
-            const customJoi = Joi.extend({
-                name: 'myType',
-                rules: [
-                    {
-                        name: 'foo',
-                        validate(params, value, state, options) {
-
-                            return undefined;
-                        }
-                    }
-                ]
-            });
-
-            const schema = Joi.array().items(customJoi.myType().foo().required()).prefs({ abortEarly: false });
-
-            Helper.validate(schema, [
-                [[{}, { c: 3 }], false, null, {
-                    message: '"[0]" must not be a sparse array item. "[1]" must not be a sparse array item',
-                    details: [
-                        {
-                            message: '"[0]" must not be a sparse array item',
-                            path: [0],
-                            type: 'array.sparse',
-                            context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
-                        },
-                        {
-                            message: '"[1]" must not be a sparse array item',
-                            path: [1],
-                            type: 'array.sparse',
-                            context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
-                        }
-                    ]
-                }]
-            ]);
-        });
-
-        it('errors on undefined value after validation with required and abortEarly false', () => {
-
-            const schema = Joi.array().items(Joi.object().empty({}).required()).prefs({ abortEarly: false });
-
-            Helper.validate(schema, [
-                [[{}, 3], false, null, {
-                    message: '"[0]" is required. "[1]" must be an object. "value" does not contain 1 required value(s)',
-                    details: [
-                        {
-                            message: '"[0]" is required',
-                            path: [0],
-                            type: 'any.required',
-                            context: { label: '[0]', key: 0 }
-                        },
-                        {
-                            message: '"[1]" must be an object',
-                            path: [1],
-                            type: 'object.base',
-                            context: { label: '[1]', key: 1, value: 3 }
-                        },
-                        {
-                            message: '"value" does not contain 1 required value(s)',
-                            path: [],
-                            type: 'array.includesRequiredUnknowns',
-                            context: { unknownMisses: 1, label: 'value', value: [{}, 3] }
-                        }
-                    ]
-                }]
-            ]);
-        });
-
-        it('errors on undefined value after validation with ordered', () => {
-
-            const schema = Joi.array().ordered(Joi.object().empty({}));
-
-            Helper.validate(schema, [
-                [[{}], false, null, {
-                    message: '"[0]" must not be a sparse array item',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors on undefined value after validation with ordered and abortEarly false', () => {
-
-            const schema = Joi.array().ordered(Joi.object().empty({})).prefs({ abortEarly: false });
-
-            Helper.validate(schema, [
-                [[{}, 3], false, null, {
-                    message: '"[0]" must not be a sparse array item. "value" must contain at most 1 items',
-                    details: [
-                        {
-                            message: '"[0]" must not be a sparse array item',
-                            path: [0],
-                            type: 'array.sparse',
-                            context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
-                        },
-                        {
-                            message: '"value" must contain at most 1 items',
-                            path: [],
-                            type: 'array.orderedLength',
-                            context: { pos: 1, limit: 1, label: 'value', value: [{}, 3] }
-                        }
-                    ]
-                }]
-            ]);
-        });
-
-        it('validates on undefined value with sparse', () => {
-
-            const schema = Joi.array().items(Joi.number()).sparse();
-
-            Helper.validate(schema, [
-                [[undefined], true],
-                [[2, undefined], true]
-            ]);
-        });
-
-        it('validates on undefined value after validation', () => {
-
-            const schema = Joi.array().items(Joi.object().empty({})).sparse();
-
-            Helper.validate(schema, [
-                [[{ a: 1 }, {}, { c: 3 }], true, null, [{ a: 1 }, undefined, { c: 3 }]]
-            ]);
-        });
-
-        it('validates on undefined value after validation with required', () => {
-
-            const schema = Joi.array().items(Joi.object().empty({}).required()).sparse();
-
-            Helper.validate(schema, [
-                [[{ a: 1 }, {}, { c: 3 }], false, null, {
-                    message: '"[1]" is required',
-                    details: [{
-                        message: '"[1]" is required',
-                        path: [1],
-                        type: 'any.required',
-                        context: { label: '[1]', key: 1 }
-                    }]
-                }]
-            ]);
-        });
-
-        it('validates on undefined value after validation with ordered', () => {
-
-            const schema = Joi.array().ordered(Joi.object().empty({})).sparse();
-
-            Helper.validate(schema, [
-                [[{}], true, null, [undefined]]
-            ]);
-        });
-
-        it('switches the sparse flag', () => {
-
-            const schema = Joi.array().sparse();
-            const desc = schema.describe();
-            expect(desc).to.equal({
-                type: 'array',
-                flags: { sparse: true }
-            });
-        });
-
-        it('switches the sparse flag with explicit value', () => {
-
-            const schema = Joi.array().sparse(true);
-            const desc = schema.describe();
-            expect(desc).to.equal({
-                type: 'array',
-                flags: { sparse: true }
-            });
-        });
-
-        it('switches the sparse flag back', () => {
-
-            const schema = Joi.array().sparse().sparse(false);
-            const desc = schema.describe();
-            expect(desc).to.equal({
-                type: 'array',
-                flags: { sparse: false }
-            });
-        });
-
-        it('avoids unnecessary cloning when called twice', () => {
-
-            const schema = Joi.array().sparse();
-            expect(schema.sparse()).to.shallow.equal(schema);
-        });
-    });
-
-    describe('single()', () => {
-
-        it('allows a single element', () => {
-
-            const schema = Joi.array().items(Joi.number()).items(Joi.boolean().forbidden()).single();
-
-            Helper.validate(schema, [
+            Helper.validate(Joi.array().items(Joi.number()), [
                 [[1, 2, 3], true],
-                [1, true],
-                [['a'], false, null, {
+                [[50, 100, 1000], true],
+                [['a', 1, 2], false, null, {
                     message: '"[0]" must be a number',
                     details: [{
                         message: '"[0]" must be a number',
@@ -2188,467 +2749,200 @@ describe('array', () => {
                         context: { label: '[0]', key: 0, value: 'a' }
                     }]
                 }],
-                ['a', false, null, {
-                    message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'a' }
-                    }]
-                }],
-                [true, false, null, {
-                    message: '"value" contains an excluded value',
-                    details: [{
-                        message: '"value" contains an excluded value',
-                        path: [],
-                        type: 'array.excludes',
-                        context: { pos: 0, value: true, label: 'value' }
-                    }]
-                }]
+                [['1', '2', 4], true]
             ]);
         });
 
-        it('allows a single element with multiple types', () => {
+        it('validates array of mixed Numbers & Strings', () => {
 
-            const schema = Joi.array().items(Joi.number(), Joi.string()).single();
-
-            Helper.validate(schema, [
+            Helper.validate(Joi.array().items(Joi.number(), Joi.string()), [
                 [[1, 2, 3], true],
-                [1, true],
-                [[1, 'a'], true],
-                ['a', true],
-                [true, false, null, {
-                    message: '"value" does not match any of the allowed types',
+                [[50, 100, 1000], true],
+                [[1, 'a', 5, 10], true],
+                [['joi', 'everydaylowprices', 5000], true]
+            ]);
+        });
+
+        it('validates array of objects with schema', () => {
+
+            Helper.validate(Joi.array().items(Joi.object({ h1: Joi.number().required() })), [
+                [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
+                [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false, null, {
+                    message: '"[0].h1" is required',
                     details: [{
-                        message: '"value" does not match any of the allowed types',
-                        path: [],
+                        message: '"[0].h1" is required',
+                        path: [0, 'h1'],
+                        type: 'any.required',
+                        context: { label: '[0].h1', key: 'h1' }
+                    }]
+                }],
+                [[1, 2, [1]], false, null, {
+                    message: '"[0]" must be an object',
+                    details: [{
+                        message: '"[0]" must be an object',
+                        path: [0],
+                        type: 'object.base',
+                        context: { label: '[0]', key: 0, value: 1 }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on array of unallowed mixed types (Array)', () => {
+
+            Helper.validate(Joi.array().items(Joi.number()), [
+                [[1, 2, 3], true],
+                [[1, 2, [1]], false, null, {
+                    message: '"[2]" must be a number',
+                    details: [{
+                        message: '"[2]" must be a number',
+                        path: [2],
+                        type: 'number.base',
+                        context: { label: '[2]', key: 2, value: [1] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on invalid number rule using includes', async () => {
+
+            const schema = Joi.object({
+                arr: Joi.array().items(Joi.number().integer())
+            });
+
+            const input = { arr: [1, 2, 2.1] };
+            const err = await expect(schema.validate(input)).to.reject('"arr[2]" must be an integer');
+            expect(err.details).to.equal([{
+                message: '"arr[2]" must be an integer',
+                path: ['arr', 2],
+                type: 'number.integer',
+                context: { value: 2.1, label: 'arr[2]', key: 2 }
+            }]);
+        });
+
+        it('validates an array within an object', () => {
+
+            const schema = Joi.object({
+                array: Joi.array().items(Joi.string().min(5), Joi.number().min(3))
+            }).prefs({ convert: false });
+
+            Helper.validate(schema, [
+                [{ array: ['12345'] }, true],
+                [{ array: ['1'] }, false, null, {
+                    message: '"array[0]" does not match any of the allowed types',
+                    details: [{
+                        message: '"array[0]" does not match any of the allowed types',
+                        path: ['array', 0],
                         type: 'array.includes',
-                        context: { pos: 0, value: true, label: 'value' }
+                        context: { pos: 0, value: '1', label: 'array[0]', key: 0 }
                     }]
-                }]
+                }],
+                [{ array: [3] }, true],
+                [{ array: ['12345', 3] }, true]
             ]);
         });
 
-        it('errors on single with array items', () => {
+        it('should not change original value', async () => {
 
-            expect(() => Joi.array().items(Joi.array()).single()).to.throw('Cannot specify single rule when array has array items');
-            expect(() => Joi.array().items(Joi.alternatives([Joi.array()])).single()).to.throw('Cannot specify single rule when array has array items');
-
-            expect(() => Joi.array().single().items(Joi.array())).to.throw('Cannot specify array item with single rule enabled');
-            expect(() => Joi.array().single().items(Joi.alternatives([Joi.array()]))).to.throw('Cannot specify array item with single rule enabled');
-
-            expect(() => Joi.array().ordered(Joi.array()).single()).to.throw('Cannot specify single rule when array has array items');
-            expect(() => Joi.array().ordered(Joi.alternatives([Joi.array()])).single()).to.throw('Cannot specify single rule when array has array items');
-
-            expect(() => Joi.array().single().ordered(Joi.array())).to.throw('Cannot specify array item with single rule enabled');
-            expect(() => Joi.array().single().ordered(Joi.alternatives([Joi.array()]))).to.throw('Cannot specify array item with single rule enabled');
-        });
-
-        it('switches the single flag with explicit value', () => {
-
-            const schema = Joi.array().single(true);
-            const desc = schema.describe();
-            expect(desc).to.equal({
-                type: 'array',
-                flags: { sparse: false, single: true }
-            });
-        });
-
-        it('switches the single flag back', () => {
-
-            const schema = Joi.array().single().single(false);
-            const desc = schema.describe();
-            expect(desc).to.equal({
-                type: 'array',
-                flags: { sparse: false, single: false }
-            });
-        });
-
-        it('avoids unnecessary cloning when called twice', () => {
-
-            const schema = Joi.array().single();
-            expect(schema.single()).to.shallow.equal(schema);
-        });
-    });
-
-    describe('options()', () => {
-
-        it('ignores stripUnknown when true', async () => {
-
-            const schema = Joi.array().items(Joi.string()).prefs({ stripUnknown: true });
-            await expect(schema.validate(['one', 'two', 3, 4, true, false])).to.reject('"[2]" must be a string');
-        });
-
-        it('respects stripUnknown (as an object)', async () => {
-
-            const schema = Joi.array().items(Joi.string()).prefs({ stripUnknown: { arrays: true, objects: false } });
-            const value = await schema.validate(['one', 'two', 3, 4, true, false]);
-            expect(value).to.equal(['one', 'two']);
-        });
-    });
-
-    describe('ordered()', () => {
-
-        it('shows path to errors in array ordered items', () => {
-
-            expect(() => {
-
-                Joi.array().ordered({
-                    a: {
-                        b: {
-                            c: {
-                                d: undefined
-                            }
-                        }
-                    }
-                });
-            }).to.throw(Error, 'Invalid schema content: (0.a.b.c.d)');
-
-            expect(() => {
-
-                Joi.array().ordered({ foo: 'bar' }, undefined);
-            }).to.throw(Error, 'Invalid schema content: (1)');
-        });
-
-        it('validates input against items in order', async () => {
-
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required());
-            const input = ['s1', 2];
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2]);
-        });
-
-        it('validates input with optional item', async () => {
-
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number());
-            const input = ['s1', 2, 3];
+            const schema = Joi.array().items(Joi.number()).unique();
+            const input = ['1', '2'];
 
             const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2, 3]);
+            expect(value).to.equal([1, 2]);
+            expect(input).to.equal(['1', '2']);
         });
 
-        it('validates input without optional item', async () => {
+        it('returns multiple errors if abort early is false', async () => {
 
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number());
-            const input = ['s1', 2];
+            const schema = Joi.array().items(Joi.number(), Joi.object()).items(Joi.boolean().forbidden());
+            const input = [1, undefined, true, 'a'];
 
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2]);
-        });
-
-        it('validates input without optional item', async () => {
-
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number()).sparse(true);
-            const input = ['s1', 2, undefined];
-
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2, undefined]);
-        });
-
-        it('validates input without optional item in a sparse array', async () => {
-
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number(), Joi.number().required()).sparse(true);
-            const input = ['s1', undefined, 3];
-
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', undefined, 3]);
-        });
-
-        it('validates when input matches ordered items and matches regular items', async () => {
-
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number());
-            const input = ['s1', 2, 3, 4, 5];
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2, 3, 4, 5]);
-        });
-
-        it('errors when input does not match ordered items', async () => {
-
-            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
-            const input = ['s1', 2];
-            const err = await expect(schema.validate(input)).to.reject('"[0]" must be a number');
+            const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject();
+            expect(err).to.be.an.error('"[1]" must not be a sparse array item. "[2]" contains an excluded value. "[3]" does not match any of the allowed types');
             expect(err.details).to.equal([{
-                message: '"[0]" must be a number',
-                path: [0],
-                type: 'number.base',
-                context: { label: '[0]', key: 0, value: 's1' }
-            }]);
-        });
-
-        it('errors when input has more items than ordered items', async () => {
-
-            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
-            const input = [1, 's2', 3];
-            const err = await expect(schema.validate(input)).to.reject('"value" must contain at most 2 items');
-            expect(err.details).to.equal([{
-                message: '"value" must contain at most 2 items',
-                path: [],
-                type: 'array.orderedLength',
-                context: { pos: 2, limit: 2, label: 'value', value: input }
-            }]);
-        });
-
-        it('errors when input has more items than ordered items with abortEarly = false', async () => {
-
-            const schema = Joi.array().ordered(Joi.string(), Joi.number()).prefs({ abortEarly: false });
-            const input = [1, 2, 3, 4, 5];
-            const err = await expect(schema.validate(input)).to.reject();
-            expect(err).to.be.an.error('"[0]" must be a string. "value" must contain at most 2 items');
-            expect(err.details).to.have.length(2);
-            expect(err.details).to.equal([
-                {
-                    message: '"[0]" must be a string',
-                    path: [0],
-                    type: 'string.base',
-                    context: { value: 1, label: '[0]', key: 0 }
-                },
-                {
-                    message: '"value" must contain at most 2 items',
-                    path: [],
-                    type: 'array.orderedLength',
-                    context: { pos: 2, limit: 2, label: 'value', value: input }
-                }
-            ]);
-        });
-
-        it('errors when input has less items than ordered items', async () => {
-
-            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
-            const input = [1];
-            const err = await expect(schema.validate(input)).to.reject('"value" does not contain 1 required value(s)');
-            expect(err.details).to.equal([{
-                message: '"value" does not contain 1 required value(s)',
-                path: [],
-                type: 'array.includesRequiredUnknowns',
-                context: { unknownMisses: 1, label: 'value', value: input }
-            }]);
-        });
-
-        it('errors when input matches ordered items but not matches regular items', async () => {
-
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number()).prefs({ abortEarly: false });
-            const input = ['s1', 2, 3, 4, 's5'];
-            const err = await expect(schema.validate(input)).to.reject('"[4]" must be a number');
-            expect(err.details).to.equal([{
-                message: '"[4]" must be a number',
-                path: [4],
-                type: 'number.base',
-                context: { label: '[4]', key: 4, value: 's5' }
-            }]);
-        });
-
-        it('errors when input does not match ordered items but matches regular items', async () => {
-
-            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.number()).prefs({ abortEarly: false });
-            const input = [1, 2, 3, 4, 5];
-            const err = await expect(schema.validate(input)).to.reject('"[0]" must be a string');
-            expect(err.details).to.equal([{
-                message: '"[0]" must be a string',
-                path: [0],
-                type: 'string.base',
-                context: { value: 1, label: '[0]', key: 0 }
-            }]);
-        });
-
-        it('errors when input does not match ordered items not matches regular items', async () => {
-
-            const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.string()).prefs({ abortEarly: false });
-            const input = [1, 2, 3, 4, 5];
-            const err = await expect(schema.validate(input)).to.reject();
-            expect(err).to.be.an.error('"[0]" must be a string. "[2]" must be a string. "[3]" must be a string. "[4]" must be a string');
-            expect(err.details).to.have.length(4);
-            expect(err.details).to.equal([
-                {
-                    message: '"[0]" must be a string',
-                    path: [0],
-                    type: 'string.base',
-                    context: { value: 1, label: '[0]', key: 0 }
-                },
-                {
-                    message: '"[2]" must be a string',
-                    path: [2],
-                    type: 'string.base',
-                    context: { value: 3, label: '[2]', key: 2 }
-                },
-                {
-                    message: '"[3]" must be a string',
-                    path: [3],
-                    type: 'string.base',
-                    context: { value: 4, label: '[3]', key: 3 }
-                },
-                {
-                    message: '"[4]" must be a string',
-                    path: [4],
-                    type: 'string.base',
-                    context: { value: 5, label: '[4]', key: 4 }
-                }
-            ]);
-        });
-
-        it('errors but continues when abortEarly is set to false', async () => {
-
-            const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required()).prefs({ abortEarly: false });
-            const input = ['s1', 2];
-            const err = await expect(schema.validate(input)).to.reject();
-            expect(err).to.be.an.error('"[0]" must be a number. "[1]" must be a string');
-            expect(err.details).to.have.length(2);
-            expect(err.details).to.equal([
-                {
-                    message: '"[0]" must be a number',
-                    path: [0],
-                    type: 'number.base',
-                    context: { label: '[0]', key: 0, value: 's1' }
-                },
-                {
-                    message: '"[1]" must be a string',
+                message: '"[1]" must not be a sparse array item',
+                path: [1],
+                type: 'array.sparse',
+                context: {
+                    key: 1,
+                    label: '[1]',
                     path: [1],
-                    type: 'string.base',
-                    context: { value: 2, label: '[1]', key: 1 }
+                    pos: 1,
+                    value: undefined
+                }
+            }, {
+                message: '"[2]" contains an excluded value',
+                path: [2],
+                type: 'array.excludes',
+                context: {
+                    pos: 2,
+                    key: 2,
+                    label: '[2]',
+                    value: true
+                }
+            }, {
+                message: '"[3]" does not match any of the allowed types',
+                path: [3],
+                type: 'array.includes',
+                context: {
+                    pos: 3,
+                    key: 3,
+                    label: '[3]',
+                    value: 'a'
+                }
+            }]);
+        });
+
+        it('returns multiple errors if abort early is false across items() and unique()', async () => {
+
+            const item = Joi.object({
+                test: Joi.string(),
+                hello: Joi.string().required()
+            });
+
+            const schema = Joi.array().items(item).unique('test');
+
+            const input = [
+                {
+                    test: 'test',
+                    hello: 'world'
+                },
+                {
+                    test: 'test'
+                }
+            ];
+
+            const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject('"[1].hello" is required. "[1]" contains a duplicate value');
+            expect(err.details).to.equal([
+                {
+                    context: {
+                        key: 'hello',
+                        label: '[1].hello'
+                    },
+                    message: '"[1].hello" is required',
+                    path: [1, 'hello'],
+                    type: 'any.required'
+                },
+                {
+                    context: {
+                        dupePos: 0,
+                        dupeValue: {
+                            hello: 'world',
+                            test: 'test'
+                        },
+                        key: 1,
+                        label: '[1]',
+                        path: 'test',
+                        pos: 1,
+                        value: {
+                            test: 'test'
+                        }
+                    },
+                    message: '"[1]" contains a duplicate value',
+                    path: [1],
+                    type: 'array.unique'
                 }
             ]);
-        });
-
-        it('errors on sparse arrays and continues when abortEarly is set to false', () => {
-
-            const schema = Joi.array().ordered(
-                Joi.number().min(0),
-                Joi.string().min(2),
-                Joi.number().max(0),
-                Joi.string().max(3)
-            )
-                .prefs({ abortEarly: false });
-
-            Helper.validate(schema, [
-                [[0, 'ab', 0, 'ab'], true],
-                [[undefined, 'foo', 2, 'bar'], false, null, {
-                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
-                    }, {
-                        message: '"[2]" must be less than or equal to 0',
-                        path: [2],
-                        type: 'number.max',
-                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
-                    }]
-                }],
-                [[undefined, 'foo', 2, undefined], false, null, {
-                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
-                    }, {
-                        message: '"[2]" must be less than or equal to 0',
-                        path: [2],
-                        type: 'number.max',
-                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
-                    }, {
-                        message: '"[3]" must not be a sparse array item',
-                        path: [3],
-                        type: 'array.sparse',
-                        context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors on forbidden items and continues when abortEarly is set to false', () => {
-
-            const schema = Joi.array().items(Joi.bool().forbidden()).ordered(
-                Joi.number().min(0),
-                Joi.string().min(2),
-                Joi.number().max(0),
-                Joi.string().max(3)
-            ).prefs({ abortEarly: false });
-
-            Helper.validate(schema, [
-                [[0, 'ab', 0, 'ab'], true],
-                [[undefined, 'foo', 2, 'bar'], false, null, {
-                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
-                    }, {
-                        message: '"[2]" must be less than or equal to 0',
-                        path: [2],
-                        type: 'number.max',
-                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
-                    }]
-                }],
-                [[undefined, 'foo', 2, undefined], false, null, {
-                    message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
-                    }, {
-                        message: '"[2]" must be less than or equal to 0',
-                        path: [2],
-                        type: 'number.max',
-                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
-                    }, {
-                        message: '"[3]" must not be a sparse array item',
-                        path: [3],
-                        type: 'array.sparse',
-                        context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
-                    }]
-                }],
-                [[undefined, false, 2, undefined], false, null, {
-                    message: '"[0]" must not be a sparse array item. "[1]" contains an excluded value. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { key: 0, label: '[0]', path: [0], pos: 0, value: undefined }
-                    }, {
-                        message: '"[1]" contains an excluded value',
-                        path: [1],
-                        type: 'array.excludes',
-                        context: { key: 1, label: '[1]', pos: 1, value: false }
-                    }, {
-                        message: '"[2]" must be less than or equal to 0',
-                        path: [2],
-                        type: 'number.max',
-                        context: { key: 2, label: '[2]', limit: 0, value: 2 }
-                    }, {
-                        message: '"[3]" must not be a sparse array item',
-                        path: [3],
-                        type: 'array.sparse',
-                        context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
-                    }]
-                }]
-            ]);
-        });
-
-        it('strips item', async () => {
-
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().strip(), Joi.number().required());
-            const input = ['s1', 2, 3];
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 3]);
-        });
-
-        it('strips multiple items', async () => {
-
-            const schema = Joi.array().ordered(Joi.string().strip(), Joi.number(), Joi.number().strip());
-            const input = ['s1', 2, 3];
-            const value = await schema.validate(input);
-            expect(value).to.equal([2]);
-        });
-
-        it('references array members', async () => {
-
-            const schema = Joi.array().ordered(Joi.number(), Joi.number().greater(Joi.ref('..0')));
-            expect(await schema.validate([1, 2])).to.equal([1, 2]);
-            await expect(schema.validate([1, 0])).to.reject();
         });
     });
 });

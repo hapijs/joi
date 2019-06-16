@@ -45,15 +45,13 @@ internals.updateTable = function () {
     const missing = internals.checkMissing(titles);
     if (missing.length) {
         console.log(`Missing:
-${missing.map((m) => `#### ${m}
+${missing.map((m) => `#### \`${m}\`
 
-**Description**
+<description>
 
-**Context**
+Additional local context properties:
 \`\`\`ts
 {
-    key: string, // Last element of the path accessing the value, \`undefined\` if at the root
-    label: string, // Label if defined, otherwise it's the key
     ...
 }
 \`\`\`

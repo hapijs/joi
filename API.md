@@ -58,15 +58,15 @@
     - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
     - [`any.when(condition, options)`](#anywhencondition-options)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
-    - [`array.sparse([enabled])`](#arraysparseenabled)
-    - [`array.single([enabled])`](#arraysingleenabled)
-    - [`array.items(...types)`](#arrayitemstypes)
-    - [`array.ordered(...type)`](#arrayorderedtype)
-    - [`array.min(limit)`](#arrayminlimit)
-    - [`array.max(limit)`](#arraymaxlimit)
-    - [`array.length(limit)`](#arraylengthlimit)
-    - [`array.unique([comparator, [options]])`](#arrayuniquecomparator-options)
     - [`array.has(schema)`](#arrayhasschema)
+    - [`array.items(...types)`](#arrayitemstypes)
+    - [`array.length(limit)`](#arraylengthlimit)
+    - [`array.max(limit)`](#arraymaxlimit)
+    - [`array.min(limit)`](#arrayminlimit)
+    - [`array.ordered(...type)`](#arrayorderedtype)
+    - [`array.single([enabled])`](#arraysingleenabled)
+    - [`array.sparse([enabled])`](#arraysparseenabled)
+    - [`array.unique([comparator, [options]])`](#arrayuniquecomparator-options)
   - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
     - [`boolean.truthy(...values)`](#booleantruthyvalues)
     - [`boolean.falsy(...values)`](#booleanfalsyvalues)
@@ -181,6 +181,9 @@
     - [`array.min`](#arraymin)
     - [`array.orderedLength`](#arrayorderedlength)
     - [`array.ref`](#arrayref)
+    - [`array.sort`](#arraysort)
+    - [`array.sort.mismatching`](#arraysortmismatching)
+    - [`array.sort.unsupported`](#arraysortunsupported)
     - [`array.sparse`](#arraysparse)
     - [`array.unique`](#arrayunique)
     - [`array.hasKnown`](#arrayhasknown)
@@ -830,7 +833,7 @@ Joi.validate({
 });
 ```
 
-💥 Possible validation errors: [`any.default`](#anydefault)
+Possible validation errors: [`any.default`](#anydefault)
 
 #### `any.describe()`
 
@@ -936,7 +939,7 @@ change the reference and any future assignment.
 Additionally, when specifying a method you must either have a `description` property on your method
 or the second parameter is required.
 
-💥 Possible validation errors: [`any.failover`](#anyfailover)
+Possible validation errors: [`any.failover`](#anyfailover)
 
 #### `any.forbidden()`
 
@@ -948,7 +951,7 @@ const schema = {
 };
 ```
 
-💥 Possible validation errors: [`any.unknown`](#anyunknown)
+Possible validation errors: [`any.unknown`](#anyunknown)
 
 #### `any.invalid(...values)` - aliases: `disallow`, `not`
 
@@ -963,7 +966,7 @@ const schema = {
 };
 ```
 
-💥 Possible validation errors: [`any.invalid`](#anyinvalid)
+Possible validation errors: [`any.invalid`](#anyinvalid)
 
 #### `any.keep()`
 
@@ -1048,7 +1051,7 @@ Marks a key as required which will not allow `undefined` as value. All keys are 
 const schema = Joi.any().required();
 ```
 
-💥 Possible validation errors: [`any.required`](#anyrequired)
+Possible validation errors: [`any.required`](#anyrequired)
 
 
 #### `any.rule(options)`
@@ -1142,7 +1145,7 @@ const schema = {
 };
 ```
 
-💥 Possible validation errors: [`any.allowOnly`](#anyallowonly)
+Possible validation errors: [`any.allowOnly`](#anyallowonly)
 
 #### `any.validate(value, [options], [callback])`
 
@@ -1299,32 +1302,24 @@ const array = Joi.array().items(Joi.string().valid('a', 'b'));
 array.validate(['a', 'b', 'a'], (err, value) => { });
 ```
 
-💥 Possible validation errors: [`array.base`](#arraybase)
+Possible validation errors: [`array.base`](#arraybase)
 
-#### `array.sparse([enabled])`
+#### `array.has(schema)`
 
-Allows this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
-
-```js
-let schema = Joi.array().sparse(); // undefined values are now allowed
-schema = schema.sparse(false); // undefined values are now denied
-```
-
-💥 Possible validation errors: [`array.sparse`](#arraysparse)
-
-#### `array.single([enabled])`
-
-Allows single values to be checked against rules as if it were provided as an array.
-
-`enabled` can be used with a falsy value to go back to the default behavior.
+Verifies that a schema validates at least one of the values in the array, where:
+- `schema` - the validation rules required to satisfy the check. If the `schema` includes references, they are resolved against
+  the array item being tested, not the value of the `ref` target.
 
 ```js
-const schema = Joi.array().items(Joi.number()).single();
-schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
-schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
+const schema = Joi.array().items(
+  Joi.object({
+    a: Joi.string(),
+    b: Joi.number()
+  })
+).has(Joi.object({ a: Joi.string().valid('a'), b: Joi.number() }))
 ```
 
-💥 Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes)
+Possible validation errors: [`array.hasKnown`](#arrayhasknown), [`array.hasUnknown`](#arrayhasunknown)
 
 #### `array.items(...types)`
 
@@ -1343,59 +1338,7 @@ const schema = Joi.array().items(Joi.string().valid('not allowed').forbidden(), 
 const schema = Joi.array().items(Joi.string().label('My string').required(), Joi.number().required()); // If this fails it can result in `[ValidationError: "value" does not contain [My string] and 1 other required value(s)]`
 ```
 
-💥 Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includesRequiredBoth`], [`array.includesRequiredKnowns`], [`array.includesRequiredUnknowns`], [`array.includes`](#arrayincludes)
-
-#### `array.ordered(...type)`
-
-Lists the types in sequence order for the array values where:
-- `types` - one or more **joi** schema objects to validate against each array item in sequence order.
-
-If a given type is `.required()` then there must be a matching item with the same index position in the array.
-Errors will contain the number of items that didn't match. Any unmatched item having a [label](#anylabelname) will be mentioned explicitly.
-
-```js
-const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()); // array must have first item as string and second item as number
-const schema = Joi.array().ordered(Joi.string().required()).items(Joi.number().required()); // array must have first item as string and 1 or more subsequent items as number
-const schema = Joi.array().ordered(Joi.string().required(), Joi.number()); // array must have first item as string and optionally second item as number
-```
-
-💥 Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes), [`array.orderedLength`](#arrayorderedlength)
-
-#### `array.min(limit)`
-
-Specifies the minimum number of items in the array where:
-- `limit` - the lowest number of array items allowed or a reference.
-
-```js
-const schema = Joi.array().min(2);
-```
-
-```js
-const schema = Joi.object({
-  limit: Joi.number().integer().required(),
-  numbers: Joi.array().min(Joi.ref('limit')).required()
-});
-```
-
-💥 Possible validation errors: [`array.min`](#arraymin), [`array.ref`](#arrayref)
-
-#### `array.max(limit)`
-
-Specifies the maximum number of items in the array where:
-- `limit` - the highest number of array items allowed or a reference.
-
-```js
-const schema = Joi.array().max(10);
-```
-
-```js
-const schema = Joi.object({
-  limit: Joi.number().integer().required(),
-  numbers: Joi.array().max(Joi.ref('limit')).required()
-});
-```
-
-💥 Possible validation errors: [`array.max`](#arraymax), [`array.ref`](#arrayref)
+Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includesRequiredBoth`], [`array.includesRequiredKnowns`], [`array.includesRequiredUnknowns`], [`array.includes`](#arrayincludes)
 
 #### `array.length(limit)`
 
@@ -1413,7 +1356,100 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`array.length`](#arraylength), [`array.ref`](#arrayref)
+Possible validation errors: [`array.length`](#arraylength), [`array.ref`](#arrayref)
+
+#### `array.max(limit)`
+
+Specifies the maximum number of items in the array where:
+- `limit` - the highest number of array items allowed or a reference.
+
+```js
+const schema = Joi.array().max(10);
+```
+
+```js
+const schema = Joi.object({
+  limit: Joi.number().integer().required(),
+  numbers: Joi.array().max(Joi.ref('limit')).required()
+});
+```
+
+Possible validation errors: [`array.max`](#arraymax), [`array.ref`](#arrayref)
+
+#### `array.min(limit)`
+
+Specifies the minimum number of items in the array where:
+- `limit` - the lowest number of array items allowed or a reference.
+
+```js
+const schema = Joi.array().min(2);
+```
+
+```js
+const schema = Joi.object({
+  limit: Joi.number().integer().required(),
+  numbers: Joi.array().min(Joi.ref('limit')).required()
+});
+```
+
+Possible validation errors: [`array.min`](#arraymin), [`array.ref`](#arrayref)
+
+#### `array.ordered(...type)`
+
+Lists the types in sequence order for the array values where:
+- `types` - one or more **joi** schema objects to validate against each array item in sequence order.
+
+If a given type is `.required()` then there must be a matching item with the same index position in the array.
+Errors will contain the number of items that didn't match. Any unmatched item having a [label](#anylabelname) will be mentioned explicitly.
+
+```js
+const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()); // array must have first item as string and second item as number
+const schema = Joi.array().ordered(Joi.string().required()).items(Joi.number().required()); // array must have first item as string and 1 or more subsequent items as number
+const schema = Joi.array().ordered(Joi.string().required(), Joi.number()); // array must have first item as string and optionally second item as number
+```
+
+Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes), [`array.orderedLength`](#arrayorderedlength)
+
+#### `array.single([enabled])`
+
+Allows single values to be checked against rules as if it were provided as an array.
+
+`enabled` can be used with a falsy value to go back to the default behavior.
+
+```js
+const schema = Joi.array().items(Joi.number()).single();
+schema.validate([4]); // returns `{ error: null, value: [ 4 ] }`
+schema.validate(4); // returns `{ error: null, value: [ 4 ] }`
+```
+
+Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includes`](#arrayincludes)
+
+#### `array.sort([options])`
+
+Requires the array to comply with the specified sort order where:
+- `options` - optional settings:
+    - `order` - the sort order. Allowed values:
+        - `'ascending'` - sort the array in ascending order. This is the default.
+        - `'descending'` - sort the array in descending order.
+    - `by` - a key name or reference to sort array objects by. Defautls to the entire value.
+
+Notes:
+- if the `convert` preference is `true`, the array is modified to match the required sort order.
+- `undefined` values are always placed at the end of the array regardless of the sort order.
+- can only sort string and number items or item key values.
+
+Possible validation errors: [`array.sort`](#arraysort), [`array.sort.unsupported`](#arraysortunsupported), [`array.sort.mismatching`](#arraysortmismatching)
+
+#### `array.sparse([enabled])`
+
+Allows this array to be sparse. `enabled` can be used with a falsy value to go back to the default behavior.
+
+```js
+let schema = Joi.array().sparse(); // undefined values are now allowed
+schema = schema.sparse(false); // undefined values are now denied
+```
+
+Possible validation errors: [`array.sparse`](#arraysparse)
 
 #### `array.unique([comparator, [options]])`
 
@@ -1458,25 +1494,7 @@ schema.validate([{}, {}]);
 // error: null
 ```
 
-💥 Possible validation errors: [`array.unique`](#arrayunique)
-
-#### `array.has(schema)`
-
-Verifies that a schema validates at least one of the values in the array, where:
-- `schema` - the validation rules required to satisfy the check. If the `schema` includes references, they are resolved against
-  the array item being tested, not the value of the `ref` target.
-
-```js
-const schema = Joi.array().items(
-  Joi.object({
-    a: Joi.string(),
-    b: Joi.number()
-  })
-).has(Joi.object({ a: Joi.string().valid('a'), b: Joi.number() }))
-```
-
-💥 Possible validation errors: [`array.hasKnown`](#arrayhasknown), [`array.hasUnknown`](#arrayhasunknown)
-
+Possible validation errors: [`array.unique`](#arrayunique)
 
 ### `boolean` - inherits from `Any`
 
@@ -1492,7 +1510,7 @@ boolean.validate(true, (err, value) => { }); // Valid
 boolean.validate(1, (err, value) => { }); // Invalid
 ```
 
-💥 Possible validation errors: [`boolean.base`](#booleanbase)
+Possible validation errors: [`boolean.base`](#booleanbase)
 
 #### `boolean.truthy(...values)`
 
@@ -1540,7 +1558,7 @@ Supports the same methods of the [`any()`](#any) type.
 const schema = Joi.binary();
 ```
 
-💥 Possible validation errors: [`binary.base`](#binarybase)
+Possible validation errors: [`binary.base`](#binarybase)
 
 #### `binary.encoding(encoding)`
 
@@ -1560,7 +1578,7 @@ Specifies the minimum length of the buffer where:
 const schema = Joi.binary().min(2);
 ```
 
-💥 Possible validation errors: [`binary.min`](#binarymin), [`binary.ref`](#binaryref)
+Possible validation errors: [`binary.min`](#binarymin), [`binary.ref`](#binaryref)
 
 #### `binary.max(limit)`
 
@@ -1571,7 +1589,7 @@ Specifies the maximum length of the buffer where:
 const schema = Joi.binary().max(10);
 ```
 
-💥 Possible validation errors: [`binary.max`](#binarymax), [`binary.ref`](#binaryref)
+Possible validation errors: [`binary.max`](#binarymax), [`binary.ref`](#binaryref)
 
 #### `binary.length(limit)`
 
@@ -1582,7 +1600,7 @@ Specifies the exact length of the buffer:
 const schema = Joi.binary().length(5);
 ```
 
-💥 Possible validation errors: [`binary.length`](#binarylength), [`binary.ref`](#binaryref)
+Possible validation errors: [`binary.length`](#binarylength), [`binary.ref`](#binaryref)
 
 ### `date` - inherits from `Any`
 
@@ -1596,7 +1614,7 @@ const date = Joi.date();
 date.validate('12-21-2012', (err, value) => { });
 ```
 
-💥 Possible validation errors: [`date.base`](#datebase), [`date.strict`](#datestrict)
+Possible validation errors: [`date.base`](#datebase), [`date.strict`](#datestrict)
 
 #### `date.min(date)`
 
@@ -1620,7 +1638,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`date.min`](#datemin), [`date.ref`](#dateref)
+Possible validation errors: [`date.min`](#datemin), [`date.ref`](#dateref)
 
 #### `date.max(date)`
 
@@ -1644,7 +1662,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`date.max`](#datemax), [`date.ref`](#dateref)
+Possible validation errors: [`date.max`](#datemax), [`date.ref`](#dateref)
 
 #### `date.greater(date)`
 
@@ -1667,7 +1685,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`date.greater`](#dategreater), [`date.ref`](#dateref)
+Possible validation errors: [`date.greater`](#dategreater), [`date.ref`](#dateref)
 
 #### `date.less(date)`
 
@@ -1689,7 +1707,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`date.less`](#dateless), [`date.ref`](#dateref)
+Possible validation errors: [`date.less`](#dateless), [`date.ref`](#dateref)
 
 #### `date.iso()`
 
@@ -1699,7 +1717,7 @@ Requires the string value to be in valid ISO 8601 date format.
 const schema = Joi.date().iso();
 ```
 
-💥 Possible validation errors: [`date.isoDate`](#dateisodate)
+Possible validation errors: [`date.isoDate`](#dateisodate)
 
 #### `date.timestamp([type])`
 
@@ -1713,7 +1731,7 @@ const schema = Joi.date().timestamp('javascript'); // also, for javascript times
 const schema = Joi.date().timestamp('unix'); // for unix timestamp (seconds)
 ```
 
-💥 Possible validation errors: [`date.timestamp.javascript`](#datetimestampjavascript), [`date.timestamp.unix`](#datetimestampunix)
+Possible validation errors: [`date.timestamp.javascript`](#datetimestampjavascript), [`date.timestamp.unix`](#datetimestampunix)
 
 ### `func` - inherits from `Any`
 
@@ -1728,7 +1746,7 @@ const func = Joi.func();
 func.validate(function () {}, (err, value) => { });
 ```
 
-💥 Possible validation errors: [`function.base`](#functionbase)
+Possible validation errors: [`function.base`](#functionbase)
 
 #### `func.arity(n)`
 
@@ -1739,7 +1757,7 @@ Specifies the arity of the function where:
 const schema = Joi.func().arity(2);
 ```
 
-💥 Possible validation errors: [`function.arity`](#functionarity)
+Possible validation errors: [`function.arity`](#functionarity)
 
 #### `func.minArity(n)`
 
@@ -1750,7 +1768,7 @@ Specifies the minimal arity of the function where:
 const schema = Joi.func().minArity(1);
 ```
 
-💥 Possible validation errors: [`function.minArity`](#functionminarity)
+Possible validation errors: [`function.minArity`](#functionminarity)
 
 #### `func.maxArity(n)`
 
@@ -1761,7 +1779,7 @@ Specifies the maximal arity of the function where:
 const schema = Joi.func().maxArity(3);
 ```
 
-💥 Possible validation errors: [`function.maxArity`](#functionmaxarity)
+Possible validation errors: [`function.maxArity`](#functionmaxarity)
 
 #### `func.class()`
 
@@ -1771,7 +1789,7 @@ Requires the function to be a class.
 const schema = Joi.func().class();
 ```
 
-💥 Possible validation errors: [`function.class`](#functionclass)
+Possible validation errors: [`function.class`](#functionclass)
 
 ### `number` - inherits from `Any`
 
@@ -1791,7 +1809,7 @@ const number = Joi.number();
 number.validate(5, (err, value) => { });
 ```
 
-💥 Possible validation errors: [`number.base`](#numberbase)
+Possible validation errors: [`number.base`](#numberbase)
 
 #### `number.unsafe([enabled])`
 
@@ -1811,7 +1829,7 @@ unsafeNumber.validate(90071992547409924);
 // value -> 90071992547409920
 ```
 
-💥 Possible validation errors: [`number.unsafe`](#numberunsafe)
+Possible validation errors: [`number.unsafe`](#numberunsafe)
 
 #### `number.min(limit)`
 
@@ -1829,7 +1847,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`number.min`](#numbermin), [`number.ref`](#numberref)
+Possible validation errors: [`number.min`](#numbermin), [`number.ref`](#numberref)
 
 #### `number.max(limit)`
 
@@ -1847,7 +1865,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`number.max`](#numbermax), [`number.ref`](#numberref)
+Possible validation errors: [`number.max`](#numbermax), [`number.ref`](#numberref)
 
 #### `number.greater(limit)`
 
@@ -1864,7 +1882,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`number.greater`](#numbergreater), [`number.ref`](#numberref)
+Possible validation errors: [`number.greater`](#numbergreater), [`number.ref`](#numberref)
 
 #### `number.less(limit)`
 
@@ -1881,7 +1899,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`number.less`](#numberless), [`number.ref`](#numberref)
+Possible validation errors: [`number.less`](#numberless), [`number.ref`](#numberref)
 
 #### `number.integer()`
 
@@ -1891,7 +1909,7 @@ Requires the number to be an integer (no floating point).
 const schema = Joi.number().integer();
 ```
 
-💥 Possible validation errors: [`number.base`](#numberbase)
+Possible validation errors: [`number.base`](#numberbase)
 
 #### `number.precision(limit)`
 
@@ -1902,7 +1920,7 @@ Specifies the maximum number of decimal places where:
 const schema = Joi.number().precision(2);
 ```
 
-💥 Possible validation errors: [`number.integer`](#numberinteger-1)
+Possible validation errors: [`number.integer`](#numberinteger-1)
 
 #### `number.multiple(base)`
 
@@ -1915,7 +1933,7 @@ const schema = Joi.number().multiple(3);
 Notes: `Joi.number.multiple(base)` _uses the modulo operator (%) to determine if a number is multiple of another number.
 Therefore, it has the normal limitations of Javascript modulo operator. The results with decimal/floats may be incorrect._
 
-💥 Possible validation errors: [`number.multiple`](#numbermultiple), [`number.ref`](#numberref)
+Possible validation errors: [`number.multiple`](#numbermultiple), [`number.ref`](#numberref)
 
 #### `number.positive()`
 
@@ -1925,7 +1943,7 @@ Requires the number to be positive.
 const schema = Joi.number().positive();
 ```
 
-💥 Possible validation errors: [`number.positive`](#numberpositive-1)
+Possible validation errors: [`number.positive`](#numberpositive-1)
 
 #### `number.negative()`
 
@@ -1935,7 +1953,7 @@ Requires the number to be negative.
 const schema = Joi.number().negative();
 ```
 
-💥 Possible validation errors: [`number.negative`](#numbernegative-1)
+Possible validation errors: [`number.negative`](#numbernegative-1)
 
 #### `number.port()`
 
@@ -1945,7 +1963,7 @@ Requires the number to be a TCP port, so between 0 and 65535.
 const schema = Joi.number().port();
 ```
 
-💥 Possible validation errors: [`number.port`](#numberport-1)
+Possible validation errors: [`number.port`](#numberport-1)
 
 ### `object` - inherits from `Any`
 
@@ -1964,7 +1982,7 @@ const object = Joi.object({
 object.validate({ a: 5 }, (err, value) => { });
 ```
 
-💥 Possible validation errors: [`object.base`](#objectbase)
+Possible validation errors: [`object.base`](#objectbase)
 
 #### `object.keys([schema])`
 
@@ -2009,7 +2027,7 @@ const schema = Joi.object().keys({
 });
 ```
 
-💥 Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
+Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
 
 While all these three objects defined above will result in the same validation object, there are some differences in using one or another:
 
@@ -2077,7 +2095,7 @@ Specifies the minimum number of keys in the object where:
 const schema = Joi.object().min(2);
 ```
 
-💥 Possible validation errors: [`object.min`](#objectmin), [`object.ref`](#objectref)
+Possible validation errors: [`object.min`](#objectmin), [`object.ref`](#objectref)
 
 #### `object.max(limit)`
 
@@ -2088,7 +2106,7 @@ Specifies the maximum number of keys in the object where:
 const schema = Joi.object().max(10);
 ```
 
-💥 Possible validation errors: [`object.max`](#objectmax), [`object.ref`](#objectref)
+Possible validation errors: [`object.max`](#objectmax), [`object.ref`](#objectref)
 
 #### `object.length(limit)`
 
@@ -2099,7 +2117,7 @@ Specifies the exact number of keys in the object where or a reference:
 const schema = Joi.object().length(5);
 ```
 
-💥 Possible validation errors: [`object.length`](#objectlength), [`object.ref`](#objectref)
+Possible validation errors: [`object.length`](#objectlength), [`object.ref`](#objectref)
 
 #### `object.pattern(pattern, schema)`
 
@@ -2134,7 +2152,7 @@ const schema = Joi.object({
 }).and('a', 'b');
 ```
 
-💥 Possible validation errors: [`object.and`](#objectand)
+Possible validation errors: [`object.and`](#objectand)
 
 #### `object.nand(...peers, [options])`
 
@@ -2150,7 +2168,7 @@ const schema = Joi.object({
 }).nand('a', 'b');
 ```
 
-💥 Possible validation errors: [`object.nand`](#objectnand)
+Possible validation errors: [`object.nand`](#objectnand)
 
 #### `object.or(...peers, [options])`
 
@@ -2167,7 +2185,7 @@ const schema = Joi.object({
 }).or('a', 'b');
 ```
 
-💥 Possible validation errors: [`object.missing`](#objectmissing)
+Possible validation errors: [`object.missing`](#objectmissing)
 
 #### `object.xor(...peers, [options])`
 
@@ -2184,7 +2202,7 @@ const schema = Joi.object({
 }).xor('a', 'b');
 ```
 
-💥 Possible validation errors: [`object.xor`](#objectxor), [`object.missing`](#objectmissing)
+Possible validation errors: [`object.xor`](#objectxor), [`object.missing`](#objectmissing)
 
 #### `object.oxor(...peers, [options])`
 
@@ -2201,7 +2219,7 @@ const schema = Joi.object({
 }).oxor('a', 'b');
 ```
 
-💥 Possible validation errors: [`object.oxor`](#objectoxor)
+Possible validation errors: [`object.oxor`](#objectoxor)
 
 #### `object.with(key, peers, [options])`
 
@@ -2222,7 +2240,7 @@ const schema = Joi.object({
 }).with('a', 'b');
 ```
 
-💥 Possible validation errors: [`object.with`](#objectwith)
+Possible validation errors: [`object.with`](#objectwith)
 
 #### `object.without(key, peers, [options])`
 
@@ -2240,7 +2258,7 @@ const schema = Joi.object({
 }).without('a', ['b']);
 ```
 
-💥 Possible validation errors: [`object.without`](#objectwithout)
+Possible validation errors: [`object.without`](#objectwithout)
 
 #### `object.ref()`
 
@@ -2250,7 +2268,7 @@ Requires the object to be a Joi reference.
 const schema = Joi.object().ref();
 ```
 
-💥 Possible validation errors: [`object.refType`](#objectreftype)
+Possible validation errors: [`object.refType`](#objectreftype)
 
 #### `object.rename(from, to, [options])`
 
@@ -2306,7 +2324,7 @@ const value = await Joi.compile(schema).validate(input);
 // value === { x123x: 'x', x1x: 'y', x0x: 'z', x4x: 'test' }
 ```
 
-💥 Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride)
+Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride)
 
 #### `object.assert(ref, schema, [message])`
 
@@ -2328,7 +2346,7 @@ const schema = Joi.object({
 }).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
 ```
 
-💥 Possible validation errors: [`object.assert`](#objectassert)
+Possible validation errors: [`object.assert`](#objectassert)
 
 #### `object.unknown([allow])`
 
@@ -2339,7 +2357,7 @@ Overrides the handling of unknown keys for the scope of the current object only 
 const schema = Joi.object({ a: Joi.any() }).unknown();
 ```
 
-💥 Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
+Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
 
 #### `object.type(constructor, [name])`
 
@@ -2351,7 +2369,7 @@ Requires the object to be an instance of a given constructor where:
 const schema = Joi.object().type(RegExp);
 ```
 
-💥 Possible validation errors: [`object.type`](#objecttype)
+Possible validation errors: [`object.type`](#objecttype)
 
 #### `object.schema([type])`
 
@@ -2362,7 +2380,7 @@ Requires the object to be a Joi schema instance where:
 const schema = Joi.object().schema();
 ```
 
-💥 Possible validation errors: [`object.schema`](#objectschema-1)
+Possible validation errors: [`object.schema`](#objectschema-1)
 
 #### `object.requiredKeys(...children)`
 
@@ -2417,7 +2435,7 @@ const schema = Joi.string().min(1).max(10);
 schema.validate('12345', (err, value) => { });
 ```
 
-💥 Possible validation errors: [`string.base`](#stringbase), [`any.empty`](#anyempty)
+Possible validation errors: [`string.base`](#stringbase), [`any.empty`](#anyempty)
 
 #### `string.insensitive()`
 
@@ -2444,7 +2462,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`string.min`](#stringmin), [`string.ref`](#stringref)
+Possible validation errors: [`string.min`](#stringmin), [`string.ref`](#stringref)
 
 #### `string.max(limit, [encoding])`
 
@@ -2463,7 +2481,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`string.max`](#stringmax), [`string.ref`](#stringref)
+Possible validation errors: [`string.max`](#stringmax), [`string.ref`](#stringref)
 
 #### `string.truncate([enabled])`
 
@@ -2485,7 +2503,7 @@ Algorithm](http://en.wikipedia.org/wiki/Luhn_algorithm)).
 const schema = Joi.string().creditCard();
 ```
 
-💥 Possible validation errors: [`string.creditCard`](#stringcreditcard-1)
+Possible validation errors: [`string.creditCard`](#stringcreditcard-1)
 
 #### `string.length(limit, [encoding])`
 
@@ -2504,7 +2522,7 @@ const schema = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`string.length`](#stringlength), [`string.ref`](#stringref)
+Possible validation errors: [`string.length`](#stringlength), [`string.ref`](#stringref)
 
 #### `string.regex(pattern, [name | options])`
 
@@ -2531,7 +2549,7 @@ const invertedNamedSchema = Joi.string().regex(/^[a-z]+$/, { name: 'alpha', inve
 invertedNamedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted alpha pattern
 ```
 
-💥 Possible validation errors: [`string.regex.base`](#stringregexbase), [`string.regex.invert.base`](#stringregexinvertbase), [`string.regex.invert.name`](#stringregexinvertname), [`string.regex.name`](#stringregexname)
+Possible validation errors: [`string.regex.base`](#stringregexbase), [`string.regex.invert.base`](#stringregexinvertbase), [`string.regex.invert.name`](#stringregexinvertname), [`string.regex.name`](#stringregexname)
 
 #### `string.replace(pattern, replacement)`
 
@@ -2558,7 +2576,7 @@ Requires the string value to only contain a-z, A-Z, and 0-9.
 const schema = Joi.string().alphanum();
 ```
 
-💥 Possible validation errors: [`string.alphanum`](#stringalphanum-1)
+Possible validation errors: [`string.alphanum`](#stringalphanum-1)
 
 #### `string.token()`
 
@@ -2568,7 +2586,7 @@ Requires the string value to only contain a-z, A-Z, 0-9, and underscore _.
 const schema = Joi.string().token();
 ```
 
-💥 Possible validation errors: [`string.token`](#stringtoken-1)
+Possible validation errors: [`string.token`](#stringtoken-1)
 
 #### `string.domain([options])`
 
@@ -2593,7 +2611,7 @@ Requires the string value to be a valid domain name.
 const schema = Joi.string().domain();
 ```
 
-💥 Possible validation errors: [`string.domain`](#stringdomain)
+Possible validation errors: [`string.domain`](#stringdomain)
 
 #### `string.email([options])`
 
@@ -2624,7 +2642,7 @@ Requires the string value to be a valid email address.
 const schema = Joi.string().email();
 ```
 
-💥 Possible validation errors: [`string.email`](#stringemail)
+Possible validation errors: [`string.email`](#stringemail)
 
 #### `string.ip([options])`
 
@@ -2645,7 +2663,7 @@ const schema = Joi.string().ip({
 });
 ```
 
-💥 Possible validation errors: [`string.ip`](#stringip), [`string.ipVersion`](#stringipversion)
+Possible validation errors: [`string.ip`](#stringip), [`string.ipVersion`](#stringipversion)
 
 #### `string.uri([options])`
 
@@ -2668,7 +2686,7 @@ const schema = Joi.string().uri({
 });
 ```
 
-💥 Possible validation errors: [`string.uri`](#stringuri), [`string.uriCustomScheme`](#stringuricustomscheme), [`string.uriRelativeOnly`](#stringurirelativeonly), [`string.domain`](#stringdomain)
+Possible validation errors: [`string.uri`](#stringuri), [`string.uriCustomScheme`](#stringuricustomscheme), [`string.uriRelativeOnly`](#stringurirelativeonly), [`string.domain`](#stringdomain)
 
 #### `string.guid()` - aliases: `uuid`
 
@@ -2688,7 +2706,7 @@ const schema = Joi.string().guid({
 });
 ```
 
-💥 Possible validation errors: [`string.guid`](#stringguid)
+Possible validation errors: [`string.guid`](#stringguid)
 
 #### `string.hex([options])`
 
@@ -2700,7 +2718,7 @@ Requires the string value to be a valid hexadecimal string.
 const schema = Joi.string().hex();
 ```
 
-💥 Possible validation errors: [`string.hex`](#stringhex), [`string.hexAlign`](#stringhexalign)
+Possible validation errors: [`string.hex`](#stringhex), [`string.hexAlign`](#stringhexalign)
 
 #### `string.base64([options])`
 
@@ -2726,7 +2744,7 @@ paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM'); // No Error
 paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
-💥 Possible validation errors: [`string.base64`](#stringbase64)
+Possible validation errors: [`string.base64`](#stringbase64)
 
 #### `string.dataUri([options])`
 
@@ -2741,7 +2759,7 @@ schema.validate('VE9PTUFOWVNFQ1JFVFM='); // ValidationError: "value" must be a v
 schema.validate('data:image/png;base64,VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
-💥 Possible validation errors: [`string.dataUri`](#stringdatauri)
+Possible validation errors: [`string.dataUri`](#stringdatauri)
 
 #### `string.hostname()`
 
@@ -2751,7 +2769,7 @@ Requires the string value to be a valid hostname as per [RFC1123](http://tools.i
 const schema = Joi.string().hostname();
 ```
 
-💥 Possible validation errors: [`string.hostname`](#stringhostname-1)
+Possible validation errors: [`string.hostname`](#stringhostname-1)
 
 #### `string.normalize([form])`
 
@@ -2768,7 +2786,7 @@ const schema = Joi.string().normalize('NFKC'); // compatibility composition
 const schema = Joi.string().normalize('NFKD'); // compatibility decomposition
 ```
 
-💥 Possible validation errors: [`string.normalize`](#stringnormalize)
+Possible validation errors: [`string.normalize`](#stringnormalize)
 
 #### `string.lowercase()`
 
@@ -2779,7 +2797,7 @@ will be forced to lowercase.
 const schema = Joi.string().lowercase();
 ```
 
-💥 Possible validation errors: [`string.lowercase`](#stringlowercase-1)
+Possible validation errors: [`string.lowercase`](#stringlowercase-1)
 
 #### `string.uppercase()`
 
@@ -2790,7 +2808,7 @@ will be forced to uppercase.
 const schema = Joi.string().uppercase();
 ```
 
-💥 Possible validation errors: [`string.uppercase`](#stringuppercase-1)
+Possible validation errors: [`string.uppercase`](#stringuppercase-1)
 
 #### `string.trim([enabled])`
 
@@ -2805,7 +2823,7 @@ const schema = Joi.string().trim();
 const schema = Joi.string().trim(false); // disable trim flag
 ```
 
-💥 Possible validation errors: [`string.trim`](#stringtrim)
+Possible validation errors: [`string.trim`](#stringtrim)
 
 #### `string.isoDate()`
 
@@ -2823,7 +2841,7 @@ schema.validate('20181-11-28T18:25:32+00:00'); // ValidationError: must be a val
 schema.validate(''); // ValidationError: must be a valid 8601 date
 ```
 
-💥 Possible validation errors: [`string.isoDate`](#stringisodate-1)
+Possible validation errors: [`string.isoDate`](#stringisodate-1)
 
 #### `string.isoDuration()`
 
@@ -2836,7 +2854,7 @@ schema.validate('2018-11-28T18:25:32+00:00'); // ValidationError: must be a vali
 schema.validate(''); // ValidationError: must be a valid ISO 8601 duration
 ```
 
-💥 Possible validation errors: [`string.isoDuration`](#stringisoduration-1)
+Possible validation errors: [`string.isoDuration`](#stringisoduration-1)
 
 ### `symbol` - inherits from `Any`
 
@@ -2851,7 +2869,7 @@ const schema = Joi.symbol().map({ 'foo': Symbol('foo'), 'bar': Symbol('bar') });
 schema.validate('foo', (err, value) => { });
 ```
 
-💥 Possible validation errors: [`symbol.base`](#symbolbase)
+Possible validation errors: [`symbol.base`](#symbolbase)
 
 #### `symbol.map(map)`
 
@@ -2868,7 +2886,7 @@ const schema = Joi.symbol().map([
 ]);
 ```
 
-💥 Possible validation errors: [`symbol.map`](#symbolmap)
+Possible validation errors: [`symbol.map`](#symbolmap)
 
 ### `alternatives` - inherits from `Any`
 
@@ -2884,7 +2902,7 @@ const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
 // Same as [Joi.number(), Joi.string()]
 ```
 
-💥 Possible validation errors: [`alternatives.base`](#alternativesbase), [`alternatives.types`](#alternativestypes), [`alternatives.match`](#alternativesmatch)
+Possible validation errors: [`alternatives.base`](#alternativesbase), [`alternatives.types`](#alternativestypes), [`alternatives.match`](#alternativesmatch)
 
 #### `alternatives.try(schemas)`
 
@@ -2969,7 +2987,7 @@ const Person = Joi.object({
 });
 ```
 
-💥 Possible validation errors: [`lazy.base`](#lazybase), [`lazy.schema`](#lazyschema)
+Possible validation errors: [`lazy.base`](#lazybase), [`lazy.schema`](#lazyschema)
 
 ## Errors
 
@@ -3004,13 +3022,9 @@ Check if an Error is a Joi `ValidationError` like:
 <!-- errors -->
 #### `alternatives.base`
 
-**Description**
-
 No alternative was found to test against the input due to try criteria.
 
 #### `alternatives.types`
-
-**Description**
 
 The provided input did not match any of the allowed types.
 
@@ -3022,8 +3036,6 @@ Additional local context properties:
 ```
 
 #### `alternatives.match`
-
-**Description**
 
 No alternative matched the input due to specific matching rules for at least one of the alternatives.
 
@@ -3037,8 +3049,6 @@ Additional local context properties:
 
 #### `any.allowOnly`
 
-**Description**
-
 Only some values were allowed, the input didn't match any of them.
 
 Additional local context properties:
@@ -3049,8 +3059,6 @@ Additional local context properties:
 ```
 
 #### `any.default`
-
-**Description**
 
 If your [`any.default()`](#anydefaultvalue-description) generator function throws error, you will have it here.
 
@@ -3063,8 +3071,6 @@ Additional local context properties:
 
 #### `any.failover`
 
-**Description**
-
 If your [`any.failover()`](#anyfailovervalue-description) generator function throws error, you will have it here.
 
 Additional local context properties:
@@ -3075,8 +3081,6 @@ Additional local context properties:
 ```
 
 #### `any.empty`
-
-**Description**
 
 When an empty string is found and denied by invalid values.
 
@@ -3089,8 +3093,6 @@ Additional local context properties:
 
 #### `any.invalid`
 
-**Description**
-
 The value matched a value listed in the invalid values.
 
 Additional local context properties:
@@ -3102,25 +3104,17 @@ Additional local context properties:
 
 #### `any.required`
 
-**Description**
-
 A required value wasn't present.
 
 #### `any.unknown`
-
-**Description**
 
 A value was present while it wasn't expected.
 
 #### `array.base`
 
-**Description**
-
 The value is not of Array type or could not be cast to an Array from a string.
 
 #### `array.excludes`
-
-**Description**
 
 The array contains a value that is part of the exclusion list.
 
@@ -3132,8 +3126,6 @@ Additional local context properties:
 ```
 
 #### `array.includesRequiredBoth`
-
-**Description**
 
 Some values were expected to be present in the array and are missing. This error happens when we have a mix of labelled and unlabelled schemas.
 
@@ -3147,8 +3139,6 @@ Additional local context properties:
 
 #### `array.includesRequiredKnowns`
 
-**Description**
-
 Some values were expected to be present in the array and are missing. This error happens when we only have labelled schemas.
 
 Additional local context properties:
@@ -3159,8 +3149,6 @@ Additional local context properties:
 ```
 
 #### `array.includesRequiredUnknowns`
-
-**Description**
 
 Some values were expected to be present in the array and are missing. This error happens when we only have unlabelled schemas.
 
@@ -3173,8 +3161,6 @@ Additional local context properties:
 
 #### `array.includes`
 
-**Description**
-
 The value didn't match any of the allowed types for that array.
 
 Additional local context properties:
@@ -3185,8 +3171,6 @@ Additional local context properties:
 ```
 
 #### `array.length`
-
-**Description**
 
 The array is not of the expected length.
 
@@ -3199,8 +3183,6 @@ Additional local context properties:
 
 #### `array.max`
 
-**Description**
-
 The array has more elements than the maximum allowed.
 
 Additional local context properties:
@@ -3212,8 +3194,6 @@ Additional local context properties:
 
 #### `array.min`
 
-**Description**
-
 The array has less elements than the minimum allowed.
 
 Additional local context properties:
@@ -3224,8 +3204,6 @@ Additional local context properties:
 ```
 
 #### `array.orderedLength`
-
-**Description**
 
 Given an [`array.ordered()`](#arrayorderedtype), that array has more elements than it should.
 
@@ -3239,8 +3217,6 @@ Additional local context properties:
 
 #### `array.ref`
 
-**Description**
-
 A reference was used in one of [`array.min()`](#arrayminlimit), [`array.max()`](#arraymaxlimit) or [`array.length()`](#arraylengthlimit) and the value pointed to by that reference in the input is not a valid number for those rules.
 
 Additional local context properties:
@@ -3250,9 +3226,34 @@ Additional local context properties:
 }
 ```
 
-#### `array.sparse`
+#### `array.sort`
 
-**Description**
+The array did not match the required sort order.
+
+Additional local context properties:
+```ts
+{
+    order: string, // 'ascending' or 'descending'
+    by: string // The object key used for comparison
+}
+```
+
+#### `array.sort.mismatching`
+
+Failed sorting the array due to mismatching item types.
+
+#### `array.sort.unsupported`
+
+Failed sorting the array due to unsupported item types.
+
+Additional local context properties:
+```ts
+{
+    type: string // The unsupported array item type
+}
+```
+
+#### `array.sparse`
 
 An `undefined` value was found in an array that shouldn't be sparse.
 
@@ -3264,8 +3265,6 @@ Additional local context properties:
 ```
 
 #### `array.unique`
-
-**Description**
 
 A duplicate value was found in an array.
 
@@ -3280,8 +3279,6 @@ Additional local context properties:
 
 #### `array.hasKnown`
 
-**Description**
-
 The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is labelled.
 
 Additional local context properties:
@@ -3293,19 +3290,13 @@ Additional local context properties:
 
 #### `array.hasUnknown`
 
-**Description**
-
 The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is unlabelled.
 
 #### `binary.base`
 
-**Description**
-
 The value is either not a Buffer or could not be cast to a Buffer from a string.
 
 #### `binary.length`
-
-**Description**
 
 The buffer was not of the specified length.
 
@@ -3318,8 +3309,6 @@ Additional local context properties:
 
 #### `binary.max`
 
-**Description**
-
 The buffer contains more bytes than expected.
 
 Additional local context properties:
@@ -3330,8 +3319,6 @@ Additional local context properties:
 ```
 
 #### `binary.min`
-
-**Description**
 
 The buffer contains less bytes than expected.
 
@@ -3344,8 +3331,6 @@ Additional local context properties:
 
 #### `binary.ref`
 
-**Description**
-
 A reference was used in one of [`binary.min()`](#binaryminlimit), [`binary.max()`](#binarymaxlimit), [`binary.length()`](#binarylengthlimit) and the value pointed to by that reference in the input is not a valid number.
 
 Additional local context properties:
@@ -3357,19 +3342,13 @@ Additional local context properties:
 
 #### `boolean.base`
 
-**Description**
-
 The value is either not a boolean or could not be cast to a boolean from one of the truthy or falsy values.
 
 #### `date.base`
 
-**Description**
-
 The value is either not a date or could not be cast to a date from a string or a number.
 
 #### `date.greater`
-
-**Description**
 
 The date is over the limit that you set.
 
@@ -3382,13 +3361,9 @@ Additional local context properties:
 
 #### `date.isoDate`
 
-**Description**
-
 The date does not match the ISO 8601 format.
 
 #### `date.less`
-
-**Description**
 
 The date is under the limit that you set.
 
@@ -3401,8 +3376,6 @@ Additional local context properties:
 
 #### `date.max`
 
-**Description**
-
 The date is over or equal to the limit that you set.
 
 Additional local context properties:
@@ -3413,8 +3386,6 @@ Additional local context properties:
 ```
 
 #### `date.min`
-
-**Description**
 
 The date is under or equal to the limit that you set.
 
@@ -3427,8 +3398,6 @@ Additional local context properties:
 
 #### `date.ref`
 
-**Description**
-
 A reference was used in one of [`date.min()`](#datemindate), [`date.max()`](#datemaxdate), [`date.less()`](#datelessdate) or [`date.greater()`](#dategreaterdate) and the value pointed to by that reference in the input is not a valid date.
 
 Additional local context properties:
@@ -3440,25 +3409,17 @@ Additional local context properties:
 
 #### `date.strict`
 
-**Description**
-
 Occurs when the input is not a Date type and `convert` is disabled.
 
 #### `date.timestamp.javascript`
-
-**Description**
 
 Failed to be converted from a string or a number to a date as JavaScript timestamp.
 
 #### `date.timestamp.unix`
 
-**Description**
-
 Failed to be converted from a string or a number to a date as Unix timestamp.
 
 #### `function.arity`
-
-**Description**
 
 The number of arguments for the function doesn't match the required number.
 
@@ -3471,19 +3432,13 @@ Additional local context properties:
 
 #### `function.base`
 
-**Description**
-
 The input is not a function.
 
 #### `function.class`
 
-**Description**
-
 The input is not a JavaScript class.
 
 #### `function.maxArity`
-
-**Description**
 
 The number of arguments for the function is over the required number.
 
@@ -3496,8 +3451,6 @@ Additional local context properties:
 
 #### `function.minArity`
 
-**Description**
-
 The number of arguments for the function is under the required number.
 
 Additional local context properties:
@@ -3509,13 +3462,9 @@ Additional local context properties:
 
 #### `lazy.base`
 
-**Description**
-
 The lazy function is not set.
 
 #### `lazy.schema`
-
-**Description**
 
 The lazy function didn't return a joi schema.
 
@@ -3528,13 +3477,9 @@ Additional local context properties:
 
 #### `number.base`
 
-**Description**
-
 The value is not a number or could not be cast to a number.
 
 #### `number.greater`
-
-**Description**
 
 The number is lower or equal to the limit that you set.
 
@@ -3547,13 +3492,9 @@ Additional local context properties:
 
 #### `number.integer`
 
-**Description**
-
 The number is not a valid integer.
 
 #### `number.less`
-
-**Description**
 
 The number is higher or equal to the limit that you set.
 
@@ -3566,8 +3507,6 @@ Additional local context properties:
 
 #### `number.max`
 
-**Description**
-
 The number is higher than the limit that you set.
 
 Additional local context properties:
@@ -3578,8 +3517,6 @@ Additional local context properties:
 ```
 
 #### `number.min`
-
-**Description**
 
 The number is lower than the limit that you set.
 
@@ -3592,8 +3529,6 @@ Additional local context properties:
 
 #### `number.multiple`
 
-**Description**
-
 The number could not be divided by the multiple you provided.
 
 Additional local context properties:
@@ -3605,25 +3540,17 @@ Additional local context properties:
 
 #### `number.negative`
 
-**Description**
-
 The number was positive.
 
 #### `number.port`
-
-**Description**
 
 The number didn't look like a port number.
 
 #### `number.positive`
 
-**Description**
-
 The number was negative.
 
 #### `number.precision`
-
-**Description**
 
 The number didn't have the required precision.
 
@@ -3636,19 +3563,13 @@ Additional local context properties:
 
 #### `number.ref`
 
-**Description**
-
 A reference was used in one of [`number.min()`](#numberminlimit), [`number.max()`](#numbermaxlimit), [`number.less()`](#numberlesslimit), [`number.greater()`](#numbergreaterlimit), or [`number.multiple()`](#numbermultiplebase) and the value pointed to by that reference in the input is not a valid number.
 
 #### `number.unsafe`
 
-**Description**
-
 The number is not within the safe range of JavaScript numbers.
 
 #### `object.allowUnknown`
-
-**Description**
 
 An unexpected property was found in the object.
 
@@ -3660,8 +3581,6 @@ Additional local context properties:
 ```
 
 #### `object.and`
-
-**Description**
 
 The AND condition between the properties you specified was not satisfied in that object.
 
@@ -3677,8 +3596,6 @@ Additional local context properties:
 
 #### `object.assert`
 
-**Description**
-
 The schema on an [`object.assert()`](#objectassertref-schema-message) failed to validate.
 
 Additional local context properties:
@@ -3691,13 +3608,9 @@ Additional local context properties:
 
 #### `object.base`
 
-**Description**
-
 The value is not of object type or could not be cast to an object from a string.
 
 #### `object.length`
-
-**Description**
 
 The number of keys for this object is not of the expected length.
 
@@ -3710,8 +3623,6 @@ Additional local context properties:
 
 #### `object.max`
 
-**Description**
-
 The number of keys for this object is over or equal to the limit that you set.
 
 Additional local context properties:
@@ -3722,8 +3633,6 @@ Additional local context properties:
 ```
 
 #### `object.min`
-
-**Description**
 
 The number of keys for this object is under or equal to the limit that you set.
 
@@ -3736,8 +3645,6 @@ Additional local context properties:
 
 #### `object.missing`
 
-**Description**
-
 The OR or XOR condition between the properties you specified was not satisfied in that object, none of it were set.
 
 Additional local context properties:
@@ -3749,8 +3656,6 @@ Additional local context properties:
 ```
 
 #### `object.nand`
-
-**Description**
 
 The NAND condition between the properties you specified was not satisfied in that object.
 
@@ -3766,8 +3671,6 @@ Additional local context properties:
 
 #### `object.ref`
 
-**Description**
-
 A reference was used in one of [`object.min()`](#objectminlimit), [`object.max()`](#objectmaxlimit), [`object.length()`](#objectlengthlimit) and the value pointed to by that reference in the input is not a valid number.
 
 Additional local context properties:
@@ -3779,13 +3682,9 @@ Additional local context properties:
 
 #### `object.refType`
 
-**Description**
-
 The object is not a [`Joi.ref()`](#refkey-options).
 
 #### `object.rename.multiple`
-
-**Description**
 
 Another rename was already done to the same target property.
 
@@ -3800,8 +3699,6 @@ Additional local context properties:
 
 #### `object.rename.override`
 
-**Description**
-
 The target property already exists and you disallowed overrides.
 
 Additional local context properties:
@@ -3815,8 +3712,6 @@ Additional local context properties:
 
 #### `object.schema`
 
-**Description**
-
 The object was not a joi schema.
 
 Additional local context properties:
@@ -3828,8 +3723,6 @@ Additional local context properties:
 
 #### `object.type`
 
-**Description**
-
 The object is not of the type you specified.
 
 Additional local context properties:
@@ -3840,8 +3733,6 @@ Additional local context properties:
 ```
 
 #### `object.with`
-
-**Description**
 
 Property that should have been present at the same time as another one was missing.
 
@@ -3857,8 +3748,6 @@ Additional local context properties:
 
 #### `object.without`
 
-**Description**
-
 Property that should have been absent at the same time as another one was present.
 
 Additional local context properties:
@@ -3873,8 +3762,6 @@ Additional local context properties:
 
 #### `object.xor`
 
-**Description**
-
 The XOR condition between the properties you specified was not satisfied in that object.
 
 Additional local context properties:
@@ -3886,8 +3773,6 @@ Additional local context properties:
 ```
 
 #### `object.oxor`
-
-**Description**
 
 The optional XOR condition between the properties you specified was not satisfied in that object.
 
@@ -3901,43 +3786,29 @@ Additional local context properties:
 
 #### `string.alphanum`
 
-**Description**
-
 The string doesn't only contain alphanumeric characters.
 
 #### `string.base64`
-
-**Description**
 
 The string isn't a valid base64 string.
 
 #### `string.base`
 
-**Description**
-
 The input is not a string.
 
 #### `string.creditCard`
-
-**Description**
 
 The string is not a valid credit card number.
 
 #### `string.dataUri`
 
-**Description**
-
 The string is not a valid data URI.
 
 #### `string.domain`
 
-**Description**
-
 The string is not a valid domain name.
 
 #### `string.email`
-
-**Description**
 
 The string is not a valid e-mail.
 
@@ -3950,31 +3821,21 @@ Additional local context properties:
 
 #### `string.guid`
 
-**Description**
-
 The string is not a valid GUID.
 
 #### `string.hexAlign`
-
-**Description**
 
 The string contains hexadecimal characters but they are not byte-aligned.
 
 #### `string.hex`
 
-**Description**
-
 The string is not a valid hexadecimal string.
 
 #### `string.hostname`
 
-**Description**
-
 The string is not a valid hostname.
 
 #### `string.ipVersion`
-
-**Description**
 
 The string is not a valid IP address considering the provided constraints.
 
@@ -3988,8 +3849,6 @@ Additional local context properties:
 
 #### `string.ip`
 
-**Description**
-
 The string is not a valid IP address.
 
 Additional local context properties:
@@ -4001,19 +3860,13 @@ Additional local context properties:
 
 #### `string.isoDate`
 
-**Description**
-
 The string is not a valid ISO date string.
 
 #### `string.isoDuration`
 
-**Description**
-
 The string must be a valid ISO 8601 duration.
 
 #### `string.length`
-
-**Description**
 
 The string is not of the expected length.
 
@@ -4027,13 +3880,9 @@ Additional local context properties:
 
 #### `string.lowercase`
 
-**Description**
-
 The string isn't all lower-cased.
 
 #### `string.max`
-
-**Description**
 
 The string is larger than expected.
 
@@ -4047,8 +3896,6 @@ Additional local context properties:
 
 #### `string.min`
 
-**Description**
-
 The string is smaller than expected.
 
 Additional local context properties:
@@ -4061,8 +3908,6 @@ Additional local context properties:
 
 #### `string.normalize`
 
-**Description**
-
 The string isn't valid in regards of the normalization form expected.
 
 Additional local context properties:
@@ -4074,8 +3919,6 @@ Additional local context properties:
 
 #### `string.ref`
 
-**Description**
-
 A reference was used in one of [`string.min()`](#stringminlimit-encoding), [`string.max()`](#stringmaxlimit-encoding) or [`string.length()`](#stringlengthlimit-encoding) and the value pointed to by that reference in the input is not a valid number for those rules.
 
 Additional local context properties:
@@ -4086,8 +3929,6 @@ Additional local context properties:
 ```
 
 #### `string.regex.base`
-
-**Description**
 
 The string didn't match the regular expression.
 
@@ -4101,8 +3942,6 @@ Additional local context properties:
 
 #### `string.regex.name`
 
-**Description**
-
 The string didn't match the named regular expression.
 
 Additional local context properties:
@@ -4114,8 +3953,6 @@ Additional local context properties:
 ```
 
 #### `string.regex.invert.base`
-
-**Description**
 
 The string matched the regular expression while it shouldn't.
 
@@ -4129,8 +3966,6 @@ Additional local context properties:
 
 #### `string.regex.invert.name`
 
-**Description**
-
 The string matched the named regular expression while it shouldn't.
 
 Additional local context properties:
@@ -4143,31 +3978,21 @@ Additional local context properties:
 
 #### `string.token`
 
-**Description**
-
 The string isn't a token.
 
 #### `string.trim`
-
-**Description**
 
 The string contains whitespaces around it.
 
 #### `string.uppercase`
 
-**Description**
-
 The string isn't all upper-cased.
 
 #### `string.uri`
 
-**Description**
-
 The string isn't a valid URI.
 
 #### `string.uriCustomScheme`
-
-**Description**
 
 The string isn't a valid URI considering the custom schemes.
 
@@ -4180,19 +4005,13 @@ Additional local context properties:
 
 #### `string.uriRelativeOnly`
 
-**Description**
-
 The string is a valid relative URI.
 
 #### `symbol.base`
 
-**Description**
-
 The input is not a Symbol.
 
 #### `symbol.map`
-
-**Description**
 
 The input is not a Symbol or could not be converted to one.
 
