@@ -4494,6 +4494,30 @@ describe('string', () => {
                 ['  abcdef  ', true, null, 'aabcd']
             ]);
         });
+
+        it('truncates a string (ref)', () => {
+
+            const ref = Joi.ref('b');
+            const schema = Joi.object({
+                a: Joi.string().max(ref).truncate(),
+                b: Joi.number()
+            });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 4 }, true, null, { a: 'abc', b: 4 }],
+                [{ a: 'abcde', b: 2 }, true, null, { a: 'ab', b: 2 }],
+                [{ a: 'abcdef', b: 5 }, true, null, { a: 'abcde', b: 5 }],
+                [{ a: 'abc' }, false, null, {
+                    message: '"a" references "ref:b" which is not a number',
+                    details: [{
+                        message: '"a" references "ref:b" which is not a number',
+                        path: ['a'],
+                        type: 'number.ref',
+                        context: { key: 'a', label: 'a', ref }
+                    }]
+                }]
+            ]);
+        });
     });
 
     describe('validate()', () => {
