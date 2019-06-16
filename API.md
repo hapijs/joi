@@ -2284,7 +2284,9 @@ Renames a key to another name (deletes the renamed key) where:
     - `override` - if `true`, allows renaming a key over an existing key. Defaults to `false`.
     - `ignoreUndefined` - if `true`, skip renaming of a key if it's undefined. Defaults to `false`.
 
-Keys are renamed before any other validation rules are applied.
+Keys are renamed before any other validation rules are applied. If `to` is a template that
+references the object own keys (e.g. `'{.prefix}-{#1}'`), the value of these keys is the raw
+input value, not the value generated after validation.
 
 ```js
 const object = Joi.object({

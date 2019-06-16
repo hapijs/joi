@@ -1478,6 +1478,60 @@ describe('object', () => {
                 });
             });
 
+            it('uses template that references another sibling key', async () => {
+
+                const schema = Joi.object({
+                    prefix: Joi.string().lowercase().required()
+                })
+                    .rename(/^(\d+)$/, Joi.template('{.prefix}{#1}'))
+                    .unknown();
+
+                const input = {
+                    123: 'x',
+                    1: 'y',
+                    0: 'z',
+                    prefix: 'TEST'
+                };
+
+                const value = await Joi.compile(schema).validate(input);
+                expect(value).to.equal({
+                    TEST123: 'x',
+                    TEST1: 'y',
+                    TEST0: 'z',
+                    prefix: 'test'
+                });
+            });
+
+            it('uses template that references peer key', () => {
+
+                const schema = Joi.object({
+                    a: Joi.object()
+                        .rename(/^(\d+)$/, Joi.template('{b.prefix}{#1}'))
+                        .unknown(),
+                    b: {
+                        prefix: Joi.string().lowercase()
+                    }
+                });
+
+                Helper.validate(schema, [
+                    [{ a: { 5: 'x' }, b: { prefix: 'p' } }, true, null, { a: { p5: 'x' }, b: { prefix: 'p' } }],
+                    [{ a: { 5: 'x' }, b: { prefix: 'P' } }, true, null, { a: { p5: 'x' }, b: { prefix: 'p' } }],
+                    [{ b: { prefix: 'P' }, a: { 5: 'x' } }, true, null, { a: { p5: 'x' }, b: { prefix: 'p' } }],
+                    [{ b: {}, a: { 5: 'x' } }, true, null, { a: { 5: 'x' }, b: {} }],
+                    [{ a: { 5: 'x' } }, true, null, { a: { 5: 'x' } }]
+                ]);
+            });
+
+            it('uses template without refs', async () => {
+
+                const schema = Joi.object()
+                    .rename(/^(\d+)$/, Joi.template('x'))
+                    .unknown();
+
+                const value = await Joi.compile(schema).validate({ 1: 'x' });
+                expect(value).to.equal({ x: 'x' });
+            });
+
             it('deletes a key with override if present and undefined', async () => {
 
                 const schema = Joi.object()
