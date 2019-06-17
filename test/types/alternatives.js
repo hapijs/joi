@@ -239,7 +239,7 @@ describe('alternatives', () => {
                         Joi.string().valid('foo', 'bar')
                     ])
                 })
-            ]).prefs({ messages: { wrapArrays: false } });
+            ]).prefs({ errors: { wrapArrays: false } });
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {

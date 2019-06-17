@@ -174,7 +174,7 @@ describe('errors', () => {
             'a()': Joi.number()
         };
 
-        const err = await expect(Joi.validate({ 'a()': 'x' }, schema, { escapeErrors: true })).to.reject();
+        const err = await expect(Joi.validate({ 'a()': 'x' }, schema, { errors: { escapeHtml: true } })).to.reject();
         expect(err).to.be.an.error('"a&#x28;&#x29;" must be a number');
         expect(err.details).to.equal([{
             message: '"a&#x28;&#x29;" must be a number',
@@ -183,7 +183,7 @@ describe('errors', () => {
             context: { label: 'a()', key: 'a()', value: 'x' }
         }]);
 
-        const err2 = await expect(Joi.validate({ 'b()': 'x' }, schema, { escapeErrors: true })).to.reject();
+        const err2 = await expect(Joi.validate({ 'b()': 'x' }, schema, { errors: { escapeHtml: true } })).to.reject();
         expect(err2).to.be.an.error('"b&#x28;&#x29;" is not allowed');
         expect(err2.details).to.equal([{
             message: '"b&#x28;&#x29;" is not allowed',
@@ -327,7 +327,7 @@ describe('errors', () => {
 
     it('overrides wrapArrays', async () => {
 
-        const schema = Joi.array().items(Joi.boolean()).prefs({ messages: { wrapArrays: false } });
+        const schema = Joi.array().items(Joi.boolean()).prefs({ errors: { wrapArrays: false } });
         const err = await expect(schema.validate([4])).to.reject();
         expect(err).to.be.an.error('"[0]" must be a boolean');
         expect(err.details).to.equal([{

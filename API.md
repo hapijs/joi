@@ -296,17 +296,18 @@ Validates a value using the given schema and options where:
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
     `validate()` and not using `any.prefs()`.
   - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
-  - `dateErrorFormat` - sets the string format used when including dates in error messages. Options are:
-    - `'date'` - date string.
-    - `'iso'` - date time ISO string. This is the default.
-    - `'string'` - JS default date time string.
-    - `'time'` - time string.
-    - `'utc'` - UTC date time string.
-  - `escapeErrors` - when `true`, error message templates will escape special characters to HTML
-    entities, for security purposes. Defaults to `false`.
+  - `error` - error formatting settings:
+    - `dateFormat` - sets the string format used when including dates in error messages. Options are:
+      - `'date'` - date string.
+      - `'iso'` - date time ISO string. This is the default.
+      - `'string'` - JS default date time string.
+      - `'time'` - time string.
+      - `'utc'` - UTC date time string.
+    - `escapeHtml` - when `true`, error message templates will escape special characters to HTML
+      entities, for security purposes. Defaults to `false`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use
     the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML
-    escaped if the option `escapeErrors` is set to `true`.
+    escaped if the option `errors.escapeHtml` is set to `true`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
   - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties. Defaults to `false`.
   - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
@@ -556,7 +557,7 @@ Generates a template from a string where:
 The template syntax uses `{}` and `{{}}` enclosed variables to indicate that these values should be
 replace with the actual referenced values at rendering time. Single braces `{}` leave the value
 as-is, while double braces `{{}}` HTML-escape the result (unless the template is used for error messages
-and the `escapeErrors` preference flag is set to `false`).
+and the `errors.escapeHtml` preference flag is set to `false`).
 
 The variable names can have one of the following prefixes:
 - `#` - indicates the variable references a local context value. For example, in errors this is the

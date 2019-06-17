@@ -20,7 +20,7 @@ describe('Template', () => {
         const template = Joi.template(source);
 
         expect(template.source).to.equal(source);
-        expect(template._template).to.be.null();
+        expect(template.isDynamic()).to.be.false();
         expect(template.render()).to.equal(source);
     });
 
@@ -30,7 +30,7 @@ describe('Template', () => {
         const template = Joi.template(source);
 
         expect(template.source).to.equal(source);
-        expect(template._template).to.be.null();
+        expect(template.isDynamic()).to.be.false();
         expect(template.render()).to.equal(source);
     });
 
@@ -40,7 +40,7 @@ describe('Template', () => {
         const template = Joi.template(source);
 
         expect(template.source).to.equal(source);
-        expect(template._template).to.be.null();
+        expect(template.isDynamic()).to.be.false();
         expect(template.render()).to.equal(source);
     });
 
@@ -50,7 +50,7 @@ describe('Template', () => {
         const template = Joi.template(source);
 
         expect(template.source).to.equal(source);
-        expect(template._template).to.be.null();
+        expect(template.isDynamic()).to.be.false();
         expect(template.render()).to.equal(source);
     });
 
@@ -60,7 +60,7 @@ describe('Template', () => {
         const template = Joi.template(source);
 
         expect(template.source).to.equal(source);
-        expect(template._template).to.be.null();
+        expect(template.isDynamic()).to.be.false();
         expect(template.render()).to.equal('text {{{ without }}} any }} {{escaped}} variables');
     });
 

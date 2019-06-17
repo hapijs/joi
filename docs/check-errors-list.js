@@ -10,7 +10,7 @@ const internals = {
     API: Fs.readFileSync(Path.join(__dirname, '../API.md'), 'utf8'),
     startString: '<!-- errors -->',
     endString: '<!-- errorsstop -->',
-    ignoredCodes: ['root', 'key', 'wrapArrays']
+    ignoredCodes: ['root']
 };
 
 

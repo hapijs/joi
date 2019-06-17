@@ -1553,7 +1553,7 @@ describe('any', () => {
                     })
                 });
 
-                const err = await expect(Joi.validate({ a: new Date('1973-01-01') }, schema, { dateErrorFormat: 'date', abortEarly: false })).to.reject();
+                const err = await expect(Joi.validate({ a: new Date('1973-01-01') }, schema, { errors: { dateFormat: 'date' }, abortEarly: false })).to.reject();
                 expect(err.isJoi).to.not.exist();
                 expect(err.message).to.equal(`"a" must be larger than or equal to "${min.toDateString()}" and "a" must be greater than "${min.toDateString()}"`);
             });

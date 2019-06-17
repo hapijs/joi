@@ -749,7 +749,7 @@ describe('date', () => {
 
                 const d = new Date('1-1-1970 UTC');
                 const message = `"value" must be less than "${d}"`;
-                Helper.validate(Joi.date().less('1-1-1970 UTC').prefs({ dateErrorFormat: 'string' }), [
+                Helper.validate(Joi.date().less('1-1-1970 UTC').prefs({ errors: { dateFormat: 'string' } }), [
                     ['1-1-1971 UTC', false, null, {
                         message,
                         details: [{
