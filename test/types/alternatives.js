@@ -366,10 +366,7 @@ describe('alternatives', () => {
 
         it('throws on invalid ref (not string)', () => {
 
-            expect(() => {
-
-                Joi.alternatives().when(5, { is: 6, then: Joi.number() });
-            }).to.throw('Invalid condition: 5');
+            expect(() => Joi.alternatives().when(5, { is: 6, then: Joi.number() })).to.throw('Invalid condition: 5');
         });
 
         it('throws on unreachable condition', () => {
@@ -382,6 +379,27 @@ describe('alternatives', () => {
                     b: Joi.any()
                 });
             }).to.throw('Unreachable condition');
+        });
+
+        it('tests only otherwise', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.alternatives().when('a', { is: 0, otherwise: Joi.valid(1) })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 1, b: 1 }, true],
+                [{ a: 0, b: 2 }, false, null, {
+                    message: '"b" does not match any of the allowed types',
+                    details: [{
+                        message: '"b" does not match any of the allowed types',
+                        path: ['b'],
+                        type: 'alternatives.base',
+                        context: { value: 2, label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
         });
 
         describe('with ref', () => {
@@ -1186,6 +1204,65 @@ describe('alternatives', () => {
                     }],
                     [{ foo: 'hasBar', bar: 42 }, true, null, { foo: 'hasBar', bar: 42 }],
                     [{}, true, null, {}]
+                ]);
+            });
+        });
+
+        describe('with switch', () => {
+
+            it('sets value based on multiple conditions', () => {
+
+                const schema = Joi.object({
+                    a: Joi.number().required(),
+                    b: Joi.alternatives()
+                        .when('a', [
+                            { is: 0, then: Joi.valid(1) },
+                            { is: 1, then: Joi.valid(2) },
+                            { is: 2, then: Joi.valid(3), otherwise: Joi.valid(4) }
+                        ])
+                });
+
+                Helper.validate(schema, [
+                    [{ a: 0, b: 1 }, true],
+                    [{ a: 0, b: 2 }, false, null, {
+                        message: '"b" must be one of [1]',
+                        details: [{
+                            message: '"b" must be one of [1]',
+                            path: ['b'],
+                            type: 'any.allowOnly',
+                            context: { value: 2, valids: [1], label: 'b', key: 'b' }
+                        }]
+                    }],
+                    [{ a: 1, b: 2 }, true],
+                    [{ a: 1, b: 3 }, false, null, {
+                        message: '"b" must be one of [2]',
+                        details: [{
+                            message: '"b" must be one of [2]',
+                            path: ['b'],
+                            type: 'any.allowOnly',
+                            context: { value: 3, valids: [2], label: 'b', key: 'b' }
+                        }]
+                    }],
+                    [{ a: 2, b: 3 }, true],
+                    [{ a: 2, b: 2 }, false, null, {
+                        message: '"b" must be one of [3]',
+                        details: [{
+                            message: '"b" must be one of [3]',
+                            path: ['b'],
+                            type: 'any.allowOnly',
+                            context: { value: 2, valids: [3], label: 'b', key: 'b' }
+                        }]
+                    }],
+                    [{ a: 42, b: 4 }, true],
+                    [{ a: 42, b: 128 }, false, null, {
+                        message: '"b" must be one of [4]',
+                        details: [{
+                            message: '"b" must be one of [4]',
+                            path: ['b'],
+                            type: 'any.allowOnly',
+                            context: { value: 128, valids: [4], label: 'b', key: 'b' }
+                        }]
+                    }]
                 ]);
             });
         });

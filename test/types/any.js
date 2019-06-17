@@ -2961,5 +2961,226 @@ describe('any', () => {
                 }]
             });
         });
+
+        it('sets value based on multiple conditions', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number()
+                    .when('a', [
+                        { is: 0, then: Joi.valid(1) },
+                        { is: 1, then: Joi.valid(2) },
+                        { is: 2, then: Joi.valid(3) }
+                    ])
+            });
+
+            Helper.validate(schema, [
+                [{ a: 0, b: 1 }, true],
+                [{ a: 0, b: 2 }, false, null, {
+                    message: '"b" must be one of [1]',
+                    details: [{
+                        message: '"b" must be one of [1]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 2, valids: [1], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 1, b: 2 }, true],
+                [{ a: 1, b: 3 }, false, null, {
+                    message: '"b" must be one of [2]',
+                    details: [{
+                        message: '"b" must be one of [2]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 3, valids: [2], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 2, b: 3 }, true],
+                [{ a: 2, b: 4 }, false, null, {
+                    message: '"b" must be one of [3]',
+                    details: [{
+                        message: '"b" must be one of [3]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 4, valids: [3], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 42, b: 128 }, true]
+            ]);
+        });
+
+        it('sets value based on multiple conditions with otherwise', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number()
+                    .when('a', {
+                        switch: [
+                            { is: 0, then: Joi.valid(1) },
+                            { is: 1, then: Joi.valid(2) },
+                            { is: 2, then: Joi.valid(3) }
+                        ],
+                        otherwise: Joi.valid(4)
+                    })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 0, b: 1 }, true],
+                [{ a: 0, b: 2 }, false, null, {
+                    message: '"b" must be one of [1]',
+                    details: [{
+                        message: '"b" must be one of [1]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 2, valids: [1], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 1, b: 2 }, true],
+                [{ a: 1, b: 3 }, false, null, {
+                    message: '"b" must be one of [2]',
+                    details: [{
+                        message: '"b" must be one of [2]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 3, valids: [2], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 2, b: 3 }, true],
+                [{ a: 2, b: 2 }, false, null, {
+                    message: '"b" must be one of [3]',
+                    details: [{
+                        message: '"b" must be one of [3]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 2, valids: [3], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 42, b: 4 }, true],
+                [{ a: 42, b: 128 }, false, null, {
+                    message: '"b" must be one of [4]',
+                    details: [{
+                        message: '"b" must be one of [4]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 128, valids: [4], label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('sets value based on multiple conditions with otherwise (short)', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number()
+                    .when('a', [
+                        { is: 0, then: 1 },
+                        { is: 1, then: 2 },
+                        { is: 2, then: 3, otherwise: 4 }
+                    ])
+            });
+
+            Helper.validate(schema, [
+                [{ a: 0, b: 1 }, true],
+                [{ a: 0, b: 2 }, false, null, {
+                    message: '"b" must be one of [1]',
+                    details: [{
+                        message: '"b" must be one of [1]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 2, valids: [1], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 1, b: 2 }, true],
+                [{ a: 1, b: 3 }, false, null, {
+                    message: '"b" must be one of [2]',
+                    details: [{
+                        message: '"b" must be one of [2]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 3, valids: [2], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 2, b: 3 }, true],
+                [{ a: 2, b: 2 }, false, null, {
+                    message: '"b" must be one of [3]',
+                    details: [{
+                        message: '"b" must be one of [3]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 2, valids: [3], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 42, b: 4 }, true],
+                [{ a: 42, b: 128 }, false, null, {
+                    message: '"b" must be one of [4]',
+                    details: [{
+                        message: '"b" must be one of [4]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 128, valids: [4], label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('sets value based on multiple conditions (with base rules)', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().valid(10)
+                    .when('a', [
+                        { is: 0, then: Joi.valid(1) },
+                        { is: 1, then: Joi.valid(2) },
+                        { is: 2, then: Joi.valid(3) }
+                    ])
+            });
+
+            Helper.validate(schema, [
+                [{ a: 0, b: 1 }, true],
+                [{ a: 0, b: 2 }, false, null, {
+                    message: '"b" must be one of [10, 1]',
+                    details: [{
+                        message: '"b" must be one of [10, 1]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 2, valids: [10, 1], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 0, b: 10 }, true],
+                [{ a: 1, b: 2 }, true],
+                [{ a: 1, b: 3 }, false, null, {
+                    message: '"b" must be one of [10, 2]',
+                    details: [{
+                        message: '"b" must be one of [10, 2]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 3, valids: [10, 2], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 1, b: 10 }, true],
+                [{ a: 2, b: 3 }, true],
+                [{ a: 2, b: 4 }, false, null, {
+                    message: '"b" must be one of [10, 3]',
+                    details: [{
+                        message: '"b" must be one of [10, 3]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 4, valids: [10, 3], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 2, b: 10 }, true],
+                [{ a: 42, b: 128 }, false, null, {
+                    message: '"b" must be one of [10]',
+                    details: [{
+                        message: '"b" must be one of [10]',
+                        path: ['b'],
+                        type: 'any.allowOnly',
+                        context: { value: 128, valids: [10], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 42, b: 10 }, true]
+            ]);
+        });
     });
 });

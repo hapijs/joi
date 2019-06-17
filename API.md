@@ -283,7 +283,7 @@
 
 ### `version`
 
-Property showing the current version of joi being used.
+Property showing the current version of **joi** being used.
 
 ### `validate(value, schema, [options], [callback])`
 
@@ -567,7 +567,7 @@ The variable names can have one of the following prefixes:
 
 ### `isSchema(schema)`
 
-Checks whether or not the provided argument is a joi schema.
+Checks whether or not the provided argument is a **joi** schema.
 
 ```js
 const schema = Joi.any();
@@ -588,7 +588,7 @@ const result = Joi.reach(schema, ['foo', 'bar']); //same as number
 
 ### `defaults(fn)`
 
-Creates a new Joi instance that will apply defaults onto newly created schemas through the use of the `fn` function that takes exactly one argument, the schema being created.
+Creates a new **joi** instance that will apply defaults onto newly created schemas through the use of the `fn` function that takes exactly one argument, the schema being created.
 
 The function must always return a schema, even if untransformed.
 
@@ -610,7 +610,7 @@ const schema = defaultJoi.object(); // Equivalent to a Joi.object().min(1)
 
 ### `bind()`
 
-By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because they use `this` internally. So `Joi.string()` works but if you extract the function from it and call `string()` it won't. `bind()` creates a new Joi instance where all the functions relying on `this` are bound to the Joi instance.
+By default, some **joi** methods to function properly need to rely on the **joi** instance they are attached to because they use `this` internally. So `Joi.string()` works but if you extract the function from it and call `string()` it won't. `bind()` creates a new **joi** instance where all the functions relying on `this` are bound to the **joi** instance.
 
 ```js
 const { object, string } = require('@hapi/joi').bind();
@@ -622,9 +622,9 @@ const schema = object({
 
 ### `extend(extension)`
 
-Creates a new Joi instance customized with the extension(s) you provide included.
+Creates a new **joi** instance customized with the extension(s) you provide included.
 
-It is **important** to understand that original Joi library is not modified by this.
+It is **important** to understand that original **joi** library is not modified by this.
 
 #### Terms
 
@@ -646,19 +646,19 @@ The extension makes use of some common structures that need to be described prio
 
 Extension objects use the following parameters :
 * `name` - name of the new type you are defining, this can be an existing type. **Required**.
-* `base` - an existing Joi schema to base your type upon. Defaults to `Joi.any()`.
+* `base` - an existing **joi** schema to base your type upon. Defaults to `Joi.any()`.
 * `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `prefs`.
 * `pre` - an optional function that runs first in the validation chain, usually serves when you need to cast values. It takes 3 arguments `value`, `state` and `prefs`.
 * `language` - an optional object to add error definitions. Every key will be prefixed by the type name.
 * `describe` - an optional function taking the fully formed description to post-process it.
 * `rules` - an optional array of rules to add.
   * `name` - name of the new rule. **Required**.
-  * `params` - an optional object containing Joi schemas of each parameter ordered. You can also pass a single Joi schema as long as it is a `Joi.object()`, of course some methods such as `pattern` or `rename` won't be useful or won't work at all in this given context.
-  * `setup` - an optional function that takes an object with the provided parameters to allow for internals manipulation of the schema when a rule is set, you can optionally return a new Joi schema that will be taken as the new schema instance. At least one of `setup` or `validate` **must** be provided.
+  * `params` - an optional object containing **joi** schemas of each parameter ordered. You can also pass a single **joi** schema as long as it is a `Joi.object()`, of course some methods such as `pattern` or `rename` won't be useful or won't work at all in this given context.
+  * `setup` - an optional function that takes an object with the provided parameters to allow for internals manipulation of the schema when a rule is set, you can optionally return a new **joi** schema that will be taken as the new schema instance. At least one of `setup` or `validate` **must** be provided.
   * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `prefs`. At least one of `setup` or `validate` **must** be provided.
   * `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
 
-Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended joi being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
+Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended **joi** being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
 
 The `params` of `rules` rely on the fact that all engines, even though not stated in the ECMA specifications, preserve the order of object keys, this is a conscious choice to simplify the API for the end-user. If you ever see an engine misbehaving or are uncomfortable relying on this, you can use a single option object to describe your parameters, like:
 ```js
@@ -865,7 +865,7 @@ const schema = Joi.any().description('this key will match anything you give it')
 #### `any.empty(schema)`
 
 Considers anything that matches the schema to be empty (`undefined`).
-- `schema` - any object or joi schema to match. An undefined schema unsets that rule.
+- `schema` - any object or **joi** schema to match. An undefined schema unsets that rule.
 
 ```js
 let schema = Joi.string().empty('');
@@ -876,7 +876,7 @@ schema.validate(''); // returns { error: "value" is not allowed to be empty, val
 
 #### `any.error(err)`
 
-Overrides the default joi error with a custom error if the rule fails where:
+Overrides the default **joi** error with a custom error if the rule fails where:
 - `err` can be:
   - an instance of `Error` - the override error.
   - a function with the signature `function(errors)`, where `errors` is an array of errors and it returns a single `Error`.
@@ -1182,16 +1182,24 @@ Converts the type into an [`alternatives`](#alternatives---inherits-from-any) ty
 conditions merged into the type definition where:
 - `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
-    - `is` - the required condition **joi** type. Anything that is not a joi schema will be converted
-      using [Joi.compile](#compileschema). Forbidden when `condition` is a schema.
-    - `then` - the alternative schema type if the condition is true. Required if `otherwise` is missing.
-    - `otherwise` - the alternative schema type if the condition is false. Required if `then` is missing.
+    - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be
+      converted using [Joi.compile](#compileschema). By default, the `is` condition schema allows for
+      `undefined` values. Use `.required()` to override. For example, use `is: Joi.number().required()`
+      to guarantee that a **joi** reference exists and is a number.
+    - `then` - if the condition is true, the **joi** schema to use.
+    - `otherwise` - if the condition is false, the **joi** schema to use.
+    - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`.
+      The last item in the array may also contain `otherwise`.
 
-Notes:
-- By default, the `is` condition schema allows for `undefined` values. Use `.required()` to override.
-  For example, use `is: Joi.number().required()` to guarantee that a joi reference exists and is a number.
-- Chaining multiple `when()` statement does not produce a logical AND operation. Because the result of
-  this method is a new `alternatives()` type, adding additional whens create a chain of tries.
+If `condition` is a reference:
+- one of `is` or `switch` is required.
+- one of `then`, `otherwise`, or `switch` is required.
+- cannot use `is` or `then` with `switch`.
+- cannot specify `otherwise` both inside the last `switch` statement and outside.
+
+If `condition` is a schema:
+- cannot specify `is` or `switch`.
+- one of `then` or `otherwise` is required.
 
 ```js
 const schema = {
@@ -1286,6 +1294,37 @@ const schema = Joi.object({
         is: Joi.number().required(),
         then: Joi.number().greater(Joi.ref('min')),
     }),
+});
+```
+
+To evaluate multiple values on a single reference:
+
+```js
+const schema = Joi.object({
+    a: Joi.number().required(),
+    b: Joi.number()
+        .when('a', {
+            switch: [
+                { is: 0, then: Joi.valid(1) },
+                { is: 1, then: Joi.valid(2) },
+                { is: 2, then: Joi.valid(3) }
+            ],
+            otherwise: Joi.valid(4)
+        })
+});
+```
+
+Or shorter:
+
+```js
+const schema = Joi.object({
+    a: Joi.number().required(),
+    b: Joi.number()
+        .when('a', [
+            { is: 0, then: 1 },
+            { is: 1, then: 2 },
+            { is: 2, then: 3, otherwise: 4 }
+        ])
 });
 ```
 
@@ -2122,7 +2161,7 @@ Possible validation errors: [`object.length`](#objectlength), [`object.ref`](#ob
 #### `object.pattern(pattern, schema)`
 
 Specify validation rules for unknown keys matching a pattern where:
-- `pattern` - a pattern that can be either a regular expression or a joi schema that will be tested against the unknown key names.
+- `pattern` - a pattern that can be either a regular expression or a **joi** schema that will be tested against the unknown key names.
 - `schema` - the schema object matching keys must validate against.
 
 ```js
@@ -2262,7 +2301,7 @@ Possible validation errors: [`object.without`](#objectwithout)
 
 #### `object.ref()`
 
-Requires the object to be a Joi reference.
+Requires the object to be a **joi** reference.
 
 ```js
 const schema = Joi.object().ref();
@@ -2375,8 +2414,8 @@ Possible validation errors: [`object.type`](#objecttype)
 
 #### `object.schema([type])`
 
-Requires the object to be a Joi schema instance where:
-- `type` - optional joi type to require.
+Requires the object to be a **joi** schema instance where:
+- `type` - optional **joi** schema to require.
 
 ```js
 const schema = Joi.object().schema();
@@ -2424,7 +2463,7 @@ The behavior is exactly the same as `requiredKeys`.
 
 Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must
 be enabled with `allow('')`. However, if you want to specify a default value in case of empty string you have to use a
-different pattern: `Joi.string().empty('').default('default value')`. This tells Joi that the empty string should be
+different pattern: `Joi.string().empty('').default('default value')`. This tells **joi** that the empty string should be
 considered as an empty value (instead of invalid) and which value to use as default.
 
 If the validation `convert` option is on (enabled by default), a string will be converted using the specified modifiers
@@ -2922,9 +2961,27 @@ Adds a conditional alternative schema type, either based on another key (not the
 schema peeking into the current value, where:
 - `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
-    - `is` - the required condition **joi** type. Forbidden when `condition` is a schema.
-    - `then` - the alternative schema type to **try** if the condition is true. Required if `otherwise` is missing.
-    - `otherwise` - the alternative schema type to **try** if the condition is false. Required if `then` is missing.
+    - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be
+      converted using [Joi.compile](#compileschema).
+    - `then` - if the condition is true, the **joi** schema to use.
+    - `otherwise` - if the condition is false, the **joi** schema to use.
+    - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`.
+      The last item in the array may also contain `otherwise`.
+
+If `condition` is a reference:
+- one of `is` or `switch` is required.
+- one of `then`, `otherwise`, or `switch` is required.
+- cannot use `is` or `then` with `switch`.
+- cannot specify `otherwise` both inside the last `switch` statement and outside.
+
+If `condition` is a schema:
+- cannot specify `is` or `switch`.
+- one of `then` or `otherwise` is required.
+
+Note that `alternatives.when()` is different than `any.when()`. When you use `any.when()` you end
+up with an alternatives type that is based on the base type `when()` was called on. Each `then` or
+`otherwise` is a concatenation of the base type with the other schemas. You cannot add additional
+conditions to such an alternatives type.
 
 ```js
 const schema = {
@@ -2993,7 +3050,7 @@ Possible validation errors: [`lazy.base`](#lazybase), [`lazy.schema`](#lazyschem
 
 ## Errors
 
-Joi throws `ValidationError`s containing :
+**joi** throws `ValidationError`s containing :
 - `name` - `'ValidationError'`.
 - `isJoi` - `true`.
 - `details` - an array of errors :
@@ -3008,7 +3065,7 @@ Joi throws `ValidationError`s containing :
 - `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occurred. Takes an optional parameter that, if truthy, will strip the colors out of the output.
 - `_object` - the original object to validate.
 
-Check if an Error is a Joi `ValidationError` like:
+Check if an Error is a **joi** `ValidationError` like:
 ```js
 } catch (error) {
     if (error instanceof Joi.ValidationError) {
@@ -3468,7 +3525,7 @@ The lazy function is not set.
 
 #### `lazy.schema`
 
-The lazy function didn't return a joi schema.
+The lazy function didn't return a **joi** schema.
 
 Additional local context properties:
 ```ts
@@ -3714,12 +3771,12 @@ Additional local context properties:
 
 #### `object.schema`
 
-The object was not a joi schema.
+The object was not a **joi** schema.
 
 Additional local context properties:
 ```ts
 {
-    type: string // The required schema type
+    type: string // The required schema
 }
 ```
 
