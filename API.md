@@ -305,10 +305,8 @@ Validates a value using the given schema and options where:
   - `escapeErrors` - when `true`, error message templates will escape special characters to HTML
     entities, for security purposes. Defaults to `false`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use
-    the same rules as [templates](#template-syntax) with the following error-specific additions:
-    - variables in double braces `{{var}}` are HTML escaped if the option `escapeErrors` is set to `true`.
-    - rendered messages are always prefixed by the key name, unless a `{label}` or `{{label}}` is
-      present in the template or if the template is prefixed by a `!!`.
+    the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML
+    escaped if the option `escapeErrors` is set to `true`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
   - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties. Defaults to `false`.
   - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.

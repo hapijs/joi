@@ -33,7 +33,7 @@ describe('ref', () => {
 
     it('reaches self', () => {
 
-        const schema = Joi.number().min(10).message('is {.} and that is not good enough');
+        const schema = Joi.number().min(10).message('"{#label}" is {.} and that is not good enough');
         expect(schema.validate(1).error).to.be.an.error('"value" is 1 and that is not good enough');
     });
 

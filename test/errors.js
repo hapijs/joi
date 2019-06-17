@@ -50,19 +50,19 @@ describe('errors', () => {
             notEmpty: ''
         };
 
-        const lang = {
-            'any.empty': '3',
-            'date.base': '18',
-            'string.base': '13',
-            'string.min': '14',
-            'string.max': '15',
-            'string.alphanum': '16',
-            'string.email': '19',
-            'object.without': '7',
-            'object.rename.override': '11'
+        const messages = {
+            'any.empty': '"{#label}" 3',
+            'date.base': '"{#label}" 18',
+            'string.base': '"{#label}" 13',
+            'string.min': '"{#label}" 14',
+            'string.max': '"{#label}" 15',
+            'string.alphanum': '"{#label}" 16',
+            'string.email': '"{#label}" 19',
+            'object.without': '"{#label}" 7',
+            'object.rename.override': '"{#label}" 11'
         };
 
-        const error = await expect(Joi.validate(value, schema, { abortEarly: false, messages: lang })).to.reject();
+        const error = await expect(Joi.validate(value, schema, { abortEarly: false, messages })).to.reject();
 
         value.required = value.renamed;
         delete value.renamed;
@@ -162,19 +162,6 @@ describe('errors', () => {
         expect(err).to.be.an.error('my hero "value" is not [sad]');
         expect(err.details).to.equal([{
             message: 'my hero "value" is not [sad]',
-            path: [],
-            type: 'any.allowOnly',
-            context: { value: 5, valids: ['sad'], label: 'value' }
-        }]);
-    });
-
-    it('accepts an empty key', async () => {
-
-        const schema = Joi.valid('sad').prefs({ messages: { key: '' } });
-        const err = await expect(schema.validate(5)).to.reject();
-        expect(err).to.be.an.error('must be one of [sad]');
-        expect(err.details).to.equal([{
-            message: 'must be one of [sad]',
             path: [],
             type: 'any.allowOnly',
             context: { value: 5, valids: ['sad'], label: 'value' }
@@ -335,19 +322,6 @@ describe('errors', () => {
             path: [],
             type: 'string.base',
             context: { value: 4, label: 'blah' }
-        }]);
-    });
-
-    it('overrides label key messages', async () => {
-
-        const schema = Joi.string().prefs({ messages: { key: 'my own {#label} ' } });
-        const err = await expect(schema.validate(4)).to.reject();
-        expect(err).to.be.an.error('my own value must be a string');
-        expect(err.details).to.equal([{
-            message: 'my own value must be a string',
-            path: [],
-            type: 'string.base',
-            context: { value: 4, label: 'value' }
         }]);
     });
 

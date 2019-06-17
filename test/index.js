@@ -3166,7 +3166,7 @@ describe('Joi', () => {
             const customJoi = Joi.extend({
                 name: 'myType',
                 messages: {
-                    'myType.bar': 'oh no bar !'
+                    'myType.bar': '"{#label}" oh no bar !'
                 },
                 rules: [
                     {
@@ -3229,7 +3229,7 @@ describe('Joi', () => {
             const customJoi = Joi.extend({
                 name: 'myType',
                 messages: {
-                    'myType.bar': 'oh no bar !'
+                    'myType.bar': '"{#label}" oh no bar !'
                 },
                 rules: [
                     {
@@ -3541,7 +3541,7 @@ describe('Joi', () => {
 
             const base = Joi.any().prefs({
                 messages: {
-                    'myType.foo': 'original'
+                    'myType.foo': '"{#label}" original'
                 }
             });
 
@@ -3549,7 +3549,7 @@ describe('Joi', () => {
                 base,
                 name: 'myType',
                 messages: {
-                    'myType.foo': 'modified'
+                    'myType.foo': '"{#label}" modified'
                 },
                 rules: [
                     {
@@ -3563,7 +3563,7 @@ describe('Joi', () => {
             });
 
             // Checks for a messages leak in the base
-            expect(base._preferences.messages['myType.foo']).to.equal('original');
+            expect(base._preferences.messages['myType.foo']).to.equal('"{#label}" original');
 
             const schema = customJoi.myType().foo();
             const result = schema.validate({});
@@ -3581,7 +3581,7 @@ describe('Joi', () => {
                 base,
                 name: 'myType',
                 messages: {
-                    'myType.foo': 'foo'
+                    'myType.foo': '"{#label}" foo'
                 },
                 rules: [
                     {
@@ -4123,7 +4123,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    messages: { 'number.foo': 'foo' },
+                    messages: { 'number.foo': '"{#label}" foo' },
                     rules: [{
                         name: 'foo',
                         validate(params, value, state, prefs) {
@@ -4135,7 +4135,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    messages: { 'number.bar': 'bar' },
+                    messages: { 'number.bar': '"{#label}" bar' },
                     rules: [{
                         name: 'bar',
                         validate(params, value, state, prefs) {
@@ -4153,7 +4153,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    messages: { 'number.foo': 'foo' },
+                    messages: { 'number.foo': '"{#label}" foo' },
                     rules: [{
                         name: 'foo',
                         validate(params, value, state, prefs) {
@@ -4193,7 +4193,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    messages: { 'number.bar': 'bar' },
+                    messages: { 'number.bar': '"{#label}" bar' },
                     rules: [{
                         name: 'bar',
                         validate(params, value, state, prefs) {
