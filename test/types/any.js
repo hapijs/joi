@@ -2088,8 +2088,8 @@ describe('any', () => {
             const baseSchema = Joi.any();
             expect(baseSchema.describe().options).to.undefined();
 
-            const languageSchema = baseSchema.prefs({ language: { 'type.foo': 'foo' } });
-            expect(languageSchema.describe().options).to.equal({ language: { 'type.foo': 'foo' } });
+            const languageSchema = baseSchema.prefs({ messages: { 'type.foo': 'foo' } });
+            expect(languageSchema.describe().options).to.equal({ messages: { 'type.foo': 'foo' } });
 
             const normalOptionSchema = baseSchema.prefs({ abortEarly: true });
             expect(normalOptionSchema.describe().options).to.equal({ abortEarly: true });
@@ -2097,27 +2097,27 @@ describe('any', () => {
             const normalOptionsOverLanguageSchema = languageSchema.prefs({ abortEarly: true });
             expect(normalOptionsOverLanguageSchema.describe().options).to.equal({
                 abortEarly: true,
-                language: {
+                messages: {
                     'type.foo': 'foo'
                 }
             });
 
-            const languageOptionsOverNormalOptionsSchema = normalOptionSchema.prefs({ language: { 'type.foo': 'foo' } });
+            const languageOptionsOverNormalOptionsSchema = normalOptionSchema.prefs({ messages: { 'type.foo': 'foo' } });
             expect(languageOptionsOverNormalOptionsSchema.describe().options).to.equal({
                 abortEarly: true,
-                language: {
+                messages: {
                     'type.foo': 'foo'
                 }
             });
 
             const languageOptionsOverLanguageOptionsSchema = languageSchema.prefs({
-                language: {
+                messages: {
                     'type.bar': 'bar',
                     'type2.foo': 'foo'
                 }
             });
             expect(languageOptionsOverLanguageOptionsSchema.describe().options).to.equal({
-                language: {
+                messages: {
                     'type.foo': 'foo',
                     'type.bar': 'bar',
                     'type2.foo': 'foo'
@@ -2207,7 +2207,7 @@ describe('any', () => {
             const custom = Joi.extend({
                 name: 'ext',
                 base: Joi.number(),
-                language: {
+                messages: {
                     big: 'Not big enough'
                 },
                 rules: [

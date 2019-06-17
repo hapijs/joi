@@ -3,14 +3,14 @@
 const Fs = require('fs');
 const Path = require('path');
 
-const Language = require('../lib/language');
+const Messages = require('../lib/messages');
 
 
 const internals = {
     API: Fs.readFileSync(Path.join(__dirname, '../API.md'), 'utf8'),
     startString: '<!-- errors -->',
     endString: '<!-- errorsstop -->',
-    ignoredCodes: ['root', 'key', 'messages.wrapArrays']
+    ignoredCodes: ['root', 'key', 'wrapArrays']
 };
 
 
@@ -29,7 +29,7 @@ internals.parseTitles = function (markdown) {
 
 internals.checkMissing = function (titles) {
 
-    return Object.keys(Language.errors)
+    return Object.keys(Messages.errors)
         .filter((code) => !internals.ignoredCodes.includes(code))
         .filter((code) => !titles.includes(code))
         .sort();

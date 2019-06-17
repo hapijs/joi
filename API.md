@@ -302,11 +302,13 @@ Validates a value using the given schema and options where:
     - `'string'` - JS default date time string.
     - `'time'` - time string.
     - `'utc'` - UTC date time string.
-  - `escapeErrors` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
-  - `language` - overrides individual error messages. Defaults to no override (`{}`). Messages apply the following rules :
-    - variables are put between curly braces like `{var}`, or `{{var}}` to be html escaped if the option `escapeErrors` is also set to `true`
-    - strings are always preceded by the key name, unless a `{{label}}` is found elsewhere or if the string is prefixed by a `!!`
-    - to better understand the structure of the language, it's advised to have a look at the existing messages you want to override [here](lib/language.js)
+  - `escapeErrors` - when `true`, error message templates will escape special characters to HTML
+    entities, for security purposes. Defaults to `false`.
+  - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use
+    the same rules as [templates](#template-syntax) with the following error-specific additions:
+    - variables in double braces `{{var}}` are HTML escaped if the option `escapeErrors` is set to `true`.
+    - rendered messages are always prefixed by the key name, unless a `{label}` or `{{label}}` is
+      present in the template or if the template is prefixed by a `!!`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
   - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties. Defaults to `false`.
   - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
@@ -629,13 +631,13 @@ It is **important** to understand that original **joi** library is not modified 
 #### Terms
 
 The extension makes use of some common structures that need to be described prior :
-* `value` - the value being processed by Joi.
-* `state` - an object containing the current context of validation.
-  * `key` - the key of the current value.
-  * `path` - the full path of the current value.
-  * `ancestors` - an array of the potential parents of the current value.
-  * `flags` - a reference to the schema's internal flags.
-* `prefs` - preferences object provided through [`any().prefs()`](#anyprefsoptions--aliases-preferences-options) or [`Joi.validate()`](#validatevalue-schema-options-callback).
+- `value` - the value being processed by Joi.
+- `state` - an object containing the current context of validation.
+    - `key` - the key of the current value.
+    - `path` - the full path of the current value.
+    - `ancestors` - an array of the potential parents of the current value.
+    - `flags` - a reference to the schema's internal flags.
+- `prefs` - preferences object provided through [`any().prefs()`](#anyprefsoptions--aliases-preferences-options) or [`Joi.validate()`](#validatevalue-schema-options-callback).
 
 #### Extension
 
@@ -645,18 +647,18 @@ The extension makes use of some common structures that need to be described prio
 - or an array of those
 
 Extension objects use the following parameters :
-* `name` - name of the new type you are defining, this can be an existing type. **Required**.
-* `base` - an existing **joi** schema to base your type upon. Defaults to `Joi.any()`.
-* `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `prefs`.
-* `pre` - an optional function that runs first in the validation chain, usually serves when you need to cast values. It takes 3 arguments `value`, `state` and `prefs`.
-* `language` - an optional object to add error definitions. Every key will be prefixed by the type name.
-* `describe` - an optional function taking the fully formed description to post-process it.
-* `rules` - an optional array of rules to add.
-  * `name` - name of the new rule. **Required**.
-  * `params` - an optional object containing **joi** schemas of each parameter ordered. You can also pass a single **joi** schema as long as it is a `Joi.object()`, of course some methods such as `pattern` or `rename` won't be useful or won't work at all in this given context.
-  * `setup` - an optional function that takes an object with the provided parameters to allow for internals manipulation of the schema when a rule is set, you can optionally return a new **joi** schema that will be taken as the new schema instance. At least one of `setup` or `validate` **must** be provided.
-  * `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `prefs`. At least one of `setup` or `validate` **must** be provided.
-  * `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
+- `name` - name of the new type you are defining, this can be an existing type. **Required**.
+- `base` - an existing **joi** schema to base your type upon. Defaults to `Joi.any()`.
+- `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `prefs`.
+- `pre` - an optional function that runs first in the validation chain, usually serves when you need to cast values. It takes 3 arguments `value`, `state` and `prefs`.
+- `messages` - an optional object to add error definitions. Every key will be prefixed by the type name.
+- `describe` - an optional function taking the fully formed description to post-process it.
+- `rules` - an optional array of rules to add.
+    - `name` - name of the new rule. **Required**.
+    - `params` - an optional object containing **joi** schemas of each parameter ordered. You can also pass a single **joi** schema as long as it is a `Joi.object()`, of course some methods such as `pattern` or `rename` won't be useful or won't work at all in this given context.
+    - `setup` - an optional function that takes an object with the provided parameters to allow for internals manipulation of the schema when a rule is set, you can optionally return a new **joi** schema that will be taken as the new schema instance. At least one of `setup` or `validate` **must** be provided.
+    - `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `prefs`. At least one of `setup` or `validate` **must** be provided.
+    - `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
 
 Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended **joi** being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
 
@@ -679,7 +681,7 @@ validate(params, value, state, prefs) {
 
 Any of the `coerce`, `pre` and `validate` functions should use `this.createError(code, value, local, state, prefs)` to create and return errors.
 This function potentially takes 5 required arguments:
-- `code` - the dotted type of the error matching predefined language elements or the ones defined in your extension.
+- `code` - the dotted type of the error matching predefined messages or the ones defined in your extension.
 - `value` - the value responsible for the error.
 - `local` - a free-form object that can contain anything you want to provide context on regarding the error. This object's properties are inserted in the error message where bracketted placeholders are.
 - `state` - state that the validation was in, which contains the current key, path, parent if any, or reference if any. Usually you just have to pass the `state` you were given.
@@ -696,7 +698,7 @@ const Joi = require('@hapi/joi');
 const customJoi = Joi.extend((joi) => ({
     base: joi.number(),
     name: 'number',
-    language: {
+    messages: {
         round: 'needs to be a rounded number', // Used below as 'number.round'
         dividable: 'needs to be dividable by {{q}}'
     },
@@ -733,7 +735,7 @@ const customJoi = Joi.extend((joi) => ({
             validate(params, value, state, prefs) {
 
                 if (value % params.q !== 0) {
-                    // Generate an error, state and prefs need to be passed, q is used in the language
+                    // Generate an error, state and prefs need to be passed, q is used in the messages
                     return this.createError('number.dividable', value, { q: params.q }, state, prefs);
                 }
 
@@ -1061,9 +1063,9 @@ Applies a set of rule options to the current ruleset or last rule added where:
   - `keep` - if `true`, the rules will not be replaced by the same unqiue rule later. For example,
     `Joi.number().min(1).rule({ keep: true }).min(2)` will keep both `min()` rules instead of the later
     rule overriding the first. Defaults to `false`.
-  - `message` - a single message string or a `language` object where each key is an error code and
-    corresponding message string as value. The `language` object is the same as the one used as an
-    option in [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+  - `message` - a single message string or a messages object where each key is an error code and
+    corresponding message string as value. The object is the same as the one used as an option in
+    [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
     The strings can be plain messages or a message template.
 
 When applying rule options, the last rule (e.g. `min()`) is used unless there is an active ruleset defined
@@ -3059,7 +3061,7 @@ Possible validation errors: [`lazy.base`](#lazybase), [`lazy.schema`](#lazyschem
     - `type` - type of the error.
     - `local` - object providing context of the error containing:
         - `key` - key of the value that errored, equivalent to the last element of `details.path`.
-        - `label` - label of the value that errored, or the `key` if any, or the default `language.root`.
+        - `label` - label of the value that errored, or the `key` if any, or the default `messages.root`.
         - `value` - the value that failed validation.
         - other error specific properties as described for each error code.
 - `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occurred. Takes an optional parameter that, if truthy, will strip the colors out of the output.

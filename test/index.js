@@ -2978,11 +2978,11 @@ describe('Joi', () => {
                 expect(() => Joi.extend({ name: 'a', pre(a, b, c, d) { } })).to.throw(/"pre" must have an arity of 3/);
             });
 
-            it('must have valid language object', () => {
+            it('must have valid messages object', () => {
 
-                expect(() => Joi.extend({ name: 'a', language: true })).to.throw(/"language" must be an object/);
-                expect(() => Joi.extend({ name: 'a', language() { } })).to.throw(/"language" must be an object/);
-                expect(() => Joi.extend({ name: 'a', language: null })).to.throw(/"language" must be an object/);
+                expect(() => Joi.extend({ name: 'a', messages: true })).to.throw(/"messages" must be an object/);
+                expect(() => Joi.extend({ name: 'a', messages() { } })).to.throw(/"messages" must be an object/);
+                expect(() => Joi.extend({ name: 'a', messages: null })).to.throw(/"messages" must be an object/);
             });
 
             it('must have valid rules', () => {
@@ -3165,7 +3165,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 name: 'myType',
-                language: {
+                messages: {
                     'myType.bar': 'oh no bar !'
                 },
                 rules: [
@@ -3228,7 +3228,7 @@ describe('Joi', () => {
 
             const customJoi = Joi.extend({
                 name: 'myType',
-                language: {
+                messages: {
                     'myType.bar': 'oh no bar !'
                 },
                 rules: [
@@ -3537,10 +3537,10 @@ describe('Joi', () => {
             expect(schema.validate(3)).to.contain({ error: null, value: 6 });
         });
 
-        it('does not override a predefined language', () => {
+        it('does not override a predefined messages', () => {
 
             const base = Joi.any().prefs({
-                language: {
+                messages: {
                     'myType.foo': 'original'
                 }
             });
@@ -3548,7 +3548,7 @@ describe('Joi', () => {
             const customJoi = Joi.extend({
                 base,
                 name: 'myType',
-                language: {
+                messages: {
                     'myType.foo': 'modified'
                 },
                 rules: [
@@ -3562,8 +3562,8 @@ describe('Joi', () => {
                 ]
             });
 
-            // Checks for a language leak in the base
-            expect(base._preferences.language['myType.foo']).to.equal('original');
+            // Checks for a messages leak in the base
+            expect(base._preferences.messages['myType.foo']).to.equal('original');
 
             const schema = customJoi.myType().foo();
             const result = schema.validate({});
@@ -3580,7 +3580,7 @@ describe('Joi', () => {
             const customJoi = Joi.extend({
                 base,
                 name: 'myType',
-                language: {
+                messages: {
                     'myType.foo': 'foo'
                 },
                 rules: [
@@ -4094,7 +4094,7 @@ describe('Joi', () => {
             expect(() => customJoi.myType().bar()).to.not.throw();
         });
 
-        it('returns a generic error when using an undefined language', () => {
+        it('returns a generic error when using an undefined messages', () => {
 
             const customJoi = Joi.extend({
                 name: 'myType',
@@ -4108,9 +4108,9 @@ describe('Joi', () => {
             });
 
             const result = customJoi.myType().foo().validate({});
-            expect(result.error).to.be.an.error('Error code "myType.foo" is not defined, your custom type is missing the correct language definition');
+            expect(result.error).to.be.an.error('Error code "myType.foo" is not defined, your custom type is missing the correct messages definition');
             expect(result.error.details).to.equal([{
-                message: 'Error code "myType.foo" is not defined, your custom type is missing the correct language definition',
+                message: 'Error code "myType.foo" is not defined, your custom type is missing the correct messages definition',
                 path: [],
                 type: 'myType.foo',
                 context: { label: 'value', value: {} }
@@ -4123,7 +4123,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    language: { 'number.foo': 'foo' },
+                    messages: { 'number.foo': 'foo' },
                     rules: [{
                         name: 'foo',
                         validate(params, value, state, prefs) {
@@ -4135,7 +4135,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    language: { 'number.bar': 'bar' },
+                    messages: { 'number.bar': 'bar' },
                     rules: [{
                         name: 'bar',
                         validate(params, value, state, prefs) {
@@ -4153,7 +4153,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    language: { 'number.foo': 'foo' },
+                    messages: { 'number.foo': 'foo' },
                     rules: [{
                         name: 'foo',
                         validate(params, value, state, prefs) {
@@ -4193,7 +4193,7 @@ describe('Joi', () => {
                 (joi) => ({
                     base: joi.number(),
                     name: 'number',
-                    language: { 'number.bar': 'bar' },
+                    messages: { 'number.bar': 'bar' },
                     rules: [{
                         name: 'bar',
                         validate(params, value, state, prefs) {

@@ -62,7 +62,7 @@ describe('errors', () => {
             'object.rename.override': '11'
         };
 
-        const error = await expect(Joi.validate(value, schema, { abortEarly: false, language: lang })).to.reject();
+        const error = await expect(Joi.validate(value, schema, { abortEarly: false, messages: lang })).to.reject();
 
         value.required = value.renamed;
         delete value.renamed;
@@ -155,9 +155,9 @@ describe('errors', () => {
         ]);
     });
 
-    it('does not prefix with key when language uses context.key', async () => {
+    it('does not prefix with key when messages uses context.key', async () => {
 
-        const schema = Joi.valid('sad').prefs({ language: { 'any.allowOnly': 'my hero "{{#label}}" is not {{#valids}}' } });
+        const schema = Joi.valid('sad').prefs({ messages: { 'any.allowOnly': 'my hero "{{#label}}" is not {{#valids}}' } });
         const err = await expect(schema.validate(5)).to.reject();
         expect(err).to.be.an.error('my hero "value" is not [sad]');
         expect(err.details).to.equal([{
@@ -170,7 +170,7 @@ describe('errors', () => {
 
     it('accepts an empty key', async () => {
 
-        const schema = Joi.valid('sad').prefs({ language: { key: '' } });
+        const schema = Joi.valid('sad').prefs({ messages: { key: '' } });
         const err = await expect(schema.validate(5)).to.reject();
         expect(err).to.be.an.error('must be one of [sad]');
         expect(err.details).to.equal([{
@@ -325,9 +325,9 @@ describe('errors', () => {
         }]);
     });
 
-    it('overrides root key language', async () => {
+    it('overrides root key messages', async () => {
 
-        const schema = Joi.string().prefs({ language: { root: 'blah' } });
+        const schema = Joi.string().prefs({ messages: { root: 'blah' } });
         const err = await expect(schema.validate(4)).to.reject();
         expect(err).to.be.an.error('"blah" must be a string');
         expect(err.details).to.equal([{
@@ -338,9 +338,9 @@ describe('errors', () => {
         }]);
     });
 
-    it('overrides label key language', async () => {
+    it('overrides label key messages', async () => {
 
-        const schema = Joi.string().prefs({ language: { key: 'my own {#label} ' } });
+        const schema = Joi.string().prefs({ messages: { key: 'my own {#label} ' } });
         const err = await expect(schema.validate(4)).to.reject();
         expect(err).to.be.an.error('my own value must be a string');
         expect(err.details).to.equal([{
@@ -353,7 +353,7 @@ describe('errors', () => {
 
     it('overrides wrapArrays', async () => {
 
-        const schema = Joi.array().items(Joi.boolean()).prefs({ language: { 'messages.wrapArrays': false } });
+        const schema = Joi.array().items(Joi.boolean()).prefs({ messages: { wrapArrays: false } });
         const err = await expect(schema.validate([4])).to.reject();
         expect(err).to.be.an.error('"[0]" must be a boolean');
         expect(err.details).to.equal([{
@@ -366,7 +366,7 @@ describe('errors', () => {
 
     it('allows html escaping', async () => {
 
-        const schema = Joi.string().prefs({ language: { root: 'blah' } }).label('bleh');
+        const schema = Joi.string().prefs({ messages: { root: 'blah' } }).label('bleh');
         const err = await expect(schema.validate(4)).to.reject();
         expect(err).to.be.an.error('"bleh" must be a string');
         expect(err.details).to.equal([{
