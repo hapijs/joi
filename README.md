@@ -86,6 +86,23 @@ Joi.validate({ a: 'a string' }, schema, function (error, value) { });
 
 If the input is valid, then the `error` will be `null`, otherwise it will be an `Error` object providing more information.
 
+The `Error` object is a JavaScript `Error` with the following added schema:
+
+```
+{
+  isJoi: true,
+  details: [ 
+    {
+      message: '...',
+      path: [ ], // array of strings: path elements to the error
+      type: '...',  // string: the name of the rule that was violated
+      context: { ... } // object: context for the validation
+    },
+    ...
+  ]
+}
+```
+
 The schema can be a plain JavaScript object where every key is assigned a **joi** type, or it can be a **joi** type directly:
 
 ```javascript
