@@ -101,6 +101,8 @@ const schema = Joi.object().keys({
 });
 ```
 
+### Options
+
 When validating a schema:
 
 * Values (or keys in case of objects) are optional by default.
@@ -119,6 +121,12 @@ When validating a schema:
 
 * Strings are utf-8 encoded by default.
 * Rules are defined in an additive fashion and evaluated in order, first the inclusive rules, then the exclusive rules.
+* Joi will return only the first validation violation that it encounters. To change this behavior, use:
+
+    ```javascript
+    Joi.validate(undefined, Joi.string(), /* options */ { abortEarly: false });
+    ```
+
 
 ## Browsers
 
