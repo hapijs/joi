@@ -305,13 +305,17 @@ Validates a value using the given schema and options where:
       - `'utc'` - UTC date time string.
     - `escapeHtml` - when `true`, error message templates will escape special characters to HTML
       entities, for security purposes. Defaults to `false`.
+    - `language` - the prefered language code for error messages. The value is matched against keys
+      are the root of the `messages` object, and then the error code as a child key of that.
+    - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use
     the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML
     escaped if the option `errors.escapeHtml` is set to `true`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
-  - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties. Defaults to `false`.
-  - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`.
-    Defaults to `'optional'`.
+  - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties.
+    Defaults to `false`.
+  - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`,
+    and `'forbidden'`. Defaults to `'optional'`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
     - when an `object` :
@@ -1063,7 +1067,7 @@ Applies a set of rule options to the current ruleset or last rule added where:
     `Joi.number().min(1).rule({ keep: true }).min(2)` will keep both `min()` rules instead of the later
     rule overriding the first. Defaults to `false`.
   - `message` - a single message string or a messages object where each key is an error code and
-    corresponding message string as value. The object is the same as the one used as an option in
+    corresponding message string as value. The object is the same as the `messages` used as an option in
     [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
     The strings can be plain messages or a message template.
 

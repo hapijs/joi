@@ -155,6 +155,28 @@ describe('errors', () => {
         ]);
     });
 
+    it('supports language preference', () => {
+
+        const schema = Joi.number().min(10);
+
+        const messages = {
+            english: {
+                root: 'value',
+                'number.min': '{#label} too small'
+            },
+            latin: {
+                root: 'valorem',
+                'number.min': Joi.template('{%label} angustus', { prefix: { local: '%' } })
+            },
+            empty: {}
+        };
+
+        expect(schema.validate(1, { messages, errors: { language: 'english' } }).error).to.be.an.error('value too small');
+        expect(schema.validate(1, { messages, errors: { language: 'latin' } }).error).to.be.an.error('valorem angustus');
+        expect(schema.validate(1, { messages, errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
+        expect(schema.validate(1, { messages, errors: { language: 'empty' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
+    });
+
     it('does not prefix with key when messages uses context.key', async () => {
 
         const schema = Joi.valid('sad').prefs({ messages: { 'any.allowOnly': 'my hero "{{#label}}" is not {{#valids}}' } });

@@ -1542,6 +1542,28 @@ describe('any', () => {
                 expect(err.message).to.equal('"b.c" must be larger than or equal to 0 and "b.c" must be an integer');
             });
 
+            it('caches report message string', async () => {
+
+                const schema = Joi.object({
+                    a: Joi.string(),
+                    b: {
+                        c: Joi.number().min(0).integer().strict().error((errors) => {
+
+                            for (const err of errors) {
+                                err.toString();
+                                err.message += '!';
+                            }
+
+                            return new Error(errors.join(' and ')); // Automatic toString() of each error on join
+                        })
+                    }
+                });
+
+                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
+                expect(err.isJoi).to.not.exist();
+                expect(err.message).to.equal('"b.c" must be larger than or equal to 0! and "b.c" must be an integer!');
+            });
+
             it('uses selected date format', async () => {
 
                 const min = new Date('1974-05-07');
@@ -1825,7 +1847,7 @@ describe('any', () => {
         });
     });
 
-    describe('message', () => {
+    describe('message()', () => {
 
         it('overrides message', () => {
 
@@ -1835,6 +1857,84 @@ describe('any', () => {
 
             expect(schema.validate(1).error).to.be.an.error('way too small');
             expect(schema.validate(1000).error).to.be.an.error('way too big');
+        });
+
+        it('overrides message with template', () => {
+
+            const schema = Joi.number()
+                .min(10).message(Joi.template('way too small'));
+
+            expect(schema.validate(1).error).to.be.an.error('way too small');
+        });
+
+        it('overrides message in multiple language', () => {
+
+            const messages = {
+                english: {
+                    root: 'value',
+                    'number.min': '{#label} too small'
+                },
+                latin: {
+                    root: 'valorem',
+                    'number.min': Joi.template('{%label} angustus', { prefix: { local: '%' } })
+                }
+            };
+
+            const schema = Joi.number().min(10).message(messages);
+
+            expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('value too small');
+            expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('valorem angustus');
+            expect(schema.validate(1, { errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
+            expect(schema.label('special').validate(1, { errors: { language: 'english' } }).error).to.be.an.error('special too small');
+        });
+
+        it('overrides message in multiple language (nested)', () => {
+
+            const messages = {
+                english: {
+                    root: 'value',
+                    'number.min': '{#label} too small'
+                },
+                latin: {
+                    root: 'valorem',
+                    'number.min': '{#label} angustus'
+                }
+            };
+
+            const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
+
+            expect(schema.validate({ a: 1 }, { errors: { language: 'english' } }).error).to.be.an.error('a too small');
+            expect(schema.validate({ a: 1 }, { errors: { language: 'latin' } }).error).to.be.an.error('a angustus');
+            expect(schema.validate({ a: 1 }, { errors: { language: 'unknown' } }).error).to.be.an.error('"a" must be larger than or equal to 10');
+        });
+
+        it('overrides message in multiple language (flat)', () => {
+
+            const messages = {
+                root: 'valorem',
+                'number.min': '{#label} angustus'
+            };
+
+            const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
+            expect(schema.validate({ a: 1 }).error).to.be.an.error('a angustus');
+        });
+
+        it('overrides message in multiple language (flat template)', () => {
+
+            const messages = {
+                root: 'valorem',
+                'number.min': Joi.template('{%label} angustus', { prefix: { local: '%' } })
+            };
+
+            const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
+            expect(schema.validate({ a: 1 }).error).to.be.an.error('a angustus');
+        });
+
+        it('errors on invalid message value', () => {
+
+            expect(() => Joi.number().min(10).message(12)).to.throw('Invalid message options');
+            expect(() => Joi.number().min(10).message({ 'number.min': 12 })).to.throw('Invalid message for number.min');
+            expect(() => Joi.number().min(10).message({ english: { 'number.min': 12 } })).to.throw('Invalid message for number.min in english');
         });
     });
 
