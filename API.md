@@ -65,6 +65,7 @@
     - [`array.min(limit)`](#arrayminlimit)
     - [`array.ordered(...type)`](#arrayorderedtype)
     - [`array.single([enabled])`](#arraysingleenabled)
+    - [`array.sort([options])`](#arraysortoptions)
     - [`array.sparse([enabled])`](#arraysparseenabled)
     - [`array.unique([comparator, [options]])`](#arrayuniquecomparator-options)
   - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
