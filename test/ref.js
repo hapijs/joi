@@ -637,6 +637,63 @@ describe('ref', () => {
         });
     });
 
+    it('sets map', () => {
+
+        const map = [[5, 10]];
+        const ref = Joi.ref('b', { map });
+        const schema = Joi.object({
+            a: ref,
+            b: Joi.number()
+        });
+
+        Helper.validate(schema, [
+            [{ b: 5 }, true],
+            [{ a: 10, b: 5 }, true],
+            [{ a: 10, b: '5' }, true],
+            [{ a: 5 }, false, null, {
+                message: '"a" must be one of [ref:b]',
+                details: [{
+                    message: '"a" must be one of [ref:b]',
+                    path: ['a'],
+                    type: 'any.allowOnly',
+                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
+                }]
+            }],
+            [{ a: 5, b: 5 }, false, null, {
+                message: '"a" must be one of [ref:b]',
+                details: [{
+                    message: '"a" must be one of [ref:b]',
+                    path: ['a'],
+                    type: 'any.allowOnly',
+                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
+                }]
+            }]
+        ]);
+
+        expect(schema.describe()).to.equal({
+            type: 'object',
+            children: {
+                b: {
+                    type: 'number',
+                    flags: { unsafe: false },
+                    invalids: [Infinity, -Infinity]
+                },
+                a: {
+                    type: 'any',
+                    flags: { allowOnly: true },
+                    valids: [
+                        {
+                            ref: 'value',
+                            key: 'b',
+                            path: ['b'],
+                            map
+                        }
+                    ]
+                }
+            }
+        });
+    });
+
     it('uses ref as a valid value (empty key)', async () => {
 
         const ref = Joi.ref('');

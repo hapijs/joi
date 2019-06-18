@@ -106,4 +106,12 @@ describe('Template', () => {
         expect(() => Joi.template('test\u0000')).to.throw('Template source cannot contain reserved control characters');
         expect(() => Joi.template('test\u0001')).to.throw('Template source cannot contain reserved control characters');
     });
+
+    describe('isTemplate()', () => {
+
+        expect(Joi.isTemplate(null)).to.be.false();
+        expect(Joi.isTemplate({})).to.be.false();
+        expect(Joi.isTemplate('test')).to.be.false();
+        expect(Joi.isTemplate(Joi.template('test'))).to.be.true();
+    });
 });
