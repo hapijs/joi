@@ -50,6 +50,17 @@ describe('array', () => {
         }]);
     });
 
+    it('errors on invalid array string', async () => {
+
+        const err = await expect(Joi.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3 \n\r\t')).to.reject('"value" must be an array');
+        expect(err.details).to.equal([{
+            message: '"value" must be an array',
+            path: [],
+            type: 'array.base',
+            context: { label: 'value', value: ' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3 \n\r\t' }
+        }]);
+    });
+
     it('errors on number', async () => {
 
         const err = await expect(Joi.array().validate(3)).to.reject('"value" must be an array');
