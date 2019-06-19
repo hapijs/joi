@@ -1739,10 +1739,7 @@ describe('any', () => {
 
         it('allows invalid values to be set', () => {
 
-            expect(() => {
-
-                Joi.any().valid(true, 1, 'hello', new Date(), Symbol('foo'));
-            }).not.to.throw();
+            expect(() => Joi.any().valid(true, 1, 'hello', new Date(), Symbol('foo'))).not.to.throw();
         });
 
         it('throws when passed undefined', () => {
@@ -1758,6 +1755,12 @@ describe('any', () => {
             const o = {};
             expect(Joi.object().invalid(o).clone().validate(o).error).to.be.an.error('"value" contains an invalid value');
             expect(Joi.object().invalid(o).clone().validate({}).error).to.be.null();
+        });
+
+        it('errors on blocked schema', () => {
+
+            expect(() => Joi.any().valid(1).invalid(1)).to.throw('Setting invalid value 1 leaves schema rejecting all values due to previous valid rule');
+            expect(() => Joi.any().allow(1).invalid(1)).to.not.throw();
         });
     });
 

@@ -1,6 +1,7 @@
 'use strict';
 
 const Code = require('@hapi/code');
+const Joi = require('..');
 const Lab = require('@hapi/lab');
 
 const Values = require('../lib/values');
@@ -120,13 +121,13 @@ describe('Values', () => {
 
     });
 
-    describe('slice', () => {
+    describe('clone()', () => {
 
         it('returns a new Values', () => {
 
             const set = new Values();
             set.add(null);
-            const otherValids = set.slice();
+            const otherValids = set.clone();
             otherValids.add('null');
             expect(set.has(null)).to.equal(true);
             expect(otherValids.has(null)).to.equal(true);
@@ -135,12 +136,12 @@ describe('Values', () => {
         });
     });
 
-    describe('concat', () => {
+    describe('concat()', () => {
 
         it('merges _set into a new Values', () => {
 
             const set = new Values();
-            const otherValids = set.slice();
+            const otherValids = set.clone();
             set.add(null);
             otherValids.add('null');
             const thirdSet = otherValids.concat(set);
@@ -150,6 +151,14 @@ describe('Values', () => {
             expect(otherValids.has('null')).to.equal(true);
             expect(thirdSet.has(null)).to.equal(true);
             expect(thirdSet.has('null')).to.equal(true);
+        });
+
+        it('merges keeps refs flag set', () => {
+
+            const set = new Values();
+            set.add(Joi.ref('x'));
+            set.concat(new Values());
+            expect(set._hasRef).to.be.true();
         });
     });
 });
