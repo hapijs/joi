@@ -215,12 +215,12 @@ describe('any', () => {
             Helper.validate(a, [
                 ['a', true],
                 ['b', false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"value" must be one of [a]',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"value" must be one of [a]',
                         path: [],
-                        type: 'any.invalid',
-                        context: { value: 'b', invalids: ['', 'b'], label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -228,27 +228,27 @@ describe('any', () => {
             Helper.validate(b, [
                 ['b', true],
                 ['a', false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"value" must be one of [b]',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"value" must be one of [b]',
                         path: [],
-                        type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a'], label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: 'a', valids: ['b'], label: 'value' }
                     }]
                 }]
             ]);
 
             Helper.validate(a.concat(b), [
+                ['b', true],
                 ['a', false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"value" must be one of [b]',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"value" must be one of [b]',
                         path: [],
-                        type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a'], label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: 'a', valids: ['b'], label: 'value' }
                     }]
-                }],
-                ['b', true]
+                }]
             ]);
         });
 
@@ -427,12 +427,12 @@ describe('any', () => {
                     }]
                 }],
                 ['', false, null, {
-                    message: '"value" is not allowed to be empty',
+                    message: '"value" must be one of [a]',
                     details: [{
-                        message: '"value" is not allowed to be empty',
+                        message: '"value" must be one of [a]',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: '', valids: ['a'], label: 'value' }
                     }]
                 }],
                 [' ', true, null, undefined]

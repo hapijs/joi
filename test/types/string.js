@@ -10337,12 +10337,12 @@ describe('string', () => {
                     }]
                 }],
                 ['', false, null, {
-                    message: '"value" is not allowed to be empty',
+                    message: '"value" must be one of [AB, BC]',
                     details: [{
-                        message: '"value" is not allowed to be empty',
+                        message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'any.allowOnly',
+                        context: { value: '', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
                 ['bc', true],

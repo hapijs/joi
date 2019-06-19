@@ -742,7 +742,7 @@ describe('object', () => {
         const input = { a: 1, hasOwnProperty: 'foo' };
         const schema = Joi.object({ a: 1 }).with('a', 'b');
 
-        const err = await expect(Joi.validate(input, schema)).to.reject();
+        const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject();
         expect(err).to.be.an.error('"hasOwnProperty" is not allowed. "a" missing required peer "b"');
         expect(err.details).to.equal([
             {
@@ -771,6 +771,15 @@ describe('object', () => {
                 }
             }
         ]);
+    });
+
+    it('aborts early on unknown keys', async () => {
+
+        const input = { a: 1, unknown: 2 };
+        const schema = Joi.object({ a: 1 }).with('a', 'b');
+
+        const err = await expect(Joi.validate(input, schema)).to.reject();
+        expect(err).to.be.an.error('"unknown" is not allowed');
     });
 
     it('should apply labels with nested objects', () => {

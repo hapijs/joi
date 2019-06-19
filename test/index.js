@@ -3161,6 +3161,68 @@ describe('Joi', () => {
             ]);
         });
 
+        it('defines a custom type with a custom base and pre (object)', () => {
+
+            const customJoi = Joi.extend({
+                base: Joi.object(),
+                pre(value, state, prefs) {
+
+                    return value;
+                },
+                name: 'myType'
+            });
+
+            expect(Joi.myType).to.not.exist();
+            expect(customJoi.myType).to.be.a.function();
+
+            const schema = customJoi.myType({ a: customJoi.number() });
+            Helper.validate(schema, [
+                [undefined, true],
+                [{}, true],
+                [{ a: 1 }, true],
+                [{ a: 'a' }, false, null, {
+                    message: '"a" must be a number',
+                    details: [{
+                        message: '"a" must be a number',
+                        path: ['a'],
+                        type: 'number.base',
+                        context: { key: 'a', label: 'a', value: 'a' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('defines a custom type with a custom base and pre (number)', () => {
+
+            const customJoi = Joi.extend({
+                base: Joi.number(),
+                pre(value, state, prefs) {
+
+                    return value;
+                },
+                name: 'myType'
+            });
+
+            expect(Joi.myType).to.not.exist();
+            expect(customJoi.myType).to.be.a.function();
+
+            const schema = customJoi.myType({ a: customJoi.number() });
+            Helper.validate(schema, [
+                [undefined, true],
+                [1, true],
+                ['1', true],
+                [{}, false, null, {
+                    message: '"value" must be a number',
+                    details: [{
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', value: {} }
+                    }]
+                }]
+            ]);
+        });
+
         it('defines a custom type with new rules', () => {
 
             const customJoi = Joi.extend({
