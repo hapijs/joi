@@ -126,6 +126,28 @@ describe('boolean', () => {
         expect(schema.validate('n', { convert: false }).error).be.an.error('"value" must be a boolean');
     });
 
+    describe('cast()', () => {
+
+        it('casts value to string', () => {
+
+            const schema = Joi.boolean().cast('string');
+            expect(schema.validate(true).value).to.equal('true');
+            expect(schema.validate(false).value).to.equal('false');
+        });
+
+        it('ignores null', () => {
+
+            const schema = Joi.boolean().allow(null).cast('string');
+            expect(schema.validate(null).value).to.be.null();
+        });
+
+        it('ignores string', () => {
+
+            const schema = Joi.boolean().allow('x').cast('string');
+            expect(schema.validate('x').value).to.equal('x');
+        });
+    });
+
     describe('insensitive()', () => {
 
         it('should default to case insensitive', () => {

@@ -143,1126 +143,1150 @@ describe('date', () => {
         expect(value).to.equal(now);
     });
 
-    describe('validate()', () => {
+    it('validates only valid dates', () => {
 
-        describe('min', () => {
+        const invalidDate = new Date('not a valid date');
+        Helper.validate(Joi.date(), [
+            ['1-1-2013 UTC', true],
+            [new Date().getTime(), true],
+            [new Date().getTime().toFixed(4), true],
+            ['not a valid date', false, null, {
+                message: '"value" must be a number of milliseconds or valid date string',
+                details: [{
+                    message: '"value" must be a number of milliseconds or valid date string',
+                    path: [],
+                    type: 'date.base',
+                    context: { label: 'value', value: 'not a valid date' }
+                }]
+            }],
+            [invalidDate, false, null, {
+                message: '"value" must be a number of milliseconds or valid date string',
+                details: [{
+                    message: '"value" must be a number of milliseconds or valid date string',
+                    path: [],
+                    type: 'date.base',
+                    context: { label: 'value', value: invalidDate }
+                }]
+            }]
+        ]);
+    });
 
-            it('validates min', () => {
+    describe('cast()', () => {
 
-                const d = new Date('1-1-2000 UTC');
-                const message = `"value" must be larger than or equal to "${d.toISOString()}"`;
-                Helper.validate(Joi.date().min('1-1-2000 UTC'), [
-                    ['1-1-2001 UTC', true],
-                    ['1-1-2000 UTC', true],
-                    [0, false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.min',
-                            context: { limit: d, label: 'value', value: new Date(0) }
-                        }]
-                    }],
-                    ['0', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.min',
-                            context: { limit: d, label: 'value', value: new Date(0) }
-                        }]
-                    }],
-                    ['-1', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.min',
-                            context: { limit: d, label: 'value', value: new Date(-1) }
-                        }]
-                    }],
-                    ['1-1-1999 UTC', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.min',
-                            context: { limit: d, label: 'value', value: new Date('1-1-1999 UTC') }
-                        }]
-                    }]
-                ]);
-            });
+        it('casts value to string', () => {
 
-            it('accepts "now" as the min date', async () => {
+            const schema = Joi.date().cast('string');
+            expect(schema.validate(new Date('1974-05-07')).value).to.equal('1974-05-07T00:00:00.000Z');
+        });
 
-                const future = new Date(Date.now() + 1000000);
-                const value = await Joi.date().min('now').validate(future);
-                expect(value).to.equal(future);
-            });
+        it('casts value to string (custom format)', () => {
 
-            it('errors if .min("now") is used with a past date', async () => {
+            const schema = Joi.date().prefs({ dateFormat: 'date' }).cast('string');
+            expect(schema.validate(new Date('1974-05-07')).value).to.equal('Tue May 07 1974');
+        });
 
-                const now = Date.now();
-                const past = new Date(now - 1000000);
+        it('ignores null', () => {
 
-                const err = await expect(Joi.date().min('now').validate(past)).to.reject();
-                const message = '"value" must be larger than or equal to "now"';
-                expect(err).to.be.an.error(message);
-                expect(err.details).to.equal([{
+            const schema = Joi.date().allow(null).cast('string');
+            expect(schema.validate(null).value).to.be.null();
+        });
+
+        it('ignores string', () => {
+
+            const schema = Joi.date().allow('x').cast('string');
+            expect(schema.validate('x').value).to.equal('x');
+        });
+    });
+
+    describe('greater()', () => {
+
+        it('validates greater', () => {
+
+            const d = new Date('1-1-2000 UTC');
+            const message = `"value" must be greater than "${d.toISOString()}"`;
+            Helper.validate(Joi.date().greater('1-1-2000 UTC'), [
+                ['1-1-2001 UTC', true],
+                ['1-1-2000 UTC', false, null, {
                     message,
-                    path: [],
-                    type: 'date.min',
-                    context: { limit: 'now', label: 'value', value: past }
-                }]);
-            });
-
-            it('accepts references as min date', () => {
-
-                const ref = Joi.ref('a');
-                const schema = Joi.object({ a: Joi.date(), b: Joi.date().min(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ a: now, b: now }, true],
-                    [{ a: now, b: now + 1e3 }, true],
-                    [{ a: now, b: now - 1e3 }, false, null, {
-                        message: '"b" must be larger than or equal to "ref:a"',
-                        details: [{
-                            message: '"b" must be larger than or equal to "ref:a"',
-                            path: ['b'],
-                            type: 'date.min',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
-                        }]
-                    }]
-                ]);
-            });
-
-            it('accepts references as min date within a when', () => {
-
-                const ref = Joi.ref('b');
-                const schema = Joi.object({
-                    a: Joi.date().required(),
-                    b: Joi.date().required(),
-                    c: Joi.number().required().when('a', {
-                        is: Joi.date().min(ref), // a >= b
-                        then: Joi.number().valid(0)
-                    })
-                });
-
-                Helper.validate(schema, [
-                    [{ a: 123, b: 123, c: 0 }, true],
-                    [{ a: 123, b: 456, c: 42 }, true],
-                    [{ a: 456, b: 123, c: 0 }, true],
-                    [{ a: 123, b: 123, c: 42 }, false, null, {
-                        message: '"c" must be one of [0]',
-                        details: [{
-                            message: '"c" must be one of [0]',
-                            path: ['c'],
-                            type: 'any.allowOnly',
-                            context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                        }]
-                    }],
-                    [{ a: 456, b: 123, c: 42 }, false, null, {
-                        message: '"c" must be one of [0]',
-                        details: [{
-                            message: '"c" must be one of [0]',
-                            path: ['c'],
-                            type: 'any.allowOnly',
-                            context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                        }]
-                    }]
-                ]);
-            });
-
-            it('accepts context references as min date', () => {
-
-                const ref = Joi.ref('$a');
-                const schema = Joi.object({ b: Joi.date().min(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ b: now }, true, { context: { a: now } }],
-                    [{ b: now + 1e3 }, true, { context: { a: now } }],
-                    [{ b: now - 1e3 }, false, { context: { a: now } }, {
-                        message: '"b" must be larger than or equal to "ref:global:a"',
-                        details: [{
-                            message: '"b" must be larger than or equal to "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.min',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
-                        }]
-                    }]
-                ]);
-            });
-
-            it('errors if reference is not a date', () => {
-
-                const ref = Joi.ref('a');
-                const schema = Joi.object({ a: Joi.string(), b: Joi.date().min(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ a: 'abc', b: now }, false, null, {
-                        message: '"b" references "ref:a" which is not a date',
-                        details: [{
-                            message: '"b" references "ref:a" which is not a date',
-                            path: ['b'],
-                            type: 'date.ref',
-                            context: { ref, label: 'b', key: 'b', value: 'abc' }
-                        }]
-                    }],
-                    [{ a: '123', b: now }, true],
-                    [{ a: (now + 1e3).toString(), b: now }, false, null, {
-                        message: '"b" must be larger than or equal to "ref:a"',
-                        details: [{
-                            message: '"b" must be larger than or equal to "ref:a"',
-                            path: ['b'],
-                            type: 'date.min',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
-                    }]
-                ]);
-            });
-
-            it('errors if context reference is not a date', () => {
-
-                const ref = Joi.ref('$a');
-                const schema = Joi.object({ b: Joi.date().min(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: '"b" references "ref:global:a" which is not a date',
-                        details: [{
-                            message: '"b" references "ref:global:a" which is not a date',
-                            path: ['b'],
-                            type: 'date.ref',
-                            context: { ref, label: 'b', key: 'b', value: 'abc' }
-                        }]
-                    }],
-                    [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
-                        message: '"b" must be larger than or equal to "ref:global:a"',
-                        details: [{
-                            message: '"b" must be larger than or equal to "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.min',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
-                    }]
-                ]);
-            });
-        });
-
-        describe('max', () => {
-
-            it('validates max', () => {
-
-                const d = new Date('1-1-1970 UTC');
-                const message = `"value" must be less than or equal to "${d.toISOString()}"`;
-                Helper.validate(Joi.date().max('1-1-1970 UTC'), [
-                    ['1-1-1971 UTC', false, null, {
+                    details: [{
                         message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.max',
-                            context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
-                        }]
-                    }],
-                    ['1-1-1970 UTC', true],
-                    [0, true],
-                    [1, false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.max',
-                            context: { limit: d, label: 'value', value: new Date(1) }
-                        }]
-                    }],
-                    ['0', true],
-                    ['-1', true],
-                    ['1-1-2014 UTC', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.max',
-                            context: { limit: d, label: 'value', value: new Date('1-1-2014 UTC') }
-                        }]
+                        path: [],
+                        type: 'date.greater',
+                        context: { limit: d, label: 'value', value: new Date('1-1-2000 UTC') }
                     }]
-                ]);
-            });
-
-            it('accepts "now" as the max date', async () => {
-
-                const past = new Date(Date.now() - 1000000);
-
-                const value = await Joi.date().max('now').validate(past);
-                expect(value).to.equal(past);
-            });
-
-            it('errors if .max("now") is used with a future date', async () => {
-
-                const now = Date.now();
-                const future = new Date(now + 1000000);
-
-                const err = await expect(Joi.date().max('now').validate(future)).to.reject();
-                const message = '"value" must be less than or equal to "now"';
-                expect(err).to.be.an.error(message);
-                expect(err.details).to.equal([{
+                }],
+                [0, false, null, {
                     message,
-                    path: [],
-                    type: 'date.max',
-                    context: { limit: 'now', label: 'value', value: future }
-                }]);
-            });
-
-            it('accepts references as max date', () => {
-
-                const ref = Joi.ref('a');
-                const schema = Joi.object({ a: Joi.date(), b: Joi.date().max(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ a: now, b: now }, true],
-                    [{ a: now, b: now + 1e3 }, false, null, {
-                        message: '"b" must be less than or equal to "ref:a"',
-                        details: [{
-                            message: '"b" must be less than or equal to "ref:a"',
-                            path: ['b'],
-                            type: 'date.max',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
-                        }]
-                    }],
-                    [{ a: now, b: now - 1e3 }, true]
-                ]);
-            });
-
-            it('accepts references as max date', () => {
-
-                const ref = Joi.ref('$a');
-                const schema = Joi.object({ b: Joi.date().max(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ b: now }, true, { context: { a: now } }],
-                    [{ b: now + 1e3 }, false, { context: { a: now } }, {
-                        message: '"b" must be less than or equal to "ref:global:a"',
-                        details: [{
-                            message: '"b" must be less than or equal to "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.max',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
-                        }]
-                    }],
-                    [{ b: now - 1e3 }, true, { context: { a: now } }]
-                ]);
-            });
-
-            it('errors if reference is not a date', () => {
-
-                const ref = Joi.ref('a');
-                const schema = Joi.object({ a: Joi.string(), b: Joi.date().max(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ a: 'abc', b: new Date() }, false, null, {
-                        message: '"b" references "ref:a" which is not a date',
-                        details: [{
-                            message: '"b" references "ref:a" which is not a date',
-                            path: ['b'],
-                            type: 'date.ref',
-                            context: { ref, label: 'b', key: 'b', value: 'abc' }
-                        }]
-                    }],
-                    [{ a: '100000000000000', b: now }, true],
-                    [{ a: (now - 1e3).toString(), b: now }, false, null, {
-                        message: '"b" must be less than or equal to "ref:a"',
-                        details: [{
-                            message: '"b" must be less than or equal to "ref:a"',
-                            path: ['b'],
-                            type: 'date.max',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.greater',
+                        context: { limit: d, label: 'value', value: new Date(0) }
                     }]
-                ]);
-            });
-
-            it('errors if context reference is not a date', () => {
-
-                const ref = Joi.ref('$a');
-                const schema = Joi.object({ b: Joi.date().max(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: '"b" references "ref:global:a" which is not a date',
-                        details: [{
-                            message: '"b" references "ref:global:a" which is not a date',
-                            path: ['b'],
-                            type: 'date.ref',
-                            context: { ref, label: 'b', key: 'b', value: 'abc' }
-                        }]
-                    }],
-                    [{ b: now }, true, { context: { a: '100000000000000' } }],
-                    [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
-                        message: '"b" must be less than or equal to "ref:global:a"',
-                        details: [{
-                            message: '"b" must be less than or equal to "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.max',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
+                }],
+                ['0', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.greater',
+                        context: { limit: d, label: 'value', value: new Date(0) }
                     }]
-                ]);
-            });
+                }],
+                ['-1', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.greater',
+                        context: { limit: d, label: 'value', value: new Date(-1) }
+                    }]
+                }],
+                ['1-1-1999 UTC', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.greater',
+                        context: { limit: d, label: 'value', value: new Date('1-1-1999 UTC') }
+                    }]
+                }]
+            ]);
         });
 
-        describe('greater', () => {
+        it('accepts "now" as the greater date', async () => {
 
-            it('validates greater', () => {
+            const future = new Date(Date.now() + 1000000);
+            const value = await Joi.date().greater('now').validate(future);
+            expect(value).to.equal(future);
+        });
 
-                const d = new Date('1-1-2000 UTC');
-                const message = `"value" must be greater than "${d.toISOString()}"`;
-                Helper.validate(Joi.date().greater('1-1-2000 UTC'), [
-                    ['1-1-2001 UTC', true],
-                    ['1-1-2000 UTC', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.greater',
-                            context: { limit: d, label: 'value', value: new Date('1-1-2000 UTC') }
-                        }]
-                    }],
-                    [0, false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.greater',
-                            context: { limit: d, label: 'value', value: new Date(0) }
-                        }]
-                    }],
-                    ['0', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.greater',
-                            context: { limit: d, label: 'value', value: new Date(0) }
-                        }]
-                    }],
-                    ['-1', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.greater',
-                            context: { limit: d, label: 'value', value: new Date(-1) }
-                        }]
-                    }],
-                    ['1-1-1999 UTC', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.greater',
-                            context: { limit: d, label: 'value', value: new Date('1-1-1999 UTC') }
-                        }]
-                    }]
-                ]);
-            });
+        it('errors if .greater("now") is used with a past date', async () => {
 
-            it('accepts "now" as the greater date', async () => {
+            const now = Date.now();
+            const past = new Date(now - 1000000);
 
-                const future = new Date(Date.now() + 1000000);
-                const value = await Joi.date().greater('now').validate(future);
-                expect(value).to.equal(future);
-            });
+            const err = await expect(Joi.date().greater('now').validate(past)).to.reject();
+            const message = '"value" must be greater than "now"';
+            expect(err).to.be.an.error(message);
+            expect(err.details).to.equal([{
+                message: '"value" must be greater than "now"',
+                path: [],
+                type: 'date.greater',
+                context: { limit: 'now', label: 'value', value: past }
+            }]);
+        });
 
-            it('errors if .greater("now") is used with a past date', async () => {
+        it('accepts references as greater date', () => {
 
-                const now = Date.now();
-                const past = new Date(now - 1000000);
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.date(), b: Joi.date().greater(ref) });
+            const now = Date.now();
 
-                const err = await expect(Joi.date().greater('now').validate(past)).to.reject();
-                const message = '"value" must be greater than "now"';
-                expect(err).to.be.an.error(message);
-                expect(err.details).to.equal([{
-                    message: '"value" must be greater than "now"',
-                    path: [],
-                    type: 'date.greater',
-                    context: { limit: 'now', label: 'value', value: past }
-                }]);
-            });
-
-            it('accepts references as greater date', () => {
-
-                const ref = Joi.ref('a');
-                const schema = Joi.object({ a: Joi.date(), b: Joi.date().greater(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ a: now, b: now }, false, null, {
+            Helper.validate(schema, [
+                [{ a: now, b: now }, false, null, {
+                    message: '"b" must be greater than "ref:a"',
+                    details: [{
                         message: '"b" must be greater than "ref:a"',
-                        details: [{
-                            message: '"b" must be greater than "ref:a"',
-                            path: ['b'],
-                            type: 'date.greater',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
-                    }],
-                    [{ a: now, b: now + 1e3 }, true],
-                    [{ a: now, b: now - 1e3 }, false, null, {
-                        message: '"b" must be greater than "ref:a"',
-                        details: [{
-                            message: '"b" must be greater than "ref:a"',
-                            path: ['b'],
-                            type: 'date.greater',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
-                        }]
+                        path: ['b'],
+                        type: 'date.greater',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                     }]
-                ]);
+                }],
+                [{ a: now, b: now + 1e3 }, true],
+                [{ a: now, b: now - 1e3 }, false, null, {
+                    message: '"b" must be greater than "ref:a"',
+                    details: [{
+                        message: '"b" must be greater than "ref:a"',
+                        path: ['b'],
+                        type: 'date.greater',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts references as greater date within a when', () => {
+
+            const ref = Joi.ref('b');
+            const schema = Joi.object({
+                a: Joi.date().required(),
+                b: Joi.date().required(),
+                c: Joi.number().required().when('a', {
+                    is: Joi.date().greater(ref), // a > b
+                    then: Joi.number().valid(0)
+                })
             });
 
-            it('accepts references as greater date within a when', () => {
-
-                const ref = Joi.ref('b');
-                const schema = Joi.object({
-                    a: Joi.date().required(),
-                    b: Joi.date().required(),
-                    c: Joi.number().required().when('a', {
-                        is: Joi.date().greater(ref), // a > b
-                        then: Joi.number().valid(0)
-                    })
-                });
-
-                Helper.validate(schema, [
-                    [{ a: 123, b: 123, c: 0 }, true],
-                    [{ a: 123, b: 456, c: 42 }, true],
-                    [{ a: 456, b: 123, c: 0 }, true],
-                    [{ a: 123, b: 123, c: 42 }, true],
-                    [{ a: 456, b: 123, c: 42 }, false, null, {
+            Helper.validate(schema, [
+                [{ a: 123, b: 123, c: 0 }, true],
+                [{ a: 123, b: 456, c: 42 }, true],
+                [{ a: 456, b: 123, c: 0 }, true],
+                [{ a: 123, b: 123, c: 42 }, true],
+                [{ a: 456, b: 123, c: 42 }, false, null, {
+                    message: '"c" must be one of [0]',
+                    details: [{
                         message: '"c" must be one of [0]',
-                        details: [{
-                            message: '"c" must be one of [0]',
-                            path: ['c'],
-                            type: 'any.allowOnly',
-                            context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                        }]
+                        path: ['c'],
+                        type: 'any.allowOnly',
+                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
                     }]
-                ]);
-            });
+                }]
+            ]);
+        });
 
-            it('accepts context references as greater date', () => {
+        it('accepts context references as greater date', () => {
 
-                const ref = Joi.ref('$a');
-                const schema = Joi.object({ b: Joi.date().greater(ref) });
-                const now = Date.now();
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.date().greater(ref) });
+            const now = Date.now();
 
-                Helper.validate(schema, [
-                    [{ b: now }, false, { context: { a: now } }, {
+            Helper.validate(schema, [
+                [{ b: now }, false, { context: { a: now } }, {
+                    message: '"b" must be greater than "ref:global:a"',
+                    details: [{
                         message: '"b" must be greater than "ref:global:a"',
-                        details: [{
-                            message: '"b" must be greater than "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.greater',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
-                    }],
-                    [{ b: now + 1e3 }, true, { context: { a: now } }],
-                    [{ b: now - 1e3 }, false, { context: { a: now } }, {
-                        message: '"b" must be greater than "ref:global:a"',
-                        details: [{
-                            message: '"b" must be greater than "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.greater',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
-                        }]
+                        path: ['b'],
+                        type: 'date.greater',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                     }]
-                ]);
-            });
+                }],
+                [{ b: now + 1e3 }, true, { context: { a: now } }],
+                [{ b: now - 1e3 }, false, { context: { a: now } }, {
+                    message: '"b" must be greater than "ref:global:a"',
+                    details: [{
+                        message: '"b" must be greater than "ref:global:a"',
+                        path: ['b'],
+                        type: 'date.greater',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
+                    }]
+                }]
+            ]);
+        });
 
-            it('errors if reference is not a date', () => {
+        it('errors if reference is not a date', () => {
 
-                const ref = Joi.ref('a');
-                const schema = Joi.object({ a: Joi.string(), b: Joi.date().greater(ref) });
-                const now = Date.now();
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.date().greater(ref) });
+            const now = Date.now();
 
-                Helper.validate(schema, [
-                    [{ a: 'abc', b: now }, false, null, {
+            Helper.validate(schema, [
+                [{ a: 'abc', b: now }, false, null, {
+                    message: '"b" references "ref:a" which is not a date',
+                    details: [{
                         message: '"b" references "ref:a" which is not a date',
-                        details: [{
-                            message: '"b" references "ref:a" which is not a date',
-                            path: ['b'],
-                            type: 'date.ref',
-                            context: { ref, label: 'b', key: 'b', value: 'abc' }
-                        }]
-                    }],
-                    [{ a: '123', b: now }, true],
-                    [{ a: (now + 1e3).toString(), b: now }, false, null, {
+                        path: ['b'],
+                        type: 'date.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }],
+                [{ a: '123', b: now }, true],
+                [{ a: (now + 1e3).toString(), b: now }, false, null, {
+                    message: '"b" must be greater than "ref:a"',
+                    details: [{
                         message: '"b" must be greater than "ref:a"',
-                        details: [{
-                            message: '"b" must be greater than "ref:a"',
-                            path: ['b'],
-                            type: 'date.greater',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
+                        path: ['b'],
+                        type: 'date.greater',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                     }]
-                ]);
-            });
+                }]
+            ]);
+        });
 
-            it('errors if context reference is not a date', () => {
+        it('errors if context reference is not a date', () => {
 
-                const ref = Joi.ref('$a');
-                const schema = Joi.object({ b: Joi.date().greater(ref) });
-                const now = Date.now();
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.date().greater(ref) });
+            const now = Date.now();
 
-                Helper.validate(schema, [
-                    [{ b: now }, false, { context: { a: 'abc' } }, {
+            Helper.validate(schema, [
+                [{ b: now }, false, { context: { a: 'abc' } }, {
+                    message: '"b" references "ref:global:a" which is not a date',
+                    details: [{
                         message: '"b" references "ref:global:a" which is not a date',
-                        details: [{
-                            message: '"b" references "ref:global:a" which is not a date',
-                            path: ['b'],
-                            type: 'date.ref',
-                            context: { ref, label: 'b', key: 'b', value: 'abc' }
-                        }]
-                    }],
-                    [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
+                        path: ['b'],
+                        type: 'date.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }],
+                [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
+                    message: '"b" must be greater than "ref:global:a"',
+                    details: [{
                         message: '"b" must be greater than "ref:global:a"',
-                        details: [{
-                            message: '"b" must be greater than "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.greater',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
+                        path: ['b'],
+                        type: 'date.greater',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                     }]
-                ]);
-            });
+                }]
+            ]);
+        });
+    });
+
+    describe('iso()', () => {
+
+        it('avoids unnecessary cloning when called twice', () => {
+
+            const schema = Joi.date().iso();
+            expect(schema.iso()).to.shallow.equal(schema);
         });
 
-        describe('less', () => {
+        it('validates isoDate', () => {
 
-            it('validates less', () => {
-
-                const d = new Date('1-1-1970 UTC');
-                const message = `"value" must be less than "${d}"`;
-                Helper.validate(Joi.date().less('1-1-1970 UTC').prefs({ errors: { dateFormat: 'string' } }), [
-                    ['1-1-1971 UTC', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.less',
-                            context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
-                        }]
-                    }],
-                    ['1-1-1970 UTC', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.less',
-                            context: { limit: d, label: 'value', value: new Date('1-1-1970 UTC') }
-                        }]
-                    }],
-                    [0, false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.less',
-                            context: { limit: d, label: 'value', value: new Date(0) }
-                        }]
-                    }],
-                    [1, false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.less',
-                            context: { limit: d, label: 'value', value: new Date(1) }
-                        }]
-                    }],
-                    ['0', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.less',
-                            context: { limit: d, label: 'value', value: new Date(0) }
-                        }]
-                    }],
-                    ['-1', true],
-                    ['1-1-2014 UTC', false, null, {
-                        message,
-                        details: [{
-                            message,
-                            path: [],
-                            type: 'date.less',
-                            context: { limit: d, label: 'value', value: new Date('1-1-2014 UTC') }
-                        }]
+            Helper.validate(Joi.date().iso(), [
+                ['+002013-06-07T14:21:46.295Z', true],
+                ['-002013-06-07T14:21:46.295Z', true],
+                ['002013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '002013-06-07T14:21:46.295Z' }
                     }]
-                ]);
-            });
+                }],
+                ['+2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '+2013-06-07T14:21:46.295Z' }
+                    }]
+                }],
+                ['-2013-06-07T14:21:46.295Z', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '-2013-06-07T14:21:46.295Z' }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295Z', true],
+                ['2013-06-07T14:21:46.295Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '2013-06-07T14:21:46.295Z0' }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '2013-06-07T14:21:46.295+07:000' }
+                    }]
+                }],
+                ['2013-06-07T14:21:46.295-07:00', true],
+                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46Z0', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '2013-06-07T14:21:46Z0' }
+                    }]
+                }],
+                ['2013-06-07T14:21:46+07:00', true],
+                ['2013-06-07T14:21:46-07:00', true],
+                ['2013-06-07T14:21Z', true],
+                ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21+07:000', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '2013-06-07T14:21+07:000' }
+                    }]
+                }],
+                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21Z+7:00', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '2013-06-07T14:21Z+7:00' }
+                    }]
+                }],
+                ['2013-06-07', true],
+                ['2013-06-07T', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '2013-06-07T' }
+                    }]
+                }],
+                ['2013-06-07T14:21', true],
+                ['1-1-2013', false, null, {
+                    message: '"value" must be a valid ISO 8601 date',
+                    details: [{
+                        message: '"value" must be a valid ISO 8601 date',
+                        path: [],
+                        type: 'date.isoDate',
+                        context: { label: 'value', value: '1-1-2013' }
+                    }]
+                }],
+                ['2013', true, null, new Date('2013')]
+            ]);
+        });
 
-            it('accepts "now" as the less date', async () => {
+        it('converts expanded isoDates', async () => {
 
-                const past = new Date(Date.now() - 1000000);
+            const schema = { item: Joi.date().iso() };
+            const value = await Joi.compile(schema).validate({ item: '-002013-06-07T14:21:46.295Z' });
+            expect(value.item.toISOString()).to.be.equal('-002013-06-07T14:21:46.295Z');
+        });
 
-                const value = await Joi.date().less('now').validate(past);
-                expect(value).to.equal(past);
-            });
+        it('validates isoDate with a friendly error message', async () => {
 
-            it('errors if .less("now") is used with a future date', async () => {
+            const schema = { item: Joi.date().iso() };
+            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            expect(err.message).to.equal('"item" must be a valid ISO 8601 date');
+            expect(err.details).to.equal([{
+                message: '"item" must be a valid ISO 8601 date',
+                path: ['item'],
+                type: 'date.isoDate',
+                context: { label: 'item', key: 'item', value: 'something' }
+            }]);
+        });
 
-                const now = Date.now();
-                const future = new Date(now + 1000000);
+        it('validates isoDate after clone', async () => {
 
-                const err = await expect(Joi.date().less('now').validate(future)).to.reject();
-                const message = '"value" must be less than "now"';
-                expect(err).to.be.an.error(message);
-                expect(err.details).to.equal([{
-                    message: '"value" must be less than "now"',
-                    path: [],
-                    type: 'date.less',
-                    context: { limit: 'now', label: 'value', value: future }
-                }]);
-            });
+            const schema = { item: Joi.date().iso().clone() };
+            await Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' });
+        });
+    });
 
-            it('accepts references as less date', () => {
+    describe('less()', () => {
 
-                const ref = Joi.ref('a');
-                const schema = Joi.object({ a: Joi.date(), b: Joi.date().less(ref) });
-                const now = Date.now();
+        it('validates less', () => {
 
-                Helper.validate(schema, [
-                    [{ a: now, b: now }, false, null, {
+            const d = new Date('1-1-1970 UTC');
+            const message = `"value" must be less than "${d}"`;
+            Helper.validate(Joi.date().less('1-1-1970 UTC').prefs({ dateFormat: 'string' }), [
+                ['1-1-1971 UTC', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.less',
+                        context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
+                    }]
+                }],
+                ['1-1-1970 UTC', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.less',
+                        context: { limit: d, label: 'value', value: new Date('1-1-1970 UTC') }
+                    }]
+                }],
+                [0, false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.less',
+                        context: { limit: d, label: 'value', value: new Date(0) }
+                    }]
+                }],
+                [1, false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.less',
+                        context: { limit: d, label: 'value', value: new Date(1) }
+                    }]
+                }],
+                ['0', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.less',
+                        context: { limit: d, label: 'value', value: new Date(0) }
+                    }]
+                }],
+                ['-1', true],
+                ['1-1-2014 UTC', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.less',
+                        context: { limit: d, label: 'value', value: new Date('1-1-2014 UTC') }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts "now" as the less date', async () => {
+
+            const past = new Date(Date.now() - 1000000);
+
+            const value = await Joi.date().less('now').validate(past);
+            expect(value).to.equal(past);
+        });
+
+        it('errors if .less("now") is used with a future date', async () => {
+
+            const now = Date.now();
+            const future = new Date(now + 1000000);
+
+            const err = await expect(Joi.date().less('now').validate(future)).to.reject();
+            const message = '"value" must be less than "now"';
+            expect(err).to.be.an.error(message);
+            expect(err.details).to.equal([{
+                message: '"value" must be less than "now"',
+                path: [],
+                type: 'date.less',
+                context: { limit: 'now', label: 'value', value: future }
+            }]);
+        });
+
+        it('accepts references as less date', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.date(), b: Joi.date().less(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ a: now, b: now }, false, null, {
+                    message: '"b" must be less than "ref:a"',
+                    details: [{
                         message: '"b" must be less than "ref:a"',
-                        details: [{
-                            message: '"b" must be less than "ref:a"',
-                            path: ['b'],
-                            type: 'date.less',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
-                    }],
-                    [{ a: now, b: now + 1e3 }, false, null, {
+                        path: ['b'],
+                        type: 'date.less',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
+                    }]
+                }],
+                [{ a: now, b: now + 1e3 }, false, null, {
+                    message: '"b" must be less than "ref:a"',
+                    details: [{
                         message: '"b" must be less than "ref:a"',
-                        details: [{
-                            message: '"b" must be less than "ref:a"',
-                            path: ['b'],
-                            type: 'date.less',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
-                        }]
-                    }],
-                    [{ a: now, b: now - 1e3 }, true]
-                ]);
-            });
+                        path: ['b'],
+                        type: 'date.less',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
+                    }]
+                }],
+                [{ a: now, b: now - 1e3 }, true]
+            ]);
+        });
 
-            it('accepts references as less date', () => {
+        it('accepts references as less date', () => {
 
-                const ref = Joi.ref('$a');
-                const schema = Joi.object({ b: Joi.date().less(ref) });
-                const now = Date.now();
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.date().less(ref) });
+            const now = Date.now();
 
-                Helper.validate(schema, [
-                    [{ b: now }, false, { context: { a: now } }, {
+            Helper.validate(schema, [
+                [{ b: now }, false, { context: { a: now } }, {
+                    message: '"b" must be less than "ref:global:a"',
+                    details: [{
                         message: '"b" must be less than "ref:global:a"',
-                        details: [{
-                            message: '"b" must be less than "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.less',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
-                    }],
-                    [{ b: now + 1e3 }, false, { context: { a: now } }, {
+                        path: ['b'],
+                        type: 'date.less',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
+                    }]
+                }],
+                [{ b: now + 1e3 }, false, { context: { a: now } }, {
+                    message: '"b" must be less than "ref:global:a"',
+                    details: [{
                         message: '"b" must be less than "ref:global:a"',
-                        details: [{
-                            message: '"b" must be less than "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.less',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
-                        }]
-                    }],
-                    [{ b: now - 1e3 }, true, { context: { a: now } }]
-                ]);
-            });
+                        path: ['b'],
+                        type: 'date.less',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
+                    }]
+                }],
+                [{ b: now - 1e3 }, true, { context: { a: now } }]
+            ]);
+        });
 
-            it('errors if reference is not a date', () => {
+        it('errors if reference is not a date', () => {
 
-                const ref = Joi.ref('a');
-                const schema = Joi.object({ a: Joi.string(), b: Joi.date().less(ref) });
-                const now = Date.now();
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.date().less(ref) });
+            const now = Date.now();
 
-                Helper.validate(schema, [
-                    [{ a: 'abc', b: new Date() }, false, null, {
+            Helper.validate(schema, [
+                [{ a: 'abc', b: new Date() }, false, null, {
+                    message: '"b" references "ref:a" which is not a date',
+                    details: [{
                         message: '"b" references "ref:a" which is not a date',
-                        details: [{
-                            message: '"b" references "ref:a" which is not a date',
-                            path: ['b'],
-                            type: 'date.ref',
-                            context: { ref, label: 'b', key: 'b', value: 'abc' }
-                        }]
-                    }],
-                    [{ a: '100000000000000', b: now }, true],
-                    [{ a: (now - 1e3).toString(), b: now }, false, null, {
+                        path: ['b'],
+                        type: 'date.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }],
+                [{ a: '100000000000000', b: now }, true],
+                [{ a: (now - 1e3).toString(), b: now }, false, null, {
+                    message: '"b" must be less than "ref:a"',
+                    details: [{
                         message: '"b" must be less than "ref:a"',
-                        details: [{
-                            message: '"b" must be less than "ref:a"',
-                            path: ['b'],
-                            type: 'date.less',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
+                        path: ['b'],
+                        type: 'date.less',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                     }]
-                ]);
-            });
-
-            it('errors if context reference is not a date', () => {
-
-                const ref = Joi.ref('$a');
-                const schema = Joi.object({ b: Joi.date().less(ref) });
-                const now = Date.now();
-
-                Helper.validate(schema, [
-                    [{ b: now }, false, { context: { a: 'abc' } }, {
-                        message: '"b" references "ref:global:a" which is not a date',
-                        details: [{
-                            message: '"b" references "ref:global:a" which is not a date',
-                            path: ['b'],
-                            type: 'date.ref',
-                            context: { ref, label: 'b', key: 'b', value: 'abc' }
-                        }]
-                    }],
-                    [{ b: now }, true, { context: { a: '100000000000000' } }],
-                    [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
-                        message: '"b" must be less than "ref:global:a"',
-                        details: [{
-                            message: '"b" must be less than "ref:global:a"',
-                            path: ['b'],
-                            type: 'date.less',
-                            context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                        }]
-                    }]
-                ]);
-            });
+                }]
+            ]);
         });
 
-        it('validates only valid dates', () => {
+        it('errors if context reference is not a date', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.date().less(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ b: now }, false, { context: { a: 'abc' } }, {
+                    message: '"b" references "ref:global:a" which is not a date',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a date',
+                        path: ['b'],
+                        type: 'date.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }],
+                [{ b: now }, true, { context: { a: '100000000000000' } }],
+                [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
+                    message: '"b" must be less than "ref:global:a"',
+                    details: [{
+                        message: '"b" must be less than "ref:global:a"',
+                        path: ['b'],
+                        type: 'date.less',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('max()', () => {
+
+        it('validates max', () => {
+
+            const d = new Date('1-1-1970 UTC');
+            const message = `"value" must be less than or equal to "${d.toISOString()}"`;
+            Helper.validate(Joi.date().max('1-1-1970 UTC'), [
+                ['1-1-1971 UTC', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.max',
+                        context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
+                    }]
+                }],
+                ['1-1-1970 UTC', true],
+                [0, true],
+                [1, false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.max',
+                        context: { limit: d, label: 'value', value: new Date(1) }
+                    }]
+                }],
+                ['0', true],
+                ['-1', true],
+                ['1-1-2014 UTC', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.max',
+                        context: { limit: d, label: 'value', value: new Date('1-1-2014 UTC') }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts "now" as the max date', async () => {
+
+            const past = new Date(Date.now() - 1000000);
+
+            const value = await Joi.date().max('now').validate(past);
+            expect(value).to.equal(past);
+        });
+
+        it('errors if .max("now") is used with a future date', async () => {
+
+            const now = Date.now();
+            const future = new Date(now + 1000000);
+
+            const err = await expect(Joi.date().max('now').validate(future)).to.reject();
+            const message = '"value" must be less than or equal to "now"';
+            expect(err).to.be.an.error(message);
+            expect(err.details).to.equal([{
+                message,
+                path: [],
+                type: 'date.max',
+                context: { limit: 'now', label: 'value', value: future }
+            }]);
+        });
+
+        it('accepts references as max date', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.date(), b: Joi.date().max(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ a: now, b: now }, true],
+                [{ a: now, b: now + 1e3 }, false, null, {
+                    message: '"b" must be less than or equal to "ref:a"',
+                    details: [{
+                        message: '"b" must be less than or equal to "ref:a"',
+                        path: ['b'],
+                        type: 'date.max',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
+                    }]
+                }],
+                [{ a: now, b: now - 1e3 }, true]
+            ]);
+        });
+
+        it('accepts references as max date', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.date().max(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ b: now }, true, { context: { a: now } }],
+                [{ b: now + 1e3 }, false, { context: { a: now } }, {
+                    message: '"b" must be less than or equal to "ref:global:a"',
+                    details: [{
+                        message: '"b" must be less than or equal to "ref:global:a"',
+                        path: ['b'],
+                        type: 'date.max',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
+                    }]
+                }],
+                [{ b: now - 1e3 }, true, { context: { a: now } }]
+            ]);
+        });
+
+        it('errors if reference is not a date', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.date().max(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: new Date() }, false, null, {
+                    message: '"b" references "ref:a" which is not a date',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a date',
+                        path: ['b'],
+                        type: 'date.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }],
+                [{ a: '100000000000000', b: now }, true],
+                [{ a: (now - 1e3).toString(), b: now }, false, null, {
+                    message: '"b" must be less than or equal to "ref:a"',
+                    details: [{
+                        message: '"b" must be less than or equal to "ref:a"',
+                        path: ['b'],
+                        type: 'date.max',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if context reference is not a date', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.date().max(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ b: now }, false, { context: { a: 'abc' } }, {
+                    message: '"b" references "ref:global:a" which is not a date',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a date',
+                        path: ['b'],
+                        type: 'date.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }],
+                [{ b: now }, true, { context: { a: '100000000000000' } }],
+                [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
+                    message: '"b" must be less than or equal to "ref:global:a"',
+                    details: [{
+                        message: '"b" must be less than or equal to "ref:global:a"',
+                        path: ['b'],
+                        type: 'date.max',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('min()', () => {
+
+        it('validates min', () => {
+
+            const d = new Date('1-1-2000 UTC');
+            const message = `"value" must be larger than or equal to "${d.toISOString()}"`;
+            Helper.validate(Joi.date().min('1-1-2000 UTC'), [
+                ['1-1-2001 UTC', true],
+                ['1-1-2000 UTC', true],
+                [0, false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.min',
+                        context: { limit: d, label: 'value', value: new Date(0) }
+                    }]
+                }],
+                ['0', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.min',
+                        context: { limit: d, label: 'value', value: new Date(0) }
+                    }]
+                }],
+                ['-1', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.min',
+                        context: { limit: d, label: 'value', value: new Date(-1) }
+                    }]
+                }],
+                ['1-1-1999 UTC', false, null, {
+                    message,
+                    details: [{
+                        message,
+                        path: [],
+                        type: 'date.min',
+                        context: { limit: d, label: 'value', value: new Date('1-1-1999 UTC') }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts "now" as the min date', async () => {
+
+            const future = new Date(Date.now() + 1000000);
+            const value = await Joi.date().min('now').validate(future);
+            expect(value).to.equal(future);
+        });
+
+        it('errors if .min("now") is used with a past date', async () => {
+
+            const now = Date.now();
+            const past = new Date(now - 1000000);
+
+            const err = await expect(Joi.date().min('now').validate(past)).to.reject();
+            const message = '"value" must be larger than or equal to "now"';
+            expect(err).to.be.an.error(message);
+            expect(err.details).to.equal([{
+                message,
+                path: [],
+                type: 'date.min',
+                context: { limit: 'now', label: 'value', value: past }
+            }]);
+        });
+
+        it('accepts references as min date', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.date(), b: Joi.date().min(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ a: now, b: now }, true],
+                [{ a: now, b: now + 1e3 }, true],
+                [{ a: now, b: now - 1e3 }, false, null, {
+                    message: '"b" must be larger than or equal to "ref:a"',
+                    details: [{
+                        message: '"b" must be larger than or equal to "ref:a"',
+                        path: ['b'],
+                        type: 'date.min',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts references as min date within a when', () => {
+
+            const ref = Joi.ref('b');
+            const schema = Joi.object({
+                a: Joi.date().required(),
+                b: Joi.date().required(),
+                c: Joi.number().required().when('a', {
+                    is: Joi.date().min(ref), // a >= b
+                    then: Joi.number().valid(0)
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 123, b: 123, c: 0 }, true],
+                [{ a: 123, b: 456, c: 42 }, true],
+                [{ a: 456, b: 123, c: 0 }, true],
+                [{ a: 123, b: 123, c: 42 }, false, null, {
+                    message: '"c" must be one of [0]',
+                    details: [{
+                        message: '"c" must be one of [0]',
+                        path: ['c'],
+                        type: 'any.allowOnly',
+                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
+                    }]
+                }],
+                [{ a: 456, b: 123, c: 42 }, false, null, {
+                    message: '"c" must be one of [0]',
+                    details: [{
+                        message: '"c" must be one of [0]',
+                        path: ['c'],
+                        type: 'any.allowOnly',
+                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts context references as min date', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.date().min(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ b: now }, true, { context: { a: now } }],
+                [{ b: now + 1e3 }, true, { context: { a: now } }],
+                [{ b: now - 1e3 }, false, { context: { a: now } }, {
+                    message: '"b" must be larger than or equal to "ref:global:a"',
+                    details: [{
+                        message: '"b" must be larger than or equal to "ref:global:a"',
+                        path: ['b'],
+                        type: 'date.min',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if reference is not a date', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.date().min(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: now }, false, null, {
+                    message: '"b" references "ref:a" which is not a date',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a date',
+                        path: ['b'],
+                        type: 'date.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }],
+                [{ a: '123', b: now }, true],
+                [{ a: (now + 1e3).toString(), b: now }, false, null, {
+                    message: '"b" must be larger than or equal to "ref:a"',
+                    details: [{
+                        message: '"b" must be larger than or equal to "ref:a"',
+                        path: ['b'],
+                        type: 'date.min',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if context reference is not a date', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.date().min(ref) });
+            const now = Date.now();
+
+            Helper.validate(schema, [
+                [{ b: now }, false, { context: { a: 'abc' } }, {
+                    message: '"b" references "ref:global:a" which is not a date',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a date',
+                        path: ['b'],
+                        type: 'date.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }],
+                [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
+                    message: '"b" must be larger than or equal to "ref:global:a"',
+                    details: [{
+                        message: '"b" must be larger than or equal to "ref:global:a"',
+                        path: ['b'],
+                        type: 'date.min',
+                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('timestamp()', () => {
+
+        it('avoids unnecessary cloning when called twice', () => {
+
+            const schema = Joi.date().timestamp('unix');
+            expect(schema.timestamp('unix')).to.shallow.equal(schema);
+        });
+
+        it('fails on empty strings', () => {
+
+            const schema = Joi.date().timestamp();
+            Helper.validate(schema, [
+                ['', false, null, {
+                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    details: [{
+                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        path: [],
+                        type: 'date.timestamp.javascript',
+                        context: { label: 'value', value: '' }
+                    }]
+                }],
+                [' \t ', false, null, {
+                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    details: [{
+                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        path: [],
+                        type: 'date.timestamp.javascript',
+                        context: { label: 'value', value: ' \t ' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates javascript timestamp', async () => {
+
+            const now = new Date();
+            const milliseconds = now.getTime();
+
+            const value = await Joi.date().timestamp().validate(milliseconds);
+            expect(value).to.equal(now);
+
+            const value2 = await Joi.date().timestamp('javascript').validate(milliseconds);
+            expect(value2).to.equal(now);
+
+            const value3 = await Joi.date().timestamp('unix').timestamp('javascript').validate(milliseconds);
+            expect(value3).to.equal(now);
+        });
+
+        it('validates unix timestamp', async () => {
+
+            const now = new Date();
+            const seconds = now.getTime() / 1000;
+
+            const value = await Joi.date().timestamp('unix').validate(seconds);
+            expect(value).to.equal(now);
+
+            const value2 = await Joi.date().timestamp().timestamp('unix').validate(seconds);
+            expect(value2).to.equal(now);
+
+            const value3 = await Joi.date().timestamp('javascript').timestamp('unix').validate(seconds);
+            expect(value3).to.equal(now);
+        });
+
+        it('validates timestamps with decimals', () => {
+
+            Helper.validate(Joi.date().timestamp(), [
+                [new Date().getTime().toFixed(4), true]
+            ]);
+            Helper.validate(Joi.date().timestamp('javascript'), [
+                [new Date().getTime().toFixed(4), true]
+            ]);
+            Helper.validate(Joi.date().timestamp('unix'), [
+                [(new Date().getTime() / 1000).toFixed(4), true]
+            ]);
+        });
+
+        it('validates only valid timestamps and returns a friendly error message', () => {
 
             const invalidDate = new Date('not a valid date');
-            Helper.validate(Joi.date(), [
-                ['1-1-2013 UTC', true],
+            Helper.validate(Joi.date().timestamp(), [
                 [new Date().getTime(), true],
                 [new Date().getTime().toFixed(4), true],
-                ['not a valid date', false, null, {
-                    message: '"value" must be a number of milliseconds or valid date string',
+                ['1.452126061677e+12', true],
+                [1.452126061677e+12, true],
+                [1E3, true],
+                ['1E3', true],
+                [',', false, null, {
+                    message: '"value" must be a valid timestamp or number of milliseconds',
                     details: [{
-                        message: '"value" must be a number of milliseconds or valid date string',
+                        message: '"value" must be a valid timestamp or number of milliseconds',
                         path: [],
-                        type: 'date.base',
-                        context: { label: 'value', value: 'not a valid date' }
+                        type: 'date.timestamp.javascript',
+                        context: { label: 'value', value: ',' }
+                    }]
+                }],
+                ['123A,0xA', false, null, {
+                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    details: [{
+                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        path: [],
+                        type: 'date.timestamp.javascript',
+                        context: { label: 'value', value: '123A,0xA' }
+                    }]
+                }],
+                ['1-1-2013 UTC', false, null, {
+                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    details: [{
+                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        path: [],
+                        type: 'date.timestamp.javascript',
+                        context: { label: 'value', value: '1-1-2013 UTC' }
+                    }]
+                }],
+                ['not a valid timestamp', false, null, {
+                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    details: [{
+                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        path: [],
+                        type: 'date.timestamp.javascript',
+                        context: { label: 'value', value: 'not a valid timestamp' }
                     }]
                 }],
                 [invalidDate, false, null, {
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"value" must be a valid timestamp or number of milliseconds',
                     details: [{
-                        message: '"value" must be a number of milliseconds or valid date string',
+                        message: '"value" must be a valid timestamp or number of milliseconds',
                         path: [],
-                        type: 'date.base',
+                        type: 'date.timestamp.javascript',
                         context: { label: 'value', value: invalidDate }
                     }]
                 }]
             ]);
         });
 
-        describe('iso()', () => {
+        it('fails with not allowed type', () => {
 
-            it('avoids unnecessary cloning when called twice', () => {
+            expect(() => {
 
-                const schema = Joi.date().iso();
-                expect(schema.iso()).to.shallow.equal(schema);
-            });
-
-            it('validates isoDate', () => {
-
-                Helper.validate(Joi.date().iso(), [
-                    ['+002013-06-07T14:21:46.295Z', true],
-                    ['-002013-06-07T14:21:46.295Z', true],
-                    ['002013-06-07T14:21:46.295Z', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '002013-06-07T14:21:46.295Z' }
-                        }]
-                    }],
-                    ['+2013-06-07T14:21:46.295Z', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '+2013-06-07T14:21:46.295Z' }
-                        }]
-                    }],
-                    ['-2013-06-07T14:21:46.295Z', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '-2013-06-07T14:21:46.295Z' }
-                        }]
-                    }],
-                    ['2013-06-07T14:21:46.295Z', true],
-                    ['2013-06-07T14:21:46.295Z0', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '2013-06-07T14:21:46.295Z0' }
-                        }]
-                    }],
-                    ['2013-06-07T14:21:46.295+07:00', true],
-                    ['2013-06-07T14:21:46.295+07:000', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '2013-06-07T14:21:46.295+07:000' }
-                        }]
-                    }],
-                    ['2013-06-07T14:21:46.295-07:00', true],
-                    ['2013-06-07T14:21:46Z', true],
-                    ['2013-06-07T14:21:46Z0', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '2013-06-07T14:21:46Z0' }
-                        }]
-                    }],
-                    ['2013-06-07T14:21:46+07:00', true],
-                    ['2013-06-07T14:21:46-07:00', true],
-                    ['2013-06-07T14:21Z', true],
-                    ['2013-06-07T14:21+07:00', true],
-                    ['2013-06-07T14:21+07:000', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '2013-06-07T14:21+07:000' }
-                        }]
-                    }],
-                    ['2013-06-07T14:21-07:00', true],
-                    ['2013-06-07T14:21Z+7:00', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '2013-06-07T14:21Z+7:00' }
-                        }]
-                    }],
-                    ['2013-06-07', true],
-                    ['2013-06-07T', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '2013-06-07T' }
-                        }]
-                    }],
-                    ['2013-06-07T14:21', true],
-                    ['1-1-2013', false, null, {
-                        message: '"value" must be a valid ISO 8601 date',
-                        details: [{
-                            message: '"value" must be a valid ISO 8601 date',
-                            path: [],
-                            type: 'date.isoDate',
-                            context: { label: 'value', value: '1-1-2013' }
-                        }]
-                    }],
-                    ['2013', true, null, new Date('2013')]
-                ]);
-            });
-
-            it('converts expanded isoDates', async () => {
-
-                const schema = { item: Joi.date().iso() };
-                const value = await Joi.compile(schema).validate({ item: '-002013-06-07T14:21:46.295Z' });
-                expect(value.item.toISOString()).to.be.equal('-002013-06-07T14:21:46.295Z');
-            });
-
-            it('validates isoDate with a friendly error message', async () => {
-
-                const schema = { item: Joi.date().iso() };
-                const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
-                expect(err.message).to.equal('"item" must be a valid ISO 8601 date');
-                expect(err.details).to.equal([{
-                    message: '"item" must be a valid ISO 8601 date',
-                    path: ['item'],
-                    type: 'date.isoDate',
-                    context: { label: 'item', key: 'item', value: 'something' }
-                }]);
-            });
-
-            it('validates isoDate after clone', async () => {
-
-                const schema = { item: Joi.date().iso().clone() };
-                await Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' });
-            });
-        });
-
-        describe('timestamp()', () => {
-
-            it('avoids unnecessary cloning when called twice', () => {
-
-                const schema = Joi.date().timestamp('unix');
-                expect(schema.timestamp('unix')).to.shallow.equal(schema);
-            });
-
-            it('fails on empty strings', () => {
-
-                const schema = Joi.date().timestamp();
-                Helper.validate(schema, [
-                    ['', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
-                        details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
-                            path: [],
-                            type: 'date.timestamp.javascript',
-                            context: { label: 'value', value: '' }
-                        }]
-                    }],
-                    [' \t ', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
-                        details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
-                            path: [],
-                            type: 'date.timestamp.javascript',
-                            context: { label: 'value', value: ' \t ' }
-                        }]
-                    }]
-                ]);
-            });
-
-            it('validates javascript timestamp', async () => {
-
-                const now = new Date();
-                const milliseconds = now.getTime();
-
-                const value = await Joi.date().timestamp().validate(milliseconds);
-                expect(value).to.equal(now);
-
-                const value2 = await Joi.date().timestamp('javascript').validate(milliseconds);
-                expect(value2).to.equal(now);
-
-                const value3 = await Joi.date().timestamp('unix').timestamp('javascript').validate(milliseconds);
-                expect(value3).to.equal(now);
-            });
-
-            it('validates unix timestamp', async () => {
-
-                const now = new Date();
-                const seconds = now.getTime() / 1000;
-
-                const value = await Joi.date().timestamp('unix').validate(seconds);
-                expect(value).to.equal(now);
-
-                const value2 = await Joi.date().timestamp().timestamp('unix').validate(seconds);
-                expect(value2).to.equal(now);
-
-                const value3 = await Joi.date().timestamp('javascript').timestamp('unix').validate(seconds);
-                expect(value3).to.equal(now);
-            });
-
-            it('validates timestamps with decimals', () => {
-
-                Helper.validate(Joi.date().timestamp(), [
-                    [new Date().getTime().toFixed(4), true]
-                ]);
-                Helper.validate(Joi.date().timestamp('javascript'), [
-                    [new Date().getTime().toFixed(4), true]
-                ]);
-                Helper.validate(Joi.date().timestamp('unix'), [
-                    [(new Date().getTime() / 1000).toFixed(4), true]
-                ]);
-            });
-
-            it('validates only valid timestamps and returns a friendly error message', () => {
-
-                const invalidDate = new Date('not a valid date');
-                Helper.validate(Joi.date().timestamp(), [
-                    [new Date().getTime(), true],
-                    [new Date().getTime().toFixed(4), true],
-                    ['1.452126061677e+12', true],
-                    [1.452126061677e+12, true],
-                    [1E3, true],
-                    ['1E3', true],
-                    [',', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
-                        details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
-                            path: [],
-                            type: 'date.timestamp.javascript',
-                            context: { label: 'value', value: ',' }
-                        }]
-                    }],
-                    ['123A,0xA', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
-                        details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
-                            path: [],
-                            type: 'date.timestamp.javascript',
-                            context: { label: 'value', value: '123A,0xA' }
-                        }]
-                    }],
-                    ['1-1-2013 UTC', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
-                        details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
-                            path: [],
-                            type: 'date.timestamp.javascript',
-                            context: { label: 'value', value: '1-1-2013 UTC' }
-                        }]
-                    }],
-                    ['not a valid timestamp', false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
-                        details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
-                            path: [],
-                            type: 'date.timestamp.javascript',
-                            context: { label: 'value', value: 'not a valid timestamp' }
-                        }]
-                    }],
-                    [invalidDate, false, null, {
-                        message: '"value" must be a valid timestamp or number of milliseconds',
-                        details: [{
-                            message: '"value" must be a valid timestamp or number of milliseconds',
-                            path: [],
-                            type: 'date.timestamp.javascript',
-                            context: { label: 'value', value: invalidDate }
-                        }]
-                    }]
-                ]);
-            });
-
-            it('fails with not allowed type', () => {
-
-                expect(() => {
-
-                    Joi.date().timestamp('not allowed');
-                }).to.throw(Error, /"type" must be one of/);
-            });
+                Joi.date().timestamp('not allowed');
+            }).to.throw(Error, /"type" must be one of/);
         });
     });
 });

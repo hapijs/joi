@@ -76,6 +76,42 @@ describe('binary', () => {
         ]);
     });
 
+    describe('cast()', () => {
+
+        it('casts value to string', () => {
+
+            const schema = Joi.binary().cast('string');
+            expect(schema.validate(Buffer.from('test')).value).to.equal('test');
+        });
+
+        it('casts value to string (in object)', () => {
+
+            const schema = Joi.object({
+                a: Joi.binary().cast('string')
+            });
+
+            expect(schema.validate({ a: Buffer.from('test') }).value).to.equal({ a: 'test' });
+            expect(schema.validate({}).value).to.equal({});
+        });
+
+        it('ignores null', () => {
+
+            const schema = Joi.binary().allow(null).cast('string');
+            expect(schema.validate(null).value).to.be.null();
+        });
+
+        it('ignores string', () => {
+
+            const schema = Joi.binary().allow('x').cast('string');
+            expect(schema.validate('x').value).to.equal('x');
+        });
+
+        it('does not leak casts to any', () => {
+
+            expect(() => Joi.any().cast('string')).to.throw('Type any does not support casting to string');
+        });
+    });
+
     describe('validate()', () => {
 
         it('returns an error when a non-buffer or non-string is used', async () => {

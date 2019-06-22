@@ -298,13 +298,13 @@ Validates a value using the given schema and options where:
   - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
     `validate()` and not using `any.prefs()`.
   - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
+  - `dateFormat` - sets the string format used when converting dates to strings in error messages and casting. Options are:
+    - `'date'` - date string.
+    - `'iso'` - date time ISO string. This is the default.
+    - `'string'` - JS default date time string.
+    - `'time'` - time string.
+    - `'utc'` - UTC date time string.
   - `error` - error formatting settings:
-    - `dateFormat` - sets the string format used when including dates in error messages. Options are:
-      - `'date'` - date string.
-      - `'iso'` - date time ISO string. This is the default.
-      - `'string'` - JS default date time string.
-      - `'time'` - time string.
-      - `'utc'` - UTC date time string.
     - `escapeHtml` - when `true`, error message templates will escape special characters to HTML
       entities, for security purposes. Defaults to `false`.
     - `language` - the prefered language code for error messages. The value is matched against keys
@@ -795,12 +795,14 @@ const schema = {
 
 Casts the validated value to the specified type where:
 - `to` - the value target type. Each **joi** schema type supports its own set of cast targets:
+    - `'map'` - supported by the `Joi.object()` type, converts the result to a `Map` object
+      containing the object key-value pairs.
     - `'raw'` - supported by all types, forces the result value to use the raw input regardless of
       any conversions or changes made during validation.
     - `'set'` - supported by the `Joi.array()` type, converts the result to a `Set` object
       containing the array values.
-    - `'map'` - supported by the `Joi.object()` type, converts the result to a `Map` object
-      containing the object key-value pairs.
+    - `'string'` - supported by the `Joi.binary()`, `Joi.boolean()`, `Joi.date()`, and
+      `Joi.number()`, converts the result to a string.
 
 #### `any.concat(schema)`
 

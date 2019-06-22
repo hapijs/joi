@@ -814,6 +814,18 @@ describe('object', () => {
             expect(schema.validate({ a: '1', b: '2' }).value).to.equal(new Map([['a', 1], ['b', 2]]));
         });
 
+        it('ignores null', () => {
+
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number() }).allow(null).cast('map');
+            expect(schema.validate(null).value).to.be.null();
+        });
+
+        it('ignores string', () => {
+
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number() }).allow('x').cast('map');
+            expect(schema.validate('x').value).to.equal('x');
+        });
+
         it('does not leak casts to any', () => {
 
             expect(() => Joi.any().cast('map')).to.throw('Type any does not support casting to map');
