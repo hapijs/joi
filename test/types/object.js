@@ -806,6 +806,20 @@ describe('object', () => {
         }]);
     });
 
+    describe('cast()', () => {
+
+        it('casts value to map', () => {
+
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number() }).cast('map');
+            expect(schema.validate({ a: '1', b: '2' }).value).to.equal(new Map([['a', 1], ['b', 2]]));
+        });
+
+        it('does not leak casts to any', () => {
+
+            expect(() => Joi.any().cast('map')).to.throw('Type any does not support casting to map');
+        });
+    });
+
     describe('keys()', () => {
 
         it('allows any key', async () => {

@@ -94,6 +94,20 @@ describe('array', () => {
         }]);
     });
 
+    describe('cast()', () => {
+
+        it('casts value to set', () => {
+
+            const schema = Joi.array().items(Joi.number()).cast('set');
+            expect(schema.validate(['1', '2', '3', '4', '5']).value).to.equal(new Set([1, 2, 3, 4, 5]));
+        });
+
+        it('does not leak casts to any', () => {
+
+            expect(() => Joi.any().cast('set')).to.throw('Type any does not support casting to set');
+        });
+    });
+
     describe('describe()', () => {
 
         it('returns an empty description when no rules are applied', () => {

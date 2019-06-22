@@ -29,6 +29,7 @@
   - [`any`](#any)
     - [`schemaType`](#schematype)
     - [`any.allow(...values)`](#anyallowvalues)
+    - [`any.cast(to)`](#anycastto)
     - [`any.concat(schema)`](#anyconcatschema)
     - [`any.default([value, [description]])`](#anydefaultvalue-description)
     - [`any.describe()`](#anydescribe)
@@ -789,6 +790,17 @@ const schema = {
     b: Joi.any().allow('b', 'B')
 };
 ```
+
+#### `any.cast(to)`
+
+Casts the validated value to the specified type where:
+- `to` - the value target type. Each **joi** schema type supports its own set of cast targets:
+    - `'raw'` - supported by all types, forces the result value to use the raw input regardless of
+      any conversions or changes made during validation.
+    - `'set'` - supported by the `Joi.array()` type, converts the result to a `Set` object
+      containing the array values.
+    - `'map'` - supported by the `Joi.object()` type, converts the result to a `Map` object
+      containing the object key-value pairs.
 
 #### `any.concat(schema)`
 
