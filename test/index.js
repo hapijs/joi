@@ -3045,15 +3045,17 @@ describe('Joi', () => {
             const defaultJoi = Joi
                 .defaults((schema) => schema.required().description('defaulted'))
                 .defaults((schema) => schema.raw());
+
             const schema = defaultJoi.object({
                 foo: 'bar'
             });
+
             expect(schema.describe()).to.equal({
                 type: 'object',
                 description: 'defaulted',
                 flags: {
                     presence: 'required',
-                    raw: true
+                    cast: 'raw'
                 },
                 children: {
                     foo: {
@@ -3062,7 +3064,7 @@ describe('Joi', () => {
                         flags: {
                             presence: 'required',
                             allowOnly: true,
-                            raw: true
+                            cast: 'raw'
                         },
                         invalids: [''],
                         valids: ['bar']

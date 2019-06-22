@@ -2245,19 +2245,19 @@ describe('any', () => {
 
             for (const test of tests) {
 
-                const baseSchema = test[0];
                 const input = test[1];
-                const schemas = [
-                    baseSchema.raw(),
-                    baseSchema.raw(true)
-                ];
+                const schema = test[0].raw();
 
-                for (const schema of schemas) {
-
-                    const value = await schema.raw().validate(input);
-                    expect(value).to.equal(input);
-                }
+                const value = await schema.raw().validate(input);
+                expect(value).to.equal(input);
             }
+        });
+
+        it('cancels raw mode', async () => {
+
+            const schema = Joi.number().raw().cast(false);
+            const value = await schema.validate('123');
+            expect(value).to.equal(123);
         });
 
         it('avoids unnecessary cloning when called twice', () => {

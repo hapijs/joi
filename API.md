@@ -46,7 +46,7 @@
     - [`any.notes(notes)`](#anynotesnotes)
     - [`any.optional()`](#anyoptional)
     - [`any.prefs(options)` = aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
-    - [`any.raw(isRaw)`](#anyrawisraw)
+    - [`any.raw()`](#anyraw)
     - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
     - [`any.rule(options)`](#anyruleoptions)
     - [`any.ruleset` - aliases: `$`](#anyruleset---aliases-)
@@ -1039,10 +1039,9 @@ Overrides the global `validate()` options for the current key and any sub-key wh
 const schema = Joi.any().prefs({ convert: false });
 ```
 
-#### `any.raw(isRaw)`
+#### `any.raw()`
 
 Outputs the original untouched value instead of the casted value.
-- `isRaw` - whether to enable raw mode or not. Defaults to true.
 
 ```js
 const timestampSchema = Joi.date().timestamp();
