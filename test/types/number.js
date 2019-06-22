@@ -54,6 +54,1031 @@ describe('number', () => {
         ]);
     });
 
+    it('should instantiate separate copies on invocation', () => {
+
+        const result1 = Joi.number().min(5);
+        const result2 = Joi.number().max(5);
+
+        expect(Object.keys(result1)).to.not.shallow.equal(Object.keys(result2));
+    });
+
+    it('should show resulting object with #valueOf', () => {
+
+        const result = Joi.number().min(5);
+        expect(result.valueOf()).to.exist();
+    });
+
+    describe('error message', () => {
+
+        it('should display correctly for int type', async () => {
+
+            const t = Joi.number().integer();
+            const err = await expect(Joi.compile(t).validate('1.1')).to.reject();
+            expect(err.message).to.contain('integer');
+        });
+    });
+
+    describe('cast()', () => {
+
+        it('casts value to string', () => {
+
+            const schema = Joi.number().cast('string');
+            expect(schema.validate(0).value).to.equal('0');
+            expect(schema.validate(0.01).value).to.equal('0.01');
+            expect(schema.validate(-12).value).to.equal('-12');
+        });
+
+        it('ignores null', () => {
+
+            const schema = Joi.number().allow(null).cast('string');
+            expect(schema.validate(null).value).to.be.null();
+        });
+
+        it('ignores string', () => {
+
+            const schema = Joi.number().allow('x').cast('string');
+            expect(schema.validate('x').value).to.equal('x');
+        });
+    });
+
+    describe('describe()', () => {
+
+        it('should describe a minimum of 0', () => {
+
+            const schema = Joi.number().min(0);
+            expect(schema.describe()).to.equal({
+                type: 'number',
+                invalids: [Infinity, -Infinity],
+                flags: { unsafe: false },
+                rules: [
+                    {
+                        name: 'min',
+                        arg: 0
+                    }
+                ]
+            });
+        });
+    });
+
+    describe('greater()', () => {
+
+        it('throws when limit is not a number', () => {
+
+            expect(() => {
+
+                Joi.number().greater('a');
+            }).to.throw('limit must be a number or reference');
+        });
+
+        it('accepts references as greater value', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().greater(ref) });
+
+            Helper.validate(schema, [
+                [{ a: 42, b: 1337 }, true],
+                [{ a: 1337, b: 42 }, false, null, {
+                    message: '"b" must be greater than ref:a',
+                    details: [{
+                        message: '"b" must be greater than ref:a',
+                        path: ['b'],
+                        type: 'number.greater',
+                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: '1337', b: 42 }, false, null, {
+                    message: '"b" must be greater than ref:a',
+                    details: [{
+                        message: '"b" must be greater than ref:a',
+                        path: ['b'],
+                        type: 'number.greater',
+                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 2.4, b: 4.2 }, true],
+                [{ a: 4.2, b: 4.20000001 }, true],
+                [{
+                    a: 4.20000001,
+                    b: 4.2
+                }, false, null, {
+                    message: '"b" must be greater than ref:a',
+                    details: [{
+                        message: '"b" must be greater than ref:a',
+                        path: ['b'],
+                        type: 'number.greater',
+                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 4.2, b: 2.4 }, false, null, {
+                    message: '"b" must be greater than ref:a',
+                    details: [{
+                        message: '"b" must be greater than ref:a',
+                        path: ['b'],
+                        type: 'number.greater',
+                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts context references as greater value', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.number().greater(ref) });
+
+            Helper.validate(schema, [
+                [{ b: 1337 }, true, { context: { a: 42 } }],
+                [{ b: 42 }, false, { context: { a: 1337 } }, {
+                    message: '"b" must be greater than ref:global:a',
+                    details: [{
+                        message: '"b" must be greater than ref:global:a',
+                        path: ['b'],
+                        type: 'number.greater',
+                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 4.2 }, true, { context: { a: 2.4 } }],
+                [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
+                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, {
+                    message: '"b" must be greater than ref:global:a',
+                    details: [{
+                        message: '"b" must be greater than ref:global:a',
+                        path: ['b'],
+                        type: 'number.greater',
+                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 2.4 }, false, { context: { a: 4.2 } }, {
+                    message: '"b" must be greater than ref:global:a',
+                    details: [{
+                        message: '"b" must be greater than ref:global:a',
+                        path: ['b'],
+                        type: 'number.greater',
+                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if reference is not a number', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().greater(ref) });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 42 }, false, null, {
+                    message: '"b" references "ref:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if context reference is not a number', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.number().greater(ref) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, false, { context: { a: 'abc' } }, {
+                    message: '"b" references "ref:global:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('less()', () => {
+
+        it('throws when limit is not a number', () => {
+
+            expect(() => {
+
+                Joi.number().less('a');
+            }).to.throw('limit must be a number or reference');
+        });
+
+        it('accepts references as less value', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().less(ref) });
+
+            Helper.validate(schema, [
+                [{ a: 1337, b: 42 }, true],
+                [{ a: 42, b: 1337 }, false, null, {
+                    message: '"b" must be less than ref:a',
+                    details: [{
+                        message: '"b" must be less than ref:a',
+                        path: ['b'],
+                        type: 'number.less',
+                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: '42', b: 1337 }, false, null, {
+                    message: '"b" must be less than ref:a',
+                    details: [{
+                        message: '"b" must be less than ref:a',
+                        path: ['b'],
+                        type: 'number.less',
+                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 4.2, b: 2.4 }, true],
+                [{ a: 4.2, b: 4.20000001 }, false, null, {
+                    message: '"b" must be less than ref:a',
+                    details: [{
+                        message: '"b" must be less than ref:a',
+                        path: ['b'],
+                        type: 'number.less',
+                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 4.20000001, b: 4.2 }, true],
+                [{ a: 2.4, b: 4.2 }, false, null, {
+                    message: '"b" must be less than ref:a',
+                    details: [{
+                        message: '"b" must be less than ref:a',
+                        path: ['b'],
+                        type: 'number.less',
+                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts context references as less value', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.number().less(ref) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, true, { context: { a: 1337 } }],
+                [{ b: 1337 }, false, { context: { a: 42 } }, {
+                    message: '"b" must be less than ref:global:a',
+                    details: [{
+                        message: '"b" must be less than ref:global:a',
+                        path: ['b'],
+                        type: 'number.less',
+                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 2.4 }, true, { context: { a: 4.2 } }],
+                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, {
+                    message: '"b" must be less than ref:global:a',
+                    details: [{
+                        message: '"b" must be less than ref:global:a',
+                        path: ['b'],
+                        type: 'number.less',
+                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
+                [{ b: 4.2 }, false, { context: { a: 2.4 } }, {
+                    message: '"b" must be less than ref:global:a',
+                    details: [{
+                        message: '"b" must be less than ref:global:a',
+                        path: ['b'],
+                        type: 'number.less',
+                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if reference is not a number', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().less(ref) });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 42 }, false, null, {
+                    message: '"b" references "ref:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if reference is null', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.any(), b: Joi.number().less(ref) });
+
+            Helper.validate(schema, [
+                [{ a: null, b: 42 }, false, null, {
+                    message: '"b" references "ref:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: null }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if context reference is not a number', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().less(ref) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, false, { context: { a: 'abc' } }, {
+                    message: '"b" references "ref:global:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('max()', () => {
+
+        it('throws when limit is not a number', () => {
+
+            expect(() => {
+
+                Joi.number().max('a');
+            }).to.throw('limit must be a number or reference');
+        });
+
+        it('accepts references as max value', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().max(ref) });
+
+            Helper.validate(schema, [
+                [{ a: 1337, b: 42 }, true],
+                [{ a: 42, b: 1337 }, false, null, {
+                    message: '"b" must be less than or equal to ref:a',
+                    details: [{
+                        message: '"b" must be less than or equal to ref:a',
+                        path: ['b'],
+                        type: 'number.max',
+                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: '42', b: 1337 }, false, null, {
+                    message: '"b" must be less than or equal to ref:a',
+                    details: [{
+                        message: '"b" must be less than or equal to ref:a',
+                        path: ['b'],
+                        type: 'number.max',
+                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 4.2, b: 2.4 }, true],
+                [{ a: 4.2, b: 4.20000001 }, false, null, {
+                    message: '"b" must be less than or equal to ref:a',
+                    details: [{
+                        message: '"b" must be less than or equal to ref:a',
+                        path: ['b'],
+                        type: 'number.max',
+                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 4.20000001, b: 4.2 }, true],
+                [{ a: 2.4, b: 4.2 }, false, null, {
+                    message: '"b" must be less than or equal to ref:a',
+                    details: [{
+                        message: '"b" must be less than or equal to ref:a',
+                        path: ['b'],
+                        type: 'number.max',
+                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts context references as max value', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.number().max(ref) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, true, { context: { a: 1337 } }],
+                [{ b: 1337 }, false, { context: { a: 42 } }, {
+                    message: '"b" must be less than or equal to ref:global:a',
+                    details: [{
+                        message: '"b" must be less than or equal to ref:global:a',
+                        path: ['b'],
+                        type: 'number.max',
+                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 2.4 }, true, { context: { a: 4.2 } }],
+                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, {
+                    message: '"b" must be less than or equal to ref:global:a',
+                    details: [{
+                        message: '"b" must be less than or equal to ref:global:a',
+                        path: ['b'],
+                        type: 'number.max',
+                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
+                [{ b: 4.2 }, false, { context: { a: 2.4 } }, {
+                    message: '"b" must be less than or equal to ref:global:a',
+                    details: [{
+                        message: '"b" must be less than or equal to ref:global:a',
+                        path: ['b'],
+                        type: 'number.max',
+                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if reference is not a number', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().max(ref) });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 42 }, false, null, {
+                    message: '"b" references "ref:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if context reference is not a number', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.number().max(ref) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, false, { context: { a: 'abc' } }, {
+                    message: '"b" references "ref:global:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('min()', () => {
+
+        it('throws when limit is not a number', () => {
+
+            expect(() => {
+
+                Joi.number().min('a');
+            }).to.throw('limit must be a number or reference');
+        });
+
+        it('throws when limit is null', () => {
+
+            expect(() => {
+
+                Joi.number().min(null);
+            }).to.throw('limit must be a number or reference');
+        });
+
+        it('supports 64bit numbers', async () => {
+
+            const schema = Joi.number().min(1394035612500);
+            const input = 1394035612552;
+
+            const value = await schema.validate(input);
+            expect(value).to.equal(input);
+        });
+
+        it('accepts references as min value', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().min(ref) });
+
+            Helper.validate(schema, [
+                [{ a: 42, b: 1337 }, true],
+                [{ a: 1337, b: 42 }, false, null, {
+                    message: '"b" must be larger than or equal to ref:a',
+                    details: [{
+                        message: '"b" must be larger than or equal to ref:a',
+                        path: ['b'],
+                        type: 'number.min',
+                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: '1337', b: 42 }, false, null, {
+                    message: '"b" must be larger than or equal to ref:a',
+                    details: [{
+                        message: '"b" must be larger than or equal to ref:a',
+                        path: ['b'],
+                        type: 'number.min',
+                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 2.4, b: 4.2 }, true],
+                [{ a: 4.2, b: 4.20000001 }, true],
+                [{ a: 4.20000001, b: 4.2 }, false, null, {
+                    message: '"b" must be larger than or equal to ref:a',
+                    details: [{
+                        message: '"b" must be larger than or equal to ref:a',
+                        path: ['b'],
+                        type: 'number.min',
+                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 4.2, b: 2.4 }, false, null, {
+                    message: '"b" must be larger than or equal to ref:a',
+                    details: [{
+                        message: '"b" must be larger than or equal to ref:a',
+                        path: ['b'],
+                        type: 'number.min',
+                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts references as min value within a when', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().required(),
+                c: Joi.number().required().when('a', {
+                    is: Joi.number().min(Joi.ref('b')), // a >= b
+                    then: Joi.number().valid(0)
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 0, b: 1, c: 42 }, true],
+                [{ a: 1, b: 1, c: 0 }, true],
+                [{ a: 2, b: 1, c: 0 }, true],
+                [{ a: 1, b: 1, c: 42 }, false, null, {
+                    message: '"c" must be one of [0]',
+                    details: [{
+                        message: '"c" must be one of [0]',
+                        path: ['c'],
+                        type: 'any.allowOnly',
+                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
+                    }]
+                }],
+                [{ a: 2, b: 1, c: 42 }, false, null, {
+                    message: '"c" must be one of [0]',
+                    details: [{
+                        message: '"c" must be one of [0]',
+                        path: ['c'],
+                        type: 'any.allowOnly',
+                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('accepts context references as min value', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.number().min(ref) });
+
+            Helper.validate(schema, [
+                [{ b: 1337 }, true, { context: { a: 42 } }],
+                [{ b: 42 }, false, { context: { a: 1337 } }, {
+                    message: '"b" must be larger than or equal to ref:global:a',
+                    details: [{
+                        message: '"b" must be larger than or equal to ref:global:a',
+                        path: ['b'],
+                        type: 'number.min',
+                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 4.2 }, true, { context: { a: 2.4 } }],
+                [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
+                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, {
+                    message: '"b" must be larger than or equal to ref:global:a',
+                    details: [{
+                        message: '"b" must be larger than or equal to ref:global:a',
+                        path: ['b'],
+                        type: 'number.min',
+                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 2.4 }, false, { context: { a: 4.2 } }, {
+                    message: '"b" must be larger than or equal to ref:global:a',
+                    details: [{
+                        message: '"b" must be larger than or equal to ref:global:a',
+                        path: ['b'],
+                        type: 'number.min',
+                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if reference is not a number', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().min(ref) });
+
+            Helper.validate(schema, [
+                [{ a: 'abc', b: 42 }, false, null, {
+                    message: '"b" references "ref:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors if context reference is not a number', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.number().min(ref) });
+
+            Helper.validate(schema, [
+                [{ b: 42 }, false, { context: { a: 'abc' } }, {
+                    message: '"b" references "ref:global:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('multiple()', () => {
+
+        it('throws when multiple is not a number', () => {
+
+            expect(() => {
+
+                Joi.number().multiple('a');
+            }).to.throw('multiple must be a number greater than 0');
+        });
+
+        it('throws when multiple is 0', () => {
+
+            expect(() => {
+
+                Joi.number().multiple(0);
+            }).to.throw('multiple must be a number greater than 0');
+        });
+
+        it('handles integer multiples correctly', () => {
+
+            const rule = Joi.number().multiple(3);
+            Helper.validate(rule, [
+                [0, true], // 0 is a multiple of every integer
+                [3, true],
+                [4, false, null, {
+                    message: '"value" must be a multiple of 3',
+                    details: [{
+                        message: '"value" must be a multiple of 3',
+                        path: [],
+                        type: 'number.multiple',
+                        context: { multiple: 3, value: 4, label: 'value' }
+                    }]
+                }],
+                [9, true],
+                ['a', false, null, {
+                    message: '"value" must be a number',
+                    details: [{
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', value: 'a' }
+                    }]
+                }],
+                [9.1, false, null, {
+                    message: '"value" must be a multiple of 3',
+                    details: [{
+                        message: '"value" must be a multiple of 3',
+                        path: [],
+                        type: 'number.multiple',
+                        context: { multiple: 3, value: 9.1, label: 'value' }
+                    }]
+                }],
+                [8.9, false, null, {
+                    message: '"value" must be a multiple of 3',
+                    details: [{
+                        message: '"value" must be a multiple of 3',
+                        path: [],
+                        type: 'number.multiple',
+                        context: { multiple: 3, value: 8.9, label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('handles floats multiples correctly', () => {
+
+            const schema = Joi.number().multiple(3.5);
+            Helper.validate(schema, [
+                [0, true], // 0 is a multiple of every integer
+                [3.5, true],
+                [3.6, false, null, {
+                    message: '"value" must be a multiple of 3.5',
+                    details: [{
+                        message: '"value" must be a multiple of 3.5',
+                        path: [],
+                        type: 'number.multiple',
+                        context: { multiple: 3.5, value: 3.6, label: 'value' }
+                    }]
+                }],
+                [10.5, true],
+                ['a', false, null, {
+                    message: '"value" must be a number',
+                    details: [{
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', value: 'a' }
+                    }]
+                }],
+                [10.501, false, null, {
+                    message: '"value" must be a multiple of 3.5',
+                    details: [{
+                        message: '"value" must be a multiple of 3.5',
+                        path: [],
+                        type: 'number.multiple',
+                        context: { multiple: 3.5, value: 10.501, label: 'value' }
+                    }]
+                }],
+                [10.499, false, null, {
+                    message: '"value" must be a multiple of 3.5',
+                    details: [{
+                        message: '"value" must be a multiple of 3.5',
+                        path: [],
+                        type: 'number.multiple',
+                        context: { multiple: 3.5, value: 10.499, label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('handles references correctly', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().multiple(ref) });
+            Helper.validate(schema, [
+                [{ a: 2, b: 32 }, true],
+                [{ a: 43, b: 0 }, true],
+                [{ a: 4, b: 25 }, false, null, {
+                    message: '"b" must be a multiple of ref:a',
+                    details: [{
+                        message: '"b" must be a multiple of ref:a',
+                        path: ['b'],
+                        type: 'number.multiple',
+                        context: { multiple: ref, value: 25, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 0, b: 0 }, false, null, {
+                    message: '"b" references "ref:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, key: 'b', label: 'b', value: 0 }
+                    }]
+                }]
+            ]);
+        });
+
+        it('handles references correctly within a when', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().required(),
+                c: Joi.number().required().when('a', {
+                    is: Joi.number().multiple(Joi.ref('b')), // a % b === 0
+                    then: Joi.number().valid(0)
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 2, b: 3, c: 42 }, true],
+                [{ a: 2, b: 4, c: 42 }, true],
+                [{ a: 4, b: 2, c: 0 }, true],
+                [{ a: 4, b: 2, c: 42 }, false, null, {
+                    message: '"c" must be one of [0]',
+                    details: [{
+                        message: '"c" must be one of [0]',
+                        path: ['c'],
+                        type: 'any.allowOnly',
+                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('handles non-number references correctly', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.string(), b: Joi.number().multiple(ref) });
+            Helper.validate(schema, [
+                [{ a: 'test', b: 32 }, false, null, {
+                    message: '"b" references "ref:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'test' }
+                    }]
+                }],
+                [{ a: 'test', b: 0 }, false, null, {
+                    message: '"b" references "ref:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'test' }
+                    }]
+                }],
+                [{ a: 'test', b: NaN }, false, null, {
+                    message: '"b" must be a number',
+                    details: [{
+                        message: '"b" must be a number',
+                        path: ['b'],
+                        type: 'number.base',
+                        context: { label: 'b', key: 'b', value: NaN }
+                    }]
+                }]
+            ]);
+        });
+
+        it('handles context references correctly', () => {
+
+            const ref = Joi.ref('$a');
+            const schema = Joi.object({ b: Joi.number().multiple(ref) });
+            Helper.validate(schema, [
+                [{ b: 32 }, true, { context: { a: 2 } }],
+                [{ b: 0 }, true, { context: { a: 43 } }],
+                [{ b: 25 }, false, { context: { a: 4 } }, {
+                    message: '"b" must be a multiple of ref:global:a',
+                    details: [{
+                        message: '"b" must be a multiple of ref:global:a',
+                        path: ['b'],
+                        type: 'number.multiple',
+                        context: { multiple: ref, value: 25, label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ b: 31 }, false, { context: { a: 0 } }, {
+                    message: '"b" references "ref:global:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, key: 'b', label: 'b', value: 0 }
+                    }]
+                }],
+                [{ b: 0 }, false, { context: { a: 0 } }, {
+                    message: '"b" references "ref:global:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, key: 'b', label: 'b', value: 0 }
+                    }]
+                }],
+                [{ b: 32 }, false, { context: { a: 'test' } }, {
+                    message: '"b" references "ref:global:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'test' }
+                    }]
+                }],
+                [{ b: 0 }, false, { context: { a: 'test' } }, {
+                    message: '"b" references "ref:global:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'test' }
+                    }]
+                }],
+                [{ b: 0 }, false, { context: { a: NaN } }, {
+                    message: '"b" references "ref:global:a" which is not a number',
+                    details: [{
+                        message: '"b" references "ref:global:a" which is not a number',
+                        path: ['b'],
+                        type: 'number.ref',
+                        context: { ref, label: 'b', key: 'b', value: NaN }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('port()', () => {
+
+        it('should validate correctly', () => {
+
+            const schema = Joi.object({ port: Joi.number().port() });
+
+            Helper.validate(schema, [
+                [{ port: 1337 }, true],
+                [{ port: -1 }, false, null, {
+                    message: '"port" must be a valid port',
+                    details: [{
+                        message: '"port" must be a valid port',
+                        path: ['port'],
+                        type: 'number.port',
+                        context: { value: -1, label: 'port', key: 'port' }
+                    }]
+                }],
+                [{ port: 65536 }, false, null, {
+                    message: '"port" must be a valid port',
+                    details: [{
+                        message: '"port" must be a valid port',
+                        path: ['port'],
+                        type: 'number.port',
+                        context: { value: 65536, label: 'port', key: 'port' }
+                    }]
+                }],
+                [{ port: 8.88 }, false, null, {
+                    message: '"port" must be a valid port',
+                    details: [{
+                        message: '"port" must be a valid port',
+                        path: ['port'],
+                        type: 'number.port',
+                        context: { value: 8.88, label: 'port', key: 'port' }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('precision()', () => {
+
+        it('converts numbers', () => {
+
+            const rule = Joi.number().precision(4);
+            Helper.validate(rule, [
+                [1.5, true, null, 1.5],
+                [0.12345, true, null, 0.1235],
+                [123456, true, null, 123456],
+                [123456.123456, true, null, 123456.1235],
+                ['123456.123456', true, null, 123456.1235],
+                ['abc', false, null, {
+                    message: '"value" must be a number',
+                    details: [{
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', value: 'abc' }
+                    }]
+                }],
+                [NaN, false, null, {
+                    message: '"value" must be a number',
+                    details: [{
+                        message: '"value" must be a number',
+                        path: [],
+                        type: 'number.base',
+                        context: { label: 'value', value: NaN }
+                    }]
+                }]
+            ]);
+        });
+    });
+
+    describe('safe', () => {
+
+        it('should accept safe numbers', () => {
+
+            const t = Joi.number();
+            Helper.validate(t, [
+                [Number.MAX_SAFE_INTEGER, true, null, Number.MAX_SAFE_INTEGER],
+                [Number.MIN_SAFE_INTEGER, true, null, Number.MIN_SAFE_INTEGER]
+            ]);
+        });
+    });
+
     describe('validate()', () => {
 
         it('should, by default, allow undefined', () => {
@@ -1272,30 +2297,6 @@ describe('number', () => {
         });
     });
 
-    it('should instantiate separate copies on invocation', () => {
-
-        const result1 = Joi.number().min(5);
-        const result2 = Joi.number().max(5);
-
-        expect(Object.keys(result1)).to.not.shallow.equal(Object.keys(result2));
-    });
-
-    it('should show resulting object with #valueOf', () => {
-
-        const result = Joi.number().min(5);
-        expect(result.valueOf()).to.exist();
-    });
-
-    describe('error message', () => {
-
-        it('should display correctly for int type', async () => {
-
-            const t = Joi.number().integer();
-            const err = await expect(Joi.compile(t).validate('1.1')).to.reject();
-            expect(err.message).to.contain('integer');
-        });
-    });
-
     describe('unsafe', () => {
 
         it('should return the same instance if nothing changed', () => {
@@ -1386,984 +2387,6 @@ describe('number', () => {
                 ['90.071992549e+15', true, null, 90071992549000000],
                 [9007199254740992, true, null, 9007199254740992],
                 [-9007199254740992, true, null, -9007199254740992]
-            ]);
-        });
-    });
-
-    describe('safe', () => {
-
-        it('should accept safe numbers', () => {
-
-            const t = Joi.number();
-            Helper.validate(t, [
-                [Number.MAX_SAFE_INTEGER, true, null, Number.MAX_SAFE_INTEGER],
-                [Number.MIN_SAFE_INTEGER, true, null, Number.MIN_SAFE_INTEGER]
-            ]);
-        });
-    });
-
-    describe('min()', () => {
-
-        it('throws when limit is not a number', () => {
-
-            expect(() => {
-
-                Joi.number().min('a');
-            }).to.throw('limit must be a number or reference');
-        });
-
-        it('throws when limit is null', () => {
-
-            expect(() => {
-
-                Joi.number().min(null);
-            }).to.throw('limit must be a number or reference');
-        });
-
-        it('supports 64bit numbers', async () => {
-
-            const schema = Joi.number().min(1394035612500);
-            const input = 1394035612552;
-
-            const value = await schema.validate(input);
-            expect(value).to.equal(input);
-        });
-
-        it('accepts references as min value', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.number(), b: Joi.number().min(ref) });
-
-            Helper.validate(schema, [
-                [{ a: 42, b: 1337 }, true],
-                [{ a: 1337, b: 42 }, false, null, {
-                    message: '"b" must be larger than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: '1337', b: 42 }, false, null, {
-                    message: '"b" must be larger than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 2.4, b: 4.2 }, true],
-                [{ a: 4.2, b: 4.20000001 }, true],
-                [{ a: 4.20000001, b: 4.2 }, false, null, {
-                    message: '"b" must be larger than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 4.2, b: 2.4 }, false, null, {
-                    message: '"b" must be larger than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('accepts references as min value within a when', () => {
-
-            const schema = Joi.object({
-                a: Joi.number().required(),
-                b: Joi.number().required(),
-                c: Joi.number().required().when('a', {
-                    is: Joi.number().min(Joi.ref('b')), // a >= b
-                    then: Joi.number().valid(0)
-                })
-            });
-
-            Helper.validate(schema, [
-                [{ a: 0, b: 1, c: 42 }, true],
-                [{ a: 1, b: 1, c: 0 }, true],
-                [{ a: 2, b: 1, c: 0 }, true],
-                [{ a: 1, b: 1, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
-                    details: [{
-                        message: '"c" must be one of [0]',
-                        path: ['c'],
-                        type: 'any.allowOnly',
-                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                    }]
-                }],
-                [{ a: 2, b: 1, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
-                    details: [{
-                        message: '"c" must be one of [0]',
-                        path: ['c'],
-                        type: 'any.allowOnly',
-                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('accepts context references as min value', () => {
-
-            const ref = Joi.ref('$a');
-            const schema = Joi.object({ b: Joi.number().min(ref) });
-
-            Helper.validate(schema, [
-                [{ b: 1337 }, true, { context: { a: 42 } }],
-                [{ b: 42 }, false, { context: { a: 1337 } }, {
-                    message: '"b" must be larger than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ b: 4.2 }, true, { context: { a: 2.4 } }],
-                [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
-                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, {
-                    message: '"b" must be larger than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ b: 2.4 }, false, { context: { a: 4.2 } }, {
-                    message: '"b" must be larger than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors if reference is not a number', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.string(), b: Joi.number().min(ref) });
-
-            Helper.validate(schema, [
-                [{ a: 'abc', b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors if context reference is not a number', () => {
-
-            const ref = Joi.ref('$a');
-            const schema = Joi.object({ b: Joi.number().min(ref) });
-
-            Helper.validate(schema, [
-                [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
-                    }]
-                }]
-            ]);
-        });
-    });
-
-    describe('max()', () => {
-
-        it('throws when limit is not a number', () => {
-
-            expect(() => {
-
-                Joi.number().max('a');
-            }).to.throw('limit must be a number or reference');
-        });
-
-        it('accepts references as max value', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.number(), b: Joi.number().max(ref) });
-
-            Helper.validate(schema, [
-                [{ a: 1337, b: 42 }, true],
-                [{ a: 42, b: 1337 }, false, null, {
-                    message: '"b" must be less than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: '42', b: 1337 }, false, null, {
-                    message: '"b" must be less than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 4.2, b: 2.4 }, true],
-                [{ a: 4.2, b: 4.20000001 }, false, null, {
-                    message: '"b" must be less than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 4.20000001, b: 4.2 }, true],
-                [{ a: 2.4, b: 4.2 }, false, null, {
-                    message: '"b" must be less than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('accepts context references as max value', () => {
-
-            const ref = Joi.ref('$a');
-            const schema = Joi.object({ b: Joi.number().max(ref) });
-
-            Helper.validate(schema, [
-                [{ b: 42 }, true, { context: { a: 1337 } }],
-                [{ b: 1337 }, false, { context: { a: 42 } }, {
-                    message: '"b" must be less than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ b: 2.4 }, true, { context: { a: 4.2 } }],
-                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, {
-                    message: '"b" must be less than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
-                [{ b: 4.2 }, false, { context: { a: 2.4 } }, {
-                    message: '"b" must be less than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors if reference is not a number', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.string(), b: Joi.number().max(ref) });
-
-            Helper.validate(schema, [
-                [{ a: 'abc', b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors if context reference is not a number', () => {
-
-            const ref = Joi.ref('$a');
-            const schema = Joi.object({ b: Joi.number().max(ref) });
-
-            Helper.validate(schema, [
-                [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
-                    }]
-                }]
-            ]);
-        });
-    });
-
-    describe('less()', () => {
-
-        it('throws when limit is not a number', () => {
-
-            expect(() => {
-
-                Joi.number().less('a');
-            }).to.throw('limit must be a number or reference');
-        });
-
-        it('accepts references as less value', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.number(), b: Joi.number().less(ref) });
-
-            Helper.validate(schema, [
-                [{ a: 1337, b: 42 }, true],
-                [{ a: 42, b: 1337 }, false, null, {
-                    message: '"b" must be less than ref:a',
-                    details: [{
-                        message: '"b" must be less than ref:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: '42', b: 1337 }, false, null, {
-                    message: '"b" must be less than ref:a',
-                    details: [{
-                        message: '"b" must be less than ref:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 4.2, b: 2.4 }, true],
-                [{ a: 4.2, b: 4.20000001 }, false, null, {
-                    message: '"b" must be less than ref:a',
-                    details: [{
-                        message: '"b" must be less than ref:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 4.20000001, b: 4.2 }, true],
-                [{ a: 2.4, b: 4.2 }, false, null, {
-                    message: '"b" must be less than ref:a',
-                    details: [{
-                        message: '"b" must be less than ref:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('accepts context references as less value', () => {
-
-            const ref = Joi.ref('$a');
-            const schema = Joi.object({ b: Joi.number().less(ref) });
-
-            Helper.validate(schema, [
-                [{ b: 42 }, true, { context: { a: 1337 } }],
-                [{ b: 1337 }, false, { context: { a: 42 } }, {
-                    message: '"b" must be less than ref:global:a',
-                    details: [{
-                        message: '"b" must be less than ref:global:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ b: 2.4 }, true, { context: { a: 4.2 } }],
-                [{ b: 4.20000001 }, false, { context: { a: 4.2 } }, {
-                    message: '"b" must be less than ref:global:a',
-                    details: [{
-                        message: '"b" must be less than ref:global:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ b: 4.2 }, true, { context: { a: 4.20000001 } }],
-                [{ b: 4.2 }, false, { context: { a: 2.4 } }, {
-                    message: '"b" must be less than ref:global:a',
-                    details: [{
-                        message: '"b" must be less than ref:global:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors if reference is not a number', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.string(), b: Joi.number().less(ref) });
-
-            Helper.validate(schema, [
-                [{ a: 'abc', b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors if reference is null', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.any(), b: Joi.number().less(ref) });
-
-            Helper.validate(schema, [
-                [{ a: null, b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: null }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors if context reference is not a number', () => {
-
-            const ref = Joi.ref('$a');
-            const schema = Joi.object({ a: Joi.string(), b: Joi.number().less(ref) });
-
-            Helper.validate(schema, [
-                [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
-                    }]
-                }]
-            ]);
-        });
-    });
-
-    describe('greater()', () => {
-
-        it('throws when limit is not a number', () => {
-
-            expect(() => {
-
-                Joi.number().greater('a');
-            }).to.throw('limit must be a number or reference');
-        });
-
-        it('accepts references as greater value', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.number(), b: Joi.number().greater(ref) });
-
-            Helper.validate(schema, [
-                [{ a: 42, b: 1337 }, true],
-                [{ a: 1337, b: 42 }, false, null, {
-                    message: '"b" must be greater than ref:a',
-                    details: [{
-                        message: '"b" must be greater than ref:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: '1337', b: 42 }, false, null, {
-                    message: '"b" must be greater than ref:a',
-                    details: [{
-                        message: '"b" must be greater than ref:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 2.4, b: 4.2 }, true],
-                [{ a: 4.2, b: 4.20000001 }, true],
-                [{
-                    a: 4.20000001,
-                    b: 4.2
-                }, false, null, {
-                    message: '"b" must be greater than ref:a',
-                    details: [{
-                        message: '"b" must be greater than ref:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 4.2, b: 2.4 }, false, null, {
-                    message: '"b" must be greater than ref:a',
-                    details: [{
-                        message: '"b" must be greater than ref:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('accepts context references as greater value', () => {
-
-            const ref = Joi.ref('$a');
-            const schema = Joi.object({ b: Joi.number().greater(ref) });
-
-            Helper.validate(schema, [
-                [{ b: 1337 }, true, { context: { a: 42 } }],
-                [{ b: 42 }, false, { context: { a: 1337 } }, {
-                    message: '"b" must be greater than ref:global:a',
-                    details: [{
-                        message: '"b" must be greater than ref:global:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ b: 4.2 }, true, { context: { a: 2.4 } }],
-                [{ b: 4.20000001 }, true, { context: { a: 4.2 } }],
-                [{ b: 4.2 }, false, { context: { a: 4.20000001 } }, {
-                    message: '"b" must be greater than ref:global:a',
-                    details: [{
-                        message: '"b" must be greater than ref:global:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ b: 2.4 }, false, { context: { a: 4.2 } }, {
-                    message: '"b" must be greater than ref:global:a',
-                    details: [{
-                        message: '"b" must be greater than ref:global:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors if reference is not a number', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.string(), b: Joi.number().greater(ref) });
-
-            Helper.validate(schema, [
-                [{ a: 'abc', b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('errors if context reference is not a number', () => {
-
-            const ref = Joi.ref('$a');
-            const schema = Joi.object({ b: Joi.number().greater(ref) });
-
-            Helper.validate(schema, [
-                [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
-                    }]
-                }]
-            ]);
-        });
-    });
-
-    describe('precision()', () => {
-
-        it('converts numbers', () => {
-
-            const rule = Joi.number().precision(4);
-            Helper.validate(rule, [
-                [1.5, true, null, 1.5],
-                [0.12345, true, null, 0.1235],
-                [123456, true, null, 123456],
-                [123456.123456, true, null, 123456.1235],
-                ['123456.123456', true, null, 123456.1235],
-                ['abc', false, null, {
-                    message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'abc' }
-                    }]
-                }],
-                [NaN, false, null, {
-                    message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: NaN }
-                    }]
-                }]
-            ]);
-        });
-    });
-
-    describe('describe()', () => {
-
-        it('should describe a minimum of 0', () => {
-
-            const schema = Joi.number().min(0);
-            expect(schema.describe()).to.equal({
-                type: 'number',
-                invalids: [Infinity, -Infinity],
-                flags: { unsafe: false },
-                rules: [
-                    {
-                        name: 'min',
-                        arg: 0
-                    }
-                ]
-            });
-        });
-    });
-
-    describe('multiple()', () => {
-
-        it('throws when multiple is not a number', () => {
-
-            expect(() => {
-
-                Joi.number().multiple('a');
-            }).to.throw('multiple must be a number greater than 0');
-        });
-
-        it('throws when multiple is 0', () => {
-
-            expect(() => {
-
-                Joi.number().multiple(0);
-            }).to.throw('multiple must be a number greater than 0');
-        });
-
-        it('handles integer multiples correctly', () => {
-
-            const rule = Joi.number().multiple(3);
-            Helper.validate(rule, [
-                [0, true], // 0 is a multiple of every integer
-                [3, true],
-                [4, false, null, {
-                    message: '"value" must be a multiple of 3',
-                    details: [{
-                        message: '"value" must be a multiple of 3',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3, value: 4, label: 'value' }
-                    }]
-                }],
-                [9, true],
-                ['a', false, null, {
-                    message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'a' }
-                    }]
-                }],
-                [9.1, false, null, {
-                    message: '"value" must be a multiple of 3',
-                    details: [{
-                        message: '"value" must be a multiple of 3',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3, value: 9.1, label: 'value' }
-                    }]
-                }],
-                [8.9, false, null, {
-                    message: '"value" must be a multiple of 3',
-                    details: [{
-                        message: '"value" must be a multiple of 3',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3, value: 8.9, label: 'value' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('handles floats multiples correctly', () => {
-
-            const schema = Joi.number().multiple(3.5);
-            Helper.validate(schema, [
-                [0, true], // 0 is a multiple of every integer
-                [3.5, true],
-                [3.6, false, null, {
-                    message: '"value" must be a multiple of 3.5',
-                    details: [{
-                        message: '"value" must be a multiple of 3.5',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3.5, value: 3.6, label: 'value' }
-                    }]
-                }],
-                [10.5, true],
-                ['a', false, null, {
-                    message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'a' }
-                    }]
-                }],
-                [10.501, false, null, {
-                    message: '"value" must be a multiple of 3.5',
-                    details: [{
-                        message: '"value" must be a multiple of 3.5',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3.5, value: 10.501, label: 'value' }
-                    }]
-                }],
-                [10.499, false, null, {
-                    message: '"value" must be a multiple of 3.5',
-                    details: [{
-                        message: '"value" must be a multiple of 3.5',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3.5, value: 10.499, label: 'value' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('handles references correctly', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.number(), b: Joi.number().multiple(ref) });
-            Helper.validate(schema, [
-                [{ a: 2, b: 32 }, true],
-                [{ a: 43, b: 0 }, true],
-                [{ a: 4, b: 25 }, false, null, {
-                    message: '"b" must be a multiple of ref:a',
-                    details: [{
-                        message: '"b" must be a multiple of ref:a',
-                        path: ['b'],
-                        type: 'number.multiple',
-                        context: { multiple: ref, value: 25, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 0, b: 0 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, key: 'b', label: 'b', value: 0 }
-                    }]
-                }]
-            ]);
-        });
-
-        it('handles references correctly within a when', () => {
-
-            const schema = Joi.object({
-                a: Joi.number().required(),
-                b: Joi.number().required(),
-                c: Joi.number().required().when('a', {
-                    is: Joi.number().multiple(Joi.ref('b')), // a % b === 0
-                    then: Joi.number().valid(0)
-                })
-            });
-
-            Helper.validate(schema, [
-                [{ a: 2, b: 3, c: 42 }, true],
-                [{ a: 2, b: 4, c: 42 }, true],
-                [{ a: 4, b: 2, c: 0 }, true],
-                [{ a: 4, b: 2, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
-                    details: [{
-                        message: '"c" must be one of [0]',
-                        path: ['c'],
-                        type: 'any.allowOnly',
-                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('handles non-number references correctly', () => {
-
-            const ref = Joi.ref('a');
-            const schema = Joi.object({ a: Joi.string(), b: Joi.number().multiple(ref) });
-            Helper.validate(schema, [
-                [{ a: 'test', b: 32 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test' }
-                    }]
-                }],
-                [{ a: 'test', b: 0 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test' }
-                    }]
-                }],
-                [{ a: 'test', b: NaN }, false, null, {
-                    message: '"b" must be a number',
-                    details: [{
-                        message: '"b" must be a number',
-                        path: ['b'],
-                        type: 'number.base',
-                        context: { label: 'b', key: 'b', value: NaN }
-                    }]
-                }]
-            ]);
-        });
-
-        it('handles context references correctly', () => {
-
-            const ref = Joi.ref('$a');
-            const schema = Joi.object({ b: Joi.number().multiple(ref) });
-            Helper.validate(schema, [
-                [{ b: 32 }, true, { context: { a: 2 } }],
-                [{ b: 0 }, true, { context: { a: 43 } }],
-                [{ b: 25 }, false, { context: { a: 4 } }, {
-                    message: '"b" must be a multiple of ref:global:a',
-                    details: [{
-                        message: '"b" must be a multiple of ref:global:a',
-                        path: ['b'],
-                        type: 'number.multiple',
-                        context: { multiple: ref, value: 25, label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ b: 31 }, false, { context: { a: 0 } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, key: 'b', label: 'b', value: 0 }
-                    }]
-                }],
-                [{ b: 0 }, false, { context: { a: 0 } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, key: 'b', label: 'b', value: 0 }
-                    }]
-                }],
-                [{ b: 32 }, false, { context: { a: 'test' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test' }
-                    }]
-                }],
-                [{ b: 0 }, false, { context: { a: 'test' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test' }
-                    }]
-                }],
-                [{ b: 0 }, false, { context: { a: NaN } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
-                    details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
-                        path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: NaN }
-                    }]
-                }]
-            ]);
-        });
-    });
-
-    describe('port()', () => {
-
-        it('should validate correctly', () => {
-
-            const schema = Joi.object({ port: Joi.number().port() });
-
-            Helper.validate(schema, [
-                [{ port: 1337 }, true],
-                [{ port: -1 }, false, null, {
-                    message: '"port" must be a valid port',
-                    details: [{
-                        message: '"port" must be a valid port',
-                        path: ['port'],
-                        type: 'number.port',
-                        context: { value: -1, label: 'port', key: 'port' }
-                    }]
-                }],
-                [{ port: 65536 }, false, null, {
-                    message: '"port" must be a valid port',
-                    details: [{
-                        message: '"port" must be a valid port',
-                        path: ['port'],
-                        type: 'number.port',
-                        context: { value: 65536, label: 'port', key: 'port' }
-                    }]
-                }],
-                [{ port: 8.88 }, false, null, {
-                    message: '"port" must be a valid port',
-                    details: [{
-                        message: '"port" must be a valid port',
-                        path: ['port'],
-                        type: 'number.port',
-                        context: { value: 8.88, label: 'port', key: 'port' }
-                    }]
-                }]
             ]);
         });
     });

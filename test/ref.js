@@ -407,6 +407,75 @@ describe('ref', () => {
         ]);
     });
 
+    it('reaches into set and map', () => {
+
+        const schema = Joi.object({
+            a: {
+                b: Joi.array()
+                    .items({
+                        x: Joi.number(),
+                        y: Joi.object().cast('map')
+                    })
+                    .cast('set')
+            },
+            d: Joi.ref('a.b.2.y.w', { iterables: true })
+        });
+
+        const value = {
+            a: {
+                b: [
+                    { x: 1 },
+                    { x: 2 },
+                    {
+                        y: {
+                            v: 4,
+                            w: 5
+                        }
+                    }
+                ]
+            },
+            d: 5
+        };
+
+        expect(schema.validate(value).error).to.not.exist();
+
+        value.d = 6;
+        expect(schema.validate(value).error).to.be.an.error('"d" must be one of [ref:a.b.2.y.w]');
+    });
+
+    it('errors on missing iterables flag when reaching into set and map', () => {
+
+        const schema = Joi.object({
+            a: {
+                b: Joi.array()
+                    .items({
+                        x: Joi.number(),
+                        y: Joi.object().cast('map')
+                    })
+                    .cast('set')
+            },
+            d: Joi.ref('a.b.2.y.w')
+        });
+
+        const value = {
+            a: {
+                b: [
+                    { x: 1 },
+                    { x: 2 },
+                    {
+                        y: {
+                            v: 4,
+                            w: 5
+                        }
+                    }
+                ]
+            },
+            d: 5
+        };
+
+        expect(schema.validate(value).error).to.be.an.error('"d" must be one of [ref:a.b.2.y.w]');
+    });
+
     it('throws on prefix + ancestor option)', () => {
 
         expect(() => Joi.ref('..x', { ancestor: 0 })).to.throw('Cannot combine prefix with ancestor option');
