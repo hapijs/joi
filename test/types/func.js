@@ -269,6 +269,92 @@ describe('func', () => {
         ]);
     });
 
+    it('validates a function with keys and function rules', () => {
+
+        const schema = Joi.func()
+            .keys({ a: Joi.string().required() })
+            .minArity(1)
+            .required();
+
+        const a = function (x) { };
+        a.a = 'abc';
+
+        const b = function (x) { };
+        b.a = 123;
+
+        const c = function () { };
+        c.a = 'abc';
+
+        Helper.validate(schema, [
+            [a, true],
+            [function (x) { }, false, null, {
+                message: '"a" is required',
+                details: [{
+                    message: '"a" is required',
+                    path: ['a'],
+                    type: 'any.required',
+                    context: { label: 'a', key: 'a' }
+                }]
+            }],
+            [b, false, null, {
+                message: '"a" must be a string',
+                details: [{
+                    message: '"a" must be a string',
+                    path: ['a'],
+                    type: 'string.base',
+                    context: { value: 123, label: 'a', key: 'a' }
+                }]
+            }]
+        ]);
+
+        const err = schema.validate(c).error;
+        expect(err).to.be.an.error('"value" must have an arity greater or equal to 1');
+        expect(err.details).to.equal([{
+            message: '"value" must have an arity greater or equal to 1',
+            path: [],
+            type: 'function.minArity',
+            context: { value: err.details[0].context.value, label: 'value', n: 1 }
+        }]);
+    });
+
+    it('validates a function with object rules and function rules', () => {
+
+        const schema = Joi.func()
+            .min(1)
+            .minArity(1)
+            .required();
+
+        const a = function (x) { };
+        a.a = 'abc';
+
+        const b = function () { };
+        b.a = 'abc';
+
+        Helper.validate(schema, [
+            [a, true]
+        ]);
+
+        const err1 = schema.validate(b).error;
+        expect(err1).to.be.an.error('"value" must have an arity greater or equal to 1');
+        expect(err1.details).to.equal([{
+            message: '"value" must have an arity greater or equal to 1',
+            path: [],
+            type: 'function.minArity',
+            context: { value: err1.details[0].context.value, label: 'value', n: 1 }
+        }]);
+
+        const c = function (x) { };
+
+        const err2 = schema.validate(c).error;
+        expect(err2).to.be.an.error('"value" must have at least 1 children');
+        expect(err2.details).to.equal([{
+            message: '"value" must have at least 1 children',
+            path: [],
+            type: 'object.min',
+            context: { value: err2.details[0].context.value, label: 'value', limit: 1 }
+        }]);
+    });
+
     it('keeps validated value as a function', async () => {
 
         const schema = Joi.func().keys({ a: Joi.number() });

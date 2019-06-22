@@ -3006,6 +3006,7 @@ describe('object', () => {
                     b: Joi.object().or('x', 'y')
                 }
             });
+
             const err = await expect(schema.validate({ a: { b: { c: 1 } } })).to.reject();
             expect(err).to.be.an.error('"a.b" must contain at least one of [x, y]');
             expect(err.details).to.equal([{
