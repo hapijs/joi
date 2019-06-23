@@ -1989,14 +1989,14 @@ describe('object', () => {
                         }
                     }
                 });
-            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+            }).to.throw('Invalid schema content: (a.b.c.d)');
 
             expect(() => {
 
                 Joi.object().pattern(/.*/, () => {
 
                 });
-            }).to.throw(Error, 'Invalid schema content: ');
+            }).to.throw('Invalid schema content: ');
 
         });
 
@@ -3411,7 +3411,7 @@ describe('object', () => {
                         }
                     }
                 });
-            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+            }).to.throw('Invalid schema content: (a.b.c.d)');
         });
 
         it('shows errors in schema', () => {
@@ -3419,7 +3419,7 @@ describe('object', () => {
             expect(() => {
 
                 Joi.object().assert('a.b', undefined);
-            }).to.throw(Error, 'Invalid schema content: ');
+            }).to.throw('Invalid schema content: ');
         });
 
         it('validates upwards reference', async () => {
@@ -3751,12 +3751,12 @@ describe('object', () => {
             expect(() => {
 
                 Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'c', 'b', 'd', 'd.e.f');
-            }).to.throw(Error, 'unknown key(s) c, d');
+            }).to.throw('unknown key(s) c, d');
 
             expect(() => {
 
                 Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'b', 'a.c.d');
-            }).to.throw(Error, 'unknown key(s) a.c.d');
+            }).to.throw('unknown key(s) a.c.d');
 
         });
 
@@ -3765,7 +3765,7 @@ describe('object', () => {
             expect(() => {
 
                 Joi.object().requiredKeys('a', 'c', 'b', 'd');
-            }).to.throw(Error, 'unknown key(s) a, b, c, d');
+            }).to.throw('unknown key(s) a, b, c, d');
         });
 
         it('should not modify original object', async () => {

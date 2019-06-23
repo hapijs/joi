@@ -502,7 +502,7 @@ describe('ref', () => {
             }
         };
 
-        expect(() => Joi.compile(schema)).to.throw('Item cannot come after itself: b(a.b)');
+        expect(() => Joi.compile(schema)).to.throw('Item cannot come after itself: b (a.b)');
     });
 
     it('references array length', () => {

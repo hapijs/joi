@@ -8,7 +8,7 @@
   - [`version`](#version)
   - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
   - [`ValidationError`](#validationerror)
-  - [`compile(schema)`](#compileschema)
+  - [`compile(schema, [options])`](#compileschema-options)
   - [`describe(schema)`](#describeschema)
   - [`assert(value, schema, [message], [options])`](#assertvalue-schema-message-options)
   - [`attempt(value, schema, [message], [options])`](#attemptvalue-schema-message-options)
@@ -17,7 +17,7 @@
   - [`isRef(ref)`](#isrefref)
   - [`template(template, [options])`](#templatetemplate-options)
     - [Template syntax](#template-syntax)
-  - [`isSchema(schema)`](#isschemaschema)
+  - [`isSchema(schema, [options])`](#isschemaschema-options)
   - [`reach(schema, path)`](#reachschema-path)
   - [`defaults(fn)`](#defaultsfn)
   - [`bind()`](#bind)
@@ -291,7 +291,7 @@ Property showing the current version of **joi** being used.
 
 Validates a value using the given schema and options where:
 - `value` - the value being validated.
-- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema-options) (be careful of the cost of compiling repeatedly the same schemas).
 - `options` - an optional object with the following optional keys:
   - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
   - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
@@ -363,10 +363,16 @@ Thrown by `assert` when validation fails.
 
 See [Errors](#errors)
 
-### `compile(schema)`
+### `compile(schema, [options])`
 
-Converts literal schema definition to **joi** schema object (or returns the same back if already a **joi** schema object) where:
+Converts literal schema definition to **joi** schema object (or returns the same back if already a
+**joi** schema object) where:
 - `schema` - the schema definition to compile.
+- `options` - optional settings:
+    - `legacy` - if `true` and the provided schema is (or contains parts) using an older version of
+      **joi**, will return a compiled schema that is compatible with the older version. If `false`,
+      the schema is always compiled using the current version and if older schema components are
+      found, an error is thrown.
 
 ```js
 const definition = ['key', 5, { a: true, b: [/^a/, 'boom'] }];
@@ -411,7 +417,7 @@ Results in:
 
 Validates a value against a schema and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
-- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema-options) (be careful of the cost of compiling repeatedly the same schemas).
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
 - `options` - optional options object, passed in to [`Joi.validate`](##validatevalue-schema-options-callback)
 
@@ -423,7 +429,7 @@ Joi.assert('x', Joi.number());
 
 Validates a value against a schema, returns valid object, and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
-- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema) (be careful of the cost of compiling repeatedly the same schemas).
+- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema-options) (be careful of the cost of compiling repeatedly the same schemas).
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
 - `options` - optional options object, passed in to [`Joi.validate`](##validatevalue-schema-options-callback)
 
@@ -575,9 +581,13 @@ The variable names can have one of the following prefixes:
   provided as an option to the validation function or set using [`any.prefs()`](#anyprefsoptions--aliases-preferences-options).
 - any other variable references a key within the current value being validated.
 
-### `isSchema(schema)`
+### `isSchema(schema, [options])`
 
-Checks whether or not the provided argument is a **joi** schema.
+Checks whether or not the provided argument is a **joi** schema where:
+- `schema` - the value being checked.
+- `options` - optional settings:
+    - `legacy` - if `true`, will identify schemas from older versions of joi, otherwise will throw
+      an error. Defaults to `false`.
 
 ```js
 const schema = Joi.any();
@@ -1205,7 +1215,7 @@ conditions merged into the type definition where:
 - `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
     - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be
-      converted using [Joi.compile](#compileschema). By default, the `is` condition schema allows for
+      converted using [Joi.compile](#compileschema-options). By default, the `is` condition schema allows for
       `undefined` values. Use `.required()` to override. For example, use `is: Joi.number().required()`
       to guarantee that a **joi** reference exists and is a number.
     - `then` - if the condition is true, the **joi** schema to use.
@@ -2984,7 +2994,7 @@ schema peeking into the current value, where:
 - `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
     - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be
-      converted using [Joi.compile](#compileschema).
+      converted using [Joi.compile](#compileschema-options).
     - `then` - if the condition is true, the **joi** schema to use.
     - `otherwise` - if the condition is false, the **joi** schema to use.
     - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`.
