@@ -10,18 +10,19 @@
   ],
   "dependencies": {
     "@hapi/hoek": "6.x.x",
-    "isemail": "3.x.x",
-    "@hapi/topo": "3.x.x"
+    "@hapi/marker": "1.x.x",
+    "@hapi/topo": "3.x.x",
+    "isemail": "3.x.x"
   },
   "devDependencies": {
-    "code": "5.x.x",
-    "hapitoc": "1.x.x",
-    "@hapi/lab": "18.x.x"
+    "@hapi/code": "5.x.x",
+    "@hapi/lab": "18.x.x",
+    "hapitoc": "1.x.x"
   },
   "scripts": {
-    "test": "lab -t 100 -a code -L",
-    "test-debug": "lab -a code",
-    "test-cov-html": "lab -r html -o coverage.html -a code",
+    "test": "lab -t 100 -a @hapi/code -L",
+    "test-debug": "lab -a @hapi/code",
+    "test-cov-html": "lab -r html -o coverage.html -a @hapi/code",
     "toc": "hapitoc && node docs/check-errors-list.js",
     "version": "npm run toc && git add API.md README.md"
   },
