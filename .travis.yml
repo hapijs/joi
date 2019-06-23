@@ -14,8 +14,7 @@ node_js:
 sudo: false
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then export NPM_CONFIG_PREFIX=c:\\npm_prefix PATH="/c/npm_prefix:$PATH"; fi
-  - "npm update -g npm"
+  - "node `npm prefix -g`/node_modules/npm/bin/npm-cli.js i -g npm@latest"
 
 install:
   - "npm install"
