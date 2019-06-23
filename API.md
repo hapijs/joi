@@ -308,7 +308,11 @@ Validates a value using the given schema and options where:
     - `escapeHtml` - when `true`, error message templates will escape special characters to HTML
       entities, for security purposes. Defaults to `false`.
     - `language` - the prefered language code for error messages. The value is matched against keys
-      are the root of the `messages` object, and then the error code as a child key of that.
+      are the root of the `messages` object, and then the error code as a child key of that. Can be
+      a reference to the value, global context, or local context which is the root value passed to the
+      validation function. Note that references to the value are usually not what you want as they move
+      around the value structure relative to where the error happens. Instead, either use the global
+      context, or the absolute value using local context notation (e.g. `Joi.ref('#variable')`);
     - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use
     the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML
