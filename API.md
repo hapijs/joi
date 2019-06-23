@@ -811,12 +811,15 @@ Casts the validated value to the specified type where:
 - `to` - the value target type. Each **joi** schema type supports its own set of cast targets:
     - `'map'` - supported by the `Joi.object()` type, converts the result to a `Map` object
       containing the object key-value pairs.
+    - `'number'` - supported by `Joi.boolean()` and `Joi.date()`, converts the result to a number.
+      For dates, number of milliseconds since the epoch and for booleans, `0` for `false` and `1`
+      for `true`.
     - `'raw'` - supported by all types, forces the result value to use the raw input regardless of
       any conversions or changes made during validation.
     - `'set'` - supported by the `Joi.array()` type, converts the result to a `Set` object
       containing the array values.
-    - `'string'` - supported by the `Joi.binary()`, `Joi.boolean()`, `Joi.date()`, and
-      `Joi.number()`, converts the result to a string.
+    - `'string'` - supported by `Joi.binary()`, `Joi.boolean()`, `Joi.date()`, and `Joi.number()`,
+      converts the result to a string.
 
 #### `any.concat(schema)`
 

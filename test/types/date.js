@@ -173,6 +173,12 @@ describe('date', () => {
 
     describe('cast()', () => {
 
+        it('casts value to number', () => {
+
+            const schema = Joi.date().cast('number');
+            expect(schema.validate(new Date('1974-05-07')).value).to.equal(137116800000);
+        });
+
         it('casts value to string', () => {
 
             const schema = Joi.date().cast('string');

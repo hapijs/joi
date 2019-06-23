@@ -128,6 +128,13 @@ describe('boolean', () => {
 
     describe('cast()', () => {
 
+        it('casts value to number', () => {
+
+            const schema = Joi.boolean().cast('number');
+            expect(schema.validate(true).value).to.equal(1);
+            expect(schema.validate(false).value).to.equal(0);
+        });
+
         it('casts value to string', () => {
 
             const schema = Joi.boolean().cast('string');
