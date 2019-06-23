@@ -560,7 +560,8 @@ describe('extension', () => {
         });
 
         // Checks for a messages leak in the base
-        expect(base._preferences.messages['myType.foo']).to.equal('"{#label}" original');
+
+        expect(base._preferences.messages['myType.foo'].source).to.equal('"{#label}" original');
 
         const schema = customJoi.myType().foo();
         const result = schema.validate({});

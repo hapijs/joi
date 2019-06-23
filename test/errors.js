@@ -177,6 +177,54 @@ describe('errors', () => {
         expect(schema.validate(1, { messages, errors: { language: 'empty' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
     });
 
+    it('supports language preference (fallthrough)', () => {
+
+        const messages = {
+            english: {
+                root: 'value',
+                'number.min': '{#label} too small'
+            },
+            root: 'valorem',
+            'number.min': '{#label} angustus'
+        };
+
+        const schema = Joi.number().min(10).prefs({ messages });
+
+        expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('value too small');
+        expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('valorem angustus');
+
+        expect(schema.describe().options.messages).to.equal(messages);
+    });
+
+    it('supports language preference combination', () => {
+
+        const code = {
+            english: {
+                'number.min': '{#label} too small'
+            },
+            latin: {
+                'number.min': Joi.template('{%label} angustus', { prefix: { local: '%' } })
+            },
+            empty: {}
+        };
+
+        const root = {
+            english: {
+                root: 'value'
+            },
+            latin: {
+                root: 'valorem'
+            }
+        };
+
+        const schema = Joi.number().min(10).prefs({ messages: code }).prefs({ messages: root });
+
+        expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('value too small');
+        expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('valorem angustus');
+        expect(schema.validate(1, { errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
+        expect(schema.validate(1, { errors: { language: 'empty' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
+    });
+
     it('supports language ref preference', () => {
 
         const messages = {
