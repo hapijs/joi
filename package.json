@@ -12,6 +12,7 @@
   "dependencies": {
     "@hapi/address": "2.x.x",
     "@hapi/bourne": "1.x.x",
+    "@hapi/formula": "1.x.x",
     "@hapi/hoek": "7.x.x",
     "@hapi/marker": "1.x.x",
     "@hapi/topo": "3.x.x"

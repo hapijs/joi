@@ -15,6 +15,19 @@ const { expect } = Code;
 
 describe('cast', () => {
 
+    describe('schema()', () => {
+
+        it('casts templates', () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.template('{a + 1}')
+            });
+
+            expect(schema.validate({ a: 5, b: 6 }).error).to.not.exist();
+        });
+    });
+
     describe('compile()', () => {
 
         it('compiles object with plain keys', () => {

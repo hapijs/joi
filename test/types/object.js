@@ -1474,7 +1474,7 @@ describe('object', () => {
             it('uses template with prefix override', async () => {
 
                 const schema = Joi.object()
-                    .rename(/^(\d+)$/, Joi.template('x{%1}x', { prefix: { local: '%' } }))
+                    .rename(/^(\d+)$/, Joi.template('x{@1}x', { prefix: { local: '@' } }))
                     .pattern(/^x\d+x$/, Joi.any());
 
                 const input = {
@@ -1501,8 +1501,8 @@ describe('object', () => {
                     renames: [{
                         from: { regex: '/^(\\d+)$/' },
                         to: {
-                            template: 'x{%1}x',
-                            options: { prefix: { local: '%' } }
+                            template: 'x{@1}x',
+                            options: { prefix: { local: '@' } }
                         },
                         options: {
                             alias: false,

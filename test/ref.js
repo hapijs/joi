@@ -33,7 +33,7 @@ describe('ref', () => {
 
     it('reaches self', () => {
 
-        const schema = Joi.number().min(10).message('"{#label}" is {.} and that is not good enough');
+        const schema = Joi.number().min(10).message('"{#label}" is {[.]} and that is not good enough');
         expect(schema.validate(1).error).to.be.an.error('"value" is 1 and that is not good enough');
     });
 
@@ -1001,7 +1001,7 @@ describe('ref', () => {
     it('uses context as default value with custom prefix', async () => {
 
         const schema = Joi.object({
-            a: Joi.default(Joi.ref('%x', { prefix: { global: '%' } })),
+            a: Joi.default(Joi.ref('@x', { prefix: { global: '@' } })),
             b: Joi.any()
         });
 

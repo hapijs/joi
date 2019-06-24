@@ -1879,7 +1879,7 @@ describe('any', () => {
                 },
                 latin: {
                     root: 'valorem',
-                    'number.min': Joi.template('{%label} angustus', { prefix: { local: '%' } })
+                    'number.min': Joi.template('{@label} angustus', { prefix: { local: '@' } })
                 }
             };
 
@@ -1926,7 +1926,7 @@ describe('any', () => {
 
             const messages = {
                 root: 'valorem',
-                'number.min': Joi.template('{%label} angustus', { prefix: { local: '%' } })
+                'number.min': Joi.template('{@label} angustus', { prefix: { local: '@' } })
             };
 
             const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
@@ -2653,7 +2653,6 @@ describe('any', () => {
                 type: 'any.allowOnly',
                 context: { value: Buffer.from('foobar'), valids: [b], label: 'value' }
             }]);
-
         });
 
         it('preserves passed value when cloned', () => {
@@ -2661,6 +2660,39 @@ describe('any', () => {
             const o = {};
             expect(Joi.valid(o).clone().validate(o).error).to.be.null();
             expect(Joi.valid(o).clone().validate({}).error).to.be.an.error('"value" must be one of [[object Object]]');
+        });
+
+        it('supports templates', () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.valid(Joi.template('{a + 1}'))
+            });
+
+            expect(schema.validate({ a: 5, b: 6 }).error).to.not.exist();
+            expect(schema.validate({ a: 5, b: 5 }).error).to.be.an.error('"b" must be one of [{a + 1}]');
+        });
+
+        it('supports templates with literals', () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.valid(Joi.template('x{a + 1}'))
+            });
+
+            expect(schema.validate({ a: 5, b: 'x6' }).error).to.not.exist();
+            expect(schema.validate({ a: 5, b: 'x5' }).error).to.be.an.error('"b" must be one of [x{a + 1}]');
+        });
+
+        it('supports pure literal templates', () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.valid(Joi.template('x'))
+            });
+
+            expect(schema.validate({ a: 5, b: 'x' }).error).to.not.exist();
+            expect(schema.validate({ a: 5, b: 'y' }).error).to.be.an.error('"b" must be one of [x]');
         });
     });
 

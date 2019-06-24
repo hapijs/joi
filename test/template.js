@@ -54,6 +54,16 @@ describe('Template', () => {
         expect(template.render()).to.equal(source);
     });
 
+    it('skips template without reference variables (trailing {{)', () => {
+
+        const source = 'text {"x"} {{{ without }}} any }} variables {{';
+        const template = Joi.template(source);
+
+        expect(template.source).to.equal(source);
+        expect(template.isDynamic()).to.be.false();
+        expect(template.render()).to.equal('text x {{{ without }}} any }} variables {{');
+    });
+
     it('skips template without variables (escaped)', () => {
 
         const source = 'text {{{ without }}} any }} \\{{escaped}} variables';
@@ -109,9 +119,21 @@ describe('Template', () => {
 
     describe('isTemplate()', () => {
 
-        expect(Joi.isTemplate(null)).to.be.false();
-        expect(Joi.isTemplate({})).to.be.false();
-        expect(Joi.isTemplate('test')).to.be.false();
-        expect(Joi.isTemplate(Joi.template('test'))).to.be.true();
+        it('checks if item is a joi template', () => {
+
+            expect(Joi.isTemplate(null)).to.be.false();
+            expect(Joi.isTemplate({})).to.be.false();
+            expect(Joi.isTemplate('test')).to.be.false();
+            expect(Joi.isTemplate(Joi.template('test'))).to.be.true();
+        });
+    });
+
+    describe('_ref()', () => {
+
+        it('errors on tempalte with invalid formula', () => {
+
+            const source = '{x +}';
+            expect(() => Joi.template(source)).to.throw('Invalid template variable "x +" fails due to: Formula contains invalid trailing operator');
+        });
     });
 });
