@@ -136,4 +136,17 @@ describe('Template', () => {
             expect(() => Joi.var(source)).to.throw('Invalid template variable "x +" fails due to: Formula contains invalid trailing operator');
         });
     });
+
+    describe('functions', () => {
+
+        describe('number()', () => {
+
+            it('casts values to numbers', () => {
+
+                const schema = Joi.valid(Joi.var('{number(1) + number(true) + number(false) + number("1") + number($x)}'));
+                expect(schema.validate(3, { context: { x: {} } }).error).to.not.exist();
+                expect(schema.validate(4, { context: { x: {} } }).error).to.be.an.error('"value" must be one of [{number(1) + number(true) + number(false) + number("1") + number($x)}]');
+            });
+        });
+    });
 });

@@ -865,7 +865,7 @@ describe('date', () => {
             ]);
         });
 
-        it('accepts references as max date', () => {
+        it('accepts context references as max date', () => {
 
             const ref = Joi.ref('$a');
             const schema = Joi.object({ b: Joi.date().max(ref) });
@@ -883,6 +883,31 @@ describe('date', () => {
                     }]
                 }],
                 [{ b: now - 1e3 }, true, { context: { a: now } }]
+            ]);
+        });
+
+        it('supports template operations', () => {
+
+            const ref = Joi.var('{number(from) + 364 * day}');
+            const schema = Joi.object({
+                annual: Joi.boolean().required(),
+                from: Joi.date().required(),
+                to: Joi.date().required()
+                    .when('annual', { is: true, then: Joi.date().max(ref) })
+            });
+
+            Helper.validate(schema, [
+                [{ annual: false, from: '2000-01-01', to: '2010-01-01' }, true],
+                [{ annual: true, from: '2000-01-01', to: '2000-12-30' }, true],
+                [{ annual: true, from: '2000-01-01', to: '2010-01-01' }, false, null, {
+                    message: '"to" must be less than or equal to "{number(from) + 364 * day}"',
+                    details: [{
+                        message: '"to" must be less than or equal to "{number(from) + 364 * day}"',
+                        path: ['to'],
+                        type: 'date.max',
+                        context: { limit: ref, label: 'to', key: 'to', value: new Date('2010-01-01') }
+                    }]
+                }]
             ]);
         });
 
