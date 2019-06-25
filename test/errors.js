@@ -166,7 +166,7 @@ describe('errors', () => {
             },
             latin: {
                 root: 'valorem',
-                'number.min': Joi.template('{@label} angustus', { prefix: { local: '@' } })
+                'number.min': Joi.var('{@label} angustus', { prefix: { local: '@' } })
             },
             empty: {}
         };
@@ -203,7 +203,7 @@ describe('errors', () => {
                 'number.min': '{#label} too small'
             },
             latin: {
-                'number.min': Joi.template('{@label} angustus', { prefix: { local: '@' } })
+                'number.min': Joi.var('{@label} angustus', { prefix: { local: '@' } })
             },
             empty: {}
         };
@@ -232,7 +232,7 @@ describe('errors', () => {
                 'number.min': '{#label} too small'
             },
             latin: {
-                'number.min': Joi.template('{@label} angustus', { prefix: { local: '@' } })
+                'number.min': Joi.var('{@label} angustus', { prefix: { local: '@' } })
             },
             empty: {}
         };

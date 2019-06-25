@@ -15,7 +15,7 @@
   - [`ref(key, [options])`](#refkey-options)
     - [Relative references](#relative-references)
   - [`isRef(ref)`](#isrefref)
-  - [`template(template, [options])`](#templatetemplate-options)
+  - [`var(template, [options])`](#vartemplate-options)
     - [Template syntax](#template-syntax)
   - [`isSchema(schema, [options])`](#isschemaschema-options)
   - [`reach(schema, path)`](#reachschema-path)
@@ -564,26 +564,43 @@ const ref = Joi.ref('a');
 Joi.isRef(ref); // returns true
 ```
 
-### `template(template, [options])`
+### `var(template, [options])`
 
-Generates a template from a string where:
+Generates a dyanmic variable using a template string where:
 - `template` - the template string using the [template syntax](#template-syntax).
 - `options` - optional settings used when creating internal references. Supports the same options
   as [`ref()`](#refkey-options).
 
 #### Template syntax
 
-The template syntax uses `{}` and `{{}}` enclosed variables to indicate that these values should be
-replace with the actual referenced values at rendering time. Single braces `{}` leave the value
-as-is, while double braces `{{}}` HTML-escape the result (unless the template is used for error messages
+The template syntax uses `{}` and `{{}}` enclosed formulas to reference values as well as perform
+number and string operations. Single braces `{}` leave the formula result as-is, while double
+braces `{{}}` HTML-escape the formula result (unless the template is used for error messages
 and the `errors.escapeHtml` preference flag is set to `false`).
 
-The variable names can have one of the following prefixes:
+The formula uses a simple mathematical syntax such as `a + b * 2` where the named formula variables
+are references. Most references can be used as-is but some can create ambiguity with the formula
+syntax and must be enclosed in `[]` bracets (e.g. `[.]`).
+
+The formulas can only operate on `null`, booleans, numbers, and strings. If any operation involves
+a string, all other numbers will be casted to strings (as the internal implementation uses simple
+JavaScript operators). The supported operators are: `^`, `*`, `/`, `%`, `+`, `-`, `<`, `<=`, `>`,
+`>=`, `==`, `!=`, `&&`, `||`, and `??` (in this order of precendece).
+
+The reference names can have one of the following prefixes:
 - `#` - indicates the variable references a local context value. For example, in errors this is the
   error context, while in rename operations, it is the regular expression matching groups.
 - `$` - indicates the variable references a global context value from the `context` preference object
   provided as an option to the validation function or set using [`any.prefs()`](#anyprefsoptions--aliases-preferences-options).
 - any other variable references a key within the current value being validated.
+
+The formula syntax also supports built-in functions:
+- `if(condition, then, otherwise)`
+
+And the following constants:
+- `null`
+- `true`
+- `false`
 
 ### `isSchema(schema, [options])`
 

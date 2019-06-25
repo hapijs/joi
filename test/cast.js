@@ -21,7 +21,7 @@ describe('cast', () => {
 
             const schema = Joi.object({
                 a: Joi.number(),
-                b: Joi.template('{a + 1}')
+                b: Joi.var('{a + 1}')
             });
 
             expect(schema.validate({ a: 5, b: 6 }).error).to.not.exist();
