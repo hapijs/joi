@@ -617,7 +617,8 @@ Joi.isSchema(schema); // returns true
 
 ### `reach(schema, path)`
 
-Get a sub-schema of an existing schema based on a `path` that can be either a string or an array of strings For string values path separator is a dot (`.`).
+Get a sub-schema of an existing schema based on a `path` that can be either a string or an array of
+strings For string values path separator is a dot (`.`).
 
 ```js
 const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
@@ -629,7 +630,8 @@ const result = Joi.reach(schema, ['foo', 'bar']); //same as number
 
 ### `defaults(fn)`
 
-Creates a new **joi** instance that will apply defaults onto newly created schemas through the use of the `fn` function that takes exactly one argument, the schema being created.
+Creates a new **joi** instance that will apply defaults onto newly created schemas through the use
+of the `fn` function that takes exactly one argument, the schema being created.
 
 The function must always return a schema, even if untransformed.
 
