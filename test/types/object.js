@@ -2298,6 +2298,143 @@ describe('object', () => {
             const value = await Joi.validate({ a: 'test' }, schema, { context: { keys: ['a'] } });
             expect(value).to.equal({ a: 'test' });
         });
+
+        it('enforces pattern matches rule', () => {
+
+            const ref1 = Joi.ref('a');
+            const ref2 = Joi.x('{a - 1}');
+
+            const schema = Joi.object({
+                a: Joi.number().required()
+            })
+                .pattern(/^x\d+$/, Joi.boolean(), { matches: Joi.array().length(ref1), exclusive: true })
+                .pattern(/^z\w+$/, Joi.number())
+                .pattern(/^x\w+$/, Joi.number(), { matches: Joi.array().max(ref2) });
+
+            Helper.validate(schema, [
+                [{ a: 1, x1: true }, true],
+                [{ a: 2, x1: true, x2: true, xx: 1 }, true],
+                [{ a: 3, x1: true, x2: true, x3: false, xx: 1 }, true],
+                [{ a: 0, x1: true }, false, null, {
+                    message: '"value" keys failed to match pattern requirements',
+                    details: [{
+                        message: '"value" keys failed to match pattern requirements',
+                        path: [],
+                        type: 'object.pattern.match',
+                        context: {
+                            message: '"value" must contain ref:a items',
+                            label: 'value',
+                            value: { a: 0, x1: true },
+                            matches: ['x1'],
+                            details: [
+                                {
+                                    context: {
+                                        label: 'value',
+                                        limit: ref1,
+                                        value: ['x1']
+                                    },
+                                    message: '"value" must contain ref:a items',
+                                    path: [],
+                                    type: 'array.length'
+                                }
+                            ]
+                        }
+                    }]
+                }]
+            ]);
+
+            const description = schema.describe();
+            expect(description).to.equal({
+                type: 'object',
+                children: {
+                    a: {
+                        type: 'number',
+                        flags: {
+                            unsafe: false,
+                            presence: 'required'
+                        },
+                        invalids: [Infinity, -Infinity]
+                    }
+                },
+                patterns: [
+                    {
+                        rule: {
+                            type: 'boolean',
+                            flags: {
+                                insensitive: true
+                            },
+                            truthy: [true],
+                            falsy: [false]
+                        },
+                        regex: '/^x\\d+$/',
+                        matches: {
+                            type: 'array',
+                            flags: {
+                                sparse: false
+                            },
+                            rules: [
+                                {
+                                    name: 'length',
+                                    arg: {
+                                        ref: 'value',
+                                        key: 'a',
+                                        path: ['a']
+                                    }
+                                }
+                            ]
+                        },
+                        exclusive: true
+                    },
+                    {
+                        rule: {
+                            type: 'number',
+                            flags: {
+                                unsafe: false
+                            },
+                            invalids: [Infinity, -Infinity]
+                        },
+                        regex: '/^z\\w+$/'
+                    },
+                    {
+                        rule: {
+                            type: 'number',
+                            flags: {
+                                unsafe: false
+                            },
+                            invalids: [Infinity, -Infinity]
+                        },
+                        regex: '/^x\\w+$/',
+                        matches: {
+                            type: 'array',
+                            flags: {
+                                sparse: false
+                            },
+                            rules: [
+                                {
+                                    name: 'max',
+                                    arg: {
+                                        template: '{a - 1}',
+                                        options: {}
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            });
+        });
+
+        it('enforces pattern matches rule (abortEarly false)', async () => {
+
+            const schema = Joi.object({
+                a: Joi.number().required()
+            })
+                .pattern(/^x\d+$/, Joi.boolean(), { matches: Joi.array().length(Joi.ref('a')), exclusive: true })
+                .pattern(/^x\w+$/, Joi.number(), { matches: Joi.array().max(Joi.x('{a - 1}')) });
+
+            const err = await expect(schema.validate({ a: 0, x1: true, xx: 1 }, { abortEarly: false })).to.reject('"value" keys failed to match pattern requirements');
+            expect(err.details).to.have.length(2);
+        });
     });
 
     describe('with()', () => {

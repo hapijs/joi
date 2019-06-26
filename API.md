@@ -111,7 +111,7 @@
     - [`object.min(limit)`](#objectminlimit)
     - [`object.max(limit)`](#objectmaxlimit)
     - [`object.length(limit)`](#objectlengthlimit)
-    - [`object.pattern(pattern, schema)`](#objectpatternpattern-schema)
+    - [`object.pattern(pattern, schema, [options])`](#objectpatternpattern-schema-options)
     - [`object.and(...peers, [options])`](#objectandpeers-options)
     - [`object.nand(...peers, [options])`](#objectnandpeers-options)
     - [`object.or(...peers, [options])`](#objectorpeers-options)
@@ -235,7 +235,7 @@
     - [`object.min`](#objectmin)
     - [`object.missing`](#objectmissing)
     - [`object.nand`](#objectnand)
-    - [`object.ref`](#objectref-1)
+    - [`object.pattern.match`](#objectpatternmatch)
     - [`object.refType`](#objectreftype)
     - [`object.rename.multiple`](#objectrenamemultiple)
     - [`object.rename.override`](#objectrenameoverride)
@@ -2216,11 +2216,17 @@ const schema = Joi.object().length(5);
 
 Possible validation errors: [`object.length`](#objectlength), [`object.ref`](#objectref)
 
-#### `object.pattern(pattern, schema)`
+#### `object.pattern(pattern, schema, [options])`
 
 Specify validation rules for unknown keys matching a pattern where:
-- `pattern` - a pattern that can be either a regular expression or a **joi** schema that will be tested against the unknown key names.
+- `pattern` - a pattern that can be either a regular expression or a **joi** schema that will be
+  tested against the unknown key names.
 - `schema` - the schema object matching keys must validate against.
+- `options` - options settings:
+    - `exclusive` - if `true` and the key matches, no other patterns are checked. Defaults to `false`.
+    - `matches` - a joi array schema used to validated the array of matching keys. For example,
+      `Joi.object().pattern(/\d/, Joi.boolean(), { matches: Joi.array().length(2) })` will require
+      two matching keys.
 
 ```js
 const schema = Joi.object({
@@ -2233,6 +2239,8 @@ const schema = Joi.object({
     a: Joi.string()
 }).pattern(Joi.string().min(2).max(5), Joi.boolean());
 ```
+
+Possible validation errors: [`object.pattern.match`](#objectpatternmatch)
 
 #### `object.and(...peers, [options])`
 
@@ -3785,6 +3793,19 @@ Additional local context properties:
     peersWithLabels: Array<string> // List of the labels of the other properties that were present
 }
 ```
+
+#### `object.pattern.match`
+
+The object keys failed to match a pattern's matches requirement.
+
+Additional local context properties:
+```ts
+{
+    details: Array<object>, // An array of details for each error found while trying to match to each of the alternatives
+    message: string, // The combined error messages
+    matches: Array<string>  // The matching keys
+}
+``
 
 #### `object.ref`
 
