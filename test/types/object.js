@@ -1432,7 +1432,7 @@ describe('object', () => {
             it('uses template', async () => {
 
                 const schema = Joi.object()
-                    .rename(/^(\d+)$/, Joi.var('x{#1}x'))
+                    .rename(/^(\d+)$/, Joi.x('x{#1}x'))
                     .pattern(/^x\d+x$/, Joi.any());
 
                 const input = {
@@ -1474,7 +1474,7 @@ describe('object', () => {
             it('uses template with prefix override', async () => {
 
                 const schema = Joi.object()
-                    .rename(/^(\d+)$/, Joi.var('x{@1}x', { prefix: { local: '@' } }))
+                    .rename(/^(\d+)$/, Joi.x('x{@1}x', { prefix: { local: '@' } }))
                     .pattern(/^x\d+x$/, Joi.any());
 
                 const input = {
@@ -1518,7 +1518,7 @@ describe('object', () => {
                 const schema = Joi.object({
                     prefix: Joi.string().lowercase().required()
                 })
-                    .rename(/^(\d+)$/, Joi.var('{.prefix}{#1}'))
+                    .rename(/^(\d+)$/, Joi.x('{.prefix}{#1}'))
                     .unknown();
 
                 const input = {
@@ -1541,7 +1541,7 @@ describe('object', () => {
 
                 const schema = Joi.object({
                     a: Joi.object()
-                        .rename(/^(\d+)$/, Joi.var('{b.prefix}{#1}'))
+                        .rename(/^(\d+)$/, Joi.x('{b.prefix}{#1}'))
                         .unknown(),
                     b: {
                         prefix: Joi.string().lowercase()
@@ -1560,7 +1560,7 @@ describe('object', () => {
             it('uses template without refs', async () => {
 
                 const schema = Joi.object()
-                    .rename(/^(\d+)$/, Joi.var('x'))
+                    .rename(/^(\d+)$/, Joi.x('x'))
                     .unknown();
 
                 const value = await Joi.compile(schema).validate({ 1: 'x' });

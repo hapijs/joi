@@ -17,7 +17,7 @@ describe('Template', () => {
     it('skips template without {', () => {
 
         const source = 'text without variables';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.isDynamic()).to.be.false();
@@ -27,7 +27,7 @@ describe('Template', () => {
     it('skips template without variables', () => {
 
         const source = 'text {{{ without }}} any }} variables';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.isDynamic()).to.be.false();
@@ -37,7 +37,7 @@ describe('Template', () => {
     it('skips template without variables (trailing {)', () => {
 
         const source = 'text {{{ without }}} any }} variables {';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.isDynamic()).to.be.false();
@@ -47,7 +47,7 @@ describe('Template', () => {
     it('skips template without variables (trailing {{)', () => {
 
         const source = 'text {{{ without }}} any }} variables {{';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.isDynamic()).to.be.false();
@@ -57,7 +57,7 @@ describe('Template', () => {
     it('skips template without reference variables (trailing {{)', () => {
 
         const source = 'text {"x"} {{{ without }}} any }} variables {{';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.isDynamic()).to.be.false();
@@ -67,7 +67,7 @@ describe('Template', () => {
     it('skips template without variables (escaped)', () => {
 
         const source = 'text {{{ without }}} any }} \\{{escaped}} variables';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.isDynamic()).to.be.false();
@@ -77,7 +77,7 @@ describe('Template', () => {
     it('parses template (escaped)', () => {
 
         const source = 'text {{$x}}{{$y}}{{$z}} \\{{escaped}} xxx abc {{{ignore}} 123 {{x';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.render({}, {}, { context: { x: 'hello', y: '!' } })).to.equal('text hello&#x21; {{escaped}} xxx abc {{{ignore}} 123 {{x');
@@ -87,7 +87,7 @@ describe('Template', () => {
     it('parses template with single variable', () => {
 
         const source = '{$x}';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.render({}, {}, { context: { x: 'hello' } })).to.equal('hello');
@@ -96,7 +96,7 @@ describe('Template', () => {
     it('parses template (raw)', () => {
 
         const source = 'text {$x}{$y}{$z} \\{{escaped}} xxx abc {{{ignore}} 123 {{x';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.render({}, {}, { context: { x: 'hello', y: '!' } })).to.equal('text hello! {{escaped}} xxx abc {{{ignore}} 123 {{x');
@@ -105,7 +105,7 @@ describe('Template', () => {
     it('parses template with odd {{ variables', () => {
 
         const source = 'text {{$\\{{\\}} }} \\{{boom}} {{!\\}}';
-        const template = Joi.var(source);
+        const template = Joi.x(source);
 
         expect(template.source).to.equal(source);
         expect(template.render({}, {}, { context: { '{{}}': 'and' } })).to.equal('text and {{boom}} {{!}}');
@@ -113,8 +113,8 @@ describe('Template', () => {
 
     it('throws on invalid characters', () => {
 
-        expect(() => Joi.var('test\u0000')).to.throw('Template source cannot contain reserved control characters');
-        expect(() => Joi.var('test\u0001')).to.throw('Template source cannot contain reserved control characters');
+        expect(() => Joi.x('test\u0000')).to.throw('Template source cannot contain reserved control characters');
+        expect(() => Joi.x('test\u0001')).to.throw('Template source cannot contain reserved control characters');
     });
 
     describe('isVar()', () => {
@@ -124,7 +124,7 @@ describe('Template', () => {
             expect(Joi.isVar(null)).to.be.false();
             expect(Joi.isVar({})).to.be.false();
             expect(Joi.isVar('test')).to.be.false();
-            expect(Joi.isVar(Joi.var('test'))).to.be.true();
+            expect(Joi.isVar(Joi.x('test'))).to.be.true();
         });
     });
 
@@ -133,7 +133,7 @@ describe('Template', () => {
         it('errors on tempalte with invalid formula', () => {
 
             const source = '{x +}';
-            expect(() => Joi.var(source)).to.throw('Invalid template variable "x +" fails due to: Formula contains invalid trailing operator');
+            expect(() => Joi.x(source)).to.throw('Invalid template variable "x +" fails due to: Formula contains invalid trailing operator');
         });
     });
 
@@ -143,7 +143,7 @@ describe('Template', () => {
 
             it('casts values to numbers', () => {
 
-                const schema = Joi.valid(Joi.var('{number(1) + number(true) + number(false) + number("1") + number($x)}'));
+                const schema = Joi.valid(Joi.x('{number(1) + number(true) + number(false) + number("1") + number($x)}'));
                 expect(schema.validate(3, { context: { x: {} } }).error).to.not.exist();
                 expect(schema.validate(4, { context: { x: {} } }).error).to.be.an.error('"value" must be one of [{number(1) + number(true) + number(false) + number("1") + number($x)}]');
             });

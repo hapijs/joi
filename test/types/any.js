@@ -1865,7 +1865,7 @@ describe('any', () => {
         it('overrides message with template', () => {
 
             const schema = Joi.number()
-                .min(10).message(Joi.var('way too small'));
+                .min(10).message(Joi.x('way too small'));
 
             expect(schema.validate(1).error).to.be.an.error('way too small');
         });
@@ -1879,7 +1879,7 @@ describe('any', () => {
                 },
                 latin: {
                     root: 'valorem',
-                    'number.min': Joi.var('{@label} angustus', { prefix: { local: '@' } })
+                    'number.min': Joi.x('{@label} angustus', { prefix: { local: '@' } })
                 }
             };
 
@@ -1926,7 +1926,7 @@ describe('any', () => {
 
             const messages = {
                 root: 'valorem',
-                'number.min': Joi.var('{@label} angustus', { prefix: { local: '@' } })
+                'number.min': Joi.x('{@label} angustus', { prefix: { local: '@' } })
             };
 
             const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
@@ -2666,7 +2666,7 @@ describe('any', () => {
 
             const schema = Joi.object({
                 a: Joi.number(),
-                b: Joi.valid(Joi.var('{a + 1}'))
+                b: Joi.valid(Joi.x('{a + 1}'))
             });
 
             expect(schema.validate({ a: 5, b: 6 }).error).to.not.exist();
@@ -2677,7 +2677,7 @@ describe('any', () => {
 
             const schema = Joi.object({
                 a: Joi.number(),
-                b: Joi.valid(Joi.var('x{a + 1}'))
+                b: Joi.valid(Joi.x('x{a + 1}'))
             });
 
             expect(schema.validate({ a: 5, b: 'x6' }).error).to.not.exist();
@@ -2688,7 +2688,7 @@ describe('any', () => {
 
             const schema = Joi.object({
                 a: Joi.number(),
-                b: Joi.valid(Joi.var('x'))
+                b: Joi.valid(Joi.x('x'))
             });
 
             expect(schema.validate({ a: 5, b: 'x' }).error).to.not.exist();
@@ -2700,7 +2700,7 @@ describe('any', () => {
             const schema = Joi.object({
                 a: Joi.number(),
                 b: Joi.boolean(),
-                c: Joi.valid(Joi.var('{if(a == 5 && b == true, a * 2, null)}'))
+                c: Joi.valid(Joi.x('{if(a == 5 && b == true, a * 2, null)}'))
             });
 
             expect(schema.validate({ a: 5, b: true, c: 10 }).error).to.not.exist();

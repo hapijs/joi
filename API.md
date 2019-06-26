@@ -15,7 +15,7 @@
   - [`ref(key, [options])`](#refkey-options)
     - [Relative references](#relative-references)
   - [`isRef(ref)`](#isrefref)
-  - [`var(template, [options])`](#vartemplate-options)
+  - [`expression(template, [options])` - aliases: `x`](#expressiontemplate-options---aliases-x)
     - [Template syntax](#template-syntax)
   - [`isSchema(schema, [options])`](#isschemaschema-options)
   - [`reach(schema, path)`](#reachschema-path)
@@ -564,9 +564,9 @@ const ref = Joi.ref('a');
 Joi.isRef(ref); // returns true
 ```
 
-### `var(template, [options])`
+### `expression(template, [options])` - aliases: `x`
 
-Generates a dyanmic variable using a template string where:
+Generates a dyanmic expression using a template string where:
 - `template` - the template string using the [template syntax](#template-syntax).
 - `options` - optional settings used when creating internal references. Supports the same options
   as [`ref()`](#refkey-options).

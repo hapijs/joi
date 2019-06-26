@@ -888,7 +888,7 @@ describe('date', () => {
 
         it('supports template operations', () => {
 
-            const ref = Joi.var('{number(from) + 364 * day}');
+            const ref = Joi.x('{number(from) + 364 * day}');
             const schema = Joi.object({
                 annual: Joi.boolean().required(),
                 from: Joi.date().required(),
