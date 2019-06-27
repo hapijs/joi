@@ -2666,7 +2666,7 @@ describe('Joi', () => {
 
         it('describes schema (root)', () => {
 
-            const description = Joi.describe(schema);
+            const description = schema.describe();
             expect(description).to.equal(result);
         });
 
@@ -2687,7 +2687,7 @@ describe('Joi', () => {
 
         it('includes schemas in description)', () => {
 
-            const description = Joi.describe(schema);
+            const description = schema.describe();
             expect(description).to.equal(result);
             expect(description[Joi.schema]).to.equal(schema);
         });

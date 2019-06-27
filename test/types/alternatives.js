@@ -1388,13 +1388,13 @@ describe('alternatives', () => {
 
         it('describes when', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.alternatives()
                     .when('b', { is: 5, then: 'x' })
                     .when('b', { is: 6, otherwise: 'y' })
                     .try('z'),
                 b: Joi.any()
-            };
+            });
 
             const outcome = {
                 type: 'object',
@@ -1460,17 +1460,17 @@ describe('alternatives', () => {
                 }
             };
 
-            expect(Joi.describe(schema)).to.equal(outcome);
+            expect(schema.describe()).to.equal(outcome);
         });
 
         it('describes when (only then)', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.alternatives()
                     .when('b', { is: 5, then: 'x' })
                     .try('z'),
                 b: Joi.any()
-            };
+            });
 
             const outcome = {
                 type: 'object',
@@ -1515,17 +1515,17 @@ describe('alternatives', () => {
                 }
             };
 
-            expect(Joi.describe(schema)).to.equal(outcome);
+            expect(schema.describe()).to.equal(outcome);
         });
 
         it('describes when (only otherwise)', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.alternatives()
                     .when('b', { is: 5, otherwise: 'y' })
                     .try('z'),
                 b: Joi.any()
-            };
+            });
 
             const outcome = {
                 type: 'object',
@@ -1570,7 +1570,7 @@ describe('alternatives', () => {
                 }
             };
 
-            expect(Joi.describe(schema)).to.equal(outcome);
+            expect(schema.describe()).to.equal(outcome);
         });
 
         it('describes when (with schema)', () => {
@@ -1604,7 +1604,7 @@ describe('alternatives', () => {
                 }]
             };
 
-            expect(Joi.describe(schema)).to.equal(outcome);
+            expect(schema.describe()).to.equal(outcome);
         });
 
         it('describes inherited fields (from any)', () => {
@@ -1635,7 +1635,7 @@ describe('alternatives', () => {
                 }]
             };
 
-            expect(Joi.describe(schema)).to.equal(outcome);
+            expect(schema.describe()).to.equal(outcome);
         });
     });
 
