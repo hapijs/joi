@@ -7,7 +7,6 @@
 - [Joi](#joi)
   - [`version`](#version)
   - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
-  - [`ValidationError`](#validationerror)
   - [`compile(schema, [options])`](#compileschema-options)
   - [`describe(schema)`](#describeschema)
   - [`assert(value, schema, [message], [options])`](#assertvalue-schema-message-options)
@@ -161,6 +160,7 @@
     - [`alternatives.when(condition, options)`](#alternativeswhencondition-options)
   - [`lazy(fn[, options])` - inherits from `Any`](#lazyfn-options---inherits-from-any)
 - [Errors](#errors)
+  - [`ValidationError`](#validationerror)
   - [List of errors](#list-of-errors)
     - [`alternatives.base`](#alternativesbase)
     - [`alternatives.types`](#alternativestypes)
@@ -330,11 +330,12 @@ Validates a value using the given schema and options where:
     - when `true`, it is equivalent to having `{ arrays: false, objects: true }`.
 - `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
   - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
-  - `value` - the validated value with any type conversions and other modifiers applied (the input is left unchanged). `value` can be
-    incomplete if validation failed and `abortEarly` is `true`. If callback is not provided, then returns an object with [error](#errors)
-    and value properties.
+  - `value` - the validated value with any type conversions and other modifiers applied (the input
+    is left unchanged). `value` can be incomplete if validation failed and `abortEarly` is `true`.
+    If callback is not provided, then returns an object with [error](#errors) and value properties.
 
-When used without a callback, this function returns a Promise-like object that can be used as a promise, or as a simple object like in the below examples.
+When used without a callback, this function returns a Promise-like object that can be used as a
+promise, or as a simple object like in the below examples.
 
 ```js
 const schema = {
@@ -360,12 +361,6 @@ promise.then((value) => {
     // value -> { "a" : 123 }
 });
 ```
-
-### `ValidationError`
-
-Thrown by `assert` when validation fails.
-
-See [Errors](#errors)
 
 ### `compile(schema, [options])`
 
@@ -3116,31 +3111,23 @@ Possible validation errors: [`lazy.base`](#lazybase), [`lazy.schema`](#lazyschem
 
 ## Errors
 
-**joi** throws `ValidationError`s containing :
+### `ValidationError`
+
+**joi** throws or returns `ValidationError` objects containing :
 - `name` - `'ValidationError'`.
 - `isJoi` - `true`.
 - `details` - an array of errors :
     - `message` - string with a description of the error.
     - `path` - ordered array where each element is the accessor to the value where the error happened.
     - `type` - type of the error.
-    - `local` - object providing context of the error containing:
+    - `context` - object providing context of the error containing:
         - `key` - key of the value that errored, equivalent to the last element of `details.path`.
         - `label` - label of the value that errored, or the `key` if any, or the default `messages.root`.
         - `value` - the value that failed validation.
         - other error specific properties as described for each error code.
-- `annotate` - function that returns a string with an annotated version of the object pointing at the places where errors occurred. Takes an optional parameter that, if truthy, will strip the colors out of the output.
-- `_object` - the original object to validate.
-
-Check if an Error is a **joi** `ValidationError` like:
-```js
-} catch (error) {
-    if (error instanceof Joi.ValidationError) {
-        // 400
-    } else {
-        // 500
-    }
-}
-```
+- `annotate()` - function that returns a string with an annotated version of the object pointing at
+  the places where errors occurred. Takes an optional parameter that, if truthy, will strip the
+  colors out of the output.
 
 ### List of errors
 
