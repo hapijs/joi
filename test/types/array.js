@@ -2882,7 +2882,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.number(), Joi.object()).items(Joi.boolean().forbidden());
             const input = [1, undefined, true, 'a'];
 
-            const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject();
+            const err = await expect(schema.validate(input, { abortEarly: false })).to.reject();
             expect(err).to.be.an.error('"[1]" must not be a sparse array item. "[2]" contains an excluded value. "[3]" does not match any of the allowed types');
             expect(err.details).to.equal([{
                 message: '"[1]" must not be a sparse array item',
@@ -2937,7 +2937,7 @@ describe('array', () => {
                 }
             ];
 
-            const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject('"[1].hello" is required. "[1]" contains a duplicate value');
+            const err = await expect(schema.validate(input, { abortEarly: false })).to.reject('"[1].hello" is required. "[1]" contains a duplicate value');
             expect(err.details).to.equal([
                 {
                     context: {

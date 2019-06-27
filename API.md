@@ -6,11 +6,9 @@
 
 - [Joi](#joi)
   - [`version`](#version)
-  - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
   - [`compile(schema, [options])`](#compileschema-options)
   - [`describe(schema)`](#describeschema)
-  - [`assert(value, schema, [message], [options])`](#assertvalue-schema-message-options)
-  - [`attempt(value, schema, [message], [options])`](#attemptvalue-schema-message-options)
+  - [`assert(value, schema, [message], [options])` - aliases: `attempt`](#assertvalue-schema-message-options---aliases-attempt)
   - [`ref(key, [options])`](#refkey-options)
     - [Relative references](#relative-references)
   - [`isRef(ref)`](#isrefref)
@@ -55,7 +53,7 @@
     - [`any.tags(tags)`](#anytagstags)
     - [`any.unit(name)`](#anyunitname)
     - [`any.valid(...values)` - aliases: `only`, `equal`](#anyvalidvalues---aliases-only-equal)
-    - [`any.validate(value, [options], [callback])`](#anyvalidatevalue-options-callback)
+    - [`any.validate(value, [options])`](#anyvalidatevalue-options)
     - [`any.when(condition, options)`](#anywhencondition-options)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.has(schema)`](#arrayhasschema)
@@ -287,81 +285,6 @@
 
 Property showing the current version of **joi** being used.
 
-### `validate(value, schema, [options], [callback])`
-
-Validates a value using the given schema and options where:
-- `value` - the value being validated.
-- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema-options) (be careful of the cost of compiling repeatedly the same schemas).
-- `options` - an optional object with the following optional keys:
-  - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
-  - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
-  - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
-    `validate()` and not using `any.prefs()`.
-  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
-  - `dateFormat` - sets the string format used when converting dates to strings in error messages and casting. Options are:
-    - `'date'` - date string.
-    - `'iso'` - date time ISO string. This is the default.
-    - `'string'` - JS default date time string.
-    - `'time'` - time string.
-    - `'utc'` - UTC date time string.
-  - `error` - error formatting settings:
-    - `escapeHtml` - when `true`, error message templates will escape special characters to HTML
-      entities, for security purposes. Defaults to `false`.
-    - `language` - the prefered language code for error messages. The value is matched against keys
-      are the root of the `messages` object, and then the error code as a child key of that. Can be
-      a reference to the value, global context, or local context which is the root value passed to the
-      validation function. Note that references to the value are usually not what you want as they move
-      around the value structure relative to where the error happens. Instead, either use the global
-      context, or the absolute value using local context notation (e.g. `Joi.ref('#variable')`);
-    - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
-  - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use
-    the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML
-    escaped if the option `errors.escapeHtml` is set to `true`.
-  - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
-  - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties.
-    Defaults to `false`.
-  - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`,
-    and `'forbidden'`. Defaults to `'optional'`.
-  - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
-  - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
-    - when an `object` :
-      - `arrays` - set to `true` to remove unknown items from arrays.
-      - `objects` - set to `true` to remove unknown keys from objects.
-    - when `true`, it is equivalent to having `{ arrays: false, objects: true }`.
-- `callback` - the optional synchronous callback method using the signature `function(err, value)` where:
-  - `err` - if validation failed, the [error](#errors) reason, otherwise `null`.
-  - `value` - the validated value with any type conversions and other modifiers applied (the input
-    is left unchanged). `value` can be incomplete if validation failed and `abortEarly` is `true`.
-    If callback is not provided, then returns an object with [error](#errors) and value properties.
-
-When used without a callback, this function returns a Promise-like object that can be used as a
-promise, or as a simple object like in the below examples.
-
-```js
-const schema = {
-    a: Joi.number()
-};
-
-const value = {
-    a: '123'
-};
-
-Joi.validate(value, schema, (err, value) => { });
-// err -> null
-// value.a -> 123 (number, not string)
-
-// or
-const result = Joi.validate(value, schema);
-// result.error -> null
-// result.value -> { "a" : 123 }
-
-// or
-const promise = Joi.validate(value, schema);
-promise.then((value) => {
-    // value -> { "a" : 123 }
-});
-```
-
 ### `compile(schema, [options])`
 
 Converts literal schema definition to **joi** schema object (or returns the same back if already a
@@ -418,7 +341,7 @@ Validates a value against a schema and [throws](#errors) if validation fails whe
 - `value` - the value to validate.
 - `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema-options) (be careful of the cost of compiling repeatedly the same schemas).
 - `message` - optional message string prefix added in front of the error message. may also be an Error object.
-- `options` - optional options object, passed in to [`Joi.validate`](##validatevalue-schema-options-callback)
+- `options` - optional options object, passed in to [`any.validate`](#anyvalidatevalue-options)
 
 ```js
 Joi.assert('x', Joi.number());
@@ -462,7 +385,7 @@ const schema = Joi.object({
     c: Joi.ref('$x')
 });
 
-Joi.validate({ a: 5, b: { c: 5 } }, schema, { context: { x: 5 } }, (err, value) => {});
+await schema.validate({ a: 5, b: { c: 5 } }, { context: { x: 5 } });
 ```
 
 #### Relative references
@@ -660,7 +583,7 @@ The extension makes use of some common structures that need to be described prio
     - `path` - the full path of the current value.
     - `ancestors` - an array of the potential parents of the current value.
     - `flags` - a reference to the schema's internal flags.
-- `prefs` - preferences object provided through [`any().prefs()`](#anyprefsoptions--aliases-preferences-options) or [`Joi.validate()`](#validatevalue-schema-options-callback).
+- `prefs` - preferences object provided through [`any().prefs()`](#anyprefsoptions--aliases-preferences-options) or [`any.validate()`](#anyvalidatevalue-options).
 
 #### Extension
 
@@ -777,7 +700,7 @@ Generates a schema object that matches any data type.
 
 ```js
 const any = Joi.any();
-any.validate('a', (err, value) => { });
+await any.validate('a');
 ```
 
 #### `schemaType`
@@ -855,23 +778,22 @@ const generateUsername = (context) => {
 };
 generateUsername.description = 'generated username';
 
-const schema = {
+const schema = Joi.object({
     username: Joi.string().default(generateUsername),
     firstname: Joi.string(),
     lastname: Joi.string(),
     created: Joi.date().default(Date.now, 'time of creation'),
     status: Joi.string().default('registered')
-};
+});
 
-Joi.validate({
+const { value } = schema.validate({
     firstname: 'Jane',
     lastname: 'Doe'
-}, schema, (err, value) => {
-
-    // value.status === 'registered'
-    // value.username === 'jane-doe'
-    // value.created will be the time of validation
 });
+
+// value.status === 'registered'
+// value.username === 'jane-doe'
+// value.created will be the time of validation
 ```
 
 Possible validation errors: [`any.default`](#anydefault)
@@ -1065,7 +987,7 @@ const schema = Joi.any().optional();
 #### `any.prefs(options)` = aliases: `preferences`, `options`
 
 Overrides the global `validate()` options for the current key and any sub-key where:
-- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+- `options` - an object with the same optional keys as [`any.validate()`](#anyvalidatevalue-options).
 
 ```js
 const schema = Joi.any().prefs({ convert: false });
@@ -1103,7 +1025,7 @@ Applies a set of rule options to the current ruleset or last rule added where:
     rule overriding the first. Defaults to `false`.
   - `message` - a single message string or a messages object where each key is an error code and
     corresponding message string as value. The object is the same as the `messages` used as an option in
-    [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+    [`any.validate()`](#anyvalidatevalue-options).
     The strings can be plain messages or a message template.
 
 When applying rule options, the last rule (e.g. `min()`) is used unless there is an active ruleset defined
@@ -1142,14 +1064,11 @@ const schema = Joi.object({
     password: Joi.string().strip()
 });
 
-schema.validate({ username: 'test', password: 'hunter2' }, (err, value) => {
-    // value = { username: 'test' }
-});
+schema.validate({ username: 'test', password: 'hunter2' }); // result.value = { username: 'test' }
 
 const schema = Joi.array().items(Joi.string(), Joi.any().strip());
 
-schema.validate(['one', 'two', true, false, 1, 2], (err, value) => {
-    // value = ['one', 'two']
+schema.validate(['one', 'two', true, false, 1, 2]); // result.value = ['one', 'two']
 });
 ```
 
@@ -1187,12 +1106,48 @@ const schema = {
 
 Possible validation errors: [`any.allowOnly`](#anyallowonly)
 
-#### `any.validate(value, [options], [callback])`
+#### `any.validate(value, [options])`
 
-Validates a value using the schema and options where:
+Validates a value using the current schema and options where:
 - `value` - the value being validated.
-- `options` - an object with the same optional keys as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
-- `callback` - an optional synchronous callback method using the the same signature as [`Joi.validate(value, schema, options, callback)`](#validatevalue-schema-options-callback).
+- `options` - an optional object with the following optional keys:
+  - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
+  - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
+  - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
+    `validate()` and not using `any.prefs()`.
+  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
+  - `dateFormat` - sets the string format used when converting dates to strings in error messages and casting. Options are:
+    - `'date'` - date string.
+    - `'iso'` - date time ISO string. This is the default.
+    - `'string'` - JS default date time string.
+    - `'time'` - time string.
+    - `'utc'` - UTC date time string.
+  - `error` - error formatting settings:
+    - `escapeHtml` - when `true`, error message templates will escape special characters to HTML
+      entities, for security purposes. Defaults to `false`.
+    - `language` - the prefered language code for error messages. The value is matched against keys
+      are the root of the `messages` object, and then the error code as a child key of that. Can be
+      a reference to the value, global context, or local context which is the root value passed to the
+      validation function. Note that references to the value are usually not what you want as they move
+      around the value structure relative to where the error happens. Instead, either use the global
+      context, or the absolute value using local context notation (e.g. `Joi.ref('#variable')`);
+    - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
+  - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use
+    the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML
+    escaped if the option `errors.escapeHtml` is set to `true`.
+  - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
+  - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties.
+    Defaults to `false`.
+  - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`,
+    and `'forbidden'`. Defaults to `'optional'`.
+  - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
+  - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
+    - when an `object` :
+      - `arrays` - set to `true` to remove unknown items from arrays.
+      - `objects` - set to `true` to remove unknown keys from objects.
+    - when `true`, it is equivalent to having `{ arrays: false, objects: true }`.
+
+Returns a Promise-like object that can be used as a promise, or as a simple object like in the below examples.
 
 ```js
 const schema = Joi.object({
@@ -1203,17 +1158,18 @@ const value = {
     a: '123'
 };
 
-schema.validate(value, (err, value) => { });
-// err -> null
-// value.a -> 123 (number, not string)
-
-// or
 const result = schema.validate(value);
 // result.error -> null
 // result.value -> { "a" : 123 }
 
 // or
-const promise = schema.validate(value);
+try {
+  const value = await schema.validate(value);
+  // value -> { "a" : 123 }
+}
+catch (err) {
+
+}
 ```
 
 #### `any.when(condition, options)`
@@ -1378,7 +1334,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const array = Joi.array().items(Joi.string().valid('a', 'b'));
-array.validate(['a', 'b', 'a'], (err, value) => { });
+await array.validate(['a', 'b', 'a']);
 ```
 
 Possible validation errors: [`array.base`](#arraybase)
@@ -1584,9 +1540,9 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const boolean = Joi.boolean();
-boolean.validate(true, (err, value) => { }); // Valid
 
-boolean.validate(1, (err, value) => { }); // Invalid
+await boolean.validate(true); // Valid
+await boolean.validate(1);    // Throws
 ```
 
 Possible validation errors: [`boolean.base`](#booleanbase)
@@ -1600,7 +1556,7 @@ String comparisons are by default case insensitive, see [`boolean.insensitive()`
 
 ```js
 const boolean = Joi.boolean().truthy('Y');
-boolean.validate('Y', (err, value) => { }); // Valid
+await boolean.validate('Y'); // Valid
 ```
 
 #### `boolean.falsy(...values)`
@@ -1612,7 +1568,7 @@ String comparisons are by default case insensitive, see [`boolean.insensitive()`
 
 ```js
 const boolean = Joi.boolean().falsy('N');
-boolean.validate('N', (err, value) => { }); // Valid
+await boolean.validate('N'); // Valid
 ```
 
 #### `boolean.insensitive([enabled])`
@@ -1690,7 +1646,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const date = Joi.date();
-date.validate('12-21-2012', (err, value) => { });
+await date.validate('12-21-2012');
 ```
 
 Possible validation errors: [`date.base`](#datebase), [`date.strict`](#datestrict)
@@ -1822,7 +1778,7 @@ set to `0`).
 
 ```js
 const func = Joi.func();
-func.validate(function () {}, (err, value) => { });
+await func.validate(function () {});
 ```
 
 Possible validation errors: [`function.base`](#functionbase)
@@ -1885,7 +1841,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const number = Joi.number();
-number.validate(5, (err, value) => { });
+await number.validate(5);
 ```
 
 Possible validation errors: [`number.base`](#numberbase)
@@ -2058,7 +2014,7 @@ const object = Joi.object({
     b: 'some string'
 });
 
-object.validate({ a: 5 }, (err, value) => { });
+await object.validate({ a: 5 });
 ```
 
 Possible validation errors: [`object.base`](#objectbase)
@@ -2126,9 +2082,7 @@ const schema = Joi.object({
     a: Joi.boolean()
 });
 
-schema.validate(true, (err, value) => {
-    console.log('err: ', err);
-});
+await schema.validate(true);  // Throws error
 ```
 
 When you use `Joi.object([schema])`, it gets compiled the first time, so you can pass it to the `validate()` method multiple times and no overhead is added.
@@ -2380,7 +2334,7 @@ const object = Joi.object({
     a: Joi.number()
 }).rename('b', 'a');
 
-object.validate({ b: 5 }, (err, value) => { });
+await object.validate({ b: 5 });
 ```
 
 Using a regular expression:
@@ -2392,7 +2346,7 @@ const schema = Joi.object({
   fooBar: Joi.string()
 }).rename(regex, 'fooBar');
 
-schema.validate({ FooBar: 'a'}, (err, value) => {});
+await schema.validate({ FooBar: 'a'});
 ```
 
 Using a regular expression with template:
@@ -2521,7 +2475,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const schema = Joi.string().min(1).max(10);
-schema.validate('12345', (err, value) => { });
+await schema.validate('12345');
 ```
 
 Possible validation errors: [`string.base`](#stringbase), [`any.empty`](#anyempty)
@@ -2650,9 +2604,7 @@ _replacement_ string where:
 
 ```js
 const schema = Joi.string().replace(/b/gi, 'x');
-schema.validate('abBc', (err, value) => {
-  // here value will be 'axxc'
-});
+await schema.validate('abBc');  // return value will be 'axxc'
 ```
 
 When `pattern` is a _string_ all its occurrences will be replaced.
@@ -2955,7 +2907,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const schema = Joi.symbol().map({ 'foo': Symbol('foo'), 'bar': Symbol('bar') });
-schema.validate('foo', (err, value) => { });
+await schema.validate('foo');
 ```
 
 Possible validation errors: [`symbol.base`](#symbolbase)
@@ -3000,7 +2952,7 @@ Adds an alternative schema type for attempting to match against the validated va
 
 ```js
 const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
-alt.validate('a', (err, value) => { });
+await alt.validate('a');
 ```
 
 #### `alternatives.when(condition, options)`

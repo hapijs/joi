@@ -23,12 +23,12 @@ describe('ref', () => {
 
     it('throws when reference reaches beyond the schema root', () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.any(),
             b: Joi.ref('...c')
-        };
+        });
 
-        expect(() => Joi.validate({ a: 1, b: 2 }, schema)).to.throw('Invalid reference exceeds the schema root: ref:...c');
+        expect(() => schema.validate({ a: 1, b: 2 })).to.throw('Invalid reference exceeds the schema root: ref:...c');
     });
 
     it('reaches self', () => {
@@ -994,7 +994,7 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const value = await Joi.validate({ b: 6 }, schema, { context: { x: 22 } });
+        const value = await schema.validate({ b: 6 }, { context: { x: 22 } });
         expect(value).to.equal({ a: 22, b: 6 });
     });
 
@@ -1005,7 +1005,7 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const value = await Joi.validate({ b: 6 }, schema, { context: { x: 22 } });
+        const value = await schema.validate({ b: 6 }, { context: { x: 22 } });
         expect(value).to.equal({ a: 22, b: 6 });
     });
 
@@ -1017,7 +1017,7 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const err = await expect(Joi.validate({ a: 5, b: 6 }, schema, { context: { x: 22 } })).to.reject();
+        const err = await expect(schema.validate({ a: 5, b: 6 }, { context: { x: 22 } })).to.reject();
         expect(err).to.be.an.error('"a" must be one of [ref:global:x]');
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:global:x]',

@@ -1215,7 +1215,7 @@ describe('extension', () => {
         );
 
         expect(() => customJoi.myType().foo().bar()).to.not.throw();
-        expect(customJoi.attempt({ a: 123, b: 456 }, { a: customJoi.myType().foo(), b: customJoi.myType().bar() })).to.equal({ a: 1, b: 2 });
+        expect(customJoi.attempt({ a: 123, b: 456 }, Joi.object({ a: customJoi.myType().foo(), b: customJoi.myType().bar() }))).to.equal({ a: 1, b: 2 });
     });
 
     it('should only keep last definition when type is defined several times with different bases', () => {

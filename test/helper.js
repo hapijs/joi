@@ -34,7 +34,7 @@ exports.validateOptions = function (schema, config, options) {
                 expect(expectedValueOrError.details).to.be.an.array();
             }
 
-            const result = Joi.validate(input, compiled, validationOptions || options);
+            const result = compiled.validate(input, validationOptions || options);
 
             const err = result.error;
             const value = result.value;

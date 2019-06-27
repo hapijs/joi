@@ -1321,7 +1321,7 @@ describe('any', () => {
 
             const input = { b: 42 };
 
-            const value = await Joi.validate(input, schema, { noDefaults: true });
+            const value = await schema.validate(input, { noDefaults: true });
             expect(value.a).to.not.exist();
             expect(value.b).to.be.equal(42);
         });
@@ -1342,7 +1342,7 @@ describe('any', () => {
 
             const input = { b: 42 };
 
-            const value = await Joi.validate(input, schema, { noDefaults: true });
+            const value = await schema.validate(input, { noDefaults: true });
             expect(value.a).to.not.exist();
             expect(value.b).to.be.equal(42);
         });
@@ -1356,7 +1356,7 @@ describe('any', () => {
 
             const input = { b: 42 };
 
-            const value = await Joi.validate(input, schema, { noDefaults: true });
+            const value = await schema.validate(input, { noDefaults: true });
             expect(value.a).to.not.exist();
             expect(value.b).to.be.equal(42);
         });
@@ -1370,7 +1370,7 @@ describe('any', () => {
 
             const input = { a: 'foo', b: 42 };
 
-            const value = await Joi.validate(input, schema, { noDefaults: true });
+            const value = await schema.validate(input, { noDefaults: true });
             expect(value.a).to.not.exist();
             expect(value.b).to.be.equal(42);
         });
@@ -1404,7 +1404,7 @@ describe('any', () => {
                 }
             });
 
-            const err = await expect(Joi.validate({ a: 'abc', b: { c: 'x' } }, schema)).to.reject();
+            const err = await expect(schema.validate({ a: 'abc', b: { c: 'x' } })).to.reject();
             expect(err.isJoi).to.not.exist();
             expect(err.message).to.equal('Really wanted a number!');
             expect(err.details).to.not.exist();
@@ -1419,7 +1419,7 @@ describe('any', () => {
                 }
             }).prefs({ abortEarly: false });
 
-            const err = await expect(Joi.validate({ a: 22, b: { c: 'x' } }, schema)).to.reject();
+            const err = await expect(schema.validate({ a: 22, b: { c: 'x' } })).to.reject();
             expect(err.isJoi).to.not.exist();
             expect(err.message).to.equal('Really wanted a number!');
             expect(err.details).to.not.exist();
@@ -1434,7 +1434,7 @@ describe('any', () => {
                 }
             });
 
-            const err = await expect(Joi.validate({ a: 22, b: { c: 'x' } }, schema)).to.reject();
+            const err = await expect(schema.validate({ a: 22, b: { c: 'x' } })).to.reject();
             expect(err.isJoi).to.be.true();
             expect(err.message).to.equal('"a" must be a string');
             expect(err.details).to.equal([{
@@ -1484,7 +1484,7 @@ describe('any', () => {
                     }
                 });
 
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: 'x' } }, schema)).to.reject();
+                const err = await expect(schema.validate({ a: 'abc', b: { c: 'x' } })).to.reject();
                 expect(err.isJoi).to.not.exist();
                 expect(err.message).to.equal('Really wanted a number!');
             });
@@ -1501,7 +1501,7 @@ describe('any', () => {
                     }
                 });
 
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
+                const err = await expect(schema.validate({ a: 'abc', b: { c: -1.5 } }, { abortEarly: false })).to.reject();
                 expect(err.isJoi).to.not.exist();
                 expect(err.message).to.equal('"b.c" must be larger than or equal to 0 and "b.c" must be an integer');
             });
@@ -1523,7 +1523,7 @@ describe('any', () => {
                     }
                 });
 
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
+                const err = await expect(schema.validate({ a: 'abc', b: { c: -1.5 } }, { abortEarly: false })).to.reject();
                 expect(err.isJoi).to.not.exist();
                 expect(err.message).to.equal('"b.c" must be larger than or equal to 0! and "b.c" must be an integer!');
             });
@@ -1539,7 +1539,7 @@ describe('any', () => {
                     })
                 });
 
-                const err = await expect(Joi.validate({ a: new Date('1973-01-01') }, schema, { dateFormat: 'date', abortEarly: false })).to.reject();
+                const err = await expect(schema.validate({ a: new Date('1973-01-01') }, { dateFormat: 'date', abortEarly: false })).to.reject();
                 expect(err.isJoi).to.not.exist();
                 expect(err.message).to.equal(`"a" must be larger than or equal to "${min.toDateString()}" and "a" must be greater than "${min.toDateString()}"`);
             });
@@ -1574,7 +1574,7 @@ describe('any', () => {
                     }
                 });
 
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
+                const err = await expect(schema.validate({ a: 'abc', b: { c: -1.5 } }, { abortEarly: false })).to.reject();
                 expect(err.isJoi).to.not.exist();
                 expect(err.message).to.equal('"c" > 0 && "c" ∈ ℤ');
             });
@@ -1588,7 +1588,7 @@ describe('any', () => {
                     }
                 });
 
-                const err = await expect(Joi.validate({ a: 'abc', b: { c: -1.5 } }, schema, { abortEarly: false })).to.reject();
+                const err = await expect(schema.validate({ a: 'abc', b: { c: -1.5 } }, { abortEarly: false })).to.reject();
                 expect(err).to.be.an.error('error of type number.min');
                 expect(err.isJoi).to.not.exist();
                 expect(err.details).to.not.exist();
@@ -2052,7 +2052,7 @@ describe('any', () => {
             expect(options).to.equal({ convert: true });
 
             const options2 = { convert: false };
-            Joi.validate({}, schema, options2);
+            schema.validate({}, options2);
             expect(options).to.equal({ convert: true });
             expect(options2).to.equal({ convert: false });
         });
@@ -2677,7 +2677,7 @@ describe('any', () => {
         it('checks value after conversion', async () => {
 
             const schema = Joi.number().invalid(2);
-            const err = await expect(Joi.validate('2', schema, { abortEarly: false })).to.reject();
+            const err = await expect(schema.validate('2', { abortEarly: false })).to.reject();
             expect(err).to.be.an.error('"value" contains an invalid value');
             expect(err.details).to.equal([{
                 message: '"value" contains an invalid value',

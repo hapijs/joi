@@ -504,7 +504,7 @@ describe('Joi', () => {
             upc: Joi.string()
         }).with('txt', 'upc');
 
-        const err = await expect(Joi.validate({ txt: 'a' }, schema, { abortEarly: false })).to.reject();
+        const err = await expect(schema.validate({ txt: 'a' }, { abortEarly: false })).to.reject();
         expect(err).to.be.an.error('"txt" missing required peer "upc"');
         expect(err.details).to.equal([{
             message: '"txt" missing required peer "upc"',
@@ -586,7 +586,7 @@ describe('Joi', () => {
             upc: Joi.string()
         }).without('txt', 'upc');
 
-        const err = await expect(Joi.validate({ txt: 'a', upc: 'b' }, schema, { abortEarly: false })).to.reject();
+        const err = await expect(schema.validate({ txt: 'a', upc: 'b' }, { abortEarly: false })).to.reject();
         expect(err).to.be.an.error('"txt" conflict with forbidden peer "upc"');
         expect(err.details).to.equal([{
             message: '"txt" conflict with forbidden peer "upc"',
@@ -652,7 +652,7 @@ describe('Joi', () => {
             upc: Joi.string()
         }).xor('txt', 'upc');
 
-        const err = await expect(Joi.validate({}, schema, { abortEarly: false })).to.reject();
+        const err = await expect(schema.validate({}, { abortEarly: false })).to.reject();
         expect(err).to.be.an.error('"value" must contain at least one of [txt, upc]');
         expect(err.details).to.equal([{
             message: '"value" must contain at least one of [txt, upc]',
@@ -885,7 +885,7 @@ describe('Joi', () => {
             code: Joi.number()
         }).or('txt', 'upc', 'code');
 
-        const err = await expect(Joi.validate({}, schema, { abortEarly: false })).to.reject();
+        const err = await expect(schema.validate({}, { abortEarly: false })).to.reject();
         expect(err).to.be.an.error('"value" must contain at least one of [txt, upc, code]');
         expect(err.details).to.equal([{
             message: '"value" must contain at least one of [txt, upc, code]',
@@ -995,7 +995,7 @@ describe('Joi', () => {
             code: Joi.number()
         }).and('txt', 'upc', 'code');
 
-        const err = await expect(Joi.validate({ txt: 'x' }, schema, { abortEarly: false })).to.reject();
+        const err = await expect(schema.validate({ txt: 'x' }, { abortEarly: false })).to.reject();
         expect(err).to.be.an.error('"value" contains [txt] without its required peers [upc, code]');
         expect(err.details).to.equal([{
             message: '"value" contains [txt] without its required peers [upc, code]',
@@ -1274,7 +1274,7 @@ describe('Joi', () => {
             code: Joi.number()
         }).nand('txt', 'upc', 'code');
 
-        const err = await expect(Joi.validate({ txt: 'x', upc: 'y', code: 123 }, schema, { abortEarly: false })).to.reject();
+        const err = await expect(schema.validate({ txt: 'x', upc: 'y', code: 123 }, { abortEarly: false })).to.reject();
         expect(err).to.be.an.error('"txt" must not exist simultaneously with [upc, code]');
         expect(err.details).to.equal([{
             message: '"txt" must not exist simultaneously with [upc, code]',
@@ -1978,17 +1978,17 @@ describe('Joi', () => {
 
     it('validates when parameter is required to be an object and is given correctly as a json string', async () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.object({
                 b: Joi.string().required()
             })
-        };
+        });
 
         const input = {
             a: '{"b":"string"}'
         };
 
-        const value = await Joi.validate(input, schema);
+        const value = await schema.validate(input);
         expect(input.a).to.equal('{"b":"string"}');
         expect(value.a.b).to.equal('string');
     });
@@ -2084,11 +2084,11 @@ describe('Joi', () => {
 
     it('validates with extra keys and remove them when stripUnknown is set', async () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c'),
             c: Joi.string().email().optional()
-        };
+        });
 
         const obj = {
             a: 1,
@@ -2096,17 +2096,17 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        const value = await Joi.validate(obj, schema, { stripUnknown: true, allowUnknown: true });
+        const value = await schema.validate(obj, { stripUnknown: true, allowUnknown: true });
         expect(value).to.equal({ a: 1, b: 'a' });
     });
 
     it('validates with extra keys and remove them when stripUnknown (as an object) is set', async () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c'),
             c: Joi.string().email().optional()
-        };
+        });
 
         const obj = {
             a: 1,
@@ -2114,7 +2114,7 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        const value = await Joi.validate(obj, schema, { stripUnknown: { arrays: false, objects: true }, allowUnknown: true });
+        const value = await schema.validate(obj, { stripUnknown: { arrays: false, objects: true }, allowUnknown: true });
         expect(value).to.equal({ a: 1, b: 'a' });
     });
 
@@ -2130,7 +2130,7 @@ describe('Joi', () => {
             foo: 'bar'
         };
 
-        const err = await expect(Joi.validate(obj, schema, { stripUnknown: true })).to.reject();
+        const err = await expect(schema.validate(obj, { stripUnknown: true })).to.reject();
         expect(err).to.be.an.error('"value" contains [a] without its required peers [b]');
         expect(err.details).to.equal([{
             message: '"value" contains [a] without its required peers [b]',
@@ -2160,7 +2160,7 @@ describe('Joi', () => {
             foo: 'bar'
         };
 
-        const err = await expect(Joi.validate(obj, schema, { stripUnknown: { arrays: false, objects: true } })).to.reject();
+        const err = await expect(schema.validate(obj, { stripUnknown: { arrays: false, objects: true } })).to.reject();
         expect(err).to.be.an.error('"value" contains [a] without its required peers [b]');
         expect(err.details).to.equal([{
             message: '"value" contains [a] without its required peers [b]',
@@ -2179,11 +2179,11 @@ describe('Joi', () => {
 
     it('fails to validate with incorrect property when asked to strip unknown keys without aborting early', async () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c'),
             c: Joi.string().email().optional()
-        };
+        });
 
         const obj = {
             a: 1,
@@ -2191,16 +2191,16 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        await expect(Joi.validate(obj, schema, { stripUnknown: true, abortEarly: false })).to.reject();
+        await expect(schema.validate(obj, { stripUnknown: true, abortEarly: false })).to.reject();
     });
 
     it('fails to validate with incorrect property when asked to strip unknown keys (as an object) without aborting early', async () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c'),
             c: Joi.string().email().optional()
-        };
+        });
 
         const obj = {
             a: 1,
@@ -2208,16 +2208,16 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        await expect(Joi.validate(obj, schema, { stripUnknown: { arrays: false, objects: true }, abortEarly: false })).to.reject();
+        await expect(schema.validate(obj, { stripUnknown: { arrays: false, objects: true }, abortEarly: false })).to.reject();
     });
 
     it('should pass validation with extra keys when allowUnknown is set', async () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.number().min(0).max(3),
             b: Joi.string().valid('a', 'b', 'c'),
             c: Joi.string().email().optional()
-        };
+        });
 
         const obj = {
             a: 1,
@@ -2225,7 +2225,7 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        const value = await Joi.validate(obj, schema, { allowUnknown: true });
+        const value = await schema.validate(obj, { allowUnknown: true });
         expect(value).to.equal({ a: 1, b: 'a', d: 'c' });
     });
 
@@ -2293,39 +2293,39 @@ describe('Joi', () => {
 
         const schema = Joi.object({ username: Joi.string() }).prefs({ skipFunctions: true });
         const input = { username: 'test', func: function () { } };
-        await Joi.validate(input, schema);
+        await schema.validate(input);
     });
 
     it('should work when the skipFunctions setting is disabled', async () => {
 
-        const schema = { username: Joi.string() };
+        const schema = Joi.object({ username: Joi.string() });
         const input = { username: 'test', func: function () { } };
 
-        const err = await expect(Joi.validate(input, schema, { skipFunctions: false })).to.reject();
+        const err = await expect(schema.validate(input, { skipFunctions: false })).to.reject();
         expect(err.message).to.contain('"func" is not allowed');
     });
 
     it('should not convert values when convert is false', async () => {
 
-        const schema = {
+        const schema = Joi.object({
             arr: Joi.array().items(Joi.string())
-        };
+        });
 
         const input = { arr: 'foo' };
-        await expect(Joi.validate(input, schema, { convert: false })).to.reject();
+        await expect(schema.validate(input, { convert: false })).to.reject();
     });
 
     it('full errors when abortEarly is false', async () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.string(),
             b: Joi.string()
-        };
+        });
 
         const input = { a: 1, b: 2 };
 
-        const errOne = await expect(Joi.validate(input, schema)).to.reject();
-        const errFull = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject();
+        const errOne = await expect(schema.validate(input)).to.reject();
+        const errFull = await expect(schema.validate(input, { abortEarly: false })).to.reject();
         expect(errFull.details.length).to.be.greaterThan(errOne.details.length);
     });
 
@@ -2373,7 +2373,7 @@ describe('Joi', () => {
             }
         };
 
-        const err = await expect(Joi.validate(input, schema, { abortEarly: false })).to.reject();
+        const err = await expect(schema.validate(input, { abortEarly: false })).to.reject();
         expect(err.details).to.have.length(6);
         expect(err.details).to.equal([{
             message: '"test[0].foo" length must be less than or equal to 3 characters long',
@@ -2408,51 +2408,33 @@ describe('Joi', () => {
         }]);
     });
 
-    it('validates using the root any object', async () => {
+    it('validates using the root any object', () => {
 
-        const any = Joi;
-        await any.validate('abc');
-    });
-
-    it('validates using the root any object (no callback)', () => {
-
-        const any = Joi;
-        const result = any.validate('abc');
+        const result = Joi.validate('abc');
         expect(result.error).to.not.exist();
         expect(result.value).to.equal('abc');
     });
 
     it('accepts no options', async () => {
 
-        await Joi.validate('test', Joi.string());
-    });
+        await Joi.string().validate('test');
 
-    it('accepts no options (no callback)', () => {
-
-        const result = Joi.validate('test', Joi.string());
+        const result = Joi.string().validate('test');
         expect(result.error).to.not.exist();
         expect(result.value).to.equal('test');
-    });
 
-    it('accepts options', async () => {
-
-        await expect(Joi.validate('5', Joi.number(), { convert: false })).to.reject();
-    });
-
-    it('accepts options (no callback)', () => {
-
-        const result = Joi.validate('5', Joi.number(), { convert: false });
-        expect(result.error).to.exist();
+        await expect(Joi.number().validate('5', { convert: false })).to.reject();
+        expect(Joi.number().validate('5', { convert: false }).error).to.exist();
     });
 
     it('accepts null options', async () => {
 
-        await Joi.validate('test', Joi.string(), null);
+        await Joi.string().validate('test', null);
     });
 
     it('accepts undefined options', async () => {
 
-        await Joi.validate('test', Joi.string(), undefined);
+        await Joi.string().validate('test', undefined);
     });
 
     describe('describe()', () => {
@@ -2773,11 +2755,11 @@ describe('Joi', () => {
 
         it('throws a validation error and not a TypeError when parameter is given as a json string with incorrect property', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.object({
                     b: Joi.string()
                 })
-            };
+            });
 
             const input = {
                 a: '{"c":"string"}'
@@ -3116,9 +3098,7 @@ describe('Joi', () => {
 
         it('should work with a successful promise', () => {
 
-            const schema = Joi.string();
-
-            const promise = Joi.validate('foo', schema);
+            const promise = Joi.string().validate('foo');
 
             return promise.then((value) => {
 
@@ -3131,9 +3111,7 @@ describe('Joi', () => {
 
         it('should work with a successful promise and a catch in between', () => {
 
-            const schema = Joi.string();
-
-            const promise = Joi.validate('foo', schema);
+            const promise = Joi.string().validate('foo');
 
             return promise
                 .catch(() => {
@@ -3151,9 +3129,7 @@ describe('Joi', () => {
 
         it('should work with a failing promise', () => {
 
-            const schema = Joi.string();
-
-            const promise = Joi.validate(0, schema);
+            const promise = Joi.string().validate(0);
 
             return promise.then((value) => {
 
@@ -3172,9 +3148,7 @@ describe('Joi', () => {
 
         it('should work with a failing promise and a then in between', () => {
 
-            const schema = Joi.string();
-
-            const promise = Joi.validate(0, schema);
+            const promise = Joi.string().validate(0);
 
             return promise
                 .then((value) => {
@@ -3195,9 +3169,7 @@ describe('Joi', () => {
 
         it('should work with a failing promise (with catch)', () => {
 
-            const schema = Joi.string();
-
-            const promise = Joi.validate(0, schema);
+            const promise = Joi.string().validate(0);
 
             return promise.catch((err) => {
 
@@ -3213,9 +3185,7 @@ describe('Joi', () => {
 
         it('should catch errors in a successful promise callback', () => {
 
-            const schema = Joi.string();
-
-            const promise = Joi.validate('foo', schema);
+            const promise = Joi.string().validate('foo');
 
             return promise.then((value) => {
 
@@ -3231,9 +3201,7 @@ describe('Joi', () => {
 
         it('should catch errors in a failing promise callback', () => {
 
-            const schema = Joi.string();
-
-            const promise = Joi.validate(0, schema);
+            const promise = Joi.string().validate(0);
 
             return promise.then((value) => {
 
@@ -3252,9 +3220,7 @@ describe('Joi', () => {
 
         it('should catch errors in a failing promise callback (with catch)', () => {
 
-            const schema = Joi.string();
-
-            const promise = Joi.validate(0, schema);
+            const promise = Joi.string().validate(0);
 
             return promise.catch(() => {
 

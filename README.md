@@ -8,17 +8,15 @@ Object schema description language and validator for JavaScript objects.
 
 ## Introduction
 
-Imagine you run facebook and you want visitors to sign up on the website with real names and not something like `l337_p@nda` in the first name field. How would you define the limitations of what can be inputted and validate it against the set rules?
+Imagine you run facebook and you want visitors to sign up on the website with real names and not
+something like `l337_p@nda` in the first name field. How would you define the limitations of what
+can be inputted and validate it against the set rules?
 
-This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object that stores information) to ensure *validation* of key information.
-
-# Installation
-
-```cli 
- npm install --save @hapi/joi
- ```
+This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object
+that stores information) to ensure *validation* of key information.
 
 ## API
+
 See the detailed [API Reference](https://github.com/hapijs/joi/blob/v16.0.0-rc2/API.md).
 
 ## Example
@@ -35,11 +33,11 @@ const schema = Joi.object().keys({
 }).with('username', 'birthyear').without('password', 'access_token');
 
 // Return result.
-const result = Joi.validate({ username: 'abc', birthyear: 1994 }, schema);
+const result = schema.validate({ username: 'abc', birthyear: 1994 });
 // result.error === null -> valid
 
 // You can also pass a callback which will be called synchronously with the validation result.
-Joi.validate({ username: 'abc', birthyear: 1994 }, schema, function (err, value) { });  // err === null -> valid
+schema.validate({ username: 'abc', birthyear: 1994 }, function (err, value) { });  // err === null -> valid
 
 ```
 
@@ -68,9 +66,9 @@ Usage is a two steps process:
 First, a schema is constructed using the provided types and constraints:
 
 ```js
-const schema = {
+const schema = Joi.object({
     a: Joi.string()
-};
+});
 ```
 
 Note that **joi** schema objects are immutable which means every additional rule added (e.g.
@@ -79,11 +77,11 @@ Note that **joi** schema objects are immutable which means every additional rule
 Second, the value is validated against the defined schema:
 
 ```js
-const { error, value } = Joi.validate({ a: 'a string' }, schema);
+const { error, value } = schema.validate({ a: 'a string' });
 
 // or
 
-Joi.validate({ a: 'a string' }, schema, function (error, value) { });
+schema.validate({ a: 'a string' }, function (error, value) { });
 ```
 
 If the input is valid, then the `error` will be `null`. If the input is invalid, `error` is assigned
@@ -110,15 +108,15 @@ When validating a schema:
 * Values (or keys in case of objects) are optional by default.
 
     ```js
-    Joi.validate(undefined, Joi.string()); // validates fine
+    Joi.string().validate(undefined); // validates fine
     ```
 
     To disallow this behavior, you can either set the schema as `required()`, or set `presence` to `"required"` when passing `options`:
 
     ```js
-    Joi.validate(undefined, Joi.string().required());
+    Joi.string().required().validate(undefined);
     // or
-    Joi.validate(undefined, Joi.string(), /* options */ { presence: "required" });
+    Joi.string().validate(undefined, /* options */ { presence: "required" });
     ```
 
 * Strings are utf-8 encoded by default.
