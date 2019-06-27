@@ -23,7 +23,7 @@ See the detailed [API Reference](https://github.com/hapijs/joi/blob/v16.0.0-rc2/
 
 ## Example
 
-```javascript
+```js
 const Joi = require('@hapi/joi');
 
 const schema = Joi.object().keys({
@@ -63,39 +63,43 @@ The above schema defines the following constraints:
 
 ## Usage
 
-Usage is a two steps process. First, a schema is constructed using the provided types and constraints:
+Usage is a two steps process:
 
-```javascript
+First, a schema is constructed using the provided types and constraints:
+
+```js
 const schema = {
     a: Joi.string()
 };
 ```
 
-Note that **joi** schema objects are immutable which means every additional rule added (e.g. `.min(5)`) will return a
-new schema object.
+Note that **joi** schema objects are immutable which means every additional rule added (e.g.
+`.min(5)`) will return a new schema object.
 
 Second, the value is validated against the defined schema:
 
-```javascript
-const {error, value} = Joi.validate({ a: 'a string' }, schema);
+```js
+const { error, value } = Joi.validate({ a: 'a string' }, schema);
 
 // or
 
 Joi.validate({ a: 'a string' }, schema, function (error, value) { });
 ```
 
-If the input is valid, then the `error` will be `null`, otherwise it will be an `Error` object providing more information.
+If the input is valid, then the `error` will be `null`. If the input is invalid, `error` is assigned
+a [`ValidationError`](https://github.com/hapijs/joi/blob/master/API.md#validationerror) object
+providing more information.
 
 The schema can be a plain JavaScript object where every key is assigned a **joi** type, or it can be a **joi** type directly:
 
-```javascript
+```js
 const schema = Joi.string().min(10);
 ```
 
 If the schema is a **joi** type, the `schema.validate(value, callback)` can be called directly on the type. When passing a non-type schema object,
 the module converts it internally to an object() type equivalent to:
 
-```javascript
+```js
 const schema = Joi.object().keys({
     a: Joi.string()
 });
@@ -105,13 +109,13 @@ When validating a schema:
 
 * Values (or keys in case of objects) are optional by default.
 
-    ```javascript
+    ```js
     Joi.validate(undefined, Joi.string()); // validates fine
     ```
 
     To disallow this behavior, you can either set the schema as `required()`, or set `presence` to `"required"` when passing `options`:
 
-    ```javascript
+    ```js
     Joi.validate(undefined, Joi.string().required());
     // or
     Joi.validate(undefined, Joi.string(), /* options */ { presence: "required" });
