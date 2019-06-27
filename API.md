@@ -2402,17 +2402,17 @@ const schema = Joi.object({ a: Joi.any() }).unknown();
 
 Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
 
-#### `object.type(constructor, [name])`
+#### `object.instance(constructor, [name])`
 
 Requires the object to be an instance of a given constructor where:
 - `constructor` - the constructor function that the object must be an instance of.
 - `name` - an alternate name to use in validation errors. This is useful when the constructor function does not have a name.
 
 ```js
-const schema = Joi.object().type(RegExp);
+const schema = Joi.object().instance(RegExp);
 ```
 
-Possible validation errors: [`object.type`](#objecttype)
+Possible validation errors: [`object.instance`](#objectinstance)
 
 #### `object.schema([type])`
 
@@ -3785,7 +3785,7 @@ Additional local context properties:
 }
 ```
 
-#### `object.type`
+#### `object.instance`
 
 The object is not of the type you specified.
 

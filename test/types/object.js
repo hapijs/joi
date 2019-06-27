@@ -380,7 +380,7 @@ describe('object', () => {
 
     it('validates constructor when type is set', () => {
 
-        const schema = Joi.object().type(RegExp);
+        const schema = Joi.object().instance(RegExp);
         const d = new Date();
         Helper.validate(schema, [
             [{ item: 'something' }, false, null, {
@@ -388,7 +388,7 @@ describe('object', () => {
                 details: [{
                     message: '"value" must be an instance of "RegExp"',
                     path: [],
-                    type: 'object.type',
+                    type: 'object.instance',
                     context: { type: 'RegExp', label: 'value', value: { item: 'something' } }
                 }]
             }],
@@ -406,7 +406,7 @@ describe('object', () => {
                 details: [{
                     message: '"value" must be an instance of "RegExp"',
                     path: [],
-                    type: 'object.type',
+                    type: 'object.instance',
                     context: { type: 'RegExp', label: 'value', value: d }
                 }]
             }],
@@ -3672,12 +3672,12 @@ describe('object', () => {
             const Foo = function Foo() {
             };
 
-            const schema = Joi.object().type(Foo);
+            const schema = Joi.object().instance(Foo);
             const err = await expect(schema.validate({})).to.reject('"value" must be an instance of "Foo"');
             expect(err.details).to.equal([{
                 message: '"value" must be an instance of "Foo"',
                 path: [],
-                type: 'object.type',
+                type: 'object.instance',
                 context: { type: 'Foo', label: 'value', value: {} }
             }]);
         });
@@ -3687,12 +3687,12 @@ describe('object', () => {
             const Foo = function () {
             };
 
-            const schema = Joi.object().type(Foo, 'Bar');
+            const schema = Joi.object().instance(Foo, 'Bar');
             const err = await expect(schema.validate({})).to.reject('"value" must be an instance of "Bar"');
             expect(err.details).to.equal([{
                 message: '"value" must be an instance of "Bar"',
                 path: [],
-                type: 'object.type',
+                type: 'object.instance',
                 context: { type: 'Bar', label: 'value', value: {} }
             }]);
         });
@@ -3702,29 +3702,26 @@ describe('object', () => {
             const Foo = function Foo() {
             };
 
-            const schema = Joi.object().type(Foo, 'Bar');
+            const schema = Joi.object().instance(Foo, 'Bar');
             const err = await expect(schema.validate({})).to.reject('"value" must be an instance of "Bar"');
             expect(err.details).to.equal([{
                 message: '"value" must be an instance of "Bar"',
                 path: [],
-                type: 'object.type',
+                type: 'object.instance',
                 context: { type: 'Bar', label: 'value', value: {} }
             }]);
         });
 
         it('throws when constructor is not a function', () => {
 
-            expect(() => {
-
-                Joi.object().type('');
-            }).to.throw('type must be a constructor function');
+            expect(() => Joi.object().instance('')).to.throw('type must be a constructor function');
         });
 
         it('uses the constructor name in the schema description', () => {
 
-            const description = Joi.object().type(RegExp).describe();
+            const description = Joi.object().instance(RegExp).describe();
 
-            expect(description.rules).to.include({ name: 'type', arg: { name: 'RegExp', ctor: RegExp } });
+            expect(description.rules).to.include({ name: 'instance', arg: { name: 'RegExp', ctor: RegExp } });
         });
 
         it('uses the constructor reference in the schema description', () => {
@@ -3732,7 +3729,7 @@ describe('object', () => {
             const Foo = function Foo() {
             };
 
-            const description = Joi.object().type(Foo).describe();
+            const description = Joi.object().instance(Foo).describe();
 
             expect(new Foo()).to.be.an.instanceof(description.rules[0].arg.ctor);
         });
