@@ -523,7 +523,7 @@ Joi.isSchema(schema); // returns true
 ### `reach(schema, path)`
 
 Get a sub-schema of an existing schema based on a `path` that can be either a string or an array of
-strings For string values path separator is a dot (`.`).
+strings. For string values path separator is a dot (`.`).
 
 ```js
 const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
