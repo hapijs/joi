@@ -16,25 +16,6 @@ const { expect } = Code;
 
 describe('Joi', () => {
 
-    it('validates with a callback', () => {
-
-        return new Promise((resolve, reject) => {
-
-            const schema = Joi.number();
-            Joi.validate(0, schema, (err, value) => {
-
-                if (err) {
-                    return reject(err);
-                }
-
-                resolve(value);
-            });
-        }).then((value) => {
-
-            expect(value).to.equal(0);
-        });
-    });
-
     it('validates object', async () => {
 
         const schema = Joi.object({

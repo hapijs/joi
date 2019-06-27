@@ -16,25 +16,6 @@ const { expect } = Code;
 
 describe('any', () => {
 
-    it('validates with a callback', () => {
-
-        return new Promise((resolve, reject) => {
-
-            const schema = Joi.any();
-            schema.validate('foo', (err, value) => {
-
-                if (err) {
-                    return reject(err);
-                }
-
-                resolve(value);
-            });
-        }).then((value) => {
-
-            expect(value).to.equal('foo');
-        });
-    });
-
     it('can be called on its own', () => {
 
         const any = Joi.any;
