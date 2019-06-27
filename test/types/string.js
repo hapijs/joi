@@ -27,9 +27,7 @@ describe('string', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(
-            () => Joi.string('invalid argument.')
-        ).to.throw('Joi.string() does not allow arguments.');
+        expect(() => Joi.string('invalid argument.')).to.throw('The string type does not allow arguments');
     });
 
     it('fails on boolean', () => {

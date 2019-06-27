@@ -24,9 +24,7 @@ describe('binary', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(
-            () => Joi.binary('invalid argument.')
-        ).to.throw('Joi.binary() does not allow arguments.');
+        expect(() => Joi.binary('invalid argument.')).to.throw('The binary type does not allow arguments');
     });
 
     it('converts a string to a buffer', async () => {

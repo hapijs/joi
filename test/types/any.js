@@ -24,27 +24,19 @@ describe('any', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(
-            () => Joi.any('invalid argument.')
-        ).to.throw('Joi.any() does not allow arguments.');
+        expect(() => Joi.any('invalid argument.')).to.throw('The any type does not allow arguments');
     });
 
     describe('allow()', () => {
 
         it('allows valid values to be set', () => {
 
-            expect(() => {
-
-                Joi.any().allow(true, 1, 'hello', new Date());
-            }).not.to.throw();
+            expect(() => Joi.any().allow(true, 1, 'hello', new Date())).not.to.throw();
         });
 
         it('throws when passed undefined', () => {
 
-            expect(() => {
-
-                Joi.any().allow(undefined);
-            }).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
+            expect(() => Joi.any().allow(undefined)).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
         });
     });
 
@@ -52,26 +44,17 @@ describe('any', () => {
 
         it('throws when schema is not any', () => {
 
-            expect(() => {
-
-                Joi.string().concat(Joi.number());
-            }).to.throw('Cannot merge type string with another type: number');
+            expect(() => Joi.string().concat(Joi.number())).to.throw('Cannot merge type string with another type: number');
         });
 
         it('throws when schema is missing', () => {
 
-            expect(() => {
-
-                Joi.string().concat();
-            }).to.throw('Invalid schema object');
+            expect(() => Joi.string().concat()).to.throw('Invalid schema object');
         });
 
         it('throws when schema is invalid', () => {
 
-            expect(() => {
-
-                Joi.string().concat(1);
-            }).to.throw('Invalid schema object');
+            expect(() => Joi.string().concat(1)).to.throw('Invalid schema object');
         });
 
         it('merges two schemas (settings)', () => {

@@ -24,9 +24,7 @@ describe('number', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(
-            () => Joi.number('invalid argument.')
-        ).to.throw('Joi.number() does not allow arguments.');
+        expect(() => Joi.number('invalid argument.')).to.throw('The number type does not allow arguments');
     });
 
     it('fails on boolean', () => {

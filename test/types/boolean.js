@@ -24,9 +24,7 @@ describe('boolean', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(
-            () => Joi.boolean('invalid argument.')
-        ).to.throw('Joi.boolean() does not allow arguments.');
+        expect(() => Joi.boolean('invalid argument.')).to.throw('The boolean type does not allow arguments');
     });
 
     it('converts boolean string to a boolean', () => {

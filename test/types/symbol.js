@@ -24,7 +24,7 @@ describe('symbol', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(() => Joi.symbol('invalid argument.')).to.throw('Joi.symbol() does not allow arguments.');
+        expect(() => Joi.symbol('invalid argument.')).to.throw('The symbol type does not allow arguments');
     });
 
     describe('validate()', () => {

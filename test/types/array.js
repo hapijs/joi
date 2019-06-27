@@ -24,7 +24,7 @@ describe('array', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(() => Joi.array('invalid argument.')).to.throw('Joi.array() does not allow arguments.');
+        expect(() => Joi.array('invalid argument.')).to.throw('The array type does not allow arguments');
     });
 
     it('converts a string to an array', async () => {

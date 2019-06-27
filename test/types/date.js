@@ -46,9 +46,7 @@ describe('date', () => {
 
     it('should throw an exception if arguments were passed.', () => {
 
-        expect(
-            () => Joi.date('invalid argument.')
-        ).to.throw('Joi.date() does not allow arguments.');
+        expect(() => Joi.date('invalid argument.')).to.throw('The date type does not allow arguments');
     });
 
     it('fails on boolean', () => {

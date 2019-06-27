@@ -2695,16 +2695,6 @@ describe('Joi', () => {
 
     describe('assert()', () => {
 
-        it('does not have a return value', () => {
-
-            let result;
-            expect(() => {
-
-                result = Joi.assert('4', Joi.number());
-            }).to.not.throw();
-            expect(result).to.not.exist();
-        });
-
         it('respects abortEarly option', () => {
 
             try {

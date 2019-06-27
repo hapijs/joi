@@ -412,7 +412,7 @@ Results in:
   valids: [ 'foo', 'bar' ] }
 ```
 
-### `assert(value, schema, [message], [options])`
+### `assert(value, schema, [message], [options])` - aliases: `attempt`
 
 Validates a value against a schema and [throws](#errors) if validation fails where:
 - `value` - the value to validate.
@@ -422,19 +422,6 @@ Validates a value against a schema and [throws](#errors) if validation fails whe
 
 ```js
 Joi.assert('x', Joi.number());
-```
-
-### `attempt(value, schema, [message], [options])`
-
-Validates a value against a schema, returns valid object, and [throws](#errors) if validation fails where:
-- `value` - the value to validate.
-- `schema` - the validation schema. Can be a **joi** type object or a plain object where every key is assigned a **joi** type object using [`Joi.compile`](#compileschema-options) (be careful of the cost of compiling repeatedly the same schemas).
-- `message` - optional message string prefix added in front of the error message. may also be an Error object.
-- `options` - optional options object, passed in to [`Joi.validate`](##validatevalue-schema-options-callback)
-
-```js
-Joi.attempt('x', Joi.number()); // throws error
-const result = Joi.attempt('4', Joi.number()); // result -> 4
 ```
 
 ### `ref(key, [options])`
