@@ -12,6 +12,7 @@
   - [`ref(key, [options])`](#refkey-options)
     - [Relative references](#relative-references)
   - [`isRef(ref)`](#isrefref)
+  - [`isExpression(expression)`](#isexpressionexpression)
   - [`expression(template, [options])` - aliases: `x`](#expressiontemplate-options---aliases-x)
     - [Template syntax](#template-syntax)
   - [`isSchema(schema, [options])`](#isschemaschema-options)
@@ -467,6 +468,15 @@ It's especially useful if you want to post-process error messages.
 ```js
 const ref = Joi.ref('a');
 Joi.isRef(ref); // returns true
+```
+
+### `isExpression(expression)`
+
+Checks whether or not the provided argument is an expression.
+
+```js
+const expression = Joi.x('{a}');
+Joi.isExpression(expression); // returns true
 ```
 
 ### `expression(template, [options])` - aliases: `x`

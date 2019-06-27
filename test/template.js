@@ -117,14 +117,14 @@ describe('Template', () => {
         expect(() => Joi.x('test\u0001')).to.throw('Template source cannot contain reserved control characters');
     });
 
-    describe('isVar()', () => {
+    describe('isExpression()', () => {
 
         it('checks if item is a joi template', () => {
 
-            expect(Joi.isVar(null)).to.be.false();
-            expect(Joi.isVar({})).to.be.false();
-            expect(Joi.isVar('test')).to.be.false();
-            expect(Joi.isVar(Joi.x('test'))).to.be.true();
+            expect(Joi.isExpression(null)).to.be.false();
+            expect(Joi.isExpression({})).to.be.false();
+            expect(Joi.isExpression('test')).to.be.false();
+            expect(Joi.isExpression(Joi.x('test'))).to.be.true();
         });
     });
 
