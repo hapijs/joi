@@ -3805,6 +3805,7 @@ describe('object', () => {
 
             const schema = Joi.object({ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: { h: 0 } })
                 .requiredKeys('a', 'b', 'c.d', 'c.e.f', 'g');
+
             Helper.validate(schema, [
                 [{}, false, null, {
                     message: '"a" is required',
@@ -3857,49 +3858,16 @@ describe('object', () => {
             ]);
         });
 
-        it('should work on types other than objects', () => {
-
-            const schemas = [Joi.array(), Joi.binary(), Joi.boolean(), Joi.date(), Joi.func(), Joi.number(), Joi.string()];
-            schemas.forEach((schema) => {
-
-                expect(() => {
-
-                    schema.applyFunctionToChildren([''], 'required');
-                }).to.not.throw();
-
-                expect(() => {
-
-                    schema.applyFunctionToChildren(['', 'a'], 'required');
-                }).to.throw();
-
-                expect(() => {
-
-                    schema.applyFunctionToChildren(['a'], 'required');
-                }).to.throw();
-            });
-
-        });
-
         it('should throw on unknown key', () => {
 
-            expect(() => {
-
-                Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'c', 'b', 'd', 'd.e.f');
-            }).to.throw('unknown key(s) c, d');
-
-            expect(() => {
-
-                Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'b', 'a.c.d');
-            }).to.throw('unknown key(s) a.c.d');
-
+            expect(() => Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'c', 'b', 'd', 'd.e.f')).to.throw('unknown keys c, d');
+            expect(() => Joi.object({ a: 0, b: 0 }).requiredKeys('a', 'b', 'a.c.d')).to.throw('unknown key a.c.d');
+            expect(() => Joi.object({ a: 0 }).requiredKeys('a.x', 'a.c.d')).to.throw('unknown keys a.c.d, a.x');
         });
 
         it('should throw on empty object', () => {
 
-            expect(() => {
-
-                Joi.object().requiredKeys('a', 'c', 'b', 'd');
-            }).to.throw('unknown key(s) a, b, c, d');
+            expect(() => Joi.object().requiredKeys('a', 'c', 'b', 'd')).to.throw('unknown keys a, b, c, d');
         });
 
         it('should not modify original object', async () => {
