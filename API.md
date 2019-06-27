@@ -24,7 +24,7 @@
     - [npm note](#npm-note)
     - [Examples](#examples)
   - [`any`](#any)
-    - [`schemaType`](#schematype)
+    - [`type`](#type)
     - [`any.allow(...values)`](#anyallowvalues)
     - [`any.cast(to)`](#anycastto)
     - [`any.concat(schema)`](#anyconcatschema)
@@ -120,7 +120,7 @@
     - [`object.rename(from, to, [options])`](#objectrenamefrom-to-options)
     - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
     - [`object.unknown([allow])`](#objectunknownallow)
-    - [`object.type(constructor, [name])`](#objecttypeconstructor-name)
+    - [`object.instance(constructor, [name])`](#objectinstanceconstructor-name)
     - [`object.schema([type])`](#objectschematype)
     - [`object.requiredKeys(...children)`](#objectrequiredkeyschildren)
     - [`object.optionalKeys(...children)`](#objectoptionalkeyschildren)
@@ -238,7 +238,7 @@
     - [`object.rename.multiple`](#objectrenamemultiple)
     - [`object.rename.override`](#objectrenameoverride)
     - [`object.schema`](#objectschema)
-    - [`object.type`](#objecttype)
+    - [`object.instance`](#objectinstance)
     - [`object.with`](#objectwith)
     - [`object.without`](#objectwithout)
     - [`object.xor`](#objectxor)
@@ -703,14 +703,14 @@ const any = Joi.any();
 await any.validate('a');
 ```
 
-#### `schemaType`
+#### `type`
 
 Gets the type of the schema.
 
 ```js
 const schema = Joi.string();
 
-schema.schemaType === 'string';   // === true
+schema.type === 'string';   // === true
 ```
 
 #### `any.allow(...values)`
