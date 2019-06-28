@@ -100,51 +100,7 @@ describe('Modify', () => {
         });
     });
 
-    describe('id()', () => {
-
-        it('errors on missing id', () => {
-
-            expect(() => Joi.id()).to.throw('id must be a non-empty string');
-        });
-
-        it('errors on invalid id', () => {
-
-            expect(() => Joi.id('a.b')).to.throw('id cannot contain period character');
-        });
-
-        it('errors on id override', () => {
-
-            expect(() => Joi.id('b').id('b')).to.throw('Cannot override schema id');
-        });
-    });
-
-    describe('labels()', () => {
-
-        it('extracts nested schema', () => {
-
-            const d = Joi.number();
-            const c = Joi.object({ d });
-            const b = Joi.object({ c });
-            const a = Joi.object({ b });
-
-            expect(a.mapLabels('b')).to.equal('b');
-            expect(a.mapLabels('b.c.d')).to.equal('b.c.d');
-            expect(a.mapLabels(['b', 'c', 'd'])).to.equal('b.c.d');
-        });
-
-        it('extracts nested schema with ids', () => {
-
-            const d = Joi.number().label('D');
-            const c = Joi.object({ d }).label('C');
-            const b = Joi.object({ c }).label('B');
-            const a = Joi.object({ b });
-
-            expect(a.mapLabels('b')).to.equal('B');
-            expect(a.mapLabels('b.c.d')).to.equal('B.C.D');
-        });
-    });
-
-    describe('modify()', () => {
+    describe('fork()', () => {
 
         it('adjusts nested schema', () => {
 
@@ -166,8 +122,123 @@ describe('Modify', () => {
                 })
             });
 
-            expect(before.modify('b.c.d', (schema) => schema.min(10))).to.equal(after);
-            expect(before.modify([['b', 'c', 'd']], (schema) => schema.min(10))).to.equal(after);
+            expect(before.fork('b.c.d', (schema) => schema.min(10))).to.equal(after);
+            expect(before.fork([['b', 'c', 'd']], (schema) => schema.min(10))).to.equal(after);
+        });
+
+        it('forks multiple times', () => {
+
+            const before = Joi.object({
+                b: Joi.object({
+                    c: Joi.object({
+                        d: Joi.number()
+                    })
+                }),
+                x: Joi.number()
+            });
+
+            const bd = before.describe();
+
+            const first = before.fork('b.c.d', (schema) => schema.min(10));
+            const fd = first.describe();
+
+            const second = first.fork('b.c.d', (schema) => schema.max(20));
+            const sd = second.describe();
+
+            const third = second.fork('b.c.d', (schema) => schema.min(5));
+            const td = third.describe();
+
+            const fourth = third.fork('x', (schema) => schema.required());
+
+            const after = Joi.object({
+                b: Joi.object({
+                    c: Joi.object({
+                        d: Joi.number().max(20).min(5)
+                    })
+                }),
+                x: Joi.number().required()
+            });
+
+            expect(fourth).to.equal(after);
+
+            expect(before.describe()).to.equal(bd);
+            expect(first.describe()).to.equal(fd);
+            expect(second.describe()).to.equal(sd);
+            expect(third.describe()).to.equal(td);
+        });
+
+        it('forks same schema multiple times', () => {
+
+            const before = Joi.object({
+                b: Joi.object({
+                    c: Joi.object({
+                        d: Joi.number()
+                    })
+                }),
+                x: Joi.number()
+            });
+
+            const bd = before.describe();
+
+            const first = before.fork('b.c.d', (schema) => schema.min(10));
+            const fd = first.describe();
+
+            const second = before.fork('b.c.d', (schema) => schema.max(20));
+            const sd = second.describe();
+
+            const third = before.fork('b.c.d', (schema) => schema.min(5));
+            const td = third.describe();
+
+            const fourth = before.fork('x', (schema) => schema.required());
+
+            const a1 = Joi.object({
+                x: Joi.number(),
+                b: Joi.object({
+                    c: Joi.object({
+                        d: Joi.number().min(10)
+                    })
+                })
+            });
+
+            expect(first).to.equal(a1);
+
+            const a2 = Joi.object({
+                x: Joi.number(),
+                b: Joi.object({
+                    c: Joi.object({
+                        d: Joi.number().max(20)
+                    })
+                })
+            });
+
+            expect(second).to.equal(a2);
+
+            const a3 = Joi.object({
+                x: Joi.number(),
+                b: Joi.object({
+                    c: Joi.object({
+                        d: Joi.number().min(5)
+                    })
+                })
+            });
+
+            expect(third).to.equal(a3);
+
+            const a4 = Joi.object({
+                b: Joi.object({
+                    c: Joi.object({
+                        d: Joi.number()
+                    })
+                }),
+                x: Joi.number().required()
+            });
+
+            expect(fourth).to.equal(a4);
+
+            expect(before.describe()).to.equal(bd);
+            expect(first.describe()).to.equal(fd);
+            expect(second.describe()).to.equal(sd);
+            expect(third.describe()).to.equal(td);
         });
 
         it('adjusts nested schema with ids', () => {
@@ -190,14 +261,14 @@ describe('Modify', () => {
                 })
             });
 
-            expect(before.modify('b.c.D', (schema) => schema.min(10))).to.equal(after);
-            expect(before.modify([['b', 'c', 'D']], (schema) => schema.min(10))).to.equal(after);
+            expect(before.fork('b.c.D', (schema) => schema.min(10))).to.equal(after);
+            expect(before.fork([['b', 'c', 'D']], (schema) => schema.min(10))).to.equal(after);
         });
 
         it('sets keys as required', () => {
 
             const orig = Joi.object({ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: { h: 0 } });
-            const schema = orig.modify(['a', 'b', 'c.d', 'c.e.f', 'g'], (x) => x.required());
+            const schema = orig.fork(['a', 'b', 'c.d', 'c.e.f', 'g'], (x) => x.required());
 
             Helper.validate(orig, [
                 [{}, true]
@@ -261,7 +332,7 @@ describe('Modify', () => {
                 a: Joi.number().required(),
                 b: Joi.number().required()
             }).
-                modify(['a', 'b'], (x) => x.optional());
+                fork(['a', 'b'], (x) => x.optional());
 
             Helper.validate(schema, [
                 [{}, true],
@@ -276,7 +347,7 @@ describe('Modify', () => {
                 a: Joi.number().required(),
                 b: Joi.number().required()
             }).
-                modify(['a', 'b'], (x) => x.forbidden());
+                fork(['a', 'b'], (x) => x.forbidden());
 
             Helper.validate(schema, [
                 [{}, true],
@@ -301,6 +372,50 @@ describe('Modify', () => {
                     }]
                 }]
             ]);
+        });
+    });
+
+    describe('id()', () => {
+
+        it('errors on missing id', () => {
+
+            expect(() => Joi.id()).to.throw('id must be a non-empty string');
+        });
+
+        it('errors on invalid id', () => {
+
+            expect(() => Joi.id('a.b')).to.throw('id cannot contain period character');
+        });
+
+        it('errors on id override', () => {
+
+            expect(() => Joi.id('b').id('b')).to.throw('Cannot override schema id');
+        });
+    });
+
+    describe('labels()', () => {
+
+        it('extracts nested schema', () => {
+
+            const d = Joi.number();
+            const c = Joi.object({ d });
+            const b = Joi.object({ c });
+            const a = Joi.object({ b });
+
+            expect(a.mapLabels('b')).to.equal('b');
+            expect(a.mapLabels('b.c.d')).to.equal('b.c.d');
+            expect(a.mapLabels(['b', 'c', 'd'])).to.equal('b.c.d');
+        });
+
+        it('extracts nested schema with ids', () => {
+
+            const d = Joi.number().label('D');
+            const c = Joi.object({ d }).label('C');
+            const b = Joi.object({ c }).label('B');
+            const a = Joi.object({ b });
+
+            expect(a.mapLabels('b')).to.equal('B');
+            expect(a.mapLabels('b.c.d')).to.equal('B.C.D');
         });
     });
 });

@@ -37,13 +37,13 @@
     - [`any.extract(path)`](#anyextractpath)
     - [`any.failover([value, [description]])`](#anyfailovervalue-description)
     - [`any.forbidden()`](#anyforbidden)
+    - [`any.fork(paths, adjuster)`](#anyforkpaths-adjuster)
     - [`any.id(id)`](#anyidid)
     - [`any.invalid(...values)` - aliases: `disallow`, `not`](#anyinvalidvalues---aliases-disallow-not)
     - [`any.keep()`](#anykeep)
     - [`any.label(name)`](#anylabelname)
     - [`any.message(message)`](#anymessagemessage)
     - [`any.meta(meta)`](#anymetameta)
-    - [`any.modify(paths, adjuster)`](#anymodifypaths-adjuster)
     - [`any.notes(notes)`](#anynotesnotes)
     - [`any.optional()`](#anyoptional)
     - [`any.prefs(options)` = aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
@@ -926,6 +926,16 @@ const schema = {
 
 Possible validation errors: [`any.unknown`](#anyunknown)
 
+#### `any.fork(paths, adjuster)`
+
+Returns a new schema where each of the path keys listed have been modified where:
+- `paths` - an array of key strings, a single key string, or an array of arrays of pre-split
+  key strings. Key string paths use dot `.` to indicate key hierarchy.
+- `adjuster` - a function using the signature `function(schema)` which must return a modified
+  schema. For example, `(schema) => schema.required()`.
+
+The method does not modify the original schema.
+
 #### `any.id(id)`
 
 Sets a schema id for reaching into the schema via [`any.extract()`](#anyextractpath) where:
@@ -982,16 +992,6 @@ Attaches metadata to the key where:
 ```js
 const schema = Joi.any().meta({ index: true });
 ```
-
-#### `any.modify(paths, adjuster)`
-
-Returns a new schema where each of the path keys listed have been modified where:
-- `paths` - an array of key strings, a single key string, or an array of arrays of pre-split
-  key strings. Key string paths use dot `.` to indicate key hierarchy.
-- `adjuster` - a function using the signature `function(schema)` which must return a modified
-  schema. For example, `(schema) => schema.required()`.
-
-The method does not modify the original schema.
 
 #### `any.notes(notes)`
 
