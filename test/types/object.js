@@ -786,19 +786,24 @@ describe('object', () => {
 
         const schema = Joi.object({
             a: Joi.number().label('first'),
-            b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
-        }).with('a', ['b.c']);
+            b: Joi.object({
+                c: Joi.string().label('second'),
+                d: Joi.number()
+            })
+        })
+            .with('a', ['b.c']);
+
         const error = schema.validate({ a: 1, b: { d: 2 } }).error;
-        expect(error).to.be.an.error('"first" missing required peer "second"');
+        expect(error).to.be.an.error('"first" missing required peer "b.second"');
         expect(error.details).to.equal([{
-            message: '"first" missing required peer "second"',
+            message: '"first" missing required peer "b.second"',
             path: ['a'],
             type: 'object.with',
             context: {
                 main: 'a',
                 mainWithLabel: 'first',
                 peer: 'b.c',
-                peerWithLabel: 'second',
+                peerWithLabel: 'b.second',
                 label: 'a',
                 key: 'a',
                 value: { a: 1, b: { d: 2 } }
@@ -2585,19 +2590,24 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
-                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
-            }).with('a', ['b.c']);
+                b: Joi.object({
+                    c: Joi.string().label('second'),
+                    d: Joi.number()
+                })
+            })
+                .with('a', ['b.c']);
+
             const error = schema.validate({ a: 1, b: { d: 2 } }).error;
-            expect(error).to.be.an.error('"first" missing required peer "second"');
+            expect(error).to.be.an.error('"first" missing required peer "b.second"');
             expect(error.details).to.equal([{
-                message: '"first" missing required peer "second"',
+                message: '"first" missing required peer "b.second"',
                 path: ['a'],
                 type: 'object.with',
                 context: {
                     main: 'a',
                     mainWithLabel: 'first',
                     peer: 'b.c',
-                    peerWithLabel: 'second',
+                    peerWithLabel: 'b.second',
                     label: 'a',
                     key: 'a',
                     value: { a: 1, b: { d: 2 } }
@@ -2605,20 +2615,26 @@ describe('object', () => {
             }]);
 
             const schema2 = Joi.object({
-                a: Joi.object({ b: Joi.string().label('first') }),
-                b: Joi.object({ c: Joi.string().label('second') })
-            }).with('a.b', ['b.c']);
+                a: Joi.object({
+                    b: Joi.string().label('first')
+                }),
+                b: Joi.object({
+                    c: Joi.string().label('second')
+                })
+            })
+                .with('a.b', ['b.c']);
+
             const error2 = schema2.validate({ a: { b: 'test' }, b: {} }).error;
-            expect(error2).to.be.an.error('"first" missing required peer "second"');
+            expect(error2).to.be.an.error('"a.first" missing required peer "b.second"');
             expect(error2.details).to.equal([{
-                message: '"first" missing required peer "second"',
+                message: '"a.first" missing required peer "b.second"',
                 path: ['a', 'b'],
                 type: 'object.with',
                 context: {
                     main: 'a.b',
-                    mainWithLabel: 'first',
+                    mainWithLabel: 'a.first',
                     peer: 'b.c',
-                    peerWithLabel: 'second',
+                    peerWithLabel: 'b.second',
                     label: 'a.b',
                     key: 'b',
                     value: { a: { b: 'test' }, b: {} }
@@ -2778,19 +2794,24 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
-                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
-            }).without('a', ['b.c']);
+                b: Joi.object({
+                    c: Joi.string().label('second'),
+                    d: Joi.number()
+                })
+            })
+                .without('a', ['b.c']);
+
             const error = schema.validate({ a: 1, b: { c: 'c' } }).error;
-            expect(error).to.be.an.error('"first" conflict with forbidden peer "second"');
+            expect(error).to.be.an.error('"first" conflict with forbidden peer "b.second"');
             expect(error.details).to.equal([{
-                message: '"first" conflict with forbidden peer "second"',
+                message: '"first" conflict with forbidden peer "b.second"',
                 path: ['a'],
                 type: 'object.without',
                 context: {
                     main: 'a',
                     mainWithLabel: 'first',
                     peer: 'b.c',
-                    peerWithLabel: 'second',
+                    peerWithLabel: 'b.second',
                     label: 'a',
                     key: 'a',
                     value: { a: 1, b: { c: 'c' } }
@@ -2960,17 +2981,22 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
-                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
-            }).xor('a', 'b.c');
+                b: Joi.object({
+                    c: Joi.string().label('second'),
+                    d: Joi.number()
+                })
+            })
+                .xor('a', 'b.c');
+
             const error = schema.validate({}).error;
-            expect(error).to.be.an.error('"value" must contain at least one of [first, second]');
+            expect(error).to.be.an.error('"value" must contain at least one of [first, b.second]');
             expect(error.details).to.equal([{
-                message: '"value" must contain at least one of [first, second]',
+                message: '"value" must contain at least one of [first, b.second]',
                 path: [],
                 type: 'object.missing',
                 context: {
                     peers: ['a', 'b.c'],
-                    peersWithLabels: ['first', 'second'],
+                    peersWithLabels: ['first', 'b.second'],
                     label: 'value',
                     value: {}
                 }
@@ -2981,19 +3007,24 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
-                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
-            }).xor('a', 'b.c');
+                b: Joi.object({
+                    c: Joi.string().label('second'),
+                    d: Joi.number()
+                })
+            })
+                .xor('a', 'b.c');
+
             const error = schema.validate({ a: 1, b: { c: 'c' } }).error;
-            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [first, second]');
+            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [first, b.second]');
             expect(error.details).to.equal([{
-                message: '"value" contains a conflict between exclusive peers [first, second]',
+                message: '"value" contains a conflict between exclusive peers [first, b.second]',
                 path: [],
                 type: 'object.xor',
                 context: {
                     peers: ['a', 'b.c'],
-                    peersWithLabels: ['first', 'second'],
+                    peersWithLabels: ['first', 'b.second'],
                     present: ['a', 'b.c'],
-                    presentWithLabels: ['first', 'second'],
+                    presentWithLabels: ['first', 'b.second'],
                     label: 'value',
                     value: { a: 1, b: { c: 'c' } }
                 }
@@ -3269,17 +3300,22 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
-                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
-            }).or('a', 'b.c');
+                b: Joi.object({
+                    c: Joi.string().label('second'),
+                    d: Joi.number()
+                })
+            })
+                .or('a', 'b.c');
+
             const error = schema.validate({}).error;
-            expect(error).to.be.an.error('"value" must contain at least one of [first, second]');
+            expect(error).to.be.an.error('"value" must contain at least one of [first, b.second]');
             expect(error.details).to.equal([{
-                message: '"value" must contain at least one of [first, second]',
+                message: '"value" must contain at least one of [first, b.second]',
                 path: [],
                 type: 'object.missing',
                 context: {
                     peers: ['a', 'b.c'],
-                    peersWithLabels: ['first', 'second'],
+                    peersWithLabels: ['first', 'b.second'],
                     label: 'value',
                     value: {}
                 }
@@ -3378,19 +3414,24 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
-                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
-            }).and('a', 'b.c');
+                b: Joi.object({
+                    c: Joi.string().label('second'),
+                    d: Joi.number()
+                })
+            })
+                .and('a', 'b.c');
+
             const error = schema.validate({ a: 1 }).error;
-            expect(error).to.be.an.error('"value" contains [first] without its required peers [second]');
+            expect(error).to.be.an.error('"value" contains [first] without its required peers [b.second]');
             expect(error.details).to.equal([{
-                message: '"value" contains [first] without its required peers [second]',
+                message: '"value" contains [first] without its required peers [b.second]',
                 path: [],
                 type: 'object.and',
                 context: {
                     present: ['a'],
                     presentWithLabels: ['first'],
                     missing: ['b.c'],
-                    missingWithLabels: ['second'],
+                    missingWithLabels: ['b.second'],
                     label: 'value',
                     value: { a: 1 }
                 }
@@ -3401,8 +3442,13 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
-                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
-            }).and('a', 'c.d');
+                b: Joi.object({
+                    c: Joi.string().label('second'),
+                    d: Joi.number()
+                })
+            })
+                .and('a', 'c.d');
+
             const error = schema.validate({ a: 1, b: { d: 1 } }).error;
             expect(error).to.be.an.error('"value" contains [first] without its required peers [c.d]');
             expect(error.details).to.equal([{
@@ -3513,19 +3559,24 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
-                b: Joi.object({ c: Joi.string().label('second'), d: Joi.number() })
-            }).nand('a', 'b.c');
+                b: Joi.object({
+                    c: Joi.string().label('second'),
+                    d: Joi.number()
+                })
+            })
+                .nand('a', 'b.c');
+
             const error = schema.validate({ a: 1, b: { c: 'c' } }).error;
-            expect(error).to.be.an.error('"first" must not exist simultaneously with [second]');
+            expect(error).to.be.an.error('"first" must not exist simultaneously with [b.second]');
             expect(error.details).to.equal([{
-                message: '"first" must not exist simultaneously with [second]',
+                message: '"first" must not exist simultaneously with [b.second]',
                 path: [],
                 type: 'object.nand',
                 context: {
                     main: 'a',
                     mainWithLabel: 'first',
                     peers: ['b.c'],
-                    peersWithLabels: ['second'],
+                    peersWithLabels: ['b.second'],
                     label: 'value',
                     value: { a: 1, b: { c: 'c' } }
                 }

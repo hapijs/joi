@@ -14,81 +14,131 @@ const { expect } = Code;
 
 describe('Manipulate', () => {
 
-    describe('reach()', () => {
+    describe('extract()', () => {
 
-        it('should fail without any parameter', () => {
+        it('extracts nested schema', () => {
 
-            expect(() => Joi.reach()).to.throw('you must provide a joi schema');
+            const d = Joi.number();
+            const c = Joi.object({ d });
+            const b = Joi.object({ c });
+            const a = Joi.object({ b });
+
+            expect(a.extract('b')).to.shallow.equal(b);
+            expect(a.extract('b.c.d')).to.shallow.equal(d);
+            expect(a.extract(['b', 'c', 'd'])).to.shallow.equal(d);
         });
 
-        it('should fail when schema is not a joi object', () => {
+        it('extracts nested schema with ids', () => {
 
-            expect(() => Joi.reach({ foo: 'bar' }, 'foo')).to.throw('you must provide a joi schema');
+            const d = Joi.number().id('D');
+            const c = Joi.object({ d }).id('C');
+            const b = Joi.object({ c }).id('B');
+            const a = Joi.object({ b });
+
+            expect(a.extract('B')).to.shallow.equal(b);
+            expect(a.extract('B.C.D')).to.shallow.equal(d);
         });
 
-        it('should fail without a proper path', () => {
+        it('extracts nested schema from array', () => {
 
-            const schema = Joi.object();
-            expect(() => Joi.reach(schema)).to.throw('path must be a string or an array of strings');
-            expect(() => Joi.reach(schema, true)).to.throw('path must be a string or an array of strings');
+            const d = Joi.number().id('d');
+            const c = Joi.object({ d }).id('c');
+            const b = Joi.object({ c }).id('b');
+            const a = Joi.array().items(b);
+
+            expect(a.extract('b')).to.shallow.equal(b);
+            expect(a.extract('b.c.d')).to.shallow.equal(d);
         });
 
-        it('should return undefined when no keys are defined', () => {
+        it('extracts nested schema from alternatives', () => {
 
-            const schema = Joi.object();
-            expect(Joi.reach(schema, 'a')).to.be.undefined();
+            const d = Joi.number().id('d');
+            const c = Joi.object({ d }).id('c');
+            const b = Joi.object({ c }).id('b');
+            const a = Joi.alternatives(b);
+
+            expect(a.extract('b')).to.shallow.equal(b);
+            expect(a.extract('b.c.d')).to.shallow.equal(d);
         });
 
-        it('should return undefined when key is not found', () => {
+        it('extracts nested schema after object key override', () => {
 
-            const schema = Joi.object().keys({ a: Joi.number() });
-            expect(Joi.reach(schema, 'foo')).to.be.undefined();
+            const d = Joi.number();
+            const c = Joi.object({ d });
+            const b = Joi.object({ c });
+            const a = Joi.object({ b });
+            const x = a.keys({ b: c });
+
+            expect(x.extract('b')).to.shallow.equal(c);
+            expect(x.extract('b.d')).to.shallow.equal(d);
         });
 
-        it('should return a schema when key is found', () => {
+        it('extracts nested schema after object key override and custom ids', () => {
 
-            const a = Joi.number();
-            const schema = Joi.object().keys({ a });
-            expect(Joi.reach(schema, 'a')).to.shallow.equal(a);
+            const d = Joi.number().id('D');
+            const c = Joi.object({ d }).id('C');
+            const b = Joi.object({ c }).id('B');
+            const a = Joi.object({ b }).id('A');
+            const x = a.keys({ b: c });
+
+            expect(x.extract('C')).to.shallow.equal(c);
+            expect(x.extract('C.D')).to.shallow.equal(d);
         });
 
-        it('should return a schema when key as array is found', () => {
+        it('extracts nested schema after object concat', () => {
 
-            const a = Joi.number();
-            const schema = Joi.object().keys({ a });
-            expect(Joi.reach(schema, ['a'])).to.shallow.equal(a);
+            const d = Joi.number();
+            const c = Joi.object({ d });
+            const b = Joi.object({ c });
+            const a = Joi.object({ b });
+            const x = a.concat(b);
+
+            expect(x.extract('b')).to.shallow.equal(b);
+            expect(x.extract('c')).to.shallow.equal(c);
+        });
+    });
+
+    describe('id()', () => {
+
+        it('errors on missing id', () => {
+
+            expect(() => Joi.id()).to.throw('id must be a non-empty string');
         });
 
-        it('throws on a schema that does not support reach', () => {
+        it('errors on invalid id', () => {
 
-            const schema = Joi.number();
-            expect(() => Joi.reach(schema, 'a')).to.throw('Cannot reach into number schema type');
+            expect(() => Joi.id('a.b')).to.throw('id cannot contain period character');
         });
 
-        it('should return a schema when deep key is found', () => {
+        it('errors on id override', () => {
 
-            const bar = Joi.number();
-            const schema = Joi.object({ foo: Joi.object({ bar }) });
-            expect(Joi.reach(schema, 'foo.bar')).to.shallow.equal(bar);
+            expect(() => Joi.id('b').id('b')).to.throw('Cannot override schema id');
+        });
+    });
+
+    describe('labels()', () => {
+
+        it('extracts nested schema', () => {
+
+            const d = Joi.number();
+            const c = Joi.object({ d });
+            const b = Joi.object({ c });
+            const a = Joi.object({ b });
+
+            expect(a.mapLabels('b')).to.equal('b');
+            expect(a.mapLabels('b.c.d')).to.equal('b.c.d');
+            expect(a.mapLabels(['b', 'c', 'd'])).to.equal('b.c.d');
         });
 
-        it('should return a schema when deep key is found', () => {
+        it('extracts nested schema with ids', () => {
 
-            const bar = Joi.number();
-            const schema = Joi.object({ foo: Joi.object({ bar }) });
-            expect(Joi.reach(schema, ['foo', 'bar'])).to.shallow.equal(bar);
-        });
+            const d = Joi.number().label('D');
+            const c = Joi.object({ d }).label('C');
+            const b = Joi.object({ c }).label('B');
+            const a = Joi.object({ b });
 
-        it('should return undefined when deep key is not found', () => {
-
-            const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
-            expect(Joi.reach(schema, 'foo.baz')).to.be.undefined();
-        });
-
-        it('should return the same schema with an empty path', () => {
-
-            const schema = Joi.object();
-            expect(Joi.reach(schema, '')).to.shallow.equal(schema);
+            expect(a.mapLabels('b')).to.equal('B');
+            expect(a.mapLabels('b.c.d')).to.equal('B.C.D');
         });
     });
 });

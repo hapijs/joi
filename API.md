@@ -16,7 +16,6 @@
   - [`expression(template, [options])` - aliases: `x`](#expressiontemplate-options---aliases-x)
     - [Template syntax](#template-syntax)
   - [`isSchema(schema, [options])`](#isschemaschema-options)
-  - [`reach(schema, path)`](#reachschema-path)
   - [`defaults(fn)`](#defaultsfn)
   - [`bind()`](#bind)
   - [`extend(extension)`](#extendextension)
@@ -35,8 +34,10 @@
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
     - [`any.example(...values)`](#anyexamplevalues)
+    - [`any.extract(path)`](#anyextractpath)
     - [`any.failover([value, [description]])`](#anyfailovervalue-description)
     - [`any.forbidden()`](#anyforbidden)
+    - [`any.id(id)`](#anyidid)
     - [`any.invalid(...values)` - aliases: `disallow`, `not`](#anyinvalidvalues---aliases-disallow-not)
     - [`any.keep()`](#anykeep)
     - [`any.label(name)`](#anylabelname)
@@ -530,19 +531,6 @@ const schema = Joi.any();
 Joi.isSchema(schema); // returns true
 ```
 
-### `reach(schema, path)`
-
-Get a sub-schema of an existing schema based on a `path` that can be either a string or an array of
-strings. For string values path separator is a dot (`.`).
-
-```js
-const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
-const number = Joi.reach(schema, 'foo.bar');
-
-//or
-const result = Joi.reach(schema, ['foo', 'bar']); //same as number
-```
-
 ### `defaults(fn)`
 
 Creates a new **joi** instance that will apply defaults onto newly created schemas through the use
@@ -892,6 +880,20 @@ Note that no validation is performed on the provided examples. Calling this func
 const schema = Joi.string().min(4).example('abcd');
 ```
 
+#### `any.extract(path)`
+
+Returns a sub-schema based on a path of object keys or schema ids where:
+- `path` - a dot `.` separated path string or a pre-split array of path keys. The keys must match
+  the sub-schema id or object key (if no id was explicitly set).
+
+```js
+const schema = Joi.object({ foo: Joi.object({ bar: Joi.number() }) });
+const number = schema.extract('foo.bar');
+
+//or
+const result = schema.extract(['foo', 'bar']); //same as number
+```
+
 #### `any.failover([value, [description]])`
 
 Sets a failover value if the original value failes passing validation where:
@@ -925,6 +927,14 @@ const schema = {
 ```
 
 Possible validation errors: [`any.unknown`](#anyunknown)
+
+#### `any.id(id)`
+
+Sets a schema id for reaching into the schema via [`any.extract()`](#anyextractpath) where:
+- `id` - an alphanumeric string (plus `_`) used to identify the schema.
+
+If no id is set, the schema id defaults to the object key it is associated with. If the schema is
+used in an array or alternatives type and no id is set, the schema in unreachable.
 
 #### `any.invalid(...values)` - aliases: `disallow`, `not`
 
