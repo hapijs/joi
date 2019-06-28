@@ -838,7 +838,8 @@ schema.validate(''); // returns { error: "value" is not allowed to be empty, val
 Overrides the default **joi** error with a custom error if the rule fails where:
 - `err` can be:
   - an instance of `Error` - the override error.
-  - a function with the signature `function(errors)`, where `errors` is an array of errors and it returns a single `Error`.
+  - a function with the signature `function(errors)`, where `errors` is an array of validation
+    reports and it returns either a single `Error` or an array of validation reports.
 
 Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any
 of the normal error properties. If validation fails and another error is found before the error

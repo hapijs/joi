@@ -863,169 +863,6 @@ describe('any', () => {
         });
     });
 
-    describe('empty()', () => {
-
-        it('should void values when considered empty', () => {
-
-            const schema = Joi.string().empty('');
-            Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', true, null, undefined]
-            ]);
-        });
-
-        it('should void values with trim', () => {
-
-            const schema = Joi.string().empty('').trim();
-            Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', true, null, undefined],
-                [' ', true, null, undefined],
-                ['       ', true, null, undefined],
-                [42, false, null, {
-                    message: '"value" must be a string',
-                    details: [{
-                        message: '"value" must be a string',
-                        path: [],
-                        type: 'string.base',
-                        context: { value: 42, label: 'value' }
-                    }]
-                }]
-            ]);
-
-            Helper.validate(schema.trim(false), [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', true, null, undefined],
-                [' ', true, null, ' ']
-            ]);
-        });
-
-        it('should override any previous empty', () => {
-
-            const schema = Joi.string().empty('').empty('abc');
-            Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, undefined],
-                ['', false, null, {
-                    message: '"value" is not allowed to be empty',
-                    details: [{
-                        message: '"value" is not allowed to be empty',
-                        path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
-                    }]
-                }],
-                ['def', true, null, 'def']
-            ]);
-        });
-
-        it('should be possible to reset the empty value', () => {
-
-            const schema = Joi.string().empty('').empty();
-            Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', false, null, {
-                    message: '"value" is not allowed to be empty',
-                    details: [{
-                        message: '"value" is not allowed to be empty',
-                        path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('should have no effect if only reset is used', () => {
-
-            const schema = Joi.string().empty();
-            Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', false, null, {
-                    message: '"value" is not allowed to be empty',
-                    details: [{
-                        message: '"value" is not allowed to be empty',
-                        path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('should remove empty flag if only reset is used', () => {
-
-            const schema = Joi.string().empty('').empty();
-            expect(schema._flags.empty).to.not.exist();
-            expect(schema.describe().flags).to.not.exist();
-        });
-
-        it('should work with dependencies', () => {
-
-            const schema = Joi.object({
-                a: Joi.string().empty(''),
-                b: Joi.string().empty('')
-            }).or('a', 'b');
-
-            Helper.validate(schema, [
-                [{}, false, null, {
-                    message: '"value" must contain at least one of [a, b]',
-                    details: [{
-                        message: '"value" must contain at least one of [a, b]',
-                        path: [],
-                        type: 'object.missing',
-                        context: {
-                            peers: ['a', 'b'],
-                            peersWithLabels: ['a', 'b'],
-                            label: 'value',
-                            value: {}
-                        }
-                    }]
-                }],
-                [{ a: '' }, false, null, {
-                    message: '"value" must contain at least one of [a, b]',
-                    details: [{
-                        message: '"value" must contain at least one of [a, b]',
-                        path: [],
-                        type: 'object.missing',
-                        context: {
-                            peers: ['a', 'b'],
-                            peersWithLabels: ['a', 'b'],
-                            label: 'value',
-                            value: {}
-                        }
-                    }]
-                }],
-                [{ a: 'a' }, true, null, { a: 'a' }],
-                [{ a: '', b: 'b' }, true, null, { b: 'b' }]
-            ]);
-        });
-    });
-
-    describe('equal()', () => {
-
-        it('validates valid values', () => {
-
-            Helper.validate(Joi.equal(4), [
-                [4, true],
-                [5, false, null, {
-                    message: '"value" must be one of [4]',
-                    details: [{
-                        message: '"value" must be one of [4]',
-                        path: [],
-                        type: 'any.allowOnly',
-                        context: { value: 5, valids: [4], label: 'value' }
-                    }]
-                }]
-            ]);
-        });
-    });
-
     describe('default()', () => {
 
         it('sets the value', async () => {
@@ -1393,6 +1230,169 @@ describe('any', () => {
         });
     });
 
+    describe('empty()', () => {
+
+        it('should void values when considered empty', () => {
+
+            const schema = Joi.string().empty('');
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', true, null, undefined]
+            ]);
+        });
+
+        it('should void values with trim', () => {
+
+            const schema = Joi.string().empty('').trim();
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', true, null, undefined],
+                [' ', true, null, undefined],
+                ['       ', true, null, undefined],
+                [42, false, null, {
+                    message: '"value" must be a string',
+                    details: [{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 42, label: 'value' }
+                    }]
+                }]
+            ]);
+
+            Helper.validate(schema.trim(false), [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', true, null, undefined],
+                [' ', true, null, ' ']
+            ]);
+        });
+
+        it('should override any previous empty', () => {
+
+            const schema = Joi.string().empty('').empty('abc');
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, undefined],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { value: '', invalids: [''], label: 'value' }
+                    }]
+                }],
+                ['def', true, null, 'def']
+            ]);
+        });
+
+        it('should be possible to reset the empty value', () => {
+
+            const schema = Joi.string().empty('').empty();
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { value: '', invalids: [''], label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('should have no effect if only reset is used', () => {
+
+            const schema = Joi.string().empty();
+            Helper.validate(schema, [
+                [undefined, true, null, undefined],
+                ['abc', true, null, 'abc'],
+                ['', false, null, {
+                    message: '"value" is not allowed to be empty',
+                    details: [{
+                        message: '"value" is not allowed to be empty',
+                        path: [],
+                        type: 'any.empty',
+                        context: { value: '', invalids: [''], label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('should remove empty flag if only reset is used', () => {
+
+            const schema = Joi.string().empty('').empty();
+            expect(schema._flags.empty).to.not.exist();
+            expect(schema.describe().flags).to.not.exist();
+        });
+
+        it('should work with dependencies', () => {
+
+            const schema = Joi.object({
+                a: Joi.string().empty(''),
+                b: Joi.string().empty('')
+            }).or('a', 'b');
+
+            Helper.validate(schema, [
+                [{}, false, null, {
+                    message: '"value" must contain at least one of [a, b]',
+                    details: [{
+                        message: '"value" must contain at least one of [a, b]',
+                        path: [],
+                        type: 'object.missing',
+                        context: {
+                            peers: ['a', 'b'],
+                            peersWithLabels: ['a', 'b'],
+                            label: 'value',
+                            value: {}
+                        }
+                    }]
+                }],
+                [{ a: '' }, false, null, {
+                    message: '"value" must contain at least one of [a, b]',
+                    details: [{
+                        message: '"value" must contain at least one of [a, b]',
+                        path: [],
+                        type: 'object.missing',
+                        context: {
+                            peers: ['a', 'b'],
+                            peersWithLabels: ['a', 'b'],
+                            label: 'value',
+                            value: {}
+                        }
+                    }]
+                }],
+                [{ a: 'a' }, true, null, { a: 'a' }],
+                [{ a: '', b: 'b' }, true, null, { b: 'b' }]
+            ]);
+        });
+    });
+
+    describe('equal()', () => {
+
+        it('validates valid values', () => {
+
+            Helper.validate(Joi.equal(4), [
+                [4, true],
+                [5, false, null, {
+                    message: '"value" must be one of [4]',
+                    details: [{
+                        message: '"value" must be one of [4]',
+                        path: [],
+                        type: 'any.allowOnly',
+                        context: { value: 5, valids: [4], label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+    });
+
     describe('error()', () => {
 
         it('returns custom error', async () => {
@@ -1592,6 +1592,40 @@ describe('any', () => {
                 expect(err).to.be.an.error('error of type number.min');
                 expect(err.isJoi).to.not.exist();
                 expect(err.details).to.not.exist();
+            });
+
+            it('handles multiple errors return value', () => {
+
+                const item = Joi.string()
+                    .trim()
+                    .regex(/^\w*$/)
+                    .error((errors) => {
+
+                        const error = errors[0];
+                        if (error.code === 'string.regex.base') {
+                            error.message = 'my new error message';
+                        }
+
+                        return errors;
+                    });
+
+                const schema = Joi.object({
+                    a: Joi.array().items(item.min(2).max(64)),
+                    b: item
+                });
+
+                expect(schema.validate({ a: [' xx', 'yy'], b: ' x' })).to.equal({
+                    error: null,
+                    value: { a: ['xx', 'yy'], b: 'x' }
+                });
+
+                const result1 = schema.validate({ a: [' xx', 'yy'], b: ' x?' });
+                expect(result1.value).to.equal({ a: ['xx', 'yy'], b: ' x?' });
+                expect(result1.error).to.be.an.error('my new error message');
+
+                const result2 = schema.validate({ a: [' xx', 'yy?'], b: ' x' });
+                expect(result2.value).to.equal({ a: [' xx', 'yy?'], b: ' x' });
+                expect(result2.error).to.be.an.error('my new error message');
             });
         });
     });
