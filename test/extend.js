@@ -822,6 +822,34 @@ describe('extension', () => {
         expect(result.error.toString()).to.equal('ValidationError: "value" must be a number');
     });
 
+    it('handles invalid ref in error message', () => {
+
+        const joi = Joi.extend({
+            base: Joi.string(),
+            name: 'test',
+            messages: {
+                testRule: 'error: {{a}}'
+            },
+            pre(value, state, options) {
+
+                return this.createError('testRule', value, { a: '1' }, state, options);
+            },
+            rules: [
+                {
+                    name: 'testRule',
+                    params: { value: Joi.number().required() },
+                    setup: (params) => { }
+                }
+            ]
+        });
+
+        const schema = joi.object({
+            test: joi.test().testRule(10)
+        });
+
+        expect(schema.validate({ test: '1' }).error).to.be.an.error('error: ');
+    });
+
     describe('parameters', () => {
 
         it('must be an object or multiple object arguments', () => {
