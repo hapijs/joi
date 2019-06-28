@@ -43,6 +43,7 @@
     - [`any.label(name)`](#anylabelname)
     - [`any.message(message)`](#anymessagemessage)
     - [`any.meta(meta)`](#anymetameta)
+    - [`any.modify(paths, adjuster)`](#anymodifypaths-adjuster)
     - [`any.notes(notes)`](#anynotesnotes)
     - [`any.optional()`](#anyoptional)
     - [`any.prefs(options)` = aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
@@ -124,9 +125,6 @@
     - [`object.unknown([allow])`](#objectunknownallow)
     - [`object.instance(constructor, [name])`](#objectinstanceconstructor-name)
     - [`object.schema([type])`](#objectschematype)
-    - [`object.requiredKeys(...children)`](#objectrequiredkeyschildren)
-    - [`object.optionalKeys(...children)`](#objectoptionalkeyschildren)
-    - [`object.forbiddenKeys(...children)`](#objectforbiddenkeyschildren)
   - [`string` - inherits from `Any`](#string---inherits-from-any)
     - [`string.insensitive()`](#stringinsensitive)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
@@ -984,6 +982,16 @@ Attaches metadata to the key where:
 ```js
 const schema = Joi.any().meta({ index: true });
 ```
+
+#### `any.modify(paths, adjuster)`
+
+Returns a new schema where each of the path keys listed have been modified where:
+- `paths` - an array of key strings, a single key string, or an array of arrays of pre-split
+  key strings. Key string paths use dot `.` to indicate key hierarchy.
+- `adjuster` - a function using the signature `function(schema)` which must return a modified
+  schema. For example, `(schema) => schema.required()`.
+
+The method does not modify the original schema.
 
 #### `any.notes(notes)`
 
@@ -2444,42 +2452,6 @@ const schema = Joi.object().schema();
 ```
 
 Possible validation errors: [`object.schema`](#objectschema-1)
-
-#### `object.requiredKeys(...children)`
-
-Sets the specified children to required.
-- `children` - the keys to specified as required.
-
-```js
-const schema = Joi.object({ a: { b: Joi.number() }, c: { d: Joi.string() } });
-const requiredSchema = schema.requiredKeys('', 'a.b', 'c', 'c.d');
-```
-
-Note that in this example `''` means the current object, `a` is not required but `b` is, as well as `c` and `d`.
-
-#### `object.optionalKeys(...children)`
-
-Sets the specified children to optional.
-- `children` - the keys to specified as optional.
-
-```js
-const schema = Joi.object({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
-const optionalSchema = schema.optionalKeys('a.b', 'c.d');
-```
-
-The behavior is exactly the same as `requiredKeys`.
-
-#### `object.forbiddenKeys(...children)`
-
-Sets the specified children to forbidden.
-- `children` - the keys specified as forbidden.
-
-```js
-const schema = Joi.object({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
-const optionalSchema = schema.forbiddenKeys('a.b', 'c.d');
-```
-
-The behavior is exactly the same as `requiredKeys`.
 
 ### `string` - inherits from `Any`
 
