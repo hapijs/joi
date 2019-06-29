@@ -2440,6 +2440,15 @@ describe('object', () => {
             const err = await expect(schema.validate({ a: 0, x1: true, xx: 1 }, { abortEarly: false })).to.reject('"value" keys failed to match pattern requirements');
             expect(err.details).to.have.length(2);
         });
+
+        it('works with keys()', () => {
+
+            const schema = Joi.object()
+                .pattern(/a/, Joi.any())
+                .keys({ b: Joi.any() });
+
+            expect(schema.validate({ a: { b: 1 }, b: { c: 2 } }).error).to.not.exist();
+        });
     });
 
     describe('with()', () => {
@@ -3713,6 +3722,17 @@ describe('object', () => {
                     value: { d: { e: [] } }
                 }
             }]);
+        });
+
+        it('works with keys()', () => {
+
+            const schema = Joi.object({ a: { b: Joi.any() } })
+                .min(2)
+                .assert('a.b', Joi.number())
+                .keys({ b: { c: Joi.any() } })
+                .assert('b.c', Joi.number());
+
+            expect(schema.validate({ a: { b: 1 }, b: { c: 2 } }).error).to.not.exist();
         });
     });
 

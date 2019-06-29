@@ -393,10 +393,7 @@ describe('array', () => {
                 });
             }).to.throw(Error, 'Invalid schema content: (0.a.b.c.d)');
 
-            expect(() => {
-
-                Joi.array().items({ foo: 'bar' }, undefined);
-            }).to.throw(Error, 'Invalid schema content: (1)');
+            expect(() => Joi.array().items({ foo: 'bar' }, undefined)).to.throw(Error, 'Invalid schema content: (1)');
         });
 
         it('allows zero size', async () => {
@@ -406,8 +403,8 @@ describe('array', () => {
                     foo: Joi.string().required()
                 }))
             });
-            const input = { test: [] };
 
+            const input = { test: [] };
             await schema.validate(input);
         });
 
@@ -418,6 +415,7 @@ describe('array', () => {
                     foo: Joi.string().required()
                 }))
             });
+
             const input = { test: [{ foo: 'a' }, { bar: 2 }] };
 
             const err = await expect(schema.validate(input)).to.reject();
