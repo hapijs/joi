@@ -441,6 +441,74 @@ describe('Modify', () => {
                 expect(third).to.equal(after3);
             });
         });
+
+        describe('alternatives', () => {
+
+            it('adjusts nested schema', () => {
+
+                const before = Joi.alternatives([
+                    Joi.number().positive().id('numbers'),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive()
+                        })
+                    }).id('objects')
+                ]);
+
+                const first = before.fork('objects.c.d', (schema) => schema.max(5));
+
+                const after1 = Joi.alternatives([
+                    Joi.number().positive().id('numbers'),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    }).id('objects')
+                ]);
+
+                after1._ruleset = false;            // Simulate similar fork operation
+                expect(first).to.equal(after1);
+
+                const second = first.fork('numbers', (schema) => schema.min(10));
+
+                const after2 = Joi.alternatives([
+                    Joi.number().positive().id('numbers').min(10),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    }).id('objects')
+                ]);
+
+                after2._ruleset = false;            // Simulate similar fork operation
+                expect(second).to.equal(after2);
+            });
+
+            it('adjusts when schema', () => {
+
+                const before = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.boolean()
+                        .when('a', [
+                            { is: 0, then: Joi.valid(0).id('zero') },
+                            { is: 1, then: Joi.valid(1).id('one') }
+                        ])
+                });
+
+                const forked = before.fork('b.one', (schema) => schema.allow(2));
+
+                const after = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.boolean()
+                        .when('a', [
+                            { is: 0, then: Joi.valid(0).id('zero') },
+                            { is: 1, then: Joi.valid(1, 2).id('one') }
+                        ])
+                });
+
+                expect(forked).to.equal(after);
+            });
+        });
     });
 
     describe('id()', () => {
