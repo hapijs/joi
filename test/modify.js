@@ -102,276 +102,344 @@ describe('Modify', () => {
 
     describe('fork()', () => {
 
-        it('adjusts nested schema', () => {
+        describe('object', () => {
 
-            const before = Joi.object({
-                a: Joi.number(),
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number()
+            it('adjusts nested schema', () => {
+
+                const before = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number()
+                        })
                     })
-                })
+                });
+
+                const after = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().min(10)
+                        })
+                    })
+                });
+
+                expect(before.fork('b.c.d', (schema) => schema.min(10))).to.equal(after);
+                expect(before.fork([['b', 'c', 'd']], (schema) => schema.min(10))).to.equal(after);
             });
 
-            const after = Joi.object({
-                a: Joi.number(),
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number().min(10)
-                    })
-                })
+            it('forks multiple times', () => {
+
+                const before = Joi.object({
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number()
+                        })
+                    }),
+                    x: Joi.number()
+                });
+
+                const bd = before.describe();
+
+                const first = before.fork('b.c.d', (schema) => schema.min(10));
+                const fd = first.describe();
+
+                const second = first.fork('b.c.d', (schema) => schema.max(20));
+                const sd = second.describe();
+
+                const third = second.fork('b.c.d', (schema) => schema.min(5));
+                const td = third.describe();
+
+                const fourth = third.fork('x', (schema) => schema.required());
+
+                const after = Joi.object({
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().max(20).min(5)
+                        })
+                    }),
+                    x: Joi.number().required()
+                });
+
+                expect(fourth).to.equal(after);
+
+                expect(before.describe()).to.equal(bd);
+                expect(first.describe()).to.equal(fd);
+                expect(second.describe()).to.equal(sd);
+                expect(third.describe()).to.equal(td);
             });
 
-            expect(before.fork('b.c.d', (schema) => schema.min(10))).to.equal(after);
-            expect(before.fork([['b', 'c', 'd']], (schema) => schema.min(10))).to.equal(after);
-        });
+            it('forks same schema multiple times', () => {
 
-        it('forks multiple times', () => {
+                const before = Joi.object({
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number()
+                        })
+                    }),
+                    x: Joi.number()
+                });
 
-            const before = Joi.object({
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number()
+                const bd = before.describe();
+
+                const first = before.fork('b.c.d', (schema) => schema.min(10));
+                const fd = first.describe();
+
+                const second = before.fork('b.c.d', (schema) => schema.max(20));
+                const sd = second.describe();
+
+                const third = before.fork('b.c.d', (schema) => schema.min(5));
+                const td = third.describe();
+
+                const fourth = before.fork('x', (schema) => schema.required());
+
+                const a1 = Joi.object({
+                    x: Joi.number(),
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().min(10)
+                        })
                     })
-                }),
-                x: Joi.number()
+                });
+
+                expect(first).to.equal(a1);
+
+                const a2 = Joi.object({
+                    x: Joi.number(),
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().max(20)
+                        })
+                    })
+                });
+
+                expect(second).to.equal(a2);
+
+                const a3 = Joi.object({
+                    x: Joi.number(),
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().min(5)
+                        })
+                    })
+                });
+
+                expect(third).to.equal(a3);
+
+                const a4 = Joi.object({
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number()
+                        })
+                    }),
+                    x: Joi.number().required()
+                });
+
+                expect(fourth).to.equal(a4);
+
+                expect(before.describe()).to.equal(bd);
+                expect(first.describe()).to.equal(fd);
+                expect(second.describe()).to.equal(sd);
+                expect(third.describe()).to.equal(td);
             });
 
-            const bd = before.describe();
+            it('adjusts nested schema with ids', () => {
 
-            const first = before.fork('b.c.d', (schema) => schema.min(10));
-            const fd = first.describe();
-
-            const second = first.fork('b.c.d', (schema) => schema.max(20));
-            const sd = second.describe();
-
-            const third = second.fork('b.c.d', (schema) => schema.min(5));
-            const td = third.describe();
-
-            const fourth = third.fork('x', (schema) => schema.required());
-
-            const after = Joi.object({
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number().max(20).min(5)
+                const before = Joi.object({
+                    a: Joi.number().id('A'),
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().id('D')
+                        })
                     })
-                }),
-                x: Joi.number().required()
+                });
+
+                const after = Joi.object({
+                    a: Joi.number().id('A'),
+                    b: Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().id('D').min(10)
+                        })
+                    })
+                });
+
+                expect(before.fork('b.c.D', (schema) => schema.min(10))).to.equal(after);
+                expect(before.fork([['b', 'c', 'D']], (schema) => schema.min(10))).to.equal(after);
             });
 
-            expect(fourth).to.equal(after);
+            it('sets keys as required', () => {
 
-            expect(before.describe()).to.equal(bd);
-            expect(first.describe()).to.equal(fd);
-            expect(second.describe()).to.equal(sd);
-            expect(third.describe()).to.equal(td);
-        });
+                const orig = Joi.object({ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: { h: 0 } });
+                const schema = orig.fork(['a', 'b', 'c.d', 'c.e.f', 'g'], (x) => x.required());
 
-        it('forks same schema multiple times', () => {
+                Helper.validate(orig, [
+                    [{}, true]
+                ]);
 
-            const before = Joi.object({
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number()
-                    })
-                }),
-                x: Joi.number()
-            });
-
-            const bd = before.describe();
-
-            const first = before.fork('b.c.d', (schema) => schema.min(10));
-            const fd = first.describe();
-
-            const second = before.fork('b.c.d', (schema) => schema.max(20));
-            const sd = second.describe();
-
-            const third = before.fork('b.c.d', (schema) => schema.min(5));
-            const td = third.describe();
-
-            const fourth = before.fork('x', (schema) => schema.required());
-
-            const a1 = Joi.object({
-                x: Joi.number(),
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number().min(10)
-                    })
-                })
-            });
-
-            expect(first).to.equal(a1);
-
-            const a2 = Joi.object({
-                x: Joi.number(),
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number().max(20)
-                    })
-                })
-            });
-
-            expect(second).to.equal(a2);
-
-            const a3 = Joi.object({
-                x: Joi.number(),
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number().min(5)
-                    })
-                })
-            });
-
-            expect(third).to.equal(a3);
-
-            const a4 = Joi.object({
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number()
-                    })
-                }),
-                x: Joi.number().required()
-            });
-
-            expect(fourth).to.equal(a4);
-
-            expect(before.describe()).to.equal(bd);
-            expect(first.describe()).to.equal(fd);
-            expect(second.describe()).to.equal(sd);
-            expect(third.describe()).to.equal(td);
-        });
-
-        it('adjusts nested schema with ids', () => {
-
-            const before = Joi.object({
-                a: Joi.number().id('A'),
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number().id('D')
-                    })
-                })
-            });
-
-            const after = Joi.object({
-                a: Joi.number().id('A'),
-                b: Joi.object({
-                    c: Joi.object({
-                        d: Joi.number().id('D').min(10)
-                    })
-                })
-            });
-
-            expect(before.fork('b.c.D', (schema) => schema.min(10))).to.equal(after);
-            expect(before.fork([['b', 'c', 'D']], (schema) => schema.min(10))).to.equal(after);
-        });
-
-        it('sets keys as required', () => {
-
-            const orig = Joi.object({ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: { h: 0 } });
-            const schema = orig.fork(['a', 'b', 'c.d', 'c.e.f', 'g'], (x) => x.required());
-
-            Helper.validate(orig, [
-                [{}, true]
-            ]);
-
-            Helper.validate(schema, [
-                [{}, false, null, {
-                    message: '"a" is required',
-                    details: [{
+                Helper.validate(schema, [
+                    [{}, false, null, {
                         message: '"a" is required',
-                        path: ['a'],
-                        type: 'any.required',
-                        context: { label: 'a', key: 'a' }
-                    }]
-                }],
-                [{ a: 0 }, false, null, {
-                    message: '"b" is required',
-                    details: [{
+                        details: [{
+                            message: '"a" is required',
+                            path: ['a'],
+                            type: 'any.required',
+                            context: { label: 'a', key: 'a' }
+                        }]
+                    }],
+                    [{ a: 0 }, false, null, {
                         message: '"b" is required',
-                        path: ['b'],
-                        type: 'any.required',
-                        context: { label: 'b', key: 'b' }
-                    }]
-                }],
-                [{ a: 0, b: 0 }, false, null, {
-                    message: '"g" is required',
-                    details: [{
+                        details: [{
+                            message: '"b" is required',
+                            path: ['b'],
+                            type: 'any.required',
+                            context: { label: 'b', key: 'b' }
+                        }]
+                    }],
+                    [{ a: 0, b: 0 }, false, null, {
                         message: '"g" is required',
-                        path: ['g'],
-                        type: 'any.required',
-                        context: { label: 'g', key: 'g' }
-                    }]
-                }],
-                [{ a: 0, b: 0, g: {} }, true],
-                [{ a: 0, b: 0, c: {}, g: {} }, false, null, {
-                    message: '"c.d" is required',
-                    details: [{
+                        details: [{
+                            message: '"g" is required',
+                            path: ['g'],
+                            type: 'any.required',
+                            context: { label: 'g', key: 'g' }
+                        }]
+                    }],
+                    [{ a: 0, b: 0, g: {} }, true],
+                    [{ a: 0, b: 0, c: {}, g: {} }, false, null, {
                         message: '"c.d" is required',
-                        path: ['c', 'd'],
-                        type: 'any.required',
-                        context: { label: 'c.d', key: 'd' }
-                    }]
-                }],
-                [{ a: 0, b: 0, c: { d: 0 }, g: {} }, true],
-                [{ a: 0, b: 0, c: { d: 0, e: {} }, g: {} }, false, null, {
-                    message: '"c.e.f" is required',
-                    details: [{
+                        details: [{
+                            message: '"c.d" is required',
+                            path: ['c', 'd'],
+                            type: 'any.required',
+                            context: { label: 'c.d', key: 'd' }
+                        }]
+                    }],
+                    [{ a: 0, b: 0, c: { d: 0 }, g: {} }, true],
+                    [{ a: 0, b: 0, c: { d: 0, e: {} }, g: {} }, false, null, {
                         message: '"c.e.f" is required',
-                        path: ['c', 'e', 'f'],
-                        type: 'any.required',
-                        context: { label: 'c.e.f', key: 'f' }
-                    }]
-                }],
-                [{ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: {} }, true]
-            ]);
-        });
+                        details: [{
+                            message: '"c.e.f" is required',
+                            path: ['c', 'e', 'f'],
+                            type: 'any.required',
+                            context: { label: 'c.e.f', key: 'f' }
+                        }]
+                    }],
+                    [{ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: {} }, true]
+                ]);
+            });
 
-        it('sets keys as optional', () => {
+            it('sets keys as optional', () => {
 
-            const schema = Joi.object({
-                a: Joi.number().required(),
-                b: Joi.number().required()
-            }).
-                fork(['a', 'b'], (x) => x.optional());
+                const schema = Joi.object({
+                    a: Joi.number().required(),
+                    b: Joi.number().required()
+                }).
+                    fork(['a', 'b'], (x) => x.optional());
 
-            Helper.validate(schema, [
-                [{}, true],
-                [{ a: 0 }, true],
-                [{ a: 0, b: 0 }, true]
-            ]);
-        });
+                Helper.validate(schema, [
+                    [{}, true],
+                    [{ a: 0 }, true],
+                    [{ a: 0, b: 0 }, true]
+                ]);
+            });
 
-        it('sets keys as forbidden', () => {
+            it('sets keys as forbidden', () => {
 
-            const schema = Joi.object({
-                a: Joi.number().required(),
-                b: Joi.number().required()
-            }).
-                fork(['a', 'b'], (x) => x.forbidden());
+                const schema = Joi.object({
+                    a: Joi.number().required(),
+                    b: Joi.number().required()
+                }).
+                    fork(['a', 'b'], (x) => x.forbidden());
 
-            Helper.validate(schema, [
-                [{}, true],
-                [{ a: undefined }, true],
-                [{ a: undefined, b: undefined }, true],
-                [{ a: 0 }, false, null, {
-                    message: '"a" is not allowed',
-                    details: [{
+                Helper.validate(schema, [
+                    [{}, true],
+                    [{ a: undefined }, true],
+                    [{ a: undefined, b: undefined }, true],
+                    [{ a: 0 }, false, null, {
                         message: '"a" is not allowed',
-                        path: ['a'],
-                        type: 'any.unknown',
-                        context: { label: 'a', key: 'a', value: 0 }
-                    }]
-                }],
-                [{ b: 0 }, false, null, {
-                    message: '"b" is not allowed',
-                    details: [{
+                        details: [{
+                            message: '"a" is not allowed',
+                            path: ['a'],
+                            type: 'any.unknown',
+                            context: { label: 'a', key: 'a', value: 0 }
+                        }]
+                    }],
+                    [{ b: 0 }, false, null, {
                         message: '"b" is not allowed',
-                        path: ['b'],
-                        type: 'any.unknown',
-                        context: { label: 'b', key: 'b', value: 0 }
+                        details: [{
+                            message: '"b" is not allowed',
+                            path: ['b'],
+                            type: 'any.unknown',
+                            context: { label: 'b', key: 'b', value: 0 }
+                        }]
                     }]
-                }]
-            ]);
+                ]);
+            });
+        });
+
+        describe('array', () => {
+
+            it('adjusts nested schema', () => {
+
+                const before = Joi.array().items(
+                    Joi.number().positive().id('numbers'),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive()
+                        })
+                    }).id('objects')
+                )
+                    .has(Joi.object())
+                    .has(Joi.valid(5).id('five'));
+
+                const first = before.fork('objects.c.d', (schema) => schema.max(5));
+
+                const after1 = Joi.array().items(
+                    Joi.number().positive().id('numbers'),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    }).id('objects')
+                )
+                    .has(Joi.object())
+                    .has(Joi.valid(5).id('five'));
+
+                after1._ruleset = false;            // Simulate similar fork operation
+                expect(first).to.equal(after1);
+
+                const second = first.fork('numbers', (schema) => schema.min(10));
+
+                const after2 = Joi.array().items(
+                    Joi.number().positive().id('numbers').min(10),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    }).id('objects')
+                )
+                    .has(Joi.object())
+                    .has(Joi.valid(5).id('five'));
+
+                after2._ruleset = false;            // Simulate similar fork operation
+                expect(second).to.equal(after2);
+
+                const third = second.fork('five', (schema) => schema.allow(-5));
+
+                const after3 = Joi.array().items(
+                    Joi.number().positive().id('numbers').min(10),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    }).id('objects')
+                )
+                    .has(Joi.object())
+                    .has(Joi.valid(5, -5).id('five'));
+
+                after3._ruleset = false;            // Simulate similar fork operation
+                expect(third).to.equal(after3);
+            });
         });
     });
 
