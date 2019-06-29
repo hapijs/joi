@@ -199,6 +199,21 @@ describe('Validator', () => {
             expect(input).to.equal({ x: false });
         });
 
+        it('does not modify original value on nested object', async () => {
+
+            const tag = (obj) => {
+
+                obj.x = true;
+            };
+
+            const schema = Joi.object({ a: Joi.object().external(tag) });
+            const input = { a: { x: false } };
+
+            const result = await schema.validate(input, { externals: true });
+            expect(result).to.equal({ a: { x: true } });
+            expect(input).to.equal({ a: { x: false } });
+        });
+
         it('does not modify original value on generic array', async () => {
 
             const tag = (array) => {
@@ -212,6 +227,21 @@ describe('Validator', () => {
             const result = await schema.validate(input, { externals: true });
             expect(result).to.equal([1, 'x']);
             expect(input).to.equal([1]);
+        });
+
+        it('does not modify original value on nested array', async () => {
+
+            const tag = (array) => {
+
+                array.push('x');
+            };
+
+            const schema = Joi.array().items(Joi.array().external(tag));
+            const input = [[1]];
+
+            const result = await schema.validate(input, { externals: true });
+            expect(result).to.equal([[1, 'x']]);
+            expect(input).to.equal([[1]]);
         });
     });
 });
