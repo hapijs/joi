@@ -183,5 +183,35 @@ describe('Validator', () => {
             expect(result).to.equal(['valid']);
             expect(called).to.be.false();
         });
+
+        it('does not modify original value on generic object', async () => {
+
+            const tag = (obj) => {
+
+                obj.x = true;
+            };
+
+            const schema = Joi.object().external(tag);
+            const input = { x: false };
+
+            const result = await schema.validate(input, { externals: true });
+            expect(result).to.equal({ x: true });
+            expect(input).to.equal({ x: false });
+        });
+
+        it('does not modify original value on generic array', async () => {
+
+            const tag = (array) => {
+
+                array.push('x');
+            };
+
+            const schema = Joi.array().external(tag);
+            const input = [1];
+
+            const result = await schema.validate(input, { externals: true });
+            expect(result).to.equal([1, 'x']);
+            expect(input).to.equal([1]);
+        });
     });
 });
