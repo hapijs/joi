@@ -2977,7 +2977,8 @@ The [`extend()`](#extendextension) method adds custom types to **joi**. Extensio
 
 Extension objects use the following parameters :
 - `name` - name of the new type you are defining, this can be an existing type. **Required**.
-- `base` - an existing **joi** schema to base your type upon. Defaults to `Joi.any()`.
+- `base` - an existing **joi** schema or function that returns a schema to base your type upon.
+  When `base` is a function, it is passed the type contructor arguments. Defaults to `Joi.any()`.
 - `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `prefs`.
 - `pre` - an optional function that runs first in the validation chain, usually serves when you need to cast values. It takes 3 arguments `value`, `state` and `prefs`.
 - `messages` - an optional object to add error definitions. Every key will be prefixed by the type name.

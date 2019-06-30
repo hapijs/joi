@@ -69,6 +69,45 @@ describe('extension', () => {
         ]);
     });
 
+    it('defines a custom type with a custom function base', () => {
+
+        const customJoi = Joi.extend({
+            base: (limit) => Joi.string().min(limit),
+            name: 'myType'
+        });
+
+        expect(Joi.myType).to.not.exist();
+        expect(customJoi.myType).to.be.a.function();
+
+        const schema = customJoi.myType(2);
+        Helper.validate(schema, [
+            [123, false, null, {
+                message: '"value" must be a string',
+                details: [{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 123, label: 'value' }
+                }]
+            }],
+            ['a', false, null, {
+                message: '"value" length must be at least 2 characters long',
+                details: [{
+                    message: '"value" length must be at least 2 characters long',
+                    path: [],
+                    type: 'string.min',
+                    context: {
+                        limit: 2,
+                        value: 'a',
+                        encoding: undefined,
+                        label: 'value'
+                    }
+                }]
+            }],
+            ['abc', true]
+        ]);
+    });
+
     it('defines a custom type with a custom base while preserving its original helper params', () => {
 
         const customJoi = Joi.extend({
@@ -855,11 +894,11 @@ describe('extension', () => {
         it('must be an object or multiple object arguments', () => {
 
             expect(() => Joi.extend(true)).to.throw(/"\[0\]" does not match any of the allowed types/);
-            //expect(() => Joi.extend(null)).to.throw(/"\[0\]" does not match any of the allowed types/);
-            //expect(() => Joi.extend({ name: 'foo' }, true)).to.throw(/"\[1\]" does not match any of the allowed types/);
-            //expect(() => Joi.extend({ name: 'foo' }, null)).to.throw(/"\[1\]" does not match any of the allowed types/);
-            //expect(() => Joi.extend([{ name: 'foo' }])).to.throw('Method no longer accepts array arguments: extend');
-            //expect(() => Joi.extend()).to.throw('You need to provide at least one extension');
+            expect(() => Joi.extend(null)).to.throw(/"\[0\]" does not match any of the allowed types/);
+            expect(() => Joi.extend({ name: 'foo' }, true)).to.throw(/"\[1\]" does not match any of the allowed types/);
+            expect(() => Joi.extend({ name: 'foo' }, null)).to.throw(/"\[1\]" does not match any of the allowed types/);
+            expect(() => Joi.extend([{ name: 'foo' }])).to.throw('Method no longer accepts array arguments: extend');
+            expect(() => Joi.extend()).to.throw('You need to provide at least one extension');
         });
 
         it('must have a valid string as name for the type', () => {
@@ -871,8 +910,8 @@ describe('extension', () => {
 
         it('must have a Joi schema as base when present', () => {
 
-            expect(() => Joi.extend({ base: true })).to.throw(/"base" must be an object/);
-            expect(() => Joi.extend({ base: { isJoi: true } })).to.throw(/"base" must be a Joi schema of any type/);
+            expect(() => Joi.extend({ base: true })).to.throw(/"base" must be one of \[object, function\]/);
+            expect(() => Joi.extend({ base: { isJoi: true } })).to.throw(/"base" does not match any of the allowed types/);
         });
 
         it('must have valid coerce function', () => {
