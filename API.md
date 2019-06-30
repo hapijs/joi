@@ -21,6 +21,7 @@
   - [`any`](#any)
     - [`any.type`](#anytype)
     - [`any.allow(...values)`](#anyallowvalues)
+    - [`any.alter(targets)`](#anyaltertargets)
     - [`any.cast(to)`](#anycastto)
     - [`any.concat(schema)`](#anyconcatschema)
     - [`any.default([value, [description]])`](#anydefaultvalue-description)
@@ -29,6 +30,7 @@
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
     - [`any.example(...values)`](#anyexamplevalues)
+    - [`any.external(method)`](#anyexternalmethod)
     - [`any.extract(path)`](#anyextractpath)
     - [`any.failover([value, [description]])`](#anyfailovervalue-description)
     - [`any.forbidden()`](#anyforbidden)
@@ -49,6 +51,7 @@
     - [`any.strict(isStrict)`](#anystrictisstrict)
     - [`any.strip()`](#anystrip)
     - [`any.tags(tags)`](#anytagstags)
+    - [`any.tailor(targets)`](#anytailortargets)
     - [`any.unit(name)`](#anyunitname)
     - [`any.valid(...values)` - aliases: `only`, `equal`](#anyvalidvalues---aliases-only-equal)
     - [`any.validate(value, [options])`](#anyvalidatevalue-options)
@@ -585,6 +588,26 @@ const schema = {
 };
 ```
 
+#### `any.alter(targets)`
+
+Assign target alteration options to a schema that are applied when [`any.tailor()`](#anytailortargets)
+is called where:
+- `targets` - an object where each key is a target name, and each value is a function with signature
+  `function(schema)` that returns a schema.
+
+```js
+const schema = Joi.object({
+    key: Joi.string()
+        .alter({
+            get: (schema) => schema.required(),
+            post: (schema) => schema.forbidden()
+        })  
+});
+
+const getSchema = schema.tailor('get');
+const postSchema = schema.tailor('post');
+```
+
 #### `any.cast(to)`
 
 Casts the validated value to the specified type where:
@@ -987,6 +1010,25 @@ Annotates the key where:
 
 ```js
 const schema = Joi.any().tags(['api', 'user']);
+```
+
+#### `any.tailor(targets)`
+
+Applies any assigned target alterations to a copy of the schema that were applied via
+[`any.alter()`](#anyaltertargets) where:
+- `targets` - a single target string or array or target strings to apply.
+
+```js
+const schema = Joi.object({
+    key: Joi.string()
+        .alter({
+            get: (schema) => schema.required(),
+            post: (schema) => schema.forbidden()
+        })  
+});
+
+const getSchema = schema.tailor('get');
+const postSchema = schema.tailor(['post']);
 ```
 
 #### `any.unit(name)`

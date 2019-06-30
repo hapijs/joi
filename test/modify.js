@@ -375,6 +375,79 @@ describe('Modify', () => {
                     }]
                 ]);
             });
+
+            it('adjusts object assert', () => {
+
+                const before = Joi.object({
+                    a: Joi.object({
+                        b: Joi.number()
+                    }),
+                    b: Joi.object({
+                        d: Joi.number()
+                    })
+                })
+                    .assert('b.d', Joi.valid(1))
+                    .assert('a.b', Joi.valid(Joi.ref('b.d')).id('assert'));
+
+                const after = Joi.object({
+                    a: Joi.object({
+                        b: Joi.number()
+                    }),
+                    b: Joi.object({
+                        d: Joi.number()
+                    })
+                })
+                    .assert('b.d', Joi.valid(1))
+                    .assert('a.b', Joi.valid(Joi.ref('b.d'), 'x').id('assert'));
+
+                after._ruleset = false;
+
+                expect(before.fork('assert', (schema) => schema.valid('x'))).to.equal(after);
+            });
+
+            it('adjusts object assert (with pattern)', () => {
+
+                const before = Joi.object({
+                    a: Joi.object({
+                        b: Joi.number()
+                    }),
+                    b: Joi.object({
+                        d: Joi.number()
+                    })
+                })
+                    .min(2)
+                    .pattern(/\d/, Joi.any())
+                    .assert('a.b', Joi.valid(Joi.ref('b.d')).id('assert'));
+
+                const after = Joi.object({
+                    a: Joi.object({
+                        b: Joi.number()
+                    }),
+                    b: Joi.object({
+                        d: Joi.number()
+                    })
+                })
+                    .min(2)
+                    .pattern(/\d/, Joi.any())
+                    .assert('a.b', Joi.valid(Joi.ref('b.d'), 'x').id('assert'));
+
+                after._ruleset = false;
+
+                expect(before.fork('assert', (schema) => schema.valid('x')).describe()).to.equal(after.describe());
+            });
+
+            it('adjusts object pattern', () => {
+
+                const before = Joi.object()
+                    .pattern(/.*/, Joi.valid('x').id('pattern'));
+
+                const after = Joi.object()
+                    .pattern(/.*/, Joi.valid('x', 'y').id('pattern'));
+
+                after._ruleset = false;
+
+                expect(before.fork('pattern', (schema) => schema.valid('y'))).to.equal(after);
+            });
         });
 
         describe('array', () => {

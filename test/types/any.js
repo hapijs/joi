@@ -40,6 +40,18 @@ describe('any', () => {
         });
     });
 
+    describe('alter()', () => {
+
+        it('errors on invalid argument', () => {
+
+            expect(() => Joi.number().alter()).to.throw('Invalid targets argument');
+            expect(() => Joi.number().alter('x')).to.throw('Invalid targets argument');
+            expect(() => Joi.number().alter([])).to.throw('Invalid targets argument');
+
+            expect(() => Joi.number().alter({ xx: 'x' })).to.throw('Alteration adjuster for xx must be a function');
+        });
+    });
+
     describe('concat()', () => {
 
         it('throws when schema is not any', () => {
@@ -2542,6 +2554,56 @@ describe('any', () => {
 
                 Joi.tags(5);
             }).to.throw('Tags must be a non-empty string or array');
+        });
+    });
+
+    describe('tailor()', () => {
+
+        it('customizes root schema', () => {
+
+            const alterations = {
+                x: (s) => s.min(10),
+                y: (s) => s.max(50),
+                z: (s) => s.integer()
+            };
+
+            const before = Joi.number().alter(alterations);
+
+            const first = before.tailor('x');
+            const after1 = Joi.number().min(10).alter(alterations);
+
+            expect(first).to.equal(after1);
+            expect(first.describe()).to.equal(after1.describe());
+
+            const second = first.tailor(['y', 'z']);
+            const after2 = Joi.number().min(10).max(50).integer().alter(alterations);
+
+            expect(second).to.equal(after2);
+        });
+
+        it('customizes root schema (multiple alter calls)', () => {
+
+            const alter1 = {
+                x: (s) => s.min(10)
+            };
+
+            const alter2 = {
+                y: (s) => s.max(50),
+                z: (s) => s.integer()
+            };
+
+            const before = Joi.number().alter(alter1).alter(alter2);
+
+            const first = before.tailor('x');
+            const after1 = Joi.number().min(10).alter(alter1).alter(alter2);
+
+            expect(first).to.equal(after1);
+            expect(first.describe()).to.equal(after1.describe());
+
+            const second = first.tailor(['y', 'z']);
+            const after2 = Joi.number().min(10).max(50).integer().alter(alter1).alter(alter2);
+
+            expect(second).to.equal(after2);
         });
     });
 

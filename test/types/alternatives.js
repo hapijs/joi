@@ -84,6 +84,490 @@ describe('alternatives', () => {
         expect(value.a.b).to.equal('any');
     });
 
+    describe('describe()', () => {
+
+        it('describes when', () => {
+
+            const schema = Joi.object({
+                a: Joi.alternatives()
+                    .when('b', { is: 5, then: 'x' })
+                    .when('b', { is: 6, otherwise: 'y' })
+                    .try('z'),
+                b: Joi.any()
+            });
+
+            const outcome = {
+                type: 'object',
+                children: {
+                    b: {
+                        type: 'any'
+                    },
+                    a: {
+                        type: 'alternatives',
+                        alternatives: [
+                            {
+                                ref: { ref: 'value', key: 'b', path: ['b'] },
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true,
+                                        presence: 'required',
+                                        unsafe: false
+                                    },
+                                    valids: [5],
+                                    invalids: [Infinity, -Infinity]
+                                },
+                                then: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['x'],
+                                    invalids: ['']
+                                }
+                            },
+                            {
+                                ref: { ref: 'value', key: 'b', path: ['b'] },
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true,
+                                        presence: 'required',
+                                        unsafe: false
+                                    },
+                                    valids: [6],
+                                    invalids: [Infinity, -Infinity]
+                                },
+                                otherwise: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['y'],
+                                    invalids: ['']
+                                }
+                            },
+                            {
+                                type: 'string',
+                                flags: {
+                                    allowOnly: true
+                                },
+                                valids: ['z'],
+                                invalids: ['']
+                            }
+                        ]
+                    }
+                }
+            };
+
+            expect(schema.describe()).to.equal(outcome);
+        });
+
+        it('describes when (only then)', () => {
+
+            const schema = Joi.object({
+                a: Joi.alternatives()
+                    .when('b', { is: 5, then: 'x' })
+                    .try('z'),
+                b: Joi.any()
+            });
+
+            const outcome = {
+                type: 'object',
+                children: {
+                    b: {
+                        type: 'any'
+                    },
+                    a: {
+                        type: 'alternatives',
+                        alternatives: [
+                            {
+                                ref: { ref: 'value', key: 'b', path: ['b'] },
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true,
+                                        presence: 'required',
+                                        unsafe: false
+                                    },
+                                    valids: [5],
+                                    invalids: [Infinity, -Infinity]
+                                },
+                                then: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['x'],
+                                    invalids: ['']
+                                }
+                            },
+                            {
+                                type: 'string',
+                                flags: {
+                                    allowOnly: true
+                                },
+                                valids: ['z'],
+                                invalids: ['']
+                            }
+                        ]
+                    }
+                }
+            };
+
+            expect(schema.describe()).to.equal(outcome);
+        });
+
+        it('describes when (only otherwise)', () => {
+
+            const schema = Joi.object({
+                a: Joi.alternatives()
+                    .when('b', { is: 5, otherwise: 'y' })
+                    .try('z'),
+                b: Joi.any()
+            });
+
+            const outcome = {
+                type: 'object',
+                children: {
+                    b: {
+                        type: 'any'
+                    },
+                    a: {
+                        type: 'alternatives',
+                        alternatives: [
+                            {
+                                ref: { ref: 'value', key: 'b', path: ['b'] },
+                                is: {
+                                    type: 'number',
+                                    flags: {
+                                        allowOnly: true,
+                                        presence: 'required',
+                                        unsafe: false
+                                    },
+                                    valids: [5],
+                                    invalids: [Infinity, -Infinity]
+                                },
+                                otherwise: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['y'],
+                                    invalids: ['']
+                                }
+                            },
+                            {
+                                type: 'string',
+                                flags: {
+                                    allowOnly: true
+                                },
+                                valids: ['z'],
+                                invalids: ['']
+                            }
+                        ]
+                    }
+                }
+            };
+
+            expect(schema.describe()).to.equal(outcome);
+        });
+
+        it('describes when (with schema)', () => {
+
+            const schema = Joi.alternatives()
+                .when(Joi.string().label('foo'), {
+                    then: Joi.string().required().min(1),
+                    otherwise: Joi.boolean()
+                });
+
+            const outcome = {
+                type: 'alternatives',
+                alternatives: [{
+                    peek: {
+                        type: 'string',
+                        label: 'foo',
+                        invalids: ['']
+                    },
+                    then: {
+                        type: 'string',
+                        flags: { presence: 'required' },
+                        invalids: [''],
+                        rules: [{ arg: { limit: 1 }, name: 'min' }]
+                    },
+                    otherwise: {
+                        type: 'boolean',
+                        flags: { insensitive: true },
+                        truthy: [true],
+                        falsy: [false]
+                    }
+                }]
+            };
+
+            expect(schema.describe()).to.equal(outcome);
+        });
+
+        it('describes inherited fields (from any)', () => {
+
+            const schema = Joi.alternatives()
+                .try('a')
+                .description('d')
+                .example('a')
+                .meta('b')
+                .meta('c')
+                .notes('f')
+                .tags('g');
+
+            const outcome = {
+                type: 'alternatives',
+                description: 'd',
+                notes: ['f'],
+                tags: ['g'],
+                meta: ['b', 'c'],
+                examples: ['a'],
+                alternatives: [{
+                    type: 'string',
+                    flags: {
+                        allowOnly: true
+                    },
+                    valids: ['a'],
+                    invalids: ['']
+                }]
+            };
+
+            expect(schema.describe()).to.equal(outcome);
+        });
+    });
+
+    describe('error()', () => {
+
+        it('overrides single try error', async () => {
+
+            const override = new Error('failed!');
+
+            const schema = Joi.object({
+                x: Joi.alternatives([
+                    Joi.number(),
+                    Joi.string().error(override)
+                ])
+            });
+
+            const err = await expect(schema.validate({ x: [] })).to.reject('"x" does not match any of the allowed types');
+            expect(err.details[0].context.details).to.equal([
+                {
+                    message: '"x" must be a number',
+                    path: ['x'],
+                    type: 'number.base',
+                    context: { value: [], label: 'x', key: 'x' }
+                },
+                {
+                    message: 'Error: failed!',
+                    type: 'override',
+                    context: {
+                        error: override
+                    }
+                }
+            ]);
+        });
+
+        it('overrides top level error', async () => {
+
+            const schema = Joi.object({
+                x: Joi.alternatives([
+                    Joi.number(),
+                    Joi.string()
+                ])
+                    .error(new Error('failed!'))
+            });
+
+            await expect(schema.validate({ x: [] })).to.reject('failed!');
+        });
+    });
+
+    describe('label()', () => {
+
+        it('passes the label to the underlying schema', () => {
+
+            const schema = Joi.object().keys({
+                a: Joi.boolean(),
+                b: Joi.when('a', {
+                    is: true,
+                    then: Joi.string().empty('').allow(null)
+                }).label('Label b'),
+                c: Joi.when('a', {
+                    is: true,
+                    otherwise: Joi.string().empty('').allow(null)
+                }).label('Label c'),
+                d: Joi.alt().try([Joi.string()]).label('Label d')
+            }).or('b', 'c', 'd');
+
+            Helper.validate(schema, [
+                [{ a: true, b: 1 }, false, null, {
+                    message: '"Label b" must be a string',
+                    details: [{
+                        message: '"Label b" must be a string',
+                        path: ['b'],
+                        type: 'string.base',
+                        context: { value: 1, key: 'b', label: 'Label b' }
+                    }]
+                }],
+                [{ a: false, b: 1, d: 1 }, false, null, {
+                    message: '"Label d" must be a string',
+                    details: [{
+                        message: '"Label d" must be a string',
+                        path: ['d'],
+                        type: 'string.base',
+                        context: { value: 1, key: 'd', label: 'Label d' }
+                    }]
+                }],
+                [{ a: false, b: 1, c: 1 }, false, null, {
+                    message: '"Label c" must be a string',
+                    details: [{
+                        message: '"Label c" must be a string',
+                        path: ['c'],
+                        type: 'string.base',
+                        context: { value: 1, key: 'c', label: 'Label c' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('does not modify the original schema', () => {
+
+            const schema = Joi.when('a', {
+                is: true,
+                then: Joi.string().empty('').allow(null)
+            });
+            const labeled = schema.label('Label b');
+
+            expect(schema.describe()).to.equal({
+                base: { type: 'any' },
+                flags: { presence: 'ignore' },
+                type: 'alternatives',
+                alternatives: [{
+                    is: {
+                        type: 'boolean',
+                        flags: { allowOnly: true, insensitive: true, presence: 'required' },
+                        truthy: [true],
+                        falsy: [false],
+                        valids: [true]
+                    },
+                    ref: { ref: 'value', key: 'a', path: ['a'] },
+                    then: {
+                        type: 'string',
+                        flags: {
+                            empty: {
+                                flags: { allowOnly: true },
+                                type: 'string',
+                                valids: ['']
+                            }
+                        },
+                        valids: [null],
+                        invalids: ['']
+                    }
+                }]
+            });
+
+            expect(labeled.describe()).to.equal({
+                base: { type: 'any' },
+                flags: { presence: 'ignore' },
+                label: 'Label b',
+                type: 'alternatives',
+                alternatives: [{
+                    is: {
+                        type: 'boolean',
+                        flags: { allowOnly: true, insensitive: true, presence: 'required' },
+                        truthy: [true],
+                        falsy: [false],
+                        valids: [true]
+                    },
+                    ref: { ref: 'value', key: 'a', path: ['a'] },
+                    then: {
+                        type: 'string',
+                        flags: {
+                            empty: {
+                                flags: { allowOnly: true },
+                                type: 'string',
+                                valids: ['']
+                            }
+                        },
+                        label: 'Label b',
+                        valids: [null],
+                        invalids: ['']
+                    }
+                }]
+            });
+        });
+    });
+
+    describe('tailor()', () => {
+
+        it('customizes schema', () => {
+
+            const alternatives = {
+                v: (s) => s.min(10)
+            };
+
+            const before = Joi.object({
+                x: Joi.alternatives([
+                    Joi.number().alter(alternatives),
+                    Joi.string().alter(alternatives)
+                ])
+            });
+
+            const bd = before.describe();
+
+            const first = before.tailor('v');
+
+            const after = Joi.object({
+                x: Joi.alternatives([
+                    Joi.number().min(10).alter(alternatives),
+                    Joi.string().min(10).alter(alternatives)
+                ])
+            });
+
+            expect(first).to.equal(after);
+            expect(first.describe()).to.equal(after.describe());
+            expect(before.describe()).to.equal(bd);
+        });
+
+        it('customizes schema with outter rule', () => {
+
+            const alt1 = {
+                v: (s) => s.min(10)
+            };
+
+            const alt2 = {
+                v: (s) => s.try(Joi.valid('x'))
+            };
+
+            const before = Joi.object({
+                x: Joi.alternatives([
+                    Joi.number().alter(alt1),
+                    Joi.string().alter(alt1)
+                ])
+                    .alter(alt2)
+            });
+
+            const bd = before.describe();
+
+            const first = before.tailor('v');
+
+            const after = Joi.object({
+                x: Joi.alternatives([
+                    Joi.number().min(10).alter(alt1),
+                    Joi.string().min(10).alter(alt1),
+                    Joi.valid('x')
+                ])
+                    .alter(alt2)
+            });
+
+            expect(first).to.equal(after);
+            expect(first.describe()).to.equal(after.describe());
+            expect(before.describe()).to.equal(bd);
+        });
+    });
+
     describe('try()', () => {
 
         it('throws when missing alternatives', () => {
@@ -1265,422 +1749,6 @@ describe('alternatives', () => {
                     }]
                 ]);
             });
-        });
-    });
-
-    describe('label()', () => {
-
-        it('passes the label to the underlying schema', () => {
-
-            const schema = Joi.object().keys({
-                a: Joi.boolean(),
-                b: Joi.when('a', {
-                    is: true,
-                    then: Joi.string().empty('').allow(null)
-                }).label('Label b'),
-                c: Joi.when('a', {
-                    is: true,
-                    otherwise: Joi.string().empty('').allow(null)
-                }).label('Label c'),
-                d: Joi.alt().try([Joi.string()]).label('Label d')
-            }).or('b', 'c', 'd');
-
-            Helper.validate(schema, [
-                [{ a: true, b: 1 }, false, null, {
-                    message: '"Label b" must be a string',
-                    details: [{
-                        message: '"Label b" must be a string',
-                        path: ['b'],
-                        type: 'string.base',
-                        context: { value: 1, key: 'b', label: 'Label b' }
-                    }]
-                }],
-                [{ a: false, b: 1, d: 1 }, false, null, {
-                    message: '"Label d" must be a string',
-                    details: [{
-                        message: '"Label d" must be a string',
-                        path: ['d'],
-                        type: 'string.base',
-                        context: { value: 1, key: 'd', label: 'Label d' }
-                    }]
-                }],
-                [{ a: false, b: 1, c: 1 }, false, null, {
-                    message: '"Label c" must be a string',
-                    details: [{
-                        message: '"Label c" must be a string',
-                        path: ['c'],
-                        type: 'string.base',
-                        context: { value: 1, key: 'c', label: 'Label c' }
-                    }]
-                }]
-            ]);
-        });
-
-        it('does not modify the original schema', () => {
-
-            const schema = Joi.when('a', {
-                is: true,
-                then: Joi.string().empty('').allow(null)
-            });
-            const labeled = schema.label('Label b');
-
-            expect(schema.describe()).to.equal({
-                base: { type: 'any' },
-                flags: { presence: 'ignore' },
-                type: 'alternatives',
-                alternatives: [{
-                    is: {
-                        type: 'boolean',
-                        flags: { allowOnly: true, insensitive: true, presence: 'required' },
-                        truthy: [true],
-                        falsy: [false],
-                        valids: [true]
-                    },
-                    ref: { ref: 'value', key: 'a', path: ['a'] },
-                    then: {
-                        type: 'string',
-                        flags: {
-                            empty: {
-                                flags: { allowOnly: true },
-                                type: 'string',
-                                valids: ['']
-                            }
-                        },
-                        valids: [null],
-                        invalids: ['']
-                    }
-                }]
-            });
-
-            expect(labeled.describe()).to.equal({
-                base: { type: 'any' },
-                flags: { presence: 'ignore' },
-                label: 'Label b',
-                type: 'alternatives',
-                alternatives: [{
-                    is: {
-                        type: 'boolean',
-                        flags: { allowOnly: true, insensitive: true, presence: 'required' },
-                        truthy: [true],
-                        falsy: [false],
-                        valids: [true]
-                    },
-                    ref: { ref: 'value', key: 'a', path: ['a'] },
-                    then: {
-                        type: 'string',
-                        flags: {
-                            empty: {
-                                flags: { allowOnly: true },
-                                type: 'string',
-                                valids: ['']
-                            }
-                        },
-                        label: 'Label b',
-                        valids: [null],
-                        invalids: ['']
-                    }
-                }]
-            });
-        });
-    });
-
-    describe('describe()', () => {
-
-        it('describes when', () => {
-
-            const schema = Joi.object({
-                a: Joi.alternatives()
-                    .when('b', { is: 5, then: 'x' })
-                    .when('b', { is: 6, otherwise: 'y' })
-                    .try('z'),
-                b: Joi.any()
-            });
-
-            const outcome = {
-                type: 'object',
-                children: {
-                    b: {
-                        type: 'any'
-                    },
-                    a: {
-                        type: 'alternatives',
-                        alternatives: [
-                            {
-                                ref: { ref: 'value', key: 'b', path: ['b'] },
-                                is: {
-                                    type: 'number',
-                                    flags: {
-                                        allowOnly: true,
-                                        presence: 'required',
-                                        unsafe: false
-                                    },
-                                    valids: [5],
-                                    invalids: [Infinity, -Infinity]
-                                },
-                                then: {
-                                    type: 'string',
-                                    flags: {
-                                        allowOnly: true
-                                    },
-                                    valids: ['x'],
-                                    invalids: ['']
-                                }
-                            },
-                            {
-                                ref: { ref: 'value', key: 'b', path: ['b'] },
-                                is: {
-                                    type: 'number',
-                                    flags: {
-                                        allowOnly: true,
-                                        presence: 'required',
-                                        unsafe: false
-                                    },
-                                    valids: [6],
-                                    invalids: [Infinity, -Infinity]
-                                },
-                                otherwise: {
-                                    type: 'string',
-                                    flags: {
-                                        allowOnly: true
-                                    },
-                                    valids: ['y'],
-                                    invalids: ['']
-                                }
-                            },
-                            {
-                                type: 'string',
-                                flags: {
-                                    allowOnly: true
-                                },
-                                valids: ['z'],
-                                invalids: ['']
-                            }
-                        ]
-                    }
-                }
-            };
-
-            expect(schema.describe()).to.equal(outcome);
-        });
-
-        it('describes when (only then)', () => {
-
-            const schema = Joi.object({
-                a: Joi.alternatives()
-                    .when('b', { is: 5, then: 'x' })
-                    .try('z'),
-                b: Joi.any()
-            });
-
-            const outcome = {
-                type: 'object',
-                children: {
-                    b: {
-                        type: 'any'
-                    },
-                    a: {
-                        type: 'alternatives',
-                        alternatives: [
-                            {
-                                ref: { ref: 'value', key: 'b', path: ['b'] },
-                                is: {
-                                    type: 'number',
-                                    flags: {
-                                        allowOnly: true,
-                                        presence: 'required',
-                                        unsafe: false
-                                    },
-                                    valids: [5],
-                                    invalids: [Infinity, -Infinity]
-                                },
-                                then: {
-                                    type: 'string',
-                                    flags: {
-                                        allowOnly: true
-                                    },
-                                    valids: ['x'],
-                                    invalids: ['']
-                                }
-                            },
-                            {
-                                type: 'string',
-                                flags: {
-                                    allowOnly: true
-                                },
-                                valids: ['z'],
-                                invalids: ['']
-                            }
-                        ]
-                    }
-                }
-            };
-
-            expect(schema.describe()).to.equal(outcome);
-        });
-
-        it('describes when (only otherwise)', () => {
-
-            const schema = Joi.object({
-                a: Joi.alternatives()
-                    .when('b', { is: 5, otherwise: 'y' })
-                    .try('z'),
-                b: Joi.any()
-            });
-
-            const outcome = {
-                type: 'object',
-                children: {
-                    b: {
-                        type: 'any'
-                    },
-                    a: {
-                        type: 'alternatives',
-                        alternatives: [
-                            {
-                                ref: { ref: 'value', key: 'b', path: ['b'] },
-                                is: {
-                                    type: 'number',
-                                    flags: {
-                                        allowOnly: true,
-                                        presence: 'required',
-                                        unsafe: false
-                                    },
-                                    valids: [5],
-                                    invalids: [Infinity, -Infinity]
-                                },
-                                otherwise: {
-                                    type: 'string',
-                                    flags: {
-                                        allowOnly: true
-                                    },
-                                    valids: ['y'],
-                                    invalids: ['']
-                                }
-                            },
-                            {
-                                type: 'string',
-                                flags: {
-                                    allowOnly: true
-                                },
-                                valids: ['z'],
-                                invalids: ['']
-                            }
-                        ]
-                    }
-                }
-            };
-
-            expect(schema.describe()).to.equal(outcome);
-        });
-
-        it('describes when (with schema)', () => {
-
-            const schema = Joi.alternatives()
-                .when(Joi.string().label('foo'), {
-                    then: Joi.string().required().min(1),
-                    otherwise: Joi.boolean()
-                });
-
-            const outcome = {
-                type: 'alternatives',
-                alternatives: [{
-                    peek: {
-                        type: 'string',
-                        label: 'foo',
-                        invalids: ['']
-                    },
-                    then: {
-                        type: 'string',
-                        flags: { presence: 'required' },
-                        invalids: [''],
-                        rules: [{ arg: { limit: 1 }, name: 'min' }]
-                    },
-                    otherwise: {
-                        type: 'boolean',
-                        flags: { insensitive: true },
-                        truthy: [true],
-                        falsy: [false]
-                    }
-                }]
-            };
-
-            expect(schema.describe()).to.equal(outcome);
-        });
-
-        it('describes inherited fields (from any)', () => {
-
-            const schema = Joi.alternatives()
-                .try('a')
-                .description('d')
-                .example('a')
-                .meta('b')
-                .meta('c')
-                .notes('f')
-                .tags('g');
-
-            const outcome = {
-                type: 'alternatives',
-                description: 'd',
-                notes: ['f'],
-                tags: ['g'],
-                meta: ['b', 'c'],
-                examples: ['a'],
-                alternatives: [{
-                    type: 'string',
-                    flags: {
-                        allowOnly: true
-                    },
-                    valids: ['a'],
-                    invalids: ['']
-                }]
-            };
-
-            expect(schema.describe()).to.equal(outcome);
-        });
-    });
-
-    describe('error()', () => {
-
-        it('overrides single try error', async () => {
-
-            const override = new Error('failed!');
-
-            const schema = Joi.object({
-                x: Joi.alternatives([
-                    Joi.number(),
-                    Joi.string().error(override)
-                ])
-            });
-
-            const err = await expect(schema.validate({ x: [] })).to.reject('"x" does not match any of the allowed types');
-            expect(err.details[0].context.details).to.equal([
-                {
-                    message: '"x" must be a number',
-                    path: ['x'],
-                    type: 'number.base',
-                    context: { value: [], label: 'x', key: 'x' }
-                },
-                {
-                    message: 'Error: failed!',
-                    type: 'override',
-                    context: {
-                        error: override
-                    }
-                }
-            ]);
-        });
-
-        it('overrides top level error', async () => {
-
-            const schema = Joi.object({
-                x: Joi.alternatives([
-                    Joi.number(),
-                    Joi.string()
-                ])
-                    .error(new Error('failed!'))
-            });
-
-            await expect(schema.validate({ x: [] })).to.reject('failed!');
         });
     });
 });
