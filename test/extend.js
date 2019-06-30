@@ -534,7 +534,7 @@ describe('extension', () => {
         expect(schema.validate(3)).to.contain({ error: null, value: 6 });
     });
 
-    it('does not override a predefined messages', () => {
+    it('overrides base messages', () => {
 
         const base = Joi.any().prefs({
             messages: {
@@ -566,7 +566,7 @@ describe('extension', () => {
         const schema = customJoi.myType().foo();
         const result = schema.validate({});
         expect(result.error).to.be.an.instanceof(Error);
-        expect(result.error.toString()).to.equal('ValidationError: "value" original');
+        expect(result.error.toString()).to.equal('ValidationError: "value" modified');
     });
 
     it('does not change predefined options', () => {
