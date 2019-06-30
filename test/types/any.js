@@ -839,11 +839,10 @@ describe('any', () => {
             const c = Joi.any();
             const d = Joi.any();
 
-            expect(a.concat(b)._meta).to.equal([{ a: 1 }, { b: 1 }]);
-            expect(a.concat(c)._meta).to.equal([metaA]);
-            expect(b.concat(c)._meta).to.equal([metaB]);
-            expect(c.concat(d)._meta).to.equal([]);
-
+            expect(a.concat(b).describe().meta).to.equal([{ a: 1 }, { b: 1 }]);
+            expect(a.concat(c).describe().meta).to.equal([metaA]);
+            expect(b.concat(c).describe().meta).to.equal([metaB]);
+            expect(c.concat(d).describe().meta).to.not.exist();
         });
 
         it('merges into an any', () => {
@@ -871,7 +870,6 @@ describe('any', () => {
                 type: 'any.allowOnly',
                 context: { value: 1, valids: [0], label: 'value' }
             }]);
-
         });
     });
 
@@ -1230,15 +1228,12 @@ describe('any', () => {
         it('sets the description', () => {
 
             const b = Joi.description('my description');
-            expect(b._description).to.equal('my description');
+            expect(b.describe().description).to.equal('my description');
         });
 
         it('throws when description is missing', () => {
 
-            expect(() => {
-
-                Joi.description();
-            }).to.throw('Description must be a non-empty string');
+            expect(() => Joi.description()).to.throw('Description must be a non-empty string');
         });
     });
 
@@ -1647,14 +1642,12 @@ describe('any', () => {
         it('sets an example', () => {
 
             const schema = Joi.valid(5, 6, 7).example(5);
-            expect(schema._examples).to.equal([5]);
             expect(schema.describe().examples).to.equal([5]);
         });
 
         it('does not flatten examples', () => {
 
             const schema = Joi.array().items(5, 6, 7).example([5, 6]);
-            expect(schema._examples).to.equal([[5, 6]]);
             expect(schema.describe().examples).to.equal([[5, 6]]);
         });
 
@@ -1999,23 +1992,17 @@ describe('any', () => {
         it('sets the notes', () => {
 
             const b = Joi.notes(['a']).notes('my notes');
-            expect(b._notes).to.equal(['a', 'my notes']);
+            expect(b.describe().notes).to.equal(['a', 'my notes']);
         });
 
         it('throws when notes are missing', () => {
 
-            expect(() => {
-
-                Joi.notes();
-            }).to.throw('Notes must be a non-empty string or array');
+            expect(() => Joi.notes()).to.throw('Notes must be a non-empty string or array');
         });
 
         it('throws when notes are invalid', () => {
 
-            expect(() => {
-
-                Joi.notes(5);
-            }).to.throw('Notes must be a non-empty string or array');
+            expect(() => Joi.notes(5)).to.throw('Notes must be a non-empty string or array');
         });
     });
 
@@ -2535,9 +2522,9 @@ describe('any', () => {
         it('sets the tags', () => {
 
             const b = Joi.tags(['tag1', 'tag2']).tags('tag3');
-            expect(b._tags).to.include('tag1');
-            expect(b._tags).to.include('tag2');
-            expect(b._tags).to.include('tag3');
+            expect(b.describe().tags).to.include('tag1');
+            expect(b.describe().tags).to.include('tag2');
+            expect(b.describe().tags).to.include('tag3');
         });
 
         it('throws when tags are missing', () => {
@@ -2612,16 +2599,12 @@ describe('any', () => {
         it('sets the unit', () => {
 
             const b = Joi.unit('milliseconds');
-            expect(b._unit).to.equal('milliseconds');
             expect(b.describe().unit).to.equal('milliseconds');
         });
 
         it('throws when unit is missing', () => {
 
-            expect(() => {
-
-                Joi.unit();
-            }).to.throw('Unit name must be a non-empty string');
+            expect(() => Joi.unit()).to.throw('Unit name must be a non-empty string');
         });
     });
 
