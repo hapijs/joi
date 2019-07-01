@@ -244,4 +244,79 @@ describe('Validator', () => {
             expect(input).to.equal([[1]]);
         });
     });
+
+    describe('warnings', () => {
+
+        it('reports warnings (sync)', () => {
+
+            const schema = Joi.any().warning('custom.x', { w: 'world' }).message({ 'custom.x': 'hello {#w}!' });
+            const { value, error, warning } = schema.validate('something');
+            expect(value).to.equal('something');
+            expect(error).to.not.exist();
+            expect(warning).to.equal({
+                message: 'hello world!',
+                details: [
+                    {
+                        message: 'hello world!',
+                        path: [],
+                        type: 'custom.x',
+                        context: {
+                            w: 'world',
+                            label: 'value',
+                            value: 'something'
+                        }
+                    }
+                ]
+            });
+        });
+
+        it('reports warnings (async)', async () => {
+
+            const schema = Joi.any().warning('custom.x', { w: 'world' }).message({ 'custom.x': 'hello {#w}!' });
+            const { value, warning } = await schema.validate('something', { warnings: true });
+            expect(value).to.equal('something');
+            expect(warning).to.equal({
+                message: 'hello world!',
+                details: [
+                    {
+                        message: 'hello world!',
+                        path: [],
+                        type: 'custom.x',
+                        context: {
+                            w: 'world',
+                            label: 'value',
+                            value: 'something'
+                        }
+                    }
+                ]
+            });
+        });
+
+        it('reports warnings with externals', async () => {
+
+            const append = (value) => value + '!';
+            const schema = Joi.string()
+                .warning('custom.x').message('test')
+                .external(append);
+
+            expect(await schema.validate('x', { externals: true, warnings: true })).to.equal({
+                value: 'x!',
+                error: null,
+                warning: {
+                    message: 'test',
+                    details: [
+                        {
+                            message: 'test',
+                            path: [],
+                            type: 'custom.x',
+                            context: {
+                                label: 'value',
+                                value: 'x'
+                            }
+                        }
+                    ]
+                }
+            });
+        });
+    });
 });

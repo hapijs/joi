@@ -2810,6 +2810,42 @@ describe('any', () => {
         });
     });
 
+    describe('warn', () => {
+
+        it('turns error into warning', () => {
+
+            const schema = Joi.string().min(10).warn();
+            const { value, error, warning } = schema.validate('abc');
+            expect(value).to.equal('abc');
+            expect(error).to.not.exist();
+            expect(warning).to.equal({
+                message: '"value" length must be at least 10 characters long',
+                details: [
+                    {
+                        message: '"value" length must be at least 10 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            encoding: undefined,
+                            label: 'value',
+                            limit: 10,
+                            value: 'abc'
+                        }
+                    }
+                ]
+            });
+        });
+    });
+
+    describe('warning', () => {
+
+        it('errors on invalid code', () => {
+
+            expect(() => Joi.warning()).to.throw('Invalid warning code');
+            expect(() => Joi.warning(123)).to.throw('Invalid warning code');
+        });
+    });
+
     describe('when()', () => {
 
         it('throws when options are invalid', () => {
