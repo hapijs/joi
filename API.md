@@ -302,7 +302,7 @@ Joi.assert('x', Joi.number());
 
 Provisions a simple LRU cache for caching simple inputs (`undefined`, `null`, strings, numbers, and
 booleans) where:
-- `options` - optional settins:
+- `options` - optional settings:
     - `max` - number of items to store in the cache before the least used items are dropped.
       Defaults to `1000`.
 
@@ -373,7 +373,7 @@ const schema = defaultJoi.object(); // Equivalent to a Joi.object().min(1)
 
 ### `expression(template, [options])` - aliases: `x`
 
-Generates a dyanmic expression using a template string where:
+Generates a dynamic expression using a template string where:
 - `template` - the template string using the [template syntax](#template-syntax).
 - `options` - optional settings used when creating internal references. Supports the same options
   as [`ref()`](#refkey-options).
@@ -387,12 +387,12 @@ and the `errors.escapeHtml` preference flag is set to `false`).
 
 The formula uses a simple mathematical syntax such as `a + b * 2` where the named formula variables
 are references. Most references can be used as-is but some can create ambiguity with the formula
-syntax and must be enclosed in `[]` bracets (e.g. `[.]`).
+syntax and must be enclosed in `[]` braces (e.g. `[.]`).
 
 The formulas can only operate on `null`, booleans, numbers, and strings. If any operation involves
 a string, all other numbers will be casted to strings (as the internal implementation uses simple
 JavaScript operators). The supported operators are: `^`, `*`, `/`, `%`, `+`, `-`, `<`, `<=`, `>`,
-`>=`, `==`, `!=`, `&&`, `||`, and `??` (in this order of precendece).
+`>=`, `==`, `!=`, `&&`, `||`, and `??` (in this order of precedence).
 
 The reference names can have one of the following prefixes:
 - `#` - indicates the variable references a local context value. For example, in errors this is the
@@ -412,7 +412,7 @@ And the following constants:
 ### `extend(extension)`
 
 Creates a new customized instance of the **joi** module where:
-- `extension` - the extension configuration as descrive in [Extensions](#extensions).
+- `extension` - the extension configuration as described in [Extensions](#extensions).
 
 Note that the original **joi** module is not modified by this.
 
@@ -678,7 +678,8 @@ Casts the validated value to the specified type where:
 #### `any.concat(schema)`
 
 Returns a new type that is the result of adding the rules of one type to another where:
-- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the context type or `any`. If applied to an `any` type, the schema can be any other schema.
+- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the
+  context type or `any`. If applied to an `any` type, the schema can be any other schema.
 
 ```js
 const a = Joi.string().valid('a');
@@ -691,15 +692,20 @@ const ab = a.concat(b);
 Sets a default value if the original value is undefined where:
 - `value` - the value.
   - `value` supports [references](#refkey-options).
-  - `value` may also be a function which returns the default value. If `value` is specified as a function that accepts a single parameter, that parameter will be a context object that can be used to derive the resulting value.
+  - `value` may also be a function which returns the default value. If `value` is specified as a
+    function that accepts a single parameter, that parameter will be a context object that can be
+    used to derive the resulting value.
     - Use a function when setting a dynamic value, such as the current time. Ex: `default(Date.now, 'time of creation')`
-    - **Caution: this clones the object**, which incurs some overhead so if you don't need access to the context define your method so that it does not accept any parameters.
-  - without any `value`, `default` has no effect, except for `object` that will then create nested defaults (applying inner defaults of that object).
+    - **Caution: this clones the object**, which incurs some overhead so if you don't need access
+      to the context define your method so that it does not accept any parameters.
+  - without any `value`, `default` has no effect, except for `object` that will then create nested
+    defaults (applying inner defaults of that object).
 
-Note that if `value` is an object, any changes to the object after `default()` is called will change the reference
-and any future assignment.
+Note that if `value` is an object, any changes to the object after `default()` is called will change
+the reference and any future assignment.
 
-Additionally, when specifying a method you must either have a `description` property on your method or the second parameter is required.
+Additionally, when specifying a method you must either have a `description` property on your method
+or the second parameter is required.
 
 ```js
 const generateUsername = (context) => {
@@ -848,7 +854,7 @@ const result = schema.extract(['foo', 'bar']); //same as number
 
 #### `any.failover([value, [description]])`
 
-Sets a failover value if the original value failes passing validation where:
+Sets a failover value if the original value fails passing validation where:
 - `value` - the failover value.
   - `value` supports [references](#refkey-options).
   - `value` may also be a function which returns the default value. If `value` is specified as a
@@ -1002,7 +1008,7 @@ Possible validation errors: [`any.required`](#anyrequired)
 
 Applies a set of rule options to the current ruleset or last rule added where:
 - `options` - the rules to apply where:
-  - `keep` - if `true`, the rules will not be replaced by the same unqiue rule later. For example,
+  - `keep` - if `true`, the rules will not be replaced by the same unique rule later. For example,
     `Joi.number().min(1).rule({ keep: true }).min(2)` will keep both `min()` rules instead of the later
     rule overriding the first. Defaults to `false`.
   - `message` - a single message string or a messages object where each key is an error code and
@@ -1093,8 +1099,8 @@ const schema = Joi.number().unit('milliseconds');
 
 #### `any.valid(...values)` - aliases: `only`, `equal`
 
-Adds the provided values into the allowed whitelist and marks them as the only valid values allowed
-where:
+Adds the provided values into the allowed values list and marks them as the only valid values
+allowed where:
 - `values` - one or more allowed values which can be of any type and will be matched against the
   validated value before applying any other rules. Supports [references](#refkey-options).
 
@@ -1132,7 +1138,7 @@ Validates a value using the current schema and options where:
   - `error` - error formatting settings:
     - `escapeHtml` - when `true`, error message templates will escape special characters to HTML
       entities, for security purposes. Defaults to `false`.
-    - `language` - the prefered language code for error messages. The value is matched against keys
+    - `language` - the preferred language code for error messages. The value is matched against keys
       are the root of the `messages` object, and then the error code as a child key of that. Can be
       a reference to the value, global context, or local context which is the root value passed to the
       validation function. Note that references to the value are usually not what you want as they move
@@ -1578,7 +1584,7 @@ Requires the array to comply with the specified sort order where:
     - `order` - the sort order. Allowed values:
         - `'ascending'` - sort the array in ascending order. This is the default.
         - `'descending'` - sort the array in descending order.
-    - `by` - a key name or reference to sort array objects by. Defautls to the entire value.
+    - `by` - a key name or reference to sort array objects by. Defaults to the entire value.
 
 Notes:
 - if the `convert` preference is `true`, the array is modified to match the required sort order.
@@ -2738,7 +2744,7 @@ Possible validation errors: [`string.hostname`](#stringhostname-1)
 
 #### `string.insensitive()`
 
-Allows the value to match any whitelist or blacklist item in a case insensitive comparison.
+Allows the value to match any value in the allowed list or disallowed list in a case insensitive comparison.
 
 ```js
 const schema = Joi.string().valid('a').insensitive();
@@ -2866,10 +2872,10 @@ Possible validation errors: [`string.min`](#stringmin), [`string.ref`](#stringre
 
 #### `string.normalize([form])`
 
-Requires the string value to be in a [unicode normalized](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize)
+Requires the string value to be in a [Unicode normalized](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/normalize)
 form. If the validation `convert` option is on (enabled by default), the string will be normalized.
 
-- `form` - The unicode normalization form to use. Valid values: `NFC` [default], `NFD`, `NFKC`, `NFKD`
+- `form` - The Unicode normalization form to use. Valid values: `NFC` [default], `NFD`, `NFKC`, `NFKD`
 
 ```js
 const schema = Joi.string().normalize(); // defaults to NFC
@@ -3035,7 +3041,7 @@ The [`extend()`](#extendextension) method adds custom types to **joi**. Extensio
 Extension objects use the following parameters :
 - `name` - name of the new type you are defining, this can be an existing type. **Required**.
 - `base` - an existing **joi** schema or function that returns a schema to base your type upon.
-  When `base` is a function, it is passed the type contructor arguments. Defaults to `Joi.any()`.
+  When `base` is a function, it is passed the type constructor arguments. Defaults to `Joi.any()`.
 - `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `prefs`.
 - `pre` - an optional function that runs first in the validation chain, usually serves when you need to cast values. It takes 3 arguments `value`, `state` and `prefs`.
 - `messages` - an optional object to add error definitions. Every key will be prefixed by the type name.
@@ -3072,7 +3078,7 @@ to create and return errors. This function potentially takes 5 required argument
   extension.
 - `value` - the value responsible for the error.
 - `local` - a free-form object that can contain anything you want to provide context on regarding
-  the error. This object's properties are inserted in the error message where bracketted
+  the error. This object's properties are inserted in the error message where bracketed
   placeholders are.
 - `state` - state that the validation was in, which contains the current key, path, parent if any,
   or reference if any. Usually you just have to pass the `state` you were given.
@@ -3163,8 +3169,8 @@ const schema = customJoi.number().round().dividable(3);
     - `path` - ordered array where each element is the accessor to the value where the error happened.
     - `type` - type of the error.
     - `context` - object providing context of the error containing:
-        - `key` - key of the value that errored, equivalent to the last element of `details.path`.
-        - `label` - label of the value that errored, or the `key` if any, or the default `messages.root`.
+        - `key` - key of the value that erred, equivalent to the last element of `details.path`.
+        - `label` - label of the value that erred, or the `key` if any, or the default `messages.root`.
         - `value` - the value that failed validation.
         - other error specific properties as described for each error code.
 - `annotate()` - function that returns a string with an annotated version of the object pointing at
@@ -3281,7 +3287,7 @@ Additional local context properties:
 
 #### `array.includesRequiredBoth`
 
-Some values were expected to be present in the array and are missing. This error happens when we have a mix of labelled and unlabelled schemas.
+Some values were expected to be present in the array and are missing. This error happens when we have a mix of labeled and unlabeled schemas.
 
 Additional local context properties:
 ```ts
@@ -3293,7 +3299,7 @@ Additional local context properties:
 
 #### `array.includesRequiredKnowns`
 
-Some values were expected to be present in the array and are missing. This error happens when we only have labelled schemas.
+Some values were expected to be present in the array and are missing. This error happens when we only have labeled schemas.
 
 Additional local context properties:
 ```ts
@@ -3304,7 +3310,7 @@ Additional local context properties:
 
 #### `array.includesRequiredUnknowns`
 
-Some values were expected to be present in the array and are missing. This error happens when we only have unlabelled schemas.
+Some values were expected to be present in the array and are missing. This error happens when we only have unlabeled schemas.
 
 Additional local context properties:
 ```ts
@@ -3433,7 +3439,7 @@ Additional local context properties:
 
 #### `array.hasKnown`
 
-The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is labelled.
+The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is labeled.
 
 Additional local context properties:
 ```ts
@@ -3444,7 +3450,7 @@ Additional local context properties:
 
 #### `array.hasUnknown`
 
-The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is unlabelled.
+The schema on an [`array.has()`](#arrayhas) was not found in the array. This error happens when the schema is unlabeled.
 
 #### `binary.base`
 
@@ -4149,7 +4155,7 @@ The string isn't a token.
 
 #### `string.trim`
 
-The string contains whitespaces around it.
+The string contains whitespace around it.
 
 #### `string.uppercase`
 
