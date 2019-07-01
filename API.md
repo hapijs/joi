@@ -6,6 +6,7 @@
 
 - [Joi](#joi)
   - [`assert(value, schema, [message], [options])` - aliases: `attempt`](#assertvalue-schema-message-options---aliases-attempt)
+  - [`cache.provision([options])`](#cacheprovisionoptions)
   - [`bind()`](#bind)
   - [`compile(schema, [options])`](#compileschema-options)
   - [`defaults(fn)`](#defaultsfn)
@@ -22,6 +23,8 @@
     - [`any.type`](#anytype)
     - [`any.allow(...values)`](#anyallowvalues)
     - [`any.alter(targets)`](#anyaltertargets)
+    - [`any.cache([cache])`](#anycachecache)
+      - [Cache interface](#cache-interface)
     - [`any.cast(to)`](#anycastto)
     - [`any.concat(schema)`](#anyconcatschema)
     - [`any.default([value, [description]])`](#anydefaultvalue-description)
@@ -294,6 +297,14 @@ Validates a value against a schema and [throws](#errors) if validation fails whe
 ```js
 Joi.assert('x', Joi.number());
 ```
+
+### `cache.provision([options])`
+
+Provisions a simple LRU cache for caching simple inputs (`undefined`, `null`, strings, numbers, and
+booleans) where:
+- `options` - optional settins:
+    - `max` - number of items to store in the cache before the least used items are dropped.
+      Defaults to `1000`.
 
 ### `bind()`
 
@@ -607,6 +618,46 @@ const schema = Joi.object({
 const getSchema = schema.tailor('get');
 const postSchema = schema.tailor('post');
 ```
+
+#### `any.cache([cache])`
+
+Adds caching to the schema which will attempt to cache the validation results (success and
+failures) of incoming inputs where:
+- `cache` - an optional cache implementation compatible with the built-in cache provided by
+  [`cache.provision()`](#cacheprovisionoptions). If no `cache` is passed, a default cache
+  is provisioned by using [`cache.provision()`](#cacheprovisionoptions) internally.
+
+Note that deciding which inputs to cache is left to the cache implementation. The built-in
+cache will only store simple values such as `undefined`, `null`, strings, numbers, and booleans.
+Any changes to the schema after `any.cache()` is called will disable caching on the resulting
+schema. this means that if `.cache()` is not the last statement in a schema definition, caching
+will be disabled.
+
+To disable caching for an entire schema in runtime, pass the `cache` preference set to `false`.
+
+Caching ignores changes to runtime preference. This means that if you run `schema.validatate()`
+onces using one set of preferences, and then again using another set (for example, changing the
+language), the cached results will be based on the first set of preferences.
+
+Before using caching, it is recommended to consider the performance gain as it will not speed up
+every schema. Schemas using `.valid()` list will not benefit from caching.
+
+Caching will be ignored when the schema uses references outside of the value scope.
+
+##### Cache interface
+
+Custom cache implementation must implement the following interface:
+
+```js
+class {
+    set(key, value) {}
+    get(key) { return found ? value : undefined; }
+}
+```
+
+Note that `key` and `value` can be anything including objects, array, etc. It is recommended
+to limit the size of the cache when validating external data in order to prevent an attacker
+from increasing the process memory usage by sending large amount of different data to validate.
 
 #### `any.cast(to)`
 
@@ -1061,12 +1112,18 @@ Possible validation errors: [`any.allowOnly`](#anyallowonly)
 Validates a value using the current schema and options where:
 - `value` - the value being validated.
 - `options` - an optional object with the following optional keys:
-  - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
-  - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
-  - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to
-    `validate()` and not using `any.prefs()`.
-  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
-  - `dateFormat` - sets the string format used when converting dates to strings in error messages and casting. Options are:
+  - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the
+    errors found. Defaults to `true`.
+  - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults
+    to `false`.
+  - `cache` - when `true`, schema caching is enabled (for schemas with explicit caching rules).
+    Default to `true`.
+  - `context` - provides an external data set to be used in [references](#refkey-options). Can only
+    be set as an external option to `validate()` and not using `any.prefs()`.
+  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a
+    number). Defaults to `true`.
+  - `dateFormat` - sets the string format used when converting dates to strings in error messages
+    and casting. Options are:
     - `'date'` - date string.
     - `'iso'` - date time ISO string. This is the default.
     - `'string'` - JS default date time string.
