@@ -1743,8 +1743,7 @@ describe('object', () => {
                     renames: [{
                         from: { regex: '/^(\\d+)$/' },
                         to: {
-                            template: 'x{#1}x',
-                            options: {}
+                            template: 'x{#1}x'
                         },
                         options: {
                             alias: false,
@@ -3000,8 +2999,7 @@ describe('object', () => {
                                 {
                                     name: 'max',
                                     arg: {
-                                        template: '{a - 1}',
-                                        options: {}
+                                        template: '{a - 1}'
                                     }
                                 }
                             ]
