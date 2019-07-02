@@ -5,7 +5,6 @@ const Lab = require('@hapi/lab');
 const Joi = require('../..');
 
 const Helper = require('../helper');
-const Lazy = require('../../lib/types/lazy');
 
 
 const internals = {};
@@ -17,49 +16,34 @@ const { expect } = Code;
 
 describe('lazy', () => {
 
-    describe('set()', () => {
+    it('should require a function', () => {
 
-        it('should require a function', () => {
+        expect(() => Joi.lazy()).to.throw('You must provide a function as first argument');
+        expect(() => Joi.lazy(true)).to.throw('You must provide a function as first argument');
+    });
 
-            expect(() => Joi.lazy()).to.throw('You must provide a function as first argument');
-            expect(() => Joi.lazy(true)).to.throw('You must provide a function as first argument');
-        });
+    it('validates a schema is returned', async () => {
 
-        it('validates a schema is set', async () => {
+        const fn = () => true;
+        const schema = Joi.lazy(fn);
+        const err = await expect(schema.validate('bar')).to.reject('schema error: lazy schema function must return a schema');
+        expect(err.details).to.equal([{
+            message: 'schema error: lazy schema function must return a schema',
+            path: [],
+            type: 'lazy.schema',
+            context: { label: 'value', schema: true, value: 'bar' }
+        }]);
+    });
 
-            const schema = Lazy;
-            const err = await expect(schema.validate('bar')).to.reject('schema error: lazy schema must be set');
-            expect(err.details).to.equal([{
-                message: 'schema error: lazy schema must be set',
-                path: [],
-                type: 'lazy.base',
-                context: { label: 'value', value: 'bar' }
-            }]);
-        });
+    it('checks options', () => {
 
-        it('validates a schema is returned', async () => {
-
-            const fn = () => true;
-            const schema = Joi.lazy(fn);
-            const err = await expect(schema.validate('bar')).to.reject('schema error: lazy schema function must return a schema');
-            expect(err.details).to.equal([{
-                message: 'schema error: lazy schema function must return a schema',
-                path: [],
-                type: 'lazy.schema',
-                context: { label: 'value', schema: true, value: 'bar' }
-            }]);
-        });
-
-        it('checks options', () => {
-
-            expect(() => Joi.lazy(() => { }, false)).to.throw('Options must be an object');
-            expect(() => Joi.lazy(() => { }, true)).to.throw('Options must be an object');
-            expect(() => Joi.lazy(() => { }, [])).to.throw('Options must be an object');
-            expect(() => Joi.lazy(() => { }, { oce: true })).to.throw('Options contain unknown keys: oce');
-            expect(() => Joi.lazy(() => { }, { once: 'foo' })).to.throw('Option "once" must be a boolean');
-            expect(() => Joi.lazy(() => { }, {})).to.not.throw();
-            expect(() => Joi.lazy(() => { }, { once: true })).to.not.throw();
-        });
+        expect(() => Joi.lazy(() => { }, false)).to.throw('Options must be an object');
+        expect(() => Joi.lazy(() => { }, true)).to.throw('Options must be an object');
+        expect(() => Joi.lazy(() => { }, [])).to.throw('Options must be an object');
+        expect(() => Joi.lazy(() => { }, { oce: true })).to.throw('Options contain unknown keys: oce');
+        expect(() => Joi.lazy(() => { }, { once: 'foo' })).to.throw('Option "once" must be a boolean');
+        expect(() => Joi.lazy(() => { }, {})).to.not.throw();
+        expect(() => Joi.lazy(() => { }, { once: true })).to.not.throw();
     });
 
     describe('validate()', () => {
@@ -184,9 +168,7 @@ describe('lazy', () => {
                                 type: 'lazy',
                                 description: 'person',
                                 schema: lazy,
-                                flags: {
-                                    once: true
-                                }
+                                once: true
                             }
                         ]
                     },

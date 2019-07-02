@@ -216,7 +216,6 @@
     - [`function.class`](#functionclass)
     - [`function.maxArity`](#functionmaxarity)
     - [`function.minArity`](#functionminarity)
-    - [`lazy.base`](#lazybase)
     - [`lazy.schema`](#lazyschema)
     - [`number.base`](#numberbase)
     - [`number.greater`](#numbergreater)
@@ -2003,7 +2002,7 @@ const Person = Joi.object({
 });
 ```
 
-Possible validation errors: [`lazy.base`](#lazybase), [`lazy.schema`](#lazyschema)
+Possible validation errors: [`lazy.schema`](#lazyschema)
 
 ### `number` - inherits from `Any`
 
@@ -3660,10 +3659,6 @@ Additional local context properties:
     n: number // Minimum expected arity
 }
 ```
-
-#### `lazy.base`
-
-The lazy function is not set.
 
 #### `lazy.schema`
 

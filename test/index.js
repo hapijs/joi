@@ -2527,8 +2527,8 @@ describe('Joi', () => {
                 max: {
                     type: 'string',
                     flags: {
-                        default: 0,
-                        failover: 1
+                        default: { value: 0 },
+                        failover: { value: 1 }
                     },
                     invalids: [''],
                     rules: [{ name: 'max', arg: { limit: 3 } }]
