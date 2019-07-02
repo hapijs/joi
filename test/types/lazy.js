@@ -25,7 +25,7 @@ describe('lazy', () => {
             expect(() => Joi.lazy(true)).to.throw('You must provide a function as first argument');
         });
 
-        it('should validate a schema is set', async () => {
+        it('validates a schema is set', async () => {
 
             const schema = Lazy;
             const err = await expect(schema.validate('bar')).to.reject('schema error: lazy schema must be set');
@@ -37,7 +37,7 @@ describe('lazy', () => {
             }]);
         });
 
-        it('should validate a schema is returned', async () => {
+        it('validates a schema is returned', async () => {
 
             const fn = () => true;
             const schema = Joi.lazy(fn);
@@ -50,7 +50,7 @@ describe('lazy', () => {
             }]);
         });
 
-        it('should check options', () => {
+        it('checks options', () => {
 
             expect(() => Joi.lazy(() => { }, false)).to.throw('Options must be an object');
             expect(() => Joi.lazy(() => { }, true)).to.throw('Options must be an object');
@@ -64,7 +64,7 @@ describe('lazy', () => {
 
     describe('validate()', () => {
 
-        it('should validate a recursive schema', () => {
+        it('validates a recursive schema', () => {
 
             let callCount = 0;
             const schema = Joi.object({
@@ -96,16 +96,18 @@ describe('lazy', () => {
             expect(callCount).to.equal(1);
         });
 
-        it('should validate a recursive schema with once disabled', () => {
+        it('validates a recursive schema with once disabled', () => {
 
             let callCount = 0;
+            const lazy = () => {
+
+                callCount++;
+                return schema;
+            };
+
             const schema = Joi.object({
                 name: Joi.string().required(),
-                children: Joi.array().items(Joi.lazy(() => {
-
-                    callCount++;
-                    return schema;
-                }, { once: false }))
+                children: Joi.array().items(Joi.lazy(lazy, { once: false }))
             });
 
             Helper.validate(schema, [
@@ -127,11 +129,41 @@ describe('lazy', () => {
 
             expect(callCount).to.equal(9);
         });
+
+        it('validates a schema with when()', () => {
+
+            let callCount = 0;
+            const lazy = () => {
+
+                callCount++;
+                return schema;
+            };
+
+            const schema = Joi.object({
+                must: Joi.boolean().required(),
+                child: Joi.lazy(lazy)
+                    .when('must', { is: true, then: Joi.required() })
+            });
+
+            Helper.validate(schema, [
+                [{ must: false }, true],
+                [{ must: false, child: { must: false } }, true],
+                [{ must: true, child: { must: false } }, true],
+                [{ must: true, child: { must: true, child: { must: false } } }, true]
+            ]);
+
+            expect(callCount).to.equal(1);
+        });
+
+        it('errors on concat of lazy to lazy', () => {
+
+            expect(() => Joi.lazy(() => null).concat(Joi.lazy(() => null))).to.throw('Cannot merge type lazy with another type: lazy');
+        });
     });
 
     describe('describe()', () => {
 
-        it('should be able to describe with description', () => {
+        it('describes schema', () => {
 
             const lazy = () => schema;
             const schema = Joi.object({
@@ -166,6 +198,5 @@ describe('lazy', () => {
                 }
             });
         });
-
     });
 });
