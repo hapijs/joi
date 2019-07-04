@@ -361,8 +361,8 @@ describe('array', () => {
                 type: 'array',
                 flags: { sparse: false },
                 rules: [
-                    { name: 'has', arg: { type: 'string', invalids: [''] } },
-                    { name: 'has', arg: { type: 'number', flags: { unsafe: false }, invalids: [Infinity, -Infinity] } }
+                    { name: 'has', args: { schema: { type: 'string', invalids: [''] } } },
+                    { name: 'has', args: { schema: { type: 'number', flags: { unsafe: false }, invalids: [Infinity, -Infinity] } } }
                 ]
             });
         });

@@ -1237,7 +1237,7 @@ describe('object', () => {
                         schema: {
                             invalids: [''],
                             rules: [{
-                                arg: { version: 'uuidv4' },
+                                args: { options: { version: 'uuidv4' } },
                                 name: 'guid'
                             }],
                             type: 'string'
@@ -2961,10 +2961,12 @@ describe('object', () => {
                             rules: [
                                 {
                                     name: 'length',
-                                    arg: {
-                                        ref: 'value',
-                                        key: 'a',
-                                        path: ['a']
+                                    args: {
+                                        limit: {
+                                            ref: 'value',
+                                            key: 'a',
+                                            path: ['a']
+                                        }
                                     }
                                 }
                             ]
@@ -2998,8 +3000,10 @@ describe('object', () => {
                             rules: [
                                 {
                                     name: 'max',
-                                    arg: {
-                                        template: '{a - 1}'
+                                    args: {
+                                        limit: {
+                                            template: '{a - 1}'
+                                        }
                                     }
                                 }
                             ]
@@ -3254,17 +3258,16 @@ describe('object', () => {
 
             const description = Joi.object().instance(RegExp).describe();
 
-            expect(description.rules).to.include({ name: 'instance', arg: { name: 'RegExp', ctor: RegExp } });
+            expect(description.rules[0]).to.equal({ name: 'instance', args: { typeData: { name: 'RegExp', ctor: RegExp } } });
         });
 
         it('uses the constructor reference in the schema description', () => {
 
-            const Foo = function Foo() {
-            };
+            const Foo = function Foo() { };
 
             const description = Joi.object().instance(Foo).describe();
 
-            expect(new Foo()).to.be.an.instanceof(description.rules[0].arg.ctor);
+            expect(new Foo()).to.be.an.instanceof(description.rules[0].args.typeData.ctor);
         });
     });
 

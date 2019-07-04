@@ -13014,12 +13014,14 @@ describe('string', () => {
                 ],
                 rules: [
                     {
-                        arg: {
-                            version: [
-                                'uuidv1',
-                                'uuidv3',
-                                'uuidv5'
-                            ]
+                        args: {
+                            options: {
+                                version: [
+                                    'uuidv1',
+                                    'uuidv3',
+                                    'uuidv5'
+                                ]
+                            }
                         },
                         name: 'guid'
                     }
@@ -13040,9 +13042,11 @@ describe('string', () => {
                 rules: [
                     {
                         name: 'regex',
-                        arg: {
-                            pattern: /[a-z]/,
-                            invert: true
+                        args: {
+                            patternObject: {
+                                pattern: /[a-z]/,
+                                invert: true
+                            }
                         }
                     }
                 ]

@@ -1239,8 +1239,8 @@ describe('ref', () => {
                 is: {
                     type: 'date',
                     rules: [
-                        { name: 'min', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
-                        { name: 'max', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } }
+                        { name: 'min', args: { date: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } },
+                        { name: 'max', args: { date: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } }
                     ]
                 },
                 then: {
@@ -1249,10 +1249,10 @@ describe('ref', () => {
                     valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }],
                     invalids: [{ ref: 'global', key: 'b.c', path: ['b', 'c'] }, Infinity, -Infinity],
                     rules: [
-                        { name: 'min', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
-                        { name: 'max', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
-                        { name: 'greater', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
-                        { name: 'less', arg: { ref: 'value', key: 'a.b', path: ['a', 'b'] } }
+                        { name: 'min', args: { limit: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } },
+                        { name: 'max', args: { limit: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } },
+                        { name: 'greater', args: { limit: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } },
+                        { name: 'less', args: { limit: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } }
                     ]
                 },
                 otherwise: {
@@ -1262,7 +1262,8 @@ describe('ref', () => {
                     invalids: [{ ref: 'global', key: 'b.c', path: ['b', 'c'] }],
                     rules: [{
                         name: 'assert',
-                        arg: {
+                        args: {
+                            message: 'pass the assertion test',
                             schema: {
                                 type: 'any',
                                 flags: { allowOnly: true },
@@ -1276,9 +1277,9 @@ describe('ref', () => {
                             type: 'string',
                             invalids: [''],
                             rules: [
-                                { name: 'min', arg: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } },
-                                { name: 'max', arg: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } },
-                                { name: 'length', arg: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } }
+                                { name: 'min', args: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } },
+                                { name: 'max', args: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } },
+                                { name: 'length', args: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } }
                             ]
                         }
                     },

@@ -256,7 +256,7 @@ describe('extension', () => {
 
         expect(merged.describe()).to.equal({
             type: 'myType',
-            rules: [{ name: 'test', arg: {} }, { name: 'test', arg: {} }]
+            rules: [{ name: 'test' }, { name: 'test' }]
         });
     });
 
@@ -1082,8 +1082,8 @@ describe('extension', () => {
             expect(schema.describe()).to.equal({
                 type: 'myType',
                 rules: [
-                    { name: 'foo', arg: {} },
-                    { name: 'bar', arg: {} }
+                    { name: 'foo' },
+                    { name: 'bar' }
                 ]
             });
         });
@@ -1110,7 +1110,7 @@ describe('extension', () => {
             expect(schema.describe()).to.equal({
                 type: 'myType',
                 rules: [
-                    { name: 'foo', arg: { bar: 'bar', baz: 42, qux: { ref: 'value', key: 'a.b', path: ['a', 'b'] }, quux: { ref: 'global', key: 'c.d', path: ['c', 'd'] } } }
+                    { name: 'foo', args: { bar: 'bar', baz: 42, qux: { ref: 'value', key: 'a.b', path: ['a', 'b'] }, quux: { ref: 'global', key: 'c.d', path: ['c', 'd'] } } }
                 ]
             });
         });
@@ -1147,8 +1147,8 @@ describe('extension', () => {
             expect(schema.describe()).to.equal({
                 type: 'myType',
                 rules: [
-                    { name: 'foo', description: 'something', arg: { bar: 'bar' } },
-                    { name: 'bar', description: 'whatever', arg: { baz: 'baz' } }
+                    { name: 'foo', description: 'something', args: { bar: 'bar' } },
+                    { name: 'bar', description: 'whatever', args: { baz: 'baz' } }
                 ]
             });
         });
@@ -1162,8 +1162,8 @@ describe('extension', () => {
                     expect(description).to.equal({
                         type: 'myType',
                         rules: [
-                            { name: 'foo', description: 'something', arg: { bar: 'bar' } },
-                            { name: 'bar', description: 'whatever', arg: { baz: 'baz' } }
+                            { name: 'foo', description: 'something', args: { bar: 'bar' } },
+                            { name: 'bar', description: 'whatever', args: { baz: 'baz' } }
                         ]
                     });
 
@@ -1198,8 +1198,8 @@ describe('extension', () => {
             expect(schema.describe()).to.equal({
                 type: 'zalgo',
                 rules: [
-                    { name: 'foo', description: 'something', arg: { bar: 'bar' } },
-                    { name: 'bar', description: 'whatever', arg: { baz: 'baz' } }
+                    { name: 'foo', description: 'something', args: { bar: 'bar' } },
+                    { name: 'bar', description: 'whatever', args: { baz: 'baz' } }
                 ]
             });
         });

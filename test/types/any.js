@@ -2155,7 +2155,7 @@ describe('any', () => {
                     invalids: [Infinity, -Infinity],
                     flags: { unsafe: false },
                     rules: [
-                        { arg: 10, name: 'min' }
+                        { args: { limit: 10 }, name: 'min' }
                     ]
                 },
                 alternatives: [{
@@ -2177,7 +2177,7 @@ describe('any', () => {
                             unsafe: false
                         },
                         invalids: [Infinity, -Infinity],
-                        rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
+                        rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
                     }
                 }]
             });
@@ -3131,7 +3131,7 @@ describe('any', () => {
                     invalids: [Infinity, -Infinity],
                     flags: { unsafe: false },
                     rules: [
-                        { arg: 10, name: 'min' }
+                        { args: { limit: 10 }, name: 'min' }
                     ]
                 },
                 alternatives: [{
@@ -3153,7 +3153,7 @@ describe('any', () => {
                             unsafe: false
                         },
                         invalids: [Infinity, -Infinity],
-                        rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
+                        rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
                     }
                 }]
             });
@@ -3169,20 +3169,20 @@ describe('any', () => {
                     type: 'number',
                     flags: { unsafe: false },
                     invalids: [Infinity, -Infinity],
-                    rules: [{ arg: 10, name: 'min' }]
+                    rules: [{ args: { limit: 10 }, name: 'min' }]
                 },
                 alternatives: [{
                     peek: {
                         type: 'number',
                         flags: { unsafe: false },
                         invalids: [Infinity, -Infinity],
-                        rules: [{ name: 'min', arg: 5 }]
+                        rules: [{ name: 'min', args: { limit: 5 } }]
                     },
                     then: {
                         type: 'number',
                         flags: { presence: 'required', unsafe: false },
                         invalids: [Infinity, -Infinity],
-                        rules: [{ name: 'min', arg: 10 }, { name: 'max', arg: 20 }]
+                        rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
                     }
                 }]
             });

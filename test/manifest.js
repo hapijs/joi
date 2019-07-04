@@ -68,7 +68,7 @@ describe('Manifest', () => {
                             email: {
                                 type: 'string',
                                 invalids: [''],
-                                rules: [{ name: 'email', arg: {} }]
+                                rules: [{ name: 'email' }]
                             },
                             domain: {
                                 type: 'string',
@@ -101,7 +101,7 @@ describe('Manifest', () => {
                             {
                                 type: 'string',
                                 invalids: [''],
-                                rules: [{ name: 'min', arg: { limit: 3 } }]
+                                rules: [{ name: 'min', args: { limit: 3 } }]
                             }
                         ]
                     },
@@ -112,7 +112,7 @@ describe('Manifest', () => {
                             failover: { value: 1 }
                         },
                         invalids: [''],
-                        rules: [{ name: 'max', arg: { limit: 3 } }]
+                        rules: [{ name: 'max', args: { limit: 3 } }]
                     },
                     required: {
                         type: 'string',

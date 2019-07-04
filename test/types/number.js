@@ -111,7 +111,7 @@ describe('number', () => {
                 rules: [
                     {
                         name: 'min',
-                        arg: 0
+                        args: { limit: 0 }
                     }
                 ]
             });
