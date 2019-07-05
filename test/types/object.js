@@ -1174,20 +1174,6 @@ describe('object', () => {
             });
         });
 
-        it('respects the shallow parameter', () => {
-
-            const schema = Joi.object({
-                name: Joi.string(),
-                child: Joi.object({
-                    name: Joi.string()
-                })
-            });
-
-            expect(Object.keys(schema.describe(true))).to.not.include('children');
-            expect(Object.keys(schema.describe())).to.include('children');
-
-        });
-
         it('describes patterns', () => {
 
             const schema = Joi.object({
