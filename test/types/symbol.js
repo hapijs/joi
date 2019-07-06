@@ -219,20 +219,5 @@ describe('symbol', () => {
                 context: { value: 1, valids: symbols, label: 'value' }
             }]);
         });
-
-        it('should describe value map', () => {
-
-            const symbols = [Symbol(1), Symbol(2)];
-            const map = new Map([[1, symbols[0]], ['two', symbols[1]]]);
-            const schema = Joi.symbol().map(map).describe();
-            expect(schema).to.equal({
-                type: 'symbol',
-                flags: {
-                    allowOnly: true
-                },
-                map,
-                valids: symbols
-            });
-        });
     });
 });

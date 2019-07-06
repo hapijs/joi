@@ -243,5 +243,33 @@ describe('Manifest', () => {
             const description = Joi.allow(null).describe();
             expect(description.invalids).to.not.exist();
         });
+
+        it('describes value map', () => {
+
+            const symbols = [Symbol(1), Symbol(2)];
+            const map = new Map([[1, symbols[0]], ['two', symbols[1]]]);
+            const schema = Joi.symbol().map(map).describe();
+            expect(schema).to.equal({
+                type: 'symbol',
+                flags: {
+                    allowOnly: true
+                },
+                map: [...map.entries()],
+                valids: symbols
+            });
+        });
+
+        it('describes symbol without map', () => {
+
+            const symbols = [Symbol(1), Symbol(2)];
+            const schema = Joi.symbol().valid(...symbols).describe();
+            expect(schema).to.equal({
+                type: 'symbol',
+                flags: {
+                    allowOnly: true
+                },
+                valids: symbols
+            });
+        });
     });
 });
