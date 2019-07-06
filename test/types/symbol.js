@@ -27,6 +27,17 @@ describe('symbol', () => {
         expect(() => Joi.symbol('invalid argument.')).to.throw('The symbol type does not allow arguments');
     });
 
+    describe('clone()', () => {
+
+        it('clones a symbols type', () => {
+
+            const schema = Joi.symbol();
+            const clone = schema.clone();
+            expect(schema).to.equal(clone);
+            expect(schema).to.not.shallow.equal(clone);
+        });
+    });
+
     describe('validate()', () => {
 
         it('handles plain symbols', () => {
@@ -80,9 +91,9 @@ describe('symbol', () => {
                     [1, true, null, symbols[0]],
                     [symbols[0], true, null, symbols[0]],
                     ['1', false, null, {
-                        message: `"value" must be one of Map { 1 => Symbol(1), 'two' => Symbol(2) }`,
+                        message: `"value" must be one of [1 -> Symbol(1), two -> Symbol(2)]`,
                         details: [{
-                            message: `"value" must be one of Map { 1 => Symbol(1), 'two' => Symbol(2) }`,
+                            message: `"value" must be one of [1 -> Symbol(1), two -> Symbol(2)]`,
                             path: [],
                             type: 'symbol.map',
                             context: { label: 'value', value: '1', map }
@@ -120,9 +131,9 @@ describe('symbol', () => {
                         }]
                     }],
                     ['toString', false, null, {
-                        message: `"value" must be one of Map { 'one' => Symbol(one), 'two' => Symbol(two) }`,
+                        message: `"value" must be one of [one -> Symbol(one), two -> Symbol(two)]`,
                         details: [{
-                            message: `"value" must be one of Map { 'one' => Symbol(one), 'two' => Symbol(two) }`,
+                            message: `"value" must be one of [one -> Symbol(one), two -> Symbol(two)]`,
                             path: [],
                             type: 'symbol.map',
                             context: { label: 'value', value: 'toString', map: new Map([['one', symbols[0]], ['two', symbols[1]]]) }
