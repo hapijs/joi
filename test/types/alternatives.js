@@ -303,9 +303,7 @@ describe('alternatives', () => {
                     },
                     otherwise: {
                         type: 'boolean',
-                        flags: { insensitive: true },
-                        truthy: [true],
-                        falsy: [false]
+                        flags: { insensitive: true }
                     }
                 }]
             };
@@ -456,8 +454,6 @@ describe('alternatives', () => {
                     is: {
                         type: 'boolean',
                         flags: { allowOnly: true, insensitive: true, presence: 'required' },
-                        truthy: [true],
-                        falsy: [false],
                         valids: [true]
                     },
                     ref: { ref: 'value', key: 'a', path: ['a'] },
@@ -485,8 +481,6 @@ describe('alternatives', () => {
                     is: {
                         type: 'boolean',
                         flags: { allowOnly: true, insensitive: true, presence: 'required' },
-                        truthy: [true],
-                        falsy: [false],
                         valids: [true]
                     },
                     ref: { ref: 'value', key: 'a', path: ['a'] },

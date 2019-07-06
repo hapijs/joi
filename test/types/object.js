@@ -1193,8 +1193,6 @@ describe('object', () => {
                         regex: '/\\w\\d/i',
                         rule: {
                             type: 'boolean',
-                            truthy: [true],
-                            falsy: [false],
                             flags: {
                                 insensitive: true
                             }
@@ -1230,8 +1228,6 @@ describe('object', () => {
                         },
                         rule: {
                             type: 'boolean',
-                            truthy: [true],
-                            falsy: [false],
                             flags: {
                                 insensitive: true
                             }
@@ -2934,9 +2930,7 @@ describe('object', () => {
                             type: 'boolean',
                             flags: {
                                 insensitive: true
-                            },
-                            truthy: [true],
-                            falsy: [false]
+                            }
                         },
                         regex: '/^x\\d+$/',
                         matches: {

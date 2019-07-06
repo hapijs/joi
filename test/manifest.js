@@ -271,5 +271,11 @@ describe('Manifest', () => {
                 valids: symbols
             });
         });
+
+        it('handles empty values', () => {
+
+            expect(Joi.allow(1).invalid(1).describe()).to.equal({ type: 'any', invalids: [1] });
+            expect(Joi.invalid(1).allow(1).describe()).to.equal({ type: 'any', valids: [1] });
+        });
     });
 });

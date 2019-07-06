@@ -674,8 +674,8 @@ describe('boolean', () => {
                     presence: 'required',
                     insensitive: true
                 },
-                truthy: [true, 'yes'],
-                falsy: [false, 'no']
+                truthy: ['yes'],
+                falsy: ['no']
             });
         });
     });
