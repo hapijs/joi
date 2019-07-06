@@ -1234,7 +1234,7 @@ describe('ref', () => {
                 invalids: [{ ref: 'global', key: 'b.c', path: ['b', 'c'] }],
                 valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }]
             },
-            alternatives: [{
+            matches: [{
                 ref: { ref: 'value', key: 'a.b', path: ['a', 'b'] },
                 is: {
                     type: 'date',

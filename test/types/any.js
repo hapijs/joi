@@ -2158,7 +2158,7 @@ describe('any', () => {
                         { args: { limit: 10 }, name: 'min' }
                     ]
                 },
-                alternatives: [{
+                matches: [{
                     ref: { ref: 'value', key: 'a', path: ['a'] },
                     is: {
                         type: 'number',
@@ -3118,9 +3118,16 @@ describe('any', () => {
             ]);
         });
 
-        it('can describe as the original object', () => {
+        it('describes the base schema', () => {
 
-            const schema = Joi.number().min(10).when('a', { is: 5, then: Joi.number().max(20).required() }).describe();
+            const schema = Joi.number()
+                .min(10)
+                .when('a', {
+                    is: 5,
+                    then: Joi.number().max(20).required()
+                })
+                .describe();
+
             expect(schema).to.equal({
                 type: 'alternatives',
                 flags: {
@@ -3134,7 +3141,7 @@ describe('any', () => {
                         { args: { limit: 10 }, name: 'min' }
                     ]
                 },
-                alternatives: [{
+                matches: [{
                     ref: { ref: 'value', key: 'a', path: ['a'] },
                     is: {
                         type: 'number',
@@ -3161,7 +3168,10 @@ describe('any', () => {
 
         it('can describe as the original object (with a schema as a condition)', () => {
 
-            const schema = Joi.number().min(10).when(Joi.number().min(5), { then: Joi.number().max(20).required() }).describe();
+            const schema = Joi.number()
+                .min(10)
+                .when(Joi.number().min(5), { then: Joi.number().max(20).required() }).describe();
+
             expect(schema).to.equal({
                 type: 'alternatives',
                 flags: { presence: 'ignore' },
@@ -3171,7 +3181,7 @@ describe('any', () => {
                     invalids: [Infinity, -Infinity],
                     rules: [{ args: { limit: 10 }, name: 'min' }]
                 },
-                alternatives: [{
+                matches: [{
                     peek: {
                         type: 'number',
                         flags: { unsafe: false },

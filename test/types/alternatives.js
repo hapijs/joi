@@ -104,7 +104,7 @@ describe('alternatives', () => {
                     },
                     a: {
                         type: 'alternatives',
-                        alternatives: [
+                        matches: [
                             {
                                 ref: { ref: 'value', key: 'b', path: ['b'] },
                                 is: {
@@ -148,12 +148,14 @@ describe('alternatives', () => {
                                 }
                             },
                             {
-                                type: 'string',
-                                flags: {
-                                    allowOnly: true
-                                },
-                                valids: ['z'],
-                                invalids: ['']
+                                schema: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['z'],
+                                    invalids: ['']
+                                }
                             }
                         ]
                     }
@@ -180,7 +182,7 @@ describe('alternatives', () => {
                     },
                     a: {
                         type: 'alternatives',
-                        alternatives: [
+                        matches: [
                             {
                                 ref: { ref: 'value', key: 'b', path: ['b'] },
                                 is: {
@@ -203,12 +205,14 @@ describe('alternatives', () => {
                                 }
                             },
                             {
-                                type: 'string',
-                                flags: {
-                                    allowOnly: true
-                                },
-                                valids: ['z'],
-                                invalids: ['']
+                                schema: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['z'],
+                                    invalids: ['']
+                                }
                             }
                         ]
                     }
@@ -235,7 +239,7 @@ describe('alternatives', () => {
                     },
                     a: {
                         type: 'alternatives',
-                        alternatives: [
+                        matches: [
                             {
                                 ref: { ref: 'value', key: 'b', path: ['b'] },
                                 is: {
@@ -258,12 +262,14 @@ describe('alternatives', () => {
                                 }
                             },
                             {
-                                type: 'string',
-                                flags: {
-                                    allowOnly: true
-                                },
-                                valids: ['z'],
-                                invalids: ['']
+                                schema: {
+                                    type: 'string',
+                                    flags: {
+                                        allowOnly: true
+                                    },
+                                    valids: ['z'],
+                                    invalids: ['']
+                                }
                             }
                         ]
                     }
@@ -283,7 +289,7 @@ describe('alternatives', () => {
 
             const outcome = {
                 type: 'alternatives',
-                alternatives: [{
+                matches: [{
                     peek: {
                         type: 'string',
                         label: 'foo',
@@ -325,13 +331,15 @@ describe('alternatives', () => {
                 tags: ['g'],
                 meta: ['b', 'c'],
                 examples: ['a'],
-                alternatives: [{
-                    type: 'string',
-                    flags: {
-                        allowOnly: true
-                    },
-                    valids: ['a'],
-                    invalids: ['']
+                matches: [{
+                    schema: {
+                        type: 'string',
+                        flags: {
+                            allowOnly: true
+                        },
+                        valids: ['a'],
+                        invalids: ['']
+                    }
                 }]
             };
 
@@ -444,7 +452,7 @@ describe('alternatives', () => {
                 base: { type: 'any' },
                 flags: { presence: 'ignore' },
                 type: 'alternatives',
-                alternatives: [{
+                matches: [{
                     is: {
                         type: 'boolean',
                         flags: { allowOnly: true, insensitive: true, presence: 'required' },
@@ -473,7 +481,7 @@ describe('alternatives', () => {
                 flags: { presence: 'ignore' },
                 label: 'Label b',
                 type: 'alternatives',
-                alternatives: [{
+                matches: [{
                     is: {
                         type: 'boolean',
                         flags: { allowOnly: true, insensitive: true, presence: 'required' },

@@ -92,16 +92,20 @@ describe('Manifest', () => {
                     },
                     min: {
                         type: 'alternatives',
-                        alternatives: [
+                        matches: [
                             {
-                                type: 'number',
-                                invalids: [Infinity, -Infinity],
-                                flags: { unsafe: false }
+                                schema: {
+                                    type: 'number',
+                                    invalids: [Infinity, -Infinity],
+                                    flags: { unsafe: false }
+                                }
                             },
                             {
-                                type: 'string',
-                                invalids: [''],
-                                rules: [{ name: 'min', args: { limit: 3 } }]
+                                schema: {
+                                    type: 'string',
+                                    invalids: [''],
+                                    rules: [{ name: 'min', args: { limit: 3 } }]
+                                }
                             }
                         ]
                     },

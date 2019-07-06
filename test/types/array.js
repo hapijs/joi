@@ -149,7 +149,7 @@ describe('array', () => {
             expect(desc).to.equal({
                 type: 'array',
                 flags: { sparse: false },
-                orderedItems: [
+                ordered: [
                     { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
                     { type: 'string', invalids: [''] },
                     { type: 'string', invalids: [''], flags: { presence: 'required' } }
