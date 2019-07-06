@@ -1190,7 +1190,7 @@ describe('object', () => {
                 },
                 patterns: [
                     {
-                        regex: '/\\w\\d/i',
+                        regex: { regex: '/\\w\\d/i' },
                         rule: {
                             type: 'boolean',
                             flags: {
@@ -1719,7 +1719,7 @@ describe('object', () => {
                 expect(schema.describe()).to.equal({
                     type: 'object',
                     patterns: [{
-                        regex: '/^x\\d+x$/',
+                        regex: { regex: '/^x\\d+x$/' },
                         rule: { type: 'any' }
                     }],
                     renames: [{
@@ -1760,7 +1760,7 @@ describe('object', () => {
                 expect(schema.describe()).to.equal({
                     type: 'object',
                     patterns: [{
-                        regex: '/^x\\d+x$/',
+                        regex: { regex: '/^x\\d+x$/' },
                         rule: { type: 'any' }
                     }],
                     renames: [{
@@ -2932,7 +2932,7 @@ describe('object', () => {
                                 insensitive: true
                             }
                         },
-                        regex: '/^x\\d+$/',
+                        regex: { regex: '/^x\\d+$/' },
                         matches: {
                             type: 'array',
                             flags: {
@@ -2961,7 +2961,7 @@ describe('object', () => {
                             },
                             invalids: [Infinity, -Infinity]
                         },
-                        regex: '/^z\\w+$/'
+                        regex: { regex: '/^z\\w+$/' }
                     },
                     {
                         rule: {
@@ -2971,7 +2971,7 @@ describe('object', () => {
                             },
                             invalids: [Infinity, -Infinity]
                         },
-                        regex: '/^x\\w+$/',
+                        regex: { regex: '/^x\\w+$/' },
                         matches: {
                             type: 'array',
                             flags: {
