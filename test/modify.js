@@ -400,9 +400,7 @@ describe('Modify', () => {
                     .assert('b.d', Joi.valid(1))
                     .assert('a.b', Joi.valid(Joi.ref('b.d'), 'x').id('assert'));
 
-                after._ruleset = false;
-
-                expect(before.fork('assert', (schema) => schema.valid('x'))).to.equal(after);
+                expect(before.fork('assert', (schema) => schema.valid('x')).describe()).to.equal(after.describe());
             });
 
             it('adjusts object assert (with pattern)', () => {
@@ -431,8 +429,6 @@ describe('Modify', () => {
                     .pattern(/\d/, Joi.any())
                     .assert('a.b', Joi.valid(Joi.ref('b.d'), 'x').id('assert'));
 
-                after._ruleset = false;
-
                 expect(before.fork('assert', (schema) => schema.valid('x')).describe()).to.equal(after.describe());
             });
 
@@ -444,9 +440,7 @@ describe('Modify', () => {
                 const after = Joi.object()
                     .pattern(/.*/, Joi.valid('x', 'y').id('pattern'));
 
-                after._ruleset = false;
-
-                expect(before.fork('pattern', (schema) => schema.valid('y'))).to.equal(after);
+                expect(before.fork('pattern', (schema) => schema.valid('y')).describe()).to.equal(after.describe());
             });
         });
 

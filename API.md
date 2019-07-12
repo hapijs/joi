@@ -96,7 +96,7 @@
     - [`func.class()`](#funcclass)
     - [`func.maxArity(n)`](#funcmaxarityn)
     - [`func.minArity(n)`](#funcminarityn)
-  - [`lazy(fn[, options])` - inherits from `Any`](#lazyfn-options---inherits-from-any)
+  - [`link(ref[, options])` - inherits from `Any`](#linkref-options---inherits-from-any)
   - [`number` - inherits from `Any`](#number---inherits-from-any)
     - [`number.greater(limit)`](#numbergreaterlimit)
     - [`number.integer()`](#numberinteger)
@@ -216,7 +216,9 @@
     - [`function.class`](#functionclass)
     - [`function.maxArity`](#functionmaxarity)
     - [`function.minArity`](#functionminarity)
-    - [`lazy.schema`](#lazyschema)
+    - [`link.depth`](#linkdepth)
+    - [`link.loop`](#linkloop)
+    - [`link.ref`](#linkref)
     - [`number.base`](#numberbase)
     - [`number.greater`](#numbergreater)
     - [`number.integer`](#numberinteger-1)
@@ -1984,25 +1986,30 @@ const schema = Joi.func().minArity(1);
 
 Possible validation errors: [`function.minArity`](#functionminarity)
 
-### `lazy(fn[, options])` - inherits from `Any`
+### `link(ref[, options])` - inherits from `Any`
 
-Generates a placeholder schema for a schema that you would provide where:
-- `fn` - is a function returning the actual schema to use for validation.
-- `options`:
-  - `once` - enables or disables the single evaluation behavior. When `false`, the function will be called every time a validation happens, otherwise the schema will be cached for further re-use. Defaults to `true`.
+Links to another schema node and reuses it for validation where:
+- `ref` - the reference to the linked schema node. Cannot reference itself or its children as well
+  as other links. Follows the same rules as value references.
+- `options` - optional settings:
 
-Supports the same methods of the [`any()`](#any) type.
+Supports the methods of the [`any()`](#any) type.
 
-This is mostly useful for recursive schemas, like :
+Link is useful for creating recursive schemas:
+
 ```js
-const Person = Joi.object({
+const person = Joi.object({
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
-    children: Joi.array().items(Joi.lazy(() => Person).description('Person schema'))
+    children: Joi.array()
+        .items(Joi.link('...'))
+        // . - the link
+        // .. - the children array
+        // ... - the person object
 });
 ```
 
-Possible validation errors: [`lazy.schema`](#lazyschema)
+Possible validation errors: [`link.depth`](#linkdepth), [`link.ref`](#linkref), [`link.loop`](#linkloop)
 
 ### `number` - inherits from `Any`
 
@@ -3659,15 +3666,36 @@ Additional local context properties:
     n: number // Minimum expected arity
 }
 ```
+#### `link.depth`
 
-#### `lazy.schema`
-
-The lazy function didn't return a **joi** schema.
+The link reference reached outside of the schema root.
 
 Additional local context properties:
 ```ts
 {
-    schema: any // The value return by the generator function
+    ref: Reference // The link reference
+}
+```
+
+#### `link.loop`
+
+The link reference referenced another link.
+
+Additional local context properties:
+```ts
+{
+    ref: Reference // The link reference
+}
+```
+
+#### `link.ref`
+
+The link reference referenced a missing schema node.
+
+Additional local context properties:
+```ts
+{
+    ref: Reference // The link reference
 }
 ```
 

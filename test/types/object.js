@@ -3112,8 +3112,6 @@ describe('object', () => {
             })
                 .assert('c.x', Joi.number().min(10).alter(alterations));
 
-            c._ruleset = false;
-
             const after1 = Joi.object({
                 a: {
                     b: Joi.number().min(10).alter(alterations)
@@ -3123,9 +3121,6 @@ describe('object', () => {
                 c
             });
 
-            after1._ruleset = false;
-
-            expect(first).to.equal(after1);
             expect(first.describe()).to.equal(after1.describe());
             expect(before.describe()).to.equal(bd);
         });
