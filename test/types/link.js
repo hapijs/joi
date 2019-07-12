@@ -149,17 +149,13 @@ describe('link', () => {
                 type: 'object',
                 children: {
                     a: {
-                        invalids: [''],
-                        type: 'string'
+                        type: 'string',
+                        invalids: ['']
                     },
                     b: {
                         type: 'link',
                         link: {
-                            ref: {
-                                key: 'a',
-                                path: ['a'],
-                                ref: 'value'
-                            }
+                            ref: { path: ['a'] }
                         }
                     }
                 }

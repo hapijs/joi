@@ -1110,7 +1110,19 @@ describe('extension', () => {
             expect(schema.describe()).to.equal({
                 type: 'myType',
                 rules: [
-                    { name: 'foo', args: { bar: 'bar', baz: 42, qux: { ref: 'value', key: 'a.b', path: ['a', 'b'] }, quux: { ref: 'global', key: 'c.d', path: ['c', 'd'] } } }
+                    {
+                        name: 'foo',
+                        args: {
+                            bar: 'bar',
+                            baz: 42,
+                            qux: {
+                                ref: { path: ['a', 'b'] }
+                            },
+                            quux: {
+                                ref: { type: 'global', path: ['c', 'd'] }
+                            }
+                        }
+                    }
                 ]
             });
         });

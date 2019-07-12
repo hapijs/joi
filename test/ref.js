@@ -81,13 +81,13 @@ describe('ref', () => {
 
     it('reaches grandparent', () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.any(),
             b: {
                 a1: Joi.ref('...a'),
                 a2: Joi.ref('...a')
             }
-        };
+        });
 
         Helper.validate(schema, [
             [
@@ -100,17 +100,45 @@ describe('ref', () => {
                 }, true
             ]
         ]);
+
+        expect(schema.describe()).to.equal({
+            type: 'object',
+            children: {
+                a: {
+                    type: 'any'
+                },
+                b: {
+                    type: 'object',
+                    children: {
+                        a1: {
+                            flags: {
+                                allowOnly: true
+                            },
+                            type: 'any',
+                            valids: [{ ref: { ancestor: 2, path: ['a'] } }]
+                        },
+                        a2: {
+                            flags: {
+                                allowOnly: true
+                            },
+                            type: 'any',
+                            valids: [{ ref: { ancestor: 2, path: ['a'] } }]
+                        }
+                    }
+                }
+            }
+        });
     });
 
     it('reaches literal', () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.any(),
             b: {
                 '...a': Joi.any(),
                 c: Joi.ref('...a', { separator: false })
             }
-        };
+        });
 
         Helper.validate(schema, [
             [
@@ -123,6 +151,30 @@ describe('ref', () => {
                 }, true
             ]
         ]);
+
+        expect(schema.describe()).to.equal({
+            type: 'object',
+            children: {
+                a: {
+                    type: 'any'
+                },
+                b: {
+                    type: 'object',
+                    children: {
+                        '...a': {
+                            type: 'any'
+                        },
+                        c: {
+                            flags: {
+                                allowOnly: true
+                            },
+                            type: 'any',
+                            valids: [{ ref: { path: ['...a'], separator: false } }]
+                        }
+                    }
+                }
+            }
+        });
     });
 
     it('reaches ancestor literal', () => {
@@ -693,14 +745,7 @@ describe('ref', () => {
                 a: {
                     type: 'any',
                     flags: { allowOnly: true },
-                    valids: [
-                        {
-                            ref: 'value',
-                            key: 'b',
-                            path: ['b'],
-                            adjust
-                        }
-                    ]
+                    valids: [{ ref: { path: ['b'], adjust } }]
                 }
             }
         });
@@ -750,14 +795,7 @@ describe('ref', () => {
                 a: {
                     type: 'any',
                     flags: { allowOnly: true },
-                    valids: [
-                        {
-                            ref: 'value',
-                            key: 'b',
-                            path: ['b'],
-                            map
-                        }
-                    ]
+                    valids: [{ ref: { path: ['b'], map } }]
                 }
             }
         });
@@ -1209,7 +1247,7 @@ describe('ref', () => {
 
     it('describes schema with ref', () => {
 
-        const desc = Joi
+        const schema = Joi
             .valid(Joi.ref('a.b'))
             .invalid(Joi.ref('$b.c'))
             .default(Joi.ref('a.b'))
@@ -1219,47 +1257,48 @@ describe('ref', () => {
                 otherwise: Joi.object({
                     a: Joi.string().min(Joi.ref('b.c')).max(Joi.ref('b.c')).length(Joi.ref('b.c'))
                 }).with('a', 'b').without('b', 'c').assert('a.b', Joi.ref('a.b'))
-            })
-            .describe();
+            });
 
-        expect(desc).to.equal({
+        expect(schema.describe()).to.equal({
             type: 'alternatives',
             flags: { presence: 'ignore' },
             base: {
                 type: 'any',
                 flags: {
                     allowOnly: true,
-                    default: { ref: 'value', key: 'a.b', path: ['a', 'b'] }
+                    default: {
+                        ref: { path: ['a', 'b'] }
+                    }
                 },
-                invalids: [{ ref: 'global', key: 'b.c', path: ['b', 'c'] }],
-                valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }]
+                invalids: [{ ref: { type: 'global', path: ['b', 'c'] } }],
+                valids: [{ ref: { path: ['a', 'b'] } }]
             },
             matches: [{
-                ref: { ref: 'value', key: 'a.b', path: ['a', 'b'] },
+                ref: { path: ['a', 'b'] },
                 is: {
                     type: 'date',
                     rules: [
-                        { name: 'min', args: { date: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } },
-                        { name: 'max', args: { date: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } }
+                        { name: 'min', args: { date: { ref: { path: ['a', 'b'] } } } },
+                        { name: 'max', args: { date: { ref: { path: ['a', 'b'] } } } }
                     ]
                 },
                 then: {
                     type: 'number',
-                    flags: { allowOnly: true, default: { ref: 'value', key: 'a.b', path: ['a', 'b'] }, unsafe: false },
-                    valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }],
-                    invalids: [{ ref: 'global', key: 'b.c', path: ['b', 'c'] }, Infinity, -Infinity],
+                    flags: { allowOnly: true, default: { ref: { path: ['a', 'b'] } }, unsafe: false },
+                    valids: [{ ref: { path: ['a', 'b'] } }],
+                    invalids: [{ ref: { type: 'global', path: ['b', 'c'] } }, Infinity, -Infinity],
                     rules: [
-                        { name: 'min', args: { limit: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } },
-                        { name: 'max', args: { limit: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } },
-                        { name: 'greater', args: { limit: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } },
-                        { name: 'less', args: { limit: { ref: 'value', key: 'a.b', path: ['a', 'b'] } } }
+                        { name: 'min', args: { limit: { ref: { path: ['a', 'b'] } } } },
+                        { name: 'max', args: { limit: { ref: { path: ['a', 'b'] } } } },
+                        { name: 'greater', args: { limit: { ref: { path: ['a', 'b'] } } } },
+                        { name: 'less', args: { limit: { ref: { path: ['a', 'b'] } } } }
                     ]
                 },
                 otherwise: {
                     type: 'object',
-                    flags: { allowOnly: true, default: { ref: 'value', key: 'a.b', path: ['a', 'b'] } },
-                    valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }],
-                    invalids: [{ ref: 'global', key: 'b.c', path: ['b', 'c'] }],
+                    flags: { allowOnly: true, default: { ref: { path: ['a', 'b'] } } },
+                    valids: [{ ref: { path: ['a', 'b'] } }],
+                    invalids: [{ ref: { type: 'global', path: ['b', 'c'] } }],
                     rules: [{
                         name: 'assert',
                         args: {
@@ -1267,9 +1306,9 @@ describe('ref', () => {
                             schema: {
                                 type: 'any',
                                 flags: { allowOnly: true },
-                                valids: [{ ref: 'value', key: 'a.b', path: ['a', 'b'] }]
+                                valids: [{ ref: { path: ['a', 'b'] } }]
                             },
-                            ref: { ref: 'value', key: 'a.b', path: ['a', 'b'] }
+                            ref: { path: ['a', 'b'] }
                         }
                     }],
                     children: {
@@ -1277,9 +1316,9 @@ describe('ref', () => {
                             type: 'string',
                             invalids: [''],
                             rules: [
-                                { name: 'min', args: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } },
-                                { name: 'max', args: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } },
-                                { name: 'length', args: { limit: { ref: 'value', key: 'b.c', path: ['b', 'c'] } } }
+                                { name: 'min', args: { limit: { ref: { path: ['b', 'c'] } } } },
+                                { name: 'max', args: { limit: { ref: { path: ['b', 'c'] } } } },
+                                { name: 'length', args: { limit: { ref: { path: ['b', 'c'] } } } }
                             ]
                         }
                     },
@@ -1302,10 +1341,7 @@ describe('ref', () => {
 
         it('throws when key is missing', () => {
 
-            expect(() => {
-
-                Joi.ref(5);
-            }).to.throw('Invalid reference key: 5');
+            expect(() => Joi.ref(5)).to.throw('Invalid reference key: 5');
         });
 
         it('finds root with default separator', () => {

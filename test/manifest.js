@@ -112,8 +112,8 @@ describe('Manifest', () => {
                     max: {
                         type: 'string',
                         flags: {
-                            default: { value: 0 },
-                            failover: { value: 1 }
+                            default: 0,
+                            failover: 1
                         },
                         invalids: [''],
                         rules: [{ name: 'max', args: { limit: 3 } }]
@@ -165,9 +165,7 @@ describe('Manifest', () => {
                         type: 'string',
                         flags: {
                             default: {
-                                ref: 'value',
-                                key: 'xor',
-                                path: ['xor']
+                                ref: { path: ['xor'] }
                             }
                         },
                         invalids: ['']
@@ -224,7 +222,7 @@ describe('Manifest', () => {
 
             const description = schema.describe();
             expect(description).to.equal(result);
-            expect(description.children.defaultRef.flags.default).to.equal({ ref: 'value', key: 'xor', path: ['xor'] });
+            expect(description.children.defaultRef.flags.default).to.equal({ ref: { path: ['xor'] } });
             expect(description.children.defaultFn.flags.default.description).to.equal('testing');
             expect(description.children.defaultDescribedFn.flags.default.description).to.equal('described test');
         });

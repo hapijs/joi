@@ -96,7 +96,7 @@ describe('alternatives', () => {
                 b: Joi.any()
             });
 
-            const outcome = {
+            expect(schema.describe()).to.equal({
                 type: 'object',
                 children: {
                     b: {
@@ -106,7 +106,7 @@ describe('alternatives', () => {
                         type: 'alternatives',
                         matches: [
                             {
-                                ref: { ref: 'value', key: 'b', path: ['b'] },
+                                ref: { path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -127,7 +127,7 @@ describe('alternatives', () => {
                                 }
                             },
                             {
-                                ref: { ref: 'value', key: 'b', path: ['b'] },
+                                ref: { path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -160,9 +160,7 @@ describe('alternatives', () => {
                         ]
                     }
                 }
-            };
-
-            expect(schema.describe()).to.equal(outcome);
+            });
         });
 
         it('describes when (only then)', () => {
@@ -174,7 +172,7 @@ describe('alternatives', () => {
                 b: Joi.any()
             });
 
-            const outcome = {
+            expect(schema.describe()).to.equal({
                 type: 'object',
                 children: {
                     b: {
@@ -184,7 +182,7 @@ describe('alternatives', () => {
                         type: 'alternatives',
                         matches: [
                             {
-                                ref: { ref: 'value', key: 'b', path: ['b'] },
+                                ref: { path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -217,9 +215,7 @@ describe('alternatives', () => {
                         ]
                     }
                 }
-            };
-
-            expect(schema.describe()).to.equal(outcome);
+            });
         });
 
         it('describes when (only otherwise)', () => {
@@ -231,7 +227,7 @@ describe('alternatives', () => {
                 b: Joi.any()
             });
 
-            const outcome = {
+            expect(schema.describe()).to.equal({
                 type: 'object',
                 children: {
                     b: {
@@ -241,7 +237,7 @@ describe('alternatives', () => {
                         type: 'alternatives',
                         matches: [
                             {
-                                ref: { ref: 'value', key: 'b', path: ['b'] },
+                                ref: { path: ['b'] },
                                 is: {
                                     type: 'number',
                                     flags: {
@@ -274,9 +270,7 @@ describe('alternatives', () => {
                         ]
                     }
                 }
-            };
-
-            expect(schema.describe()).to.equal(outcome);
+            });
         });
 
         it('describes when (with schema)', () => {
@@ -444,6 +438,7 @@ describe('alternatives', () => {
                 is: true,
                 then: Joi.string().empty('').allow(null)
             });
+
             const labeled = schema.label('Label b');
 
             expect(schema.describe()).to.equal({
@@ -456,7 +451,7 @@ describe('alternatives', () => {
                         flags: { allowOnly: true, insensitive: true, presence: 'required' },
                         valids: [true]
                     },
-                    ref: { ref: 'value', key: 'a', path: ['a'] },
+                    ref: { path: ['a'] },
                     then: {
                         type: 'string',
                         flags: {
@@ -483,7 +478,7 @@ describe('alternatives', () => {
                         flags: { allowOnly: true, insensitive: true, presence: 'required' },
                         valids: [true]
                     },
-                    ref: { ref: 'value', key: 'a', path: ['a'] },
+                    ref: { path: ['a'] },
                     then: {
                         type: 'string',
                         flags: {

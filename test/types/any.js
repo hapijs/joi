@@ -2100,48 +2100,38 @@ describe('any', () => {
 
         it('throws with an invalid option', () => {
 
-            expect(() => {
-
-                Joi.any().prefs({ foo: 'bar' });
-            }).to.throw('"foo" is not allowed');
+            expect(() => Joi.any().prefs({ foo: 'bar' })).to.throw('"foo" is not allowed');
         });
 
         it('throws with an invalid option type', () => {
 
-            expect(() => {
-
-                Joi.any().prefs({ convert: 'yes' });
-            }).to.throw('"convert" must be a boolean');
+            expect(() => Joi.any().prefs({ convert: 'yes' })).to.throw('"convert" must be a boolean');
         });
 
         it('throws with an invalid option value', () => {
 
-            expect(() => {
-
-                Joi.any().prefs({ presence: 'yes' });
-            }).to.throw('"presence" must be one of [required, optional, forbidden, ignore]');
+            expect(() => Joi.any().prefs({ presence: 'yes' })).to.throw('"presence" must be one of [required, optional, forbidden, ignore]');
         });
 
         it('does not throw with multiple options including presence key', () => {
 
-            expect(() => {
-
-                Joi.any().prefs({ presence: 'optional', noDefaults: true });
-            }).to.not.throw();
+            expect(() => Joi.any().prefs({ presence: 'optional', noDefaults: true })).to.not.throw();
         });
 
         it('describes a schema with options', () => {
 
             const schema = Joi.any().prefs({ abortEarly: false, convert: false });
-            const description = schema.describe();
-
-            expect(description).to.equal({ type: 'any', options: { abortEarly: false, convert: false } });
+            expect(schema.describe()).to.equal({ type: 'any', options: { abortEarly: false, convert: false } });
         });
 
         it('describes an alternatives schema with options', () => {
 
-            const schema = Joi.number().min(10).when('a', { is: 5, then: Joi.number().max(20).required() }).prefs({ abortEarly: false, convert: false }).describe();
-            expect(schema).to.equal({
+            const schema = Joi.number()
+                .min(10)
+                .when('a', { is: 5, then: Joi.number().max(20).required() })
+                .prefs({ abortEarly: false, convert: false });
+
+            expect(schema.describe()).to.equal({
                 type: 'alternatives',
                 flags: {
                     presence: 'ignore'
@@ -2159,7 +2149,7 @@ describe('any', () => {
                     ]
                 },
                 matches: [{
-                    ref: { ref: 'value', key: 'a', path: ['a'] },
+                    ref: { path: ['a'] },
                     is: {
                         type: 'number',
                         flags: {
@@ -2177,7 +2167,10 @@ describe('any', () => {
                             unsafe: false
                         },
                         invalids: [Infinity, -Infinity],
-                        rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
+                        rules: [
+                            { name: 'min', args: { limit: 10 } },
+                            { name: 'max', args: { limit: 20 } }
+                        ]
                     }
                 }]
             });
@@ -3125,10 +3118,9 @@ describe('any', () => {
                 .when('a', {
                     is: 5,
                     then: Joi.number().max(20).required()
-                })
-                .describe();
+                });
 
-            expect(schema).to.equal({
+            expect(schema.describe()).to.equal({
                 type: 'alternatives',
                 flags: {
                     presence: 'ignore'
@@ -3142,7 +3134,7 @@ describe('any', () => {
                     ]
                 },
                 matches: [{
-                    ref: { ref: 'value', key: 'a', path: ['a'] },
+                    ref: { path: ['a'] },
                     is: {
                         type: 'number',
                         flags: {

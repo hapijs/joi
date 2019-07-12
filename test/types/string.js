@@ -13007,36 +13007,28 @@ describe('string', () => {
         it('describes various versions of a guid', () => {
 
             const schema = Joi.string().guid({ version: ['uuidv1', 'uuidv3', 'uuidv5'] });
-            const description = schema.describe();
-            expect(description).to.equal({
-                invalids: [
-                    ''
-                ],
+
+            expect(schema.describe()).to.equal({
+                type: 'string',
+                invalids: [''],
                 rules: [
                     {
+                        name: 'guid',
                         args: {
                             options: {
-                                version: [
-                                    'uuidv1',
-                                    'uuidv3',
-                                    'uuidv5'
-                                ]
+                                version: ['uuidv1', 'uuidv3', 'uuidv5']
                             }
-                        },
-                        name: 'guid'
+                        }
                     }
-                ],
-                type: 'string'
+                ]
             });
         });
 
         it('describes invert regex pattern', () => {
 
-            const schema = Joi.string().regex(/[a-z]/, {
-                invert: true
-            });
-            const description = schema.describe();
-            expect(description).to.equal({
+            const schema = Joi.string().regex(/[a-z]/, { invert: true });
+
+            expect(schema.describe()).to.equal({
                 type: 'string',
                 invalids: [''],
                 rules: [
@@ -13044,8 +13036,10 @@ describe('string', () => {
                         name: 'regex',
                         args: {
                             patternObject: {
-                                pattern: /[a-z]/,
-                                invert: true
+                                value: {
+                                    pattern: /[a-z]/,
+                                    invert: true
+                                }
                             }
                         }
                     }

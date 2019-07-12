@@ -2943,9 +2943,9 @@ describe('object', () => {
                                     name: 'length',
                                     args: {
                                         limit: {
-                                            ref: 'value',
-                                            key: 'a',
-                                            path: ['a']
+                                            ref: {
+                                                path: ['a']
+                                            }
                                         }
                                     }
                                 }
@@ -3233,7 +3233,7 @@ describe('object', () => {
 
             const description = Joi.object().instance(RegExp).describe();
 
-            expect(description.rules[0]).to.equal({ name: 'instance', args: { typeData: { name: 'RegExp', ctor: RegExp } } });
+            expect(description.rules[0]).to.equal({ name: 'instance', args: { typeData: { value: { name: 'RegExp', ctor: RegExp } } } });
         });
 
         it('uses the constructor reference in the schema description', () => {
@@ -3242,7 +3242,7 @@ describe('object', () => {
 
             const description = Joi.object().instance(Foo).describe();
 
-            expect(new Foo()).to.be.an.instanceof(description.rules[0].args.typeData.ctor);
+            expect(new Foo()).to.be.an.instanceof(description.rules[0].args.typeData.value.ctor);
         });
     });
 
