@@ -2580,8 +2580,8 @@ describe('Joi', () => {
             const schema = defaultJoi.optional();
             expect(schema.describe()).to.equal({
                 type: 'any',
-                description: 'defaulted',
                 flags: {
+                    description: 'defaulted',
                     presence: 'optional'
                 }
             });
@@ -2594,8 +2594,8 @@ describe('Joi', () => {
             expect(schema.describe()).to.equal({
                 type: 'string',
                 invalids: [''],
-                description: 'defaulted',
                 flags: {
+                    description: 'defaulted',
                     presence: 'required'
                 }
             });
@@ -2607,15 +2607,15 @@ describe('Joi', () => {
             const schema = defaultJoi.object({ foo: 'bar' });
             expect(schema.describe()).to.equal({
                 type: 'object',
-                description: 'defaulted',
                 flags: {
+                    description: 'defaulted',
                     presence: 'required'
                 },
                 children: {
                     foo: {
                         type: 'string',
-                        description: 'defaulted',
                         flags: {
+                            description: 'defaulted',
                             presence: 'required',
                             allowOnly: true
                         },
@@ -2638,16 +2638,16 @@ describe('Joi', () => {
             });
             expect(schema.describe()).to.equal({
                 type: 'object',
-                description: 'defaulted',
                 flags: {
+                    description: 'defaulted',
                     presence: 'required'
                 },
                 children: {
                     foo: {
                         type: 'string',
-                        description: 'defaulted',
                         flags: {
                             presence: 'required',
+                            description: 'defaulted',
                             allowOnly: true
                         },
                         invalids: [''],
@@ -2656,9 +2656,9 @@ describe('Joi', () => {
                     baz: {
                         children: {
                             qux: {
-                                description: 'defaulted2',
                                 flags: {
                                     allowOnly: true,
+                                    description: 'defaulted2',
                                     presence: 'required'
                                 },
                                 invalids: [''],
@@ -2666,8 +2666,8 @@ describe('Joi', () => {
                                 valids: ['zorg']
                             }
                         },
-                        description: 'defaulted2',
                         flags: {
+                            description: 'defaulted2',
                             presence: 'required'
                         },
                         type: 'object'
@@ -2689,16 +2689,16 @@ describe('Joi', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'object',
-                description: 'defaulted',
                 flags: {
+                    description: 'defaulted',
                     presence: 'required',
                     cast: 'raw'
                 },
                 children: {
                     foo: {
                         type: 'string',
-                        description: 'defaulted',
                         flags: {
+                            description: 'defaulted',
                             presence: 'required',
                             allowOnly: true,
                             cast: 'raw'
@@ -2717,8 +2717,8 @@ describe('Joi', () => {
             const schema = extendedJoi.foobar();
             expect(schema.describe()).to.equal({
                 type: 'foobar',
-                description: 'defaulted',
                 flags: {
+                    description: 'defaulted',
                     presence: 'required'
                 }
             });
@@ -2731,8 +2731,8 @@ describe('Joi', () => {
             const schema = defaultJoi.foobar();
             expect(schema.describe()).to.equal({
                 type: 'foobar',
-                description: 'defaulted',
                 flags: {
+                    description: 'defaulted',
                     presence: 'required'
                 }
             });

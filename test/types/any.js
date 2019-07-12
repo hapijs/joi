@@ -557,10 +557,12 @@ describe('any', () => {
             const desc = a.concat(b).describe();
             expect(desc).to.equal({
                 type: 'any',
-                description: 'b',
                 tags: ['a', 'b'],
                 examples: ['a', 'b'],
-                unit: 'b'
+                flags: {
+                    description: 'b',
+                    unit: 'b'
+                }
             });
         });
 
@@ -1228,7 +1230,7 @@ describe('any', () => {
         it('sets the description', () => {
 
             const b = Joi.description('my description');
-            expect(b.describe().description).to.equal('my description');
+            expect(b.describe().flags.description).to.equal('my description');
         });
 
         it('throws when description is missing', () => {
@@ -1805,7 +1807,7 @@ describe('any', () => {
         it('can describe a label', () => {
 
             const schema = Joi.object().label('lbl').describe();
-            expect(schema).to.equal({ type: 'object', label: 'lbl' });
+            expect(schema).to.equal({ type: 'object', flags: { label: 'lbl' } });
         });
 
         it('does not leak into sub objects', async () => {
@@ -2592,7 +2594,7 @@ describe('any', () => {
         it('sets the unit', () => {
 
             const b = Joi.unit('milliseconds');
-            expect(b.describe().unit).to.equal('milliseconds');
+            expect(b.describe().flags.unit).to.equal('milliseconds');
         });
 
         it('throws when unit is missing', () => {

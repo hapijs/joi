@@ -286,7 +286,9 @@ describe('alternatives', () => {
                 matches: [{
                     peek: {
                         type: 'string',
-                        label: 'foo',
+                        flags: {
+                            label: 'foo'
+                        },
                         invalids: ['']
                     },
                     then: {
@@ -318,11 +320,13 @@ describe('alternatives', () => {
 
             const outcome = {
                 type: 'alternatives',
-                description: 'd',
                 notes: ['f'],
                 tags: ['g'],
                 meta: ['b', 'c'],
                 examples: ['a'],
+                flags: {
+                    description: 'd'
+                },
                 matches: [{
                     schema: {
                         type: 'string',
@@ -469,8 +473,10 @@ describe('alternatives', () => {
 
             expect(labeled.describe()).to.equal({
                 base: { type: 'any' },
-                flags: { presence: 'ignore' },
-                label: 'Label b',
+                flags: {
+                    label: 'Label b',
+                    presence: 'ignore'
+                },
                 type: 'alternatives',
                 matches: [{
                     is: {
@@ -482,13 +488,13 @@ describe('alternatives', () => {
                     then: {
                         type: 'string',
                         flags: {
+                            label: 'Label b',
                             empty: {
                                 flags: { allowOnly: true },
                                 type: 'string',
                                 valids: ['']
                             }
                         },
-                        label: 'Label b',
                         valids: [null],
                         invalids: ['']
                     }

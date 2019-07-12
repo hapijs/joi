@@ -140,9 +140,9 @@ describe('Manifest', () => {
                     notEmpty: {
                         type: 'string',
                         flags: {
+                            description: 'a',
                             presence: 'required'
                         },
-                        description: 'a',
                         notes: ['b'],
                         tags: ['c'],
                         invalids: ['']
