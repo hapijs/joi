@@ -593,7 +593,7 @@ Allows values where:
   validated value before applying any other rules. Supports [references](#refkey-options).
 
 Note that this list of allowed values is in *addition* to any other permitted values.
-To create an exclusive list of values, see [`any.valid(value)`](#anyvalidvalue---aliases-only-equal).
+To create an exclusive list of values, see [`any.valid(value)`](#anyvalidvalues---aliases-only-equal).
 
 ```js
 const schema = {
