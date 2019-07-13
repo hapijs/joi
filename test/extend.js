@@ -917,17 +917,17 @@ describe('extension', () => {
         it('must have valid coerce function', () => {
 
             expect(() => Joi.extend({ name: 'a', coerce: true })).to.throw(/"coerce" must be a Function/);
-            expect(() => Joi.extend({ name: 'a', coerce() { } })).to.throw(/"coerce" must have an arity of 3/);
-            expect(() => Joi.extend({ name: 'a', coerce(a, b) { } })).to.throw(/"coerce" must have an arity of 3/);
-            expect(() => Joi.extend({ name: 'a', coerce(a, b, c, d) { } })).to.throw(/"coerce" must have an arity of 3/);
+            expect(() => Joi.extend({ name: 'a', coerce() { } })).to.throw(/"coerce" must have an arity greater or equal to 1/);
+            expect(() => Joi.extend({ name: 'a', coerce(a, b) { } })).not.to.throw();
+            expect(() => Joi.extend({ name: 'a', coerce(a, b, c, d) { } })).to.throw(/"coerce" must have an arity lesser or equal to 3/);
         });
 
         it('must have valid pre function', () => {
 
             expect(() => Joi.extend({ name: 'a', pre: true })).to.throw(/"pre" must be a Function/);
-            expect(() => Joi.extend({ name: 'a', pre() { } })).to.throw(/"pre" must have an arity of 3/);
-            expect(() => Joi.extend({ name: 'a', pre(a, b) { } })).to.throw(/"pre" must have an arity of 3/);
-            expect(() => Joi.extend({ name: 'a', pre(a, b, c, d) { } })).to.throw(/"pre" must have an arity of 3/);
+            expect(() => Joi.extend({ name: 'a', pre() { } })).to.throw(/"pre" must have an arity greater or equal to 1/);
+            expect(() => Joi.extend({ name: 'a', pre(a, b) { } })).not.to.throw();
+            expect(() => Joi.extend({ name: 'a', pre(a, b, c, d) { } })).to.throw(/"pre" must have an arity lesser or equal to 3/);
         });
 
         it('must have valid messages object', () => {
