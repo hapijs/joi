@@ -367,9 +367,9 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        expect(() => schema.foo()).to.throw('Setup of extension myType().foo() must return undefined or a joi schema');
-        expect(() => schema.bar()).to.throw('Setup of extension myType().bar() must return undefined or a joi schema');
-        expect(() => schema.foobar()).to.throw('Setup of extension myType().foobar() must return undefined or a joi schema');
+        expect(() => schema.foo()).to.throw('Setup of extension myType foo rule must return undefined or a joi schema');
+        expect(() => schema.bar()).to.throw('Setup of extension myType bar rule must return undefined or a joi schema');
+        expect(() => schema.foobar()).to.throw('Setup of extension myType foobar rule must return undefined or a joi schema');
     });
 
     it('defines a custom type with a rule with both setup and validate', () => {
@@ -457,7 +457,7 @@ describe('extension', () => {
         expect(customJoi.number().multiply(2).validate(3)).to.contain({ error: null, value: 6 });
         expect(customJoi.number().multiply(5, '$').validate(7)).to.contain({ error: null, value: '$35' });
         expect(() => customJoi.number().multiply(5, 5)).to.throw(/"currency" must be a string/);
-        expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
+        expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Incorrect number of arguments');
     });
 
     it('defines a rule that validates its parameters when provided as a Joi schema', () => {
@@ -486,7 +486,7 @@ describe('extension', () => {
 
         expect(customJoi.number().multiply(2).validate(3)).to.contain({ error: null, value: 6 });
         expect(customJoi.number().multiply(5, '$').validate(7)).to.contain({ error: null, value: '$35' });
-        expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Unexpected number of arguments');
+        expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Incorrect number of arguments');
     });
 
     it('defines a rule that validates its parameters with references', () => {
