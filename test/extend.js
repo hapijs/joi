@@ -367,9 +367,9 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        expect(() => schema.foo()).to.throw('Setup of extension Joi.myType().foo() must return undefined or a Joi object');
-        expect(() => schema.bar()).to.throw('Setup of extension Joi.myType().bar() must return undefined or a Joi object');
-        expect(() => schema.foobar()).to.throw('Setup of extension Joi.myType().foobar() must return undefined or a Joi object');
+        expect(() => schema.foo()).to.throw('Setup of extension myType().foo() must return undefined or a joi schema');
+        expect(() => schema.bar()).to.throw('Setup of extension myType().bar() must return undefined or a joi schema');
+        expect(() => schema.foobar()).to.throw('Setup of extension myType().foobar() must return undefined or a joi schema');
     });
 
     it('defines a custom type with a rule with both setup and validate', () => {
