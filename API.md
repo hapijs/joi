@@ -1,5 +1,5 @@
 <!-- version -->
-# 16.0.0 API Reference
+# 16.0.0-rc2 API Reference
 <!-- versionstop -->
 
 <!-- toc -->
@@ -115,9 +115,6 @@
     - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
     - [`object.instance(constructor, [name])`](#objectinstanceconstructor-name)
     - [`object.keys([schema])`](#objectkeysschema)
-      - [`{} notation`](#-notation)
-      - [`Joi.object([schema]) notation`](#joiobjectschema-notation)
-      - [`Joi.object().keys([schema]) notation`](#joiobjectkeysschema-notation)
     - [`object.length(limit)`](#objectlengthlimit)
     - [`object.max(limit)`](#objectmaxlimit)
     - [`object.min(limit)`](#objectminlimit)
@@ -2202,6 +2199,13 @@ const object = Joi.object({
 await object.validate({ a: 5 });
 ```
 
+Note that when an object schema type is passed as an input to another joi method (e.g. array
+item) or is set as a key definition, the `Joi.object()` constructor may be omitted. For example:
+
+```js
+const schema = Joi.array().items({ a: Joi.string() });
+```
+
 Possible validation errors: [`object.base`](#objectbase)
 
 #### `object.and(...peers, [options])`
@@ -2290,70 +2294,7 @@ const extended = base.keys({
 });
 ```
 
-Notes: We have three different ways to define a schema for performing a validation
-
-- Using the plain JS object notation:
-```js
-const schema = {
-    a: Joi.string(),
-    b: Joi.number()
-};
-```
-- Using the `Joi.object([schema])` notation
-```js
-const schema = Joi.object({
-    a: Joi.string(),
-    b: Joi.number()
-});
-```
-- Using the `Joi.object().keys([schema])` notation
-```js
-const schema = Joi.object().keys({
-    a: Joi.string(),
-    b: Joi.number()
-});
-```
-
 Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
-
-While all these three objects defined above will result in the same validation object, there are some differences in using one or another:
-
-##### `{} notation`
-
-When using the `{}` notation, you are just defining a plain JS object, which isn't a schema object.
-You can pass it to the validation method but you can't call `validate()` method of the object because it's just a plain JS object.
-
-Besides, passing the `{}` object to the `validate()` method each time, will perform an expensive schema compilation operation on every validation.
-
-##### `Joi.object([schema]) notation`
-
-Using `Joi.object([schema])` will return a schema object, so you can call the `validate()` method directly, e.g:
-
-```js
-const schema = Joi.object({
-    a: Joi.boolean()
-});
-
-await schema.validate(true);  // Throws error
-```
-
-When you use `Joi.object([schema])`, it gets compiled the first time, so you can pass it to the `validate()` method multiple times and no overhead is added.
-
-Another benefits of using `Joi.object([schema])` instead of a plain JS object is that you can set any options on the object like allowing unknown keys, e.g:
-
-```js
-const schema = Joi.object({
-    arg: Joi.string().valid('firstname', 'lastname', 'title', 'company', 'jobtitle'),
-    value: Joi.string(),
-})
-    .pattern(/firstname|lastname/, Joi.string().min(2));
-```
-
-##### `Joi.object().keys([schema]) notation`
-
-This is basically the same as `Joi.object([schema])`, but using `Joi.object().keys([schema])` is more useful when you want to add more keys (e.g. call `keys()` multiple times). If you are only adding one set of keys, you can skip the `keys()` method and just use `object()` directly.
-
-Some people like to use `keys()` to make the code more explicit (this is style only).
 
 #### `object.length(limit)`
 
