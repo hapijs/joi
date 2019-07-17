@@ -193,7 +193,7 @@ describe('errors', () => {
         expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('value too small');
         expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('valorem angustus');
 
-        expect(schema.describe().options.messages).to.equal(messages);
+        expect(schema.describe().preferences.messages).to.equal(messages);
     });
 
     it('supports language preference combination', () => {

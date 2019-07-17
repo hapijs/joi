@@ -214,7 +214,7 @@ describe('Manifest', () => {
                         }
                     }
                 ],
-                options: {
+                preferences: {
                     abortEarly: false,
                     convert: false
                 }

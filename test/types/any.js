@@ -2123,7 +2123,7 @@ describe('any', () => {
         it('describes a schema with options', () => {
 
             const schema = Joi.any().prefs({ abortEarly: false, convert: false });
-            expect(schema.describe()).to.equal({ type: 'any', options: { abortEarly: false, convert: false } });
+            expect(schema.describe()).to.equal({ type: 'any', preferences: { abortEarly: false, convert: false } });
         });
 
         it('describes an alternatives schema with options', () => {
@@ -2138,7 +2138,7 @@ describe('any', () => {
                 flags: {
                     presence: 'ignore'
                 },
-                options: {
+                preferences: {
                     abortEarly: false,
                     convert: false
                 },
@@ -2181,16 +2181,16 @@ describe('any', () => {
         it('merges options properly', () => {
 
             const baseSchema = Joi.any();
-            expect(baseSchema.describe().options).to.undefined();
+            expect(baseSchema.describe().preferences).to.be.undefined();
 
             const languageSchema = baseSchema.prefs({ messages: { 'type.foo': 'foo' } });
-            expect(languageSchema.describe().options).to.equal({ messages: { 'type.foo': 'foo' } });
+            expect(languageSchema.describe().preferences).to.equal({ messages: { 'type.foo': 'foo' } });
 
             const normalOptionSchema = baseSchema.prefs({ abortEarly: true });
-            expect(normalOptionSchema.describe().options).to.equal({ abortEarly: true });
+            expect(normalOptionSchema.describe().preferences).to.equal({ abortEarly: true });
 
             const normalOptionsOverLanguageSchema = languageSchema.prefs({ abortEarly: true });
-            expect(normalOptionsOverLanguageSchema.describe().options).to.equal({
+            expect(normalOptionsOverLanguageSchema.describe().preferences).to.equal({
                 abortEarly: true,
                 messages: {
                     'type.foo': 'foo'
@@ -2198,7 +2198,7 @@ describe('any', () => {
             });
 
             const languageOptionsOverNormalOptionsSchema = normalOptionSchema.prefs({ messages: { 'type.foo': 'foo' } });
-            expect(languageOptionsOverNormalOptionsSchema.describe().options).to.equal({
+            expect(languageOptionsOverNormalOptionsSchema.describe().preferences).to.equal({
                 abortEarly: true,
                 messages: {
                     'type.foo': 'foo'
@@ -2211,7 +2211,7 @@ describe('any', () => {
                     'type2.foo': 'foo'
                 }
             });
-            expect(languageOptionsOverLanguageOptionsSchema.describe().options).to.equal({
+            expect(languageOptionsOverLanguageOptionsSchema.describe().preferences).to.equal({
                 messages: {
                     'type.foo': 'foo',
                     'type.bar': 'bar',
