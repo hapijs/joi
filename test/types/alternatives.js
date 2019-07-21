@@ -443,7 +443,6 @@ describe('alternatives', () => {
 
             expect(schema.describe()).to.equal({
                 base: { type: 'any' },
-                flags: { presence: 'ignore' },
                 type: 'alternatives',
                 matches: [{
                     is: {
@@ -470,8 +469,7 @@ describe('alternatives', () => {
             expect(labeled.describe()).to.equal({
                 base: { type: 'any' },
                 flags: {
-                    label: 'Label b',
-                    presence: 'ignore'
+                    label: 'Label b'
                 },
                 type: 'alternatives',
                 matches: [{

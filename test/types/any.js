@@ -2079,7 +2079,7 @@ describe('any', () => {
 
         it('throws with an invalid option value', () => {
 
-            expect(() => Joi.any().prefs({ presence: 'yes' })).to.throw('"presence" must be one of [required, optional, forbidden, ignore]');
+            expect(() => Joi.any().prefs({ presence: 'yes' })).to.throw('"presence" must be one of [required, optional, forbidden]');
         });
 
         it('does not throw with multiple options including presence key', () => {
@@ -2102,9 +2102,6 @@ describe('any', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'alternatives',
-                flags: {
-                    presence: 'ignore'
-                },
                 preferences: {
                     abortEarly: false,
                     convert: false
@@ -3088,9 +3085,6 @@ describe('any', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'alternatives',
-                flags: {
-                    presence: 'ignore'
-                },
                 base: {
                     type: 'number',
                     invalids: [Infinity, -Infinity],
@@ -3129,7 +3123,6 @@ describe('any', () => {
 
             expect(schema).to.equal({
                 type: 'alternatives',
-                flags: { presence: 'ignore' },
                 base: {
                     type: 'number',
                     invalids: [Infinity, -Infinity],

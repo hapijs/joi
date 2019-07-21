@@ -1259,7 +1259,6 @@ describe('ref', () => {
 
         expect(schema.describe()).to.equal({
             type: 'alternatives',
-            flags: { presence: 'ignore' },
             base: {
                 type: 'any',
                 flags: {
