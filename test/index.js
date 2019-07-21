@@ -61,7 +61,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"value" must be one of [b]',
                     path: [],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'a', valids: ['b'], label: 'value' }
                 }]
             }],
@@ -71,7 +71,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"value" must be one of [b]',
                     path: [],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: ['b'], label: 'value' }
                 }]
             }]
@@ -100,7 +100,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"value" must be one of [null]',
                     path: [],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'a', valids: [null], label: 'value' }
                 }]
             }],
@@ -116,7 +116,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"value" must be one of [5]',
                     path: [],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 6, valids: [5], label: 'value' }
                 }]
             }],
@@ -132,7 +132,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"value" must be one of [5]',
                     path: [],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: '6', valids: ['5'], label: 'value' }
                 }]
             }],
@@ -148,7 +148,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"value" must be one of [true]',
                     path: [],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: false, valids: [true], label: 'value' }
                 }]
             }],
@@ -168,7 +168,7 @@ describe('Joi', () => {
                 details: [{
                     message: `"value" must be one of [${dnow.toISOString()}]`,
                     path: [],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: new Date(now * 2), valids: [dnow], label: 'value' }
                 }]
             }]
@@ -196,13 +196,13 @@ describe('Joi', () => {
                                 {
                                     message: '"value" must be one of [key]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: 'other', valids: ['key'], label: 'value' }
                                 },
                                 {
                                     message: '"value" must be one of [5]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: 'other', valids: [5], label: 'value' }
                                 },
                                 {
@@ -231,13 +231,13 @@ describe('Joi', () => {
                                 {
                                     message: '"value" must be one of [key]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: 6, valids: ['key'], label: 'value' }
                                 },
                                 {
                                     message: '"value" must be one of [5]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: 6, valids: [5], label: 'value' }
                                 },
                                 {
@@ -266,13 +266,13 @@ describe('Joi', () => {
                                 {
                                     message: '"value" must be one of [key]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: { c: 5 }, valids: ['key'], label: 'value' }
                                 },
                                 {
                                     message: '"value" must be one of [5]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: { c: 5 }, valids: [5], label: 'value' }
                                 },
                                 {
@@ -304,19 +304,19 @@ describe('Joi', () => {
                                 {
                                     message: '"value" must be one of [key]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
                                 },
                                 {
                                     message: '"value" must be one of [5]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
                                 },
                                 {
                                     message: '"a" must be one of [true]',
                                     path: ['a'],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { label: 'a', key: 'a', value: 5, valids: [true] }
                                 }
                             ]
@@ -348,13 +348,13 @@ describe('Joi', () => {
                                 {
                                     message: '"value" must be one of [key]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: 'other', valids: ['key'], label: 'value' }
                                 },
                                 {
                                     message: '"value" must be one of [5]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: 'other', valids: [5], label: 'value' }
                                 },
                                 {
@@ -383,13 +383,13 @@ describe('Joi', () => {
                                 {
                                     message: '"value" must be one of [key]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: 6, valids: ['key'], label: 'value' }
                                 },
                                 {
                                     message: '"value" must be one of [5]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: 6, valids: [5], label: 'value' }
                                 },
                                 {
@@ -418,13 +418,13 @@ describe('Joi', () => {
                                 {
                                     message: '"value" must be one of [key]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: { c: 5 }, valids: ['key'], label: 'value' }
                                 },
                                 {
                                     message: '"value" must be one of [5]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: { c: 5 }, valids: [5], label: 'value' }
                                 },
                                 {
@@ -456,19 +456,19 @@ describe('Joi', () => {
                                 {
                                     message: '"value" must be one of [key]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
                                 },
                                 {
                                     message: '"value" must be one of [5]',
                                     path: [],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
                                 },
                                 {
                                     message: '"a" must be one of [true]',
                                     path: ['a'],
-                                    type: 'any.allowOnly',
+                                    type: 'any.only',
                                     context: { label: 'a', key: 'a', value: 5, valids: [true] }
                                 }
                             ]
@@ -1356,7 +1356,7 @@ describe('Joi', () => {
             {
                 message: '"auth.mode" must be one of [required, optional, try, null]',
                 path: ['auth', 'mode'],
-                type: 'any.allowOnly',
+                type: 'any.only',
                 context: { value: 'none', valids: ['required', 'optional', 'try', null], label: 'auth.mode', key: 'mode' }
             },
             {
@@ -1455,7 +1455,7 @@ describe('Joi', () => {
             {
                 message: '"auth.mode" must be one of [required, optional, try, null]',
                 path: ['auth', 'mode'],
-                type: 'any.allowOnly',
+                type: 'any.only',
                 context: { value: 'none', valids: ['required', 'optional', 'try', null], label: 'auth.mode', key: 'mode' }
             },
             {
@@ -1668,7 +1668,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"brand[1]" must be one of [amex, visa]',
                     path: ['brand', 1],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'mc', valids: ['amex', 'visa'], label: 'brand[1]', key: 1 }
                 }]
             }]
@@ -2616,7 +2616,7 @@ describe('Joi', () => {
                         flags: {
                             description: 'defaulted',
                             presence: 'required',
-                            allowOnly: true
+                            only: true
                         },
                         invalids: [''],
                         valids: ['bar']
@@ -2647,7 +2647,7 @@ describe('Joi', () => {
                         flags: {
                             presence: 'required',
                             description: 'defaulted',
-                            allowOnly: true
+                            only: true
                         },
                         invalids: [''],
                         valids: ['bar']
@@ -2656,7 +2656,7 @@ describe('Joi', () => {
                         children: {
                             qux: {
                                 flags: {
-                                    allowOnly: true,
+                                    only: true,
                                     description: 'defaulted2',
                                     presence: 'required'
                                 },
@@ -2699,7 +2699,7 @@ describe('Joi', () => {
                         flags: {
                             description: 'defaulted',
                             presence: 'required',
-                            allowOnly: true,
+                            only: true,
                             cast: 'raw'
                         },
                         invalids: [''],

@@ -635,7 +635,7 @@ describe('number', () => {
                     details: [{
                         message: '"c" must be one of [0]',
                         path: ['c'],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
                     }]
                 }],
@@ -644,7 +644,7 @@ describe('number', () => {
                     details: [{
                         message: '"c" must be one of [0]',
                         path: ['c'],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
                     }]
                 }]
@@ -885,7 +885,7 @@ describe('number', () => {
                     details: [{
                         message: '"c" must be one of [0]',
                         path: ['c'],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
                     }]
                 }]

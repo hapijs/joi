@@ -112,14 +112,14 @@ describe('ref', () => {
                     children: {
                         a1: {
                             flags: {
-                                allowOnly: true
+                                only: true
                             },
                             type: 'any',
                             valids: [{ ref: { ancestor: 2, path: ['a'] } }]
                         },
                         a2: {
                             flags: {
-                                allowOnly: true
+                                only: true
                             },
                             type: 'any',
                             valids: [{ ref: { ancestor: 2, path: ['a'] } }]
@@ -166,7 +166,7 @@ describe('ref', () => {
                         },
                         c: {
                             flags: {
-                                allowOnly: true
+                                only: true
                             },
                             type: 'any',
                             valids: [{ ref: { path: ['...a'], separator: false } }]
@@ -276,7 +276,7 @@ describe('ref', () => {
                         {
                             message: '"a.b.ix" must be one of [ref:...i]',
                             path: ['a', 'b', 'ix'],
-                            type: 'any.allowOnly',
+                            type: 'any.only',
                             context: {
                                 value: 5,
                                 valids: [ix],
@@ -365,7 +365,7 @@ describe('ref', () => {
                         {
                             message: '"a.b.ix" must be one of [ref:...i]',
                             path: ['a', 'b', 'ix'],
-                            type: 'any.allowOnly',
+                            type: 'any.only',
                             context: {
                                 value: 5,
                                 valids: [ix],
@@ -573,7 +573,7 @@ describe('ref', () => {
                     {
                         message: '"x[0]" must be one of [ref:length]',
                         path: ['x', 0],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: {
                             value: 2,
                             valids: [ref],
@@ -605,7 +605,7 @@ describe('ref', () => {
                     {
                         message: '"x[0]" must be one of [7]',
                         path: ['x', 0],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 2, valids: [7], key: 0, label: 'x[0]' }
                     }
                 ]
@@ -681,7 +681,7 @@ describe('ref', () => {
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:b]',
             path: ['a'],
-            type: 'any.allowOnly',
+            type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
         }]);
 
@@ -691,7 +691,7 @@ describe('ref', () => {
                 details: [{
                     message: '"a" must be one of [ref:b]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
@@ -719,7 +719,7 @@ describe('ref', () => {
                 details: [{
                     message: '"a" must be one of [ref:b]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
@@ -728,7 +728,7 @@ describe('ref', () => {
                 details: [{
                     message: '"a" must be one of [ref:b]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }]
@@ -743,7 +743,7 @@ describe('ref', () => {
                 },
                 a: {
                     type: 'any',
-                    flags: { allowOnly: true },
+                    flags: { only: true },
                     valids: [{ ref: { path: ['b'], adjust } }]
                 }
             }
@@ -768,7 +768,7 @@ describe('ref', () => {
                 details: [{
                     message: '"a" must be one of [ref:b]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
@@ -777,7 +777,7 @@ describe('ref', () => {
                 details: [{
                     message: '"a" must be one of [ref:b]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }]
@@ -792,7 +792,7 @@ describe('ref', () => {
                 },
                 a: {
                     type: 'any',
-                    flags: { allowOnly: true },
+                    flags: { only: true },
                     valids: [{ ref: { path: ['b'], map } }]
                 }
             }
@@ -812,7 +812,7 @@ describe('ref', () => {
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:]',
             path: ['a'],
-            type: 'any.allowOnly',
+            type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
         }]);
 
@@ -822,7 +822,7 @@ describe('ref', () => {
                 details: [{
                     message: '"a" must be one of [ref:]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
@@ -848,7 +848,7 @@ describe('ref', () => {
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:b.c]',
             path: ['a'],
-            type: 'any.allowOnly',
+            type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
         }]);
 
@@ -858,7 +858,7 @@ describe('ref', () => {
                 details: [{
                     message: '"a" must be one of [ref:b.c]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
@@ -1005,13 +1005,13 @@ describe('ref', () => {
                                     {
                                         message: '"b" must be one of [ref:a.c]',
                                         path: ['b'],
-                                        type: 'any.allowOnly',
+                                        type: 'any.only',
                                         context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
                                     },
                                     {
                                         message: '"b" must be one of [ref:c]',
                                         path: ['b'],
-                                        type: 'any.allowOnly',
+                                        type: 'any.only',
                                         context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
                                     }
                                 ]
@@ -1058,7 +1058,7 @@ describe('ref', () => {
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:global:x]',
             path: ['a'],
-            type: 'any.allowOnly',
+            type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
         }]);
 
@@ -1068,7 +1068,7 @@ describe('ref', () => {
                 details: [{
                     message: '"a" must be one of [ref:global:x]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
@@ -1080,7 +1080,7 @@ describe('ref', () => {
                 details: [{
                     message: '"a" must be one of [ref:global:x]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: '22', valids: [ref], label: 'a', key: 'a' }
                 }]
             }]
@@ -1262,7 +1262,7 @@ describe('ref', () => {
             base: {
                 type: 'any',
                 flags: {
-                    allowOnly: true,
+                    only: true,
                     default: {
                         ref: { path: ['a', 'b'] }
                     }
@@ -1281,7 +1281,7 @@ describe('ref', () => {
                 },
                 then: {
                     type: 'number',
-                    flags: { allowOnly: true, default: { ref: { path: ['a', 'b'] } } },
+                    flags: { only: true, default: { ref: { path: ['a', 'b'] } } },
                     valids: [{ ref: { path: ['a', 'b'] } }],
                     invalids: [{ ref: { type: 'global', path: ['b', 'c'] } }, Infinity, -Infinity],
                     rules: [
@@ -1293,7 +1293,7 @@ describe('ref', () => {
                 },
                 otherwise: {
                     type: 'object',
-                    flags: { allowOnly: true, default: { ref: { path: ['a', 'b'] } } },
+                    flags: { only: true, default: { ref: { path: ['a', 'b'] } } },
                     valids: [{ ref: { path: ['a', 'b'] } }],
                     invalids: [{ ref: { type: 'global', path: ['b', 'c'] } }],
                     rules: [{
@@ -1302,7 +1302,7 @@ describe('ref', () => {
                             message: 'pass the assertion test',
                             schema: {
                                 type: 'any',
-                                flags: { allowOnly: true },
+                                flags: { only: true },
                                 valids: [{ ref: { path: ['a', 'b'] } }]
                             },
                             ref: { path: ['a', 'b'] }

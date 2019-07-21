@@ -118,7 +118,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [a, b]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'A', valids: ['a', 'b'], label: 'value' }
                     }]
                 }],
@@ -127,7 +127,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [a, b]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'B', valids: ['a', 'b'], label: 'value' }
                     }]
                 }]
@@ -146,7 +146,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [a, b]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 4, valids: ['a', 'b'], label: 'value' }
                     }]
                 }]
@@ -166,7 +166,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [a, b, 5, c]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 4, valids, label: 'value' }
                     }]
                 }],
@@ -338,7 +338,7 @@ describe('string', () => {
                     details: [{
                         message: '"c" must be one of [0]',
                         path: ['c'],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
                     }]
                 }]
@@ -4637,7 +4637,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [a, b, c]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'x', valids: ['a', 'b', 'c'], label: 'value' }
                     }]
                 }],
@@ -4655,7 +4655,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [a, b, c]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'x', valids: ['a', 'b', 'c'], label: 'value' }
                     }]
                 }],
@@ -10265,7 +10265,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'X', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10274,7 +10274,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: '123', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10283,7 +10283,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: '1234', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10292,7 +10292,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: '12', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10302,7 +10302,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'ABC', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10311,7 +10311,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'A2C', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10320,7 +10320,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'ABCD', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10329,7 +10329,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: '*AB', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10338,7 +10338,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: '', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10349,7 +10349,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'DE', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10358,7 +10358,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 'ABC', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
@@ -10368,7 +10368,7 @@ describe('string', () => {
                     details: [{
                         message: '"value" must be one of [AB, BC]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: null, valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }]

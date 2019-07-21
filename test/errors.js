@@ -254,13 +254,13 @@ describe('errors', () => {
 
     it('does not prefix with key when messages uses context.key', async () => {
 
-        const schema = Joi.valid('sad').prefs({ messages: { 'any.allowOnly': 'my hero "{{#label}}" is not {{#valids}}' } });
+        const schema = Joi.valid('sad').prefs({ messages: { 'any.only': 'my hero "{{#label}}" is not {{#valids}}' } });
         const err = await expect(schema.validate(5)).to.reject();
         expect(err).to.be.an.error('my hero "value" is not [sad]');
         expect(err.details).to.equal([{
             message: 'my hero "value" is not [sad]',
             path: [],
-            type: 'any.allowOnly',
+            type: 'any.only',
             context: { value: 5, valids: ['sad'], label: 'value' }
         }]);
     });
@@ -527,7 +527,7 @@ describe('errors', () => {
                 {
                     message: '"a" must be one of [a, b, c, d]',
                     path: ['a'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'm', valids: ['a', 'b', 'c', 'd'], label: 'a', key: 'a' }
                 },
                 {
@@ -539,7 +539,7 @@ describe('errors', () => {
                 {
                     message: '"y.b" must be one of [i, j, false]',
                     path: ['y', 'b'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: { c: 10 }, label: 'y.b', key: 'b', valids: ['i', 'j', false] }
                 },
                 {
@@ -568,7 +568,7 @@ describe('errors', () => {
             expect(err.details).to.equal([{
                 message: '"a" must be one of [a, b, c, d]',
                 path: ['a'],
-                type: 'any.allowOnly',
+                type: 'any.only',
                 context: { value: 'm', valids: ['a', 'b', 'c', 'd'], label: 'a', key: 'a' }
             }]);
             expect(err.annotate(true)).to.equal('{\n  "a" [1]: "m"\n}\n\n[1] "a" must be one of [a, b, c, d]');
@@ -590,19 +590,19 @@ describe('errors', () => {
                 {
                     message: '"a[2]" must be one of [1, 2]',
                     path: ['a', 2],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 3, valids: [1, 2], label: 'a[2]', key: 2 }
                 },
                 {
                     message: '"a[3]" must be one of [1, 2]',
                     path: ['a', 3],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 4, valids: [1, 2], label: 'a[3]', key: 3 }
                 },
                 {
                     message: '"a[5]" must be one of [1, 2]',
                     path: ['a', 5],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 5, valids: [1, 2], label: 'a[5]', key: 5 }
                 }
             ]);

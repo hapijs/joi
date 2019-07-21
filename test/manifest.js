@@ -131,7 +131,7 @@ describe('Manifest', () => {
                     renamed: {
                         type: 'string',
                         flags: {
-                            allowOnly: true
+                            only: true
                         },
                         valids: ['456'],
                         invalids: ['']
@@ -152,7 +152,7 @@ describe('Manifest', () => {
                             empty: {
                                 type: 'string',
                                 flags: {
-                                    allowOnly: true
+                                    only: true
                                 },
                                 valids: ['']
                             },
@@ -241,7 +241,7 @@ describe('Manifest', () => {
             expect(schema).to.equal({
                 type: 'symbol',
                 flags: {
-                    allowOnly: true
+                    only: true
                 },
                 map: [...map.entries()],
                 valids: symbols
@@ -255,7 +255,7 @@ describe('Manifest', () => {
             expect(schema).to.equal({
                 type: 'symbol',
                 flags: {
-                    allowOnly: true
+                    only: true
                 },
                 valids: symbols
             });

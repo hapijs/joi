@@ -72,7 +72,7 @@ describe('symbol', () => {
                     details: [{
                         message: '"value" must be one of [Symbol(1), Symbol(2)]',
                         path: [],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: otherSymbol, label: 'value', valids: symbols }
                     }]
                 }]
@@ -105,7 +105,7 @@ describe('symbol', () => {
                         details: [{
                             message: '"value" must be one of [Symbol(1), Symbol(2)]',
                             path: [],
-                            type: 'any.allowOnly',
+                            type: 'any.only',
                             context: { value: otherSymbol, label: 'value', valids: symbols }
                         }]
                     }]
@@ -126,7 +126,7 @@ describe('symbol', () => {
                         details: [{
                             message: '"value" must be one of [Symbol(one), Symbol(two)]',
                             path: [],
-                            type: 'any.allowOnly',
+                            type: 'any.only',
                             context: { value: otherSymbol, label: 'value', valids: symbols }
                         }]
                     }],
@@ -155,7 +155,7 @@ describe('symbol', () => {
                         details: [{
                             message: '"value" must be one of [Symbol(1), Symbol(2)]',
                             path: [],
-                            type: 'any.allowOnly',
+                            type: 'any.only',
                             context: { value: otherSymbol, label: 'value', valids: symbols }
                         }]
                     }]
@@ -215,7 +215,7 @@ describe('symbol', () => {
             expect(err.details).to.equal([{
                 message: '"value" must be one of [Symbol(1), Symbol(2)]',
                 path: [],
-                type: 'any.allowOnly',
+                type: 'any.only',
                 context: { value: 1, valids: symbols, label: 'value' }
             }]);
         });

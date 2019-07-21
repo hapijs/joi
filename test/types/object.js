@@ -658,7 +658,7 @@ describe('object', () => {
                 details: [{
                     message: '"foo" must be one of [ref:global:x]',
                     path: ['foo'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
                 }]
             }],
@@ -667,7 +667,7 @@ describe('object', () => {
                 details: [{
                     message: '"foo" must be one of [ref:global:x]',
                     path: ['foo'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
                 }]
             }],
@@ -676,7 +676,7 @@ describe('object', () => {
                 details: [{
                     message: '"foo" must be one of [ref:global:x]',
                     path: ['foo'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
                 }]
             }]
@@ -1297,7 +1297,7 @@ describe('object', () => {
                     details: [{
                         message: '"a" must be one of [1]',
                         path: ['a'],
-                        type: 'any.allowOnly',
+                        type: 'any.only',
                         context: { value: 2, valids: [1], label: 'a', key: 'a' }
                     }]
                 }]
@@ -2586,7 +2586,7 @@ describe('object', () => {
                 {
                     message: '"bb" must be one of [x]',
                     path: ['bb'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
                 }
             ]);
@@ -2645,7 +2645,7 @@ describe('object', () => {
                 {
                     message: '"bb" must be one of [x]',
                     path: ['bb'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
                 }
             ]);
@@ -2768,7 +2768,7 @@ describe('object', () => {
                 {
                     message: '"x.bb" must be one of [x]',
                     path: ['x', 'bb'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'y', valids: ['x'], label: 'x.bb', key: 'bb' }
                 }
             ]);
@@ -2799,7 +2799,7 @@ describe('object', () => {
                 {
                     message: '"x.bb" must be one of [x]',
                     path: ['x', 'bb'],
-                    type: 'any.allowOnly',
+                    type: 'any.only',
                     context: { value: 'y', valids: ['x'], label: 'x.bb', key: 'bb' }
                 }
             ]);

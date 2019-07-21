@@ -167,7 +167,7 @@
     - [`alternatives.base`](#alternativesbase)
     - [`alternatives.types`](#alternativestypes)
     - [`alternatives.match`](#alternativesmatch)
-    - [`any.allowOnly`](#anyallowonly)
+    - [`any.only`](#anyonly)
     - [`any.default`](#anydefault)
     - [`any.failover`](#anyfailover)
     - [`any.empty`](#anyempty)
@@ -746,7 +746,7 @@ Results in:
 
 ```
 { type: 'any',
-  flags: { allowOnly: true },
+  flags: { only: true },
   valids: [ 'foo', 'bar' ] }
 ```
 
@@ -1104,7 +1104,7 @@ const schema = {
 };
 ```
 
-Possible validation errors: [`any.allowOnly`](#anyallowonly)
+Possible validation errors: [`any.only`](#anyonly)
 
 #### `any.validate(value, [options])`
 
@@ -3188,7 +3188,7 @@ Additional local context properties:
 }
 ```
 
-#### `any.allowOnly`
+#### `any.only`
 
 Only some values were allowed, the input didn't match any of them.
 
