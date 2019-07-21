@@ -229,7 +229,7 @@
     - [`number.precision`](#numberprecision)
     - [`number.ref`](#numberref)
     - [`number.unsafe`](#numberunsafe)
-    - [`object.allowUnknown`](#objectallowunknown)
+    - [`object.unknown`](#objectunknown)
     - [`object.and`](#objectand)
     - [`object.assert`](#objectassert)
     - [`object.base`](#objectbase)
@@ -2287,7 +2287,7 @@ const extended = base.keys({
 });
 ```
 
-Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
+Possible validation errors: [`object.unknown`](#objectunknown)
 
 #### `object.length(limit)`
 
@@ -2486,7 +2486,7 @@ Overrides the handling of unknown keys for the scope of the current object only 
 const schema = Joi.object({ a: Joi.any() }).unknown();
 ```
 
-Possible validation errors: [`object.allowUnknown`](#objectallowunknown)
+Possible validation errors: [`object.unknown`](#objectunknown)
 
 #### `object.with(key, peers, [options])`
 
@@ -3727,7 +3727,7 @@ A reference was used in one of [`number.min()`](#numberminlimit), [`number.max()
 
 The number is not within the safe range of JavaScript numbers.
 
-#### `object.allowUnknown`
+#### `object.unknown`
 
 An unexpected property was found in the object.
 

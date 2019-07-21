@@ -285,7 +285,7 @@ describe('errors', () => {
         expect(err2.details).to.equal([{
             message: '"b&#x28;&#x29;" is not allowed',
             path: ['b()'],
-            type: 'object.allowUnknown',
+            type: 'object.unknown',
             context: { child: 'b()', label: 'b()', key: 'b()', value: 'x' }
         }]);
     });
@@ -310,7 +310,7 @@ describe('errors', () => {
         expect(err2.details).to.equal([{
             message: '"b()" is not allowed',
             path: ['b()'],
-            type: 'object.allowUnknown',
+            type: 'object.unknown',
             context: { child: 'b()', label: 'b()', key: 'b()', value: 'x' }
         }]);
     });
@@ -781,7 +781,7 @@ describe('errors', () => {
             expect(err.details).to.equal([{
                 message: '"x.x" is not allowed',
                 path: ['x', 'x'],
-                type: 'object.allowUnknown',
+                type: 'object.unknown',
                 context: { child: 'x', label: 'x.x', key: 'x', value: input.x }
             }]);
             expect(err.annotate()).to.equal('{\n  "x" \u001b[31m[1]\u001b[0m: "[Circular ~]"\n}\n\u001b[31m\n[1] "x.x" is not allowed\u001b[0m');
@@ -829,7 +829,7 @@ describe('errors', () => {
             expect(err.details).to.equal([{
                 message: '"x.y.foo" is not allowed',
                 path: ['x', 'y', 'foo'],
-                type: 'object.allowUnknown',
+                type: 'object.unknown',
                 context: { child: 'foo', label: 'x.y.foo', key: 'foo', value: input.x.y.foo }
             }]);
             expect(err.annotate()).to.equal('{\n  "x": {\n    "y": {\n      "z": 1,\n      "foo" \u001b[31m[1]\u001b[0m: "[Circular ~.x.y]"\n    }\n  }\n}\n\u001b[31m\n[1] "x.y.foo" is not allowed\u001b[0m');
@@ -896,7 +896,7 @@ describe('errors', () => {
             expect(err.details).to.equal([{
                 message: '"a.c" is not allowed',
                 path: ['a', 'c'],
-                type: 'object.allowUnknown',
+                type: 'object.unknown',
                 context: { child: 'c', label: 'a.c', key: 'c', value: 'string' }
             }]);
             expect(err.annotate(true)).to.equal('{\n  "a" [1]: "{\\"c\\":\\"string\\"}"\n}\n\n[1] "a.c" is not allowed');

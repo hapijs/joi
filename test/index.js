@@ -278,7 +278,7 @@ describe('Joi', () => {
                                 {
                                     message: '"c" is not allowed',
                                     path: ['c'],
-                                    type: 'object.allowUnknown',
+                                    type: 'object.unknown',
                                     context: { child: 'c', label: 'c', key: 'c', value: 5 }
                                 }
                             ]
@@ -430,7 +430,7 @@ describe('Joi', () => {
                                 {
                                     message: '"c" is not allowed',
                                     path: ['c'],
-                                    type: 'object.allowUnknown',
+                                    type: 'object.unknown',
                                     context: { child: 'c', label: 'c', key: 'c', value: 5 }
                                 }
                             ]
@@ -1380,7 +1380,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"something" is not allowed',
                     path: ['something'],
-                    type: 'object.allowUnknown',
+                    type: 'object.unknown',
                     context: { child: 'something', label: 'something', key: 'something' }
                 }]
             }],
@@ -1400,7 +1400,7 @@ describe('Joi', () => {
                                 {
                                     message: '"auth.something" is not allowed',
                                     path: ['auth', 'something'],
-                                    type: 'object.allowUnknown',
+                                    type: 'object.unknown',
                                     context: { child: 'something', label: 'auth.something', key: 'something' }
                                 },
                                 {
@@ -1479,7 +1479,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"something" is not allowed',
                     path: ['something'],
-                    type: 'object.allowUnknown',
+                    type: 'object.unknown',
                     context: { child: 'something', label: 'something', key: 'something' }
                 }]
             }],
@@ -1499,7 +1499,7 @@ describe('Joi', () => {
                                 {
                                     message: '"auth.something" is not allowed',
                                     path: ['auth', 'something'],
-                                    type: 'object.allowUnknown',
+                                    type: 'object.unknown',
                                     context: { child: 'something', label: 'auth.something', key: 'something' }
                                 },
                                 {
@@ -1589,7 +1589,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"b" is not allowed',
                     path: ['b'],
-                    type: 'object.allowUnknown',
+                    type: 'object.unknown',
                     context: { child: 'b', label: 'b', key: 'b' }
                 }]
             }]
@@ -1648,7 +1648,7 @@ describe('Joi', () => {
                 details: [{
                     message: '"b" is not allowed',
                     path: ['b'],
-                    type: 'object.allowUnknown',
+                    type: 'object.unknown',
                     context: { child: 'b', label: 'b', key: 'b' }
                 }]
             }]
@@ -1782,7 +1782,7 @@ describe('Joi', () => {
         expect(err.details).to.equal([{
             message: '"foo" is not allowed',
             path: ['foo'],
-            type: 'object.allowUnknown',
+            type: 'object.unknown',
             context: { child: 'foo', label: 'foo', key: 'foo', value: 'bar' }
         }]);
 
@@ -2403,7 +2403,7 @@ describe('Joi', () => {
         }, {
             message: '"test2.test3[2].baz.test4[0].baz" is not allowed',
             path: ['test2', 'test3', 2, 'baz', 'test4', 0, 'baz'],
-            type: 'object.allowUnknown',
+            type: 'object.unknown',
             context: { key: 'baz', label: 'test2.test3[2].baz.test4[0].baz', child: 'baz', value: '123' }
         }]);
     });

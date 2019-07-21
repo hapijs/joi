@@ -203,7 +203,7 @@ describe('object', () => {
                 details: [{
                     message: '"item2" is not allowed',
                     path: ['item2'],
-                    type: 'object.allowUnknown',
+                    type: 'object.unknown',
                     context: { child: 'item2', label: 'item2', key: 'item2', value: 'something else' }
                 }]
             }],
@@ -486,7 +486,7 @@ describe('object', () => {
                 details: [{
                     message: '"num" is not allowed',
                     path: ['num'],
-                    type: 'object.allowUnknown',
+                    type: 'object.unknown',
                     context: { child: 'num', label: 'num', key: 'num', value: 1 }
                 }]
             }],
@@ -610,7 +610,7 @@ describe('object', () => {
         expect(err.details).to.equal([{
             message: '"b" is not allowed',
             path: ['b'],
-            type: 'object.allowUnknown',
+            type: 'object.unknown',
             context: { child: 'b', label: 'b', key: 'b', value: 'value' }
         }]);
     });
@@ -691,7 +691,7 @@ describe('object', () => {
         expect(err.details).to.equal([{
             message: '"a.b" is not allowed',
             path: ['a', 'b'],
-            type: 'object.allowUnknown',
+            type: 'object.unknown',
             context: { child: 'b', label: 'a.b', key: 'b', value: 'value' }
         }]);
     });
@@ -704,7 +704,7 @@ describe('object', () => {
         expect(err.details).to.equal([{
             message: '"c" is not allowed',
             path: ['c'],
-            type: 'object.allowUnknown',
+            type: 'object.unknown',
             context: { child: 'c', label: 'c', key: 'c', value: 'hello' }
         }]);
     });
@@ -748,7 +748,7 @@ describe('object', () => {
             {
                 message: '"hasOwnProperty" is not allowed',
                 path: ['hasOwnProperty'],
-                type: 'object.allowUnknown',
+                type: 'object.unknown',
                 context: {
                     child: 'hasOwnProperty',
                     label: 'hasOwnProperty',
@@ -1248,7 +1248,7 @@ describe('object', () => {
             expect(err.details).to.equal([{
                 message: '"b" is not allowed',
                 path: ['b'],
-                type: 'object.allowUnknown',
+                type: 'object.unknown',
                 context: { child: 'b', label: 'b', key: 'b', value: 3 }
             }]);
 
@@ -1264,7 +1264,7 @@ describe('object', () => {
             expect(err.details).to.equal([{
                 message: '"b" is not allowed',
                 path: ['b'],
-                type: 'object.allowUnknown',
+                type: 'object.unknown',
                 context: { child: 'b', label: 'b', key: 'b', value: 3 }
             }]);
         });
@@ -1277,7 +1277,7 @@ describe('object', () => {
             expect(err.details).to.equal([{
                 message: '"b" is not allowed',
                 path: ['b'],
-                type: 'object.allowUnknown',
+                type: 'object.unknown',
                 context: { child: 'b', label: 'b', key: 'b', value: 2 }
             }]);
 
@@ -2099,13 +2099,13 @@ describe('object', () => {
                     {
                         message: '"d" is not allowed',
                         path: ['d'],
-                        type: 'object.allowUnknown',
+                        type: 'object.unknown',
                         context: { child: 'd', key: 'd', label: 'd', value: 1 }
                     },
                     {
                         message: '"b" is not allowed',
                         path: ['b'],
-                        type: 'object.allowUnknown',
+                        type: 'object.unknown',
                         context: { child: 'b', key: 'b', label: 'b', value: 1 }
                     }
                 ]);
@@ -2607,7 +2607,7 @@ describe('object', () => {
                     details: [{
                         message: '"b" is not allowed',
                         path: ['b'],
-                        type: 'object.allowUnknown',
+                        type: 'object.unknown',
                         context: { child: 'b', label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
@@ -2666,7 +2666,7 @@ describe('object', () => {
                     details: [{
                         message: '"b" is not allowed',
                         path: ['b'],
-                        type: 'object.allowUnknown',
+                        type: 'object.unknown',
                         context: { child: 'b', label: 'b', key: 'b', value: 'x' }
                     }]
                 }],
@@ -2718,7 +2718,7 @@ describe('object', () => {
                     details: [{
                         message: '"b.foo" is not allowed',
                         path: ['b', 'foo'],
-                        type: 'object.allowUnknown',
+                        type: 'object.unknown',
                         context: { child: 'foo', value: true, key: 'foo', label: 'b.foo' }
                     }]
                 }],
@@ -2727,7 +2727,7 @@ describe('object', () => {
                     details: [{
                         message: '"b.foo" is not allowed',
                         path: ['b', 'foo'],
-                        type: 'object.allowUnknown',
+                        type: 'object.unknown',
                         context: { child: 'foo', value: true, key: 'foo', label: 'b.foo' }
                     }]
                 }],
@@ -2813,7 +2813,7 @@ describe('object', () => {
             expect(err.details).to.equal([{
                 message: '"a" is not allowed',
                 path: ['a'],
-                type: 'object.allowUnknown',
+                type: 'object.unknown',
                 context: { child: 'a', label: 'a', key: 'a', value: 5 }
             }]);
         });
@@ -2826,7 +2826,7 @@ describe('object', () => {
             expect(err.details).to.equal([{
                 message: '"a" is not allowed',
                 path: ['a'],
-                type: 'object.allowUnknown',
+                type: 'object.unknown',
                 context: { child: 'a', label: 'a', key: 'a', value: 5 }
             }]);
         });
@@ -3266,7 +3266,7 @@ describe('object', () => {
                     details: [{
                         message: '"a.c" is not allowed',
                         path: ['a', 'c'],
-                        type: 'object.allowUnknown',
+                        type: 'object.unknown',
                         context: { child: 'c', label: 'a.c', key: 'c', value: 'ignore' }
                     }]
                 }]
@@ -3297,7 +3297,7 @@ describe('object', () => {
                     details: [{
                         message: '"c" is not allowed',
                         path: ['c'],
-                        type: 'object.allowUnknown',
+                        type: 'object.unknown',
                         context: { child: 'c', label: 'c', key: 'c', value: 'ignore' }
                     }]
                 }],
