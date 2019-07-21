@@ -1668,7 +1668,7 @@ describe('alternatives', () => {
                     foo: Joi.string(),
                     bar: Joi.number()
                 })
-                    .when(Joi.object().keys({ foo: Joi.only('hasBar').required() }).unknown(), {
+                    .when(Joi.object().keys({ foo: Joi.valid('hasBar').required() }).unknown(), {
                         then: Joi.object().keys({ bar: Joi.required() })
                     });
 

@@ -2689,7 +2689,7 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.object().pattern(Joi.only(Joi.ref('a')), Joi.boolean())
+                b: Joi.object().pattern(Joi.valid(Joi.ref('a')), Joi.boolean())
             });
 
             Helper.validate(schema, [

@@ -45,6 +45,7 @@
     - [`any.message(message)`](#anymessagemessage)
     - [`any.meta(meta)`](#anymetameta)
     - [`any.notes(notes)`](#anynotesnotes)
+    - [`any.only()`](#anyonly)
     - [`any.optional()`](#anyoptional)
     - [`any.prefs(options)` = aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
     - [`any.raw()`](#anyraw)
@@ -56,7 +57,7 @@
     - [`any.tags(tags)`](#anytagstags)
     - [`any.tailor(targets)`](#anytailortargets)
     - [`any.unit(name)`](#anyunitname)
-    - [`any.valid(...values)` - aliases: `only`, `equal`](#anyvalidvalues---aliases-only-equal)
+    - [`any.valid(...values)` - aliases: `equal`](#anyvalidvalues---aliases-equal)
     - [`any.validate(value, [options])`](#anyvalidatevalue-options)
     - [`any.warn()`](#anywarn)
     - [`any.warning(code, [context])`](#anywarningcode-context)
@@ -167,7 +168,7 @@
     - [`alternatives.base`](#alternativesbase)
     - [`alternatives.types`](#alternativestypes)
     - [`alternatives.match`](#alternativesmatch)
-    - [`any.only`](#anyonly)
+    - [`any.only`](#anyonly-1)
     - [`any.default`](#anydefault)
     - [`any.failover`](#anyfailover)
     - [`any.empty`](#anyempty)
@@ -590,7 +591,7 @@ Allows values where:
   validated value before applying any other rules. Supports [references](#refkey-options).
 
 Note that this list of allowed values is in *addition* to any other permitted values.
-To create an exclusive list of values, see [`any.valid(value)`](#anyvalidvalues---aliases-only-equal).
+To create an exclusive list of values, see [`any.valid(value)`](#anyvalidvalues---aliases-equal).
 
 ```js
 const schema = {
@@ -955,6 +956,12 @@ Annotates the key where:
 const schema = Joi.any().notes(['this is special', 'this is important']);
 ```
 
+#### `any.only()`
+
+Requires the validated value to match of the provided `any.allow()` values. It has not effect when
+called together with `any.valid()` since it already sets the requirements. When used with
+`any.allow()` it converts it to an `any.valid()`.
+
 #### `any.optional()`
 
 Marks a key as optional which will allow `undefined` as values. Used to annotate the schema for readability as all keys are optional by default.
@@ -1090,7 +1097,7 @@ Annotates the key where:
 const schema = Joi.number().unit('milliseconds');
 ```
 
-#### `any.valid(...values)` - aliases: `only`, `equal`
+#### `any.valid(...values)` - aliases: `equal`
 
 Adds the provided values into the allowed values list and marks them as the only valid values
 allowed where:

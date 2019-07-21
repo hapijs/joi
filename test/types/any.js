@@ -850,7 +850,7 @@ describe('any', () => {
         it('merges into an any', () => {
 
             const a = Joi.any().required();
-            const b = Joi.number().only(0);
+            const b = Joi.number().valid(0);
 
             expect(() => {
 
@@ -3008,7 +3008,7 @@ describe('any', () => {
 
             const schema = {
                 a: Joi.any(),
-                b: Joi.string().valid('x').when('a', { is: Joi.number().only(5).required(), then: Joi.valid('y') })
+                b: Joi.string().valid('x').when('a', { is: Joi.number().valid(5).required(), then: Joi.valid('y') })
             };
 
             Helper.validate(schema, [
