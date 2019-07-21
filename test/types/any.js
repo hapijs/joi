@@ -886,20 +886,6 @@ describe('any', () => {
             expect(value.foo).to.equal('test');
         });
 
-        it('throws when value is a method and no description is provided', () => {
-
-            expect(() => {
-
-                Joi.object({
-                    foo: Joi.string().default(() => {
-
-                        return 'test';
-
-                    })
-                });
-            }).to.throw();
-        });
-
         it('allows passing description as a property of a default method', () => {
 
             const defaultFn = function () {
@@ -921,7 +907,7 @@ describe('any', () => {
                 foo: Joi.string().default(() => {
 
                     return 'test';
-                }, 'testing')
+                })
             });
             const input = {};
 
@@ -936,7 +922,7 @@ describe('any', () => {
                 foo: Joi.number().default(() => {
 
                     return ++count;
-                }, 'incrementer')
+                })
             });
             const input = {};
 
@@ -953,7 +939,7 @@ describe('any', () => {
                 foo: Joi.string().default((context) => {
 
                     return context.bar + 'ing';
-                }, 'testing'),
+                }),
                 bar: Joi.string()
             });
             const input = { bar: 'test' };
@@ -990,7 +976,7 @@ describe('any', () => {
                 methodCalled = true;
                 c = context;
                 return 'test';
-            }, 'testing');
+            });
 
             const value = await schema.validate(undefined);
             expect(methodCalled).to.equal(true);
@@ -998,21 +984,12 @@ describe('any', () => {
             expect(value).to.equal('test');
         });
 
-        it('allows passing a method with no description to default when the object being validated is a function', async () => {
+        it('sets literal function default', async () => {
 
-            const defaultFn = function () {
-
-                return 'just a function';
-            };
-
-            let schema;
-            expect(() => {
-
-                schema = Joi.func().default(defaultFn);
-            }).to.not.throw();
-
+            const func = () => 'just a function';
+            const schema = Joi.func().default(func, { literal: true });
             const value = await schema.validate(undefined);
-            expect(value).to.equal(defaultFn);
+            expect(value).to.equal(func);
         });
 
         it('allows passing a method that generates a default method when validating a function', async () => {
@@ -1027,14 +1004,7 @@ describe('any', () => {
                 return defaultFn;
             };
 
-            defaultGeneratorFn.description = 'generate a default fn';
-
-            let schema;
-            expect(() => {
-
-                schema = Joi.func().default(defaultGeneratorFn);
-            }).to.not.throw();
-
+            const schema = Joi.func().default(defaultGeneratorFn);
             const value = await schema.validate(undefined);
             expect(value).to.equal(defaultFn);
         });
@@ -1055,7 +1025,7 @@ describe('any', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.string().default(Joi.ref('a'), 'this is a ref')
+                b: Joi.string().default(Joi.ref('a'))
             });
 
             const value = await schema.validate({ a: 'test' });
@@ -1098,7 +1068,9 @@ describe('any', () => {
 
             const schema = Joi.object({
                 a: Joi.boolean(),
-                b: Joi.boolean().default(false).when('a', { is: true, then: Joi.required(), otherwise: Joi.forbidden() })
+                b: Joi.boolean()
+                    .default(false)
+                    .when('a', { is: true, then: Joi.required(), otherwise: Joi.forbidden() })
             });
 
             const value = await schema.validate({ a: false });
@@ -1123,8 +1095,10 @@ describe('any', () => {
                 b: Joi.object({
                     c: Joi.boolean().default(true),
                     d: Joi.string()
-                }).default()
-            }).default();
+                })
+                    .default()
+            })
+                .default();
 
             Helper.validate(schema, [
                 [undefined, true, null, { a: 42, b: { c: true } }],
@@ -1132,16 +1106,9 @@ describe('any', () => {
             ]);
         });
 
-        it('should not affect objects other than object when called without an argument', () => {
+        it('errors when missing value on non-object schemas', () => {
 
-            const schema = Joi.object({
-                a: Joi.number().default()
-            }).default();
-
-            Helper.validate(schema, [
-                [undefined, true, null, {}],
-                [{ a: 24 }, true, null, { a: 24 }]
-            ]);
+            expect(() => Joi.number().default()).to.throw('Missing default value');
         });
 
         it('should set default value as a clone', async () => {
@@ -2145,7 +2112,6 @@ describe('any', () => {
                 base: {
                     type: 'number',
                     invalids: [Infinity, -Infinity],
-                    flags: { unsafe: false },
                     rules: [
                         { args: { limit: 10 }, name: 'min' }
                     ]
@@ -2156,8 +2122,7 @@ describe('any', () => {
                         type: 'number',
                         flags: {
                             allowOnly: true,
-                            presence: 'required',
-                            unsafe: false
+                            presence: 'required'
                         },
                         valids: [5],
                         invalids: [Infinity, -Infinity]
@@ -2165,8 +2130,7 @@ describe('any', () => {
                     then: {
                         type: 'number',
                         flags: {
-                            presence: 'required',
-                            unsafe: false
+                            presence: 'required'
                         },
                         invalids: [Infinity, -Infinity],
                         rules: [
@@ -3130,7 +3094,6 @@ describe('any', () => {
                 base: {
                     type: 'number',
                     invalids: [Infinity, -Infinity],
-                    flags: { unsafe: false },
                     rules: [
                         { args: { limit: 10 }, name: 'min' }
                     ]
@@ -3141,8 +3104,7 @@ describe('any', () => {
                         type: 'number',
                         flags: {
                             allowOnly: true,
-                            presence: 'required',
-                            unsafe: false
+                            presence: 'required'
                         },
                         valids: [5],
                         invalids: [Infinity, -Infinity]
@@ -3150,8 +3112,7 @@ describe('any', () => {
                     then: {
                         type: 'number',
                         flags: {
-                            presence: 'required',
-                            unsafe: false
+                            presence: 'required'
                         },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
@@ -3171,20 +3132,18 @@ describe('any', () => {
                 flags: { presence: 'ignore' },
                 base: {
                     type: 'number',
-                    flags: { unsafe: false },
                     invalids: [Infinity, -Infinity],
                     rules: [{ args: { limit: 10 }, name: 'min' }]
                 },
                 matches: [{
                     peek: {
                         type: 'number',
-                        flags: { unsafe: false },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', args: { limit: 5 } }]
                     },
                     then: {
                         type: 'number',
-                        flags: { presence: 'required', unsafe: false },
+                        flags: { presence: 'required' },
                         invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
                     }

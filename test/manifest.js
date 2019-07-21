@@ -48,9 +48,9 @@ describe('Manifest', () => {
                 renamed: Joi.string().valid('456'),
                 notEmpty: Joi.string().required().description('a').notes('b').tags('c'),
                 empty: Joi.string().empty('').strip(),
-                defaultRef: Joi.string().default(defaultRef, 'not here'),
-                defaultFn: Joi.string().default(defaultFn, 'not here'),
-                defaultDescribedFn: Joi.string().default(defaultDescribedFn, 'described test')
+                defaultRef: Joi.string().default(defaultRef),
+                defaultFn: Joi.string().default(defaultFn),
+                defaultDescribedFn: Joi.string().default(defaultDescribedFn)
             })
                 .prefs({ abortEarly: false, convert: false })
                 .rename('renamed', 'required')
@@ -96,8 +96,7 @@ describe('Manifest', () => {
                             {
                                 schema: {
                                     type: 'number',
-                                    invalids: [Infinity, -Infinity],
-                                    flags: { unsafe: false }
+                                    invalids: [Infinity, -Infinity]
                                 }
                             },
                             {
@@ -173,20 +172,14 @@ describe('Manifest', () => {
                     defaultFn: {
                         type: 'string',
                         flags: {
-                            default: {
-                                description: 'testing',
-                                function: defaultFn
-                            }
+                            default: defaultFn
                         },
                         invalids: ['']
                     },
                     defaultDescribedFn: {
                         type: 'string',
                         flags: {
-                            default: {
-                                description: 'described test',
-                                function: defaultDescribedFn
-                            }
+                            default: defaultDescribedFn
                         },
                         invalids: ['']
                     }
@@ -223,8 +216,6 @@ describe('Manifest', () => {
             const description = schema.describe();
             expect(description).to.equal(result);
             expect(description.children.defaultRef.flags.default).to.equal({ ref: { path: ['xor'] } });
-            expect(description.children.defaultFn.flags.default.description).to.equal('testing');
-            expect(description.children.defaultDescribedFn.flags.default.description).to.equal('described test');
         });
 
         it('describes schema (any)', () => {
@@ -290,6 +281,43 @@ describe('Manifest', () => {
                     }
                 ]
             });
+        });
+    });
+
+    describe('build()', () => {
+
+        it('builds basic schemas', () => {
+
+            const schemas = [
+                Joi.any(),
+                Joi.array(),
+                Joi.binary(),
+                Joi.boolean(),
+                Joi.date(),
+                Joi.func(),
+                Joi.number(),
+                Joi.string(),
+                Joi.symbol()
+            ];
+
+            for (const schema of schemas) {
+                const built = Joi.build(schema.describe());
+                built._ruleset = schema._ruleset;
+                expect(built).to.equal(schema);
+            }
+        });
+
+        it('sets flags', () => {
+
+            const schemas = [
+                Joi.string().required()
+            ];
+
+            for (const schema of schemas) {
+                const built = Joi.build(schema.describe());
+                built._ruleset = schema._ruleset;
+                expect(built).to.equal(schema);
+            }
         });
     });
 });

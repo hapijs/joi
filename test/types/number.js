@@ -107,7 +107,6 @@ describe('number', () => {
             expect(schema.describe()).to.equal({
                 type: 'number',
                 invalids: [Infinity, -Infinity],
-                flags: { unsafe: false },
                 rules: [
                     {
                         name: 'min',

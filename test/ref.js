@@ -739,7 +739,6 @@ describe('ref', () => {
             children: {
                 b: {
                     type: 'number',
-                    flags: { unsafe: false },
                     invalids: [Infinity, -Infinity]
                 },
                 a: {
@@ -789,7 +788,6 @@ describe('ref', () => {
             children: {
                 b: {
                     type: 'number',
-                    flags: { unsafe: false },
                     invalids: [Infinity, -Infinity]
                 },
                 a: {
@@ -1284,7 +1282,7 @@ describe('ref', () => {
                 },
                 then: {
                     type: 'number',
-                    flags: { allowOnly: true, default: { ref: { path: ['a', 'b'] } }, unsafe: false },
+                    flags: { allowOnly: true, default: { ref: { path: ['a', 'b'] } } },
                     valids: [{ ref: { path: ['a', 'b'] } }],
                     invalids: [{ ref: { type: 'global', path: ['b', 'c'] } }, Infinity, -Infinity],
                     rules: [

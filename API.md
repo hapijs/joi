@@ -27,7 +27,7 @@
       - [Cache interface](#cache-interface)
     - [`any.cast(to)`](#anycastto)
     - [`any.concat(schema)`](#anyconcatschema)
-    - [`any.default([value, [description]])`](#anydefaultvalue-description)
+    - [`any.default([value])`](#anydefaultvalue)
     - [`any.describe()`](#anydescribe)
     - [`any.description(desc)`](#anydescriptiondesc)
     - [`any.empty(schema)`](#anyemptyschema)
@@ -35,7 +35,7 @@
     - [`any.example(...values)`](#anyexamplevalues)
     - [`any.external(method)`](#anyexternalmethod)
     - [`any.extract(path)`](#anyextractpath)
-    - [`any.failover([value, [description]])`](#anyfailovervalue-description)
+    - [`any.failover(value)`](#anyfailovervalue)
     - [`any.forbidden()`](#anyforbidden)
     - [`any.fork(paths, adjuster)`](#anyforkpaths-adjuster)
     - [`any.id(id)`](#anyidid)
@@ -687,25 +687,23 @@ const b = Joi.string().valid('b');
 const ab = a.concat(b);
 ```
 
-#### `any.default([value, [description]])`
+#### `any.default([value])`
 
 Sets a default value if the original value is undefined where:
-- `value` - the value.
-  - `value` supports [references](#refkey-options).
-  - `value` may also be a function which returns the default value. If `value` is specified as a
-    function that accepts a single parameter, that parameter will be a context object that can be
-    used to derive the resulting value.
-    - Use a function when setting a dynamic value, such as the current time. Ex: `default(Date.now, 'time of creation')`
-    - **Caution: this clones the object**, which incurs some overhead so if you don't need access
-      to the context define your method so that it does not accept any parameters.
-  - without any `value`, `default` has no effect, except for `object` that will then create nested
-    defaults (applying inner defaults of that object).
+- `value` - the default value. `value` supports [references](#refkey-options). It may be assigned a
+  function which returns the default value. If `value` is specified as a function that accepts a
+  single parameter, that parameter will be a context object that can be used to derive the
+  resulting value.
+
+When called without any `value` on an object schema type, a default value will be automatically
+generated based on the default values of the object keys.
 
 Note that if `value` is an object, any changes to the object after `default()` is called will change
-the reference and any future assignment.
+the reference and any future assignment. Use a function when setting a dynamic value (e.g. the
+current time).
 
-Additionally, when specifying a method you must either have a `description` property on your method
-or the second parameter is required.
+Using a function with a single argument performs some internal cloning which has a performance
+impact. If you do not need access to the context, define the function without any arguments.
 
 ```js
 const generateUsername = (context) => {
@@ -718,7 +716,7 @@ const schema = Joi.object({
     username: Joi.string().default(generateUsername),
     firstname: Joi.string(),
     lastname: Joi.string(),
-    created: Joi.date().default(Date.now, 'time of creation'),
+    created: Joi.date().default(Date.now),
     status: Joi.string().default('registered')
 });
 
@@ -852,25 +850,20 @@ const number = schema.extract('foo.bar');
 const result = schema.extract(['foo', 'bar']); //same as number
 ```
 
-#### `any.failover([value, [description]])`
+#### `any.failover(value)`
 
 Sets a failover value if the original value fails passing validation where:
-- `value` - the failover value.
-  - `value` supports [references](#refkey-options).
-  - `value` may also be a function which returns the default value. If `value` is specified as a
-    function that accepts a single parameter, that parameter will be a context object that can be
-    used to derive the resulting value.
-    - Use a function when setting a dynamic value, such as the current time. Ex: `default(Date.now, 'time of creation')`
-    - **Caution: this clones the object**, which incurs some overhead so if you don't need access
-      to the context define your method so that it does not accept any parameters.
-  - without any `value`, `default` has no effect, except for `object` that will then create nested
-    defaults (applying inner defaults of that object).
+- `value` - the failover value. `value` supports [references](#refkey-options). `value` may be
+  assigned a function which returns the default value. If `value` is specified as a function
+  that accepts a single parameter, that parameter will be a context object that can be used to
+  derive the resulting value.
 
-Note that if `value` is an object, any changes to the object after `failover()` is called will
-change the reference and any future assignment.
+Note that if `value` is an object, any changes to the object after `failover()` is called will change
+the reference and any future assignment. Use a function when setting a dynamic value (e.g. the
+current time).
 
-Additionally, when specifying a method you must either have a `description` property on your method
-or the second parameter is required.
+Using a function with a single argument performs some internal cloning which has a performance
+impact. If you do not need access to the context, define the function without any arguments.
 
 Possible validation errors: [`any.failover`](#anyfailover)
 

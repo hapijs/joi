@@ -111,8 +111,7 @@ describe('alternatives', () => {
                                     type: 'number',
                                     flags: {
                                         allowOnly: true,
-                                        presence: 'required',
-                                        unsafe: false
+                                        presence: 'required'
                                     },
                                     valids: [5],
                                     invalids: [Infinity, -Infinity]
@@ -132,8 +131,7 @@ describe('alternatives', () => {
                                     type: 'number',
                                     flags: {
                                         allowOnly: true,
-                                        presence: 'required',
-                                        unsafe: false
+                                        presence: 'required'
                                     },
                                     valids: [6],
                                     invalids: [Infinity, -Infinity]
@@ -187,8 +185,7 @@ describe('alternatives', () => {
                                     type: 'number',
                                     flags: {
                                         allowOnly: true,
-                                        presence: 'required',
-                                        unsafe: false
+                                        presence: 'required'
                                     },
                                     valids: [5],
                                     invalids: [Infinity, -Infinity]
@@ -242,8 +239,7 @@ describe('alternatives', () => {
                                     type: 'number',
                                     flags: {
                                         allowOnly: true,
-                                        presence: 'required',
-                                        unsafe: false
+                                        presence: 'required'
                                     },
                                     valids: [5],
                                     invalids: [Infinity, -Infinity]

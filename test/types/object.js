@@ -1190,7 +1190,7 @@ describe('object', () => {
                 },
                 patterns: [
                     {
-                        regex: { regex: '/\\w\\d/i' },
+                        regex: '/\\w\\d/i',
                         rule: {
                             type: 'boolean',
                             flags: {
@@ -1719,7 +1719,7 @@ describe('object', () => {
                 expect(schema.describe()).to.equal({
                     type: 'object',
                     patterns: [{
-                        regex: { regex: '/^x\\d+x$/' },
+                        regex: '/^x\\d+x$/',
                         rule: { type: 'any' }
                     }],
                     renames: [{
@@ -1760,7 +1760,7 @@ describe('object', () => {
                 expect(schema.describe()).to.equal({
                     type: 'object',
                     patterns: [{
-                        regex: { regex: '/^x\\d+x$/' },
+                        regex: '/^x\\d+x$/',
                         rule: { type: 'any' }
                     }],
                     renames: [{
@@ -2918,7 +2918,6 @@ describe('object', () => {
                     a: {
                         type: 'number',
                         flags: {
-                            unsafe: false,
                             presence: 'required'
                         },
                         invalids: [Infinity, -Infinity]
@@ -2932,12 +2931,9 @@ describe('object', () => {
                                 insensitive: true
                             }
                         },
-                        regex: { regex: '/^x\\d+$/' },
+                        regex: '/^x\\d+$/',
                         matches: {
                             type: 'array',
-                            flags: {
-                                sparse: false
-                            },
                             rules: [
                                 {
                                     name: 'length',
@@ -2956,27 +2952,18 @@ describe('object', () => {
                     {
                         rule: {
                             type: 'number',
-                            flags: {
-                                unsafe: false
-                            },
                             invalids: [Infinity, -Infinity]
                         },
-                        regex: { regex: '/^z\\w+$/' }
+                        regex: '/^z\\w+$/'
                     },
                     {
                         rule: {
                             type: 'number',
-                            flags: {
-                                unsafe: false
-                            },
                             invalids: [Infinity, -Infinity]
                         },
-                        regex: { regex: '/^x\\w+$/' },
+                        regex: '/^x\\w+$/',
                         matches: {
                             type: 'array',
-                            flags: {
-                                sparse: false
-                            },
                             rules: [
                                 {
                                     name: 'max',

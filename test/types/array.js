@@ -115,8 +115,7 @@ describe('array', () => {
             const schema = Joi.array();
             const desc = schema.describe();
             expect(desc).to.equal({
-                type: 'array',
-                flags: { sparse: false }
+                type: 'array'
             });
         });
 
@@ -148,14 +147,13 @@ describe('array', () => {
             expect(desc.items).to.have.length(3);
             expect(desc).to.equal({
                 type: 'array',
-                flags: { sparse: false },
                 ordered: [
-                    { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
+                    { type: 'number', invalids: [Infinity, -Infinity] },
                     { type: 'string', invalids: [''] },
                     { type: 'string', invalids: [''], flags: { presence: 'required' } }
                 ],
                 items: [
-                    { type: 'number', invalids: [Infinity, -Infinity], flags: { unsafe: false } },
+                    { type: 'number', invalids: [Infinity, -Infinity] },
                     { type: 'string', invalids: [''] },
                     { type: 'boolean', flags: { presence: 'forbidden', insensitive: true } }
                 ]
@@ -168,11 +166,9 @@ describe('array', () => {
             const desc = schema.describe();
             expect(desc).to.equal({
                 type: 'array',
-                flags: { sparse: false },
                 items: [
                     {
-                        type: 'array',
-                        flags: { sparse: false }
+                        type: 'array'
                     }
                 ]
             });
@@ -359,10 +355,9 @@ describe('array', () => {
             const schema = Joi.array().has(Joi.string()).has(Joi.number());
             expect(schema.describe()).to.equal({
                 type: 'array',
-                flags: { sparse: false },
                 rules: [
                     { name: 'has', args: { schema: { type: 'string', invalids: [''] } } },
-                    { name: 'has', args: { schema: { type: 'number', flags: { unsafe: false }, invalids: [Infinity, -Infinity] } } }
+                    { name: 'has', args: { schema: { type: 'number', invalids: [Infinity, -Infinity] } } }
                 ]
             });
         });
@@ -1514,7 +1509,7 @@ describe('array', () => {
             const desc = schema.describe();
             expect(desc).to.equal({
                 type: 'array',
-                flags: { sparse: false, single: true }
+                flags: { single: true }
             });
         });
 
@@ -1524,7 +1519,7 @@ describe('array', () => {
             const desc = schema.describe();
             expect(desc).to.equal({
                 type: 'array',
-                flags: { sparse: false, single: false }
+                flags: { single: false }
             });
         });
 
@@ -2127,8 +2122,7 @@ describe('array', () => {
             const schema = Joi.array().sparse().sparse(false);
             const desc = schema.describe();
             expect(desc).to.equal({
-                type: 'array',
-                flags: { sparse: false }
+                type: 'array'
             });
         });
 

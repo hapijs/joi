@@ -2581,8 +2581,7 @@ describe('Joi', () => {
             expect(schema.describe()).to.equal({
                 type: 'any',
                 flags: {
-                    description: 'defaulted',
-                    presence: 'optional'
+                    description: 'defaulted'
                 }
             });
         });

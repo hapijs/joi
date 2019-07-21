@@ -4458,8 +4458,7 @@ describe('string', () => {
             const desc = schema.describe();
             expect(desc).to.equal({
                 type: 'string',
-                invalids: [''],
-                flags: { truncate: false }
+                invalids: ['']
             });
         });
 
@@ -13037,7 +13036,7 @@ describe('string', () => {
                         args: {
                             patternObject: {
                                 value: {
-                                    pattern: /[a-z]/,
+                                    pattern: { regex: '/[a-z]/' },
                                     invert: true
                                 }
                             }
