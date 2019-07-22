@@ -60,19 +60,17 @@ describe('Manifest', () => {
 
             const result = {
                 type: 'object',
-                valids: [{ value: { a: 'x' } }],
+                allow: [{ value: { a: 'x' } }],
                 children: {
                     sub: {
                         type: 'object',
                         children: {
                             email: {
                                 type: 'string',
-                                invalids: [''],
                                 rules: [{ name: 'email' }]
                             },
                             domain: {
                                 type: 'string',
-                                invalids: [''],
                                 rules: [{ name: 'domain' }]
                             },
                             date: {
@@ -83,7 +81,6 @@ describe('Manifest', () => {
                                 children: {
                                     alphanum: {
                                         type: 'string',
-                                        invalids: [''],
                                         rules: [{ name: 'alphanum' }]
                                     }
                                 }
@@ -95,14 +92,12 @@ describe('Manifest', () => {
                         matches: [
                             {
                                 schema: {
-                                    type: 'number',
-                                    invalids: [Infinity, -Infinity]
+                                    type: 'number'
                                 }
                             },
                             {
                                 schema: {
                                     type: 'string',
-                                    invalids: [''],
                                     rules: [{ name: 'min', args: { limit: 3 } }]
                                 }
                             }
@@ -114,27 +109,23 @@ describe('Manifest', () => {
                             default: 0,
                             failover: 1
                         },
-                        invalids: [''],
                         rules: [{ name: 'max', args: { limit: 3 } }]
                     },
                     required: {
                         type: 'string',
                         flags: {
                             presence: 'required'
-                        },
-                        invalids: ['']
+                        }
                     },
                     xor: {
-                        type: 'string',
-                        invalids: ['']
+                        type: 'string'
                     },
                     renamed: {
                         type: 'string',
                         flags: {
                             only: true
                         },
-                        valids: ['456'],
-                        invalids: ['']
+                        allow: ['456']
                     },
                     notEmpty: {
                         type: 'string',
@@ -143,8 +134,7 @@ describe('Manifest', () => {
                             presence: 'required'
                         },
                         notes: ['b'],
-                        tags: ['c'],
-                        invalids: ['']
+                        tags: ['c']
                     },
                     empty: {
                         type: 'string',
@@ -154,11 +144,10 @@ describe('Manifest', () => {
                                 flags: {
                                     only: true
                                 },
-                                valids: ['']
+                                allow: ['']
                             },
                             strip: true
-                        },
-                        invalids: ['']
+                        }
                     },
                     defaultRef: {
                         type: 'string',
@@ -166,22 +155,19 @@ describe('Manifest', () => {
                             default: {
                                 ref: { path: ['xor'] }
                             }
-                        },
-                        invalids: ['']
+                        }
                     },
                     defaultFn: {
                         type: 'string',
                         flags: {
                             default: defaultFn
-                        },
-                        invalids: ['']
+                        }
                     },
                     defaultDescribedFn: {
                         type: 'string',
                         flags: {
                             default: defaultDescribedFn
-                        },
-                        invalids: ['']
+                        }
                     }
                 },
                 dependencies: [
@@ -244,7 +230,7 @@ describe('Manifest', () => {
                     only: true
                 },
                 map: [...map.entries()],
-                valids: symbols
+                allow: symbols
             });
         });
 
@@ -257,14 +243,14 @@ describe('Manifest', () => {
                 flags: {
                     only: true
                 },
-                valids: symbols
+                allow: symbols
             });
         });
 
         it('handles empty values', () => {
 
-            expect(Joi.allow(1).invalid(1).describe()).to.equal({ type: 'any', invalids: [1] });
-            expect(Joi.invalid(1).allow(1).describe()).to.equal({ type: 'any', valids: [1] });
+            expect(Joi.allow(1).invalid(1).describe()).to.equal({ type: 'any', invalid: [1] });
+            expect(Joi.invalid(1).allow(1).describe()).to.equal({ type: 'any', allow: [1] });
         });
 
         it('describes ruleset changes', () => {
@@ -272,7 +258,6 @@ describe('Manifest', () => {
             const schema = Joi.string().min(1).keep();
             expect(schema.describe()).to.equal({
                 type: 'string',
-                invalids: [''],
                 rules: [
                     {
                         name: 'min',
@@ -288,7 +273,7 @@ describe('Manifest', () => {
 
         it('builds basic schemas', () => {
 
-            const schemas = [
+            internals.test([
                 Joi.any(),
                 Joi.array(),
                 Joi.binary(),
@@ -298,26 +283,63 @@ describe('Manifest', () => {
                 Joi.number(),
                 Joi.string(),
                 Joi.symbol()
-            ];
-
-            for (const schema of schemas) {
-                const built = Joi.build(schema.describe());
-                built._ruleset = schema._ruleset;
-                expect(built).to.equal(schema);
-            }
+            ]);
         });
 
         it('sets flags', () => {
 
-            const schemas = [
-                Joi.string().required()
-            ];
+            internals.test([
+                Joi.string().required(),
+                Joi.func().default(() => null, { literal: true }),
+                Joi.object().default()
+            ]);
+        });
 
-            for (const schema of schemas) {
-                const built = Joi.build(schema.describe());
-                built._ruleset = schema._ruleset;
-                expect(built).to.equal(schema);
-            }
+        it('sets preferences', () => {
+
+            internals.test([
+                Joi.object().prefs({ abortEarly: true }),
+                Joi.string().min(10).prefs({ messages: { 'string.min': Joi.x('{$x}') } }),
+                Joi.string().min(10).prefs({ messages: { 'string.min': Joi.x('{@x}', { prefix: { context: '@' } }) } })
+            ]);
+        });
+
+        it('sets allow and invalid', () => {
+
+            internals.test([
+                Joi.string().allow(1, 2, 3),
+                Joi.string().valid(Joi.ref('$x')),
+                Joi.number().invalid(1),
+                Joi.object().allow({ x: 1 })
+            ]);
+        });
+
+        it('sets rules', () => {
+
+            internals.test([
+                Joi.string().lowercase(),
+                Joi.string().alphanum(),
+                Joi.string().min(10),
+                Joi.string().length(10, 'binary')
+            ]);
+        });
+
+        it('sets ruleset options', () => {
+
+            internals.test([
+                Joi.string().min(1).keep(),
+                Joi.string().$.min(1).max(2).rule({ message: 'override' }),
+                Joi.string().$.min(1).max(2).rule({ message: Joi.x('{$x}') })
+            ]);
         });
     });
 });
+
+
+internals.test = function (schemas) {
+
+    for (const schema of schemas) {
+        const built = Joi.build(schema.describe());
+        expect(built).to.equal(schema);
+    }
+};

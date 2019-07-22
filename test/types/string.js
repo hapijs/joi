@@ -4436,7 +4436,6 @@ describe('string', () => {
             const desc = schema.describe();
             expect(desc).to.equal({
                 type: 'string',
-                invalids: [''],
                 flags: { truncate: true }
             });
         });
@@ -4447,7 +4446,6 @@ describe('string', () => {
             const desc = schema.describe();
             expect(desc).to.equal({
                 type: 'string',
-                invalids: [''],
                 flags: { truncate: true }
             });
         });
@@ -4457,8 +4455,7 @@ describe('string', () => {
             const schema = Joi.string().truncate().truncate(false);
             const desc = schema.describe();
             expect(desc).to.equal({
-                type: 'string',
-                invalids: ['']
+                type: 'string'
             });
         });
 
@@ -13009,7 +13006,6 @@ describe('string', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'string',
-                invalids: [''],
                 rules: [
                     {
                         name: 'guid',
@@ -13029,7 +13025,6 @@ describe('string', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'string',
-                invalids: [''],
                 rules: [
                     {
                         name: 'regex',

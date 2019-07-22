@@ -115,14 +115,14 @@ describe('ref', () => {
                                 only: true
                             },
                             type: 'any',
-                            valids: [{ ref: { ancestor: 2, path: ['a'] } }]
+                            allow: [{ ref: { ancestor: 2, path: ['a'] } }]
                         },
                         a2: {
                             flags: {
                                 only: true
                             },
                             type: 'any',
-                            valids: [{ ref: { ancestor: 2, path: ['a'] } }]
+                            allow: [{ ref: { ancestor: 2, path: ['a'] } }]
                         }
                     }
                 }
@@ -169,7 +169,7 @@ describe('ref', () => {
                                 only: true
                             },
                             type: 'any',
-                            valids: [{ ref: { path: ['...a'], separator: false } }]
+                            allow: [{ ref: { path: ['...a'], separator: false } }]
                         }
                     }
                 }
@@ -738,13 +738,12 @@ describe('ref', () => {
             type: 'object',
             children: {
                 b: {
-                    type: 'number',
-                    invalids: [Infinity, -Infinity]
+                    type: 'number'
                 },
                 a: {
                     type: 'any',
                     flags: { only: true },
-                    valids: [{ ref: { path: ['b'], adjust } }]
+                    allow: [{ ref: { path: ['b'], adjust } }]
                 }
             }
         });
@@ -787,13 +786,12 @@ describe('ref', () => {
             type: 'object',
             children: {
                 b: {
-                    type: 'number',
-                    invalids: [Infinity, -Infinity]
+                    type: 'number'
                 },
                 a: {
                     type: 'any',
                     flags: { only: true },
-                    valids: [{ ref: { path: ['b'], map } }]
+                    allow: [{ ref: { path: ['b'], map } }]
                 }
             }
         });
@@ -1259,17 +1257,6 @@ describe('ref', () => {
 
         expect(schema.describe()).to.equal({
             type: 'alternatives',
-            base: {
-                type: 'any',
-                flags: {
-                    only: true,
-                    default: {
-                        ref: { path: ['a', 'b'] }
-                    }
-                },
-                invalids: [{ ref: { type: 'global', path: ['b', 'c'] } }],
-                valids: [{ ref: { path: ['a', 'b'] } }]
-            },
             matches: [{
                 ref: { path: ['a', 'b'] },
                 is: {
@@ -1282,8 +1269,8 @@ describe('ref', () => {
                 then: {
                     type: 'number',
                     flags: { only: true, default: { ref: { path: ['a', 'b'] } } },
-                    valids: [{ ref: { path: ['a', 'b'] } }],
-                    invalids: [{ ref: { type: 'global', path: ['b', 'c'] } }, Infinity, -Infinity],
+                    allow: [{ ref: { path: ['a', 'b'] } }],
+                    invalid: [{ ref: { type: 'global', path: ['b', 'c'] } }, Infinity, -Infinity],
                     rules: [
                         { name: 'min', args: { limit: { ref: { path: ['a', 'b'] } } } },
                         { name: 'max', args: { limit: { ref: { path: ['a', 'b'] } } } },
@@ -1294,8 +1281,8 @@ describe('ref', () => {
                 otherwise: {
                     type: 'object',
                     flags: { only: true, default: { ref: { path: ['a', 'b'] } } },
-                    valids: [{ ref: { path: ['a', 'b'] } }],
-                    invalids: [{ ref: { type: 'global', path: ['b', 'c'] } }],
+                    allow: [{ ref: { path: ['a', 'b'] } }],
+                    invalid: [{ ref: { type: 'global', path: ['b', 'c'] } }],
                     rules: [{
                         name: 'assert',
                         args: {
@@ -1303,7 +1290,7 @@ describe('ref', () => {
                             schema: {
                                 type: 'any',
                                 flags: { only: true },
-                                valids: [{ ref: { path: ['a', 'b'] } }]
+                                allow: [{ ref: { path: ['a', 'b'] } }]
                             },
                             ref: { path: ['a', 'b'] }
                         }
@@ -1311,7 +1298,6 @@ describe('ref', () => {
                     children: {
                         a: {
                             type: 'string',
-                            invalids: [''],
                             rules: [
                                 { name: 'min', args: { limit: { ref: { path: ['b', 'c'] } } } },
                                 { name: 'max', args: { limit: { ref: { path: ['b', 'c'] } } } },

@@ -1184,8 +1184,7 @@ describe('object', () => {
                 type: 'object',
                 children: {
                     a: {
-                        type: 'string',
-                        invalids: ['']
+                        type: 'string'
                     }
                 },
                 patterns: [
@@ -1212,14 +1211,12 @@ describe('object', () => {
                 type: 'object',
                 children: {
                     a: {
-                        type: 'string',
-                        invalids: ['']
+                        type: 'string'
                     }
                 },
                 patterns: [
                     {
                         schema: {
-                            invalids: [''],
                             rules: [{
                                 args: { options: { version: 'uuidv4' } },
                                 name: 'guid'
@@ -2919,8 +2916,7 @@ describe('object', () => {
                         type: 'number',
                         flags: {
                             presence: 'required'
-                        },
-                        invalids: [Infinity, -Infinity]
+                        }
                     }
                 },
                 patterns: [
@@ -2951,15 +2947,13 @@ describe('object', () => {
                     },
                     {
                         rule: {
-                            type: 'number',
-                            invalids: [Infinity, -Infinity]
+                            type: 'number'
                         },
                         regex: '/^z\\w+$/'
                     },
                     {
                         rule: {
-                            type: 'number',
-                            invalids: [Infinity, -Infinity]
+                            type: 'number'
                         },
                         regex: '/^x\\w+$/',
                         matches: {

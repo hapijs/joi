@@ -148,13 +148,13 @@ describe('array', () => {
             expect(desc).to.equal({
                 type: 'array',
                 ordered: [
-                    { type: 'number', invalids: [Infinity, -Infinity] },
-                    { type: 'string', invalids: [''] },
-                    { type: 'string', invalids: [''], flags: { presence: 'required' } }
+                    { type: 'number' },
+                    { type: 'string' },
+                    { type: 'string', flags: { presence: 'required' } }
                 ],
                 items: [
-                    { type: 'number', invalids: [Infinity, -Infinity] },
-                    { type: 'string', invalids: [''] },
+                    { type: 'number' },
+                    { type: 'string' },
                     { type: 'boolean', flags: { presence: 'forbidden', insensitive: true } }
                 ]
             });
@@ -356,8 +356,8 @@ describe('array', () => {
             expect(schema.describe()).to.equal({
                 type: 'array',
                 rules: [
-                    { name: 'has', args: { schema: { type: 'string', invalids: [''] } } },
-                    { name: 'has', args: { schema: { type: 'number', invalids: [Infinity, -Infinity] } } }
+                    { name: 'has', args: { schema: { type: 'string' } } },
+                    { name: 'has', args: { schema: { type: 'number' } } }
                 ]
             });
         });

@@ -113,16 +113,14 @@ describe('alternatives', () => {
                                         only: true,
                                         presence: 'required'
                                     },
-                                    valids: [5],
-                                    invalids: [Infinity, -Infinity]
+                                    allow: [5]
                                 },
                                 then: {
                                     type: 'string',
                                     flags: {
                                         only: true
                                     },
-                                    valids: ['x'],
-                                    invalids: ['']
+                                    allow: ['x']
                                 }
                             },
                             {
@@ -133,16 +131,14 @@ describe('alternatives', () => {
                                         only: true,
                                         presence: 'required'
                                     },
-                                    valids: [6],
-                                    invalids: [Infinity, -Infinity]
+                                    allow: [6]
                                 },
                                 otherwise: {
                                     type: 'string',
                                     flags: {
                                         only: true
                                     },
-                                    valids: ['y'],
-                                    invalids: ['']
+                                    allow: ['y']
                                 }
                             },
                             {
@@ -151,8 +147,7 @@ describe('alternatives', () => {
                                     flags: {
                                         only: true
                                     },
-                                    valids: ['z'],
-                                    invalids: ['']
+                                    allow: ['z']
                                 }
                             }
                         ]
@@ -187,16 +182,14 @@ describe('alternatives', () => {
                                         only: true,
                                         presence: 'required'
                                     },
-                                    valids: [5],
-                                    invalids: [Infinity, -Infinity]
+                                    allow: [5]
                                 },
                                 then: {
                                     type: 'string',
                                     flags: {
                                         only: true
                                     },
-                                    valids: ['x'],
-                                    invalids: ['']
+                                    allow: ['x']
                                 }
                             },
                             {
@@ -205,8 +198,7 @@ describe('alternatives', () => {
                                     flags: {
                                         only: true
                                     },
-                                    valids: ['z'],
-                                    invalids: ['']
+                                    allow: ['z']
                                 }
                             }
                         ]
@@ -241,16 +233,14 @@ describe('alternatives', () => {
                                         only: true,
                                         presence: 'required'
                                     },
-                                    valids: [5],
-                                    invalids: [Infinity, -Infinity]
+                                    allow: [5]
                                 },
                                 otherwise: {
                                     type: 'string',
                                     flags: {
                                         only: true
                                     },
-                                    valids: ['y'],
-                                    invalids: ['']
+                                    allow: ['y']
                                 }
                             },
                             {
@@ -259,8 +249,7 @@ describe('alternatives', () => {
                                     flags: {
                                         only: true
                                     },
-                                    valids: ['z'],
-                                    invalids: ['']
+                                    allow: ['z']
                                 }
                             }
                         ]
@@ -284,13 +273,11 @@ describe('alternatives', () => {
                         type: 'string',
                         flags: {
                             label: 'foo'
-                        },
-                        invalids: ['']
+                        }
                     },
                     then: {
                         type: 'string',
                         flags: { presence: 'required' },
-                        invalids: [''],
                         rules: [{ args: { limit: 1 }, name: 'min' }]
                     },
                     otherwise: {
@@ -329,8 +316,7 @@ describe('alternatives', () => {
                         flags: {
                             only: true
                         },
-                        valids: ['a'],
-                        invalids: ['']
+                        allow: ['a']
                     }
                 }]
             };
@@ -390,16 +376,24 @@ describe('alternatives', () => {
 
             const schema = Joi.object().keys({
                 a: Joi.boolean(),
+
                 b: Joi.when('a', {
                     is: true,
                     then: Joi.string().empty('').allow(null)
-                }).label('Label b'),
+                })
+                    .label('Label b'),
+
                 c: Joi.when('a', {
                     is: true,
                     otherwise: Joi.string().empty('').allow(null)
-                }).label('Label c'),
-                d: Joi.alt().try([Joi.string()]).label('Label d')
-            }).or('b', 'c', 'd');
+                })
+                    .label('Label c'),
+
+                d: Joi.alt()
+                    .try([Joi.string()])
+                    .label('Label d')
+            })
+                .or('b', 'c', 'd');
 
             Helper.validate(schema, [
                 [{ a: true, b: 1 }, false, null, {
@@ -442,13 +436,12 @@ describe('alternatives', () => {
             const labeled = schema.label('Label b');
 
             expect(schema.describe()).to.equal({
-                base: { type: 'any' },
                 type: 'alternatives',
                 matches: [{
                     is: {
                         type: 'boolean',
                         flags: { only: true, insensitive: true, presence: 'required' },
-                        valids: [true]
+                        allow: [true]
                     },
                     ref: { path: ['a'] },
                     then: {
@@ -457,17 +450,16 @@ describe('alternatives', () => {
                             empty: {
                                 flags: { only: true },
                                 type: 'string',
-                                valids: ['']
+                                allow: ['']
                             }
                         },
-                        valids: [null],
-                        invalids: ['']
-                    }
+                        allow: [null]
+                    },
+                    otherwise: { type: 'any' }
                 }]
             });
 
             expect(labeled.describe()).to.equal({
-                base: { type: 'any' },
                 flags: {
                     label: 'Label b'
                 },
@@ -476,7 +468,7 @@ describe('alternatives', () => {
                     is: {
                         type: 'boolean',
                         flags: { only: true, insensitive: true, presence: 'required' },
-                        valids: [true]
+                        allow: [true]
                     },
                     ref: { path: ['a'] },
                     then: {
@@ -486,13 +478,116 @@ describe('alternatives', () => {
                             empty: {
                                 flags: { only: true },
                                 type: 'string',
-                                valids: ['']
+                                allow: ['']
                             }
                         },
-                        valids: [null],
-                        invalids: ['']
+                        allow: [null]
+                    },
+                    otherwise: {
+                        type: 'any',
+                        flags: { label: 'Label b' }
                     }
                 }]
+            });
+        });
+
+        it('applies label to then', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.alternatives()
+                    .when('a', { is: true, then: Joi.string() })
+                    .label('x')
+            });
+
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                children: {
+                    a: {
+                        type: 'boolean',
+                        flags: {
+                            insensitive: true
+                        }
+                    },
+                    b: {
+                        type: 'alternatives',
+                        flags: {
+                            label: 'x'
+                        },
+                        matches: [
+                            {
+                                is: {
+                                    type: 'boolean',
+                                    allow: [true],
+                                    flags: {
+                                        insensitive: true,
+                                        only: true,
+                                        presence: 'required'
+                                    }
+                                },
+                                ref: {
+                                    path: ['a']
+                                },
+                                then: {
+                                    type: 'string',
+                                    flags: {
+                                        label: 'x'
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            });
+        });
+
+        it('applies label to otherwise', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.alternatives()
+                    .when('a', { is: true, otherwise: Joi.string() })
+                    .label('x')
+            });
+
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                children: {
+                    a: {
+                        type: 'boolean',
+                        flags: {
+                            insensitive: true
+                        }
+                    },
+                    b: {
+                        type: 'alternatives',
+                        flags: {
+                            label: 'x'
+                        },
+                        matches: [
+                            {
+                                is: {
+                                    type: 'boolean',
+                                    allow: [true],
+                                    flags: {
+                                        insensitive: true,
+                                        only: true,
+                                        presence: 'required'
+                                    }
+                                },
+                                ref: {
+                                    path: ['a']
+                                },
+                                otherwise: {
+                                    type: 'string',
+                                    flags: {
+                                        label: 'x'
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
             });
         });
     });

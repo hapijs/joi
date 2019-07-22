@@ -16,6 +16,11 @@ const { expect } = Code;
 
 describe('link', () => {
 
+    it('errors on uninitialized link', () => {
+
+        expect(Joi.link().validate(1).error).to.be.an.error('uninitialized schema');
+    });
+
     it('links schema nodes', () => {
 
         const schema = Joi.object({
@@ -149,8 +154,7 @@ describe('link', () => {
                 type: 'object',
                 children: {
                     a: {
-                        type: 'string',
-                        invalids: ['']
+                        type: 'string'
                     },
                     b: {
                         type: 'link',

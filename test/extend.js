@@ -1056,8 +1056,7 @@ describe('extension', () => {
 
             const schema = customJoi.myType();
             expect(schema.describe()).to.equal({
-                type: 'myType',
-                invalids: [Infinity, -Infinity]
+                type: 'myType'
             });
         });
 

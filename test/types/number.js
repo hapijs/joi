@@ -106,7 +106,6 @@ describe('number', () => {
             const schema = Joi.number().min(0);
             expect(schema.describe()).to.equal({
                 type: 'number',
-                invalids: [Infinity, -Infinity],
                 rules: [
                     {
                         name: 'min',

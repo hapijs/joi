@@ -421,13 +421,11 @@ describe('any', () => {
                     empty: {
                         type: 'string',
                         flags: { only: true },
-                        valids: [' '],
-                        invalids: ['']
+                        allow: [' ']
                     },
                     insensitive: true
                 },
-                valids: ['a'],
-                invalids: ['']
+                allow: ['a']
             });
         });
 
@@ -500,12 +498,11 @@ describe('any', () => {
                     empty: {
                         type: 'string',
                         flags: { only: true },
-                        valids: ['']
+                        allow: ['']
                     },
                     insensitive: true
                 },
-                valids: ['a'],
-                invalids: ['']
+                allow: ['a']
             });
 
             const ba = b.concat(a);
@@ -540,12 +537,11 @@ describe('any', () => {
                     empty: {
                         type: 'string',
                         flags: { only: true },
-                        valids: ['']
+                        allow: ['']
                     },
                     insensitive: true
                 },
-                valids: ['a'],
-                invalids: ['']
+                allow: ['a']
             });
         });
 
@@ -2118,13 +2114,6 @@ describe('any', () => {
                     abortEarly: false,
                     convert: false
                 },
-                base: {
-                    type: 'number',
-                    invalids: [Infinity, -Infinity],
-                    rules: [
-                        { args: { limit: 10 }, name: 'min' }
-                    ]
-                },
                 matches: [{
                     ref: { path: ['a'] },
                     is: {
@@ -2133,18 +2122,22 @@ describe('any', () => {
                             only: true,
                             presence: 'required'
                         },
-                        valids: [5],
-                        invalids: [Infinity, -Infinity]
+                        allow: [5]
                     },
                     then: {
                         type: 'number',
                         flags: {
                             presence: 'required'
                         },
-                        invalids: [Infinity, -Infinity],
                         rules: [
                             { name: 'min', args: { limit: 10 } },
                             { name: 'max', args: { limit: 20 } }
+                        ]
+                    },
+                    otherwise: {
+                        type: 'number',
+                        rules: [
+                            { args: { limit: 10 }, name: 'min' }
                         ]
                     }
                 }]
@@ -2832,7 +2825,7 @@ describe('any', () => {
                     min: Joi.boolean(),
                     max: Joi.boolean()
                 });
-            }).to.throw('Cannot chain multiple when conditions on non-alternatives root');
+            }).to.throw('Unreachable condition');
         });
 
         it('forks type into alternatives', () => {
@@ -3097,13 +3090,6 @@ describe('any', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'alternatives',
-                base: {
-                    type: 'number',
-                    invalids: [Infinity, -Infinity],
-                    rules: [
-                        { args: { limit: 10 }, name: 'min' }
-                    ]
-                },
                 matches: [{
                     ref: { path: ['a'] },
                     is: {
@@ -3112,16 +3098,20 @@ describe('any', () => {
                             only: true,
                             presence: 'required'
                         },
-                        valids: [5],
-                        invalids: [Infinity, -Infinity]
+                        allow: [5]
                     },
                     then: {
                         type: 'number',
                         flags: {
                             presence: 'required'
                         },
-                        invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
+                    },
+                    otherwise: {
+                        type: 'number',
+                        rules: [
+                            { args: { limit: 10 }, name: 'min' }
+                        ]
                     }
                 }]
             });
@@ -3135,22 +3125,19 @@ describe('any', () => {
 
             expect(schema).to.equal({
                 type: 'alternatives',
-                base: {
-                    type: 'number',
-                    invalids: [Infinity, -Infinity],
-                    rules: [{ args: { limit: 10 }, name: 'min' }]
-                },
                 matches: [{
                     peek: {
                         type: 'number',
-                        invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', args: { limit: 5 } }]
                     },
                     then: {
                         type: 'number',
                         flags: { presence: 'required' },
-                        invalids: [Infinity, -Infinity],
                         rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
+                    },
+                    otherwise: {
+                        type: 'number',
+                        rules: [{ args: { limit: 10 }, name: 'min' }]
                     }
                 }]
             });

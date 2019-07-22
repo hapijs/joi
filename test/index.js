@@ -2592,7 +2592,6 @@ describe('Joi', () => {
             const schema = defaultJoi.string();
             expect(schema.describe()).to.equal({
                 type: 'string',
-                invalids: [''],
                 flags: {
                     description: 'defaulted',
                     presence: 'required'
@@ -2618,8 +2617,7 @@ describe('Joi', () => {
                             presence: 'required',
                             only: true
                         },
-                        invalids: [''],
-                        valids: ['bar']
+                        allow: ['bar']
                     }
                 }
             });
@@ -2649,8 +2647,7 @@ describe('Joi', () => {
                             description: 'defaulted',
                             only: true
                         },
-                        invalids: [''],
-                        valids: ['bar']
+                        allow: ['bar']
                     },
                     baz: {
                         children: {
@@ -2660,9 +2657,8 @@ describe('Joi', () => {
                                     description: 'defaulted2',
                                     presence: 'required'
                                 },
-                                invalids: [''],
                                 type: 'string',
-                                valids: ['zorg']
+                                allow: ['zorg']
                             }
                         },
                         flags: {
@@ -2702,8 +2698,7 @@ describe('Joi', () => {
                             only: true,
                             cast: 'raw'
                         },
-                        invalids: [''],
-                        valids: ['bar']
+                        allow: ['bar']
                     }
                 }
             });
