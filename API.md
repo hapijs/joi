@@ -48,6 +48,7 @@
     - [`any.only()`](#anyonly)
     - [`any.optional()`](#anyoptional)
     - [`any.prefs(options)` = aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
+    - [`any.presence(mode)`](#anypresencemode)
     - [`any.raw()`](#anyraw)
     - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
     - [`any.rule(options)`](#anyruleoptions)
@@ -97,7 +98,8 @@
     - [`func.class()`](#funcclass)
     - [`func.maxArity(n)`](#funcmaxarityn)
     - [`func.minArity(n)`](#funcminarityn)
-  - [`link(ref[, options])` - inherits from `Any`](#linkref-options---inherits-from-any)
+  - [`link(ref)` - inherits from `Any`](#linkref---inherits-from-any)
+    - [`link.ref(ref)`](#linkrefref)
   - [`number` - inherits from `Any`](#number---inherits-from-any)
     - [`number.greater(limit)`](#numbergreaterlimit)
     - [`number.integer()`](#numberinteger)
@@ -133,6 +135,7 @@
   - [`string` - inherits from `Any`](#string---inherits-from-any)
     - [`string.alphanum()`](#stringalphanum)
     - [`string.base64([options])`](#stringbase64options)
+    - [`string.case(direction)`](#stringcasedirection)
     - [`string.creditCard()`](#stringcreditcard)
     - [`string.dataUri([options])`](#stringdataurioptions)
     - [`string.domain([options])`](#stringdomainoptions)
@@ -217,6 +220,7 @@
     - [`link.depth`](#linkdepth)
     - [`link.loop`](#linkloop)
     - [`link.ref`](#linkref)
+    - [`link.uninitialized`](#linkuninitialized)
     - [`number.base`](#numberbase)
     - [`number.greater`](#numbergreater)
     - [`number.integer`](#numberinteger-1)
@@ -980,6 +984,13 @@ Overrides the global `validate()` options for the current key and any sub-key wh
 ```js
 const schema = Joi.any().prefs({ convert: false });
 ```
+
+#### `any.presence(mode)`
+
+Sets the presence mode for the schema where:
+- `mode` - can be one of `'optional'`, `'required'`, or `'forbidden'`
+
+Same as calling `any.optional()`, `any.required()`, or `any.forbidden()`.
 
 #### `any.raw()`
 
@@ -1983,12 +1994,11 @@ const schema = Joi.func().minArity(1);
 
 Possible validation errors: [`function.minArity`](#functionminarity)
 
-### `link(ref[, options])` - inherits from `Any`
+### `link(ref)` - inherits from `Any`
 
 Links to another schema node and reuses it for validation where:
 - `ref` - the reference to the linked schema node. Cannot reference itself or its children as well
   as other links. Follows the same rules as value references.
-- `options` - optional settings:
 
 Supports the methods of the [`any()`](#any) type.
 
@@ -2007,6 +2017,13 @@ const person = Joi.object({
 ```
 
 Possible validation errors: [`link.depth`](#linkdepth), [`link.ref`](#linkref), [`link.loop`](#linkloop)
+
+#### `link.ref(ref)`
+
+Initializes the schema after constructions for cases where the schema has to be constructed first and
+then initialized. If `ref` was not passed to the constructor, `link.ref()` must be called prior to usaged.
+
+Possible validation errors: [`link.uninitialized`](#linkuninitialized)
 
 ### `number` - inherits from `Any`
 
@@ -2605,6 +2622,17 @@ paddingOptionalSchema.validate('VE9PTUFOWVNFQ1JFVFM='); // No Error
 ```
 
 Possible validation errors: [`string.base64`](#stringbase64)
+
+#### `string.case(direction)`
+
+Sets the required string case where:
+- `direction` - can be either `'upper'` or `'lower'`.
+
+```js
+const schema = Joi.string().case('lower');
+```
+
+Possible validation errors: [`string.lowercase`](#stringlowercase-1) [`string.uppercase`](#stringuppercase-1)
 
 #### `string.creditCard()`
 
@@ -3639,6 +3667,10 @@ Additional local context properties:
     ref: Reference // The link reference
 }
 ```
+
+#### `link.uninitialized`
+
+The link schema was not initialized prior to validation.
 
 #### `number.base`
 

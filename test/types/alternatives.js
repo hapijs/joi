@@ -98,7 +98,7 @@ describe('alternatives', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'object',
-                children: {
+                keys: {
                     b: {
                         type: 'any'
                     },
@@ -167,7 +167,7 @@ describe('alternatives', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'object',
-                children: {
+                keys: {
                     b: {
                         type: 'any'
                     },
@@ -218,7 +218,7 @@ describe('alternatives', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'object',
-                children: {
+                keys: {
                     b: {
                         type: 'any'
                     },
@@ -502,7 +502,7 @@ describe('alternatives', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'object',
-                children: {
+                keys: {
                     a: {
                         type: 'boolean',
                         flags: {
@@ -552,7 +552,7 @@ describe('alternatives', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'object',
-                children: {
+                keys: {
                     a: {
                         type: 'boolean',
                         flags: {

@@ -51,25 +51,25 @@ describe('link', () => {
 
         const schema = Joi.object({
             name: Joi.string().required(),
-            children: Joi.array()
+            keys: Joi.array()
                 .items(Joi.link('...'))
         });
 
-        expect(schema.validate({ name: 'foo', children: [{ name: 'bar' }] }).error).to.not.exist();
+        expect(schema.validate({ name: 'foo', keys: [{ name: 'bar' }] }).error).to.not.exist();
 
         Helper.validate(schema, [
             [{ name: 'foo' }, true],
-            [{ name: 'foo', children: [] }, true],
-            [{ name: 'foo', children: [{ name: 'bar' }] }, true],
-            [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz' }] }] }, true],
-            [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 'qux' }] }] }] }, true],
-            [{ name: 'foo', children: [{ name: 'bar', children: [{ name: 'baz', children: [{ name: 42 }] }] }] }, false, null, {
-                message: '"children[0].children[0].children[0].name" must be a string',
+            [{ name: 'foo', keys: [] }, true],
+            [{ name: 'foo', keys: [{ name: 'bar' }] }, true],
+            [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz' }] }] }, true],
+            [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz', keys: [{ name: 'qux' }] }] }] }, true],
+            [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz', keys: [{ name: 42 }] }] }] }, false, null, {
+                message: '"keys[0].keys[0].keys[0].name" must be a string',
                 details: [{
-                    message: '"children[0].children[0].children[0].name" must be a string',
-                    path: ['children', 0, 'children', 0, 'children', 0, 'name'],
+                    message: '"keys[0].keys[0].keys[0].name" must be a string',
+                    path: ['keys', 0, 'keys', 0, 'keys', 0, 'name'],
                     type: 'string.base',
-                    context: { value: 42, label: 'children[0].children[0].children[0].name', key: 'name' }
+                    context: { value: 42, label: 'keys[0].keys[0].keys[0].name', key: 'name' }
                 }]
             }]
         ]);
@@ -152,7 +152,7 @@ describe('link', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'object',
-                children: {
+                keys: {
                     a: {
                         type: 'string'
                     },

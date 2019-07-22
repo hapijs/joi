@@ -2609,7 +2609,7 @@ describe('Joi', () => {
                     description: 'defaulted',
                     presence: 'required'
                 },
-                children: {
+                keys: {
                     foo: {
                         type: 'string',
                         flags: {
@@ -2639,7 +2639,7 @@ describe('Joi', () => {
                     description: 'defaulted',
                     presence: 'required'
                 },
-                children: {
+                keys: {
                     foo: {
                         type: 'string',
                         flags: {
@@ -2650,7 +2650,7 @@ describe('Joi', () => {
                         allow: ['bar']
                     },
                     baz: {
-                        children: {
+                        keys: {
                             qux: {
                                 flags: {
                                     only: true,
@@ -2689,7 +2689,7 @@ describe('Joi', () => {
                     presence: 'required',
                     cast: 'raw'
                 },
-                children: {
+                keys: {
                     foo: {
                         type: 'string',
                         flags: {

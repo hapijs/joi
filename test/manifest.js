@@ -61,10 +61,10 @@ describe('Manifest', () => {
             const result = {
                 type: 'object',
                 allow: [{ value: { a: 'x' } }],
-                children: {
+                keys: {
                     sub: {
                         type: 'object',
-                        children: {
+                        keys: {
                             email: {
                                 type: 'string',
                                 rules: [{ name: 'email' }]
@@ -78,7 +78,7 @@ describe('Manifest', () => {
                             },
                             child: {
                                 type: 'object',
-                                children: {
+                                keys: {
                                     alphanum: {
                                         type: 'string',
                                         rules: [{ name: 'alphanum' }]
@@ -201,7 +201,7 @@ describe('Manifest', () => {
 
             const description = schema.describe();
             expect(description).to.equal(result);
-            expect(description.children.defaultRef.flags.default).to.equal({ ref: { path: ['xor'] } });
+            expect(description.keys.defaultRef.flags.default).to.equal({ ref: { path: ['xor'] } });
         });
 
         it('describes schema (any)', () => {

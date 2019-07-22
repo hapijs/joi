@@ -224,18 +224,18 @@ describe('object', () => {
         const schema = Joi.object().min(3);
         Helper.validate(schema, [
             [{ item: 'something' }, false, null, {
-                message: '"value" must have at least 3 children',
+                message: '"value" must have at least 3 keys',
                 details: [{
-                    message: '"value" must have at least 3 children',
+                    message: '"value" must have at least 3 keys',
                     path: [],
                     type: 'object.min',
                     context: { limit: 3, label: 'value', value: { item: 'something' } }
                 }]
             }],
             [{ item: 'something', item2: 'something else' }, false, null, {
-                message: '"value" must have at least 3 children',
+                message: '"value" must have at least 3 keys',
                 details: [{
-                    message: '"value" must have at least 3 children',
+                    message: '"value" must have at least 3 keys',
                     path: [],
                     type: 'object.min',
                     context: {
@@ -265,9 +265,9 @@ describe('object', () => {
             [{ item: 'something' }, true],
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, false, null, {
-                message: '"value" must have less than or equal to 2 children',
+                message: '"value" must have less than or equal to 2 keys',
                 details: [{
-                    message: '"value" must have less than or equal to 2 children',
+                    message: '"value" must have less than or equal to 2 keys',
                     path: [],
                     type: 'object.max',
                     context: {
@@ -294,9 +294,9 @@ describe('object', () => {
         const schema = Joi.object().max(3).min(2);
         Helper.validate(schema, [
             [{ item: 'something' }, false, null, {
-                message: '"value" must have at least 2 children',
+                message: '"value" must have at least 2 keys',
                 details: [{
-                    message: '"value" must have at least 2 children',
+                    message: '"value" must have at least 2 keys',
                     path: [],
                     type: 'object.min',
                     context: { limit: 2, label: 'value', value: { item: 'something' } }
@@ -310,9 +310,9 @@ describe('object', () => {
                 item3: 'something something else',
                 item4: 'item4'
             }, false, null, {
-                message: '"value" must have less than or equal to 3 children',
+                message: '"value" must have less than or equal to 3 keys',
                 details: [{
-                    message: '"value" must have less than or equal to 3 children',
+                    message: '"value" must have less than or equal to 3 keys',
                     path: [],
                     type: 'object.max',
                     context: {
@@ -344,9 +344,9 @@ describe('object', () => {
         const schema = Joi.object().length(2);
         Helper.validate(schema, [
             [{ item: 'something' }, false, null, {
-                message: '"value" must have 2 children',
+                message: '"value" must have 2 keys',
                 details: [{
-                    message: '"value" must have 2 children',
+                    message: '"value" must have 2 keys',
                     path: [],
                     type: 'object.length',
                     context: { limit: 2, label: 'value', value: { item: 'something' } }
@@ -354,9 +354,9 @@ describe('object', () => {
             }],
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, false, null, {
-                message: '"value" must have 2 children',
+                message: '"value" must have 2 keys',
                 details: [{
-                    message: '"value" must have 2 children',
+                    message: '"value" must have 2 keys',
                     path: [],
                     type: 'object.length',
                     context: {
@@ -1182,7 +1182,7 @@ describe('object', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'object',
-                children: {
+                keys: {
                     a: {
                         type: 'string'
                     }
@@ -1209,7 +1209,7 @@ describe('object', () => {
 
             expect(schema.describe()).to.equal({
                 type: 'object',
-                children: {
+                keys: {
                     a: {
                         type: 'string'
                     }
@@ -2911,7 +2911,7 @@ describe('object', () => {
             const description = schema.describe();
             expect(description).to.equal({
                 type: 'object',
-                children: {
+                keys: {
                     a: {
                         type: 'number',
                         flags: {
@@ -3235,7 +3235,7 @@ describe('object', () => {
             expect(schema.unknown()).to.shallow.equal(schema);
         });
 
-        it('allows local unknown without applying to children', () => {
+        it('allows local unknown without applying to keys', () => {
 
             const schema = Joi.object({
                 a: {
@@ -3267,7 +3267,7 @@ describe('object', () => {
             ]);
         });
 
-        it('forbids local unknown without applying to children', () => {
+        it('forbids local unknown without applying to keys', () => {
 
             const schema = Joi.object({
                 a: Joi.object({

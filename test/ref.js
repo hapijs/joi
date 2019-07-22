@@ -103,13 +103,13 @@ describe('ref', () => {
 
         expect(schema.describe()).to.equal({
             type: 'object',
-            children: {
+            keys: {
                 a: {
                     type: 'any'
                 },
                 b: {
                     type: 'object',
-                    children: {
+                    keys: {
                         a1: {
                             flags: {
                                 only: true
@@ -154,13 +154,13 @@ describe('ref', () => {
 
         expect(schema.describe()).to.equal({
             type: 'object',
-            children: {
+            keys: {
                 a: {
                     type: 'any'
                 },
                 b: {
                     type: 'object',
-                    children: {
+                    keys: {
                         '...a': {
                             type: 'any'
                         },
@@ -650,10 +650,10 @@ describe('ref', () => {
             [{ length: 1 }, true],
             [{ length: 2, x: 3 }, true],
             [{ length: 2, x: 3, y: 4 }, false, null, {
-                message: '"value" must have ref:.length children',
+                message: '"value" must have ref:.length keys',
                 details: [
                     {
-                        message: '"value" must have ref:.length children',
+                        message: '"value" must have ref:.length keys',
                         path: [],
                         type: 'object.length',
                         context: {
@@ -736,7 +736,7 @@ describe('ref', () => {
 
         expect(schema.describe()).to.equal({
             type: 'object',
-            children: {
+            keys: {
                 b: {
                     type: 'number'
                 },
@@ -784,7 +784,7 @@ describe('ref', () => {
 
         expect(schema.describe()).to.equal({
             type: 'object',
-            children: {
+            keys: {
                 b: {
                     type: 'number'
                 },
@@ -1295,7 +1295,7 @@ describe('ref', () => {
                             ref: { path: ['a', 'b'] }
                         }
                     }],
-                    children: {
+                    keys: {
                         a: {
                             type: 'string',
                             rules: [
