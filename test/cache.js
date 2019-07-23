@@ -18,11 +18,11 @@ describe('Cache', () => {
 
         it('caches values', () => {
 
-            const schema = Joi.string().regex(/abc/).cache();
+            const schema = Joi.string().pattern(/abc/).cache();
 
-            const rule = schema._rules.regex;
+            const rule = schema._rules.pattern;
             let count = 0;
-            schema._rules.regex = function (...args) {
+            schema._rules.pattern = function (...args) {
 
                 ++count;
                 return rule(...args);
@@ -34,7 +34,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(1);
 
-            schema._rules.regex = rule;
+            schema._rules.pattern = rule;
         });
 
         it('caches cast objects and clones on return', () => {
@@ -63,11 +63,11 @@ describe('Cache', () => {
 
         it('caches errors', () => {
 
-            const schema = Joi.string().regex(/abc/).cache();
+            const schema = Joi.string().pattern(/abc/).cache();
 
-            const rule = schema._rules.regex;
+            const rule = schema._rules.pattern;
             let count = 0;
-            schema._rules.regex = function (...args) {
+            schema._rules.pattern = function (...args) {
 
                 ++count;
                 return rule(...args);
@@ -80,17 +80,17 @@ describe('Cache', () => {
 
             expect(count).to.equal(1);
 
-            schema._rules.regex = rule;
+            schema._rules.pattern = rule;
         });
 
         it('skips caching when prefs disabled', () => {
 
             const cache = Joi.cache.provision();
-            const schema = Joi.string().regex(/abc/).cache(cache);
+            const schema = Joi.string().pattern(/abc/).cache(cache);
 
-            const rule = schema._rules.regex;
+            const rule = schema._rules.pattern;
             let count = 0;
-            schema._rules.regex = function (...args) {
+            schema._rules.pattern = function (...args) {
 
                 ++count;
                 return rule(...args);
@@ -102,20 +102,20 @@ describe('Cache', () => {
 
             expect(count).to.equal(3);
 
-            schema._rules.regex = rule;
+            schema._rules.pattern = rule;
         });
 
         it('skips caching when schema contains refs', () => {
 
-            const a = Joi.string().allow(Joi.ref('b')).regex(/abc/).cache();
+            const a = Joi.string().allow(Joi.ref('b')).pattern(/abc/).cache();
             const schema = Joi.object({
                 a,
                 b: Joi.any()
             });
 
-            const rule = a._rules.regex;
+            const rule = a._rules.pattern;
             let count = 0;
-            a._rules.regex = function (...args) {
+            a._rules.pattern = function (...args) {
 
                 ++count;
                 return rule(...args);
@@ -127,7 +127,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(3);
 
-            a._rules.regex = rule;
+            a._rules.pattern = rule;
         });
     });
 

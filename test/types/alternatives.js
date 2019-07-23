@@ -298,14 +298,14 @@ describe('alternatives', () => {
                 .example('a')
                 .meta('b')
                 .meta('c')
-                .notes('f')
-                .tags('g');
+                .note('f')
+                .tag('g');
 
             const outcome = {
                 type: 'alternatives',
                 notes: ['f'],
                 tags: ['g'],
-                meta: ['b', 'c'],
+                metas: ['b', 'c'],
                 examples: ['a'],
                 flags: {
                     description: 'd'

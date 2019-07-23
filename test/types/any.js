@@ -547,8 +547,8 @@ describe('any', () => {
 
         it('overrides and append information', () => {
 
-            const a = Joi.description('a').unit('a').tags('a').example('a');
-            const b = Joi.description('b').unit('b').tags('b').example('b');
+            const a = Joi.description('a').unit('a').tag('a').example('a');
+            const b = Joi.description('b').unit('b').tag('b').example('b');
 
             const desc = a.concat(b).describe();
             expect(desc).to.equal({
@@ -837,10 +837,10 @@ describe('any', () => {
             const c = Joi.any();
             const d = Joi.any();
 
-            expect(a.concat(b).describe().meta).to.equal([{ a: 1 }, { b: 1 }]);
-            expect(a.concat(c).describe().meta).to.equal([metaA]);
-            expect(b.concat(c).describe().meta).to.equal([metaB]);
-            expect(c.concat(d).describe().meta).to.not.exist();
+            expect(a.concat(b).describe().metas).to.equal([{ a: 1 }, { b: 1 }]);
+            expect(a.concat(c).describe().metas).to.equal([metaA]);
+            expect(b.concat(c).describe().metas).to.equal([metaB]);
+            expect(c.concat(d).describe().metas).to.not.exist();
         });
 
         it('merges into an any', () => {
@@ -1574,7 +1574,7 @@ describe('any', () => {
                     .error((errors) => {
 
                         const error = errors[0];
-                        if (error.code === 'string.regex.base') {
+                        if (error.code === 'string.pattern.base') {
                             error.message = 'my new error message';
                         }
 
@@ -1610,6 +1610,18 @@ describe('any', () => {
             expect(schema.describe().examples).to.equal([5]);
         });
 
+        it('appends examples', () => {
+
+            const schema = Joi.valid(5, 6, 7).example(4).example(5);
+            expect(schema.describe().examples).to.equal([4, 5]);
+        });
+
+        it('overrides example', () => {
+
+            const schema = Joi.valid(5, 6, 7).example(4).example(5, { override: true });
+            expect(schema.describe().examples).to.equal([5]);
+        });
+
         it('does not flatten examples', () => {
 
             const schema = Joi.array().items(5, 6, 7).example([5, 6]);
@@ -1618,7 +1630,7 @@ describe('any', () => {
 
         it('throws when examples are missing', () => {
 
-            expect(() => Joi.example()).to.throw('Missing examples');
+            expect(() => Joi.example()).to.throw('Missing example');
         });
     });
 
@@ -1915,10 +1927,10 @@ describe('any', () => {
 
             const meta = { prop: 'val', prop2: 3 };
             let b = Joi.meta(meta);
-            expect(b.describe().meta).to.equal([meta]);
+            expect(b.describe().metas).to.equal([meta]);
 
             b = b.meta({ other: true });
-            expect(b.describe().meta).to.equal([meta, {
+            expect(b.describe().metas).to.equal([meta, {
                 other: true
             }]);
 
@@ -1926,10 +1938,7 @@ describe('any', () => {
 
         it('throws when meta is missing', () => {
 
-            expect(() => {
-
-                Joi.meta();
-            }).to.throw('Meta cannot be undefined');
+            expect(() => Joi.meta()).to.throw('Meta cannot be undefined');
         });
     });
 
@@ -1952,22 +1961,23 @@ describe('any', () => {
         });
     });
 
-    describe('notes()', () => {
+    describe('note()', () => {
 
-        it('sets the notes', () => {
+        it('sets notes', () => {
 
-            const b = Joi.notes(['a']).notes('my notes');
+            const b = Joi.note('a').note('my notes');
             expect(b.describe().notes).to.equal(['a', 'my notes']);
         });
 
         it('throws when notes are missing', () => {
 
-            expect(() => Joi.notes()).to.throw('Notes must be a non-empty string or array');
+            expect(() => Joi.note()).to.throw('Missing notes');
         });
 
         it('throws when notes are invalid', () => {
 
-            expect(() => Joi.notes(5)).to.throw('Notes must be a non-empty string or array');
+            expect(() => Joi.note(5)).to.throw('Notes must be non-empty strings');
+            expect(() => Joi.note('')).to.throw('Notes must be non-empty strings');
         });
     });
 
@@ -2478,11 +2488,11 @@ describe('any', () => {
         });
     });
 
-    describe('tags()', () => {
+    describe('tag()', () => {
 
         it('sets the tags', () => {
 
-            const b = Joi.tags(['tag1', 'tag2']).tags('tag3');
+            const b = Joi.tag('tag1', 'tag2').tag('tag3');
             expect(b.describe().tags).to.include('tag1');
             expect(b.describe().tags).to.include('tag2');
             expect(b.describe().tags).to.include('tag3');
@@ -2490,18 +2500,13 @@ describe('any', () => {
 
         it('throws when tags are missing', () => {
 
-            expect(() => {
-
-                Joi.tags();
-            }).to.throw('Tags must be a non-empty string or array');
+            expect(() => Joi.tag()).to.throw('Missing tags');
         });
 
         it('throws when tags are invalid', () => {
 
-            expect(() => {
-
-                Joi.tags(5);
-            }).to.throw('Tags must be a non-empty string or array');
+            expect(() => Joi.tag(5)).to.throw('Tags must be non-empty strings');
+            expect(() => Joi.tag('')).to.throw('Tags must be non-empty strings');
         });
     });
 

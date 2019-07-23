@@ -1861,10 +1861,10 @@ describe('string', () => {
             expect(err.details).to.equal([{
                 message: '"value" with value "abcd" fails to match the required pattern: /[0-9]+/',
                 path: [],
-                type: 'string.regex.base',
+                type: 'string.pattern.base',
                 context: {
                     name: undefined,
-                    pattern: /[0-9]+/,
+                    regex: /[0-9]+/,
                     value: 'abcd',
                     label: 'value'
                 }
@@ -1879,10 +1879,10 @@ describe('string', () => {
             expect(err.details).to.equal([{
                 message: '"value" with value "abcd" fails to match the numbers pattern',
                 path: [],
-                type: 'string.regex.name',
+                type: 'string.pattern.name',
                 context: {
                     name: 'numbers',
-                    pattern: /[0-9]+/,
+                    regex: /[0-9]+/,
                     value: 'abcd',
                     label: 'value'
                 }
@@ -1897,10 +1897,10 @@ describe('string', () => {
             expect(err.details).to.equal([{
                 message: '"value" with value "abcd" fails to match the numbers pattern',
                 path: [],
-                type: 'string.regex.name',
+                type: 'string.pattern.name',
                 context: {
                     name: 'numbers',
-                    pattern: /[0-9]+/,
+                    regex: /[0-9]+/,
                     value: 'abcd',
                     label: 'value'
                 }
@@ -1917,10 +1917,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "abcdefg" matches the inverted pattern: /[a-z]/',
                         path: [],
-                        type: 'string.regex.invert.base',
+                        type: 'string.pattern.invert.base',
                         context: {
                             name: undefined,
-                            pattern: /[a-z]/,
+                            regex: /[a-z]/,
                             value: 'abcdefg',
                             label: 'value'
                         }
@@ -1942,10 +1942,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "abcdefg" matches the inverted lowercase pattern',
                         path: [],
-                        type: 'string.regex.invert.name',
+                        type: 'string.pattern.invert.name',
                         context: {
                             name: 'lowercase',
-                            pattern: /[a-z]/,
+                            regex: /[a-z]/,
                             value: 'abcdefg',
                             label: 'value'
                         }
@@ -4835,10 +4835,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "van" fails to match the required pattern: /^[0-9][-][a-z]+$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^[0-9][-][a-z]+$/,
+                            regex: /^[0-9][-][a-z]+$/,
                             value: 'van',
                             label: 'value'
                         }
@@ -4850,8 +4850,8 @@ describe('string', () => {
 
         it('rejects regex with global or sticky flag', () => {
 
-            expect(() => Joi.string().regex(/a/g)).to.throw('pattern should not use global or sticky mode');
-            expect(() => Joi.string().regex(/a/y)).to.throw('pattern should not use global or sticky mode');
+            expect(() => Joi.string().regex(/a/g)).to.throw('regex should not use global or sticky mode');
+            expect(() => Joi.string().regex(/a/y)).to.throw('regex should not use global or sticky mode');
         });
 
         it('validates token', () => {
@@ -5306,10 +5306,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '123',
                             label: 'value'
                         }
@@ -5334,10 +5334,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '12',
                             label: 'value'
                         }
@@ -5403,10 +5403,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '123',
                             label: 'value'
                         }
@@ -5431,10 +5431,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '12',
                             label: 'value'
                         }
@@ -5492,10 +5492,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '123',
                             label: 'value'
                         }
@@ -5520,10 +5520,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '12',
                             label: 'value'
                         }
@@ -5821,10 +5821,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '123',
                             label: 'value'
                         }
@@ -5849,10 +5849,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '12',
                             label: 'value'
                         }
@@ -5928,10 +5928,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '123',
                             label: 'value'
                         }
@@ -5956,10 +5956,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '12',
                             label: 'value'
                         }
@@ -6035,10 +6035,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '123',
                             label: 'value'
                         }
@@ -6063,10 +6063,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^a/,
+                            regex: /^a/,
                             value: '12',
                             label: 'value'
                         }
@@ -6599,10 +6599,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^1234/,
+                            regex: /^1234/,
                             value: '123@x.com',
                             label: 'value'
                         }
@@ -6667,10 +6667,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^1234/,
+                            regex: /^1234/,
                             value: '123@x.com',
                             label: 'value'
                         }
@@ -6727,10 +6727,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^1234/,
+                            regex: /^1234/,
                             value: '123@x.com',
                             label: 'value'
                         }
@@ -8365,10 +8365,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21+07:00',
                             label: 'value'
                         }
@@ -8388,10 +8388,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21-07:00',
                             label: 'value'
                         }
@@ -8576,10 +8576,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21+07:00',
                             label: 'value'
                         }
@@ -8599,10 +8599,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21-07:00',
                             label: 'value'
                         }
@@ -8966,10 +8966,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21+07:00',
                             label: 'value'
                         }
@@ -8989,10 +8989,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21-07:00',
                             label: 'value'
                         }
@@ -9182,10 +9182,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21+07:00',
                             label: 'value'
                         }
@@ -9205,10 +9205,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21-07:00',
                             label: 'value'
                         }
@@ -9391,10 +9391,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21+07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21+07:00',
                             label: 'value'
                         }
@@ -9414,10 +9414,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "2013-06-07T14:21-07:00" fails to match the required pattern: /Z$/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /Z$/,
+                            regex: /Z$/,
                             value: '2013-06-07T14:21-07:00',
                             label: 'value'
                         }
@@ -12155,10 +12155,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e908/,
+                            regex: /^{7e908/,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value'
                         }
@@ -12183,10 +12183,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e908/,
+                            regex: /^{7e908/,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value'
                         }
@@ -12299,10 +12299,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e908/,
+                            regex: /^{7e908/,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value'
                         }
@@ -12327,10 +12327,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e908/,
+                            regex: /^{7e908/,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value'
                         }
@@ -12548,10 +12548,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            regex: /^{7e9081/i,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value'
                         }
@@ -12576,10 +12576,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            regex: /^{7e9081/i,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value'
                         }
@@ -12619,10 +12619,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            regex: /^{7e9081/i,
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
                             label: 'value'
                         }
@@ -12708,10 +12708,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            regex: /^{7e9081/i,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value'
                         }
@@ -12736,10 +12736,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            regex: /^{7e9081/i,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value'
                         }
@@ -12779,10 +12779,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            regex: /^{7e9081/i,
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
                             label: 'value'
                         }
@@ -12860,10 +12860,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            regex: /^{7e9081/i,
                             value: '{B59511BD6A5F4DF09ECF562A108D8A2E}',
                             label: 'value'
                         }
@@ -12888,10 +12888,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            regex: /^{7e9081/i,
                             value: '677E2553DD4D43B09DA77414DB1EB8EA',
                             label: 'value'
                         }
@@ -12931,10 +12931,10 @@ describe('string', () => {
                     details: [{
                         message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
                         path: [],
-                        type: 'string.regex.base',
+                        type: 'string.pattern.base',
                         context: {
                             name: undefined,
-                            pattern: /^{7e9081/i,
+                            regex: /^{7e9081/i,
                             value: 'b4b2fb69c6244e5eb0698e0c6ec66618',
                             label: 'value'
                         }
@@ -13027,13 +13027,11 @@ describe('string', () => {
                 type: 'string',
                 rules: [
                     {
-                        name: 'regex',
+                        name: 'pattern',
                         args: {
-                            patternObject: {
-                                value: {
-                                    pattern: { regex: '/[a-z]/' },
-                                    invert: true
-                                }
+                            regex: '/[a-z]/',
+                            options: {
+                                invert: true
                             }
                         }
                     }

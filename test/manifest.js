@@ -46,7 +46,7 @@ describe('Manifest', () => {
                 required: Joi.string().required(),
                 xor: Joi.string(),
                 renamed: Joi.string().valid('456'),
-                notEmpty: Joi.string().required().description('a').notes('b').tags('c'),
+                notEmpty: Joi.string().required().description('a').note('b').tag('c'),
                 empty: Joi.string().empty('').strip(),
                 defaultRef: Joi.string().default(defaultRef),
                 defaultFn: Joi.string().default(defaultFn),
@@ -280,7 +280,9 @@ describe('Manifest', () => {
                 Joi.boolean(),
                 Joi.date(),
                 Joi.func(),
+                Joi.link(),
                 Joi.number(),
+                Joi.object(),
                 Joi.string(),
                 Joi.symbol()
             ]);
@@ -330,6 +332,46 @@ describe('Manifest', () => {
                 Joi.string().min(1).keep(),
                 Joi.string().$.min(1).max(2).rule({ message: 'override' }),
                 Joi.string().$.min(1).max(2).rule({ message: Joi.x('{$x}') })
+            ]);
+        });
+
+        it('sets any inners', () => {
+
+            internals.test([
+                Joi.string().example('text').tag('a').note('ok then').meta(123),
+                Joi.binary().external((v) => v),
+                Joi.number().alter({ x: (s) => s.min(1) })
+            ]);
+        });
+
+        it('builds alternatives', () => {
+
+            internals.test([
+                Joi.number().when('$x', { is: true, then: Joi.required(), otherwise: Joi.forbidden() }),
+                Joi.number().when(Joi.valid('x'), { then: Joi.required(), otherwise: Joi.forbidden() }),
+                Joi.alternatives().try(Joi.boolean())
+            ]);
+        });
+
+        it('builds objects', () => {
+
+            internals.test([
+                Joi.object({ a: Joi.string(), b: Joi.number() }),
+                Joi.object().rename('a', 'b'),
+                Joi.object().rename(/a/, 'b'),
+                Joi.object().rename(/(a)/, Joi.x('x{#1}')),
+                Joi.object().and('a', 'b').or('c', 'd').without('e', 'f').xor('g.h', 'i', { separator: false }),
+                Joi.object().pattern(/x/, Joi.number()),
+                Joi.object().pattern(Joi.string(), Joi.number()),
+                Joi.object().pattern(/x/, Joi.number(), { matches: Joi.array().length(Joi.ref('$x')), exclusive: true })
+            ]);
+        });
+
+        it('builds strings', () => {
+
+            internals.test([
+                Joi.string().min(1).max(10).pattern(/\d*/),
+                Joi.string().replace(/x/, 'X')
             ]);
         });
     });

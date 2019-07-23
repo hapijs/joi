@@ -487,10 +487,10 @@ describe('Joi', () => {
         expect(err.details).to.equal([{
             message: '"value" with value "6" fails to match the required pattern: /.{2}/',
             path: [],
-            type: 'string.regex.base',
+            type: 'string.pattern.base',
             context: {
                 name: undefined,
-                pattern: /.{2}/,
+                regex: /.{2}/,
                 value: '6',
                 label: 'value'
             }

@@ -32,7 +32,7 @@
     - [`any.description(desc)`](#anydescriptiondesc)
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
-    - [`any.example(...values)`](#anyexamplevalues)
+    - [`any.example(example, [options])`](#anyexampleexample-options)
     - [`any.external(method)`](#anyexternalmethod)
     - [`any.extract(path)`](#anyextractpath)
     - [`any.failover(value)`](#anyfailovervalue)
@@ -44,7 +44,7 @@
     - [`any.label(name)`](#anylabelname)
     - [`any.message(message)`](#anymessagemessage)
     - [`any.meta(meta)`](#anymetameta)
-    - [`any.notes(notes)`](#anynotesnotes)
+    - [`any.note(...notes)`](#anynotenotes)
     - [`any.only()`](#anyonly)
     - [`any.optional()`](#anyoptional)
     - [`any.prefs(options)` = aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
@@ -55,7 +55,7 @@
     - [`any.ruleset` - aliases: `$`](#anyruleset---aliases-)
     - [`any.strict(isStrict)`](#anystrictisstrict)
     - [`any.strip()`](#anystrip)
-    - [`any.tags(tags)`](#anytagstags)
+    - [`any.tag(...tags)`](#anytagtags)
     - [`any.tailor(targets)`](#anytailortargets)
     - [`any.unit(name)`](#anyunitname)
     - [`any.valid(...values)` - aliases: `equal`](#anyvalidvalues---aliases-equal)
@@ -152,7 +152,7 @@
     - [`string.max(limit, [encoding])`](#stringmaxlimit-encoding)
     - [`string.min(limit, [encoding])`](#stringminlimit-encoding)
     - [`string.normalize([form])`](#stringnormalizeform)
-    - [`string.regex(pattern, [name | options])`](#stringregexpattern-name--options)
+    - [`string.pattern(regex, [name | options])` - aliases: `regex`](#stringpatternregex-name--options---aliases-regex)
     - [`string.replace(pattern, replacement)`](#stringreplacepattern-replacement)
     - [`string.token()`](#stringtoken)
     - [`string.trim([enabled])`](#stringtrimenabled)
@@ -274,10 +274,10 @@
     - [`string.min`](#stringmin)
     - [`string.normalize`](#stringnormalize)
     - [`string.ref`](#stringref)
-    - [`string.regex.base`](#stringregexbase)
-    - [`string.regex.name`](#stringregexname)
-    - [`string.regex.invert.base`](#stringregexinvertbase)
-    - [`string.regex.invert.name`](#stringregexinvertname)
+    - [`string.pattern.base`](#stringpatternbase)
+    - [`string.pattern.name`](#stringpatternname)
+    - [`string.pattern.invert.base`](#stringpatterninvertbase)
+    - [`string.pattern.invert.name`](#stringpatterninvertname)
     - [`string.token`](#stringtoken-1)
     - [`string.trim`](#stringtrim)
     - [`string.uppercase`](#stringuppercase-1)
@@ -346,7 +346,7 @@ const schema = Joi.alternatives().try([
     Joi.object({
         a: Joi.boolean().valid(true),
         b: Joi.alternatives().try([
-            Joi.string().regex(/^a/),
+            Joi.string().pattern(/^a/),
             Joi.string().valid('boom')
         ])
     })
@@ -811,12 +811,12 @@ const schema = Joi.object({
 schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
 ```
 
-#### `any.example(...values)`
+#### `any.example(example, [options])`
 
 Adds examples to the schema where:
-- `values` - each argument is an example value.
-
-Note that no validation is performed on the provided examples. Calling this function again will override the previous examples.
+- `example` - adds an example. Note that no validation is performed on the value.
+- `options` - optional settings:
+    - `override` - if `true`, replaces any existing examples. Defaults to `false`.
 
 ```js
 const schema = Joi.string().min(4).example('abcd');
@@ -951,13 +951,13 @@ Attaches metadata to the key where:
 const schema = Joi.any().meta({ index: true });
 ```
 
-#### `any.notes(notes)`
+#### `any.note(...notes)`
 
 Annotates the key where:
-- `notes` - the notes string or array of strings.
+- `notes` - the note string or multiple notes as individual arguments.
 
 ```js
-const schema = Joi.any().notes(['this is special', 'this is important']);
+const schema = Joi.any().note('this is special', 'this is important');
 ```
 
 #### `any.only()`
@@ -1071,13 +1071,13 @@ schema.validate(['one', 'two', true, false, 1, 2]); // result.value = ['one', 't
 });
 ```
 
-#### `any.tags(tags)`
+#### `any.tag(...tags)`
 
 Annotates the key where:
-- `tags` - the tag string or array of strings.
+- `tags` - the tag string or multiple tags (each as an argument).
 
 ```js
-const schema = Joi.any().tags(['api', 'user']);
+const schema = Joi.any().tag('api', 'user');
 ```
 
 #### `any.tailor(targets)`
@@ -2903,32 +2903,33 @@ const schema = Joi.string().normalize('NFKD'); // compatibility decomposition
 
 Possible validation errors: [`string.normalize`](#stringnormalize)
 
-#### `string.regex(pattern, [name | options])`
+#### `string.pattern(regex, [name | options])` - aliases: `regex`
 
-Defines a regular expression rule where:
-- `pattern` - a regular expression object the string value must match against.
+Defines a pattern rule where:
+- `regex` - a regular expression object the string value must match against.
 - `name` - optional name for patterns (useful with multiple patterns).
 - `options` - an optional configuration object with the following supported properties:
   - `name` - optional pattern name.
-  - `invert` - optional boolean flag. Defaults to `false` behavior. If specified as `true`, the provided pattern will be disallowed instead of required.
+  - `invert` - optional boolean flag. Defaults to `false` behavior. If specified as `true`, the
+    provided pattern will be disallowed instead of required.
 
 ```js
-const schema = Joi.string().regex(/^[abc]+$/);
+const schema = Joi.string().pattern(/^[abc]+$/);
 
-const inlineNamedSchema = Joi.string().regex(/^[0-9]+$/, 'numbers');
+const inlineNamedSchema = Joi.string().pattern(/^[0-9]+$/, 'numbers');
 inlineNamedSchema.validate('alpha'); // ValidationError: "value" with value "alpha" fails to match the numbers pattern
 
-const namedSchema = Joi.string().regex(/^[0-9]+$/, { name: 'numbers'});
+const namedSchema = Joi.string().pattern(/^[0-9]+$/, { name: 'numbers'});
 namedSchema.validate('alpha'); // ValidationError: "value" with value "alpha" fails to match the numbers pattern
 
-const invertedSchema = Joi.string().regex(/^[a-z]+$/, { invert: true });
+const invertedSchema = Joi.string().pattern(/^[a-z]+$/, { invert: true });
 invertedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted pattern: [a-z]
 
-const invertedNamedSchema = Joi.string().regex(/^[a-z]+$/, { name: 'alpha', invert: true });
+const invertedNamedSchema = Joi.string().pattern(/^[a-z]+$/, { name: 'alpha', invert: true });
 invertedNamedSchema.validate('lowercase'); // ValidationError: "value" with value "lowercase" matches the inverted alpha pattern
 ```
 
-Possible validation errors: [`string.regex.base`](#stringregexbase), [`string.regex.invert.base`](#stringregexinvertbase), [`string.regex.invert.name`](#stringregexinvertname), [`string.regex.name`](#stringregexname)
+Possible validation errors: [`string.pattern.base`](#stringpatternbase), [`string.pattern.invert.base`](#stringpatterninvertbase), [`string.pattern.invert.name`](#stringpatterninvertname), [`string.pattern.name`](#stringpatternname)
 
 #### `string.replace(pattern, replacement)`
 
@@ -4138,7 +4139,7 @@ Additional local context properties:
 }
 ```
 
-#### `string.regex.base`
+#### `string.pattern.base`
 
 The string didn't match the regular expression.
 
@@ -4150,7 +4151,7 @@ Additional local context properties:
 }
 ```
 
-#### `string.regex.name`
+#### `string.pattern.name`
 
 The string didn't match the named regular expression.
 
@@ -4162,7 +4163,7 @@ Additional local context properties:
 }
 ```
 
-#### `string.regex.invert.base`
+#### `string.pattern.invert.base`
 
 The string matched the regular expression while it shouldn't.
 
@@ -4174,7 +4175,7 @@ Additional local context properties:
 }
 ```
 
-#### `string.regex.invert.name`
+#### `string.pattern.invert.name`
 
 The string matched the named regular expression while it shouldn't.
 
