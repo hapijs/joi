@@ -353,6 +353,32 @@ describe('Manifest', () => {
             ]);
         });
 
+        it('builds arrays', () => {
+
+            internals.test([
+                Joi.array().min(1).items(Joi.number()),
+                Joi.array().has(Joi.string()),
+                Joi.array().ordered(Joi.number(), Joi.boolean(), Joi.binary())
+            ]);
+        });
+
+        it('builds booleans', () => {
+
+            internals.test([
+                Joi.boolean().truthy('x'),
+                Joi.boolean().falsy(Joi.ref('$x')),
+                Joi.boolean().truthy(3).falsy(4)
+            ]);
+        });
+
+        it('builds links', () => {
+
+            internals.test([
+                Joi.link('....'),
+                Joi.link(Joi.ref('xxx....', { separator: 'x' }))
+            ]);
+        });
+
         it('builds objects', () => {
 
             internals.test([
@@ -372,6 +398,21 @@ describe('Manifest', () => {
             internals.test([
                 Joi.string().min(1).max(10).pattern(/\d*/),
                 Joi.string().replace(/x/, 'X')
+            ]);
+        });
+
+        it('builds strings', () => {
+
+            internals.test([
+                Joi.string().min(1).max(10).pattern(/\d*/),
+                Joi.string().replace(/x/, 'X')
+            ]);
+        });
+
+        it('builds symbols', () => {
+
+            internals.test([
+                Joi.symbol().map([['a', Symbol('a')]])
             ]);
         });
     });
