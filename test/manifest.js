@@ -4,6 +4,8 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Joi = require('..');
 
+const Helper = require('./helper');
+
 
 const internals = {};
 
@@ -204,15 +206,6 @@ describe('Manifest', () => {
             expect(description.keys.defaultRef.flags.default).to.equal({ ref: { path: ['xor'] } });
         });
 
-        it('describes schema (any)', () => {
-
-            const any = Joi;
-            const description = any.describe();
-            expect(description).to.equal({
-                type: 'any'
-            });
-        });
-
         it('describes schema without invalids', () => {
 
             const description = Joi.allow(null).describe();
@@ -293,7 +286,9 @@ describe('Manifest', () => {
             internals.test([
                 Joi.string().required(),
                 Joi.func().default(() => null, { literal: true }),
-                Joi.object().default()
+                Joi.object().default(),
+                Joi.boolean().optional(),
+                Joi.string().empty('')
             ]);
         });
 
@@ -312,7 +307,9 @@ describe('Manifest', () => {
                 Joi.string().allow(1, 2, 3),
                 Joi.string().valid(Joi.ref('$x')),
                 Joi.number().invalid(1),
-                Joi.object().allow({ x: 1 })
+                Joi.object().allow({ x: 1 }),
+                Joi.allow(null),
+                Joi.string().empty('').allow(null)
             ]);
         });
 
@@ -415,6 +412,27 @@ describe('Manifest', () => {
                 Joi.symbol().map([['a', Symbol('a')]])
             ]);
         });
+
+        it('builds references', () => {
+
+            internals.test([
+                Joi.allow(Joi.ref('a'))
+            ]);
+        });
+
+        it.skip('builds complex schemas', () => {
+
+            const schema = Joi.when('a', {
+                is: true,
+                then: Joi.string()
+            });
+
+            console.log(JSON.stringify(schema.describe(), null, 4));
+
+            internals.test([
+                schema
+            ]);
+        });
     });
 });
 
@@ -423,6 +441,6 @@ internals.test = function (schemas) {
 
     for (const schema of schemas) {
         const built = Joi.build(schema.describe());
-        expect(built).to.equal(schema);
+        Helper.compare(built, schema);
     }
 };

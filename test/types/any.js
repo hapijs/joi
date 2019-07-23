@@ -547,8 +547,8 @@ describe('any', () => {
 
         it('overrides and append information', () => {
 
-            const a = Joi.description('a').unit('a').tag('a').example('a');
-            const b = Joi.description('b').unit('b').tag('b').example('b');
+            const a = Joi.any().description('a').unit('a').tag('a').example('a');
+            const b = Joi.any().description('b').unit('b').tag('b').example('b');
 
             const desc = a.concat(b).describe();
             expect(desc).to.equal({
@@ -1077,7 +1077,7 @@ describe('any', () => {
 
             const schema = Joi.object({
                 a: Joi.boolean(),
-                b: Joi.boolean().when('a', { is: true, then: Joi.default(false), otherwise: Joi.forbidden() })
+                b: Joi.boolean().when('a', { is: true, then: Joi.any().default(false), otherwise: Joi.forbidden() })
             });
 
             const value = await schema.validate({ a: true });
@@ -1192,13 +1192,13 @@ describe('any', () => {
 
         it('sets the description', () => {
 
-            const b = Joi.description('my description');
+            const b = Joi.any().description('my description');
             expect(b.describe().flags.description).to.equal('my description');
         });
 
         it('throws when description is missing', () => {
 
-            expect(() => Joi.description()).to.throw('Description must be a non-empty string');
+            expect(() => Joi.any().description()).to.throw('Description must be a non-empty string');
         });
     });
 
@@ -1630,7 +1630,7 @@ describe('any', () => {
 
         it('throws when examples are missing', () => {
 
-            expect(() => Joi.example()).to.throw('Missing example');
+            expect(() => Joi.any().example()).to.throw('Missing example');
         });
     });
 
@@ -1775,7 +1775,7 @@ describe('any', () => {
 
             expect(() => {
 
-                Joi.label();
+                Joi.any().label();
             }).to.throw('Label name must be a non-empty string');
         });
 
@@ -1926,7 +1926,7 @@ describe('any', () => {
         it('sets the meta', () => {
 
             const meta = { prop: 'val', prop2: 3 };
-            let b = Joi.meta(meta);
+            let b = Joi.any().meta(meta);
             expect(b.describe().metas).to.equal([meta]);
 
             b = b.meta({ other: true });
@@ -1938,7 +1938,7 @@ describe('any', () => {
 
         it('throws when meta is missing', () => {
 
-            expect(() => Joi.meta()).to.throw('Meta cannot be undefined');
+            expect(() => Joi.any().meta()).to.throw('Meta cannot be undefined');
         });
     });
 
@@ -1965,19 +1965,19 @@ describe('any', () => {
 
         it('sets notes', () => {
 
-            const b = Joi.note('a').note('my notes');
+            const b = Joi.any().note('a').note('my notes');
             expect(b.describe().notes).to.equal(['a', 'my notes']);
         });
 
         it('throws when notes are missing', () => {
 
-            expect(() => Joi.note()).to.throw('Missing notes');
+            expect(() => Joi.any().note()).to.throw('Missing notes');
         });
 
         it('throws when notes are invalid', () => {
 
-            expect(() => Joi.note(5)).to.throw('Notes must be non-empty strings');
-            expect(() => Joi.note('')).to.throw('Notes must be non-empty strings');
+            expect(() => Joi.any().note(5)).to.throw('Notes must be non-empty strings');
+            expect(() => Joi.any().note('')).to.throw('Notes must be non-empty strings');
         });
     });
 
@@ -2492,7 +2492,7 @@ describe('any', () => {
 
         it('sets the tags', () => {
 
-            const b = Joi.tag('tag1', 'tag2').tag('tag3');
+            const b = Joi.any().tag('tag1', 'tag2').tag('tag3');
             expect(b.describe().tags).to.include('tag1');
             expect(b.describe().tags).to.include('tag2');
             expect(b.describe().tags).to.include('tag3');
@@ -2500,13 +2500,13 @@ describe('any', () => {
 
         it('throws when tags are missing', () => {
 
-            expect(() => Joi.tag()).to.throw('Missing tags');
+            expect(() => Joi.any().tag()).to.throw('Missing tags');
         });
 
         it('throws when tags are invalid', () => {
 
-            expect(() => Joi.tag(5)).to.throw('Tags must be non-empty strings');
-            expect(() => Joi.tag('')).to.throw('Tags must be non-empty strings');
+            expect(() => Joi.any().tag(5)).to.throw('Tags must be non-empty strings');
+            expect(() => Joi.any().tag('')).to.throw('Tags must be non-empty strings');
         });
     });
 
@@ -2564,13 +2564,13 @@ describe('any', () => {
 
         it('sets the unit', () => {
 
-            const b = Joi.unit('milliseconds');
+            const b = Joi.any().unit('milliseconds');
             expect(b.describe().flags.unit).to.equal('milliseconds');
         });
 
         it('throws when unit is missing', () => {
 
-            expect(() => Joi.unit()).to.throw('Unit name must be a non-empty string');
+            expect(() => Joi.any().unit()).to.throw('Unit name must be a non-empty string');
         });
     });
 
@@ -2807,8 +2807,8 @@ describe('any', () => {
 
         it('errors on invalid code', () => {
 
-            expect(() => Joi.warning()).to.throw('Invalid warning code');
-            expect(() => Joi.warning(123)).to.throw('Invalid warning code');
+            expect(() => Joi.any().warning()).to.throw('Invalid warning code');
+            expect(() => Joi.any().warning(123)).to.throw('Invalid warning code');
         });
     });
 

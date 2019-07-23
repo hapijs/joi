@@ -2408,13 +2408,6 @@ describe('Joi', () => {
         }]);
     });
 
-    it('validates using the root any object', () => {
-
-        const result = Joi.validate('abc');
-        expect(result.error).to.not.exist();
-        expect(result.value).to.equal('abc');
-    });
-
     it('accepts no options', async () => {
 
         await Joi.string().validate('test');
@@ -2581,7 +2574,8 @@ describe('Joi', () => {
             expect(schema.describe()).to.equal({
                 type: 'any',
                 flags: {
-                    description: 'defaulted'
+                    description: 'defaulted',
+                    presence: 'optional'
                 }
             });
         });
@@ -2929,9 +2923,9 @@ describe('Joi', () => {
         });
     });
 
-    describe('bind()', () => {
+    describe('types()', () => {
 
-        it('binds functions', () => {
+        it('returns type shortcut methods', () => {
 
             expect(() => {
 
@@ -2939,14 +2933,14 @@ describe('Joi', () => {
                 string();
             }).to.throw('Must be invoked on a Joi instance.');
 
-            const { string } = Joi.bind();
-            expect(() => string()).to.not.throw();
+            const { string } = Joi.types();
+            expect(() => string.allow('x')).to.not.throw();
 
-            const { error } = string().validate(0);
+            const { error } = string.validate(0);
             expect(error).to.be.an.error('"value" must be a string');
         });
 
-        it('binds functions on an extended joi', () => {
+        it('returns extended shortcuts', () => {
 
             const customJoi = Joi.extend({
                 base: Joi.string(),
@@ -2959,14 +2953,14 @@ describe('Joi', () => {
                 string();
             }).to.throw('Must be invoked on a Joi instance.');
 
-            const { string, myType } = customJoi.bind();
-            expect(() => string()).to.not.throw();
-            expect(string().validate(0).error).to.be.an.error('"value" must be a string');
+            const { string, myType } = customJoi.types();
+            expect(() => string.allow('x')).to.not.throw();
+            expect(string.validate(0).error).to.be.an.error('"value" must be a string');
 
-            expect(() => myType()).to.not.throw();
-            expect(myType().validate(0).error).to.be.an.error('"value" must be a string');
+            expect(() => myType.allow('x')).to.not.throw();
+            expect(myType.validate(0).error).to.be.an.error('"value" must be a string');
 
-            expect(customJoi._binds.size).to.equal(Joi._binds.size + 1);
+            expect(customJoi._types.size).to.equal(Joi._types.size + 1);
         });
     });
 });

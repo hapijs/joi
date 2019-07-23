@@ -10,6 +10,39 @@ const internals = {};
 const { expect } = Code;
 
 
+exports.compare = function (a, b) {
+
+    const clearRuleset = function (schema, _seen) {
+
+        const seen = _seen || new Set();
+
+        if (!schema ||
+            typeof schema !== 'object') {
+
+            return;
+        }
+
+        if (seen.has(schema)) {
+            return;
+        }
+
+        seen.add(schema);
+
+        for (const key in schema) {
+            if (key === '_ruleset') {
+                schema._ruleset = null;
+            }
+
+            clearRuleset(schema[key], seen);
+        }
+
+        return schema;
+    };
+
+    expect(clearRuleset(a.clone())).to.equal(clearRuleset(b.clone()));
+};
+
+
 exports.validate = function (schema, config) {
 
     return exports.validateOptions(schema, config, null);
@@ -20,6 +53,8 @@ exports.validateOptions = function (schema, config, options) {
 
     try {
         const compiled = Joi.compile(schema);
+        //exports.compare(Joi.build(compiled.describe()), compiled);
+
         for (let i = 0; i < config.length; ++i) {
 
             const item = config[i];

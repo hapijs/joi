@@ -7,7 +7,6 @@
 - [Joi](#joi)
   - [`assert(value, schema, [message], [options])` - aliases: `attempt`](#assertvalue-schema-message-options---aliases-attempt)
   - [`cache.provision([options])`](#cacheprovisionoptions)
-  - [`bind()`](#bind)
   - [`compile(schema, [options])`](#compileschema-options)
   - [`defaults(fn)`](#defaultsfn)
   - [`expression(template, [options])` - aliases: `x`](#expressiontemplate-options---aliases-x)
@@ -19,6 +18,7 @@
   - [`ref(key, [options])`](#refkey-options)
     - [Relative references](#relative-references)
   - [`version`](#version)
+  - [`types()`](#types)
   - [`any`](#any)
     - [`any.type`](#anytype)
     - [`any.allow(...values)`](#anyallowvalues)
@@ -311,18 +311,6 @@ booleans) where:
     - `max` - number of items to store in the cache before the least used items are dropped.
       Defaults to `1000`.
 
-### `bind()`
-
-By default, some **joi** methods to function properly need to rely on the **joi** instance they are attached to because they use `this` internally. So `Joi.string()` works but if you extract the function from it and call `string()` it won't. `bind()` creates a new **joi** instance where all the functions relying on `this` are bound to the **joi** instance.
-
-```js
-const { object, string } = require('@hapi/joi').bind();
-
-const schema = object({
-  property: string().min(4)
-});
-```
-
 ### `compile(schema, [options])`
 
 Converts literal schema definition to **joi** schema object (or returns the same back if already a
@@ -568,6 +556,21 @@ Note that if a reference tries to reach beyond the value root, validation fails.
 ### `version`
 
 Property showing the current version of **joi** being used.
+
+### `types()`
+
+Returns an object where each key is a plain joi schema type. Useful for creating type shortcuts
+using deconstruction. Note that the types are already formed and do not need to be called as
+functions (e.g. `string`, not `string()`).
+
+```js
+const Joi = require('@hapi/joi');
+const { object, string } = Joi.types();
+
+const schema = object.keys({
+  property: string.min(4)
+});
+```
 
 ### `any`
 

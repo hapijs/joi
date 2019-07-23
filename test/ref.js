@@ -935,7 +935,7 @@ describe('ref', () => {
     it('uses ref as default value', async () => {
 
         const schema = Joi.object({
-            a: Joi.default(Joi.ref('b')),
+            a: Joi.any().default(Joi.ref('b')),
             b: Joi.any()
         });
 
@@ -958,7 +958,7 @@ describe('ref', () => {
     it('uses ref as default value regardless of order', async () => {
 
         const ab = Joi.object({
-            a: Joi.default(Joi.ref('b')),
+            a: Joi.any().default(Joi.ref('b')),
             b: Joi.number()
         });
 
@@ -967,7 +967,7 @@ describe('ref', () => {
 
         const ba = Joi.object({
             b: Joi.number(),
-            a: Joi.default(Joi.ref('b'))
+            a: Joi.any().default(Joi.ref('b'))
         });
 
         const value2 = await ba.validate({ b: '6' });
@@ -982,8 +982,8 @@ describe('ref', () => {
         const b = [ref1, ref2];
         const c = Joi.number();
 
-        for (const value of [{ a, b, c }, { b, a, c }, { b, c, a }, { a, c, b }, { c, a, b }, { c, b, a }]) {
-            Helper.validate(value, [
+        for (const schema of [{ a, b, c }, { b, a, c }, { b, c, a }, { a, c, b }, { c, a, b }, { c, b, a }]) {
+            Helper.validate(schema, [
                 [{ a: {} }, true],
                 [{ a: { c: '5' }, b: 5 }, true],
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
@@ -1024,7 +1024,7 @@ describe('ref', () => {
     it('uses context as default value', async () => {
 
         const schema = Joi.object({
-            a: Joi.default(Joi.ref('$x')),
+            a: Joi.any().default(Joi.ref('$x')),
             b: Joi.any()
         });
 
@@ -1035,7 +1035,7 @@ describe('ref', () => {
     it('uses context as default value with custom prefix', async () => {
 
         const schema = Joi.object({
-            a: Joi.default(Joi.ref('@x', { prefix: { global: '@' } })),
+            a: Joi.any().default(Joi.ref('@x', { prefix: { global: '@' } })),
             b: Joi.any()
         });
 

@@ -582,17 +582,17 @@ describe('Modify', () => {
 
         it('errors on missing id', () => {
 
-            expect(() => Joi.id()).to.throw('id must be a non-empty string');
+            expect(() => Joi.any().id()).to.throw('id must be a non-empty string');
         });
 
         it('errors on invalid id', () => {
 
-            expect(() => Joi.id('a.b')).to.throw('id cannot contain period character');
+            expect(() => Joi.any().id('a.b')).to.throw('id cannot contain period character');
         });
 
         it('errors on id override', () => {
 
-            expect(() => Joi.id('b').id('b')).to.throw('Cannot override schema id');
+            expect(() => Joi.any().id('b').id('b')).to.throw('Cannot override schema id');
         });
     });
 

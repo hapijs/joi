@@ -1215,17 +1215,6 @@ describe('extension', () => {
         });
     });
 
-    it('should return a custom Joi as an instance of Any', () => {
-
-        const customJoi = Joi.extend({
-            name: 'myType'
-        });
-
-        const Any = require('../lib/types/any');
-
-        expect(customJoi).to.be.an.instanceof(Any);
-    });
-
     it('should return a custom Joi with types not inheriting root properties', () => {
 
         const customJoi = Joi.extend({
