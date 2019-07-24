@@ -671,8 +671,7 @@ describe('boolean', () => {
             expect(schema).to.equal({
                 type: 'boolean',
                 flags: {
-                    presence: 'required',
-                    insensitive: true
+                    presence: 'required'
                 },
                 truthy: ['yes'],
                 falsy: ['no']

@@ -472,8 +472,7 @@ describe('Modify', () => {
                     .has(Joi.object())
                     .has(Joi.valid(5).id('five'));
 
-                after1._ruleset = false;            // Simulate similar fork operation
-                expect(first).to.equal(after1);
+                expect(first).to.equal(after1, { skip: ['_ruleset'] });
 
                 const second = first.fork('numbers', (schema) => schema.min(10));
 
@@ -488,8 +487,7 @@ describe('Modify', () => {
                     .has(Joi.object())
                     .has(Joi.valid(5).id('five'));
 
-                after2._ruleset = false;            // Simulate similar fork operation
-                expect(second).to.equal(after2);
+                expect(second).to.equal(after2, { skip: ['_ruleset'] });
 
                 const third = second.fork('five', (schema) => schema.allow(-5));
 
@@ -504,8 +502,7 @@ describe('Modify', () => {
                     .has(Joi.object())
                     .has(Joi.valid(5, -5).id('five'));
 
-                after3._ruleset = false;            // Simulate similar fork operation
-                expect(third).to.equal(after3);
+                expect(third).to.equal(after3, { skip: ['_ruleset'] });
             });
         });
 
@@ -533,8 +530,7 @@ describe('Modify', () => {
                     }).id('objects')
                 ]);
 
-                after1._ruleset = false;            // Simulate similar fork operation
-                expect(first).to.equal(after1);
+                expect(first).to.equal(after1, { skip: ['_ruleset'] });
 
                 const second = first.fork('numbers', (schema) => schema.min(10));
 
@@ -547,8 +543,7 @@ describe('Modify', () => {
                     }).id('objects')
                 ]);
 
-                after2._ruleset = false;            // Simulate similar fork operation
-                expect(second).to.equal(after2);
+                expect(second).to.equal(after2, { skip: ['_ruleset'] });
             });
 
             it('adjusts when schema', () => {

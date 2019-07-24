@@ -4,8 +4,6 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Joi = require('..');
 
-const Helper = require('./helper');
-
 
 const internals = {};
 
@@ -346,7 +344,9 @@ describe('Manifest', () => {
             internals.test([
                 Joi.number().when('$x', { is: true, then: Joi.required(), otherwise: Joi.forbidden() }),
                 Joi.number().when(Joi.valid('x'), { then: Joi.required(), otherwise: Joi.forbidden() }),
-                Joi.alternatives().try(Joi.boolean())
+                Joi.alternatives().try(Joi.boolean()),
+                Joi.when('$x', { is: true, then: Joi.string() }),
+                Joi.number().when('a', { switch: [{ is: 0, then: Joi.valid(1) }], otherwise: Joi.valid(4) })
             ]);
         });
 
@@ -355,7 +355,9 @@ describe('Manifest', () => {
             internals.test([
                 Joi.array().min(1).items(Joi.number()),
                 Joi.array().has(Joi.string()),
-                Joi.array().ordered(Joi.number(), Joi.boolean(), Joi.binary())
+                Joi.array().ordered(Joi.number(), Joi.boolean(), Joi.binary()),
+                Joi.array().items(Joi.number()).has(Joi.number()),
+                Joi.array().sparse().unique()
             ]);
         });
 
@@ -364,7 +366,15 @@ describe('Manifest', () => {
             internals.test([
                 Joi.boolean().truthy('x'),
                 Joi.boolean().falsy(Joi.ref('$x')),
-                Joi.boolean().truthy(3).falsy(4)
+                Joi.boolean().truthy(3).falsy(4),
+                Joi.boolean().insensitive(false)
+            ]);
+        });
+
+        it('builds dates', () => {
+
+            internals.test([
+                Joi.date().min('1-1-2000 UTC')
             ]);
         });
 
@@ -379,6 +389,7 @@ describe('Manifest', () => {
         it('builds objects', () => {
 
             internals.test([
+                Joi.object({}),
                 Joi.object({ a: Joi.string(), b: Joi.number() }),
                 Joi.object().rename('a', 'b'),
                 Joi.object().rename(/a/, 'b'),
@@ -386,7 +397,9 @@ describe('Manifest', () => {
                 Joi.object().and('a', 'b').or('c', 'd').without('e', 'f').xor('g.h', 'i', { separator: false }),
                 Joi.object().pattern(/x/, Joi.number()),
                 Joi.object().pattern(Joi.string(), Joi.number()),
-                Joi.object().pattern(/x/, Joi.number(), { matches: Joi.array().length(Joi.ref('$x')), exclusive: true })
+                Joi.object().pattern(/x/, Joi.number(), { matches: Joi.array().length(Joi.ref('$x')), exclusive: true }),
+                Joi.object({ a: 1 }).concat(Joi.object({ a: 3 })),
+                Joi.object().instance(RegExp)
             ]);
         });
 
@@ -419,20 +432,6 @@ describe('Manifest', () => {
                 Joi.allow(Joi.ref('a'))
             ]);
         });
-
-        it.skip('builds complex schemas', () => {
-
-            const schema = Joi.when('a', {
-                is: true,
-                then: Joi.string()
-            });
-
-            console.log(JSON.stringify(schema.describe(), null, 4));
-
-            internals.test([
-                schema
-            ]);
-        });
     });
 });
 
@@ -441,6 +440,6 @@ internals.test = function (schemas) {
 
     for (const schema of schemas) {
         const built = Joi.build(schema.describe());
-        Helper.compare(built, schema);
+        expect(built).to.equal(schema, { skip: ['_ruleset'] });
     }
 };

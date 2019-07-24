@@ -111,6 +111,7 @@
     - [`number.port()`](#numberport)
     - [`number.positive()`](#numberpositive)
     - [`number.precision(limit)`](#numberprecisionlimit)
+    - [`number.sign(sign)`](#numbersignsign)
     - [`number.unsafe([enabled])`](#numberunsafeenabled)
   - [`object` - inherits from `Any`](#object---inherits-from-any)
     - [`object.and(...peers, [options])`](#objectandpeers-options)
@@ -2181,6 +2182,13 @@ const schema = Joi.number().precision(2);
 ```
 
 Possible validation errors: [`number.integer`](#numberinteger-1)
+
+#### `number.sign(sign)`
+
+Requires the number to be negative or positive where:
+`sign` - one of `'negative'` or `'positive'`.
+
+Possible validation errors: [`number.negative`](#numbernegative-1), [`number.positive`](#numberpositive-1)
 
 #### `number.unsafe([enabled])`
 

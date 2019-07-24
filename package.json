@@ -18,7 +18,7 @@
     "@hapi/topo": "3.x.x"
   },
   "devDependencies": {
-    "@hapi/code": "5.x.x",
+    "@hapi/code": "6.x.x",
     "@hapi/lab": "19.x.x",
     "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x",
     "hapitoc": "1.x.x"

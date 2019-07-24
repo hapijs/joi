@@ -49,14 +49,14 @@ describe('Cache', () => {
                 return rule(...args);
             };
 
-            expect(schema.validate('{"a":"x"}')).to.equal({ value: { a: 'x' }, error: null });
-            expect(schema.validate('{"a":"x"}')).to.equal({ value: { a: 'x' }, error: null });
-            expect(schema.validate('{"a":"x"}')).to.equal({ value: { a: 'x' }, error: null });
+            expect(schema.validate('{"a":"x"}').value).to.equal({ a: 'x' });
+            expect(schema.validate('{"a":"x"}').value).to.equal({ a: 'x' });
+            expect(schema.validate('{"a":"x"}').value).to.equal({ a: 'x' });
 
             const value = schema.validate('{"a":"x"}').value;
             value.x = 'y';
 
-            expect(schema.validate('{"a":"x"}')).to.equal({ value: { a: 'x' }, error: null });
+            expect(schema.validate('{"a":"x"}').value).to.equal({ a: 'x' });
 
             expect(count).to.equal(1);
         });

@@ -281,8 +281,7 @@ describe('alternatives', () => {
                         rules: [{ args: { limit: 1 }, name: 'min' }]
                     },
                     otherwise: {
-                        type: 'boolean',
-                        flags: { insensitive: true }
+                        type: 'boolean'
                     }
                 }]
             };
@@ -440,7 +439,7 @@ describe('alternatives', () => {
                 matches: [{
                     is: {
                         type: 'boolean',
-                        flags: { only: true, insensitive: true, presence: 'required' },
+                        flags: { only: true, presence: 'required' },
                         allow: [true]
                     },
                     ref: { path: ['a'] },
@@ -467,7 +466,7 @@ describe('alternatives', () => {
                 matches: [{
                     is: {
                         type: 'boolean',
-                        flags: { only: true, insensitive: true, presence: 'required' },
+                        flags: { only: true, presence: 'required' },
                         allow: [true]
                     },
                     ref: { path: ['a'] },
@@ -504,10 +503,7 @@ describe('alternatives', () => {
                 type: 'object',
                 keys: {
                     a: {
-                        type: 'boolean',
-                        flags: {
-                            insensitive: true
-                        }
+                        type: 'boolean'
                     },
                     b: {
                         type: 'alternatives',
@@ -520,7 +516,6 @@ describe('alternatives', () => {
                                     type: 'boolean',
                                     allow: [true],
                                     flags: {
-                                        insensitive: true,
                                         only: true,
                                         presence: 'required'
                                     }
@@ -554,10 +549,7 @@ describe('alternatives', () => {
                 type: 'object',
                 keys: {
                     a: {
-                        type: 'boolean',
-                        flags: {
-                            insensitive: true
-                        }
+                        type: 'boolean'
                     },
                     b: {
                         type: 'alternatives',
@@ -570,7 +562,6 @@ describe('alternatives', () => {
                                     type: 'boolean',
                                     allow: [true],
                                     flags: {
-                                        insensitive: true,
                                         only: true,
                                         presence: 'required'
                                     }

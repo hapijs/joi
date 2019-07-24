@@ -155,7 +155,7 @@ describe('array', () => {
                 items: [
                     { type: 'number' },
                     { type: 'string' },
-                    { type: 'boolean', flags: { presence: 'forbidden', insensitive: true } }
+                    { type: 'boolean', flags: { presence: 'forbidden' } }
                 ]
             });
         });
@@ -1517,10 +1517,7 @@ describe('array', () => {
 
             const schema = Joi.array().single().single(false);
             const desc = schema.describe();
-            expect(desc).to.equal({
-                type: 'array',
-                flags: { single: false }
-            });
+            expect(desc).to.equal({ type: 'array' });
         });
 
         it('avoids unnecessary cloning when called twice', () => {
@@ -1926,7 +1923,7 @@ describe('array', () => {
                 ]
             });
 
-            const schema = Joi.array().items(customJoi.myType().foo().required());
+            const schema = customJoi.array().items(customJoi.myType().foo().required());
 
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, null, {
@@ -1956,7 +1953,7 @@ describe('array', () => {
                 ]
             });
 
-            const schema = Joi.array().items(customJoi.myType().foo().required()).prefs({ abortEarly: false });
+            const schema = customJoi.array().items(customJoi.myType().foo().required()).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, null, {

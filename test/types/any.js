@@ -1586,10 +1586,7 @@ describe('any', () => {
                     b: item
                 });
 
-                expect(schema.validate({ a: [' xx', 'yy'], b: ' x' })).to.equal({
-                    error: null,
-                    value: { a: ['xx', 'yy'], b: 'x' }
-                });
+                expect(schema.validate({ a: [' xx', 'yy'], b: ' x' }).value).to.equal({ a: ['xx', 'yy'], b: 'x' });
 
                 const result1 = schema.validate({ a: [' xx', 'yy'], b: ' x?' });
                 expect(result1.value).to.equal({ a: ['xx', 'yy'], b: ' x?' });

@@ -1191,10 +1191,7 @@ describe('object', () => {
                     {
                         regex: '/\\w\\d/i',
                         rule: {
-                            type: 'boolean',
-                            flags: {
-                                insensitive: true
-                            }
+                            type: 'boolean'
                         }
                     }
                 ]
@@ -1224,10 +1221,7 @@ describe('object', () => {
                             type: 'string'
                         },
                         rule: {
-                            type: 'boolean',
-                            flags: {
-                                insensitive: true
-                            }
+                            type: 'boolean'
                         }
                     }
                 ]
@@ -2922,10 +2916,7 @@ describe('object', () => {
                 patterns: [
                     {
                         rule: {
-                            type: 'boolean',
-                            flags: {
-                                insensitive: true
-                            }
+                            type: 'boolean'
                         },
                         regex: '/^x\\d+$/',
                         matches: {
@@ -3132,28 +3123,23 @@ describe('object', () => {
 
             const first = before.tailor('x');
 
-            const c = Joi.object({
-                x: Joi.number(),
-                y: Joi.number()
-            })
-                .alter(alterations)
-                .assert('c.x', Joi.number().min(10).alter(alterations))
-                .min(10);
-
-            c._ruleset = false;
-
             const after1 = Joi.object({
                 a: {
                     b: Joi.number().min(10).alter(alterations)
                 },
                 b: Joi.object()
                     .pattern(/.*/, Joi.number().min(10).alter(alterations)),
-                c
+                c: Joi.object({
+                    x: Joi.number(),
+                    y: Joi.number()
+                })
+                    .alter(alterations)
+                    .assert('c.x', Joi.number().min(10).alter(alterations))
+                    .min(10)
             });
 
-            after1._ruleset = false;
-
             expect(first.describe()).to.equal(after1.describe());
+            expect(first).to.equal(after1, { skip: ['_ruleset'] });
             expect(before.describe()).to.equal(bd);
         });
     });
@@ -3207,14 +3193,14 @@ describe('object', () => {
 
         it('throws when constructor is not a function', () => {
 
-            expect(() => Joi.object().instance('')).to.throw('type must be a constructor function');
+            expect(() => Joi.object().instance('')).to.throw('constructor must be a function');
         });
 
         it('uses the constructor name in the schema description', () => {
 
             const description = Joi.object().instance(RegExp).describe();
 
-            expect(description.rules[0]).to.equal({ name: 'instance', args: { typeData: { value: { name: 'RegExp', ctor: RegExp } } } });
+            expect(description.rules[0]).to.equal({ name: 'instance', args: { name: 'RegExp', constructor: RegExp } });
         });
 
         it('uses the constructor reference in the schema description', () => {
@@ -3223,7 +3209,7 @@ describe('object', () => {
 
             const description = Joi.object().instance(Foo).describe();
 
-            expect(new Foo()).to.be.an.instanceof(description.rules[0].args.typeData.value.ctor);
+            expect(new Foo()).to.be.an.instanceof(description.rules[0].args.constructor);
         });
     });
 
