@@ -3073,13 +3073,11 @@ Extension objects use the following parameters :
 - `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `prefs`.
 - `pre` - an optional function that runs first in the validation chain, usually serves when you need to cast values. It takes 3 arguments `value`, `state` and `prefs`.
 - `messages` - an optional object to add error definitions. Every key will be prefixed by the type name.
-- `describe` - an optional function taking the fully formed description to post-process it.
 - `rules` - an optional array of rules to add.
     - `name` - name of the new rule. **Required**.
     - `params` - an optional object containing **joi** schemas of each parameter ordered. You can also pass a single **joi** schema as long as it is a `Joi.object()`, of course some methods such as `pattern` or `rename` won't be useful or won't work at all in this given context.
     - `setup` - an optional function that takes an object with the provided parameters to allow for internals manipulation of the schema when a rule is set, you can optionally return a new **joi** schema that will be taken as the new schema instance. At least one of `setup` or `validate` **must** be provided.
     - `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `prefs`. At least one of `setup` or `validate` **must** be provided.
-    - `description` - an optional string or function taking the parameters as argument to describe what the rule is doing.
 
 Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended **joi** being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
 
