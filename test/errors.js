@@ -67,7 +67,7 @@ describe('errors', () => {
         value.required = value.renamed;
         delete value.renamed;
 
-        expect(error).to.be.an.error('"value" 11. "email" 19. "date" 18. "alphanum" 16. "min" 14. "max" 15. "notEmpty" 3. "required" 7. "xor" 7');
+        expect(error).to.be.an.error('"value" 11. "email" 19. "date" 18. "alphanum" 16. "min" 14. "max" 15. "notEmpty" 3. "value" 7');
         expect(error.name).to.equal('ValidationError');
         expect(error.details).to.equal([
             {
@@ -125,30 +125,28 @@ describe('errors', () => {
                 context: { value: '', invalids: [''], label: 'notEmpty', key: 'notEmpty' }
             },
             {
-                message: '"required" 7',
-                path: ['required'],
+                message: '"value" 7',
+                path: [],
                 type: 'object.without',
                 context: {
                     main: 'required',
                     mainWithLabel: 'required',
                     peer: 'xor',
                     peerWithLabel: 'xor',
-                    label: 'required',
-                    key: 'required',
+                    label: 'value',
                     value
                 }
             },
             {
-                message: '"xor" 7',
-                path: ['xor'],
+                message: '"value" 7',
+                path: [],
                 type: 'object.without',
                 context: {
                     main: 'xor',
                     mainWithLabel: 'xor',
                     peer: 'required',
                     peerWithLabel: 'required',
-                    label: 'xor',
-                    key: 'xor',
+                    label: 'value',
                     value
                 }
             }

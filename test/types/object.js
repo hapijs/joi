@@ -627,15 +627,14 @@ describe('object', () => {
                 message: '"first" missing required peer "second"',
                 details: [{
                     message: '"first" missing required peer "second"',
-                    path: ['first'],
+                    path: [],
                     type: 'object.with',
                     context: {
                         main: 'first',
                         mainWithLabel: 'first',
                         peer: 'second',
                         peerWithLabel: 'second',
-                        label: 'first',
-                        key: 'first',
+                        label: 'value',
                         value: { first: 'value' }
                     }
                 }]
@@ -758,15 +757,14 @@ describe('object', () => {
             },
             {
                 message: '"a" missing required peer "b"',
-                path: ['a'],
+                path: [],
                 type: 'object.with',
                 context: {
                     main: 'a',
                     mainWithLabel: 'a',
                     peer: 'b',
                     peerWithLabel: 'b',
-                    label: 'a',
-                    key: 'a',
+                    label: 'value',
                     value: input
                 }
             }
@@ -797,15 +795,14 @@ describe('object', () => {
         expect(error).to.be.an.error('"first" missing required peer "b.second"');
         expect(error.details).to.equal([{
             message: '"first" missing required peer "b.second"',
-            path: ['a'],
+            path: [],
             type: 'object.with',
             context: {
                 main: 'a',
                 mainWithLabel: 'first',
                 peer: 'b.c',
                 peerWithLabel: 'b.second',
-                label: 'a',
-                key: 'a',
+                label: 'value',
                 value: { a: 1, b: { d: 2 } }
             }
         }]);
@@ -3358,15 +3355,14 @@ describe('object', () => {
             expect(error).to.be.an.error('"first" missing required peer "second"');
             expect(error.details).to.equal([{
                 message: '"first" missing required peer "second"',
-                path: ['a'],
+                path: [],
                 type: 'object.with',
                 context: {
                     main: 'a',
                     mainWithLabel: 'first',
                     peer: 'b',
                     peerWithLabel: 'second',
-                    label: 'a',
-                    key: 'a',
+                    label: 'value',
                     value: { a: 1 }
                 }
             }]);
@@ -3386,15 +3382,14 @@ describe('object', () => {
                     message: '"a" missing required peer "b.c"',
                     details: [{
                         message: '"a" missing required peer "b.c"',
-                        path: ['a'],
+                        path: [],
                         type: 'object.with',
                         context: {
                             main: 'a',
                             mainWithLabel: 'a',
                             peer: 'b.c',
                             peerWithLabel: 'b.c',
-                            key: 'a',
-                            label: 'a',
+                            label: 'value',
                             value: { a: 'test', b: { d: 80 } }
                         }
                     }]
@@ -3412,15 +3407,14 @@ describe('object', () => {
                     message: '"a.b" missing required peer "b.c"',
                     details: [{
                         message: '"a.b" missing required peer "b.c"',
-                        path: ['a', 'b'],
+                        path: [],
                         type: 'object.with',
                         context: {
                             main: 'a.b',
                             mainWithLabel: 'a.b',
                             peer: 'b.c',
                             peerWithLabel: 'b.c',
-                            key: 'b',
-                            label: 'a.b',
+                            label: 'value',
                             value: { a: { b: 'test' }, b: {} }
                         }
                     }]
@@ -3444,15 +3438,14 @@ describe('object', () => {
             expect(error).to.be.an.error('"a" missing required peer "b.c"');
             expect(error.details).to.equal([{
                 message: '"a" missing required peer "b.c"',
-                path: ['a'],
+                path: [],
                 type: 'object.with',
                 context: {
                     main: 'a',
                     mainWithLabel: 'a',
                     peer: 'b.c',
                     peerWithLabel: 'b.c',
-                    key: 'a',
-                    label: 'a',
+                    label: 'value',
                     value: error.details[0].context.value
                 }
             }]);
@@ -3473,15 +3466,14 @@ describe('object', () => {
             expect(error).to.be.an.error('"first" missing required peer "b.second"');
             expect(error.details).to.equal([{
                 message: '"first" missing required peer "b.second"',
-                path: ['a'],
+                path: [],
                 type: 'object.with',
                 context: {
                     main: 'a',
                     mainWithLabel: 'first',
                     peer: 'b.c',
                     peerWithLabel: 'b.second',
-                    label: 'a',
-                    key: 'a',
+                    label: 'value',
                     value: { a: 1, b: { d: 2 } }
                 }
             }]);
@@ -3500,15 +3492,14 @@ describe('object', () => {
             expect(error2).to.be.an.error('"a.first" missing required peer "b.second"');
             expect(error2.details).to.equal([{
                 message: '"a.first" missing required peer "b.second"',
-                path: ['a', 'b'],
+                path: [],
                 type: 'object.with',
                 context: {
                     main: 'a.b',
                     mainWithLabel: 'a.first',
                     peer: 'b.c',
                     peerWithLabel: 'b.second',
-                    label: 'a.b',
-                    key: 'b',
+                    label: 'value',
                     value: { a: { b: 'test' }, b: {} }
                 }
             }]);
@@ -3583,15 +3574,14 @@ describe('object', () => {
             expect(error).to.be.an.error('"first" conflict with forbidden peer "second"');
             expect(error.details).to.equal([{
                 message: '"first" conflict with forbidden peer "second"',
-                path: ['a'],
+                path: [],
                 type: 'object.without',
                 context: {
                     main: 'a',
                     mainWithLabel: 'first',
                     peer: 'b',
                     peerWithLabel: 'second',
-                    label: 'a',
-                    key: 'a',
+                    label: 'value',
                     value: { a: 1, b: 'b' }
                 }
             }]);
@@ -3615,15 +3605,14 @@ describe('object', () => {
             expect(error2).to.be.an.error('"a" conflict with forbidden peer "b.d"');
             expect(error2.details).to.equal([{
                 message: '"a" conflict with forbidden peer "b.d"',
-                path: ['a'],
+                path: [],
                 type: 'object.without',
                 context: {
                     main: 'a',
                     mainWithLabel: 'a',
                     peer: 'b.d',
                     peerWithLabel: 'b.d',
-                    key: 'a',
-                    label: 'a',
+                    label: 'value',
                     value: sampleObject2
                 }
             }]);
@@ -3648,15 +3637,14 @@ describe('object', () => {
             expect(error2).to.be.an.error('"a" conflict with forbidden peer "b.d"');
             expect(error2.details).to.equal([{
                 message: '"a" conflict with forbidden peer "b.d"',
-                path: ['a'],
+                path: [],
                 type: 'object.without',
                 context: {
                     main: 'a',
                     mainWithLabel: 'a',
                     peer: 'b.d',
                     peerWithLabel: 'b.d',
-                    key: 'a',
-                    label: 'a',
+                    label: 'value',
                     value: error2.details[0].context.value
                 }
             }]);
@@ -3677,15 +3665,14 @@ describe('object', () => {
             expect(error).to.be.an.error('"first" conflict with forbidden peer "b.second"');
             expect(error.details).to.equal([{
                 message: '"first" conflict with forbidden peer "b.second"',
-                path: ['a'],
+                path: [],
                 type: 'object.without',
                 context: {
                     main: 'a',
                     mainWithLabel: 'first',
                     peer: 'b.c',
                     peerWithLabel: 'b.second',
-                    label: 'a',
-                    key: 'a',
+                    label: 'value',
                     value: { a: 1, b: { c: 'c' } }
                 }
             }]);

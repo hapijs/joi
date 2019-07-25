@@ -508,15 +508,14 @@ describe('Joi', () => {
         expect(err).to.be.an.error('"txt" missing required peer "upc"');
         expect(err.details).to.equal([{
             message: '"txt" missing required peer "upc"',
-            path: ['txt'],
+            path: [],
             type: 'object.with',
             context: {
                 main: 'txt',
                 mainWithLabel: 'txt',
                 peer: 'upc',
                 peerWithLabel: 'upc',
-                label: 'txt',
-                key: 'txt',
+                label: 'value',
                 value: { txt: 'a' }
             }
         }]);
@@ -527,15 +526,14 @@ describe('Joi', () => {
                 message: '"txt" missing required peer "upc"',
                 details: [{
                     message: '"txt" missing required peer "upc"',
-                    path: ['txt'],
+                    path: [],
                     type: 'object.with',
                     context: {
                         main: 'txt',
                         mainWithLabel: 'txt',
                         peer: 'upc',
                         peerWithLabel: 'upc',
-                        label: 'txt',
-                        key: 'txt',
+                        label: 'value',
                         value: { txt: 'test' }
                     }
                 }]
@@ -562,15 +560,14 @@ describe('Joi', () => {
                 message: '"txt" missing required peer "upc"',
                 details: [{
                     message: '"txt" missing required peer "upc"',
-                    path: ['txt'],
+                    path: [],
                     type: 'object.with',
                     context: {
                         main: 'txt',
                         mainWithLabel: 'txt',
                         peer: 'upc',
                         peerWithLabel: 'upc',
-                        label: 'txt',
-                        key: 'txt',
+                        label: 'value',
                         value: { txt: 'test', upc: undefined }
                     }
                 }]
@@ -590,15 +587,14 @@ describe('Joi', () => {
         expect(err).to.be.an.error('"txt" conflict with forbidden peer "upc"');
         expect(err.details).to.equal([{
             message: '"txt" conflict with forbidden peer "upc"',
-            path: ['txt'],
+            path: [],
             type: 'object.without',
             context: {
                 main: 'txt',
                 mainWithLabel: 'txt',
                 peer: 'upc',
                 peerWithLabel: 'upc',
-                label: 'txt',
-                key: 'txt',
+                label: 'value',
                 value: { txt: 'a', upc: 'b' }
             }
         }]);
@@ -629,15 +625,14 @@ describe('Joi', () => {
                 message: '"txt" conflict with forbidden peer "upc"',
                 details: [{
                     message: '"txt" conflict with forbidden peer "upc"',
-                    path: ['txt'],
+                    path: [],
                     type: 'object.without',
                     context: {
                         main: 'txt',
                         mainWithLabel: 'txt',
                         peer: 'upc',
                         peerWithLabel: 'upc',
-                        label: 'txt',
-                        key: 'txt',
+                        label: 'value',
                         value: { txt: 'test', upc: 'test' }
                     }
                 }]
