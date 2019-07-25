@@ -9,7 +9,7 @@ module.exports = [
             Joi.object({
                 id: Joi.string().required(),
                 level: Joi.string()
-                    .valid(['debug', 'info', 'notice'])
+                    .valid('debug', 'info', 'notice')
                     .required()
             }).unknown(false),
             { id: '1', level: 'info' },
@@ -26,7 +26,7 @@ module.exports = [
             Joi.object({
                 id: Joi.string().required(),
                 level: Joi.string()
-                    .valid(['debug', 'info', 'notice'])
+                    .valid('debug', 'info', 'notice')
                     .required()
             }).unknown(false).prefs({ convert: false }),
             { id: '1', level: 'info' },
@@ -43,7 +43,7 @@ module.exports = [
             Joi.object({
                 id: Joi.string().required(),
                 level: Joi.string()
-                    .valid(['debug', 'info', 'notice'])
+                    .valid('debug', 'info', 'notice')
                     .required()
             }).unknown(false),
             '{ "id": "1", "level": "info" }',
@@ -79,7 +79,7 @@ module.exports = [
                 }))
                 .meta('foo')
                 .strip()
-                .default(() => 'foo', 'Def')
+                .default(() => 'foo')
                 .optional();
         }
     ],
@@ -97,7 +97,7 @@ module.exports = [
         (list) => {
 
             Joi.object().keys({
-                foo: Joi.string().valid(list)
+                foo: Joi.string().valid(...list)
             });
         }
     ],
@@ -110,7 +110,7 @@ module.exports = [
                 list.push(i.toString());
             }
 
-            const schema = Joi.string().valid(list);
+            const schema = Joi.string().valid(...list);
 
             let i = 0;
             const value = () => {
