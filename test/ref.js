@@ -495,6 +495,49 @@ describe('ref', () => {
         expect(schema.validate(value).error).to.be.an.error('"d" must be one of [ref:a.b.2.y.w]');
     });
 
+    it('reaches root', () => {
+
+        const schema = Joi.object({
+            a: Joi.any(),
+            b: {
+                c: Joi.ref('/a'),
+                d: Joi.ref('@a', { prefix: { root: '@' } })
+            }
+        });
+
+        Helper.validate(schema, [
+            [{ a: 1, b: { c: 1, d: 1 } }, true]
+        ]);
+
+        expect(schema.describe()).to.equal({
+            type: 'object',
+            keys: {
+                a: {
+                    type: 'any'
+                },
+                b: {
+                    type: 'object',
+                    keys: {
+                        c: {
+                            flags: {
+                                only: true
+                            },
+                            type: 'any',
+                            allow: [{ ref: { ancestor: 'root', path: ['a'] } }]
+                        },
+                        d: {
+                            flags: {
+                                only: true
+                            },
+                            type: 'any',
+                            allow: [{ ref: { ancestor: 'root', path: ['a'] } }]
+                        }
+                    }
+                }
+            }
+        });
+    });
+
     it('errors on missing iterables flag when reaching into set and map', () => {
 
         const schema = Joi.object({
@@ -528,9 +571,22 @@ describe('ref', () => {
         expect(schema.validate(value).error).to.be.an.error('"d" must be one of [ref:a.b.2.y.w]');
     });
 
-    it('throws on prefix + ancestor option)', () => {
+    it('errors on invalid separator)', () => {
+
+        expect(() => Joi.ref('x', { separator: 0 })).to.throw('Invalid separator');
+        expect(() => Joi.ref('x', { separator: '' })).to.throw('Invalid separator');
+        expect(() => Joi.ref('x', { separator: '$$' })).to.throw('Invalid separator');
+    });
+
+    it('errors on prefix + ancestor option)', () => {
 
         expect(() => Joi.ref('..x', { ancestor: 0 })).to.throw('Cannot combine prefix with ancestor option');
+    });
+
+    it('errors on root with ancestor prefix', () => {
+
+        expect(() => Joi.ref('/.x')).to.throw('Cannot specify relative path with root prefix');
+        expect(() => Joi.ref('/.x', { separator: false })).to.not.throw();
     });
 
     it('errors on ancestor circular dependency', () => {

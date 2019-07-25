@@ -464,6 +464,7 @@ References support the following arguments:
     - `prefix` - overrides default prefix characters for:
       - `global` - references to the globally provided `context` preference. Defaults to `'$'`.
       - `local` - references to error-specific or rule specific context. Defaults to `'#'`.
+      - `root` - references to the root value being validated. Defaults to `'/'`.
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
     - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined
       with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
@@ -553,6 +554,19 @@ For example:
 ```
 
 Note that if a reference tries to reach beyond the value root, validation fails.
+
+To specify an absolute path from the value root, use the `/` prefix:
+
+```js
+{
+    x: {
+        a: Joi.any(),
+        b: {
+            c: Joi.ref('/x.a')
+        }
+    }
+}
+```
 
 ### `version`
 
