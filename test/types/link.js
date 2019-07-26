@@ -47,12 +47,54 @@ describe('link', () => {
         expect(schema.validate({ a: [1], b: { c: '2' } }).error).to.be.an.error('"a" must be one of [string, number]');
     });
 
+    it('links schema cousin nodes (root)', () => {
+
+        const schema = Joi.object({
+            a: [Joi.string(), Joi.number()],
+            b: {
+                c: Joi.link('/a')
+            }
+        });
+
+        expect(schema.validate({ a: 1, b: { c: 2 } }).error).to.not.exist();
+        expect(schema.validate({ a: '1', b: { c: '2' } }).error).to.not.exist();
+        expect(schema.validate({ a: [1], b: { c: '2' } }).error).to.be.an.error('"a" must be one of [string, number]');
+    });
+
     it('validates a recursive schema', () => {
 
         const schema = Joi.object({
             name: Joi.string().required(),
             keys: Joi.array()
                 .items(Joi.link('...'))
+        });
+
+        expect(schema.validate({ name: 'foo', keys: [{ name: 'bar' }] }).error).to.not.exist();
+
+        Helper.validate(schema, [
+            [{ name: 'foo' }, true],
+            [{ name: 'foo', keys: [] }, true],
+            [{ name: 'foo', keys: [{ name: 'bar' }] }, true],
+            [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz' }] }] }, true],
+            [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz', keys: [{ name: 'qux' }] }] }] }, true],
+            [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz', keys: [{ name: 42 }] }] }] }, false, null, {
+                message: '"keys[0].keys[0].keys[0].name" must be a string',
+                details: [{
+                    message: '"keys[0].keys[0].keys[0].name" must be a string',
+                    path: ['keys', 0, 'keys', 0, 'keys', 0, 'name'],
+                    type: 'string.base',
+                    context: { value: 42, label: 'keys[0].keys[0].keys[0].name', key: 'name' }
+                }]
+            }]
+        ]);
+    });
+
+    it('validates a recursive schema (root)', () => {
+
+        const schema = Joi.object({
+            name: Joi.string().required(),
+            keys: Joi.array()
+                .items(Joi.link('/'))
         });
 
         expect(schema.validate({ name: 'foo', keys: [{ name: 'bar' }] }).error).to.not.exist();
