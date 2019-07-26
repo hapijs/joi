@@ -364,6 +364,13 @@ describe('Manifest', () => {
             ]);
         });
 
+        it('builds binaries', () => {
+
+            internals.test([
+                Joi.binary().default(Buffer.from('abcde')).allow(Buffer.from('123'))
+            ]);
+        });
+
         it('builds booleans', () => {
 
             internals.test([
@@ -385,7 +392,8 @@ describe('Manifest', () => {
 
             internals.test([
                 Joi.link('....'),
-                Joi.link(Joi.ref('xxx....', { separator: 'x' }))
+                Joi.link(Joi.ref('xxx....', { separator: 'x' })),
+                Joi.link('/')
             ]);
         });
 
@@ -402,7 +410,7 @@ describe('Manifest', () => {
                 Joi.object().pattern(Joi.string(), Joi.number()),
                 Joi.object().pattern(/x/, Joi.number(), { matches: Joi.array().length(Joi.ref('$x')), exclusive: true }),
                 Joi.object({ a: 1 }).concat(Joi.object({ a: 3 })),
-                Joi.object().instance(RegExp)
+                Joi.object().instance(RegExp).default(/x/).allow({}).allow({ x: 1 })
             ]);
         });
 
