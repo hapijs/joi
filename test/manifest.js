@@ -146,7 +146,7 @@ describe('Manifest', () => {
                                 },
                                 allow: ['']
                             },
-                            strip: true
+                            result: 'strip'
                         }
                     },
                     defaultRef: {
@@ -286,7 +286,10 @@ describe('Manifest', () => {
                 Joi.func().default(() => null, { literal: true }),
                 Joi.object().default(),
                 Joi.boolean().optional(),
-                Joi.string().empty('')
+                Joi.string().empty(''),
+                Joi.binary().strip(),
+                Joi.alternatives().raw(),
+                Joi.any().result('raw')
             ]);
         });
 

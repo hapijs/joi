@@ -2676,7 +2676,7 @@ describe('Joi', () => {
                 flags: {
                     description: 'defaulted',
                     presence: 'required',
-                    cast: 'raw'
+                    result: 'raw'
                 },
                 keys: {
                     foo: {
@@ -2685,7 +2685,7 @@ describe('Joi', () => {
                             description: 'defaulted',
                             presence: 'required',
                             only: true,
-                            cast: 'raw'
+                            result: 'raw'
                         },
                         allow: ['bar']
                     }

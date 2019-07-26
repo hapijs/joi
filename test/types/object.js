@@ -1375,11 +1375,7 @@ describe('object', () => {
                 a: [Joi.boolean().strip()]
             });
 
-            const valid = {
-                a: true
-            };
-
-            const value = await schema.validate(valid);
+            const value = await schema.validate({ a: true });
             expect(value).to.equal({});
         });
     });

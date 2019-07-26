@@ -49,12 +49,13 @@
     - [`any.optional()`](#anyoptional)
     - [`any.prefs(options)` = aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
     - [`any.presence(mode)`](#anypresencemode)
-    - [`any.raw()`](#anyraw)
+    - [`any.raw([enabled])`](#anyrawenabled)
     - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
+    - [`any.result(mode)`](#anyresultmode)
     - [`any.rule(options)`](#anyruleoptions)
     - [`any.ruleset` - aliases: `$`](#anyruleset---aliases-)
     - [`any.strict(isStrict)`](#anystrictisstrict)
-    - [`any.strip()`](#anystrip)
+    - [`any.strip([enabled])`](#anystripenabled)
     - [`any.tag(...tags)`](#anytagtags)
     - [`any.tailor(targets)`](#anytailortargets)
     - [`any.unit(name)`](#anyunitname)
@@ -691,8 +692,6 @@ Casts the validated value to the specified type where:
     - `'number'` - supported by `Joi.boolean()` and `Joi.date()`, converts the result to a number.
       For dates, number of milliseconds since the epoch and for booleans, `0` for `false` and `1`
       for `true`.
-    - `'raw'` - supported by all types, forces the result value to use the raw input regardless of
-      any conversions or changes made during validation.
     - `'set'` - supported by the `Joi.array()` type, converts the result to a `Set` object
       containing the array values.
     - `'string'` - supported by `Joi.binary()`, `Joi.boolean()`, `Joi.date()`, and `Joi.number()`,
@@ -1010,9 +1009,14 @@ Sets the presence mode for the schema where:
 
 Same as calling `any.optional()`, `any.required()`, or `any.forbidden()`.
 
-#### `any.raw()`
+#### `any.raw([enabled])`
 
-Outputs the original untouched value instead of the casted value.
+Outputs the original untouched value instead of the casted value where:
+- `enabled` - if `true`, the original result is returned, otherwise the validated value. Defaults
+  to `true`.
+
+Note that the raw value is only applied after validation and any references to the value use the
+validated value, not the raw value.
 
 ```js
 const timestampSchema = Joi.date().timestamp();
@@ -1032,6 +1036,10 @@ const schema = Joi.any().required();
 
 Possible validation errors: [`any.required`](#anyrequired)
 
+#### `any.result(mode)`
+
+Set the result mode where:
+- `mode` - one of `'raw'` (same as `any.raw()`) or `'strip'` (same as `any.strip()`).
 
 #### `any.rule(options)`
 
@@ -1071,9 +1079,12 @@ Strict mode sets the `options.convert` options to `false` which prevent type cas
 const schema = Joi.any().strict();
 ```
 
-#### `any.strip()`
+#### `any.strip([enabled])`
 
-Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
+Marks a key to be removed from a resulting object or array after validation to sanitize the output
+where:
+- `enabled` - if `true`, the value is stripped, otherwise the validated value is retained. Defaults
+  to `true`.
 
 ```js
 const schema = Joi.object({

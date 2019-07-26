@@ -52,6 +52,16 @@ describe('any', () => {
         });
     });
 
+    describe('cast()', () => {
+
+        it('cancels cast', async () => {
+
+            const schema = Joi.number().cast('string').cast(false);
+            const value = await schema.validate('123');
+            expect(value).to.equal(123);
+        });
+    });
+
     describe('concat()', () => {
 
         it('throws when schema is not any', () => {
@@ -2220,7 +2230,7 @@ describe('any', () => {
 
         it('cancels raw mode', async () => {
 
-            const schema = Joi.number().raw().cast(false);
+            const schema = Joi.number().raw().raw(false);
             const value = await schema.validate('123');
             expect(value).to.equal(123);
         });
@@ -2482,6 +2492,12 @@ describe('any', () => {
 
             const schema = Joi.any().strip();
             expect(schema.strip()).to.shallow.equal(schema);
+        });
+
+        it('cancels strip', () => {
+
+            const schema = Joi.any().strip().strip(false);
+            expect(schema._flags.result).to.not.exist();
         });
     });
 

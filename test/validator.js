@@ -245,6 +245,19 @@ describe('Validator', () => {
         });
     });
 
+    describe('finalize()', () => {
+
+        it('applies raw after validation', async () => {
+
+            const schema = Joi.object({
+                a: Joi.number().raw(),
+                b: Joi.ref('a')
+            });
+
+            expect(await schema.validate({ a: '5', b: 5 })).to.equal({ a: '5', b: 5 });
+        });
+    });
+
     describe('warnings', () => {
 
         it('reports warnings (sync)', () => {
@@ -317,6 +330,37 @@ describe('Validator', () => {
                     ]
                 }
             });
+        });
+    });
+
+    describe('Shadow', () => {
+
+        it('ignores result flags on root values', () => {
+
+            const schema = Joi.string().strip();
+            expect(schema.validate('xyz').value).to.not.exist();
+        });
+
+        it('reaches deep into shadow', async () => {
+
+            const schema = Joi.object({
+                a: {
+                    b: {
+                        c: {
+                            d: {
+                                e: Joi.number().raw()
+                            },
+                            g: Joi.boolean().raw()
+                        }
+                    }
+                },
+                f: Joi.ref('a.b.c.d.e'),
+                h: Joi.ref('a.b.c.g')
+            });
+
+            const value = { a: { b: { c: { d: { e: '100' }, g: 'TRUE' } } }, f: 100, h: true };
+
+            expect(await schema.validate(value)).to.equal(value);
         });
     });
 });
