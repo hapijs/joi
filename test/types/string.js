@@ -3279,6 +3279,24 @@ describe('string', () => {
                         type: 'string.uri',
                         context: { value: 'http://', label: 'value' }
                     }]
+                }],
+                ['http:/', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'http:/', label: 'value' }
+                    }]
+                }],
+                ['https:/', false, null, {
+                    message: '"value" must be a valid uri',
+                    details: [{
+                        message: '"value" must be a valid uri',
+                        path: [],
+                        type: 'string.uri',
+                        context: { value: 'https:/', label: 'value' }
+                    }]
                 }]
             ]);
         });
