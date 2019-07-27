@@ -3382,4 +3382,17 @@ describe('any', () => {
             ]);
         });
     });
+
+    describe('_rule()', () => {
+
+        it('errors on invalid options', () => {
+
+            expect(() => Joi.any()._rule()).to.throw('Invalid options');
+            expect(() => Joi.any()._rule(5)).to.throw('Invalid options');
+            expect(() => Joi.any()._rule({})).to.throw('Invalid rule name');
+            expect(() => Joi.any()._rule('')).to.throw('Invalid rule name');
+            expect(() => Joi.any()._rule({ name: '' })).to.throw('Invalid rule name');
+            expect(() => Joi.any()._rule({ name: 5 })).to.throw('Invalid rule name');
+        });
+    });
 });
