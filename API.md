@@ -3159,7 +3159,7 @@ const customJoi = Joi.extend((joi) => ({
     base: joi.number(),
     name: 'number',
     messages: {
-        round: 'needs to be a rounded number', // Used below as 'number.round'
+        round: 'needs to be a rounded number', // Used below by this.createError
         dividable: 'needs to be dividable by {{q}}'
     },
     pre(value, state, prefs) {
@@ -3181,7 +3181,7 @@ const customJoi = Joi.extend((joi) => ({
 
                 if (value % 1 !== 0) {
                     // Generate an error, state and prefs need to be passed
-                    return this.createError('number.round', value, {}, state, prefs);
+                    return this.createError('round', value, {}, state, prefs);
                 }
 
                 return value; // Everything is OK
@@ -3196,7 +3196,7 @@ const customJoi = Joi.extend((joi) => ({
 
                 if (value % params.q !== 0) {
                     // Generate an error, state and prefs need to be passed, q is used in the messages
-                    return this.createError('number.dividable', value, { q: params.q }, state, prefs);
+                    return this.createError('dividable', value, { q: params.q }, state, prefs);
                 }
 
                 return value; // Everything is OK
