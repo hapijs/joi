@@ -3190,7 +3190,7 @@ const customJoi = Joi.extend((joi) => ({
         {
             name: 'dividable',
             params: {
-                q: joi.alternatives([joi.number().required(), joi.func().ref()])
+                q: joi.alternatives([joi.number().required(), joi.object().ref()])
             },
             validate(params, value, state, prefs) {
 
