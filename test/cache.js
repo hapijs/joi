@@ -20,12 +20,12 @@ describe('Cache', () => {
 
             const schema = Joi.string().pattern(/abc/).cache();
 
-            const method = schema._rules.pattern.method;
+            const validate = schema._rules.pattern.validate;
             let count = 0;
-            schema._rules.pattern.method = function (...args) {
+            schema._rules.pattern.validate = function (...args) {
 
                 ++count;
-                return method(...args);
+                return validate(...args);
             };
 
             expect(schema.validate('xabcd').error).to.not.exist();
@@ -34,7 +34,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(1);
 
-            schema._rules.pattern.method = method;
+            schema._rules.pattern.validate = validate;
         });
 
         it('caches cast objects and clones on return', () => {
@@ -65,12 +65,12 @@ describe('Cache', () => {
 
             const schema = Joi.string().pattern(/abc/).cache();
 
-            const method = schema._rules.pattern.method;
+            const validate = schema._rules.pattern.validate;
             let count = 0;
-            schema._rules.pattern.method = function (...args) {
+            schema._rules.pattern.validate = function (...args) {
 
                 ++count;
-                return method(...args);
+                return validate(...args);
             };
 
             const err = schema.validate('xbcd').error;
@@ -80,7 +80,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(1);
 
-            schema._rules.pattern.method = method;
+            schema._rules.pattern.validate = validate;
         });
 
         it('skips caching when prefs disabled', () => {
@@ -88,12 +88,12 @@ describe('Cache', () => {
             const cache = Joi.cache.provision();
             const schema = Joi.string().pattern(/abc/).cache(cache);
 
-            const method = schema._rules.pattern.method;
+            const validate = schema._rules.pattern.validate;
             let count = 0;
-            schema._rules.pattern.method = function (...args) {
+            schema._rules.pattern.validate = function (...args) {
 
                 ++count;
-                return method(...args);
+                return validate(...args);
             };
 
             expect(schema.validate('xabcd', { cache: false }).error).to.not.exist();
@@ -102,7 +102,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(3);
 
-            schema._rules.pattern.method = method;
+            schema._rules.pattern.validate = validate;
         });
 
         it('skips caching when schema contains refs', () => {
@@ -113,12 +113,12 @@ describe('Cache', () => {
                 b: Joi.any()
             });
 
-            const method = a._rules.pattern.method;
+            const validate = a._rules.pattern.validate;
             let count = 0;
-            a._rules.pattern.method = function (...args) {
+            a._rules.pattern.validate = function (...args) {
 
                 ++count;
-                return method(...args);
+                return validate(...args);
             };
 
             expect(schema.validate({ a: 'xabcd' }).error).to.not.exist();
@@ -127,7 +127,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(3);
 
-            a._rules.pattern.method = method;
+            a._rules.pattern.validate = validate;
         });
     });
 
