@@ -60,6 +60,7 @@ module.exports = (Joi) => [
         () => [],
         {
             15: () =>
+
                 Joi.object({
                     foo: Joi.array().items(
                         Joi.boolean().required(),
@@ -83,6 +84,7 @@ module.exports = (Joi) => [
                     .default(() => 'foo', 'Def')
                     .optional(),
             16: () =>
+
                 Joi.object({
                     foo: Joi.array().items(
                         Joi.boolean().required(),
@@ -118,10 +120,7 @@ module.exports = (Joi) => [
 
             return [list.filter((x) => !['12345', '23456', '34567', '456789'].includes(x))];
         },
-        (list) =>
-            Joi.object().keys({
-                foo: Joi.string().valid(...list)
-            })
+        (list) => Joi.object().keys({ foo: Joi.string().valid(...list) })
     ],
     [
         'String with long valid() list',

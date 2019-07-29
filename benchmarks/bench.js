@@ -56,6 +56,7 @@ const Joi = require(args.joi);
 const Suite = new Benchmark.Suite('joi');
 
 const versionPick = (o) => {
+
     if (typeof o === 'function') {
         return o;
     }
