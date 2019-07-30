@@ -23,6 +23,11 @@ const definition = {
         alias: 'threshold',
         type: 'number',
         default: 10
+    },
+    j: {
+        alias: 'joi',
+        type: 'string',
+        default: '..'
     }
 };
 
@@ -46,15 +51,33 @@ const formats = {
 
 Benchmark.options.minSamples = 100;
 
+const Joi = require(args.joi);
+
 const Suite = new Benchmark.Suite('joi');
+
+const versionPick = (o) => {
+
+    if (typeof o === 'function') {
+        return o;
+    }
+
+    for (const k of Object.keys(o)) {
+        if (Joi.version.startsWith(k)) {
+            return o[k];
+        }
+    }
+
+    throw new Error(`Unsupported version ${Joi.version}`);
+};
 
 const test = ([name, initFn, testFn]) => {
 
-    const [schema, valid, invalid] = initFn();
+    const [schema, valid, invalid] = versionPick(initFn)();
 
     Hoek.assert(valid === undefined || testFn(schema, valid).error === null, 'validation must not fail for: ' + name);
     Hoek.assert(invalid === undefined || testFn(schema, invalid).error !== null, 'validation must fail for: ' + name);
 
+    testFn = versionPick(testFn);
     Suite.add(name + (valid !== undefined ? ' (valid)' : ''), () => {
 
         testFn(schema, valid);
@@ -68,7 +91,7 @@ const test = ([name, initFn, testFn]) => {
     }
 };
 
-require('./suite').forEach(test);
+require('./suite')(Joi).forEach(test);
 
 Suite
     .on('complete', (benches) => {

@@ -1,8 +1,6 @@
 'use strict';
 
-const Joi = require('../');
-
-module.exports = [
+module.exports = (Joi) => [
     [
         'Simple object',
         () => [
@@ -15,27 +13,33 @@ module.exports = [
             { id: '1', level: 'info' },
             { id: '2', level: 'warning' }
         ],
-        (schema, value) => {
-
-            return schema.validate(value, { convert: false });
-        }
+        (schema, value) => schema.validate(value, { convert: false })
     ],
     [
         'Simple object with inlined prefs',
-        () => [
-            Joi.object({
-                id: Joi.string().required(),
-                level: Joi.string()
-                    .valid('debug', 'info', 'notice')
-                    .required()
-            }).unknown(false).prefs({ convert: false }),
-            { id: '1', level: 'info' },
-            { id: '2', level: 'warning' }
-        ],
-        (schema, value) => {
-
-            return schema.validate(value);
-        }
+        {
+            15: () => [
+                Joi.object({
+                    id: Joi.string().required(),
+                    level: Joi.string()
+                        .valid('debug', 'info', 'notice')
+                        .required()
+                }).unknown(false).options({ convert: false }),
+                { id: '1', level: 'info' },
+                { id: '2', level: 'warning' }
+            ],
+            16: () => [
+                Joi.object({
+                    id: Joi.string().required(),
+                    level: Joi.string()
+                        .valid('debug', 'info', 'notice')
+                        .required()
+                }).unknown(false).prefs({ convert: false }),
+                { id: '1', level: 'info' },
+                { id: '2', level: 'warning' }
+            ]
+        },
+        (schema, value) => schema.validate(value)
     ],
     [
         'JSON object',
@@ -49,38 +53,60 @@ module.exports = [
             '{ "id": "1", "level": "info" }',
             'invalid'
         ],
-        (schema, value) => {
-
-            return schema.validate(value, { convert: true });
-        }
+        (schema, value) => schema.validate(value, { convert: true })
     ],
     [
         'Schema creation',
-        () =>  [],
-        () => {
+        () => [],
+        {
+            15: () =>
 
-            return Joi.object({
-                foo: Joi.array().items(
-                    Joi.boolean().required(),
-                    Joi.string().allow(''),
-                    Joi.symbol()
-                ).single().sparse().required(),
-                bar: Joi.number().min(12).max(353).default(56).positive(),
-                baz: Joi.date().timestamp('unix'),
-                qux: [Joi.func().minArity(12).strict(), Joi.binary().max(345)],
-                quxx: Joi.string().ip({ version: ['ipv6'] }),
-                quxxx: [554, 'azerty', true]
-            })
-                .xor('foo', 'bar')
-                .or('bar', 'baz')
-                .pattern(/b/, Joi.when('a', {
-                    is: true,
-                    then: Joi.prefs({ messages: { 'any.required': 'oops' } })
-                }))
-                .meta('foo')
-                .strip()
-                .default(() => 'foo')
-                .optional();
+                Joi.object({
+                    foo: Joi.array().items(
+                        Joi.boolean().required(),
+                        Joi.string().allow(''),
+                        Joi.symbol()
+                    ).single().sparse().required(),
+                    bar: Joi.number().min(12).max(353).default(56).positive(),
+                    baz: Joi.date().timestamp('unix'),
+                    qux: [Joi.func().minArity(12).strict(), Joi.binary().max(345)],
+                    quxx: Joi.string().ip({ version: ['ipv6'] }),
+                    quxxx: [554, 'azerty', true]
+                })
+                    .xor('foo', 'bar')
+                    .or('bar', 'baz')
+                    .pattern(/b/, Joi.when('a', {
+                        is: true,
+                        then: Joi.options({ language: { 'any.required': 'oops' } })
+                    }))
+                    .meta('foo')
+                    .strip()
+                    .default(() => 'foo', 'Def')
+                    .optional(),
+            16: () =>
+
+                Joi.object({
+                    foo: Joi.array().items(
+                        Joi.boolean().required(),
+                        Joi.string().allow(''),
+                        Joi.symbol()
+                    ).single().sparse().required(),
+                    bar: Joi.number().min(12).max(353).default(56).positive(),
+                    baz: Joi.date().timestamp('unix'),
+                    qux: [Joi.func().minArity(12).strict(), Joi.binary().max(345)],
+                    quxx: Joi.string().ip({ version: ['ipv6'] }),
+                    quxxx: [554, 'azerty', true]
+                })
+                    .xor('foo', 'bar')
+                    .or('bar', 'baz')
+                    .pattern(/b/, Joi.when('a', {
+                        is: true,
+                        then: Joi.prefs({ messages: { 'any.required': 'oops' } })
+                    }))
+                    .meta('foo')
+                    .strip()
+                    .default(() => 'foo')
+                    .optional()
         }
     ],
     [
@@ -94,12 +120,7 @@ module.exports = [
 
             return [list.filter((x) => !['12345', '23456', '34567', '456789'].includes(x))];
         },
-        (list) => {
-
-            Joi.object().keys({
-                foo: Joi.string().valid(...list)
-            });
-        }
+        (list) => Joi.object().keys({ foo: Joi.string().valid(...list) })
     ],
     [
         'String with long valid() list',
@@ -120,9 +141,31 @@ module.exports = [
 
             return [schema, value, () => '5000'];
         },
-        (schema, value) => {
+        (schema, value) => schema.validate(value())
+    ],
+    [
+        'Complex object',
+        () =>
+            [
+                Joi.object({
+                    id: Joi.number()
+                        .min(0)
+                        .max(100)
+                        .required(),
 
-            return schema.validate(value());
-        }
+                    level: Joi.string()
+                        .min(1)
+                        .max(100)
+                        .lowercase()
+                        .required(),
+
+                    tags: Joi.array()
+                        .items(Joi.boolean())
+                        .min(2)
+                })
+                    .unknown(false),
+                { id: 1, level: 'info', tags: [true, false] }
+            ],
+        (schema, value) => schema.validate(value)
     ]
 ];
