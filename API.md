@@ -343,29 +343,6 @@ const schema = Joi.alternatives().try([
 ]);
 ```
 
-### `defaults(fn)`
-
-Creates a new **joi** instance that will apply defaults onto newly created schemas through the use
-of the `fn` function that takes exactly one argument, the schema being created.
-
-The function must always return a schema, even if untransformed.
-
-```js
-const defaultJoi = Joi.defaults((schema) => {
-
-    switch (schema.schemaType) {
-        case 'string':
-            return schema.allow('');
-        case 'object':
-            return schema.min(1);
-        default:
-            return schema;
-    }
-});
-
-const schema = defaultJoi.object(); // Equivalent to a Joi.object().min(1)
-```
-
 ### `expression(template, [options])` - aliases: `x`
 
 Generates a dynamic expression using a template string where:
