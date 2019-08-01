@@ -8,7 +8,6 @@
   - [`assert(value, schema, [message], [options])` - aliases: `attempt`](#assertvalue-schema-message-options---aliases-attempt)
   - [`cache.provision([options])`](#cacheprovisionoptions)
   - [`compile(schema, [options])`](#compileschema-options)
-  - [`defaults(fn)`](#defaultsfn)
   - [`expression(template, [options])` - aliases: `x`](#expressiontemplate-options---aliases-x)
     - [Template syntax](#template-syntax)
   - [`extend(extension)`](#extendextension)
@@ -176,7 +175,6 @@
     - [`any.only`](#anyonly-1)
     - [`any.default`](#anydefault)
     - [`any.failover`](#anyfailover)
-    - [`any.empty`](#anyempty)
     - [`any.invalid`](#anyinvalid)
     - [`any.required`](#anyrequired)
     - [`any.unknown`](#anyunknown)
@@ -225,6 +223,7 @@
     - [`link.uninitialized`](#linkuninitialized)
     - [`number.base`](#numberbase)
     - [`number.greater`](#numbergreater)
+    - [`number.infinity`](#numberinfinity)
     - [`number.integer`](#numberinteger-1)
     - [`number.less`](#numberless)
     - [`number.max`](#numbermax)
@@ -262,6 +261,7 @@
     - [`string.dataUri`](#stringdatauri)
     - [`string.domain`](#stringdomain)
     - [`string.email`](#stringemail)
+    - [`string.empty`](#stringempty)
     - [`string.guid`](#stringguid)
     - [`string.hexAlign`](#stringhexalign)
     - [`string.hex`](#stringhex)
@@ -2049,7 +2049,7 @@ const number = Joi.number();
 await number.validate(5);
 ```
 
-Possible validation errors: [`number.base`](#numberbase)
+Possible validation errors: [`number.base`](#numberbase), [`number.infinity`](#numberinfinity)
 
 #### `number.greater(limit)`
 
@@ -3687,6 +3687,10 @@ Additional local context properties:
     limit: number // Minimum value that was expected for this number
 }
 ```
+
+#### `number.infinity`
+
+The number is `Infinity` or `-Infinity`.
 
 #### `number.integer`
 

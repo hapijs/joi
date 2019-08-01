@@ -1326,7 +1326,7 @@ describe('ref', () => {
                     type: 'number',
                     flags: { only: true, default: { ref: { path: ['a', 'b'] } } },
                     allow: [{ ref: { path: ['a', 'b'] } }],
-                    invalid: [{ ref: { type: 'global', path: ['b', 'c'] } }, Infinity, -Infinity],
+                    invalid: [{ ref: { type: 'global', path: ['b', 'c'] } }],
                     rules: [
                         { name: 'min', args: { limit: { ref: { path: ['a', 'b'] } } } },
                         { name: 'max', args: { limit: { ref: { path: ['a', 'b'] } } } },

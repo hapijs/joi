@@ -1119,7 +1119,7 @@ describe('number', () => {
                 message: '"value" contains an invalid value',
                 path: [],
                 type: 'any.invalid',
-                context: { value: 50, invalids: [Infinity, -Infinity, 50], label: 'value' }
+                context: { value: 50, invalids: [50], label: 'value' }
             }]);
         });
 
@@ -1165,21 +1165,21 @@ describe('number', () => {
             const t = Joi.number();
             Helper.validate(t, [
                 [Infinity, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"value" cannot be infinity',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"value" cannot be infinity',
                         path: [],
-                        type: 'any.invalid',
-                        context: { value: Infinity, invalids: [Infinity, -Infinity], label: 'value' }
+                        type: 'number.infinity',
+                        context: { value: Infinity, label: 'value' }
                     }]
                 }],
                 [-Infinity, false, null, {
-                    message: '"value" contains an invalid value',
+                    message: '"value" cannot be infinity',
                     details: [{
-                        message: '"value" contains an invalid value',
+                        message: '"value" cannot be infinity',
                         path: [],
-                        type: 'any.invalid',
-                        context: { value: -Infinity, invalids: [Infinity, -Infinity], label: 'value' }
+                        type: 'number.infinity',
+                        context: { value: -Infinity, label: 'value' }
                     }]
                 }]
             ]);
@@ -1594,7 +1594,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 1, invalids: [Infinity, -Infinity, 1], label: 'value' }
+                        context: { value: 1, invalids: [1], label: 'value' }
                     }]
                 }],
                 [-1, true],
@@ -1624,7 +1624,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: -5, invalids: [Infinity, -Infinity, -5], label: 'value' }
+                        context: { value: -5, invalids: [-5], label: 'value' }
                     }]
                 }],
                 [8, false, null, {
@@ -1718,7 +1718,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 9, invalids: [Infinity, -Infinity, 9], label: 'value' }
+                        context: { value: 9, invalids: [9], label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -1754,7 +1754,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 9, invalids: [Infinity, -Infinity, 9], label: 'value' }
+                        context: { value: 9, invalids: [9], label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -1880,7 +1880,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 8, invalids: [Infinity, -Infinity, 8], label: 'value' }
+                        context: { value: 8, invalids: [8], label: 'value' }
                     }]
                 }],
                 [9, true],
@@ -1934,7 +1934,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 8, invalids: [Infinity, -Infinity, 8], label: 'value' }
+                        context: { value: 8, invalids: [8], label: 'value' }
                     }]
                 }],
                 [9, true],
@@ -2026,7 +2026,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 8, invalids: [Infinity, -Infinity, 8], label: 'value' }
+                        context: { value: 8, invalids: [8], label: 'value' }
                     }]
                 }],
                 [9, true],
@@ -2273,7 +2273,7 @@ describe('number', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 6, invalids: [Infinity, -Infinity, 6], label: 'value' }
+                        context: { value: 6, invalids: [6], label: 'value' }
                     }]
                 }],
                 [8, true],

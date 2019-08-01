@@ -1718,7 +1718,7 @@ describe('Joi', () => {
                     message: '"value" contains an invalid value',
                     path: [],
                     type: 'any.invalid',
-                    context: { value: 5, invalids: [Infinity, -Infinity, 5], label: 'value' }
+                    context: { value: 5, invalids: [5], label: 'value' }
                 }]
             }],
             ['5', false, null, {
@@ -1727,7 +1727,7 @@ describe('Joi', () => {
                     message: '"value" contains an invalid value',
                     path: [],
                     type: 'any.invalid',
-                    context: { value: 5, invalids: [Infinity, -Infinity, 5], label: 'value' }
+                    context: { value: 5, invalids: [5], label: 'value' }
                 }]
             }]
         ]);

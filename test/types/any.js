@@ -1741,6 +1741,12 @@ describe('any', () => {
             expect(() => Joi.any().valid(1).invalid(1)).to.throw('Setting invalid value 1 leaves schema rejecting all values due to previous valid rule');
             expect(() => Joi.any().allow(1).invalid(1)).to.not.throw();
         });
+
+        it('appends invalid values', () => {
+
+            const schema = Joi.any().invalid(1).invalid(2);
+            expect(schema.describe()).to.equal({ type: 'any', invalid: [1, 2] });
+        });
     });
 
     describe('keep()', () => {
@@ -2728,7 +2734,7 @@ describe('any', () => {
                 message: '"value" contains an invalid value',
                 path: [],
                 type: 'any.invalid',
-                context: { value: 2, invalids: [Infinity, -Infinity, 2], label: 'value' }
+                context: { value: 2, invalids: [2], label: 'value' }
             }]);
         });
     });
