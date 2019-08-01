@@ -552,8 +552,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"upc" is not allowed to be empty',
                     path: ['upc'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'upc', key: 'upc' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'upc', key: 'upc' }
                 }]
             }],
             [{ txt: 'test', upc: undefined }, false, null, {
@@ -616,8 +616,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"upc" is not allowed to be empty',
                     path: ['upc'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'upc', key: 'upc' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'upc', key: 'upc' }
                 }]
             }],
             [{ txt: 'test', upc: undefined }, true],
@@ -696,8 +696,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"upc" is not allowed to be empty',
                     path: ['upc'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'upc', key: 'upc' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'upc', key: 'upc' }
                 }]
             }],
             [{ txt: '', upc: 'test' }, false, null, {
@@ -705,8 +705,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: null, upc: 'test' }, false, null, {
@@ -725,8 +725,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: '' }, false, null, {
@@ -734,8 +734,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: 'test', upc: 'test' }, false, null, {
@@ -924,8 +924,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: null, upc: 'test' }, false, null, {
@@ -946,8 +946,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: undefined, code: 999 }, false, null, {
@@ -955,8 +955,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: undefined, code: undefined }, false, null, {
@@ -964,8 +964,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: '' }, false, null, {
@@ -973,8 +973,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: 'test', upc: 'test' }, true],
@@ -1127,8 +1127,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: null, upc: 'test' }, false, null, {
@@ -1209,8 +1209,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: undefined, code: 999 }, false, null, {
@@ -1218,8 +1218,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: undefined, code: undefined }, false, null, {
@@ -1227,8 +1227,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: '', upc: '' }, false, null, {
@@ -1236,8 +1236,8 @@ describe('Joi', () => {
                 details: [{
                     message: '"txt" is not allowed to be empty',
                     path: ['txt'],
-                    type: 'any.empty',
-                    context: { value: '', invalids: [''], label: 'txt', key: 'txt' }
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }]
             }],
             [{ txt: 'test', upc: 'test' }, false, null, {

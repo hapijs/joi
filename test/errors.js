@@ -51,7 +51,7 @@ describe('errors', () => {
         };
 
         const messages = {
-            'any.empty': '"{#label}" 3',
+            'string.empty': '"{#label}" 3',
             'date.base': '"{#label}" 18',
             'string.base': '"{#label}" 13',
             'string.min': '"{#label}" 14',
@@ -121,8 +121,8 @@ describe('errors', () => {
             {
                 message: '"notEmpty" 3',
                 path: ['notEmpty'],
-                type: 'any.empty',
-                context: { value: '', invalids: [''], label: 'notEmpty', key: 'notEmpty' }
+                type: 'string.empty',
+                context: { value: '', label: 'notEmpty', key: 'notEmpty' }
             },
             {
                 message: '"value" 7',

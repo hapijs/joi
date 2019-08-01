@@ -158,7 +158,7 @@ describe('Values', () => {
             const set = new Values();
             set.add(Joi.ref('x'));
             set.concat(new Values());
-            expect(set._hasRef).to.be.true();
+            expect(set._resolve).to.be.true();
         });
     });
 });

@@ -2598,7 +2598,7 @@ const schema = Joi.string().min(1).max(10);
 await schema.validate('12345');
 ```
 
-Possible validation errors: [`string.base`](#stringbase), [`any.empty`](#anyempty)
+Possible validation errors: [`string.base`](#stringbase), [`string.empty`](#stringempty)
 
 #### `string.alphanum()`
 
@@ -3265,17 +3265,6 @@ Additional local context properties:
 ```ts
 {
     error: Error // Error generated during the failover value function call
-}
-```
-
-#### `any.empty`
-
-When an empty string is found and denied by invalid values.
-
-Additional local context properties:
-```ts
-{
-    invalids: Array<any> // Contains the list of the invalid values that should be rejected
 }
 ```
 
@@ -4040,6 +4029,10 @@ Additional local context properties:
     invalids: [string] // Array of invalid emails
 }
 ```
+
+#### `string.empty`
+
+When an empty string is found and denied by invalid values.
 
 #### `string.guid`
 

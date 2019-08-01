@@ -153,7 +153,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a'], label: 'value' }
+                        context: { value: 'a', invalids: ['a'], label: 'value' }
                     }]
                 }]
             ]);
@@ -178,7 +178,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a', 'b'], label: 'value' }
+                        context: { value: 'a', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
                 ['b', false, null, {
@@ -187,7 +187,7 @@ describe('any', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b', invalids: ['', 'a', 'b'], label: 'value' }
+                        context: { value: 'b', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }]
             ]);
@@ -412,15 +412,7 @@ describe('any', () => {
                         context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
-                ['', false, null, {
-                    message: '"value" must be one of [a]',
-                    details: [{
-                        message: '"value" must be one of [a]',
-                        path: [],
-                        type: 'any.only',
-                        context: { value: '', valids: ['a'], label: 'value' }
-                    }]
-                }],
+                ['', true, null, undefined],
                 [' ', true, null, undefined]
             ]);
 
@@ -431,7 +423,7 @@ describe('any', () => {
                     empty: {
                         type: 'string',
                         flags: { only: true },
-                        allow: [' ']
+                        allow: ['', ' ']
                     },
                     insensitive: true
                 },
@@ -1263,8 +1255,8 @@ describe('any', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 ['def', true, null, 'def']
@@ -1282,8 +1274,8 @@ describe('any', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }]
             ]);
@@ -1300,8 +1292,8 @@ describe('any', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }]
             ]);
@@ -1795,8 +1787,7 @@ describe('any', () => {
         it('does not leak into sub objects', async () => {
 
             const schema = Joi.object({ a: Joi.number() }).label('foo');
-            const err = await expect(schema.validate({ a: 'a' })).to.reject();
-            expect(err.message).to.equal('"a" must be a number');
+            const err = await expect(schema.validate({ a: 'a' })).to.reject('"a" must be a number');
             expect(err.details).to.equal([{
                 message: '"a" must be a number',
                 path: ['a'],
@@ -1811,9 +1802,7 @@ describe('any', () => {
                 Joi.object({ a: Joi.number() }).label('foo')
             ).label('bar');
 
-            const err = await expect(schema.validate([{ a: 'a' }])).to.reject();
-            expect(err).to.exist();
-            expect(err.message).to.equal('"[0].a" must be a number');
+            const err = await expect(schema.validate([{ a: 'a' }])).to.reject('"[0].a" must be a number');
             expect(err.details).to.equal([{
                 message: '"[0].a" must be a number',
                 path: [0, 'a'],
@@ -1825,9 +1814,7 @@ describe('any', () => {
         it('does not leak into unknown keys', async () => {
 
             const schema = Joi.object({ a: Joi.number() }).label('foo');
-            const err = await expect(schema.validate({ b: 'a' })).to.reject();
-            expect(err).to.exist();
-            expect(err.message).to.equal('"b" is not allowed');
+            const err = await expect(schema.validate({ b: 'a' })).to.reject('"b" is not allowed');
             expect(err.details).to.equal([{
                 message: '"b" is not allowed',
                 path: ['b'],

@@ -30,6 +30,13 @@ describe('string', () => {
         expect(() => Joi.string('invalid argument.')).to.throw('The string type does not allow arguments');
     });
 
+    it('blocks empty strings by default', async () => {
+
+        await expect(Joi.string().validate('')).to.reject('"value" is not allowed to be empty');
+        await expect(Joi.string().allow('x').validate('')).to.reject('"value" is not allowed to be empty');
+        await expect(Joi.string().allow('').validate('')).to.not.reject();
+    });
+
     it('fails on boolean', () => {
 
         const schema = Joi.string();
@@ -187,7 +194,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a', 'b'], label: 'value' }
+                        context: { value: 'a', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
                 ['b', false, null, {
@@ -196,7 +203,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b', invalids: ['', 'a', 'b'], label: 'value' }
+                        context: { value: 'b', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
                 ['A', true],
@@ -213,7 +220,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a', 'b'], label: 'value' }
+                        context: { value: 'a', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
                 ['b', false, null, {
@@ -222,7 +229,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b', invalids: ['', 'a', 'b'], label: 'value' }
+                        context: { value: 'b', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
                 ['A', false, null, {
@@ -231,7 +238,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'A', invalids: ['', 'a', 'b'], label: 'value' }
+                        context: { value: 'A', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
                 ['B', false, null, {
@@ -240,7 +247,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'B', invalids: ['', 'a', 'b'], label: 'value' }
+                        context: { value: 'B', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }]
             ]);
@@ -2791,8 +2798,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 ['(╯°□°)╯︵ ┻━┻', false, null, {
@@ -3246,8 +3253,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 ['(╯°□°)╯︵ ┻━┻', false, null, {
@@ -4391,8 +4398,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 ['(╯°□°)╯︵ ┻━┻', false, null, {
@@ -4543,8 +4550,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }]
             ]);
@@ -4567,8 +4574,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }]
             ]);
@@ -4581,8 +4588,8 @@ describe('string', () => {
             expect(err.details).to.equal([{
                 message: '"value" is not allowed to be empty',
                 path: [],
-                type: 'any.empty',
-                context: { value: '', invalids: [''], label: 'value' }
+                type: 'string.empty',
+                context: { value: '', label: 'value' }
             }]);
         });
 
@@ -4594,8 +4601,8 @@ describe('string', () => {
             expect(err.details).to.equal([{
                 message: '"value" is not allowed to be empty',
                 path: [],
-                type: 'any.empty',
-                context: { value: '', invalids: [''], label: 'value' }
+                type: 'string.empty',
+                context: { value: '', label: 'value' }
             }]);
         });
 
@@ -4628,7 +4635,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'a', invalids: ['', 'a', 'b', 'c'], label: 'value' }
+                        context: { value: 'a', invalids: ['a', 'b', 'c'], label: 'value' }
                     }]
                 }],
                 ['c', false, null, {
@@ -4637,7 +4644,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'c', invalids: ['', 'a', 'b', 'c'], label: 'value' }
+                        context: { value: 'c', invalids: ['a', 'b', 'c'], label: 'value' }
                     }]
                 }]
             ]);
@@ -4988,8 +4995,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5029,8 +5036,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5136,8 +5143,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, true]
@@ -5183,8 +5190,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5285,8 +5292,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5382,8 +5389,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5568,8 +5575,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5648,8 +5655,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5800,8 +5807,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -5907,8 +5914,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6014,8 +6021,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6153,8 +6160,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6208,8 +6215,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6248,7 +6255,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '123@x.com', invalids: ['', '123@x.com'], label: 'value' }
+                        context: { value: '123@x.com', invalids: ['123@x.com'], label: 'value' }
                     }]
                 }],
                 ['1234@x.com', true],
@@ -6271,8 +6278,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: ['', '123@x.com'], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6313,8 +6320,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6340,7 +6347,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '123@x.com', invalids: ['', '123@x.com'], label: 'value' }
+                        context: { value: '123@x.com', invalids: ['123@x.com'], label: 'value' }
                     }]
                 }],
                 ['1234@x.com', true],
@@ -6363,8 +6370,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: ['', '123@x.com'], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6466,7 +6473,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '123@x.com', invalids: ['', '123@x.com'], label: 'value' }
+                        context: { value: '123@x.com', invalids: ['123@x.com'], label: 'value' }
                     }]
                 }],
                 ['1234@x.com', true],
@@ -6489,8 +6496,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: ['', '123@x.com'], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6646,8 +6653,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -6774,8 +6781,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -7168,8 +7175,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -7358,8 +7365,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -7483,7 +7490,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '2013-06-07T14:21+07:00', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value' }
+                        context: { value: '2013-06-07T14:21+07:00', invalids: ['2013-06-07T14:21+07:00'], label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21+07:000', false, null, {
@@ -7556,8 +7563,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -7733,8 +7740,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -7845,7 +7852,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '2013-06-07T14:21+07:00', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value' }
+                        context: { value: '2013-06-07T14:21+07:00', invalids: ['2013-06-07T14:21+07:00'], label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21+07:000', false, null, {
@@ -7918,8 +7925,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: ['', '2013-06-07T14:21+07:00'], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -8375,7 +8382,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: '2013-06-07T14:21Z', invalids: ['', '2013-06-07T14:21Z'], label: 'value' }
+                        context: { value: '2013-06-07T14:21Z', invalids: ['2013-06-07T14:21Z'], label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14:21+07:00', false, null, {
@@ -8475,8 +8482,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: ['', '2013-06-07T14:21Z'], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -9076,8 +9083,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -9501,8 +9508,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -9583,8 +9590,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -11444,8 +11451,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -11565,8 +11572,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -11650,7 +11657,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
+                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
@@ -11694,8 +11701,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -11804,8 +11811,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -11889,7 +11896,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
+                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
@@ -11922,8 +11929,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -12245,7 +12252,7 @@ describe('string', () => {
                         message: '"value" contains an invalid value',
                         path: [],
                         type: 'any.invalid',
-                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
+                        context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
                 ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
@@ -12278,8 +12285,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: ['', 'b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -12687,8 +12694,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
@@ -12999,8 +13006,8 @@ describe('string', () => {
                     details: [{
                         message: '"value" is not allowed to be empty',
                         path: [],
-                        type: 'any.empty',
-                        context: { value: '', invalids: [''], label: 'value' }
+                        type: 'string.empty',
+                        context: { value: '', label: 'value' }
                     }]
                 }],
                 [null, false, null, {
