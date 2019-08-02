@@ -27,9 +27,9 @@ describe('binary', () => {
         expect(() => Joi.binary('invalid argument.')).to.throw('The binary type does not allow arguments');
     });
 
-    it('converts a string to a buffer', async () => {
+    it('converts a string to a buffer', () => {
 
-        const value = await Joi.binary().validate('test');
+        const value = Joi.binary().validate('test').value;
         expect(value instanceof Buffer).to.equal(true);
         expect(value.length).to.equal(4);
         expect(value.toString('utf8')).to.equal('test');
@@ -112,9 +112,10 @@ describe('binary', () => {
 
     describe('validate()', () => {
 
-        it('returns an error when a non-buffer or non-string is used', async () => {
+        it('returns an error when a non-buffer or non-string is used', () => {
 
-            const err = await expect(Joi.binary().validate(5)).to.reject('"value" must be a buffer or a string');
+            const err = Joi.binary().validate(5).error;
+            expect(err).to.be.an.error('"value" must be a buffer or a string');
             expect(err.details).to.equal([{
                 message: '"value" must be a buffer or a string',
                 path: [],
@@ -123,33 +124,31 @@ describe('binary', () => {
             }]);
         });
 
-        it('accepts a buffer object', async () => {
+        it('accepts a buffer object', () => {
 
-            const value = await Joi.binary().validate(Buffer.from('hello world'));
-            expect(value.toString('utf8')).to.equal('hello world');
+            const input = Buffer.from('hello world');
+            expect(Joi.binary().validate(input)).to.equal({ value: input });
         });
 
-        it('accepts a buffer object in strict mode', async () => {
+        it('accepts a buffer object in strict mode', () => {
 
-            const value = await Joi.binary().strict().validate(Buffer.from('hello world'));
-            expect(value.toString('utf8')).to.equal('hello world');
+            const input = Buffer.from('hello world');
+            expect(Joi.binary().strict().validate(input)).to.equal({ value: input });
         });
 
-        it('rejects strings in strict mode', async () => {
+        it('rejects strings in strict mode', () => {
 
-            await expect(Joi.binary().strict().validate('hello world')).to.reject('"value" must be a buffer or a string');
+            expect(Joi.binary().strict().validate('hello world').error).to.be.an.error('"value" must be a buffer or a string');
         });
     });
 
     describe('encoding()', () => {
 
-        it('applies encoding', async () => {
+        it('applies encoding', () => {
 
             const schema = Joi.binary().encoding('base64');
             const input = Buffer.from('abcdef');
-            const value = await schema.validate(input.toString('base64'));
-            expect(value instanceof Buffer).to.equal(true);
-            expect(value.toString()).to.equal('abcdef');
+            expect(schema.validate(input.toString('base64'))).to.equal({ value: input });
         });
 
         it('throws when encoding is invalid', () => {

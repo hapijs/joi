@@ -16,7 +16,7 @@ const { expect } = Code;
 
 describe('Joi', () => {
 
-    it('validates object', async () => {
+    it('validates object', () => {
 
         const schema = Joi.object({
             a: Joi.number().min(0).max(3),
@@ -33,7 +33,7 @@ describe('Joi', () => {
             c: 'joe@example.com'
         };
 
-        await schema.validate(obj);
+        expect(schema.validate(obj).error).to.not.exist();
     });
 
     it('keeps schema immutable', () => {
@@ -78,9 +78,9 @@ describe('Joi', () => {
         ]);
     });
 
-    it('validates null', async () => {
+    it('validates null', () => {
 
-        const err = await expect(Joi.string().validate(null)).to.reject();
+        const err = Joi.string().validate(null).error;
         expect(err).to.be.an.error('"value" must be a string');
         expect(err.details).to.equal([{
             message: '"value" must be a string',
@@ -479,10 +479,10 @@ describe('Joi', () => {
         ]);
     });
 
-    it('validates regex directly', async () => {
+    it('validates regex directly', () => {
 
-        await Joi.compile(/^5$/).validate('5');
-        const err = await expect(Joi.compile(/.{2}/).validate('6')).to.reject();
+        expect(Joi.compile(/^5$/).validate('5').error).to.not.exist();
+        const err = Joi.compile(/.{2}/).validate('6').error;
         expect(err).to.be.an.error('"value" with value "6" fails to match the required pattern: /.{2}/');
         expect(err.details).to.equal([{
             message: '"value" with value "6" fails to match the required pattern: /.{2}/',
@@ -497,14 +497,14 @@ describe('Joi', () => {
         }]);
     });
 
-    it('validated with', async () => {
+    it('validated with', () => {
 
         const schema = Joi.object({
             txt: Joi.string(),
             upc: Joi.string()
         }).with('txt', 'upc');
 
-        const err = await expect(schema.validate({ txt: 'a' }, { abortEarly: false })).to.reject();
+        const err = schema.validate({ txt: 'a' }, { abortEarly: false }).error;
         expect(err).to.be.an.error('"txt" missing required peer "upc"');
         expect(err.details).to.equal([{
             message: '"txt" missing required peer "upc"',
@@ -576,14 +576,14 @@ describe('Joi', () => {
         ]);
     });
 
-    it('validated without', async () => {
+    it('validated without', () => {
 
         const schema = Joi.object({
             txt: Joi.string(),
             upc: Joi.string()
         }).without('txt', 'upc');
 
-        const err = await expect(schema.validate({ txt: 'a', upc: 'b' }, { abortEarly: false })).to.reject();
+        const err = schema.validate({ txt: 'a', upc: 'b' }, { abortEarly: false }).error;
         expect(err).to.be.an.error('"txt" conflict with forbidden peer "upc"');
         expect(err.details).to.equal([{
             message: '"txt" conflict with forbidden peer "upc"',
@@ -640,14 +640,14 @@ describe('Joi', () => {
         ]);
     });
 
-    it('validates xor', async () => {
+    it('validates xor', () => {
 
         const schema = Joi.object({
             txt: Joi.string(),
             upc: Joi.string()
         }).xor('txt', 'upc');
 
-        const err = await expect(schema.validate({}, { abortEarly: false })).to.reject();
+        const err = schema.validate({}, { abortEarly: false }).error;
         expect(err).to.be.an.error('"value" must contain at least one of [txt, upc]');
         expect(err.details).to.equal([{
             message: '"value" must contain at least one of [txt, upc]',
@@ -872,7 +872,7 @@ describe('Joi', () => {
         ]);
     });
 
-    it('validates or()', async () => {
+    it('validates or()', () => {
 
         const schema = Joi.object({
             txt: Joi.string(),
@@ -880,7 +880,7 @@ describe('Joi', () => {
             code: Joi.number()
         }).or('txt', 'upc', 'code');
 
-        const err = await expect(schema.validate({}, { abortEarly: false })).to.reject();
+        const err = schema.validate({}, { abortEarly: false }).error;
         expect(err).to.be.an.error('"value" must contain at least one of [txt, upc, code]');
         expect(err.details).to.equal([{
             message: '"value" must contain at least one of [txt, upc, code]',
@@ -982,7 +982,7 @@ describe('Joi', () => {
         ]);
     });
 
-    it('validates and()', async () => {
+    it('validates and()', () => {
 
         const schema = Joi.object({
             txt: Joi.string(),
@@ -990,7 +990,7 @@ describe('Joi', () => {
             code: Joi.number()
         }).and('txt', 'upc', 'code');
 
-        const err = await expect(schema.validate({ txt: 'x' }, { abortEarly: false })).to.reject();
+        const err = schema.validate({ txt: 'x' }, { abortEarly: false }).error;
         expect(err).to.be.an.error('"value" contains [txt] without its required peers [upc, code]');
         expect(err.details).to.equal([{
             message: '"value" contains [txt] without its required peers [upc, code]',
@@ -1261,7 +1261,7 @@ describe('Joi', () => {
         ]);
     });
 
-    it('validates nand()', async () => {
+    it('validates nand()', () => {
 
         const schema = Joi.object({
             txt: Joi.string(),
@@ -1269,7 +1269,7 @@ describe('Joi', () => {
             code: Joi.number()
         }).nand('txt', 'upc', 'code');
 
-        const err = await expect(schema.validate({ txt: 'x', upc: 'y', code: 123 }, { abortEarly: false })).to.reject();
+        const err = schema.validate({ txt: 'x', upc: 'y', code: 123 }, { abortEarly: false }).error;
         expect(err).to.be.an.error('"txt" must not exist simultaneously with [upc, code]');
         expect(err.details).to.equal([{
             message: '"txt" must not exist simultaneously with [upc, code]',
@@ -1334,7 +1334,7 @@ describe('Joi', () => {
         ]);
     });
 
-    it('validates an array of valid types', async () => {
+    it('validates an array of valid types', () => {
 
         const schema = Joi.object({
             auth: [
@@ -1346,7 +1346,8 @@ describe('Joi', () => {
             ]
         });
 
-        const err = await expect(schema.validate({ auth: { mode: 'none' } })).to.reject('"auth" does not match any of the allowed types');
+        const err = schema.validate({ auth: { mode: 'none' } }).error;
+        expect(err).to.be.an.error('"auth" does not match any of the allowed types');
         expect(err.details[0].context.details).to.equal([
             {
                 message: '"auth.mode" must be one of [required, optional, try, null]',
@@ -1433,7 +1434,7 @@ describe('Joi', () => {
         ]);
     });
 
-    it('validates alternatives', async () => {
+    it('validates alternatives', () => {
 
         const schema = Joi.object({
             auth: Joi.alternatives([
@@ -1445,7 +1446,8 @@ describe('Joi', () => {
             ])
         });
 
-        const err = await expect(schema.validate({ auth: { mode: 'none' } })).to.reject('"auth" does not match any of the allowed types');
+        const err = schema.validate({ auth: { mode: 'none' } }).error;
+        expect(err).to.be.an.error('"auth" does not match any of the allowed types');
         expect(err.details[0].context.details).to.equal([
             {
                 message: '"auth.mode" must be one of [required, optional, try, null]',
@@ -1695,7 +1697,7 @@ describe('Joi', () => {
         expect(value.a).to.equal('5');
     });
 
-    it('does not set optional keys when missing', async () => {
+    it('does not set optional keys when missing', () => {
 
         const schema = Joi.object({
             a: Joi.number()
@@ -1703,7 +1705,7 @@ describe('Joi', () => {
 
         const obj = {};
 
-        const value = await schema.validate(obj);
+        const value = schema.validate(obj).value;
         expect(value.hasOwnProperty('a')).to.equal(false);
     });
 
@@ -1733,46 +1735,45 @@ describe('Joi', () => {
         ]);
     });
 
-    it('invalidates missing peers', async () => {
+    it('invalidates missing peers', () => {
 
         const schema = Joi.object({
             username: Joi.string(),
             password: Joi.string()
         }).with('username', 'password').without('password', 'access_token');
 
-        await expect(schema.validate({ username: 'bob' })).to.reject();
+        expect(schema.validate({ username: 'bob' }).error).to.be.an.error();
     });
 
-    it('validates config where the root item is a joi type', async () => {
+    it('validates config where the root item is a joi type', () => {
 
-        await Joi.boolean().allow(null).validate(true);
-        await Joi.object().validate({ auth: { mode: 'try' } });
-        await expect(Joi.object().validate(true)).to.reject('"value" must be an object');
-        await expect(Joi.string().validate(true)).to.reject('"value" must be a string');
-        await Joi.string().email().validate('test@test.com');
-        await Joi.object({ param: Joi.string().required() }).validate({ param: 'item' });
+        expect(Joi.boolean().allow(null).validate(true).error).to.not.exist();
+        expect(Joi.object().validate({ auth: { mode: 'try' } }).error).to.not.exist();
+        expect(Joi.object().validate(true).error).to.be.an.error('"value" must be an object');
+        expect(Joi.string().validate(true).error).to.be.an.error('"value" must be a string');
+        expect(Joi.string().email().validate('test@test.com').error).to.not.exist();
+        expect(Joi.object({ param: Joi.string().required() }).validate({ param: 'item' }).error).to.not.exist();
     });
 
-    it('converts string to number', async () => {
+    it('converts string to number', () => {
 
         const schema = Joi.object({
             a: Joi.number()
         });
 
         const input = { a: '5' };
-        const value = await schema.validate(input);
-        expect(value.a).to.equal(5);
+        expect(schema.validate(input)).to.equal({ value: { a: 5 } });
         expect(input.a).to.equal('5');
     });
 
-    it('allows unknown keys in objects if no schema was given', async () => {
+    it('allows unknown keys in objects if no schema was given', () => {
 
-        await Joi.object().validate({ foo: 'bar' });
+        expect(Joi.object().validate({ foo: 'bar' }).error).to.not.exist();
     });
 
-    it('fails on unknown keys in objects if a schema was given', async () => {
+    it('fails on unknown keys in objects if a schema was given', () => {
 
-        const err = await expect(Joi.object({}).validate({ foo: 'bar' })).to.reject();
+        const err = Joi.object({}).validate({ foo: 'bar' }).error;
         expect(err).to.be.an.error('"foo" is not allowed');
         expect(err.details).to.equal([{
             message: '"foo" is not allowed',
@@ -1781,14 +1782,14 @@ describe('Joi', () => {
             context: { child: 'foo', label: 'foo', key: 'foo', value: 'bar' }
         }]);
 
-        const err2 = await expect(Joi.compile({}).validate({ foo: 'bar' })).to.reject();
+        const err2 = Joi.compile({}).validate({ foo: 'bar' }).error;
         expect(err2.message).to.equal('"foo" is not allowed');
 
-        const err3 = await expect(Joi.compile({ other: Joi.number() }).validate({ foo: 'bar' })).to.reject();
+        const err3 = Joi.compile({ other: Joi.number() }).validate({ foo: 'bar' }).error;
         expect(err3.message).to.equal('"foo" is not allowed');
     });
 
-    it('validates an unknown option', async () => {
+    it('validates an unknown option', () => {
 
         const config = {
             auth: Joi.object({
@@ -1796,14 +1797,14 @@ describe('Joi', () => {
             }).allow(null)
         };
 
-        const err = await expect(Joi.compile(config).validate({ auth: { unknown: true } })).to.reject();
+        const err = Joi.compile(config).validate({ auth: { unknown: true } }).error;
         expect(err.message).to.contain('"auth.unknown" is not allowed');
 
-        const err2 = await expect(Joi.compile(config).validate({ something: false })).to.reject();
+        const err2 = Joi.compile(config).validate({ something: false }).error;
         expect(err2.message).to.contain('"something" is not allowed');
     });
 
-    it('validates required key with multiple options', async () => {
+    it('validates required key with multiple options', () => {
 
         const config = {
             module: Joi.alternatives([
@@ -1815,18 +1816,19 @@ describe('Joi', () => {
             ]).required()
         };
 
-        const err = await expect(Joi.compile(config).validate({})).to.reject();
+        const err = Joi.compile(config).validate({}).error;
         expect(err.message).to.contain('"module" is required');
 
-        await Joi.compile(config).validate({ module: 'test' });
+        expect(Joi.compile(config).validate({ module: 'test' }).error).to.not.exist();
 
-        const err2 = await expect(Joi.compile(config).validate({ module: {} })).to.reject('"module" does not match any of the allowed types');
+        const err2 = Joi.compile(config).validate({ module: {} }).error;
+        expect(err2).to.be.an.error('"module" does not match any of the allowed types');
         expect(err2.details[0].context.message).to.equal('"module.compile" is required. "module" must be a string');
 
-        await Joi.compile(config).validate({ module: { compile: function () { } } });
+        expect(Joi.compile(config).validate({ module: { compile: function () { } } }).error).to.not.exist();
     });
 
-    it('validates key with required alternatives', async () => {
+    it('validates key with required alternatives', () => {
 
         const config = {
             module: Joi.alt().try(
@@ -1838,10 +1840,10 @@ describe('Joi', () => {
             )
         };
 
-        await Joi.compile(config).validate({});
+        expect(Joi.compile(config).validate({}).error).to.not.exist();
     });
 
-    it('validates required key with alternatives', async () => {
+    it('validates required key with alternatives', () => {
 
         const config = {
             module: Joi.alt().try([
@@ -1853,33 +1855,33 @@ describe('Joi', () => {
             ]).required()
         };
 
-        const err = await expect(Joi.compile(config).validate({})).to.reject();
+        const err = Joi.compile(config).validate({}).error;
         expect(err.message).to.contain('"module" is required');
     });
 
-    it('does not require optional numbers', async () => {
+    it('does not require optional numbers', () => {
 
         const config = {
             position: Joi.number(),
             suggestion: Joi.string()
         };
 
-        await Joi.compile(config).validate({ suggestion: 'something' });
-        await Joi.compile(config).validate({ position: 1 });
+        expect(Joi.compile(config).validate({ suggestion: 'something' }).error).to.not.exist();
+        expect(Joi.compile(config).validate({ position: 1 }).error).to.not.exist();
     });
 
-    it('does not require optional objects', async () => {
+    it('does not require optional objects', () => {
 
         const config = {
             position: Joi.number(),
             suggestion: Joi.object()
         };
 
-        await Joi.compile(config).validate({ suggestion: {} });
-        await Joi.compile(config).validate({ position: 1 });
+        expect(Joi.compile(config).validate({ suggestion: {} }).error).to.not.exist();
+        expect(Joi.compile(config).validate({ position: 1 }).error).to.not.exist();
     });
 
-    it('validates object successfully when config has an array of types', async () => {
+    it('validates object successfully when config has an array of types', () => {
 
         const schema = {
             f: [Joi.number(), Joi.boolean()],
@@ -1891,10 +1893,10 @@ describe('Joi', () => {
             g: 'test'
         };
 
-        await Joi.compile(schema).validate(obj);
+        expect(Joi.compile(schema).validate(obj).error).to.not.exist();
     });
 
-    it('validates object successfully when config allows for optional key and key is missing', async () => {
+    it('validates object successfully when config allows for optional key and key is missing', () => {
 
         const schema = {
             h: Joi.number(),
@@ -1907,10 +1909,10 @@ describe('Joi', () => {
             i: 'test'
         };
 
-        await Joi.compile(schema).validate(obj);
+        expect(Joi.compile(schema).validate(obj).error).to.not.exist();
     });
 
-    it('fails validation', async () => {
+    it('fails validation', () => {
 
         const schema = {
             a: Joi.number().min(0).max(3),
@@ -1924,10 +1926,10 @@ describe('Joi', () => {
             c: 'joe@example.com'
         };
 
-        await expect(Joi.compile(schema).validate(obj)).to.reject();
+        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation when the wrong types are supplied', async () => {
+    it('fails validation when the wrong types are supplied', () => {
 
         const schema = {
             a: Joi.number().min(0).max(3),
@@ -1941,37 +1943,37 @@ describe('Joi', () => {
             c: 'joe@example.com'
         };
 
-        await expect(Joi.compile(schema).validate(obj)).to.reject();
+        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation when missing a required parameter', async () => {
+    it('fails validation when missing a required parameter', () => {
 
         const obj = {
             c: 10
         };
 
-        await expect(Joi.compile({ a: Joi.string().required() }).validate(obj)).to.reject();
+        expect(Joi.compile({ a: Joi.string().required() }).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation when missing a required parameter within an object config', async () => {
+    it('fails validation when missing a required parameter within an object config', () => {
 
         const obj = {
             a: {}
         };
 
-        await expect(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj)).to.reject();
+        expect(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation when parameter is required to be an object but is given as string', async () => {
+    it('fails validation when parameter is required to be an object but is given as string', () => {
 
         const obj = {
             a: 'a string'
         };
 
-        await expect(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj)).to.reject();
+        expect(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
     });
 
-    it('validates when parameter is required to be an object and is given correctly as a json string', async () => {
+    it('validates when parameter is required to be an object and is given correctly as a json string', () => {
 
         const schema = Joi.object({
             a: Joi.object({
@@ -1983,48 +1985,47 @@ describe('Joi', () => {
             a: '{"b":"string"}'
         };
 
-        const value = await schema.validate(input);
+        expect(schema.validate(input)).to.equal({ value: { a: { b: 'string' } } });
         expect(input.a).to.equal('{"b":"string"}');
-        expect(value.a.b).to.equal('string');
     });
 
-    it('fails validation when parameter is required to be an object but is given as a json string that is incorrect (number instead of string)', async () => {
+    it('fails validation when parameter is required to be an object but is given as a json string that is incorrect (number instead of string)', () => {
 
         const obj = {
             a: '{"b":2}'
         };
 
-        await expect(Joi.object({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj)).to.reject();
+        expect(Joi.object({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation when parameter is required to be an Array but is given as string', async () => {
+    it('fails validation when parameter is required to be an Array but is given as string', () => {
 
         const obj = {
             a: 'an array'
         };
 
-        await expect(Joi.object({ a: Joi.array() }).validate(obj)).to.reject();
+        expect(Joi.object({ a: Joi.array() }).validate(obj).error).to.be.an.error();
     });
 
-    it('validates when parameter is required to be an Array and is given correctly as a json string', async () => {
+    it('validates when parameter is required to be an Array and is given correctly as a json string', () => {
 
         const obj = {
             a: '[1,2]'
         };
 
-        await Joi.object({ a: Joi.array() }).validate(obj);
+        expect(Joi.object({ a: Joi.array() }).validate(obj).error).to.not.exist();
     });
 
-    it('fails validation when parameter is required to be an Array but is given as a json that is incorrect (object instead of array)', async () => {
+    it('fails validation when parameter is required to be an Array but is given as a json that is incorrect (object instead of array)', () => {
 
         const obj = {
             a: '{"b":2}'
         };
 
-        await expect(Joi.object({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj)).to.reject();
+        expect(Joi.object({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation when config is an array and fails', async () => {
+    it('fails validation when config is an array and fails', () => {
 
         const schema = {
             d: [Joi.string(), Joi.boolean()],
@@ -2036,10 +2037,10 @@ describe('Joi', () => {
             e: 'a'
         };
 
-        await expect(Joi.compile(schema).validate(obj)).to.reject();
+        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation when config is an array and fails with extra keys', async () => {
+    it('fails validation when config is an array and fails with extra keys', () => {
 
         const schema = {
             d: [Joi.string(), Joi.boolean()],
@@ -2051,10 +2052,10 @@ describe('Joi', () => {
             b: 'a'
         };
 
-        await expect(Joi.compile(schema).validate(obj)).to.reject();
+        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation with extra keys', async () => {
+    it('fails validation with extra keys', () => {
 
         const schema = {
             a: Joi.number()
@@ -2065,19 +2066,19 @@ describe('Joi', () => {
             b: 'a'
         };
 
-        await expect(Joi.compile(schema).validate(obj)).to.reject();
+        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
     });
 
-    it('validates missing optional key with string condition', async () => {
+    it('validates missing optional key with string condition', () => {
 
         const schema = {
             key: Joi.string().alphanum(false).min(8)
         };
 
-        await Joi.compile(schema).validate({});
+        expect(Joi.compile(schema).validate({}).error).to.not.exist();
     });
 
-    it('validates with extra keys and remove them when stripUnknown is set', async () => {
+    it('validates with extra keys and remove them when stripUnknown is set', () => {
 
         const schema = Joi.object({
             a: Joi.number().min(0).max(3),
@@ -2091,11 +2092,10 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        const value = await schema.validate(obj, { stripUnknown: true, allowUnknown: true });
-        expect(value).to.equal({ a: 1, b: 'a' });
+        expect(schema.validate(obj, { stripUnknown: true, allowUnknown: true })).to.equal({ value: { a: 1, b: 'a' } });
     });
 
-    it('validates with extra keys and remove them when stripUnknown (as an object) is set', async () => {
+    it('validates with extra keys and remove them when stripUnknown (as an object) is set', () => {
 
         const schema = Joi.object({
             a: Joi.number().min(0).max(3),
@@ -2109,11 +2109,10 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        const value = await schema.validate(obj, { stripUnknown: { arrays: false, objects: true }, allowUnknown: true });
-        expect(value).to.equal({ a: 1, b: 'a' });
+        expect(schema.validate(obj, { stripUnknown: { arrays: false, objects: true }, allowUnknown: true })).to.equal({ value: { a: 1, b: 'a' } });
     });
 
-    it('validates dependencies when stripUnknown is set', async () => {
+    it('validates dependencies when stripUnknown is set', () => {
 
         const schema = Joi.object({
             a: Joi.number(),
@@ -2125,7 +2124,7 @@ describe('Joi', () => {
             foo: 'bar'
         };
 
-        const err = await expect(schema.validate(obj, { stripUnknown: true })).to.reject();
+        const err = schema.validate(obj, { stripUnknown: true }).error;
         expect(err).to.be.an.error('"value" contains [a] without its required peers [b]');
         expect(err.details).to.equal([{
             message: '"value" contains [a] without its required peers [b]',
@@ -2142,7 +2141,7 @@ describe('Joi', () => {
         }]);
     });
 
-    it('validates dependencies when stripUnknown (as an object) is set', async () => {
+    it('validates dependencies when stripUnknown (as an object) is set', () => {
 
         const schema = Joi.object({
             a: Joi.number(),
@@ -2155,7 +2154,7 @@ describe('Joi', () => {
             foo: 'bar'
         };
 
-        const err = await expect(schema.validate(obj, { stripUnknown: { arrays: false, objects: true } })).to.reject();
+        const err = schema.validate(obj, { stripUnknown: { arrays: false, objects: true } }).error;
         expect(err).to.be.an.error('"value" contains [a] without its required peers [b]');
         expect(err.details).to.equal([{
             message: '"value" contains [a] without its required peers [b]',
@@ -2172,7 +2171,7 @@ describe('Joi', () => {
         }]);
     });
 
-    it('fails to validate with incorrect property when asked to strip unknown keys without aborting early', async () => {
+    it('fails to validate with incorrect property when asked to strip unknown keys without aborting early', () => {
 
         const schema = Joi.object({
             a: Joi.number().min(0).max(3),
@@ -2186,10 +2185,10 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        await expect(schema.validate(obj, { stripUnknown: true, abortEarly: false })).to.reject();
+        expect(schema.validate(obj, { stripUnknown: true, abortEarly: false }).error).to.be.an.error();
     });
 
-    it('fails to validate with incorrect property when asked to strip unknown keys (as an object) without aborting early', async () => {
+    it('fails to validate with incorrect property when asked to strip unknown keys (as an object) without aborting early', () => {
 
         const schema = Joi.object({
             a: Joi.number().min(0).max(3),
@@ -2203,10 +2202,10 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        await expect(schema.validate(obj, { stripUnknown: { arrays: false, objects: true }, abortEarly: false })).to.reject();
+        expect(schema.validate(obj, { stripUnknown: { arrays: false, objects: true }, abortEarly: false }).error).to.be.an.error();
     });
 
-    it('should pass validation with extra keys when allowUnknown is set', async () => {
+    it('should pass validation with extra keys when allowUnknown is set', () => {
 
         const schema = Joi.object({
             a: Joi.number().min(0).max(3),
@@ -2220,11 +2219,10 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        const value = await schema.validate(obj, { allowUnknown: true });
-        expect(value).to.equal({ a: 1, b: 'a', d: 'c' });
+        expect(schema.validate(obj, { allowUnknown: true })).to.equal({ value: { a: 1, b: 'a', d: 'c' } });
     });
 
-    it('should pass validation with extra keys set', async () => {
+    it('should pass validation with extra keys set', () => {
 
         const localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
@@ -2237,14 +2235,10 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        const value = await localConfig.validate(obj);
-        expect(value).to.equal({ a: 1, b: 'a', d: 'c' });
-
-        const value2 = await localConfig.validate(value);
-        expect(value2).to.equal({ a: 1, b: 'a', d: 'c' });
+        expect(localConfig.validate(obj)).to.equal({ value: { a: 1, b: 'a', d: 'c' } });
     });
 
-    it('should pass validation with extra keys and remove them when stripUnknown is set locally', async () => {
+    it('should pass validation with extra keys and remove them when stripUnknown is set locally', () => {
 
         const localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
@@ -2257,14 +2251,11 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        const value = await localConfig.validate(obj);
-        expect(value).to.equal({ a: 1, b: 'a' });
-
-        const value2 = await localConfig.validate(value);
-        expect(value2).to.equal({ a: 1, b: 'a' });
+        expect(localConfig.validate(obj)).to.equal({ value: { a: 1, b: 'a' } });
+        expect(localConfig.validate({ a: 1, b: 'a' })).to.equal({ value: { a: 1, b: 'a' } });
     });
 
-    it('should pass validation with extra keys and remove them when stripUnknown (as an object) is set locally', async () => {
+    it('should pass validation with extra keys and remove them when stripUnknown (as an object) is set locally', () => {
 
         const localConfig = Joi.object({
             a: Joi.number().min(0).max(3),
@@ -2277,40 +2268,37 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        const value = await localConfig.validate(obj);
-        expect(value).to.equal({ a: 1, b: 'a' });
-
-        const value2 = await localConfig.validate(value);
-        expect(value2).to.equal({ a: 1, b: 'a' });
+        expect(localConfig.validate(obj)).to.equal({ value: { a: 1, b: 'a' } });
+        expect(localConfig.validate({ a: 1, b: 'a' })).to.equal({ value: { a: 1, b: 'a' } });
     });
 
-    it('should work when the skipFunctions setting is enabled', async () => {
+    it('should work when the skipFunctions setting is enabled', () => {
 
         const schema = Joi.object({ username: Joi.string() }).prefs({ skipFunctions: true });
         const input = { username: 'test', func: function () { } };
-        await schema.validate(input);
+        expect(schema.validate(input).error).to.not.exist();
     });
 
-    it('should work when the skipFunctions setting is disabled', async () => {
+    it('should work when the skipFunctions setting is disabled', () => {
 
         const schema = Joi.object({ username: Joi.string() });
         const input = { username: 'test', func: function () { } };
 
-        const err = await expect(schema.validate(input, { skipFunctions: false })).to.reject();
+        const err = schema.validate(input, { skipFunctions: false }).error;
         expect(err.message).to.contain('"func" is not allowed');
     });
 
-    it('should not convert values when convert is false', async () => {
+    it('should not convert values when convert is false', () => {
 
         const schema = Joi.object({
             arr: Joi.array().items(Joi.string())
         });
 
         const input = { arr: 'foo' };
-        await expect(schema.validate(input, { convert: false })).to.reject();
+        expect(schema.validate(input, { convert: false }).error).to.be.an.error();
     });
 
-    it('full errors when abortEarly is false', async () => {
+    it('full errors when abortEarly is false', () => {
 
         const schema = Joi.object({
             a: Joi.string(),
@@ -2319,12 +2307,12 @@ describe('Joi', () => {
 
         const input = { a: 1, b: 2 };
 
-        const errOne = await expect(schema.validate(input)).to.reject();
-        const errFull = await expect(schema.validate(input, { abortEarly: false })).to.reject();
+        const errOne = schema.validate(input).error;
+        const errFull = schema.validate(input, { abortEarly: false }).error;
         expect(errFull.details.length).to.be.greaterThan(errOne.details.length);
     });
 
-    it('errors multiple times when abortEarly is false in a complex object', async () => {
+    it('errors multiple times when abortEarly is false in a complex object', () => {
 
         const schema = Joi.object({
             test: Joi.array().items(Joi.object().keys({
@@ -2368,7 +2356,7 @@ describe('Joi', () => {
             }
         };
 
-        const err = await expect(schema.validate(input, { abortEarly: false })).to.reject();
+        const err = schema.validate(input, { abortEarly: false }).error;
         expect(err.details).to.have.length(6);
         expect(err.details).to.equal([{
             message: '"test[0].foo" length must be less than or equal to 3 characters long',
@@ -2403,26 +2391,21 @@ describe('Joi', () => {
         }]);
     });
 
-    it('accepts no options', async () => {
+    it('accepts no options', () => {
 
-        await Joi.string().validate('test');
-
-        const result = Joi.string().validate('test');
-        expect(result.error).to.not.exist();
-        expect(result.value).to.equal('test');
-
-        await expect(Joi.number().validate('5', { convert: false })).to.reject();
-        expect(Joi.number().validate('5', { convert: false }).error).to.exist();
+        expect(Joi.string().validate('test').error).to.not.exist();
+        expect(Joi.string().validate('test')).to.equal({ value: 'test' });
+        expect(Joi.number().validate('5', { convert: false }).error).to.be.an.error();
     });
 
-    it('accepts null options', async () => {
+    it('accepts null options', () => {
 
-        await Joi.string().validate('test', null);
+        expect(Joi.string().validate('test', null).error).to.not.exist();
     });
 
-    it('accepts undefined options', async () => {
+    it('accepts undefined options', () => {
 
-        await Joi.string().validate('test', undefined);
+        expect(Joi.string().validate('test', undefined).error).to.not.exist();
     });
 
     describe('assert()', () => {
@@ -2560,24 +2543,16 @@ describe('Joi', () => {
         });
     });
 
-    describe('validate()', () => {
+    describe('validateAsync()', () => {
 
-        it('should work with a successful promise', () => {
+        it('should work with a successful promise', async () => {
 
-            const promise = Joi.string().validate('foo');
-
-            return promise.then((value) => {
-
-                expect(value).to.equal('foo');
-            }, () => {
-
-                throw new Error('Should not go here');
-            });
+            expect(await Joi.string().validateAsync('foo')).to.equal('foo');
         });
 
         it('should work with a successful promise and a catch in between', () => {
 
-            const promise = Joi.string().validate('foo');
+            const promise = Joi.string().validateAsync('foo');
 
             return promise
                 .catch(() => {
@@ -2595,7 +2570,7 @@ describe('Joi', () => {
 
         it('should work with a failing promise', () => {
 
-            const promise = Joi.string().validate(0);
+            const promise = Joi.string().validateAsync(0);
 
             return promise.then((value) => {
 
@@ -2614,7 +2589,7 @@ describe('Joi', () => {
 
         it('should work with a failing promise and a then in between', () => {
 
-            const promise = Joi.string().validate(0);
+            const promise = Joi.string().validateAsync(0);
 
             return promise
                 .then((value) => {
@@ -2635,7 +2610,7 @@ describe('Joi', () => {
 
         it('should work with a failing promise (with catch)', () => {
 
-            const promise = Joi.string().validate(0);
+            const promise = Joi.string().validateAsync(0);
 
             return promise.catch((err) => {
 
@@ -2651,7 +2626,7 @@ describe('Joi', () => {
 
         it('should catch errors in a successful promise callback', () => {
 
-            const promise = Joi.string().validate('foo');
+            const promise = Joi.string().validateAsync('foo');
 
             return promise.then((value) => {
 
@@ -2667,7 +2642,7 @@ describe('Joi', () => {
 
         it('should catch errors in a failing promise callback', () => {
 
-            const promise = Joi.string().validate(0);
+            const promise = Joi.string().validateAsync(0);
 
             return promise.then((value) => {
 
@@ -2686,7 +2661,7 @@ describe('Joi', () => {
 
         it('should catch errors in a failing promise callback (with catch)', () => {
 
-            const promise = Joi.string().validate(0);
+            const promise = Joi.string().validateAsync(0);
 
             return promise.catch(() => {
 

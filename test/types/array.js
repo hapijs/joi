@@ -27,21 +27,20 @@ describe('array', () => {
         expect(() => Joi.array('invalid argument.')).to.throw('The array type does not allow arguments');
     });
 
-    it('converts a string to an array', async () => {
+    it('converts a string to an array', () => {
 
-        const value = await Joi.array().validate('[1,2,3]');
-        expect(value.length).to.equal(3);
+        expect(Joi.array().validate('[1,2,3]')).to.equal({ value: [1, 2, 3] });
     });
 
-    it('converts a string with whitespace to an array', async () => {
+    it('converts a string with whitespace to an array', () => {
 
-        const value = await Joi.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3] \n\r\t');
-        expect(value.length).to.equal(3);
+        expect(Joi.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3] \n\r\t')).to.equal({ value: [1, 2, 3] });
     });
 
-    it('errors on non-array string', async () => {
+    it('errors on non-array string', () => {
 
-        const err = await expect(Joi.array().validate('{ "something": false }')).to.reject('"value" must be an array');
+        const err = Joi.array().validate('{ "something": false }').error;
+        expect(err).to.be.an.error('"value" must be an array');
         expect(err.details).to.equal([{
             message: '"value" must be an array',
             path: [],
@@ -50,9 +49,10 @@ describe('array', () => {
         }]);
     });
 
-    it('errors on invalid array string', async () => {
+    it('errors on invalid array string', () => {
 
-        const err = await expect(Joi.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3 \n\r\t')).to.reject('"value" must be an array');
+        const err = Joi.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3 \n\r\t').error;
+        expect(err).to.be.an.error('"value" must be an array');
         expect(err.details).to.equal([{
             message: '"value" must be an array',
             path: [],
@@ -61,9 +61,10 @@ describe('array', () => {
         }]);
     });
 
-    it('errors on number', async () => {
+    it('errors on number', () => {
 
-        const err = await expect(Joi.array().validate(3)).to.reject('"value" must be an array');
+        const err = Joi.array().validate(3).error;
+        expect(err).to.be.an.error('"value" must be an array');
         expect(err.details).to.equal([{
             message: '"value" must be an array',
             path: [],
@@ -72,9 +73,10 @@ describe('array', () => {
         }]);
     });
 
-    it('converts a non-array string with number type', async () => {
+    it('converts a non-array string with number type', () => {
 
-        const err = await expect(Joi.array().validate('3')).to.reject('"value" must be an array');
+        const err = Joi.array().validate('3').error;
+        expect(err).to.be.an.error('"value" must be an array');
         expect(err.details).to.equal([{
             message: '"value" must be an array',
             path: [],
@@ -83,9 +85,10 @@ describe('array', () => {
         }]);
     });
 
-    it('errors on a non-array string', async () => {
+    it('errors on a non-array string', () => {
 
-        const err = await expect(Joi.array().validate('asdf')).to.reject('"value" must be an array');
+        const err = Joi.array().validate('asdf').error;
+        expect(err).to.be.an.error('"value" must be an array');
         expect(err.details).to.equal([{
             message: '"value" must be an array',
             path: [],
@@ -365,12 +368,11 @@ describe('array', () => {
 
     describe('items()', () => {
 
-        it('converts members', async () => {
+        it('converts members', () => {
 
             const schema = Joi.array().items(Joi.number());
             const input = ['1', '2', '3'];
-            const value = await schema.validate(input);
-            expect(value).to.equal([1, 2, 3]);
+            expect(schema.validate(input)).to.equal({ value: [1, 2, 3] });
         });
 
         it('shows path to errors in array items', () => {
@@ -391,7 +393,7 @@ describe('array', () => {
             expect(() => Joi.array().items({ foo: 'bar' }, undefined)).to.throw(Error, 'Invalid schema content: (1)');
         });
 
-        it('allows zero size', async () => {
+        it('allows zero size', () => {
 
             const schema = Joi.object({
                 test: Joi.array().items(Joi.object({
@@ -400,10 +402,10 @@ describe('array', () => {
             });
 
             const input = { test: [] };
-            await schema.validate(input);
+            expect(schema.validate(input)).to.equal({ value: input });
         });
 
-        it('returns the first error when only one inclusion', async () => {
+        it('returns the first error when only one inclusion', () => {
 
             const schema = Joi.object({
                 test: Joi.array().items(Joi.object({
@@ -413,7 +415,7 @@ describe('array', () => {
 
             const input = { test: [{ foo: 'a' }, { bar: 2 }] };
 
-            const err = await expect(schema.validate(input)).to.reject();
+            const err = schema.validate(input).error;
             expect(err.message).to.equal('"test[1].foo" is required');
             expect(err.details).to.equal([{
                 message: '"test[1].foo" is required',
@@ -470,12 +472,13 @@ describe('array', () => {
             ]);
         });
 
-        it('allows forbidden to restrict values', async () => {
+        it('allows forbidden to restrict values', () => {
 
             const schema = Joi.array().items(Joi.string().valid('four').forbidden(), Joi.string());
             const input = ['one', 'two', 'three', 'four'];
 
-            const err = await expect(schema.validate(input)).to.reject('"[3]" contains an excluded value');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"[3]" contains an excluded value');
             expect(err.details).to.equal([{
                 message: '"[3]" contains an excluded value',
                 path: [3],
@@ -484,7 +487,7 @@ describe('array', () => {
             }]);
         });
 
-        it('allows forbidden to restrict values (ref)', async () => {
+        it('allows forbidden to restrict values (ref)', () => {
 
             const schema = Joi.object({
                 array: Joi.array().items(Joi.valid(Joi.ref('...value')).forbidden(), Joi.string()),
@@ -496,7 +499,8 @@ describe('array', () => {
                 value: 'four'
             };
 
-            const err = await expect(schema.validate(input)).to.reject('"array[3]" contains an excluded value');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"array[3]" contains an excluded value');
             expect(err.details).to.equal([{
                 message: '"array[3]" contains an excluded value',
                 path: ['array', 3],
@@ -505,7 +509,7 @@ describe('array', () => {
             }]);
         });
 
-        it('process referenced property first when referenced by an item rule', async () => {
+        it('process referenced property first when referenced by an item rule', () => {
 
             const schema = Joi.object({
                 array: Joi.array().items(Joi.valid(Joi.ref('...value')).forbidden(), Joi.number()),
@@ -517,7 +521,8 @@ describe('array', () => {
                 value: '4'
             };
 
-            const err = await expect(schema.validate(input)).to.reject('"array[3]" contains an excluded value');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"array[3]" contains an excluded value');
             expect(err.details).to.equal([{
                 message: '"array[3]" contains an excluded value',
                 path: ['array', 3],
@@ -526,12 +531,13 @@ describe('array', () => {
             }]);
         });
 
-        it('validates that a required value exists', async () => {
+        it('validates that a required value exists', () => {
 
             const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string());
             const input = ['one', 'two', 'three'];
 
-            const err = await expect(schema.validate(input)).to.reject('"value" does not contain 1 required value(s)');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"value" does not contain 1 required value(s)');
             expect(err.details).to.equal([{
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
@@ -540,12 +546,13 @@ describe('array', () => {
             }]);
         });
 
-        it('validates that a required value exists with abortEarly = false', async () => {
+        it('validates that a required value exists with abortEarly = false', () => {
 
             const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string()).prefs({ abortEarly: false });
             const input = ['one', 'two', 'three'];
 
-            const err = await expect(schema.validate(input)).to.reject('"value" does not contain 1 required value(s)');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"value" does not contain 1 required value(s)');
             expect(err.details).to.equal([{
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
@@ -554,21 +561,21 @@ describe('array', () => {
             }]);
         });
 
-        it('does not re-run required tests that have already been matched', async () => {
+        it('does not re-run required tests that have already been matched', () => {
 
             const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string());
             const input = ['one', 'two', 'three', 'four', 'four', 'four'];
 
-            const value = await schema.validate(input);
-            expect(value).to.equal(input);
+            expect(schema.validate(input)).to.equal({ value: input });
         });
 
-        it('does not re-run required tests that have already failed', async () => {
+        it('does not re-run required tests that have already failed', () => {
 
             const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.boolean().required(), Joi.number());
             const input = ['one', 'two', 'three', 'four', 'four', 'four'];
 
-            const err = await expect(schema.validate(input)).to.reject('"[0]" does not match any of the allowed types');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"[0]" does not match any of the allowed types');
             expect(err.details).to.equal([{
                 message: '"[0]" does not match any of the allowed types',
                 path: [0],
@@ -577,12 +584,13 @@ describe('array', () => {
             }]);
         });
 
-        it('can require duplicates of the same schema and fail', async () => {
+        it('can require duplicates of the same schema and fail', () => {
 
             const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string().valid('four').required(), Joi.string());
             const input = ['one', 'two', 'three', 'four'];
 
-            const err = await expect(schema.validate(input)).to.reject('"value" does not contain 1 required value(s)');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"value" does not contain 1 required value(s)');
             expect(err.details).to.equal([{
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
@@ -591,30 +599,29 @@ describe('array', () => {
             }]);
         });
 
-        it('can require duplicates of the same schema and pass', async () => {
+        it('can require duplicates of the same schema and pass', () => {
 
             const schema = Joi.array().items(Joi.string().valid('four').required(), Joi.string().valid('four').required(), Joi.string());
             const input = ['one', 'two', 'three', 'four', 'four'];
 
-            const value = await schema.validate(input);
-            expect(value).to.equal(input);
+            expect(schema.validate(input)).to.equal({ value: input });
         });
 
-        it('continues to validate after a required match', async () => {
+        it('continues to validate after a required match', () => {
 
             const schema = Joi.array().items(Joi.string().required(), Joi.boolean());
             const input = [true, 'one', false, 'two'];
 
-            const value = await schema.validate(input);
-            expect(value).to.equal(input);
+            expect(schema.validate(input)).to.equal({ value: input });
         });
 
-        it('can use a label on a required parameter', async () => {
+        it('can use a label on a required parameter', () => {
 
             const schema = Joi.array().items(Joi.string().required().label('required string'), Joi.boolean());
             const input = [true, false];
 
-            const err = await expect(schema.validate(input)).to.reject('"value" does not contain [required string]');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"value" does not contain [required string]');
             expect(err.details).to.equal([{
                 message: '"value" does not contain [required string]',
                 path: [],
@@ -623,12 +630,13 @@ describe('array', () => {
             }]);
         });
 
-        it('can use a label on one required parameter, and no label on another', async () => {
+        it('can use a label on one required parameter, and no label on another', () => {
 
             const schema = Joi.array().items(Joi.string().required().label('required string'), Joi.string().required(), Joi.boolean());
             const input = [true, false];
 
-            const err = await expect(schema.validate(input)).to.reject('"value" does not contain [required string] and 1 other required value(s)');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"value" does not contain [required string] and 1 other required value(s)');
             expect(err.details).to.equal([{
                 message: '"value" does not contain [required string] and 1 other required value(s)',
                 path: [],
@@ -642,11 +650,10 @@ describe('array', () => {
             }]);
         });
 
-        it('can strip matching items', async () => {
+        it('can strip matching items', () => {
 
             const schema = Joi.array().items(Joi.string(), Joi.any().strip());
-            const value = await schema.validate(['one', 'two', 3, 4]);
-            expect(value).to.equal(['one', 'two']);
+            expect(schema.validate(['one', 'two', 3, 4])).to.equal({ value: ['one', 'two'] });
         });
     });
 
@@ -1050,17 +1057,16 @@ describe('array', () => {
 
     describe('options()', () => {
 
-        it('ignores stripUnknown when true', async () => {
+        it('ignores stripUnknown when true', () => {
 
             const schema = Joi.array().items(Joi.string()).prefs({ stripUnknown: true });
-            await expect(schema.validate(['one', 'two', 3, 4, true, false])).to.reject('"[2]" must be a string');
+            expect(schema.validate(['one', 'two', 3, 4, true, false]).error).to.be.an.error('"[2]" must be a string');
         });
 
-        it('respects stripUnknown (as an object)', async () => {
+        it('respects stripUnknown (as an object)', () => {
 
             const schema = Joi.array().items(Joi.string()).prefs({ stripUnknown: { arrays: true, objects: false } });
-            const value = await schema.validate(['one', 'two', 3, 4, true, false]);
-            expect(value).to.equal(['one', 'two']);
+            expect(schema.validate(['one', 'two', 3, 4, true, false])).to.equal({ value: ['one', 'two'] });
         });
     });
 
@@ -1087,63 +1093,58 @@ describe('array', () => {
             }).to.throw(Error, 'Invalid schema content: (1)');
         });
 
-        it('validates input against items in order', async () => {
+        it('validates input against items in order', () => {
 
             const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required());
             const input = ['s1', 2];
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2]);
+            expect(schema.validate(input)).to.equal({ value: ['s1', 2] });
         });
 
-        it('validates input with optional item', async () => {
+        it('validates input with optional item', () => {
 
             const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number());
             const input = ['s1', 2, 3];
 
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2, 3]);
+            expect(schema.validate(input)).to.equal({ value: ['s1', 2, 3] });
         });
 
-        it('validates input without optional item', async () => {
+        it('validates input without optional item', () => {
 
             const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number());
             const input = ['s1', 2];
 
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2]);
+            expect(schema.validate(input)).to.equal({ value: ['s1', 2] });
         });
 
-        it('validates input without optional item', async () => {
+        it('validates input without optional item', () => {
 
             const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required(), Joi.number()).sparse(true);
             const input = ['s1', 2, undefined];
 
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2, undefined]);
+            expect(schema.validate(input)).to.equal({ value: ['s1', 2, undefined] });
         });
 
-        it('validates input without optional item in a sparse array', async () => {
+        it('validates input without optional item in a sparse array', () => {
 
             const schema = Joi.array().ordered(Joi.string().required(), Joi.number(), Joi.number().required()).sparse(true);
             const input = ['s1', undefined, 3];
 
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', undefined, 3]);
+            expect(schema.validate(input)).to.equal({ value: ['s1', undefined, 3] });
         });
 
-        it('validates when input matches ordered items and matches regular items', async () => {
+        it('validates when input matches ordered items and matches regular items', () => {
 
             const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number());
             const input = ['s1', 2, 3, 4, 5];
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 2, 3, 4, 5]);
+            expect(schema.validate(input)).to.equal({ value: ['s1', 2, 3, 4, 5] });
         });
 
-        it('errors when input does not match ordered items', async () => {
+        it('errors when input does not match ordered items', () => {
 
             const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
             const input = ['s1', 2];
-            const err = await expect(schema.validate(input)).to.reject('"[0]" must be a number');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"[0]" must be a number');
             expect(err.details).to.equal([{
                 message: '"[0]" must be a number',
                 path: [0],
@@ -1152,11 +1153,12 @@ describe('array', () => {
             }]);
         });
 
-        it('errors when input has more items than ordered items', async () => {
+        it('errors when input has more items than ordered items', () => {
 
             const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
             const input = [1, 's2', 3];
-            const err = await expect(schema.validate(input)).to.reject('"value" must contain at most 2 items');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"value" must contain at most 2 items');
             expect(err.details).to.equal([{
                 message: '"value" must contain at most 2 items',
                 path: [],
@@ -1165,11 +1167,11 @@ describe('array', () => {
             }]);
         });
 
-        it('errors when input has more items than ordered items with abortEarly = false', async () => {
+        it('errors when input has more items than ordered items with abortEarly = false', () => {
 
             const schema = Joi.array().ordered(Joi.string(), Joi.number()).prefs({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
-            const err = await expect(schema.validate(input)).to.reject();
+            const err = schema.validate(input).error;
             expect(err).to.be.an.error('"[0]" must be a string. "value" must contain at most 2 items');
             expect(err.details).to.have.length(2);
             expect(err.details).to.equal([
@@ -1188,11 +1190,12 @@ describe('array', () => {
             ]);
         });
 
-        it('errors when input has less items than ordered items', async () => {
+        it('errors when input has less items than ordered items', () => {
 
             const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required());
             const input = [1];
-            const err = await expect(schema.validate(input)).to.reject('"value" does not contain 1 required value(s)');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"value" does not contain 1 required value(s)');
             expect(err.details).to.equal([{
                 message: '"value" does not contain 1 required value(s)',
                 path: [],
@@ -1201,11 +1204,12 @@ describe('array', () => {
             }]);
         });
 
-        it('errors when input matches ordered items but not matches regular items', async () => {
+        it('errors when input matches ordered items but not matches regular items', () => {
 
             const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required()).items(Joi.number()).prefs({ abortEarly: false });
             const input = ['s1', 2, 3, 4, 's5'];
-            const err = await expect(schema.validate(input)).to.reject('"[4]" must be a number');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"[4]" must be a number');
             expect(err.details).to.equal([{
                 message: '"[4]" must be a number',
                 path: [4],
@@ -1214,11 +1218,12 @@ describe('array', () => {
             }]);
         });
 
-        it('errors when input does not match ordered items but matches regular items', async () => {
+        it('errors when input does not match ordered items but matches regular items', () => {
 
             const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.number()).prefs({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
-            const err = await expect(schema.validate(input)).to.reject('"[0]" must be a string');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"[0]" must be a string');
             expect(err.details).to.equal([{
                 message: '"[0]" must be a string',
                 path: [0],
@@ -1227,11 +1232,11 @@ describe('array', () => {
             }]);
         });
 
-        it('errors when input does not match ordered items not matches regular items', async () => {
+        it('errors when input does not match ordered items not matches regular items', () => {
 
             const schema = Joi.array().ordered(Joi.string(), Joi.number()).items(Joi.string()).prefs({ abortEarly: false });
             const input = [1, 2, 3, 4, 5];
-            const err = await expect(schema.validate(input)).to.reject();
+            const err = schema.validate(input).error;
             expect(err).to.be.an.error('"[0]" must be a string. "[2]" must be a string. "[3]" must be a string. "[4]" must be a string');
             expect(err.details).to.have.length(4);
             expect(err.details).to.equal([
@@ -1262,11 +1267,11 @@ describe('array', () => {
             ]);
         });
 
-        it('errors but continues when abortEarly is set to false', async () => {
+        it('errors but continues when abortEarly is set to false', () => {
 
             const schema = Joi.array().ordered(Joi.number().required(), Joi.string().required()).prefs({ abortEarly: false });
             const input = ['s1', 2];
-            const err = await expect(schema.validate(input)).to.reject();
+            const err = schema.validate(input).error;
             expect(err).to.be.an.error('"[0]" must be a number. "[1]" must be a string');
             expect(err.details).to.have.length(2);
             expect(err.details).to.equal([
@@ -1404,27 +1409,25 @@ describe('array', () => {
             ]);
         });
 
-        it('strips item', async () => {
+        it('strips item', () => {
 
             const schema = Joi.array().ordered(Joi.string().required(), Joi.number().strip(), Joi.number().required());
             const input = ['s1', 2, 3];
-            const value = await schema.validate(input);
-            expect(value).to.equal(['s1', 3]);
+            expect(schema.validate(input)).to.equal({ value: ['s1', 3] });
         });
 
-        it('strips multiple items', async () => {
+        it('strips multiple items', () => {
 
             const schema = Joi.array().ordered(Joi.string().strip(), Joi.number(), Joi.number().strip());
             const input = ['s1', 2, 3];
-            const value = await schema.validate(input);
-            expect(value).to.equal([2]);
+            expect(schema.validate(input)).to.equal({ value: [2] });
         });
 
-        it('references array members', async () => {
+        it('references array members', () => {
 
             const schema = Joi.array().ordered(Joi.number(), Joi.number().greater(Joi.ref('..0')));
-            expect(await schema.validate([1, 2])).to.equal([1, 2]);
-            await expect(schema.validate([1, 0])).to.reject();
+            expect(schema.validate([1, 2])).to.equal({ value: [1, 2] });
+            expect(schema.validate([1, 0]).error).to.be.an.error();
         });
     });
 
@@ -1808,16 +1811,16 @@ describe('array', () => {
             ]);
         });
 
-        it('errors on unsupported type', async () => {
+        it('errors on unsupported type', () => {
 
             const schema = Joi.array().sort().prefs({ convert: false });
-            await expect(schema.validate([{}, {}])).to.reject('"value" cannot be sorted due to unsupported type object');
+            expect(schema.validate([{}, {}]).error).to.be.an.error('"value" cannot be sorted due to unsupported type object');
         });
 
-        it('errors on mismatching types', async () => {
+        it('errors on mismatching types', () => {
 
             const schema = Joi.array().sort().prefs({ convert: false });
-            await expect(schema.validate([1, 'x'])).to.reject('"value" cannot be sorted due to mismatching types');
+            expect(schema.validate([1, 'x']).error).to.be.an.error('"value" cannot be sorted due to mismatching types');
         });
     });
 
@@ -2665,12 +2668,12 @@ describe('array', () => {
             expect(() => Joi.array().unique({})).to.throw(Error, 'comparator must be a function or a string');
         });
 
-        it('handles period in key names', async () => {
+        it('handles period in key names', () => {
 
             const schema = Joi.array().unique('a.b', { separator: false });
 
             const test = [{ 'a.b': 1 }, { 'a.b': 2 }];
-            expect(await schema.validate(test)).to.equal(test);
+            expect(schema.validate(test)).to.equal({ value: test });
         });
     });
 
@@ -2732,12 +2735,13 @@ describe('array', () => {
             ]);
         });
 
-        it('allows types to be forbidden', async () => {
+        it('allows types to be forbidden', () => {
 
             const schema = Joi.array().items(Joi.number().forbidden());
 
             const n = [1, 2, 'hippo'];
-            const err = await expect(schema.validate(n)).to.reject('"[0]" contains an excluded value');
+            const err = schema.validate(n).error;
+            expect(err).to.be.an.error('"[0]" contains an excluded value');
             expect(err.details).to.equal([{
                 message: '"[0]" contains an excluded value',
                 path: [0],
@@ -2746,7 +2750,7 @@ describe('array', () => {
             }]);
 
             const m = ['x', 'y', 'z'];
-            await schema.validate(m);
+            expect(schema.validate(m)).to.equal({ value: m });
         });
 
         it('validates array of Numbers', () => {
@@ -2818,14 +2822,15 @@ describe('array', () => {
             ]);
         });
 
-        it('errors on invalid number rule using includes', async () => {
+        it('errors on invalid number rule using includes', () => {
 
             const schema = Joi.object({
                 arr: Joi.array().items(Joi.number().integer())
             });
 
             const input = { arr: [1, 2, 2.1] };
-            const err = await expect(schema.validate(input)).to.reject('"arr[2]" must be an integer');
+            const err = schema.validate(input).error;
+            expect(err).to.be.an.error('"arr[2]" must be an integer');
             expect(err.details).to.equal([{
                 message: '"arr[2]" must be an integer',
                 path: ['arr', 2],
@@ -2856,22 +2861,21 @@ describe('array', () => {
             ]);
         });
 
-        it('should not change original value', async () => {
+        it('should not change original value', () => {
 
             const schema = Joi.array().items(Joi.number()).unique();
             const input = ['1', '2'];
 
-            const value = await schema.validate(input);
-            expect(value).to.equal([1, 2]);
+            expect(schema.validate(input)).to.equal({ value: [1, 2] });
             expect(input).to.equal(['1', '2']);
         });
 
-        it('returns multiple errors if abort early is false', async () => {
+        it('returns multiple errors if abort early is false', () => {
 
             const schema = Joi.array().items(Joi.number(), Joi.object()).items(Joi.boolean().forbidden());
             const input = [1, undefined, true, 'a'];
 
-            const err = await expect(schema.validate(input, { abortEarly: false })).to.reject();
+            const err = schema.validate(input, { abortEarly: false }).error;
             expect(err).to.be.an.error('"[1]" must not be a sparse array item. "[2]" contains an excluded value. "[3]" does not match any of the allowed types');
             expect(err.details).to.equal([{
                 message: '"[1]" must not be a sparse array item',
@@ -2907,7 +2911,7 @@ describe('array', () => {
             }]);
         });
 
-        it('returns multiple errors if abort early is false across items() and unique()', async () => {
+        it('returns multiple errors if abort early is false across items() and unique()', () => {
 
             const item = Joi.object({
                 test: Joi.string(),
@@ -2926,7 +2930,8 @@ describe('array', () => {
                 }
             ];
 
-            const err = await expect(schema.validate(input, { abortEarly: false })).to.reject('"[1].hello" is required. "[1]" contains a duplicate value');
+            const err = schema.validate(input, { abortEarly: false }).error;
+            expect(err).to.be.an.error('"[1].hello" is required. "[1]" contains a duplicate value');
             expect(err.details).to.equal([
                 {
                     context: {

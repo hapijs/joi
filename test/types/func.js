@@ -353,7 +353,7 @@ describe('func', () => {
         }]);
     });
 
-    it('keeps validated value as a function', async () => {
+    it('keeps validated value as a function', () => {
 
         const schema = Joi.func().keys({ a: Joi.number() });
 
@@ -365,13 +365,13 @@ describe('func', () => {
 
         value.a = '123';
 
-        const validated = await schema.validate(value);
+        const validated = schema.validate(value).value;
         expect(validated).to.be.a.function();
         expect(validated()).to.equal('abc');
         expect(validated).to.not.equal(value);
     });
 
-    it('retains validated value prototype', async () => {
+    it('retains validated value prototype', () => {
 
         const schema = Joi.func().keys({ a: Joi.number() });
 
@@ -385,14 +385,14 @@ describe('func', () => {
             return this.x;
         };
 
-        const validated = await schema.validate(value);
+        const validated = schema.validate(value).value;
         expect(validated).to.be.a.function();
         const p = new validated();
         expect(p.get()).to.equal('o');
         expect(validated).to.not.equal(value);
     });
 
-    it('keeps validated value as a function (no clone)', async () => {
+    it('keeps validated value as a function (no clone)', () => {
 
         const schema = Joi.func();
 
@@ -404,7 +404,7 @@ describe('func', () => {
 
         value.a = '123';
 
-        const validated = await schema.validate(value);
+        const validated = schema.validate(value).value;
         expect(validated).to.be.a.function();
         expect(validated()).to.equal('abc');
         expect(validated).to.equal(value);

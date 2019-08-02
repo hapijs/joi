@@ -723,7 +723,7 @@ describe('ref', () => {
         ]);
     });
 
-    it('uses ref as a valid value', async () => {
+    it('uses ref as a valid value', () => {
 
         const ref = Joi.ref('b');
         const schema = Joi.object({
@@ -731,7 +731,7 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const err = await expect(schema.validate({ a: 5, b: 6 })).to.reject();
+        const err = schema.validate({ a: 5, b: 6 }).error;
 
         expect(err).to.be.an.error('"a" must be one of [ref:b]');
         expect(err.details).to.equal([{
@@ -853,7 +853,7 @@ describe('ref', () => {
         });
     });
 
-    it('uses ref as a valid value (empty key)', async () => {
+    it('uses ref as a valid value (empty key)', () => {
 
         const ref = Joi.ref('');
         const schema = Joi.object({
@@ -861,7 +861,7 @@ describe('ref', () => {
             '': Joi.any()
         });
 
-        const err = await expect(schema.validate({ a: 5, '': 6 })).to.reject();
+        const err = schema.validate({ a: 5, '': 6 }).error;
         expect(err).to.be.an.error('"a" must be one of [ref:]');
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:]',
@@ -886,7 +886,7 @@ describe('ref', () => {
         ]);
     });
 
-    it('uses ref with nested keys as a valid value', async () => {
+    it('uses ref with nested keys as a valid value', () => {
 
         const ref = Joi.ref('b.c');
         const schema = Joi.object({
@@ -896,7 +896,7 @@ describe('ref', () => {
             }
         });
 
-        const err = await expect(schema.validate({ a: 5, b: { c: 6 } })).to.reject();
+        const err = schema.validate({ a: 5, b: { c: 6 } }).error;
 
         expect(err).to.be.an.error('"a" must be one of [ref:b.c]');
         expect(err.details).to.equal([{
@@ -930,7 +930,7 @@ describe('ref', () => {
         ]);
     });
 
-    it('uses ref with combined nested keys in sub child', async () => {
+    it('uses ref with combined nested keys in sub child', () => {
 
         const ref = Joi.ref('b.c');
         expect(ref.root).to.equal('b');
@@ -943,16 +943,16 @@ describe('ref', () => {
         });
 
         const input = { a: 5, b: { c: 5 } };
-        await expect(schema.validate(input)).to.not.reject();
+        expect(schema.validate(input).error).to.not.exist();
 
         const parent = Joi.object({
             e: schema
         });
 
-        await expect(parent.validate({ e: input })).to.not.reject();
+        expect(parent.validate({ e: input }).error).to.not.exist();
     });
 
-    it('uses ref reach options', async () => {
+    it('uses ref reach options', () => {
 
         const ref = Joi.ref('b/c', { separator: '/' });
         expect(ref.root).to.equal('b');
@@ -964,10 +964,10 @@ describe('ref', () => {
             }
         });
 
-        await expect(schema.validate({ a: 5, b: { c: 5 } })).to.not.reject();
+        expect(schema.validate({ a: 5, b: { c: 5 } }).error).to.not.exist();
     });
 
-    it('ignores the order in which keys are defined', async () => {
+    it('ignores the order in which keys are defined', () => {
 
         const ab = Joi.object({
             a: {
@@ -976,7 +976,7 @@ describe('ref', () => {
             b: Joi.ref('a.c')
         });
 
-        await expect(ab.validate({ a: { c: '5' }, b: 5 })).to.not.reject();
+        expect(ab.validate({ a: { c: '5' }, b: 5 }).error).to.not.exist();
 
         const ba = Joi.object({
             b: Joi.ref('a.c'),
@@ -985,7 +985,7 @@ describe('ref', () => {
             }
         });
 
-        await expect(ba.validate({ a: { c: '5' }, b: 5 })).to.not.reject();
+        expect(ba.validate({ a: { c: '5' }, b: 5 }).error).to.not.exist();
     });
 
     it('uses ref as default value', async () => {
@@ -995,7 +995,7 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const value = await schema.validate({ b: 6 });
+        const value = await schema.validateAsync({ b: 6 });
         expect(value).to.equal({ a: 6, b: 6 });
     });
 
@@ -1006,9 +1006,9 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        expect(await schema.validate({ a: 6, b: 6 })).to.equal({ a: 6, b: 6 });
-        expect(await schema.validate({ a: 1, b: 6 })).to.equal({ a: 1, b: 6 });
-        await expect(schema.validate({ a: 6, b: 1 })).to.reject();
+        expect(await schema.validateAsync({ a: 6, b: 6 })).to.equal({ a: 6, b: 6 });
+        expect(await schema.validateAsync({ a: 1, b: 6 })).to.equal({ a: 1, b: 6 });
+        expect(schema.validate({ a: 6, b: 1 }).error).to.be.an.error();
     });
 
     it('uses ref as default value regardless of order', async () => {
@@ -1018,7 +1018,7 @@ describe('ref', () => {
             b: Joi.number()
         });
 
-        const value = await ab.validate({ b: '6' });
+        const value = await ab.validateAsync({ b: '6' });
         expect(value).to.equal({ a: 6, b: 6 });
 
         const ba = Joi.object({
@@ -1026,7 +1026,7 @@ describe('ref', () => {
             a: Joi.any().default(Joi.ref('b'))
         });
 
-        const value2 = await ba.validate({ b: '6' });
+        const value2 = await ba.validateAsync({ b: '6' });
         expect(value2).to.equal({ a: 6, b: 6 });
     });
 
@@ -1084,7 +1084,7 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const value = await schema.validate({ b: 6 }, { context: { x: 22 } });
+        const value = await schema.validateAsync({ b: 6 }, { context: { x: 22 } });
         expect(value).to.equal({ a: 22, b: 6 });
     });
 
@@ -1095,11 +1095,11 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const value = await schema.validate({ b: 6 }, { context: { x: 22 } });
+        const value = await schema.validateAsync({ b: 6 }, { context: { x: 22 } });
         expect(value).to.equal({ a: 22, b: 6 });
     });
 
-    it('uses context as a valid value', async () => {
+    it('uses context as a valid value', () => {
 
         const ref = Joi.ref('$x');
         const schema = Joi.object({
@@ -1107,7 +1107,7 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const err = await expect(schema.validate({ a: 5, b: 6 }, { context: { x: 22 } })).to.reject();
+        const err = schema.validate({ a: 5, b: 6 }, { context: { x: 22 } }).error;
         expect(err).to.be.an.error('"a" must be one of [ref:global:x]');
         expect(err.details).to.equal([{
             message: '"a" must be one of [ref:global:x]',

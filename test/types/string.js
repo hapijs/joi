@@ -30,11 +30,11 @@ describe('string', () => {
         expect(() => Joi.string('invalid argument.')).to.throw('The string type does not allow arguments');
     });
 
-    it('blocks empty strings by default', async () => {
+    it('blocks empty strings by default', () => {
 
-        await expect(Joi.string().validate('')).to.reject('"value" is not allowed to be empty');
-        await expect(Joi.string().allow('x').validate('')).to.reject('"value" is not allowed to be empty');
-        await expect(Joi.string().allow('').validate('')).to.not.reject();
+        expect(Joi.string().validate('').error).to.be.an.error('"value" is not allowed to be empty');
+        expect(Joi.string().allow('x').validate('').error).to.be.an.error('"value" is not allowed to be empty');
+        expect(Joi.string().allow('').validate('').error).to.not.exist();
     });
 
     it('fails on boolean', () => {
@@ -543,10 +543,10 @@ describe('string', () => {
 
     describe('creditCard()', () => {
 
-        it('should validate credit card', async () => {
+        it('should validate credit card', () => {
 
             const t = Joi.string().creditCard();
-            await expect(t.validate('4111111111111112')).to.reject('"value" must be a credit card');
+            expect(t.validate('4111111111111112').error).to.be.an.error('"value" must be a credit card');
 
             Helper.validate(t, [
                 ['378734493671000', true],  // american express
@@ -824,10 +824,10 @@ describe('string', () => {
             ]);
         });
 
-        it('validates domain with a friendly error message', async () => {
+        it('validates domain with a friendly error message', () => {
 
             const schema = { item: Joi.string().domain() };
-            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something' }).error;
             expect(err).to.be.an.error('"item" must contain a valid domain name');
             expect(err.details).to.equal([{
                 message: '"item" must contain a valid domain name',
@@ -1020,10 +1020,10 @@ describe('string', () => {
             ]);
         });
 
-        it('validates email with a friendly error message', async () => {
+        it('validates email with a friendly error message', () => {
 
             const schema = { item: Joi.string().email() };
-            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something' }).error;
             expect(err).to.be.an.error('"item" must be a valid email');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid email',
@@ -1198,48 +1198,40 @@ describe('string', () => {
             ], { convert: false });
         });
 
-        it('normalizes string using NFC before validation', async () => {
+        it('normalizes string using NFC before validation', () => {
 
-            const value = await Joi.string().normalize('NFC').validate(normalizations.original);
-            expect(value).to.equal(normalizations.NFC);
+            expect(Joi.string().normalize('NFC').validate(normalizations.original)).to.equal({ value: normalizations.NFC });
         });
 
-        it('normalizes string using NFD before validation', async () => {
+        it('normalizes string using NFD before validation', () => {
 
-            const value = await Joi.string().normalize('NFD').validate(normalizations.original);
-            expect(value).to.equal(normalizations.NFD);
+            expect(Joi.string().normalize('NFD').validate(normalizations.original)).to.equal({ value: normalizations.NFD });
         });
 
-        it('normalizes string using NFKC before validation', async () => {
+        it('normalizes string using NFKC before validation', () => {
 
-            const value = await Joi.string().normalize('NFKC').validate(normalizations.original);
-            expect(value).to.equal(normalizations.NFKC);
+            expect(Joi.string().normalize('NFKC').validate(normalizations.original)).to.equal({ value: normalizations.NFKC });
         });
 
-        it('normalizes string using NFKD before validation', async () => {
+        it('normalizes string using NFKD before validation', () => {
 
-            const value = await Joi.string().normalize('NFKD').validate(normalizations.original);
-            expect(value).to.equal(normalizations.NFKD);
+            expect(Joi.string().normalize('NFKD').validate(normalizations.original)).to.equal({ value: normalizations.NFKD });
         });
 
-        it('should default to NFC form', async () => {
+        it('should default to NFC form', () => {
 
-            const value = await Joi.string().normalize().validate(normalizations.original);
-            expect(value).to.equal(normalizations.NFC);
+            expect(Joi.string().normalize().validate(normalizations.original)).to.equal({ value: normalizations.NFC });
         });
 
         // The below tests use the composed and decomposed form
         // of the 'ñ' character
 
-        it('should work in combination with min', async () => {
+        it('should work in combination with min', () => {
 
             const baseSchema = Joi.string().min(2);
+            expect(baseSchema.normalize('NFD').validate('\u00F1')).to.equal({ value: 'n\u0303' });
 
-            const value = await baseSchema.normalize('NFD').validate('\u00F1');
-            expect(value).to.equal('n\u0303');
-
-            const err = await expect(baseSchema.normalize('NFC').validate('n\u0303')).to.reject();
-
+            const err = baseSchema.normalize('NFC').validate('n\u0303').error;
             expect(err).to.be.an.error('"value" length must be at least 2 characters long');
             expect(err.details).to.equal([{
                 message: '"value" length must be at least 2 characters long',
@@ -1254,14 +1246,12 @@ describe('string', () => {
             }]);
         });
 
-        it('should work in combination with max', async () => {
+        it('should work in combination with max', () => {
 
             const baseSchema = Joi.string().max(1);
+            expect(baseSchema.normalize('NFC').validate('n\u0303')).to.equal({ value: '\u00F1' });
 
-            const value = await baseSchema.normalize('NFC').validate('n\u0303');
-            expect(value).to.equal('\u00F1');
-
-            const err = await expect(baseSchema.normalize('NFD').validate('\u00F1')).to.reject();
+            const err = baseSchema.normalize('NFD').validate('\u00F1').error;
             expect(err).to.be.an.error('"value" length must be less than or equal to 1 characters long');
             expect(err.details).to.equal([{
                 message: '"value" length must be less than or equal to 1 characters long',
@@ -1367,26 +1357,18 @@ describe('string', () => {
             ]);
         });
 
-        it('should work in combination with lowercase', async () => {
+        it('should work in combination with lowercase', () => {
 
             const baseSchema = Joi.string().lowercase();
-
-            const value = await baseSchema.normalize('NFC').validate('N\u0303');
-            expect(value).to.equal('\u00F1');
-
-            const value2 = await baseSchema.normalize('NFD').validate('\u00D1');
-            expect(value2).to.equal('n\u0303');
+            expect(baseSchema.normalize('NFC').validate('N\u0303')).to.equal({ value: '\u00F1' });
+            expect(baseSchema.normalize('NFD').validate('\u00D1')).to.equal({ value: 'n\u0303' });
         });
 
-        it('should work in combination with uppercase', async () => {
+        it('should work in combination with uppercase', () => {
 
             const baseSchema = Joi.string().uppercase();
-
-            const value = await baseSchema.normalize('NFC').validate('n\u0303');
-            expect(value).to.equal('\u00D1');
-
-            const value2 = await baseSchema.normalize('NFD').validate('\u00F1');
-            expect(value2).to.equal('N\u0303');
+            expect(baseSchema.normalize('NFC').validate('n\u0303')).to.equal({ value: '\u00D1' });
+            expect(baseSchema.normalize('NFD').validate('\u00F1')).to.equal({ value: 'N\u0303' });
         });
     });
 
@@ -1429,11 +1411,10 @@ describe('string', () => {
             ], { convert: false });
         });
 
-        it('coerce string to lowercase before validation', async () => {
+        it('coerce string to lowercase before validation', () => {
 
             const schema = Joi.string().lowercase();
-            const value = await schema.validate('UPPER TO LOWER');
-            expect(value).to.equal('upper to lower');
+            expect(schema.validate('UPPER TO LOWER')).to.equal({ value: 'upper to lower' });
         });
 
         it('should work in combination with a trim', () => {
@@ -1514,11 +1495,10 @@ describe('string', () => {
             ], { convert: false });
         });
 
-        it('coerce string to uppercase before validation', async () => {
+        it('coerce string to uppercase before validation', () => {
 
             const schema = Joi.string().uppercase();
-            const value = await schema.validate('lower to upper');
-            expect(value).to.equal('LOWER TO UPPER');
+            expect(schema.validate('lower to upper')).to.equal({ value: 'LOWER TO UPPER' });
         });
 
         it('works in combination with a forced trim', () => {
@@ -1623,18 +1603,16 @@ describe('string', () => {
             ]);
         });
 
-        it('removes leading and trailing whitespace before validation', async () => {
+        it('removes leading and trailing whitespace before validation', () => {
 
             const schema = Joi.string().trim();
-            const value = await schema.validate(' trim this ');
-            expect(value).to.equal('trim this');
+            expect(schema.validate(' trim this ')).to.equal({ value: 'trim this' });
         });
 
-        it('removes leading and trailing whitespace before validation', async () => {
+        it('removes leading and trailing whitespace before validation', () => {
 
             const schema = Joi.string().trim().allow('');
-            const value = await schema.validate('     ');
-            expect(value).to.equal('');
+            expect(schema.validate('     ')).to.equal({ value: '' });
         });
 
         it('should work in combination with min', () => {
@@ -1785,21 +1763,19 @@ describe('string', () => {
             ], { convert: true });
         });
 
-        it('successfully replaces multiple times', async () => {
+        it('successfully replaces multiple times', () => {
 
             const schema = Joi.string().replace(/a/g, 'b').replace(/b/g, 'c');
-            const value = await schema.validate('a quick brown fox');
-            expect(value).to.equal('c quick crown fox');
+            expect(schema.validate('a quick brown fox')).to.equal({ value: 'c quick crown fox' });
         });
 
-        it('should work in combination with trim', async () => {
+        it('should work in combination with trim', () => {
 
             // The string below is the name "Yamada Tarou" separated by a
             // carriage return, a "full width" ideographic space and a newline
 
             const schema = Joi.string().trim().replace(/\s+/g, ' ');
-            const value = await schema.validate(' \u5C71\u7530\r\u3000\n\u592A\u90CE ');
-            expect(value).to.equal('\u5C71\u7530 \u592A\u90CE');
+            expect(schema.validate(' \u5C71\u7530\r\u3000\n\u592A\u90CE ')).to.equal({ value: '\u5C71\u7530 \u592A\u90CE' });
         });
 
         it('should work in combination with min', () => {
@@ -1860,10 +1836,10 @@ describe('string', () => {
 
     describe('regex()', () => {
 
-        it('should not include a pattern name by default', async () => {
+        it('should not include a pattern name by default', () => {
 
             const schema = Joi.string().regex(/[a-z]+/).regex(/[0-9]+/);
-            const err = await expect(schema.validate('abcd')).to.reject();
+            const err = schema.validate('abcd').error;
             expect(err).to.be.an.error('"value" with value "abcd" fails to match the required pattern: /[0-9]+/');
             expect(err.details).to.equal([{
                 message: '"value" with value "abcd" fails to match the required pattern: /[0-9]+/',
@@ -1878,10 +1854,10 @@ describe('string', () => {
             }]);
         });
 
-        it('should include a pattern name if specified', async () => {
+        it('should include a pattern name if specified', () => {
 
             const schema = Joi.string().regex(/[a-z]+/, 'letters').regex(/[0-9]+/, 'numbers');
-            const err = await expect(schema.validate('abcd')).to.reject();
+            const err = schema.validate('abcd').error;
             expect(err).to.be.an.error('"value" with value "abcd" fails to match the numbers pattern');
             expect(err.details).to.equal([{
                 message: '"value" with value "abcd" fails to match the numbers pattern',
@@ -1896,10 +1872,10 @@ describe('string', () => {
             }]);
         });
 
-        it('should include a pattern name in options object', async () => {
+        it('should include a pattern name in options object', () => {
 
             const schema = Joi.string().regex(/[a-z]+/, { name: 'letters' }).regex(/[0-9]+/, { name: 'numbers' });
-            const err = await expect(schema.validate('abcd')).to.reject();
+            const err = schema.validate('abcd').error;
             expect(err).to.be.an.error('"value" with value "abcd" fails to match the numbers pattern');
             expect(err.details).to.equal([{
                 message: '"value" with value "abcd" fails to match the numbers pattern',
@@ -2245,10 +2221,10 @@ describe('string', () => {
             }).to.throw('version at position 0 must be one of ipv4, ipv6, ipvfuture');
         });
 
-        it('validates ip with a friendly error message', async () => {
+        it('validates ip with a friendly error message', () => {
 
             const schema = { item: Joi.string().ip() };
-            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something' }).error;
             expect(err).to.be.an.error('"item" must be a valid ip address with a optional CIDR');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid ip address with a optional CIDR',
@@ -2263,10 +2239,10 @@ describe('string', () => {
             }]);
         });
 
-        it('validates ip and cidr presence with a friendly error message', async () => {
+        it('validates ip and cidr presence with a friendly error message', () => {
 
             const schema = { item: Joi.string().ip({ cidr: 'required' }) };
-            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something' }).error;
             expect(err).to.be.an.error('"item" must be a valid ip address with a required CIDR');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid ip address with a required CIDR',
@@ -2281,10 +2257,10 @@ describe('string', () => {
             }]);
         });
 
-        it('validates custom ip version and cidr presence with a friendly error message', async () => {
+        it('validates custom ip version and cidr presence with a friendly error message', () => {
 
             const schema = { item: Joi.string().ip({ version: 'ipv4', cidr: 'required' }) };
-            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something' }).error;
             expect(err).to.be.an.error('"item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid ip address of one of the following versions [ipv4] with a required CIDR',
@@ -2992,15 +2968,15 @@ describe('string', () => {
             ]);
         });
 
-        it('validates uri with a friendly error message', async () => {
+        it('validates uri with a friendly error message', () => {
 
             const schema = { item: Joi.string().uri() };
 
-            const err = await expect(Joi.compile(schema).validate({ item: 'something invalid' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something invalid' }).error;
             expect(err.message).to.contain('must be a valid uri');
         });
 
-        it('validates uri with a custom scheme with a friendly error message', async () => {
+        it('validates uri with a custom scheme with a friendly error message', () => {
 
             const schema = {
                 item: Joi.string().uri({
@@ -3008,11 +2984,11 @@ describe('string', () => {
                 })
             };
 
-            const err = await expect(Joi.compile(schema).validate({ item: 'something invalid' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something invalid' }).error;
             expect(err.message).to.contain('must be a valid uri with a scheme matching the http pattern');
         });
 
-        it('validates uri with a custom array of schemes with a friendly error message', async () => {
+        it('validates uri with a custom array of schemes with a friendly error message', () => {
 
             const schema = {
                 item: Joi.string().uri({
@@ -3020,7 +2996,7 @@ describe('string', () => {
                 })
             };
 
-            const err = await expect(Joi.compile(schema).validate({ item: 'something invalid' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something invalid' }).error;
             expect(err.message).to.contain('must be a valid uri with a scheme matching the http|https? pattern');
         });
 
@@ -4484,11 +4460,10 @@ describe('string', () => {
             });
         });
 
-        it('does not change anything when used without max', async () => {
+        it('does not change anything when used without max', () => {
 
             const schema = Joi.string().min(2).truncate();
-            const value = await schema.validate('fooooooooooooooooooo');
-            expect(value).to.equal('fooooooooooooooooooo');
+            expect(schema.validate('fooooooooooooooooooo')).to.equal({ value: 'fooooooooooooooooooo' });
         });
 
         it('truncates a string when used with max', () => {
@@ -4581,10 +4556,11 @@ describe('string', () => {
             ]);
         });
 
-        it('should, when .required(), print a friend error message for an empty string', async () => {
+        it('should, when .required(), print a friend error message for an empty string', () => {
 
             const schema = Joi.string().required();
-            const err = await expect(Joi.compile(schema).validate('')).to.reject('"value" is not allowed to be empty');
+            const err = Joi.compile(schema).validate('').error;
+            expect(err).to.be.an.error('"value" is not allowed to be empty');
             expect(err.details).to.equal([{
                 message: '"value" is not allowed to be empty',
                 path: [],
@@ -4593,11 +4569,12 @@ describe('string', () => {
             }]);
         });
 
-        it('should, when .required(), print a friendly error message for trimmed whitespace', async () => {
+        it('should, when .required(), print a friendly error message for trimmed whitespace', () => {
 
             const schema = Joi.string().trim().required();
 
-            const err = await expect(Joi.compile(schema).validate('    ')).to.reject('"value" is not allowed to be empty');
+            const err = Joi.compile(schema).validate('    ').error;
+            expect(err).to.be.an.error('"value" is not allowed to be empty');
             expect(err.details).to.equal([{
                 message: '"value" is not allowed to be empty',
                 path: [],
@@ -4931,29 +4908,29 @@ describe('string', () => {
             ]);
         });
 
-        it('should return false for denied value', async () => {
+        it('should return false for denied value', () => {
 
             const text = Joi.string().invalid('joi');
-            await expect(text.validate('joi')).to.reject();
+            expect(text.validate('joi').error).to.be.an.error();
         });
 
-        it('should return true for allowed value', async () => {
+        it('should return true for allowed value', () => {
 
             const text = Joi.string().allow('hapi');
-            await text.validate('result');
+            expect(text.validate('result').error).to.not.exist();
         });
 
-        it('validates with one validator (min)', async () => {
+        it('validates with one validator (min)', () => {
 
             const text = Joi.string().min(3);
-            await text.validate('joi');
+            expect(text.validate('joi').error).to.not.exist();
         });
 
-        it('validates with two validators (min, required)', async () => {
+        it('validates with two validators (min, required)', () => {
 
             const text = Joi.string().min(3).required();
-            await text.validate('joi');
-            await expect(text.validate('')).to.reject();
+            expect(text.validate('joi').error).to.not.exist();
+            expect(text.validate('').error).to.be.an.error();
         });
 
         it('validates null with allow(null)', () => {
@@ -7007,11 +6984,11 @@ describe('string', () => {
             ], { convert: false });
         });
 
-        it('validates isoDate with a friendly error message', async () => {
+        it('validates isoDate with a friendly error message', () => {
 
             const schema = { item: Joi.string().isoDate() };
-            await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject('"item" must be a valid ISO 8601 date');
-            await expect(Joi.compile(schema).validate({ item: 'something' }, { convert: false })).to.reject('"item" must be a valid ISO 8601 date');
+            expect(Joi.compile(schema).validate({ item: 'something' }).error).to.be.an.error('"item" must be a valid ISO 8601 date');
+            expect(Joi.compile(schema).validate({ item: 'something' }, { convert: false }).error).to.be.an.error('"item" must be a valid ISO 8601 date');
         });
 
         it('validates combination of isoDate and min', () => {
@@ -11333,10 +11310,10 @@ describe('string', () => {
             ]);
         });
 
-        it('validates guid with a friendly error message', async () => {
+        it('validates guid with a friendly error message', () => {
 
             const schema = { item: Joi.string().guid() };
-            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something' }).error;
             expect(err).to.be.an.error('"item" must be a valid GUID');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid GUID',

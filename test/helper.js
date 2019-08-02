@@ -43,19 +43,19 @@ exports.validateOptions = function (schema, config, options) {
             const err = result.error;
             const value = result.value;
 
-            if (err !== null &&
+            if (err &&
                 shouldValidate) {
 
                 console.log(err);
             }
 
-            if (err === null &&
+            if (!err &&
                 !shouldValidate) {
 
                 console.log(input);
             }
 
-            expect(err === null).to.equal(shouldValidate);
+            expect(!err).to.equal(shouldValidate);
 
             if (item.length >= 4) {
                 if (shouldValidate) {

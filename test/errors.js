@@ -14,14 +14,14 @@ const { expect } = Code;
 
 describe('errors', () => {
 
-    it('has an isJoi property', async () => {
+    it('has an isJoi property', () => {
 
-        const err = await expect(Joi.valid('foo').validate('bar')).to.reject();
+        const err = Joi.valid('foo').validate('bar').error;
         expect(err).to.be.an.error();
         expect(err.isJoi).to.be.true();
     });
 
-    it('supports custom errors when validating types', async () => {
+    it('supports custom errors when validating types', () => {
 
         const schema = Joi.object({
             email: Joi.string().email(),
@@ -62,7 +62,7 @@ describe('errors', () => {
             'object.rename.override': '"{#label}" 11'
         };
 
-        const error = await expect(schema.validate(value, { abortEarly: false, messages })).to.reject();
+        const error = schema.validate(value, { abortEarly: false, messages }).error;
 
         value.required = value.renamed;
         delete value.renamed;
@@ -250,10 +250,10 @@ describe('errors', () => {
         expect(schema.validate({ a: 1, lang: 'empty' }).error).to.be.an.error('"a" must be larger than or equal to 10');
     });
 
-    it('does not prefix with key when messages uses context.key', async () => {
+    it('does not prefix with key when messages uses context.key', () => {
 
         const schema = Joi.valid('sad').prefs({ messages: { 'any.only': 'my hero "{{#label}}" is not {{#valids}}' } });
-        const err = await expect(schema.validate(5)).to.reject();
+        const err = schema.validate(5).error;
         expect(err).to.be.an.error('my hero "value" is not [sad]');
         expect(err.details).to.equal([{
             message: 'my hero "value" is not [sad]',
@@ -263,13 +263,13 @@ describe('errors', () => {
         }]);
     });
 
-    it('escapes unsafe keys', async () => {
+    it('escapes unsafe keys', () => {
 
         const schema = Joi.object({
             'a()': Joi.number()
         });
 
-        const err = await expect(schema.validate({ 'a()': 'x' }, { errors: { escapeHtml: true } })).to.reject();
+        const err = schema.validate({ 'a()': 'x' }, { errors: { escapeHtml: true } }).error;
         expect(err).to.be.an.error('"a&#x28;&#x29;" must be a number');
         expect(err.details).to.equal([{
             message: '"a&#x28;&#x29;" must be a number',
@@ -278,7 +278,7 @@ describe('errors', () => {
             context: { label: 'a()', key: 'a()', value: 'x' }
         }]);
 
-        const err2 = await expect(schema.validate({ 'b()': 'x' }, { errors: { escapeHtml: true } })).to.reject();
+        const err2 = schema.validate({ 'b()': 'x' }, { errors: { escapeHtml: true } }).error;
         expect(err2).to.be.an.error('"b&#x28;&#x29;" is not allowed');
         expect(err2.details).to.equal([{
             message: '"b&#x28;&#x29;" is not allowed',
@@ -288,13 +288,13 @@ describe('errors', () => {
         }]);
     });
 
-    it('does not escape unsafe keys by default', async () => {
+    it('does not escape unsafe keys by default', () => {
 
         const schema = Joi.object({
             'a()': Joi.number()
         });
 
-        const err = await expect(schema.validate({ 'a()': 'x' })).to.reject();
+        const err = schema.validate({ 'a()': 'x' }).error;
         expect(err).to.be.an.error('"a()" must be a number');
         expect(err.details).to.equal([{
             message: '"a()" must be a number',
@@ -303,7 +303,7 @@ describe('errors', () => {
             context: { label: 'a()', key: 'a()', value: 'x' }
         }]);
 
-        const err2 = await expect(schema.validate({ 'b()': 'x' })).to.reject();
+        const err2 = schema.validate({ 'b()': 'x' }).error;
         expect(err2).to.be.an.error('"b()" is not allowed');
         expect(err2.details).to.equal([{
             message: '"b()" is not allowed',
@@ -313,7 +313,7 @@ describe('errors', () => {
         }]);
     });
 
-    it('returns error type in validation error', async () => {
+    it('returns error type in validation error', () => {
 
         const input = {
             notNumber: '',
@@ -327,7 +327,7 @@ describe('errors', () => {
             notBoolean: Joi.boolean().required()
         });
 
-        const err = await expect(schema.validate(input, { abortEarly: false })).to.reject();
+        const err = schema.validate(input, { abortEarly: false }).error;
         expect(err).to.be.an.error('"notNumber" must be a number. "notString" must be a string. "notBoolean" must be a boolean');
         expect(err.details).to.equal([
             {
@@ -351,7 +351,7 @@ describe('errors', () => {
         ]);
     });
 
-    it('returns a full path to an error value on an array (items)', async () => {
+    it('returns a full path to an error value on an array (items)', () => {
 
         const schema = Joi.array().items(Joi.array().items({ x: Joi.number() }));
         const input = [
@@ -359,7 +359,7 @@ describe('errors', () => {
             [{ x: 1 }, { x: 'a' }]
         ];
 
-        const err = await expect(schema.validate(input)).to.reject();
+        const err = schema.validate(input).error;
         expect(err).to.be.an.error('"[1][1].x" must be a number');
         expect(err.details).to.equal([{
             message: '"[1][1].x" must be a number',
@@ -369,7 +369,7 @@ describe('errors', () => {
         }]);
     });
 
-    it('returns a full path to an error value on an array (items forbidden)', async () => {
+    it('returns a full path to an error value on an array (items forbidden)', () => {
 
         const schema = Joi.array().items(Joi.array().items(Joi.object({ x: Joi.string() }).forbidden()));
         const input = [
@@ -377,7 +377,7 @@ describe('errors', () => {
             [{ x: 1 }, { x: 'a' }]
         ];
 
-        const err = await expect(schema.validate(input)).to.reject();
+        const err = schema.validate(input).error;
         expect(err).to.be.an.error('"[1][1]" contains an excluded value');
         expect(err.details).to.equal([{
             message: '"[1][1]" contains an excluded value',
@@ -387,7 +387,7 @@ describe('errors', () => {
         }]);
     });
 
-    it('returns a full path to an error value on an object', async () => {
+    it('returns a full path to an error value on an object', () => {
 
         const schema = Joi.object({
             x: Joi.array().items({ x: Joi.number() })
@@ -397,7 +397,7 @@ describe('errors', () => {
             x: [{ x: 1 }, { x: 'a' }]
         };
 
-        const err = await expect(schema.validate(input)).to.reject();
+        const err = schema.validate(input).error;
         expect(err).to.be.an.error('"x[1].x" must be a number');
         expect(err.details).to.equal([{
             message: '"x[1].x" must be a number',
@@ -407,10 +407,10 @@ describe('errors', () => {
         }]);
     });
 
-    it('overrides root key messages', async () => {
+    it('overrides root key messages', () => {
 
         const schema = Joi.string().prefs({ messages: { root: 'blah' } });
-        const err = await expect(schema.validate(4)).to.reject();
+        const err = schema.validate(4).error;
         expect(err).to.be.an.error('"blah" must be a string');
         expect(err.details).to.equal([{
             message: '"blah" must be a string',
@@ -420,10 +420,10 @@ describe('errors', () => {
         }]);
     });
 
-    it('overrides wrapArrays', async () => {
+    it('overrides wrapArrays', () => {
 
         const schema = Joi.array().items(Joi.boolean()).prefs({ errors: { wrapArrays: false } });
-        const err = await expect(schema.validate([4])).to.reject();
+        const err = schema.validate([4]).error;
         expect(err).to.be.an.error('"[0]" must be a boolean');
         expect(err.details).to.equal([{
             message: '"[0]" must be a boolean',
@@ -433,10 +433,10 @@ describe('errors', () => {
         }]);
     });
 
-    it('allows html escaping', async () => {
+    it('allows html escaping', () => {
 
         const schema = Joi.string().prefs({ messages: { root: 'blah' } }).label('bleh');
-        const err = await expect(schema.validate(4)).to.reject();
+        const err = schema.validate(4).error;
         expect(err).to.be.an.error('"bleh" must be a string');
         expect(err.details).to.equal([{
             message: '"bleh" must be a string',
@@ -446,10 +446,10 @@ describe('errors', () => {
         }]);
     });
 
-    it('provides context with the error', async () => {
+    it('provides context with the error', () => {
 
         const schema = Joi.object({ length: Joi.number().min(3).required() });
-        const err = await expect(schema.validate({ length: 1 })).to.reject();
+        const err = schema.validate({ length: 1 }).error;
         expect(err.details).to.equal([{
             message: '"length" must be larger than or equal to 3',
             path: ['length'],
@@ -463,10 +463,10 @@ describe('errors', () => {
         }]);
     });
 
-    it('has a name that is ValidationError', async () => {
+    it('has a name that is ValidationError', () => {
 
         const schema = Joi.number();
-        const validateErr = await expect(schema.validate('a')).to.reject();
+        const validateErr = schema.validate('a').error;
         expect(validateErr.name).to.be.equal('ValidationError');
 
         try {
@@ -496,7 +496,7 @@ describe('errors', () => {
 
     describe('annotate()', () => {
 
-        it('annotates error', async () => {
+        it('annotates error', () => {
 
             const object = {
                 a: 'm',
@@ -519,7 +519,7 @@ describe('errors', () => {
                 })
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"a" must be one of [a, b, c, d]. "y.u" is required. "y.b" must be one of [i, j, false]. "y.b" must be a string');
             expect(err.details).to.equal([
                 {
@@ -551,7 +551,7 @@ describe('errors', () => {
             expect(err.annotate()).to.equal('{\n  "y": {\n    "b" \u001b[31m[3, 4]\u001b[0m: {\n      "c": 10\n    },\n    \u001b[41m"u"\u001b[0m\u001b[31m [2]: -- missing --\u001b[0m\n  },\n  "a" \u001b[31m[1]\u001b[0m: "m"\n}\n\u001b[31m\n[1] "a" must be one of [a, b, c, d]\n[2] "y.u" is required\n[3] "y.b" must be one of [i, j, false]\n[4] "y.b" must be a string\u001b[0m');
         });
 
-        it('annotates error without colors if requested', async () => {
+        it('annotates error without colors if requested', () => {
 
             const object = {
                 a: 'm'
@@ -561,7 +561,7 @@ describe('errors', () => {
                 a: Joi.string().valid('a', 'b', 'c', 'd')
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"a" must be one of [a, b, c, d]');
             expect(err.details).to.equal([{
                 message: '"a" must be one of [a, b, c, d]',
@@ -572,7 +572,7 @@ describe('errors', () => {
             expect(err.annotate(true)).to.equal('{\n  "a" [1]: "m"\n}\n\n[1] "a" must be one of [a, b, c, d]');
         });
 
-        it('annotates error within array', async () => {
+        it('annotates error within array', () => {
 
             const object = {
                 a: [1, 2, 3, 4, 2, 5]
@@ -582,7 +582,7 @@ describe('errors', () => {
                 a: Joi.array().items(Joi.valid(1, 2))
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"a[2]" must be one of [1, 2]. "a[3]" must be one of [1, 2]. "a[5]" must be one of [1, 2]');
             expect(err.details).to.equal([
                 {
@@ -607,7 +607,7 @@ describe('errors', () => {
             expect(err.annotate()).to.equal('{\n  "a": [\n    1,\n    2,\n    3, \u001b[31m[1]\u001b[0m\n    4, \u001b[31m[2]\u001b[0m\n    2,\n    5 \u001b[31m[3]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] "a[2]" must be one of [1, 2]\n[2] "a[3]" must be one of [1, 2]\n[3] "a[5]" must be one of [1, 2]\u001b[0m');
         });
 
-        it('annotates error within array multiple times on the same element', async () => {
+        it('annotates error within array multiple times on the same element', () => {
 
             const object = {
                 a: [2, 3, 4]
@@ -617,7 +617,7 @@ describe('errors', () => {
                 a: Joi.array().items(Joi.number().min(4).max(2))
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"a[0]" must be larger than or equal to 4. "a[1]" must be larger than or equal to 4. "a[1]" must be less than or equal to 2. "a[2]" must be less than or equal to 2');
             expect(err.details).to.equal([
                 {
@@ -649,7 +649,7 @@ describe('errors', () => {
             expect(err.annotate()).to.equal('{\n  "a": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] "a[0]" must be larger than or equal to 4\n[2] "a[1]" must be larger than or equal to 4\n[3] "a[1]" must be less than or equal to 2\n[4] "a[2]" must be less than or equal to 2\u001b[0m');
         });
 
-        it('annotates error within array when it is an object', async () => {
+        it('annotates error within array when it is an object', () => {
 
             const object = {
                 a: [{ b: 2 }]
@@ -659,7 +659,7 @@ describe('errors', () => {
                 a: Joi.array().items(Joi.number())
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"a[0]" must be a number');
             expect(err.details).to.equal([{
                 message: '"a[0]" must be a number',
@@ -670,7 +670,7 @@ describe('errors', () => {
             expect(err.annotate()).to.equal('{\n  "a": [\n    { \u001b[31m[1]\u001b[0m\n      "b": 2\n    }\n  ]\n}\n\u001b[31m\n[1] "a[0]" must be a number\u001b[0m');
         });
 
-        it('annotates error within multiple arrays and multiple times on the same element', async () => {
+        it('annotates error within multiple arrays and multiple times on the same element', () => {
 
             const object = {
                 a: [2, 3, 4],
@@ -682,7 +682,7 @@ describe('errors', () => {
                 b: Joi.array().items(Joi.number().min(4).max(2))
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"a[0]" must be larger than or equal to 4. "a[1]" must be larger than or equal to 4. "a[1]" must be less than or equal to 2. "a[2]" must be less than or equal to 2. "b[0]" must be larger than or equal to 4. "b[1]" must be larger than or equal to 4. "b[1]" must be less than or equal to 2. "b[2]" must be less than or equal to 2');
             expect(err.details).to.equal([
                 {
@@ -737,7 +737,7 @@ describe('errors', () => {
             expect(err.annotate()).to.equal('{\n  "a": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ],\n  "b": [\n    2, \u001b[31m[5]\u001b[0m\n    3, \u001b[31m[6, 7]\u001b[0m\n    4 \u001b[31m[8]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] "a[0]" must be larger than or equal to 4\n[2] "a[1]" must be larger than or equal to 4\n[3] "a[1]" must be less than or equal to 2\n[4] "a[2]" must be less than or equal to 2\n[5] "b[0]" must be larger than or equal to 4\n[6] "b[1]" must be larger than or equal to 4\n[7] "b[1]" must be less than or equal to 2\n[8] "b[2]" must be less than or equal to 2\u001b[0m');
         });
 
-        it('displays alternatives fail as a single line', async () => {
+        it('displays alternatives fail as a single line', () => {
 
             const schema = Joi.object({
                 x: [
@@ -747,7 +747,7 @@ describe('errors', () => {
                 ]
             });
 
-            const err = await expect(schema.validate({ x: true })).to.reject();
+            const err = schema.validate({ x: true }).error;
             expect(err).to.be.an.error('"x" must be one of [string, number, date]');
             expect(err.details).to.equal([
                 {
@@ -761,7 +761,7 @@ describe('errors', () => {
             expect(err.annotate()).to.equal('{\n  "x" \u001b[31m[1]\u001b[0m: true\n}\n\u001b[31m\n[1] "x" must be one of [string, number, date]\u001b[0m');
         });
 
-        it('annotates circular input', async () => {
+        it('annotates circular input', () => {
 
             const schema = Joi.object({
                 x: Joi.object({
@@ -774,7 +774,7 @@ describe('errors', () => {
             const input = {};
             input.x = input;
 
-            const err = await expect(schema.validate(input)).to.reject();
+            const err = schema.validate(input).error;
             expect(err).to.be.an.error('"x.x" is not allowed');
             expect(err.details).to.equal([{
                 message: '"x.x" is not allowed',
@@ -785,7 +785,7 @@ describe('errors', () => {
             expect(err.annotate()).to.equal('{\n  "x" \u001b[31m[1]\u001b[0m: "[Circular ~]"\n}\n\u001b[31m\n[1] "x.x" is not allowed\u001b[0m');
         });
 
-        it('annotates deep circular input', async () => {
+        it('annotates deep circular input', () => {
 
             const schema = Joi.object({
                 x: Joi.object({
@@ -798,7 +798,7 @@ describe('errors', () => {
             const input = { x: { y: {} } };
             input.x.y.z = input.x.y;
 
-            const err = await expect(schema.validate(input)).to.reject();
+            const err = schema.validate(input).error;
             expect(err).to.be.an.error('"x.y.z" must be a number');
             expect(err.details).to.equal([{
                 message: '"x.y.z" must be a number',
@@ -809,7 +809,7 @@ describe('errors', () => {
             expect(err.annotate()).to.equal('{\n  "x": {\n    "y": {\n      "z" \u001b[31m[1]\u001b[0m: "[Circular ~.x.y]"\n    }\n  }\n}\n\u001b[31m\n[1] "x.y.z" must be a number\u001b[0m');
         });
 
-        it('annotates deep circular input with extra keys', async () => {
+        it('annotates deep circular input with extra keys', () => {
 
             const schema = Joi.object({
                 x: Joi.object({
@@ -822,7 +822,7 @@ describe('errors', () => {
             const input = { x: { y: { z: 1, foo: {} } } };
             input.x.y.foo = input.x.y;
 
-            const err = await expect(schema.validate(input)).to.reject();
+            const err = schema.validate(input).error;
             expect(err).to.be.an.error('"x.y.foo" is not allowed');
             expect(err.details).to.equal([{
                 message: '"x.y.foo" is not allowed',
@@ -833,7 +833,7 @@ describe('errors', () => {
             expect(err.annotate()).to.equal('{\n  "x": {\n    "y": {\n      "z": 1,\n      "foo" \u001b[31m[1]\u001b[0m: "[Circular ~.x.y]"\n    }\n  }\n}\n\u001b[31m\n[1] "x.y.foo" is not allowed\u001b[0m');
         });
 
-        it('prints NaN, Infinity and -Infinity correctly in errors', async () => {
+        it('prints NaN, Infinity and -Infinity correctly in errors', () => {
 
             const schema = Joi.object({
                 x: Joi.object({
@@ -866,7 +866,7 @@ describe('errors', () => {
                 }
             };
 
-            const err = await expect(schema.validate(input)).to.reject();
+            const err = schema.validate(input).error;
             expect(err).to.be.an.error('"x.y" must be a number of milliseconds or valid date string');
             expect(err.details).to.equal([{
                 message: '"x.y" must be a number of milliseconds or valid date string',
@@ -877,7 +877,7 @@ describe('errors', () => {
             expect(err.annotate().replace(/\\r/g, '')).to.equal('{\n  "x": {\n    "z": Infinity,\n    "u": -Infinity,\n    "g": Symbol(foo),\n    "h": -Infinity,\n    "i": Infinity,\n    "k": (a) => a,\n    "p": Symbol(bar),\n    "f": function (x) {\\n\\n                        return [{ y: 2 }];\\n                    },\n    "y" \u001b[31m[1]\u001b[0m: NaN\n  }\n}\n\u001b[31m\n[1] "x.y" must be a number of milliseconds or valid date string\u001b[0m');
         });
 
-        it('pinpoints an error in a stringified JSON object', async () => {
+        it('pinpoints an error in a stringified JSON object', () => {
 
             const object = {
                 a: '{"c":"string"}'
@@ -889,7 +889,7 @@ describe('errors', () => {
                 })
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"a.c" is not allowed');
             expect(err.details).to.equal([{
                 message: '"a.c" is not allowed',
@@ -900,7 +900,7 @@ describe('errors', () => {
             expect(err.annotate(true)).to.equal('{\n  "a" [1]: "{\\"c\\":\\"string\\"}"\n}\n\n[1] "a.c" is not allowed');
         });
 
-        it('pinpoints several errors in a stringified JSON object', async () => {
+        it('pinpoints several errors in a stringified JSON object', () => {
 
             const object = {
                 a: '{"b":-1.5}'
@@ -912,7 +912,7 @@ describe('errors', () => {
                 })
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"a.b" must be an integer. "a.b" must be a positive number');
             expect(err.details).to.equal([
                 {
@@ -932,7 +932,7 @@ describe('errors', () => {
             expect(err.annotate(true)).to.equal('{\n  "a" [1, 2]: "{\\"b\\":-1.5}"\n}\n\n[1] "a.b" must be an integer\n[2] "a.b" must be a positive number');
         });
 
-        it('pinpoints an error in a stringified JSON object (deep)', async () => {
+        it('pinpoints an error in a stringified JSON object (deep)', () => {
 
             const object = {
                 a: '{"b":{"c":{"d":1}}}'
@@ -948,7 +948,7 @@ describe('errors', () => {
                 })
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"a.b.c.d" must be a string');
             expect(err.details).to.equal([{
                 message: '"a.b.c.d" must be a string',
@@ -960,7 +960,7 @@ describe('errors', () => {
             expect(err.annotate(true)).to.equal('{\n  "a" [1]: "{\\"b\\":{\\"c\\":{\\"d\\":1}}}"\n}\n\n[1] "a.b.c.d" must be a string');
         });
 
-        it('handles child to uncle relationship inside a child', async () => {
+        it('handles child to uncle relationship inside a child', () => {
 
             const object = {
                 response: {
@@ -978,7 +978,7 @@ describe('errors', () => {
                     .assert('options.stripUnknown', Joi.ref('modify'), 'meet requirement of having peer modify set to true')
             });
 
-            const err = await expect(schema.validate(object, { abortEarly: false })).to.reject();
+            const err = schema.validate(object, { abortEarly: false }).error;
             expect(err).to.be.an.error('"response" is invalid because "options.stripUnknown" failed to meet requirement of having peer modify set to true');
             expect(err.details).to.equal([{
                 message: '"response" is invalid because "options.stripUnknown" failed to meet requirement of having peer modify set to true',
@@ -996,7 +996,7 @@ describe('errors', () => {
             expect(() => err.annotate(true)).to.not.throw();
         });
 
-        it('annotates joi schema error', async () => {
+        it('annotates joi schema error', () => {
 
             const schema = Joi.object({
                 _type: 'string'
@@ -1004,7 +1004,8 @@ describe('errors', () => {
                 .unknown();
 
             const value = Joi.number().min(1);
-            const err = await expect(schema.validate(value)).to.reject('"_type" must be one of [string]');
+            const err = schema.validate(value).error;
+            expect(err.message).equal('"_type" must be one of [string]');
             expect(err.annotate()).to.contain('"_type" must be one of [string]');
             expect(value).to.equal(Joi.number().min(1));
         });

@@ -22,9 +22,9 @@ describe('alternatives', () => {
         expect(() => alternatives()).to.throw('Must be invoked on a Joi instance.');
     });
 
-    it('fails when no alternatives are provided', async () => {
+    it('fails when no alternatives are provided', () => {
 
-        const err = await expect(Joi.alternatives().validate('a')).to.reject();
+        const err = Joi.alternatives().validate('a').error;
         expect(err.message).to.equal('"value" does not match any of the allowed types');
         expect(err.details).to.equal([
             {
@@ -39,12 +39,12 @@ describe('alternatives', () => {
         ]);
     });
 
-    it('allows undefined when no alternatives are provided', async () => {
+    it('allows undefined when no alternatives are provided', () => {
 
-        await Joi.alternatives().validate(undefined);
+        expect(Joi.alternatives().validate(undefined)).to.equal({ value: undefined });
     });
 
-    it('applies modifiers when higher priority converts', async () => {
+    it('applies modifiers when higher priority converts', () => {
 
         const schema = Joi.object({
             a: [
@@ -53,11 +53,10 @@ describe('alternatives', () => {
             ]
         });
 
-        const value = await schema.validate({ a: '5' });
-        expect(value.a).to.equal(5);
+        expect(schema.validate({ a: '5' })).to.equal({ value: { a: 5 } });
     });
 
-    it('applies modifiers when lower priority valid is a match', async () => {
+    it('applies modifiers when lower priority valid is a match', () => {
 
         const schema = Joi.object({
             a: [
@@ -66,11 +65,10 @@ describe('alternatives', () => {
             ]
         });
 
-        const value = await schema.validate({ a: '5' });
-        expect(value.a).to.equal(5);
+        expect(schema.validate({ a: '5' })).to.equal({ value: { a: 5 } });
     });
 
-    it('does not apply modifier if alternative fails', async () => {
+    it('does not apply modifier if alternative fails', () => {
 
         const schema = Joi.object({
             a: [
@@ -80,8 +78,7 @@ describe('alternatives', () => {
         });
 
         const input = { a: { b: 'any', d: 'string' } };
-        const value = await schema.validate(input);
-        expect(value.a.b).to.equal('any');
+        expect(schema.validate(input)).to.equal({ value: { a: { b: 'any', d: 'string' } } });
     });
 
     describe('describe()', () => {
@@ -326,7 +323,7 @@ describe('alternatives', () => {
 
     describe('error()', () => {
 
-        it('overrides single try error', async () => {
+        it('overrides single try error', () => {
 
             const override = new Error('failed!');
 
@@ -337,7 +334,8 @@ describe('alternatives', () => {
                 ])
             });
 
-            const err = await expect(schema.validate({ x: [] })).to.reject('"x" does not match any of the allowed types');
+            const err = schema.validate({ x: [] }).error;
+            expect(err).to.be.an.error('"x" does not match any of the allowed types');
             expect(err.details[0].context.details).to.equal([
                 {
                     message: '"x" must be a number',
@@ -355,7 +353,7 @@ describe('alternatives', () => {
             ]);
         });
 
-        it('overrides top level error', async () => {
+        it('overrides top level error', () => {
 
             const schema = Joi.object({
                 x: Joi.alternatives([
@@ -365,7 +363,7 @@ describe('alternatives', () => {
                     .error(new Error('failed!'))
             });
 
-            await expect(schema.validate({ x: [] })).to.reject('failed!');
+            expect(schema.validate({ x: [] }).error).to.be.an.error('failed!');
         });
     });
 

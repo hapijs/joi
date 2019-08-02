@@ -227,12 +227,8 @@ describe('extension', () => {
         expect(original.bar).to.not.exist();
 
         const schema = customJoi.myType();
-        const valid = schema.foo().validate({});
-        const invalid = schema.bar().validate({});
-
-        expect(valid.error).to.be.null();
-        expect(invalid.error).to.be.an.instanceof(Error);
-        expect(invalid.error.toString()).to.equal('ValidationError: "value" oh no bar !');
+        expect(schema.foo().validate({})).to.equal({ value: null });
+        expect(schema.bar().validate({}).error).to.be.an.error('"value" oh no bar !');
     });
 
     it('concat custom type', () => {
@@ -306,7 +302,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        expect(schema.foo('bar').validate(null).value).to.equal({ first: 'bar', second: undefined });
+        expect(schema.foo('bar').validate(null)).to.equal({ value: { first: 'bar', second: undefined } });
         expect(schema.foo('bar', Joi.ref('a.b')).validate(null).value.first).to.equal('bar');
         expect(Joi.isRef(schema.foo('bar', Joi.ref('a.b')).validate(null).value.second)).to.be.true();
     });
@@ -331,8 +327,8 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        expect(schema.foo().validate('bar').value).to.equal('bar');
-        expect(schema.validate('baz').value).to.equal('baz');
+        expect(schema.foo().validate('bar')).to.equal({ value: 'bar' });
+        expect(schema.validate('baz')).to.equal({ value: 'baz' });
     });
 
     it('defines a custom type with a rule with setup which return other value will throw error', () => {
@@ -399,7 +395,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        expect(schema.addTwice(3).validate(0).value).to.equal(6);
+        expect(schema.addTwice(3).validate(0)).to.equal({ value: 6 });
     });
 
     it('defines a custom type with a rule with both setup and validate', () => {
@@ -427,7 +423,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        expect(schema.add(3).validate(3).value).to.equal(6);
+        expect(schema.add(3).validate(3)).to.equal({ value: 6 });
     });
 
     it('defines a rule that validates its parameters', () => {
@@ -454,8 +450,8 @@ describe('extension', () => {
         const original = Joi.number();
         expect(original.double).to.not.exist();
 
-        expect(customJoi.number().multiply(2).validate(3)).to.contain({ error: null, value: 6 });
-        expect(customJoi.number().multiply(5, '$').validate(7)).to.contain({ error: null, value: '$35' });
+        expect(customJoi.number().multiply(2).validate(3)).to.contain({ value: 6 });
+        expect(customJoi.number().multiply(5, '$').validate(7)).to.contain({ value: '$35' });
         expect(() => customJoi.number().multiply(5, 5)).to.throw(/"currency" must be a string/);
         expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Incorrect number of arguments');
     });
@@ -484,8 +480,8 @@ describe('extension', () => {
         const original = Joi.number();
         expect(original.double).to.not.exist();
 
-        expect(customJoi.number().multiply(2).validate(3)).to.contain({ error: null, value: 6 });
-        expect(customJoi.number().multiply(5, '$').validate(7)).to.contain({ error: null, value: '$35' });
+        expect(customJoi.number().multiply(2).validate(3)).to.contain({ value: 6 });
+        expect(customJoi.number().multiply(5, '$').validate(7)).to.contain({ value: '$35' });
         expect(() => customJoi.number().multiply(5, '$', 'oops')).to.throw('Incorrect number of arguments');
     });
 
@@ -546,7 +542,7 @@ describe('extension', () => {
         const original = Joi.number();
         expect(original.double).to.not.exist();
 
-        expect(customJoi.number().multiply(5).validate(7)).to.contain({ error: null, value: '$35' });
+        expect(customJoi.number().multiply(5).validate(7)).to.contain({ value: '$35' });
         expect(() => customJoi.number().multiply(5, 5)).to.throw(/"currency" must be a string/);
     });
 
@@ -570,7 +566,7 @@ describe('extension', () => {
         expect(original.double).to.not.exist();
 
         const schema = customJoi.number().double();
-        expect(schema.validate(3)).to.contain({ error: null, value: 6 });
+        expect(schema.validate(3)).to.contain({ value: 6 });
     });
 
     it('overrides base messages', () => {
@@ -649,9 +645,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        const result = schema.validate(true);
-        expect(result.error).to.be.null();
-        expect(result.value).to.equal('foobar');
+        expect(schema.validate(true)).to.equal({ value: 'foobar' });
     });
 
     it('defines a custom type coercing its input value that runs early enough', () => {
@@ -666,9 +660,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        const result = schema.validate('');
-        expect(result.error).to.be.null();
-        expect(result.value).to.equal('foobar');
+        expect(schema.validate('')).to.equal({ value: 'foobar' });
     });
 
     it('defines multiple levels of coercion', () => {
@@ -693,9 +685,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi2.myType();
-        const result = schema.validate('');
-        expect(result.error).to.be.null();
-        expect(result.value).to.equal('baz');
+        expect(schema.validate('')).to.equal({ value: 'baz' });
     });
 
     it('defines multiple levels of coercion where base fails', () => {
@@ -737,7 +727,7 @@ describe('extension', () => {
 
         const schema = customJoi.myType();
         const result = schema.validate('foo');
-        expect(result.error).to.be.null();
+        expect(result.error).to.not.exist();
         expect(typeof result.value).to.equal('symbol');
         expect(result.value.toString()).to.equal('Symbol(foo)');
     });
@@ -758,9 +748,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        const result = schema.validate('foo');
-        expect(result.error).to.be.null();
-        expect(result.value).to.equal('true');
+        expect(schema.validate('foo')).to.equal({ value: 'true' });
     });
 
     it('defines a custom type coercing when base skips coercing', () => {
@@ -775,9 +763,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        const result = schema.validate(true);
-        expect(result.error).to.be.null();
-        expect(result.value).to.be.false();
+        expect(schema.validate(true)).to.equal({ value: false });
     });
 
     it('defines a custom type with a failing coerce', () => {
@@ -823,9 +809,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        const result = schema.validate('foo');
-        expect(result.error).to.not.exist();
-        expect(result.value).to.equal('foo');
+        expect(schema.validate('foo')).to.equal({ value: 'foo' });
     });
 
     it('defines a custom type with a non-modifying pre', () => {
@@ -839,9 +823,7 @@ describe('extension', () => {
         });
 
         const schema = customJoi.myType();
-        const result = schema.validate('foo');
-        expect(result.error).to.not.exist();
-        expect(result.value).to.equal('foo');
+        expect(schema.validate('foo')).to.equal({ value: 'foo' });
     });
 
     it('never reaches a pre if the base is failing', () => {

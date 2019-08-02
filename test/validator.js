@@ -15,6 +15,21 @@ const { expect } = Code;
 
 describe('Validator', () => {
 
+    describe('entryAsync()', () => {
+
+        it('validates schema', async () => {
+
+            const schema = Joi.number();
+            expect(await schema.validateAsync(5)).to.equal(5);
+        });
+
+        it('validates schema with warnings (empty)', async () => {
+
+            const schema = Joi.number();
+            expect(await schema.validateAsync(5, { warnings: true })).to.equal({ value: 5 });
+        });
+    });
+
     describe('externals()', () => {
 
         it('executes externals on object child', async () => {
@@ -44,8 +59,8 @@ describe('Validator', () => {
                 id: Joi.string().external(check).external(append)
             });
 
-            expect(await schema.validate({ id: 'valid' }, { externals: true })).to.equal({ id: 'verified!' });
-            expect(await schema.validate({ id: 'skip' }, { externals: true })).to.equal({ id: 'skip!' });
+            expect(await schema.validateAsync({ id: 'valid' })).to.equal({ id: 'verified!' });
+            expect(await schema.validateAsync({ id: 'skip' })).to.equal({ id: 'skip!' });
         });
 
         it('executes externals on nested object child', async () => {
@@ -81,10 +96,10 @@ describe('Validator', () => {
                 }
             });
 
-            expect(await schema.validate({ user: { id: 'valid' } }, { externals: true })).to.equal({ user: { id: 'verified!' } });
-            expect(await schema.validate({ user: { id: 'skip' } }, { externals: true })).to.equal({ user: { id: 'skip!' } });
-            expect(await schema.validate({ user: { id: 'unchanged' } }, { externals: true })).to.equal({ user: { id: 'unchanged!' } });
-            await expect(schema.validate({ user: { id: 'other' } }, { externals: true })).to.reject('Invalid id (user.id)');
+            expect(await schema.validateAsync({ user: { id: 'valid' } })).to.equal({ user: { id: 'verified!' } });
+            expect(await schema.validateAsync({ user: { id: 'skip' } })).to.equal({ user: { id: 'skip!' } });
+            expect(await schema.validateAsync({ user: { id: 'unchanged' } })).to.equal({ user: { id: 'unchanged!' } });
+            await expect(schema.validateAsync({ user: { id: 'other' } })).to.reject('Invalid id (user.id)');
         });
 
         it('executes externals on root', async () => {
@@ -107,7 +122,7 @@ describe('Validator', () => {
 
             const schema = Joi.string().external(check).external(append);
 
-            const result = await schema.validate('valid', { externals: true });
+            const result = await schema.validateAsync('valid');
             expect(result).to.equal('verified!');
         });
 
@@ -136,8 +151,8 @@ describe('Validator', () => {
 
             const schema = Joi.array().items(Joi.string().external(check).external(append));
 
-            expect(await schema.validate(['valid'], { externals: true })).to.equal(['verified!']);
-            expect(await schema.validate(['skip'], { externals: true })).to.equal(['skip!']);
+            expect(await schema.validateAsync(['valid'])).to.equal(['verified!']);
+            expect(await schema.validateAsync(['skip'])).to.equal(['skip!']);
         });
 
         it('skips externals when prefs is false', async () => {
@@ -151,9 +166,9 @@ describe('Validator', () => {
                 id: Joi.string().external(check)
             });
 
-            await expect(schema.validate({ id: 'valid' }, { externals: true })).to.reject('Invalid id (id)');
-            await expect(schema.validate({ id: 'valid' }, { externals: false })).to.not.reject();
-            expect(() => schema.validate({ id: 'valid' })).to.throw('Cannot validate a schema with external rules without the externals flag');
+            await expect(schema.validateAsync({ id: 'valid' })).to.reject('Invalid id (id)');
+            expect(() => schema.validate({ id: 'valid' }, { externals: false })).to.not.throw();
+            expect(() => schema.validate({ id: 'valid' })).to.throw('Schema with external rules must use validateAsync()');
         });
 
         it('supports describe', () => {
@@ -179,7 +194,7 @@ describe('Validator', () => {
 
             const schema = Joi.array().has(Joi.string().external(check));
 
-            const result = await schema.validate(['valid'], { externals: true });
+            const result = await schema.validateAsync(['valid']);
             expect(result).to.equal(['valid']);
             expect(called).to.be.false();
         });
@@ -194,7 +209,7 @@ describe('Validator', () => {
             const schema = Joi.object().external(tag);
             const input = { x: false };
 
-            const result = await schema.validate(input, { externals: true });
+            const result = await schema.validateAsync(input);
             expect(result).to.equal({ x: true });
             expect(input).to.equal({ x: false });
         });
@@ -209,7 +224,7 @@ describe('Validator', () => {
             const schema = Joi.object({ a: Joi.object().external(tag) });
             const input = { a: { x: false } };
 
-            const result = await schema.validate(input, { externals: true });
+            const result = await schema.validateAsync(input);
             expect(result).to.equal({ a: { x: true } });
             expect(input).to.equal({ a: { x: false } });
         });
@@ -224,7 +239,7 @@ describe('Validator', () => {
             const schema = Joi.array().external(tag);
             const input = [1];
 
-            const result = await schema.validate(input, { externals: true });
+            const result = await schema.validateAsync(input);
             expect(result).to.equal([1, 'x']);
             expect(input).to.equal([1]);
         });
@@ -239,7 +254,7 @@ describe('Validator', () => {
             const schema = Joi.array().items(Joi.array().external(tag));
             const input = [[1]];
 
-            const result = await schema.validate(input, { externals: true });
+            const result = await schema.validateAsync(input);
             expect(result).to.equal([[1, 'x']]);
             expect(input).to.equal([[1]]);
         });
@@ -254,7 +269,7 @@ describe('Validator', () => {
                 b: Joi.ref('a')
             });
 
-            expect(await schema.validate({ a: '5', b: 5 })).to.equal({ a: '5', b: 5 });
+            expect(await schema.validateAsync({ a: '5', b: 5 })).to.equal({ a: '5', b: 5 });
         });
     });
 
@@ -286,7 +301,7 @@ describe('Validator', () => {
         it('reports warnings (async)', async () => {
 
             const schema = Joi.any().warning('custom.x', { w: 'world' }).message({ 'custom.x': 'hello {#w}!' });
-            const { value, warning } = await schema.validate('something', { warnings: true });
+            const { value, warning } = await schema.validateAsync('something', { warnings: true });
             expect(value).to.equal('something');
             expect(warning).to.equal({
                 message: 'hello world!',
@@ -312,9 +327,8 @@ describe('Validator', () => {
                 .warning('custom.x').message('test')
                 .external(append);
 
-            expect(await schema.validate('x', { externals: true, warnings: true })).to.equal({
+            expect(await schema.validateAsync('x', { externals: true, warnings: true })).to.equal({
                 value: 'x!',
-                error: null,
                 warning: {
                     message: 'test',
                     details: [
@@ -360,7 +374,7 @@ describe('Validator', () => {
 
             const value = { a: { b: { c: { d: { e: '100' }, g: 'TRUE' } } }, f: 100, h: true };
 
-            expect(await schema.validate(value)).to.equal(value);
+            expect(await schema.validateAsync(value)).to.equal(value);
         });
     });
 });

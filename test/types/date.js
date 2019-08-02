@@ -108,16 +108,16 @@ describe('date', () => {
         ]);
     });
 
-    it('matches specific date', async () => {
+    it('matches specific date', () => {
 
         const now = Date.now();
-        await Joi.date().valid(new Date(now)).validate(new Date(now));
-        await Joi.date().valid(new Date(now)).validate(new Date(now).toISOString());
+        expect(Joi.date().valid(new Date(now)).validate(new Date(now)).error).to.not.exist();
+        expect(Joi.date().valid(new Date(now)).validate(new Date(now).toISOString()).error).to.not.exist();
     });
 
-    it('errors on invalid input and convert disabled', async () => {
+    it('errors on invalid input and convert disabled', () => {
 
-        const err = await expect(Joi.date().prefs({ convert: false }).validate('1-1-2013 UTC')).to.reject();
+        const err = Joi.date().prefs({ convert: false }).validate('1-1-2013 UTC').error;
         expect(err).to.be.an.error('"value" must be a valid date');
         expect(err.details).to.equal([{
             message: '"value" must be a valid date',
@@ -127,18 +127,17 @@ describe('date', () => {
         }]);
     });
 
-    it('validates date', async () => {
+    it('validates date', () => {
 
-        await Joi.date().validate(new Date());
+        expect(Joi.date().validate(new Date()).error).to.not.exist();
     });
 
-    it('validates millisecond date as a string', async () => {
+    it('validates millisecond date as a string', () => {
 
         const now = new Date();
         const mili = now.getTime();
 
-        const value = await Joi.date().validate(mili.toString());
-        expect(value).to.equal(now);
+        expect(Joi.date().validate(mili.toString())).to.equal({ value: now });
     });
 
     it('validates only valid dates', () => {
@@ -258,19 +257,18 @@ describe('date', () => {
             ]);
         });
 
-        it('accepts "now" as the greater date', async () => {
+        it('accepts "now" as the greater date', () => {
 
             const future = new Date(Date.now() + 1000000);
-            const value = await Joi.date().greater('now').validate(future);
-            expect(value).to.equal(future);
+            expect(Joi.date().greater('now').validate(future)).to.equal({ value: future });
         });
 
-        it('errors if .greater("now") is used with a past date', async () => {
+        it('errors if .greater("now") is used with a past date', () => {
 
             const now = Date.now();
             const past = new Date(now - 1000000);
 
-            const err = await expect(Joi.date().greater('now').validate(past)).to.reject();
+            const err = Joi.date().greater('now').validate(past).error;
             const message = '"value" must be greater than "now"';
             expect(err).to.be.an.error(message);
             expect(err.details).to.equal([{
@@ -544,17 +542,16 @@ describe('date', () => {
             ]);
         });
 
-        it('converts expanded isoDates', async () => {
+        it('converts expanded isoDates', () => {
 
             const schema = { item: Joi.date().iso() };
-            const value = await Joi.compile(schema).validate({ item: '-002013-06-07T14:21:46.295Z' });
-            expect(value.item.toISOString()).to.be.equal('-002013-06-07T14:21:46.295Z');
+            expect(Joi.compile(schema).validate({ item: '-002013-06-07T14:21:46.295Z' })).to.equal({ value: { item: new Date('-002013-06-07T14:21:46.295Z') } });
         });
 
-        it('validates isoDate with a friendly error message', async () => {
+        it('validates isoDate with a friendly error message', () => {
 
             const schema = { item: Joi.date().iso() };
-            const err = await expect(Joi.compile(schema).validate({ item: 'something' })).to.reject();
+            const err = Joi.compile(schema).validate({ item: 'something' }).error;
             expect(err.message).to.equal('"item" must be a valid ISO 8601 date');
             expect(err.details).to.equal([{
                 message: '"item" must be a valid ISO 8601 date',
@@ -564,10 +561,10 @@ describe('date', () => {
             }]);
         });
 
-        it('validates isoDate after clone', async () => {
+        it('validates isoDate after clone', () => {
 
             const schema = { item: Joi.date().iso().clone() };
-            await Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' });
+            expect(Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' }).error).to.not.exist();
         });
     });
 
@@ -636,20 +633,18 @@ describe('date', () => {
             ]);
         });
 
-        it('accepts "now" as the less date', async () => {
+        it('accepts "now" as the less date', () => {
 
             const past = new Date(Date.now() - 1000000);
-
-            const value = await Joi.date().less('now').validate(past);
-            expect(value).to.equal(past);
+            expect(Joi.date().less('now').validate(past)).to.equal({ value: past });
         });
 
-        it('errors if .less("now") is used with a future date', async () => {
+        it('errors if .less("now") is used with a future date', () => {
 
             const now = Date.now();
             const future = new Date(now + 1000000);
 
-            const err = await expect(Joi.date().less('now').validate(future)).to.reject();
+            const err = Joi.date().less('now').validate(future).error;
             const message = '"value" must be less than "now"';
             expect(err).to.be.an.error(message);
             expect(err.details).to.equal([{
@@ -818,20 +813,18 @@ describe('date', () => {
             ]);
         });
 
-        it('accepts "now" as the max date', async () => {
+        it('accepts "now" as the max date', () => {
 
             const past = new Date(Date.now() - 1000000);
-
-            const value = await Joi.date().max('now').validate(past);
-            expect(value).to.equal(past);
+            expect(Joi.date().max('now').validate(past)).to.equal({ value: past });
         });
 
-        it('errors if .max("now") is used with a future date', async () => {
+        it('errors if .max("now") is used with a future date', () => {
 
             const now = Date.now();
             const future = new Date(now + 1000000);
 
-            const err = await expect(Joi.date().max('now').validate(future)).to.reject();
+            const err = Joi.date().max('now').validate(future).error;
             const message = '"value" must be less than or equal to "now"';
             expect(err).to.be.an.error(message);
             expect(err.details).to.equal([{
@@ -1016,19 +1009,18 @@ describe('date', () => {
             ]);
         });
 
-        it('accepts "now" as the min date', async () => {
+        it('accepts "now" as the min date', () => {
 
             const future = new Date(Date.now() + 1000000);
-            const value = await Joi.date().min('now').validate(future);
-            expect(value).to.equal(future);
+            expect(Joi.date().min('now').validate(future)).to.equal({ value: future });
         });
 
-        it('errors if .min("now") is used with a past date', async () => {
+        it('errors if .min("now") is used with a past date', () => {
 
             const now = Date.now();
             const past = new Date(now - 1000000);
 
-            const err = await expect(Joi.date().min('now').validate(past)).to.reject();
+            const err = Joi.date().min('now').validate(past).error;
             const message = '"value" must be larger than or equal to "now"';
             expect(err).to.be.an.error(message);
             expect(err.details).to.equal([{
@@ -1209,34 +1201,24 @@ describe('date', () => {
             ]);
         });
 
-        it('validates javascript timestamp', async () => {
+        it('validates javascript timestamp', () => {
 
             const now = new Date();
             const milliseconds = now.getTime();
 
-            const value = await Joi.date().timestamp().validate(milliseconds);
-            expect(value).to.equal(now);
-
-            const value2 = await Joi.date().timestamp('javascript').validate(milliseconds);
-            expect(value2).to.equal(now);
-
-            const value3 = await Joi.date().timestamp('unix').timestamp('javascript').validate(milliseconds);
-            expect(value3).to.equal(now);
+            expect(Joi.date().timestamp().validate(milliseconds)).to.equal({ value: now });
+            expect(Joi.date().timestamp('javascript').validate(milliseconds)).to.equal({ value: now });
+            expect(Joi.date().timestamp('unix').timestamp('javascript').validate(milliseconds)).to.equal({ value: now });
         });
 
-        it('validates unix timestamp', async () => {
+        it('validates unix timestamp', () => {
 
             const now = new Date();
             const seconds = now.getTime() / 1000;
 
-            const value = await Joi.date().timestamp('unix').validate(seconds);
-            expect(value).to.equal(now);
-
-            const value2 = await Joi.date().timestamp().timestamp('unix').validate(seconds);
-            expect(value2).to.equal(now);
-
-            const value3 = await Joi.date().timestamp('javascript').timestamp('unix').validate(seconds);
-            expect(value3).to.equal(now);
+            expect(Joi.date().timestamp('unix').validate(seconds)).to.equal({ value: now });
+            expect(Joi.date().timestamp().timestamp('unix').validate(seconds)).to.equal({ value: now });
+            expect(Joi.date().timestamp('javascript').timestamp('unix').validate(seconds)).to.equal({ value: now });
         });
 
         it('validates timestamps with decimals', () => {

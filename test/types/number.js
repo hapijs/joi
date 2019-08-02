@@ -68,11 +68,10 @@ describe('number', () => {
 
     describe('error message', () => {
 
-        it('should display correctly for int type', async () => {
+        it('should display correctly for int type', () => {
 
             const t = Joi.number().integer();
-            const err = await expect(Joi.compile(t).validate('1.1')).to.reject();
-            expect(err.message).to.contain('integer');
+            expect(Joi.compile(t).validate('1.1').error).to.be.an.error(/integer/);
         });
     });
 
@@ -557,13 +556,12 @@ describe('number', () => {
             }).to.throw('limit must be a number or reference');
         });
 
-        it('supports 64bit numbers', async () => {
+        it('supports 64bit numbers', () => {
 
             const schema = Joi.number().min(1394035612500);
             const input = 1394035612552;
 
-            const value = await schema.validate(input);
-            expect(value).to.equal(input);
+            expect(schema.validate(input)).to.equal({ value: input });
         });
 
         it('accepts references as min value', () => {
@@ -1099,22 +1097,23 @@ describe('number', () => {
             ]);
         });
 
-        it('compares valid matching post-coerce value', async () => {
+        it('compares valid matching post-coerce value', () => {
 
             const schema = Joi.number().valid(1, 2, 3);
-            expect(await schema.validate('1')).to.equal(1);
+            expect(schema.validate('1')).to.equal({ value: 1 });
         });
 
-        it('ignores invalid matching of pre-coerce value', async () => {
+        it('ignores invalid matching of pre-coerce value', () => {
 
             const schema = Joi.number().invalid('1');
-            expect(await schema.validate('1')).to.equal(1);
+            expect(schema.validate('1')).to.equal({ value: 1 });
         });
 
-        it('should return false for denied value', async () => {
+        it('should return false for denied value', () => {
 
             const text = Joi.number().invalid(50);
-            const err = await expect(text.validate(50)).to.reject('"value" contains an invalid value');
+            const err = text.validate(50).error;
+            expect(err).to.be.an.error('"value" contains an invalid value');
             expect(err.details).to.equal([{
                 message: '"value" contains an invalid value',
                 path: [],
@@ -1285,24 +1284,23 @@ describe('number', () => {
             ]);
         });
 
-        it('converts an object string to a number', async () => {
+        it('converts an object string to a number', () => {
 
             const config = { a: Joi.number() };
             const obj = { a: '123' };
 
-            const value = await Joi.compile(config).validate(obj);
-            expect(value.a).to.equal(123);
+            expect(Joi.compile(config).validate(obj)).to.equal({ value: { a: 123 } });
         });
 
-        it('converts a string to a number', async () => {
+        it('converts a string to a number', () => {
 
-            const value = await Joi.number().validate('1');
-            expect(value).to.equal(1);
+            expect(Joi.number().validate('1')).to.equal({ value: 1 });
         });
 
-        it('errors on null', async () => {
+        it('errors on null', () => {
 
-            const err = await expect(Joi.number().validate(null)).to.reject('"value" must be a number');
+            const err = Joi.number().validate(null).error;
+            expect(err).to.be.an.error('"value" must be a number');
             expect(err.details).to.equal([{
                 message: '"value" must be a number',
                 path: [],

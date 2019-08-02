@@ -60,6 +60,7 @@
     - [`any.unit(name)`](#anyunitname)
     - [`any.valid(...values)` - aliases: `equal`](#anyvalidvalues---aliases-equal)
     - [`any.validate(value, [options])`](#anyvalidatevalue-options)
+    - [`await any.validateAsync(value, [options])`](#await-anyvalidateasyncvalue-options)
     - [`any.warn()`](#anywarn)
     - [`any.warning(code, [context])`](#anywarningcode-context)
     - [`any.when(condition, options)`](#anywhencondition-options)
@@ -459,7 +460,7 @@ const schema = Joi.object({
     c: Joi.ref('$x')
 });
 
-await schema.validate({ a: 5, b: { c: 5 } }, { context: { x: 5 } });
+await schema.validateAsync({ a: 5, b: { c: 5 } }, { context: { x: 5 } });
 ```
 
 #### Relative references
@@ -571,7 +572,7 @@ Generates a schema object that matches any data type.
 
 ```js
 const any = Joi.any();
-await any.validate('a');
+await any.validateAsync('a');
 ```
 
 #### `any.type`
@@ -828,12 +829,6 @@ the external rules are not available to any other validation rules during the no
 validation phase.
 
 If schema validation failed, no external validation rules are called.
-
-When a schema contains external rules, the `externals` preference option must be set to either
-`true` (execute the external rules) or `false` (skip external rules). When `externals` is set to
-`true`, the [`any.validate()`](#anyvalidatevalue-options) method returns a plain Promise that must
-be resolved before the validated value can be received. This means using external rules turns the
-entire validation process to an async call.
 
 #### `any.extract(path)`
 
@@ -1162,12 +1157,9 @@ Validates a value using the current schema and options where:
       around the value structure relative to where the error happens. Instead, either use the global
       context, or the absolute value using local context notation (e.g. `Joi.ref('#variable')`);
     - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
-  - `externals` - if `true`, the external rules set with [`any.external()`](#anyexternalmethod) are
-    execute from the most nested part of the schema out in serial. If `false`, any external rules are
-    ignored. Note that the `externals` settings must be set to either `false` or `true` explicitly
-    when external rules are present in the schema. When `externals` is set to `true`, the
-    [`any.validate()`](#anyvalidatevalue-options) method returns a plain Promise that must be
-    resolved before the validated value can be received.
+  - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod) are
+    ignored, which is required to ignore any external validations in synchronous mode (or an exception
+    is thrown). Defaults to `true`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use
     the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML
     escaped if the option `errors.escapeHtml` is set to `true`.
@@ -1183,7 +1175,10 @@ Validates a value using the current schema and options where:
       - `objects` - set to `true` to remove unknown keys from objects.
     - when `true`, it is equivalent to having `{ arrays: false, objects: true }`.
 
-Returns a Promise-like object that can be used as a promise, or as a simple object like in the below examples.
+Returns an object with the following keys:
+- `value` - the validated and normalized value.
+- `error` - the validation errors if found.
+- `warning` - the generated warnings if any.
 
 ```js
 const schema = Joi.object({
@@ -1195,16 +1190,35 @@ const value = {
 };
 
 const result = schema.validate(value);
-// result.error -> null
-// result.value -> { "a" : 123 }
+// result -> { value: { "a" : 123 } }
+```
 
-// or
+#### `await any.validateAsync(value, [options])`
+
+Validates a value asynchronously using the current schema and options where:
+- `value` - the value being validated.
+- `options` - an optional object as described in [`any.validate()`](#anyvalidatevalue-options),
+  with the following additional settings:
+    - `warnings` - when `true`, warnings are returned alongside the value (i.e. `{ value, warning }`).
+      Defaults to `false`.
+
+
+Returns a Promise.
+
+```js
+const schema = Joi.object({
+    a: Joi.number()
+});
+
+const value = {
+    a: '123'
+};
+
 try {
-  const value = await schema.validate(value);
+  const value = await schema.validateAsync(value);
   // value -> { "a" : 123 }
 }
 catch (err) {
-
 }
 ```
 
@@ -1223,8 +1237,10 @@ Generates a warning where:
   [`any.prefs()`](#anyprefsoptions--aliases-preferences-options), or validation `messages` option.
 - `context` - optional context object.
 
-Warnings are reported separately from errors via the `warning` key when [`any.validate()`](#anyvalidatevalue-options)
-is called synchroniously, or called asynchroniously with the `warnings` option set to `true`.
+When calling [`any.validateAsync()`](#anyvalidateasyncvalue-options), set the `warning` option to `true`
+to enable warnings. Warnings are reported separately from errors alongside the result value via the
+`warning` key (i.e. `{ value, warning }`). Warning are always included when calling
+[`any.validate()`](#anyvalidatevalue-options).
 
 ```js
 const schema = Joi.any()
@@ -1240,7 +1256,7 @@ const { value, error, warning } = schema.validate('anything');
 // or
 
 try {
-    const { value, warning } = await schema.validate('anything', { warnings: true });
+    const { value, warning } = await schema.validateAsync('anything', { warnings: true });
     // value -> 'anything';
     // warning -> { message: 'hello world!', details: [...] }
 }
@@ -1422,7 +1438,7 @@ Adds an alternative schema type for attempting to match against the validated va
 
 ```js
 const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
-await alt.validate('a');
+await alt.validateAsync('a');
 ```
 
 #### `alternatives.when(condition, options)`
@@ -1508,7 +1524,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const array = Joi.array().items(Joi.string().valid('a', 'b'));
-await array.validate(['a', 'b', 'a']);
+await array.validateAsync(['a', 'b', 'a']);
 ```
 
 Possible validation errors: [`array.base`](#arraybase)
@@ -1770,8 +1786,8 @@ Supports the same methods of the [`any()`](#any) type.
 ```js
 const boolean = Joi.boolean();
 
-await boolean.validate(true); // Valid
-await boolean.validate(1);    // Throws
+await boolean.validateAsync(true); // Valid
+await boolean.validateAsync(1);    // Throws
 ```
 
 Possible validation errors: [`boolean.base`](#booleanbase)
@@ -1785,7 +1801,7 @@ String comparisons are by default case insensitive, see [`boolean.insensitive()`
 
 ```js
 const boolean = Joi.boolean().falsy('N');
-await boolean.validate('N'); // Valid
+await boolean.validateAsync('N'); // Valid
 ```
 
 #### `boolean.insensitive([enabled])`
@@ -1808,7 +1824,7 @@ String comparisons are by default case insensitive, see [`boolean.insensitive()`
 
 ```js
 const boolean = Joi.boolean().truthy('Y');
-await boolean.validate('Y'); // Valid
+await boolean.validateAsync('Y'); // Valid
 ```
 
 ### `date` - inherits from `Any`
@@ -1820,7 +1836,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const date = Joi.date();
-await date.validate('12-21-2012');
+await date.validateAsync('12-21-2012');
 ```
 
 Possible validation errors: [`date.base`](#datebase), [`date.strict`](#datestrict)
@@ -1952,7 +1968,7 @@ set to `0`).
 
 ```js
 const func = Joi.func();
-await func.validate(function () {});
+await func.validateAsync(function () {});
 ```
 
 Possible validation errors: [`function.base`](#functionbase)
@@ -2046,7 +2062,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const number = Joi.number();
-await number.validate(5);
+await number.validateAsync(5);
 ```
 
 Possible validation errors: [`number.base`](#numberbase), [`number.infinity`](#numberinfinity)
@@ -2226,7 +2242,7 @@ const object = Joi.object({
     b: 'some string'
 });
 
-await object.validate({ a: 5 });
+await object.validateAsync({ a: 5 });
 ```
 
 Note that when an object schema type is passed as an input to another joi method (e.g. array
@@ -2468,7 +2484,7 @@ const object = Joi.object({
     a: Joi.number()
 }).rename('b', 'a');
 
-await object.validate({ b: 5 });
+await object.validateAsync({ b: 5 });
 ```
 
 Using a regular expression:
@@ -2480,7 +2496,7 @@ const schema = Joi.object({
   fooBar: Joi.string()
 }).rename(regex, 'fooBar');
 
-await schema.validate({ FooBar: 'a'});
+await schema.validateAsync({ FooBar: 'a'});
 ```
 
 Using a regular expression with template:
@@ -2497,7 +2513,7 @@ const input = {
     x4x: 'test'
 };
 
-const value = await Joi.compile(schema).validate(input);
+const value = await Joi.compile(schema).validateAsync(input);
 // value === { x123x: 'x', x1x: 'y', x0x: 'z', x4x: 'test' }
 ```
 
@@ -2595,7 +2611,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const schema = Joi.string().min(1).max(10);
-await schema.validate('12345');
+await schema.validateAsync('12345');
 ```
 
 Possible validation errors: [`string.base`](#stringbase), [`string.empty`](#stringempty)
@@ -2954,7 +2970,7 @@ _replacement_ string where:
 
 ```js
 const schema = Joi.string().replace(/b/gi, 'x');
-await schema.validate('abBc');  // return value will be 'axxc'
+await schema.validateAsync('abBc');  // return value will be 'axxc'
 ```
 
 When `pattern` is a _string_ all its occurrences will be replaced.
@@ -3039,7 +3055,7 @@ Supports the same methods of the [`any()`](#any) type.
 
 ```js
 const schema = Joi.symbol().map({ 'foo': Symbol('foo'), 'bar': Symbol('bar') });
-await schema.validate('foo');
+await schema.validateAsync('foo');
 ```
 
 Possible validation errors: [`symbol.base`](#symbolbase)
