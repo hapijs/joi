@@ -7,6 +7,7 @@
 - [Joi](#joi)
   - [`assert(value, schema, [message], [options])` - aliases: `attempt`](#assertvalue-schema-message-options---aliases-attempt)
   - [`cache.provision([options])`](#cacheprovisionoptions)
+  - [`checkPreferences(prefs)`](#checkpreferencesprefs)
   - [`compile(schema, [options])`](#compileschema-options)
   - [`expression(template, [options])` - aliases: `x`](#expressiontemplate-options---aliases-x)
     - [Template syntax](#template-syntax)
@@ -60,7 +61,7 @@
     - [`any.unit(name)`](#anyunitname)
     - [`any.valid(...values)` - aliases: `equal`](#anyvalidvalues---aliases-equal)
     - [`any.validate(value, [options])`](#anyvalidatevalue-options)
-    - [`await any.validateAsync(value, [options])`](#await-anyvalidateasyncvalue-options)
+    - [`any.validateAsync(value, [options])`](#anyvalidateasyncvalue-options)
     - [`any.warn()`](#anywarn)
     - [`any.warning(code, [context])`](#anywarningcode-context)
     - [`any.when(condition, options)`](#anywhencondition-options)
@@ -313,6 +314,18 @@ booleans) where:
 - `options` - optional settings:
     - `max` - number of items to store in the cache before the least used items are dropped.
       Defaults to `1000`.
+
+### `checkPreferences(prefs)`
+
+Checks if the provided preferences are valid where:
+- `prefs` - the preferences object to validate.
+
+Throws an exception if the `prefs` object is invalid.
+
+The method is provided to perform inputs validation for the [`any.validate(])`](#anyvalidatevalue-options)
+and [`any.validateAsync()`](#anyvalidateasyncvalue-options) methods. Validation is not performed
+automatically for performance reasons. Instead, manually validate the preferences passed once and
+reuse.
 
 ### `compile(schema, [options])`
 
@@ -1193,7 +1206,7 @@ const result = schema.validate(value);
 // result -> { value: { "a" : 123 } }
 ```
 
-#### `await any.validateAsync(value, [options])`
+#### `any.validateAsync(value, [options])`
 
 Validates a value asynchronously using the current schema and options where:
 - `value` - the value being validated.

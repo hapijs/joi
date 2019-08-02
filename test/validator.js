@@ -17,6 +17,136 @@ describe('Validator', () => {
 
     describe('entryAsync()', () => {
 
+        it('should work with a successful promise', async () => {
+
+            expect(await Joi.string().validateAsync('foo')).to.equal('foo');
+        });
+
+        it('should work with a successful promise and a catch in between', () => {
+
+            const promise = Joi.string().validateAsync('foo');
+
+            return promise
+                .catch(() => {
+
+                    throw new Error('Should not go here');
+                })
+                .then((value) => {
+
+                    expect(value).to.equal('foo');
+                }, () => {
+
+                    throw new Error('Should not go here');
+                });
+        });
+
+        it('should work with a failing promise', () => {
+
+            const promise = Joi.string().validateAsync(0);
+
+            return promise.then((value) => {
+
+                throw new Error('Should not go here');
+            }, (err) => {
+
+                expect(err).to.be.an.error('"value" must be a string');
+                expect(err.details).to.equal([{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 0, label: 'value' }
+                }]);
+            });
+        });
+
+        it('should work with a failing promise and a then in between', () => {
+
+            const promise = Joi.string().validateAsync(0);
+
+            return promise
+                .then((value) => {
+
+                    throw new Error('Should not go here');
+                })
+                .catch((err) => {
+
+                    expect(err).to.be.an.error('"value" must be a string');
+                    expect(err.details).to.equal([{
+                        message: '"value" must be a string',
+                        path: [],
+                        type: 'string.base',
+                        context: { value: 0, label: 'value' }
+                    }]);
+                });
+        });
+
+        it('should work with a failing promise (with catch)', () => {
+
+            const promise = Joi.string().validateAsync(0);
+
+            return promise.catch((err) => {
+
+                expect(err).to.be.an.error('"value" must be a string');
+                expect(err.details).to.equal([{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 0, label: 'value' }
+                }]);
+            });
+        });
+
+        it('should catch errors in a successful promise callback', () => {
+
+            const promise = Joi.string().validateAsync('foo');
+
+            return promise.then((value) => {
+
+                throw new Error('oops');
+            }).then(() => {
+
+                throw new Error('Should not go here');
+            }, (err) => {
+
+                expect(err).to.be.an.error('oops');
+            });
+        });
+
+        it('should catch errors in a failing promise callback', () => {
+
+            const promise = Joi.string().validateAsync(0);
+
+            return promise.then((value) => {
+
+                throw new Error('Should not go here');
+            }, () => {
+
+                throw new Error('oops');
+            }).then(() => {
+
+                throw new Error('Should not go here');
+            }, (err) => {
+
+                expect(err).to.be.an.error('oops');
+            });
+        });
+
+        it('should catch errors in a failing promise callback (with catch)', () => {
+
+            const promise = Joi.string().validateAsync(0);
+
+            return promise.catch(() => {
+
+                throw new Error('oops');
+            }).then(() => {
+
+                throw new Error('Should not go here');
+            }, (err) => {
+
+                expect(err).to.be.an.error('oops');
+            });
+        });
+
         it('validates schema', async () => {
 
             const schema = Joi.number();
