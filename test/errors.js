@@ -21,6 +21,23 @@ describe('errors', () => {
         expect(err.isJoi).to.be.true();
     });
 
+
+    it('has no stack by default', () => {
+
+        const err = Joi.valid('foo').validate('bar').error;
+        expect(err).to.be.an.error();
+        expect(err.isJoi).to.be.true();
+        expect(err.stack).to.not.contain('\n');
+    });
+
+    it('has a stack when enabled', () => {
+
+        const err = Joi.valid('foo').validate('bar', { errors: { stack:true } }).error;
+        expect(err).to.be.an.error();
+        expect(err.isJoi).to.be.true();
+        expect(err.stack).to.contain('at module.exports');
+    });
+
     it('supports custom errors when validating types', () => {
 
         const schema = Joi.object({

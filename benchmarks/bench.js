@@ -74,8 +74,8 @@ const test = ([name, initFn, testFn]) => {
 
     const [schema, valid, invalid] = versionPick(initFn)();
 
-    Hoek.assert(valid === undefined || testFn(schema, valid).error === null, 'validation must not fail for: ' + name);
-    Hoek.assert(invalid === undefined || testFn(schema, invalid).error !== null, 'validation must fail for: ' + name);
+    Hoek.assert(valid === undefined || !testFn(schema, valid).error, 'validation must not fail for: ' + name);
+    Hoek.assert(invalid === undefined || testFn(schema, invalid).error, 'validation must fail for: ' + name);
 
     testFn = versionPick(testFn);
     Suite.add(name + (valid !== undefined ? ' (valid)' : ''), () => {
