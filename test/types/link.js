@@ -117,6 +117,22 @@ describe('link', () => {
         ]);
     });
 
+    it('concats schemas with links', () => {
+
+        const a = Joi.object({
+            a: [Joi.string(), Joi.number()],
+            b: Joi.link('a')
+        });
+
+        const b = Joi.object({ c: Joi.number() });
+
+        const schema = b.concat(a);
+
+        expect(schema.validate({ a: 1, b: 2, c: 3 }).error).to.not.exist();
+        expect(schema.validate({ a: '1', b: '2', c: 3 }).error).to.not.exist();
+        expect(schema.validate({ a: [1], b: '2' }).error).to.be.an.error('"a" must be one of [string, number]');
+    });
+
     it('errors on invalid reference', () => {
 
         expect(() => Joi.link('.')).to.throw('Link cannot reference itself');
