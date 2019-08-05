@@ -691,6 +691,44 @@ describe('extension', () => {
         expect(type2.validate(4).error).to.be.an.error('failed2');
     });
 
+    it('extends coerce (undefined)', () => {
+
+        const type1 = Joi.any().extend({
+            type: 'type1',
+            coerce: function (schema, value, { error }) {
+
+                if (value === '1') {
+                    return { value: undefined };
+
+                }
+            }
+        });
+
+        const type2 = type1.extend({
+            type: 'type2',
+            coerce: function (schema, value, { error }) {
+
+                if (value === '2') {
+                    return { value: undefined };
+                }
+            }
+        });
+
+        const type3 = type2.extend({
+            type: 'type3',
+            coerce: function (schema, value, { error }) {
+
+                if (value === '3') {
+                    return { value: undefined };
+                }
+            }
+        });
+
+        expect(type3.validate('1')).to.equal({ value: undefined });
+        expect(type3.validate('2')).to.equal({ value: undefined });
+        expect(type3.validate('3')).to.equal({ value: undefined });
+    });
+
     it('extends with a failing validate', () => {
 
         const custom = Joi.extend({

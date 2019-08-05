@@ -20,9 +20,9 @@ describe('Cache', () => {
 
             const schema = Joi.string().pattern(/abc/).cache();
 
-            const validate = schema._rules.pattern.validate;
+            const validate = schema._definition.rules.pattern.validate;
             let count = 0;
-            schema._rules.pattern.validate = function (...args) {
+            schema._definition.rules.pattern.validate = function (...args) {
 
                 ++count;
                 return validate(...args);
@@ -34,7 +34,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(1);
 
-            schema._rules.pattern.validate = validate;
+            schema._definition.rules.pattern.validate = validate;
         });
 
         it('caches cast objects and clones on return', () => {
@@ -66,9 +66,9 @@ describe('Cache', () => {
 
             const schema = Joi.string().pattern(/abc/).cache();
 
-            const validate = schema._rules.pattern.validate;
+            const validate = schema._definition.rules.pattern.validate;
             let count = 0;
-            schema._rules.pattern.validate = function (...args) {
+            schema._definition.rules.pattern.validate = function (...args) {
 
                 ++count;
                 return validate(...args);
@@ -81,7 +81,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(1);
 
-            schema._rules.pattern.validate = validate;
+            schema._definition.rules.pattern.validate = validate;
         });
 
         it('skips caching when prefs disabled', () => {
@@ -89,9 +89,9 @@ describe('Cache', () => {
             const cache = Joi.cache.provision();
             const schema = Joi.string().pattern(/abc/).cache(cache);
 
-            const validate = schema._rules.pattern.validate;
+            const validate = schema._definition.rules.pattern.validate;
             let count = 0;
-            schema._rules.pattern.validate = function (...args) {
+            schema._definition.rules.pattern.validate = function (...args) {
 
                 ++count;
                 return validate(...args);
@@ -103,7 +103,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(3);
 
-            schema._rules.pattern.validate = validate;
+            schema._definition.rules.pattern.validate = validate;
         });
 
         it('skips caching when schema contains refs', () => {
@@ -114,9 +114,9 @@ describe('Cache', () => {
                 b: Joi.any()
             });
 
-            const validate = a._rules.pattern.validate;
+            const validate = a._definition.rules.pattern.validate;
             let count = 0;
-            a._rules.pattern.validate = function (...args) {
+            a._definition.rules.pattern.validate = function (...args) {
 
                 ++count;
                 return validate(...args);
@@ -128,7 +128,7 @@ describe('Cache', () => {
 
             expect(count).to.equal(3);
 
-            a._rules.pattern.validate = validate;
+            a._definition.rules.pattern.validate = validate;
         });
     });
 
