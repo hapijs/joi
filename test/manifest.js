@@ -453,8 +453,7 @@ describe('Manifest', () => {
                     'million.base': '"{{#label}}" must be at least a million',
                     'million.big': '"{{#label}}" must be at least five millions',
                     'million.round': '"{{#label}}" must be a round number',
-                    'million.dividable': '"{{#label}}" must be dividable by {{#q}}',
-                    'million.ref': '"{{#label}}" references "{{#ref}}" which is not a number'
+                    'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
                 },
                 coerce: function (schema, value, helpers) {
 
@@ -509,13 +508,14 @@ describe('Manifest', () => {
 
                             return this.addRule({ name: 'dividable', args: { q } });
                         },
-                        refs: {
-                            q: {
+                        args: [
+                            {
+                                name: 'q',
+                                ref: true,
                                 assert: (value) => typeof value === 'number' && !isNaN(value),
-                                code: 'million.ref',
                                 message: 'q must be a number or reference'
                             }
-                        },
+                        ],
                         validate: function (value, helpers, args, options) {
 
                             if (value % args.q === 0) {

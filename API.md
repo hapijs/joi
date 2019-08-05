@@ -175,6 +175,7 @@
     - [`any.default`](#anydefault)
     - [`any.failover`](#anyfailover)
     - [`any.invalid`](#anyinvalid)
+    - [`any.ref`](#anyref)
     - [`any.required`](#anyrequired)
     - [`any.unknown`](#anyunknown)
     - [`array.base`](#arraybase)
@@ -187,7 +188,6 @@
     - [`array.max`](#arraymax)
     - [`array.min`](#arraymin)
     - [`array.orderedLength`](#arrayorderedlength)
-    - [`array.ref`](#arrayref)
     - [`array.sort`](#arraysort)
     - [`array.sort.mismatching`](#arraysortmismatching)
     - [`array.sort.unsupported`](#arraysortunsupported)
@@ -199,7 +199,6 @@
     - [`binary.length`](#binarylength)
     - [`binary.max`](#binarymax)
     - [`binary.min`](#binarymin)
-    - [`binary.ref`](#binaryref)
     - [`boolean.base`](#booleanbase)
     - [`date.base`](#datebase)
     - [`date.greater`](#dategreater)
@@ -207,7 +206,6 @@
     - [`date.less`](#dateless)
     - [`date.max`](#datemax)
     - [`date.min`](#datemin)
-    - [`date.ref`](#dateref)
     - [`date.strict`](#datestrict)
     - [`date.timestamp.javascript`](#datetimestampjavascript)
     - [`date.timestamp.unix`](#datetimestampunix)
@@ -231,7 +229,6 @@
     - [`number.port`](#numberport-1)
     - [`number.positive`](#numberpositive-1)
     - [`number.precision`](#numberprecision)
-    - [`number.ref`](#numberref)
     - [`number.unsafe`](#numberunsafe)
     - [`object.unknown`](#objectunknown)
     - [`object.and`](#objectand)
@@ -243,8 +240,6 @@
     - [`object.missing`](#objectmissing)
     - [`object.nand`](#objectnand)
     - [`object.pattern.match`](#objectpatternmatch)
-    - [`object.refType`](#objectreftype)
-    - [`object.rename.multiple`](#objectrenamemultiple)
     - [`object.rename.override`](#objectrenameoverride)
     - [`object.schema`](#objectschema)
     - [`object.instance`](#objectinstance)
@@ -273,7 +268,6 @@
     - [`string.max`](#stringmax)
     - [`string.min`](#stringmin)
     - [`string.normalize`](#stringnormalize)
-    - [`string.ref`](#stringref)
     - [`string.pattern.base`](#stringpatternbase)
     - [`string.pattern.name`](#stringpatternname)
     - [`string.pattern.invert.base`](#stringpatterninvertbase)
@@ -3106,7 +3100,6 @@ Extension objects use the following parameters :
 - `rules` - an optional object where each key is a rule name and value is:
     - `method` - the method exposed as the type API.
     - `validate` - the validation method.
-    - `refs`
     - `args`
     - `multi`
     - `convert`
@@ -3128,8 +3121,7 @@ const custom = Joi.extend((joi) => {
             'million.base': '"{{#label}}" must be at least a million',
             'million.big': '"{{#label}}" must be at least five millions',
             'million.round': '"{{#label}}" must be a round number',
-            'million.dividable': '"{{#label}}" must be dividable by {{#q}}',
-            'million.ref': '"{{#label}}" references "{{#ref}}" which is not a number'
+            'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
         },
         coerce: function (schema, value, helpers) {
 
@@ -3184,13 +3176,14 @@ const custom = Joi.extend((joi) => {
 
                     return this.addRule({ name: 'dividable', args: { q } });
                 },
-                refs: {
-                    q: {
+                args: [
+                    {
+                        name: 'q',
+                        ref: true,
                         assert: (value) => typeof value === 'number' && !isNaN(value),
-                        code: 'million.ref',
-                        message: 'q must be a number or reference'
+                        message: 'must be a number'
                     }
-                },
+                ],
                 validate: function (value, helpers, args, options) {
 
                     if (value % args.q === 0) {
@@ -3315,6 +3308,19 @@ Additional local context properties:
 }
 ```
 
+#### `any.ref`
+
+A reference was used in rule argument and the value pointed to by that reference in the input is not valid.
+
+Additional local context properties:
+```ts
+{
+    arg: string, // The argument name
+    reason: string, // The reason the referenced value is invalid
+    ref: Reference // Reference used
+}
+```
+
 #### `any.required`
 
 A required value wasn't present.
@@ -3428,17 +3434,6 @@ Additional local context properties:
 }
 ```
 
-#### `array.ref`
-
-A reference was used in one of [`array.min()`](#arrayminlimit), [`array.max()`](#arraymaxlimit) or [`array.length()`](#arraylengthlimit) and the value pointed to by that reference in the input is not a valid number for those rules.
-
-Additional local context properties:
-```ts
-{
-    ref: Reference // Reference used
-}
-```
-
 #### `array.sort`
 
 The array did not match the required sort order.
@@ -3542,17 +3537,6 @@ Additional local context properties:
 }
 ```
 
-#### `binary.ref`
-
-A reference was used in one of [`binary.min()`](#binaryminlimit), [`binary.max()`](#binarymaxlimit), [`binary.length()`](#binarylengthlimit) and the value pointed to by that reference in the input is not a valid number.
-
-Additional local context properties:
-```ts
-{
-    ref: Reference // Reference used
-}
-```
-
 #### `boolean.base`
 
 The value is either not a boolean or could not be cast to a boolean from one of the truthy or falsy values.
@@ -3606,17 +3590,6 @@ Additional local context properties:
 ```ts
 {
     limit: Date // Minimum date
-}
-```
-
-#### `date.ref`
-
-A reference was used in one of [`date.min()`](#datemindate), [`date.max()`](#datemaxdate), [`date.less()`](#datelessdate) or [`date.greater()`](#dategreaterdate) and the value pointed to by that reference in the input is not a valid date.
-
-Additional local context properties:
-```ts
-{
-    ref: Reference // Reference used
 }
 ```
 
@@ -3795,10 +3768,6 @@ Additional local context properties:
 }
 ```
 
-#### `number.ref`
-
-A reference was used in one of [`number.min()`](#numberminlimit), [`number.max()`](#numbermaxlimit), [`number.less()`](#numberlesslimit), [`number.greater()`](#numbergreaterlimit), or [`number.multiple()`](#numbermultiplebase) and the value pointed to by that reference in the input is not a valid number.
-
 #### `number.unsafe`
 
 The number is not within the safe range of JavaScript numbers.
@@ -3922,17 +3891,6 @@ Additional local context properties:
     matches: Array<string>  // The matching keys
 }
 ``
-
-#### `object.ref`
-
-A reference was used in one of [`object.min()`](#objectminlimit), [`object.max()`](#objectmaxlimit), [`object.length()`](#objectlengthlimit) and the value pointed to by that reference in the input is not a valid number.
-
-Additional local context properties:
-```ts
-{
-    ref: Reference // Reference used
-}
-```
 
 #### `object.refType`
 
@@ -4172,17 +4130,6 @@ Additional local context properties:
 ```ts
 {
     form: string // Normalization form that is expected
-}
-```
-
-#### `string.ref`
-
-A reference was used in one of [`string.min()`](#stringminlimit-encoding), [`string.max()`](#stringmaxlimit-encoding) or [`string.length()`](#stringlengthlimit-encoding) and the value pointed to by that reference in the input is not a valid number for those rules.
-
-Additional local context properties:
-```ts
-{
-    ref: Reference // Reference used
 }
 ```
 

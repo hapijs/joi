@@ -377,12 +377,12 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" limit references "ref:a" which must be a positive integer',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" limit references "ref:a" which must be a positive integer',
                         path: ['b'],
-                        type: 'string.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there', arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }]
             ]);
@@ -395,12 +395,12 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" limit references "ref:global:a" which must be a positive integer',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" limit references "ref:global:a" which must be a positive integer',
                         path: ['b'],
-                        type: 'string.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there', arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }]
             ]);
@@ -505,12 +505,12 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" limit references "ref:a" which must be a positive integer',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" limit references "ref:a" which must be a positive integer',
                         path: ['b'],
-                        type: 'string.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there', arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }]
             ]);
@@ -523,12 +523,12 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" limit references "ref:global:a" which must be a positive integer',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" limit references "ref:global:a" which must be a positive integer',
                         path: ['b'],
-                        type: 'string.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there', arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }]
             ]);
@@ -689,12 +689,12 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ a: 'Hi there', b: '\u00bd' }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" limit references "ref:a" which must be a positive integer',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" limit references "ref:a" which must be a positive integer',
                         path: ['b'],
-                        type: 'string.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there', arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }]
             ]);
@@ -707,12 +707,12 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" limit references "ref:global:a" which must be a positive integer',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" limit references "ref:global:a" which must be a positive integer',
                         path: ['b'],
-                        type: 'string.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'Hi there' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'Hi there', reason: 'must be a positive integer', arg: 'limit' }
                     }]
                 }]
             ]);
@@ -4496,12 +4496,12 @@ describe('string', () => {
                 [{ a: 'abcde', b: 2 }, true, null, { a: 'ab', b: 2 }],
                 [{ a: 'abcdef', b: 5 }, true, null, { a: 'abcde', b: 5 }],
                 [{ a: 'abc' }, false, null, {
-                    message: '"a" references "ref:b" which is not a number',
+                    message: '"a" limit references "ref:b" which must be a positive integer',
                     details: [{
-                        message: '"a" references "ref:b" which is not a number',
+                        message: '"a" limit references "ref:b" which must be a positive integer',
                         path: ['a'],
-                        type: 'string.ref',
-                        context: { key: 'a', label: 'a', ref }
+                        type: 'any.ref',
+                        context: { key: 'a', label: 'a', ref, arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }]
             ]);

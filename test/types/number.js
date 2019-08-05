@@ -216,12 +216,12 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" limit references "ref:a" which must be a number',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" limit references "ref:a" which must be a number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                     }]
                 }]
             ]);
@@ -234,12 +234,12 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" limit references "ref:global:a" which must be a number',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" limit references "ref:global:a" which must be a number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                     }]
                 }]
             ]);
@@ -350,12 +350,12 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" limit references "ref:a" which must be a number',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" limit references "ref:a" which must be a number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                     }]
                 }]
             ]);
@@ -368,12 +368,12 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: null, b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" limit references "ref:a" which must be a number',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" limit references "ref:a" which must be a number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: null }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: null, arg: 'limit', reason: 'must be a number' }
                     }]
                 }]
             ]);
@@ -386,12 +386,12 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" limit references "ref:global:a" which must be a number',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" limit references "ref:global:a" which must be a number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                     }]
                 }]
             ]);
@@ -502,12 +502,12 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" limit references "ref:a" which must be a number',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" limit references "ref:a" which must be a number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                     }]
                 }]
             ]);
@@ -520,12 +520,12 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" limit references "ref:global:a" which must be a number',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" limit references "ref:global:a" which must be a number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                     }]
                 }]
             ]);
@@ -688,12 +688,12 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" limit references "ref:a" which must be a number',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" limit references "ref:a" which must be a number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                     }]
                 }]
             ]);
@@ -706,12 +706,12 @@ describe('number', () => {
 
             Helper.validate(schema, [
                 [{ b: 42 }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" limit references "ref:global:a" which must be a number',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" limit references "ref:global:a" which must be a number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                     }]
                 }]
             ]);
@@ -725,7 +725,7 @@ describe('number', () => {
             expect(() => {
 
                 Joi.number().multiple('a');
-            }).to.throw('multiple must be a number greater than 0');
+            }).to.throw('base must be a positive number or reference');
         });
 
         it('throws when multiple is 0', () => {
@@ -733,7 +733,7 @@ describe('number', () => {
             expect(() => {
 
                 Joi.number().multiple(0);
-            }).to.throw('multiple must be a number greater than 0');
+            }).to.throw('base must be a positive number or reference');
         });
 
         it('handles integer multiples correctly', () => {
@@ -845,12 +845,12 @@ describe('number', () => {
                     }]
                 }],
                 [{ a: 0, b: 0 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" base references "ref:a" which must be a positive number',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" base references "ref:a" which must be a positive number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, key: 'b', label: 'b', value: 0 }
+                        type: 'any.ref',
+                        context: { ref, key: 'b', label: 'b', value: 0, arg: 'base', reason: 'must be a positive number' }
                     }]
                 }]
             ]);
@@ -889,21 +889,21 @@ describe('number', () => {
             const schema = Joi.object({ a: Joi.string(), b: Joi.number().multiple(ref) });
             Helper.validate(schema, [
                 [{ a: 'test', b: 32 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" base references "ref:a" which must be a positive number',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" base references "ref:a" which must be a positive number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
                     }]
                 }],
                 [{ a: 'test', b: 0 }, false, null, {
-                    message: '"b" references "ref:a" which is not a number',
+                    message: '"b" base references "ref:a" which must be a positive number',
                     details: [{
-                        message: '"b" references "ref:a" which is not a number',
+                        message: '"b" base references "ref:a" which must be a positive number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
                     }]
                 }],
                 [{ a: 'test', b: NaN }, false, null, {
@@ -935,48 +935,48 @@ describe('number', () => {
                     }]
                 }],
                 [{ b: 31 }, false, { context: { a: 0 } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" base references "ref:global:a" which must be a positive number',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" base references "ref:global:a" which must be a positive number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, key: 'b', label: 'b', value: 0 }
+                        type: 'any.ref',
+                        context: { ref, key: 'b', label: 'b', value: 0, arg: 'base', reason: 'must be a positive number' }
                     }]
                 }],
                 [{ b: 0 }, false, { context: { a: 0 } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" base references "ref:global:a" which must be a positive number',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" base references "ref:global:a" which must be a positive number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, key: 'b', label: 'b', value: 0 }
+                        type: 'any.ref',
+                        context: { ref, key: 'b', label: 'b', value: 0, arg: 'base', reason: 'must be a positive number' }
                     }]
                 }],
                 [{ b: 32 }, false, { context: { a: 'test' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" base references "ref:global:a" which must be a positive number',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" base references "ref:global:a" which must be a positive number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
                     }]
                 }],
                 [{ b: 0 }, false, { context: { a: 'test' } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" base references "ref:global:a" which must be a positive number',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" base references "ref:global:a" which must be a positive number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
                     }]
                 }],
                 [{ b: 0 }, false, { context: { a: NaN } }, {
-                    message: '"b" references "ref:global:a" which is not a number',
+                    message: '"b" base references "ref:global:a" which must be a positive number',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a number',
+                        message: '"b" base references "ref:global:a" which must be a positive number',
                         path: ['b'],
-                        type: 'number.ref',
-                        context: { ref, label: 'b', key: 'b', value: NaN }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: NaN, arg: 'base', reason: 'must be a positive number' }
                     }]
                 }]
             ]);

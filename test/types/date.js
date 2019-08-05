@@ -368,12 +368,12 @@ describe('date', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: now }, false, null, {
-                    message: '"b" references "ref:a" which is not a date',
+                    message: '"b" date references "ref:a" which must have a valid date format',
                     details: [{
-                        message: '"b" references "ref:a" which is not a date',
+                        message: '"b" date references "ref:a" which must have a valid date format',
                         path: ['b'],
-                        type: 'date.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
                 }],
                 [{ a: '123', b: now }, true],
@@ -397,12 +397,12 @@ describe('date', () => {
 
             Helper.validate(schema, [
                 [{ b: now }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a date',
+                    message: '"b" date references "ref:global:a" which must have a valid date format',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a date',
+                        message: '"b" date references "ref:global:a" which must have a valid date format',
                         path: ['b'],
-                        type: 'date.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
                 }],
                 [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
@@ -715,12 +715,12 @@ describe('date', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: new Date() }, false, null, {
-                    message: '"b" references "ref:a" which is not a date',
+                    message: '"b" date references "ref:a" which must have a valid date format',
                     details: [{
-                        message: '"b" references "ref:a" which is not a date',
+                        message: '"b" date references "ref:a" which must have a valid date format',
                         path: ['b'],
-                        type: 'date.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
                 }],
                 [{ a: '100000000000000', b: now }, true],
@@ -744,12 +744,12 @@ describe('date', () => {
 
             Helper.validate(schema, [
                 [{ b: now }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a date',
+                    message: '"b" date references "ref:global:a" which must have a valid date format',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a date',
+                        message: '"b" date references "ref:global:a" which must have a valid date format',
                         path: ['b'],
-                        type: 'date.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
                 }],
                 [{ b: now }, true, { context: { a: '100000000000000' } }],
@@ -904,12 +904,12 @@ describe('date', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: new Date() }, false, null, {
-                    message: '"b" references "ref:a" which is not a date',
+                    message: '"b" date references "ref:a" which must have a valid date format',
                     details: [{
-                        message: '"b" references "ref:a" which is not a date',
+                        message: '"b" date references "ref:a" which must have a valid date format',
                         path: ['b'],
-                        type: 'date.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
                 }],
                 [{ a: '100000000000000', b: now }, true],
@@ -933,12 +933,12 @@ describe('date', () => {
 
             Helper.validate(schema, [
                 [{ b: now }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a date',
+                    message: '"b" date references "ref:global:a" which must have a valid date format',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a date',
+                        message: '"b" date references "ref:global:a" which must have a valid date format',
                         path: ['b'],
-                        type: 'date.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
                 }],
                 [{ b: now }, true, { context: { a: '100000000000000' } }],
@@ -1112,12 +1112,12 @@ describe('date', () => {
 
             Helper.validate(schema, [
                 [{ a: 'abc', b: now }, false, null, {
-                    message: '"b" references "ref:a" which is not a date',
+                    message: '"b" date references "ref:a" which must have a valid date format',
                     details: [{
-                        message: '"b" references "ref:a" which is not a date',
+                        message: '"b" date references "ref:a" which must have a valid date format',
                         path: ['b'],
-                        type: 'date.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
                 }],
                 [{ a: '123', b: now }, true],
@@ -1141,12 +1141,12 @@ describe('date', () => {
 
             Helper.validate(schema, [
                 [{ b: now }, false, { context: { a: 'abc' } }, {
-                    message: '"b" references "ref:global:a" which is not a date',
+                    message: '"b" date references "ref:global:a" which must have a valid date format',
                     details: [{
-                        message: '"b" references "ref:global:a" which is not a date',
+                        message: '"b" date references "ref:global:a" which must have a valid date format',
                         path: ['b'],
-                        type: 'date.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc' }
+                        type: 'any.ref',
+                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
                 }],
                 [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {

@@ -762,24 +762,24 @@ describe('array', () => {
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
                 }, false, null, {
-                    message: '"arr" references "ref:limit" which is not a positive integer',
+                    message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
-                        message: '"arr" references "ref:limit" which is not a positive integer',
+                        message: '"arr" limit references "ref:limit" which must be a positive integer',
                         path: ['arr'],
-                        type: 'array.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53) }
+                        type: 'any.ref',
+                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53), arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }],
                 [{
                     limit: 'I like turtles',
                     arr: [1]
                 }, false, null, {
-                    message: '"arr" references "ref:limit" which is not a positive integer',
+                    message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
-                        message: '"arr" references "ref:limit" which is not a positive integer',
+                        message: '"arr" limit references "ref:limit" which must be a positive integer',
                         path: ['arr'],
-                        type: 'array.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles' }
+                        type: 'any.ref',
+                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles', arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }]
             ]);
@@ -889,24 +889,24 @@ describe('array', () => {
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
                 }, false, null, {
-                    message: '"arr" references "ref:limit" which is not a positive integer',
+                    message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
-                        message: '"arr" references "ref:limit" which is not a positive integer',
+                        message: '"arr" limit references "ref:limit" which must be a positive integer',
                         path: ['arr'],
-                        type: 'array.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53) }
+                        type: 'any.ref',
+                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53), arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }],
                 [{
                     limit: 'I like turtles',
                     arr: [1]
                 }, false, null, {
-                    message: '"arr" references "ref:limit" which is not a positive integer',
+                    message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
-                        message: '"arr" references "ref:limit" which is not a positive integer',
+                        message: '"arr" limit references "ref:limit" which must be a positive integer',
                         path: ['arr'],
-                        type: 'array.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles' }
+                        type: 'any.ref',
+                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles', arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }]
             ]);
@@ -1025,24 +1025,24 @@ describe('array', () => {
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
                 }, false, null, {
-                    message: '"arr" references "ref:limit" which is not a positive integer',
+                    message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
-                        message: '"arr" references "ref:limit" which is not a positive integer',
+                        message: '"arr" limit references "ref:limit" which must be a positive integer',
                         path: ['arr'],
-                        type: 'array.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53) }
+                        type: 'any.ref',
+                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53), arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }],
                 [{
                     limit: 'I like turtles',
                     arr: [1]
                 }, false, null, {
-                    message: '"arr" references "ref:limit" which is not a positive integer',
+                    message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
-                        message: '"arr" references "ref:limit" which is not a positive integer',
+                        message: '"arr" limit references "ref:limit" which must be a positive integer',
                         path: ['arr'],
-                        type: 'array.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles' }
+                        type: 'any.ref',
+                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles', arg: 'limit', reason: 'must be a positive integer' }
                     }]
                 }]
             ]);

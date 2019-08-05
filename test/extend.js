@@ -991,8 +991,7 @@ describe('extension', () => {
                     'million.base': '"{{#label}}" must be at least a million',
                     'million.big': '"{{#label}}" must be at least five millions',
                     'million.round': '"{{#label}}" must be a round number',
-                    'million.dividable': '"{{#label}}" must be dividable by {{#q}}',
-                    'million.ref': '"{{#label}}" references "{{#ref}}" which is not a number'
+                    'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
                 },
                 coerce: function (schema, value, helpers) {
 
@@ -1047,13 +1046,14 @@ describe('extension', () => {
 
                             return this.addRule({ name: 'dividable', args: { q } });
                         },
-                        refs: {
-                            q: {
+                        args: [
+                            {
+                                name: 'q',
+                                ref: true,
                                 assert: (value) => typeof value === 'number' && !isNaN(value),
-                                code: 'million.ref',
-                                message: 'q must be a number or reference'
+                                message: 'must be a number'
                             }
-                        },
+                        ],
                         validate: function (value, helpers, args, options) {
 
                             if (value % args.q === 0) {
@@ -1126,6 +1126,63 @@ describe('extension', () => {
                     path: ['e'],
                     type: 'million.big',
                     context: { value: 1000000, label: 'e', key: 'e' }
+                }]
+            }]
+        ]);
+    });
+
+    it('extends rule with schema ref validation', () => {
+
+        const custom = Joi.extend((joi) => {
+
+            return {
+                type: 'number',
+                base: joi.number(),
+                messages: {
+                    'number.dividable': '"{{#label}}" must be dividable by {{#q}}'
+                },
+                rules: {
+                    dividable: {
+                        method: function (q) {
+
+                            return this.addRule({ name: 'dividable', args: { q } });
+                        },
+                        args: [
+                            {
+                                name: 'q',
+                                ref: true,
+                                assert: Joi.number().required()
+                            }
+                        ],
+                        validate: function (value, helpers, args, options) {
+
+                            if (value % args.q === 0) {
+                                return value;       // Value is valid
+                            }
+
+                            return helpers.error('number.dividable', { q: args.q });
+                        }
+                    }
+                }
+            };
+        });
+
+        const ref = Joi.ref('b');
+        const schema = custom.object({
+            a: custom.number().dividable(ref),
+            b: custom.number()
+        });
+
+        Helper.validate(schema, [
+            [{ a: 30, b: 3 }, true],
+            [{ a: 30 }, false, null, {
+                message: '"a" q references "ref:b" which "value" is required',
+                key: 'a',
+                details: [{
+                    message: '"a" q references "ref:b" which "value" is required',
+                    path: ['a'],
+                    type: 'any.ref',
+                    context: { label: 'a', key: 'a', ref, arg: 'q', reason: '"value" is required' }
                 }]
             }]
         ]);
