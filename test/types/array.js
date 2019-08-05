@@ -1913,20 +1913,20 @@ describe('array', () => {
 
         it('errors on undefined value after custom validation with required', () => {
 
-            const customJoi = Joi.extend({
-                name: 'myType',
-                rules: [
-                    {
-                        name: 'foo',
-                        validate(params, value, state, options) {
+            const custom = Joi.extend({
+                type: 'extended',
+                rules: {
+                    foo: {
+                        method: function () {
 
-                            return undefined;
-                        }
+                            return this.addRule('foo');
+                        },
+                        validate: () => undefined
                     }
-                ]
+                }
             });
 
-            const schema = customJoi.array().items(customJoi.myType().foo().required());
+            const schema = custom.array().items(custom.extended().foo().required());
 
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, null, {
@@ -1943,20 +1943,20 @@ describe('array', () => {
 
         it('errors on undefined value after custom validation with required and abortEarly false', () => {
 
-            const customJoi = Joi.extend({
-                name: 'myType',
-                rules: [
-                    {
-                        name: 'foo',
-                        validate(params, value, state, options) {
+            const custom = Joi.extend({
+                type: 'extended',
+                rules: {
+                    foo: {
+                        method: function () {
 
-                            return undefined;
-                        }
+                            return this.addRule('foo');
+                        },
+                        validate: () => undefined
                     }
-                ]
+                }
             });
 
-            const schema = customJoi.array().items(customJoi.myType().foo().required()).prefs({ abortEarly: false });
+            const schema = custom.array().items(custom.extended().foo().required()).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, null, {

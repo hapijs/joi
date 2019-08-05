@@ -4506,7 +4506,7 @@ describe('string', () => {
                     details: [{
                         message: '"a" references "ref:b" which is not a number',
                         path: ['a'],
-                        type: 'number.ref',
+                        type: 'string.ref',
                         context: { key: 'a', label: 'a', ref }
                     }]
                 }]

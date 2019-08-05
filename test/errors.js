@@ -32,10 +32,10 @@ describe('errors', () => {
 
     it('has a stack when enabled', () => {
 
-        const err = Joi.valid('foo').validate('bar', { errors: { stack:true } }).error;
+        const err = Joi.valid('foo').validate('bar', { errors: { stack: true } }).error;
         expect(err).to.be.an.error();
         expect(err.isJoi).to.be.true();
-        expect(err.stack).to.contain('at module.exports');
+        expect(err.stack).to.contain('at Object.exports.process');
     });
 
     it('supports custom errors when validating types', () => {

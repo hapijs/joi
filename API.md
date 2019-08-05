@@ -3101,120 +3101,128 @@ The [`extend()`](#extendextension) method adds custom types to **joi**. Extensio
 - or an array of those
 
 Extension objects use the following parameters :
-- `name` - name of the new type you are defining, this can be an existing type. **Required**.
-- `base` - an existing **joi** schema or function that returns a schema to base your type upon.
-  When `base` is a function, it is passed the type constructor arguments. Defaults to `Joi.any()`.
-- `coerce` - an optional function that runs before the base, usually serves when you want to coerce values of a different type than your base. It takes 3 arguments `value`, `state` and `prefs`.
-- `pre` - an optional function that runs first in the validation chain, usually serves when you need to cast values. It takes 3 arguments `value`, `state` and `prefs`.
+- `type` - name of the new type you are defining, this can be an existing type. **Required**.
+- `base` - an existing **joi** schema. Defaults to `any()`.
+- `coerce` - an optional function that runs before `validate` and used to coerce values of a different
+  type than the base.
+- `validate` - an optional function used to perform general validations.
 - `messages` - an optional object to add error definitions. Every key will be prefixed by the type name.
-- `rules` - an optional array of rules to add.
-    - `name` - name of the new rule. **Required**.
-    - `params` - an optional object containing **joi** schemas of each parameter ordered. You can also pass a single **joi** schema as long as it is a `Joi.object()`, of course some methods such as `pattern` or `rename` won't be useful or won't work at all in this given context.
-    - `setup` - an optional function that takes an object with the provided parameters to allow for internals manipulation of the schema when a rule is set, you can optionally return a new **joi** schema that will be taken as the new schema instance. At least one of `setup` or `validate` **must** be provided.
-    - `validate` - an optional function to validate values that takes 4 parameters `params`, `value`, `state` and `prefs`. At least one of `setup` or `validate` **must** be provided.
+- `rules` - an optional object where each key is a rule name and value is:
+    - `method` - the method exposed as the type API.
+    - `validate` - the validation method.
+    - `refs`
+    - `args`
+    - `multi`
+    - `convert`
+    - `alias`
 
-Factory functions are advised if you intend to publish your extensions for others to use, because they are capable of using an extended **joi** being built, thus avoiding any erasure when using multiple extensions at the same time. See an example of a factory function in the section below.
-
-The `params` of `rules` rely on the fact that all engines, even though not stated in the ECMA specifications, preserve the order of object keys, this is a conscious choice to simplify the API for the end-user. If you ever see an engine misbehaving or are uncomfortable relying on this, you can use a single option object to describe your parameters, like:
-```js
-params: { options: Joi.object({ param1: Joi.number().required(), param2: Joi.string() }) }
-```
-
-To resolve referenced `params` in you `validate` or `setup` functions, you can use the following approach:
-```js
-validate(params, value, state, prefs) {
-
-    let { foo } = params;
-    if (Joi.isRef(foo)) {
-        foo = foo.resolve(value, state, prefs);
-    }
-  //...
-}
-```
-
-Any of the `coerce`, `pre` and `validate` functions should use `this.createError(code, value, local, state, prefs)`
-to create and return errors. This function potentially takes 5 required arguments:
-- `code` - the dotted type of the error matching predefined messages or the ones defined in your
-  extension.
-- `value` - the value responsible for the error.
-- `local` - a free-form object that can contain anything you want to provide context on regarding
-  the error. This object's properties are inserted in the error message where bracketed
-  placeholders are.
-- `state` - state that the validation was in, which contains the current key, path, parent if any,
-  or reference if any. Usually you just have to pass the `state` you were given.
-- `prefs` - preferences that were used for the validation. Usually you just have to pass the
-  `prefs` you were given.
-
-### Terms
-
-The extension makes use of some common structures that need to be described prior :
-- `value` - the value being processed by Joi.
-- `state` - an object containing the current context of validation.
-    - `path` - the full path of the current value.
-    - `ancestors` - an array of the parents of the current value.
-    - `flags` - a reference to the schema's internal flags.
-- `prefs` - preferences object provided through [`any().prefs()`](#anyprefsoptions--aliases-preferences-options)
-  or [`any.validate()`](#anyvalidatevalue-options).
-
-### npm note
-
-If you publish your extension on npm, make sure to add `joi` and `extension` as keywords so that it's discoverable more easily.
-
-### Examples
+Factory functions are advised if you intend to publish your extensions for others to use, because they are
+capable of using an extended **joi** being built, thus avoiding any erasure when using multiple extensions
+at the same time. See an example of a factory function in the section below.
 
 ```js
 const Joi = require('@hapi/joi');
-const customJoi = Joi.extend((joi) => ({
-    base: joi.number(),
-    name: 'number',
-    messages: {
-        round: 'needs to be a rounded number', // Used below as 'number.round'
-        dividable: 'needs to be dividable by {{q}}'
-    },
-    pre(value, state, prefs) {
 
-        if (prefs.convert && this._flags.round) {
-            return Math.round(value); // Change the value
-        }
+const custom = Joi.extend((joi) => {
 
-        return value; // Keep the value as it was
-    },
-    rules: [
-        {
-            name: 'round',
-            setup(params) {
+    return {
+        type: 'million',
+        base: joi.number(),
+        messages: {
+            'million.base': '"{{#label}}" must be at least a million',
+            'million.big': '"{{#label}}" must be at least five millions',
+            'million.round': '"{{#label}}" must be a round number',
+            'million.dividable': '"{{#label}}" must be dividable by {{#q}}',
+            'million.ref': '"{{#label}}" references "{{#ref}}" which is not a number'
+        },
+        coerce: function (schema, value, helpers) {
 
-                this._flags.round = true;    // Set a flag for later use
-            },
-            validate(params, value, state, prefs) {
+            // Only called when prefs.convert is true
 
-                if (value % 1 !== 0) {
-                    // Generate an error, state and prefs need to be passed
-                    return this.createError('number.round', value, {}, state, prefs);
-                }
-
-                return value; // Everything is OK
+            if (schema.getRule('round')) {
+                return { value: Math.round(value) };
             }
         },
-        {
-            name: 'dividable',
-            params: {
-                q: joi.alternatives([joi.number().required(), joi.object().ref()])
-            },
-            validate(params, value, state, prefs) {
+        validate: function (schema, value, helpers) {
 
-                if (value % params.q !== 0) {
-                    // Generate an error, state and prefs need to be passed, q is used in the messages
-                    return this.createError('number.dividable', value, { q: params.q }, state, prefs);
+            // Base validation regardless of the rules applied
+
+            if (value < 1000000) {
+                return { value, errors: helpers.error('million.base') };
+            }
+
+            // Check flags for global state
+
+            if (schema.getFlag('big') &&
+                value < 5000000) {
+
+                return { value, errors: helpers.error('million.big') };
+            }
+        },
+        rules: {
+            big: {
+                alias: 'large',
+                method: function () {
+
+                    return this.setFlag('big', true);
                 }
+            },
+            round: {
+                convert: true,              // Dual rule: converts or validates
+                method: function () {
 
-                return value; // Everything is OK
+                    return this.addRule('round');
+                },
+                validate: function (value, helpers, args, options) {
+
+                    // Only called when prefs.convert is false (due to rule convert option)
+
+                    if (value % 1 !== 0) {
+                        return helpers.error('million.round');
+                    }
+                }
+            },
+            dividable: {
+                multi: true,                // Rule supports multiple invocations
+                method: function (q) {
+
+                    return this.addRule({ name: 'dividable', args: { q } });
+                },
+                refs: {
+                    q: {
+                        assert: (value) => typeof value === 'number' && !isNaN(value),
+                        code: 'million.ref',
+                        message: 'q must be a number or reference'
+                    }
+                },
+                validate: function (value, helpers, args, options) {
+
+                    if (value % args.q === 0) {
+                        return value;       // Value is valid
+                    }
+
+                    return helpers.error('million.dividable', { q: args.q });
+                }
+            },
+            even: {
+                method: function () {
+
+                    // Rule with only method used to alias another rule
+
+                    return this.dividable(2);
+                }
             }
         }
-    ]
-}));
+    };
+});
 
-const schema = customJoi.number().round().dividable(3);
+const schema = custom.object({
+    a: custom.million().round().dividable(Joi.ref('b')),
+    b: custom.number(),
+    c: custom.million().even().dividable(7),
+    d: custom.million().round().prefs({ convert: false }),
+    e: custom.million().large()
+});
 ```
 
 ## Errors

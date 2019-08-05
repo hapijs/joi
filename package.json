@@ -26,7 +26,7 @@
   "scripts": {
     "test": "lab -t 100 -a @hapi/code -L",
     "test-cov-html": "lab -r html -o coverage.html -a @hapi/code",
-    "toc": "hapitoc && node docs/check-errors-list.js",
+    "toc": "hapitoc",
     "version": "npm run toc && git add API.md README.md"
   },
   "license": "BSD-3-Clause"

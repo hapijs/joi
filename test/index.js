@@ -2583,28 +2583,5 @@ describe('Joi', () => {
             const { error } = string.validate(0);
             expect(error).to.be.an.error('"value" must be a string');
         });
-
-        it('returns extended shortcuts', () => {
-
-            const customJoi = Joi.extend({
-                base: Joi.string(),
-                name: 'myType'
-            });
-
-            expect(() => {
-
-                const string = customJoi.string;
-                string();
-            }).to.throw('Must be invoked on a Joi instance.');
-
-            const { string, myType } = customJoi.types();
-            expect(() => string.allow('x')).to.not.throw();
-            expect(string.validate(0).error).to.be.an.error('"value" must be a string');
-
-            expect(() => myType.allow('x')).to.not.throw();
-            expect(myType.validate(0).error).to.be.an.error('"value" must be a string');
-
-            expect(customJoi._types.size).to.equal(Joi._types.size + 1);
-        });
     });
 });

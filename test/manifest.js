@@ -443,6 +443,152 @@ describe('Manifest', () => {
                 Joi.allow(Joi.ref('a'))
             ]);
         });
+
+        it('builds extended schema', () => {
+
+            const custom = Joi.extend({
+                type: 'million',
+                base: Joi.number(),
+                messages: {
+                    'million.base': '"{{#label}}" must be at least a million',
+                    'million.big': '"{{#label}}" must be at least five millions',
+                    'million.round': '"{{#label}}" must be a round number',
+                    'million.dividable': '"{{#label}}" must be dividable by {{#q}}',
+                    'million.ref': '"{{#label}}" references "{{#ref}}" which is not a number'
+                },
+                coerce: function (schema, value, helpers) {
+
+                    // Only called when prefs.convert is true
+
+                    if (schema.getRule('round')) {
+                        return { value: Math.round(value) };
+                    }
+                },
+                validate: function (schema, value, helpers) {
+
+                    // Base validation regardless of the rules applied
+
+                    if (value < 1000000) {
+                        return { value, errors: helpers.error('million.base') };
+                    }
+
+                    // Check flags for global state
+
+                    if (schema.getFlag('big') &&
+                        value < 5000000) {
+
+                        return { value, errors: helpers.error('million.big') };
+                    }
+                },
+                rules: {
+                    big: {
+                        alias: 'large',
+                        method: function () {
+
+                            return this.setFlag('big', true);
+                        }
+                    },
+                    round: {
+                        convert: true,              // Dual rule: converts or validates
+                        method: function () {
+
+                            return this.addRule('round');
+                        },
+                        validate: function (value, helpers, args, options) {
+
+                            // Only called when prefs.convert is false (due to rule convert option)
+
+                            if (value % 1 !== 0) {
+                                return helpers.error('million.round');
+                            }
+                        }
+                    },
+                    dividable: {
+                        multi: true,                // Rule supports multiple invocations
+                        method: function (q) {
+
+                            return this.addRule({ name: 'dividable', args: { q } });
+                        },
+                        refs: {
+                            q: {
+                                assert: (value) => typeof value === 'number' && !isNaN(value),
+                                code: 'million.ref',
+                                message: 'q must be a number or reference'
+                            }
+                        },
+                        validate: function (value, helpers, args, options) {
+
+                            if (value % args.q === 0) {
+                                return value;       // Value is valid
+                            }
+
+                            return helpers.error('million.dividable', { q: args.q });
+                        }
+                    },
+                    even: {
+                        method: function () {
+
+                            // Rule with only method used to alias another rule
+
+                            return this.dividable(2);
+                        }
+                    }
+                }
+            });
+
+            const schema = custom.object({
+                a: custom.million().round().dividable(Joi.ref('b')),
+                b: custom.number(),
+                c: custom.million().even().dividable(7),
+                d: custom.million().round().prefs({ convert: false }),
+                e: custom.million().large()
+            });
+
+            const desc = schema.describe();
+            expect(desc).to.equal({
+                type: 'object',
+                keys: {
+                    b: {
+                        type: 'number'
+                    },
+                    a: {
+                        type: 'million',
+                        rules: [
+                            { name: 'round' },
+                            {
+                                name: 'dividable',
+                                args: { q: { ref: { path: ['b'] } } }
+                            }
+                        ]
+                    },
+                    c: {
+                        type: 'million',
+                        rules: [
+                            { name: 'dividable', args: { q: 2 } },
+                            { name: 'dividable', args: { q: 7 } }
+                        ]
+                    },
+                    d: {
+                        type: 'million',
+                        rules: [
+                            { name: 'round' }
+                        ],
+                        preferences: {
+                            convert: false
+                        }
+                    },
+                    e: {
+                        type: 'million',
+                        flags: {
+                            big: true
+                        }
+                    }
+                }
+            });
+
+            const built = custom.build(desc);
+            expect(built).to.equal(schema, { skip: ['_ruleset'] });
+        });
     });
 });
 

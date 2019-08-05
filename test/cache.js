@@ -40,10 +40,11 @@ describe('Cache', () => {
         it('caches cast objects and clones on return', () => {
 
             const schema = Joi.object().cache();
+            schema._definition = Object.assign({}, schema._definition);     // Shallow cloned
 
-            const rule = schema._coerce;
+            const rule = schema._definition.coerce.method;
             let count = 0;
-            schema._coerce = function (...args) {
+            schema._definition.coerce.method = function (...args) {
 
                 ++count;
                 return rule(...args);
