@@ -19,12 +19,6 @@ process.env.TZ = 'utc'; // Needed for timezone sensitive tests
 
 describe('string', () => {
 
-    it('can be called on its own', () => {
-
-        const string = Joi.string;
-        expect(() => string()).to.throw('Must be invoked on a Joi instance.');
-    });
-
     it('should throw an exception if arguments were passed.', () => {
 
         expect(() => Joi.string('invalid argument.')).to.throw('The string type does not allow arguments');
@@ -2178,7 +2172,7 @@ describe('string', () => {
 
         it('throws when options is not an object', () => {
 
-            expect(() => Joi.string().ip(42)).to.throw('Options must be an object');
+            expect(() => Joi.string().ip(42)).to.throw('Options must be of type object');
         });
 
         it('throws when options.cidr is not a string', () => {
@@ -3013,7 +3007,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().uri('http');
-            }).to.throw(Error, 'Options must be an object');
+            }).to.throw(Error, 'Options must be of type object');
         });
 
         it('validates uri requires scheme to be a RegExp, String, or Array with a friendly error message', () => {
@@ -9588,7 +9582,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().hex('a');
-            }).to.throw('Options must be an object');
+            }).to.throw('Options must be of type object');
 
             expect(() => {
 
@@ -9669,7 +9663,7 @@ describe('string', () => {
 
         it('validates the base64 options', () => {
 
-            expect(() => Joi.string().base64('a')).to.throw('Options must be an object');
+            expect(() => Joi.string().base64('a')).to.throw('Options must be of type object');
             expect(() => Joi.string().base64({ paddingRequired: 'a' })).to.throw('paddingRequired must be boolean');
             expect(() => Joi.string().base64({ urlSafe: 'a' })).to.throw('urlSafe must be boolean');
         });

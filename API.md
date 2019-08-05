@@ -165,9 +165,6 @@
   - [`symbol` - inherits from `Any`](#symbol---inherits-from-any)
     - [`symbol.map(map)`](#symbolmapmap)
 - [Extensions](#extensions)
-  - [Terms](#terms)
-  - [npm note](#npm-note)
-  - [Examples](#examples)
 - [Errors](#errors)
   - [`ValidationError`](#validationerror)
   - [List of errors](#list-of-errors)
@@ -215,7 +212,6 @@
     - [`date.timestamp.javascript`](#datetimestampjavascript)
     - [`date.timestamp.unix`](#datetimestampunix)
     - [`function.arity`](#functionarity)
-    - [`function.base`](#functionbase)
     - [`function.class`](#functionclass)
     - [`function.maxArity`](#functionmaxarity)
     - [`function.minArity`](#functionminarity)
@@ -1987,7 +1983,7 @@ const func = Joi.func();
 await func.validateAsync(function () {});
 ```
 
-Possible validation errors: [`function.base`](#functionbase)
+Possible validation errors: [`object.base`](#objectbase)
 
 #### `func.arity(n)`
 
@@ -3647,10 +3643,6 @@ Additional local context properties:
 }
 ```
 
-#### `function.base`
-
-The input is not a function.
-
 #### `function.class`
 
 The input is not a JavaScript class.
@@ -3850,7 +3842,14 @@ Additional local context properties:
 
 #### `object.base`
 
-The value is not of object type or could not be cast to an object from a string.
+The value is not of the expected type.
+
+Additional local context properties:
+```ts
+{
+    type: string // The expected type
+}
+```
 
 #### `object.length`
 

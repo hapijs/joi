@@ -16,12 +16,6 @@ const { expect } = Code;
 
 describe('number', () => {
 
-    it('can be called on its own', () => {
-
-        const number = Joi.number;
-        expect(() => number()).to.throw('Must be invoked on a Joi instance.');
-    });
-
     it('should throw an exception if arguments were passed.', () => {
 
         expect(() => Joi.number('invalid argument.')).to.throw('The number type does not allow arguments');

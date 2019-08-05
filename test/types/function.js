@@ -14,30 +14,24 @@ const { describe, it } = exports.lab = Lab.script();
 const { expect } = Code;
 
 
-describe('func', () => {
+describe('function', () => {
 
-    it('can be called on its own', () => {
+    it('throws an exception if arguments were passed.', () => {
 
-        const func = Joi.func;
-        expect(() => func()).to.throw('Must be invoked on a Joi instance.');
-    });
-
-    it('should throw an exception if arguments were passed.', () => {
-
-        expect(() => Joi.func('invalid argument.')).to.throw('The func type does not allow arguments');
+        expect(() => Joi.func('invalid argument.')).to.throw('The function type does not allow arguments');
     });
 
     it('validates a function', () => {
 
-        Helper.validate(Joi.func().required(), [
+        Helper.validate(Joi.function().required(), [
             [function () { }, true],
             ['', false, null, {
-                message: '"value" must be a Function',
+                message: '"value" must be of type function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"value" must be of type function',
                     path: [],
-                    type: 'function.base',
-                    context: { label: 'value', value: '' }
+                    type: 'object.base',
+                    context: { label: 'value', value: '', type: 'function' }
                 }]
             }]
         ]);
@@ -45,17 +39,17 @@ describe('func', () => {
 
     it('validates a function arity', () => {
 
-        const schema = Joi.func().arity(2).required();
+        const schema = Joi.function().arity(2).required();
         Helper.validate(schema, [
             [function (a, b) { }, true],
             [(a, b) => { }, true],
             ['', false, null, {
-                message: '"value" must be a Function',
+                message: '"value" must be of type function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"value" must be of type function',
                     path: [],
-                    type: 'function.base',
-                    context: { label: 'value', value: '' }
+                    type: 'object.base',
+                    context: { label: 'value', value: '', type: 'function' }
                 }]
             }]
         ]);
@@ -101,12 +95,12 @@ describe('func', () => {
 
         const schemaWithStringArity = function () {
 
-            return Joi.func().arity('deux');
+            return Joi.function().arity('deux');
         };
 
         const schemaWithNegativeArity = function () {
 
-            return Joi.func().arity(-2);
+            return Joi.function().arity(-2);
         };
 
         expect(schemaWithStringArity).to.throw(Error, 'n must be a positive integer');
@@ -115,19 +109,19 @@ describe('func', () => {
 
     it('validates a function min arity', () => {
 
-        const schema = Joi.func().minArity(2).required();
+        const schema = Joi.function().minArity(2).required();
         Helper.validate(schema, [
             [function (a, b) { }, true],
             [function (a, b, c) { }, true],
             [(a, b) => { }, true],
             [(a, b, c) => { }, true],
             ['', false, null, {
-                message: '"value" must be a Function',
+                message: '"value" must be of type function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"value" must be of type function',
                     path: [],
-                    type: 'function.base',
-                    context: { label: 'value', value: '' }
+                    type: 'object.base',
+                    context: { label: 'value', value: '', type: 'function' }
                 }]
             }]
         ]);
@@ -155,17 +149,17 @@ describe('func', () => {
 
         const schemaWithStringMinArity = function () {
 
-            return Joi.func().minArity('deux');
+            return Joi.function().minArity('deux');
         };
 
         const schemaWithNegativeMinArity = function () {
 
-            return Joi.func().minArity(-2);
+            return Joi.function().minArity(-2);
         };
 
         const schemaWithZeroArity = function () {
 
-            return Joi.func().minArity(0);
+            return Joi.function().minArity(0);
         };
 
         expect(schemaWithStringMinArity).to.throw(Error, 'n must be a strict positive integer');
@@ -175,7 +169,7 @@ describe('func', () => {
 
     it('validates a function max arity', () => {
 
-        const schema = Joi.func().maxArity(2).required();
+        const schema = Joi.function().maxArity(2).required();
         Helper.validate(schema, [
             [function (a, b) { }, true],
             [function (a) { }, true],
@@ -202,12 +196,12 @@ describe('func', () => {
         }]);
 
         const error3 = schema.validate('').error;
-        expect(error3).to.be.an.error('"value" must be a Function');
+        expect(error3).to.be.an.error('"value" must be of type function');
         expect(error3.details).to.equal([{
-            message: '"value" must be a Function',
+            message: '"value" must be of type function',
             path: [],
-            type: 'function.base',
-            context: { label: 'value', value: '' }
+            type: 'object.base',
+            context: { label: 'value', value: '', type: 'function' }
         }]);
     });
 
@@ -215,12 +209,12 @@ describe('func', () => {
 
         const schemaWithStringMaxArity = function () {
 
-            return Joi.func().maxArity('deux');
+            return Joi.function().maxArity('deux');
         };
 
         const schemaWithNegativeMaxArity = function () {
 
-            return Joi.func().maxArity(-2);
+            return Joi.function().maxArity(-2);
         };
 
         expect(schemaWithStringMaxArity).to.throw('n must be a positive integer');
@@ -235,7 +229,7 @@ describe('func', () => {
         const b = function () { };
         b.a = 123;
 
-        Helper.validate(Joi.func().keys({ a: Joi.string().required() }).required(), [
+        Helper.validate(Joi.function().keys({ a: Joi.string().required() }).required(), [
             [function () { }, false, null, {
                 message: '"a" is required',
                 details: [{
@@ -256,12 +250,12 @@ describe('func', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be a Function',
+                message: '"value" must be of type function',
                 details: [{
-                    message: '"value" must be a Function',
+                    message: '"value" must be of type function',
                     path: [],
-                    type: 'function.base',
-                    context: { label: 'value', value: '' }
+                    type: 'object.base',
+                    context: { label: 'value', value: '', type: 'function' }
                 }]
             }]
         ]);
@@ -269,7 +263,7 @@ describe('func', () => {
 
     it('validates a function with keys and function rules', () => {
 
-        const schema = Joi.func()
+        const schema = Joi.function()
             .keys({ a: Joi.string().required() })
             .minArity(1)
             .required();
@@ -317,7 +311,7 @@ describe('func', () => {
 
     it('validates a function with object rules and function rules', () => {
 
-        const schema = Joi.func()
+        const schema = Joi.function()
             .min(1)
             .minArity(1)
             .required();
@@ -355,7 +349,7 @@ describe('func', () => {
 
     it('keeps validated value as a function', () => {
 
-        const schema = Joi.func().keys({ a: Joi.number() });
+        const schema = Joi.function().keys({ a: Joi.number() });
 
         const b = 'abc';
         const value = function () {
@@ -373,7 +367,7 @@ describe('func', () => {
 
     it('retains validated value prototype', () => {
 
-        const schema = Joi.func().keys({ a: Joi.number() });
+        const schema = Joi.function().keys({ a: Joi.number() });
 
         const value = function () {
 
@@ -394,7 +388,7 @@ describe('func', () => {
 
     it('keeps validated value as a function (no clone)', () => {
 
-        const schema = Joi.func();
+        const schema = Joi.function();
 
         const b = 'abc';
         const value = function () {
@@ -411,12 +405,12 @@ describe('func', () => {
     });
 });
 
-describe('func().class()', () => {
+describe('function().class()', () => {
 
     it('should differentiate between classes and functions', () => {
 
         const classSchema = Joi.object({
-            _class: Joi.func().class()
+            _class: Joi.function().class()
         });
 
         const testFunc = function () { };
@@ -439,26 +433,26 @@ describe('func().class()', () => {
     it('refuses class look-alikes and bad values', () => {
 
         const classSchema = Joi.object({
-            _class: Joi.func().class()
+            _class: Joi.function().class()
         });
 
         Helper.validate(classSchema, [
             [{ _class: ['class '] }, false, null, {
-                message: '"_class" must be a Function',
+                message: '"_class" must be of type function',
                 details: [{
-                    message: '"_class" must be a Function',
+                    message: '"_class" must be of type function',
                     path: ['_class'],
-                    type: 'function.base',
-                    context: { key: '_class', label: '_class', value: ['class '] }
+                    type: 'object.base',
+                    context: { key: '_class', label: '_class', value: ['class '], type: 'function' }
                 }]
             }],
             [{ _class: null }, false, null, {
-                message: '"_class" must be a Function',
+                message: '"_class" must be of type function',
                 details: [{
-                    message: '"_class" must be a Function',
+                    message: '"_class" must be of type function',
                     path: ['_class'],
-                    type: 'function.base',
-                    context: { key: '_class', label: '_class', value: null }
+                    type: 'object.base',
+                    context: { key: '_class', label: '_class', value: null, type: 'function' }
                 }]
             }]
         ]);

@@ -16,12 +16,6 @@ const { expect } = Code;
 
 describe('boolean', () => {
 
-    it('can be called on its own', () => {
-
-        const boolean = Joi.boolean;
-        expect(() => boolean()).to.throw('Must be invoked on a Joi instance.');
-    });
-
     it('should throw an exception if arguments were passed.', () => {
 
         expect(() => Joi.boolean('invalid argument.')).to.throw('The boolean type does not allow arguments');

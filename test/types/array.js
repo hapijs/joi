@@ -16,12 +16,6 @@ const { expect } = Code;
 
 describe('array', () => {
 
-    it('can be called on its own', () => {
-
-        const array = Joi.array;
-        expect(() => array()).to.throw('Must be invoked on a Joi instance.');
-    });
-
     it('should throw an exception if arguments were passed.', () => {
 
         expect(() => Joi.array('invalid argument.')).to.throw('The array type does not allow arguments');
@@ -1876,7 +1870,7 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{ a: 1 }, {}, 3], false, null, {
-                    message: '"[1]" must not be a sparse array item. "[2]" must be an object',
+                    message: '"[1]" must not be a sparse array item. "[2]" must be of type object',
                     details: [
                         {
                             message: '"[1]" must not be a sparse array item',
@@ -1885,10 +1879,10 @@ describe('array', () => {
                             context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
                         },
                         {
-                            message: '"[2]" must be an object',
+                            message: '"[2]" must be of type object',
                             path: [2],
                             type: 'object.base',
-                            context: { label: '[2]', key: 2, value: 3 }
+                            context: { label: '[2]', key: 2, value: 3, type: 'object' }
                         }
                     ]
                 }]
@@ -1986,7 +1980,7 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[{}, 3], false, null, {
-                    message: '"[0]" is required. "[1]" must be an object. "value" does not contain 1 required value(s)',
+                    message: '"[0]" is required. "[1]" must be of type object. "value" does not contain 1 required value(s)',
                     details: [
                         {
                             message: '"[0]" is required',
@@ -1995,10 +1989,10 @@ describe('array', () => {
                             context: { label: '[0]', key: 0 }
                         },
                         {
-                            message: '"[1]" must be an object',
+                            message: '"[1]" must be of type object',
                             path: [1],
                             type: 'object.base',
-                            context: { label: '[1]', key: 1, value: 3 }
+                            context: { label: '[1]', key: 1, value: 3, type: 'object' }
                         },
                         {
                             message: '"value" does not contain 1 required value(s)',
@@ -2660,7 +2654,7 @@ describe('array', () => {
 
         it('fails with invalid configs', () => {
 
-            expect(() => Joi.array().unique('id', 'invalid configs')).to.throw('Options must be an object');
+            expect(() => Joi.array().unique('id', 'invalid configs')).to.throw('Options must be of type object');
             expect(() => Joi.array().unique('id', {})).to.not.throw();
         });
 
@@ -2796,12 +2790,12 @@ describe('array', () => {
                     }]
                 }],
                 [[1, 2, [1]], false, null, {
-                    message: '"[0]" must be an object',
+                    message: '"[0]" must be of type object',
                     details: [{
-                        message: '"[0]" must be an object',
+                        message: '"[0]" must be of type object',
                         path: [0],
                         type: 'object.base',
-                        context: { label: '[0]', key: 0, value: 1 }
+                        context: { label: '[0]', key: 0, value: 1, type: 'object' }
                     }]
                 }]
             ]);

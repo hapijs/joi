@@ -16,12 +16,6 @@ const { expect } = Code;
 
 describe('any', () => {
 
-    it('can be called on its own', () => {
-
-        const any = Joi.any;
-        expect(() => any()).to.throw('Must be invoked on a Joi instance.');
-    });
-
     it('should throw an exception if arguments were passed.', () => {
 
         expect(() => Joi.any('invalid argument.')).to.throw('The any type does not allow arguments');
@@ -2750,7 +2744,7 @@ describe('any', () => {
 
         it('throws when options are invalid', () => {
 
-            expect(() => Joi.when('a')).to.throw('Options must be an object');
+            expect(() => Joi.when('a')).to.throw('Options must be of type object');
         });
 
         it('throws on multiple whens', () => {

@@ -186,15 +186,15 @@ describe('symbol', () => {
 
                 expect(
                     () => Joi.symbol().map([[{}, Symbol()]])
-                ).to.throw('Key must not be an object, function, or Symbol');
+                ).to.throw('Key must not be of type object, function, or Symbol');
 
                 expect(
                     () => Joi.symbol().map([[() => { }, Symbol()]])
-                ).to.throw('Key must not be an object, function, or Symbol');
+                ).to.throw('Key must not be of type object, function, or Symbol');
 
                 expect(
                     () => Joi.symbol().map([[Symbol(), Symbol()]])
-                ).to.throw('Key must not be an object, function, or Symbol');
+                ).to.throw('Key must not be of type object, function, or Symbol');
             });
         });
 

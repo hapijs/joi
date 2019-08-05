@@ -16,12 +16,6 @@ const { expect } = Code;
 
 describe('object', () => {
 
-    it('can be called on its own', () => {
-
-        const object = Joi.object;
-        expect(() => object()).to.throw('Must be invoked on a Joi instance.');
-    });
-
     it('converts a json string to an object', () => {
 
         expect(Joi.object().validate('{"hi":true}')).to.equal({ value: { hi: true } });
@@ -34,18 +28,18 @@ describe('object', () => {
 
     it('fails on json string in strict mode', () => {
 
-        expect(Joi.object().strict().validate('{"hi":true}').error).to.be.an.error('"value" must be an object');
+        expect(Joi.object().strict().validate('{"hi":true}').error).to.be.an.error('"value" must be of type object');
     });
 
     it('errors on non-object string', () => {
 
         const err = Joi.object().validate('a string').error;
-        expect(err).to.be.an.error('"value" must be an object');
+        expect(err).to.be.an.error('"value" must be of type object');
         expect(err.details).to.equal([{
-            message: '"value" must be an object',
+            message: '"value" must be of type object',
             path: [],
             type: 'object.base',
-            context: { label: 'value', value: 'a string' }
+            context: { label: 'value', value: 'a string', type: 'object' }
         }]);
     });
 
@@ -56,12 +50,12 @@ describe('object', () => {
             [{}, true],
             [{ hi: true }, true],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"value" must be of type object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"value" must be of type object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', value: '' }
+                    context: { label: 'value', value: '', type: 'object' }
                 }]
             }]
         ]);
@@ -174,12 +168,12 @@ describe('object', () => {
     it('errors on array', () => {
 
         const err = Joi.object().validate([1, 2, 3]).error;
-        expect(err).to.be.an.error('"value" must be an object');
+        expect(err).to.be.an.error('"value" must be of type object');
         expect(err.details).to.equal([{
-            message: '"value" must be an object',
+            message: '"value" must be of type object',
             path: [],
             type: 'object.base',
-            context: { label: 'value', value: [1, 2, 3] }
+            context: { label: 'value', value: [1, 2, 3], type: 'object' }
         }]);
     });
 
@@ -198,12 +192,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"value" must be of type object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"value" must be of type object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', value: '' }
+                    context: { label: 'value', value: '', type: 'object' }
                 }]
             }]
         ]);
@@ -237,12 +231,12 @@ describe('object', () => {
             }],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"value" must be of type object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"value" must be of type object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', value: '' }
+                    context: { label: 'value', value: '', type: 'object' }
                 }]
             }]
         ]);
@@ -268,12 +262,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"value" must be of type object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"value" must be of type object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', value: '' }
+                    context: { label: 'value', value: '', type: 'object' }
                 }]
             }]
         ]);
@@ -318,12 +312,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"value" must be of type object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"value" must be of type object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', value: '' }
+                    context: { label: 'value', value: '', type: 'object' }
                 }]
             }]
         ]);
@@ -357,12 +351,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"value" must be of type object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"value" must be of type object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', value: '' }
+                    context: { label: 'value', value: '', type: 'object' }
                 }]
             }]
         ]);
@@ -383,12 +377,12 @@ describe('object', () => {
                 }]
             }],
             ['', false, null, {
-                message: '"value" must be an object',
+                message: '"value" must be of type object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"value" must be of type object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', value: '' }
+                    context: { label: 'value', value: '', type: 'object' }
                 }]
             }],
             [d, false, null, {
@@ -510,12 +504,12 @@ describe('object', () => {
 
         Helper.validate(schema, [
             [null, false, null, {
-                message: '"value" must be an object',
+                message: '"value" must be of type object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"value" must be of type object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', value: null }
+                    context: { label: 'value', value: null, type: 'object' }
                 }]
             }],
             [undefined, true],
@@ -558,12 +552,12 @@ describe('object', () => {
 
         Helper.validate(schema, [
             [null, false, null, {
-                message: '"value" must be an object',
+                message: '"value" must be of type object',
                 details: [{
-                    message: '"value" must be an object',
+                    message: '"value" must be of type object',
                     path: [],
                     type: 'object.base',
-                    context: { label: 'value', value: null }
+                    context: { label: 'value', value: null, type: 'object' }
                 }]
             }],
             [undefined, true],
@@ -2642,12 +2636,12 @@ describe('object', () => {
                     }]
                 }],
                 [{ b: 'x' }, false, null, {
-                    message: '"b" must be an object',
+                    message: '"b" must be of type object',
                     details: [{
-                        message: '"b" must be an object',
+                        message: '"b" must be of type object',
                         path: ['b'],
                         type: 'object.base',
-                        context: { label: 'b', key: 'b', value: 'x' }
+                        context: { label: 'b', key: 'b', value: 'x', type: 'object' }
                     }]
                 }],
                 [{ b: {} }, true],

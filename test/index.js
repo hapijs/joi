@@ -189,7 +189,7 @@ describe('Joi', () => {
                         path: [],
                         type: 'alternatives.match',
                         context: {
-                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
                             label: 'value',
                             value: 'other',
                             details: [
@@ -206,10 +206,10 @@ describe('Joi', () => {
                                     context: { value: 'other', valids: [5], label: 'value' }
                                 },
                                 {
-                                    message: '"value" must be an object',
+                                    message: '"value" must be of type object',
                                     path: [],
                                     type: 'object.base',
-                                    context: { label: 'value', value: 'other' }
+                                    context: { label: 'value', value: 'other', type: 'object' }
                                 }
                             ]
                         }
@@ -224,7 +224,7 @@ describe('Joi', () => {
                         path: [],
                         type: 'alternatives.match',
                         context: {
-                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
                             label: 'value',
                             value: 6,
                             details: [
@@ -241,10 +241,10 @@ describe('Joi', () => {
                                     context: { value: 6, valids: [5], label: 'value' }
                                 },
                                 {
-                                    message: '"value" must be an object',
+                                    message: '"value" must be of type object',
                                     path: [],
                                     type: 'object.base',
-                                    context: { label: 'value', value: 6 }
+                                    context: { label: 'value', value: 6, type: 'object' }
                                 }
                             ]
                         }
@@ -341,7 +341,7 @@ describe('Joi', () => {
                         path: [],
                         type: 'alternatives.match',
                         context: {
-                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
                             label: 'value',
                             value: 'other',
                             details: [
@@ -358,10 +358,10 @@ describe('Joi', () => {
                                     context: { value: 'other', valids: [5], label: 'value' }
                                 },
                                 {
-                                    message: '"value" must be an object',
+                                    message: '"value" must be of type object',
                                     path: [],
                                     type: 'object.base',
-                                    context: { label: 'value', value: 'other' }
+                                    context: { label: 'value', value: 'other', type: 'object' }
                                 }
                             ]
                         }
@@ -376,7 +376,7 @@ describe('Joi', () => {
                         path: [],
                         type: 'alternatives.match',
                         context: {
-                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be an object',
+                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
                             label: 'value',
                             value: 6,
                             details: [
@@ -393,10 +393,10 @@ describe('Joi', () => {
                                     context: { value: 6, valids: [5], label: 'value' }
                                 },
                                 {
-                                    message: '"value" must be an object',
+                                    message: '"value" must be of type object',
                                     path: [],
                                     type: 'object.base',
-                                    context: { label: 'value', value: 6 }
+                                    context: { label: 'value', value: 6, type: 'object' }
                                 }
                             ]
                         }
@@ -1749,7 +1749,7 @@ describe('Joi', () => {
 
         expect(Joi.boolean().allow(null).validate(true).error).to.not.exist();
         expect(Joi.object().validate({ auth: { mode: 'try' } }).error).to.not.exist();
-        expect(Joi.object().validate(true).error).to.be.an.error('"value" must be an object');
+        expect(Joi.object().validate(true).error).to.be.an.error('"value" must be of type object');
         expect(Joi.string().validate(true).error).to.be.an.error('"value" must be a string');
         expect(Joi.string().email().validate('test@test.com').error).to.not.exist();
         expect(Joi.object({ param: Joi.string().required() }).validate({ param: 'item' }).error).to.not.exist();
@@ -1964,7 +1964,7 @@ describe('Joi', () => {
         expect(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation when parameter is required to be an object but is given as string', () => {
+    it('fails validation when parameter is required to be of type object but is given as string', () => {
 
         const obj = {
             a: 'a string'
@@ -1973,7 +1973,7 @@ describe('Joi', () => {
         expect(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
     });
 
-    it('validates when parameter is required to be an object and is given correctly as a json string', () => {
+    it('validates when parameter is required to be of type object and is given correctly as a json string', () => {
 
         const schema = Joi.object({
             a: Joi.object({
@@ -1989,7 +1989,7 @@ describe('Joi', () => {
         expect(input.a).to.equal('{"b":"string"}');
     });
 
-    it('fails validation when parameter is required to be an object but is given as a json string that is incorrect (number instead of string)', () => {
+    it('fails validation when parameter is required to be of type object but is given as a json string that is incorrect (number instead of string)', () => {
 
         const obj = {
             a: '{"b":2}'

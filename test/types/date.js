@@ -38,12 +38,6 @@ describe('date', () => {
         Date.now.restore();
     });
 
-    it('can be called on its own', () => {
-
-        const date = Joi.date;
-        expect(() => date()).to.throw('Must be invoked on a Joi instance.');
-    });
-
     it('should throw an exception if arguments were passed.', () => {
 
         expect(() => Joi.date('invalid argument.')).to.throw('The date type does not allow arguments');

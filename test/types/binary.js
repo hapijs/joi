@@ -16,12 +16,6 @@ const { expect } = Code;
 
 describe('binary', () => {
 
-    it('can be called on its own', () => {
-
-        const binary = Joi.binary;
-        expect(() => binary()).to.throw('Must be invoked on a Joi instance.');
-    });
-
     it('should throw an exception if arguments were passed.', () => {
 
         expect(() => Joi.binary('invalid argument.')).to.throw('The binary type does not allow arguments');

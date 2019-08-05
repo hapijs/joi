@@ -16,12 +16,6 @@ const { expect } = Code;
 
 describe('alternatives', () => {
 
-    it('can be called on its own', () => {
-
-        const alternatives = Joi.alternatives;
-        expect(() => alternatives()).to.throw('Must be invoked on a Joi instance.');
-    });
-
     it('fails when no alternatives are provided', () => {
 
         const err = Joi.alternatives().validate('a').error;

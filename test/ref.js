@@ -395,16 +395,17 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{ key: object }, true],
             [{ key: 1 }, false, null, {
-                message: '"key" must be an object',
+                message: '"key" must be of type object',
                 details: [
                     {
-                        message: '"key" must be an object',
+                        message: '"key" must be of type object',
                         type: 'object.base',
                         path: ['key'],
                         context: {
                             key: 'key',
                             label: 'key',
-                            value: 1
+                            value: 1,
+                            type: 'object'
                         }
                     }
                 ]
@@ -426,16 +427,17 @@ describe('ref', () => {
                 ]
             }],
             [{ key: { a: 1 } }, false, null, {
-                message: '"key.a" must be an object',
+                message: '"key.a" must be of type object',
                 details: [
                     {
-                        message: '"key.a" must be an object',
+                        message: '"key.a" must be of type object',
                         type: 'object.base',
                         path: ['key', 'a'],
                         context: {
                             key: 'a',
                             label: 'key.a',
-                            value: 1
+                            value: 1,
+                            type: 'object'
                         }
                     }
                 ]
@@ -918,12 +920,12 @@ describe('ref', () => {
             }],
             [{ b: { c: 5 } }, true],
             [{ a: 5, b: 5 }, false, null, {
-                message: '"b" must be an object',
+                message: '"b" must be of type object',
                 details: [{
-                    message: '"b" must be an object',
+                    message: '"b" must be of type object',
                     path: ['b'],
                     type: 'object.base',
-                    context: { label: 'b', key: 'b', value: 5 }
+                    context: { label: 'b', key: 'b', value: 5, type: 'object' }
                 }]
             }],
             [{ a: '5', b: { c: '5' } }, true]
