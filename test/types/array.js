@@ -1495,6 +1495,7 @@ describe('array', () => {
 
             expect(() => Joi.array().items(Joi.array()).single()).to.throw('Cannot specify single rule when array has array items');
             expect(() => Joi.array().items(Joi.alternatives([Joi.array()])).single()).to.throw('Cannot specify single rule when array has array items');
+            expect(() => Joi.array().items(Joi.alternatives([Joi.number(), Joi.string()])).single()).to.not.throw();
 
             expect(() => Joi.array().single().items(Joi.array())).to.throw('Cannot specify array item with single rule enabled');
             expect(() => Joi.array().single().items(Joi.alternatives([Joi.array()]))).to.throw('Cannot specify array item with single rule enabled');
