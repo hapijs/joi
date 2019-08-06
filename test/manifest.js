@@ -449,9 +449,9 @@ describe('Manifest', () => {
             const custom = Joi.extend({
                 type: 'fancy',
                 base: Joi.object({ a: Joi.number() }),
-                initialize: function () {
+                initialize: function (schema) {
 
-                    this._inners.fancy = [];
+                    schema._inners.fancy = [];
                 },
                 rules: {
                     pants: {

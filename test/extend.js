@@ -1,8 +1,9 @@
 'use strict';
 
 const Code = require('@hapi/code');
-const Lab = require('@hapi/lab');
+const Hoek = require('@hapi/hoek');
 const Joi = require('..');
+const Lab = require('@hapi/lab');
 
 const Helper = require('./helper');
 
@@ -1195,9 +1196,9 @@ describe('extension', () => {
             return {
                 type: 'special',
                 base: joi.object(),
-                initialize: function () {
+                initialize: function (schema) {
 
-                    this._inners.tests = [];
+                    schema._inners.tests = [];
                 },
                 rules: {
                     test: {
@@ -1205,7 +1206,7 @@ describe('extension', () => {
 
                             const obj = this.clone();
                             obj._inners.tests.push(schema);
-                            obj.$_registerChild(schema);
+                            obj.$_mutateRegister(schema);
                             return obj;
                         }
                     }
@@ -1217,13 +1218,15 @@ describe('extension', () => {
                         if (id === item._flags.id) {
                             const obj = schema.clone();
                             obj._inners.tests[i] = replacement;
-                            return obj.$_rebuild();
+                            return obj.$_mutateRebuild();
                         }
                     }
                 },
-                rebuild: function () {
+                rebuild: function (schema) {
 
-                    return this;
+                    for (const item of schema._inners.tests) {
+                        schema.$_mutateRegister(item);
+                    }
                 }
             };
         });
@@ -1271,5 +1274,31 @@ describe('extension', () => {
                 }
             ]
         });
+    });
+
+    it('extends with rules override', () => {
+
+        const custom = Joi.extend({
+            type: 'special',
+            base: Joi.number(),
+            rules: {
+                factor: {
+                    method: function (n) {
+
+                        return this.$_overrideRules('min', (rule) => {
+
+                            const clone = Hoek.clone(rule);
+                            clone.options.args.limit *= n;
+                            clone.args = clone.options.args;
+                            return clone;
+                        });
+                    }
+                }
+            }
+        });
+
+        const schema = custom.special().min(1).keep().min(10).factor(2);
+        expect(schema.validate(20)).to.equal({ value: 20 });
+        expect(schema.validate(19).error).to.be.an.error('"value" must be larger than or equal to 20');
     });
 });
