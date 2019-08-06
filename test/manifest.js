@@ -444,7 +444,51 @@ describe('Manifest', () => {
             ]);
         });
 
-        it('builds extended schema', () => {
+        it('builds extended schema (nested builds)', () => {
+
+            const custom = Joi.extend({
+                type: 'fancy',
+                base: Joi.object({ a: Joi.number() }),
+                initialize: function () {
+
+                    this._inners.fancy = [];
+                },
+                rules: {
+                    pants: {
+                        method: function (button) {
+
+                            this._inners.fancy.push(button);
+                            return this;
+                        }
+                    }
+                },
+                build: function (obj, desc) {
+
+                    if (desc.fancy) {
+                        obj = obj.clone();
+                        obj._inners.fancy = desc.fancy.slice();
+                    }
+
+                    return obj;
+                }
+            });
+
+            const schema = custom.fancy().pants('green');
+            const desc = schema.describe();
+
+            expect(desc).to.equal({
+                type: 'fancy',
+                keys: {
+                    a: { type: 'number' }
+                },
+                fancy: ['green']
+            });
+
+            const built = custom.build(desc);
+            expect(built).to.equal(schema, { skip: ['_ruleset'] });
+        });
+
+        it('builds extended schema (complex)', () => {
 
             const custom = Joi.extend({
                 type: 'million',

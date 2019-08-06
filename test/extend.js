@@ -1187,4 +1187,89 @@ describe('extension', () => {
             }]
         ]);
     });
+
+    it('extends modify', () => {
+
+        const custom = Joi.extend((joi) => {
+
+            return {
+                type: 'special',
+                base: joi.object(),
+                initialize: function () {
+
+                    this._inners.tests = [];
+                },
+                rules: {
+                    test: {
+                        method: function (schema) {
+
+                            const obj = this.clone();
+                            obj._inners.tests.push(schema);
+                            obj._register(schema);
+                            return obj;
+                        }
+                    }
+                },
+                modify: function (schema, id, replacement) {
+
+                    for (let i = 0; i < schema._inners.tests.length; ++i) {
+                        const item = schema._inners.tests[i];
+                        if (id === item._flags.id) {
+                            const obj = schema.clone();
+                            obj._inners.tests[i] = replacement;
+                            return obj.rebuild();
+                        }
+                    }
+                },
+                rebuild: function () {
+
+                    return this;
+                }
+            };
+        });
+
+        const schema = custom.special().keys({ y: Joi.number() }).test(Joi.number().id('x'));
+
+        const modified1 = schema.fork('x', (s) => s.min(10));
+        expect(modified1.describe()).to.equal({
+            type: 'special',
+            keys: {
+                y: { type: 'number' }
+            },
+            tests: [
+                {
+                    type: 'number',
+                    flags: { id: 'x' },
+                    rules: [
+                        {
+                            name: 'min',
+                            args: { limit: 10 }
+                        }
+                    ]
+                }
+            ]
+        });
+
+        const modified2 = schema.fork('y', (s) => s.min(10));
+        expect(modified2.describe()).to.equal({
+            type: 'special',
+            keys: {
+                y: {
+                    type: 'number',
+                    rules: [
+                        {
+                            name: 'min',
+                            args: { limit: 10 }
+                        }
+                    ]
+                }
+            },
+            tests: [
+                {
+                    type: 'number',
+                    flags: { id: 'x' }
+                }
+            ]
+        });
+    });
 });
