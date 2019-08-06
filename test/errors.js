@@ -1016,14 +1016,14 @@ describe('errors', () => {
         it('annotates joi schema error', () => {
 
             const schema = Joi.object({
-                _type: 'string'
+                type: 'string'
             })
                 .unknown();
 
             const value = Joi.number().min(1);
             const err = schema.validate(value).error;
-            expect(err.message).equal('"_type" must be one of [string]');
-            expect(err.annotate()).to.contain('"_type" must be one of [string]');
+            expect(err.message).equal('"type" must be one of [string]');
+            expect(err.annotate()).to.contain('"type" must be one of [string]');
             expect(value).to.equal(Joi.number().min(1));
         });
     });

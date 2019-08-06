@@ -600,9 +600,9 @@ describe('Modify', () => {
             const b = Joi.object({ c });
             const a = Joi.object({ b });
 
-            expect(a.mapLabels('b')).to.equal('b');
-            expect(a.mapLabels('b.c.d')).to.equal('b.c.d');
-            expect(a.mapLabels(['b', 'c', 'd'])).to.equal('b.c.d');
+            expect(a.$_mapLabels('b')).to.equal('b');
+            expect(a.$_mapLabels('b.c.d')).to.equal('b.c.d');
+            expect(a.$_mapLabels(['b', 'c', 'd'])).to.equal('b.c.d');
         });
 
         it('extracts nested schema with ids', () => {
@@ -612,8 +612,8 @@ describe('Modify', () => {
             const b = Joi.object({ c }).label('B');
             const a = Joi.object({ b });
 
-            expect(a.mapLabels('b')).to.equal('B');
-            expect(a.mapLabels('b.c.d')).to.equal('B.C.D');
+            expect(a.$_mapLabels('b')).to.equal('B');
+            expect(a.$_mapLabels('b.c.d')).to.equal('B.C.D');
         });
     });
 });

@@ -2655,7 +2655,7 @@ describe('any', () => {
         });
     });
 
-    describe('_validate()', () => {
+    describe('$_validate()', () => {
 
         it('checks value after conversion', () => {
 
@@ -3302,12 +3302,12 @@ describe('any', () => {
 
         it('errors on invalid options', () => {
 
-            expect(() => Joi.any().addRule()).to.throw('Invalid options');
-            expect(() => Joi.any().addRule(5)).to.throw('Invalid options');
-            expect(() => Joi.any().addRule({})).to.throw('Invalid rule name');
-            expect(() => Joi.any().addRule('')).to.throw('Invalid rule name');
-            expect(() => Joi.any().addRule({ name: '' })).to.throw('Invalid rule name');
-            expect(() => Joi.any().addRule({ name: 5 })).to.throw('Invalid rule name');
+            expect(() => Joi.any().$_addRule()).to.throw('Invalid options');
+            expect(() => Joi.any().$_addRule(5)).to.throw('Invalid options');
+            expect(() => Joi.any().$_addRule({})).to.throw('Invalid rule name');
+            expect(() => Joi.any().$_addRule('')).to.throw('Invalid rule name');
+            expect(() => Joi.any().$_addRule({ name: '' })).to.throw('Invalid rule name');
+            expect(() => Joi.any().$_addRule({ name: 5 })).to.throw('Invalid rule name');
         });
     });
 });

@@ -90,7 +90,7 @@ describe('extension', () => {
                 fail: {
                     method: function () {
 
-                        return this.addRule('fail');
+                        return this.$_addRule('fail');
                     },
                     validate: function (value, helpers) {
 
@@ -389,7 +389,7 @@ describe('extension', () => {
             type: 'special',
             validate(schema, value, helpers) {
 
-                return { value: schema.getFlag('foo') };
+                return { value: schema.$_getFlag('foo') };
             },
             rules: {
                 foo: {
@@ -398,7 +398,7 @@ describe('extension', () => {
                         Joi.assert(first, Joi.string());
                         Joi.assert(second, Joi.object().ref());
 
-                        return this.setFlag('foo', { first, second });
+                        return this.$_setFlag('foo', { first, second });
                     }
                 }
             }
@@ -997,7 +997,7 @@ describe('extension', () => {
 
                     // Only called when prefs.convert is true
 
-                    if (schema.getRule('round')) {
+                    if (schema.$_getRule('round')) {
                         return { value: Math.round(value) };
                     }
                 },
@@ -1011,7 +1011,7 @@ describe('extension', () => {
 
                     // Check flags for global state
 
-                    if (schema.getFlag('big') &&
+                    if (schema.$_getFlag('big') &&
                         value < 5000000) {
 
                         return { value, errors: helpers.error('million.big') };
@@ -1022,14 +1022,14 @@ describe('extension', () => {
                         alias: 'large',
                         method: function () {
 
-                            return this.setFlag('big', true);
+                            return this.$_setFlag('big', true);
                         }
                     },
                     round: {
                         convert: true,              // Dual rule: converts or validates
                         method: function () {
 
-                            return this.addRule('round');
+                            return this.$_addRule('round');
                         },
                         validate: function (value, helpers, args, options) {
 
@@ -1044,7 +1044,7 @@ describe('extension', () => {
                         multi: true,                // Rule supports multiple invocations
                         method: function (q) {
 
-                            return this.addRule({ name: 'dividable', args: { q } });
+                            return this.$_addRule({ name: 'dividable', args: { q } });
                         },
                         args: [
                             {
@@ -1145,7 +1145,7 @@ describe('extension', () => {
                     dividable: {
                         method: function (q) {
 
-                            return this.addRule({ name: 'dividable', args: { q } });
+                            return this.$_addRule({ name: 'dividable', args: { q } });
                         },
                         args: [
                             {
@@ -1205,7 +1205,7 @@ describe('extension', () => {
 
                             const obj = this.clone();
                             obj._inners.tests.push(schema);
-                            obj._register(schema);
+                            obj.$_registerChild(schema);
                             return obj;
                         }
                     }
@@ -1217,7 +1217,7 @@ describe('extension', () => {
                         if (id === item._flags.id) {
                             const obj = schema.clone();
                             obj._inners.tests[i] = replacement;
-                            return obj.rebuild();
+                            return obj.$_rebuild();
                         }
                     }
                 },

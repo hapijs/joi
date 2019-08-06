@@ -503,7 +503,7 @@ describe('Manifest', () => {
 
                     // Only called when prefs.convert is true
 
-                    if (schema.getRule('round')) {
+                    if (schema.$_getRule('round')) {
                         return { value: Math.round(value) };
                     }
                 },
@@ -517,7 +517,7 @@ describe('Manifest', () => {
 
                     // Check flags for global state
 
-                    if (schema.getFlag('big') &&
+                    if (schema.$_getFlag('big') &&
                         value < 5000000) {
 
                         return { value, errors: helpers.error('million.big') };
@@ -528,14 +528,14 @@ describe('Manifest', () => {
                         alias: 'large',
                         method: function () {
 
-                            return this.setFlag('big', true);
+                            return this.$_setFlag('big', true);
                         }
                     },
                     round: {
                         convert: true,              // Dual rule: converts or validates
                         method: function () {
 
-                            return this.addRule('round');
+                            return this.$_addRule('round');
                         },
                         validate: function (value, helpers, args, options) {
 
@@ -550,7 +550,7 @@ describe('Manifest', () => {
                         multi: true,                // Rule supports multiple invocations
                         method: function (q) {
 
-                            return this.addRule({ name: 'dividable', args: { q } });
+                            return this.$_addRule({ name: 'dividable', args: { q } });
                         },
                         args: [
                             {

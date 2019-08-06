@@ -1914,7 +1914,7 @@ describe('array', () => {
                     foo: {
                         method: function () {
 
-                            return this.addRule('foo');
+                            return this.$_addRule('foo');
                         },
                         validate: () => undefined
                     }
@@ -1944,7 +1944,7 @@ describe('array', () => {
                     foo: {
                         method: function () {
 
-                            return this.addRule('foo');
+                            return this.$_addRule('foo');
                         },
                         validate: () => undefined
                     }
