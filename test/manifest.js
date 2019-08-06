@@ -333,7 +333,7 @@ describe('Manifest', () => {
             ]);
         });
 
-        it('sets any inners', () => {
+        it('sets any terms', () => {
 
             internals.test([
                 Joi.string().example('text').tag('a').note('ok then').meta(123),
@@ -451,13 +451,13 @@ describe('Manifest', () => {
                 base: Joi.object({ a: Joi.number() }),
                 initialize: function (schema) {
 
-                    schema._inners.fancy = [];
+                    schema.$_terms.fancy = [];
                 },
                 rules: {
                     pants: {
                         method: function (button) {
 
-                            this._inners.fancy.push(button);
+                            this.$_terms.fancy.push(button);
                             return this;
                         }
                     }
@@ -466,7 +466,7 @@ describe('Manifest', () => {
 
                     if (desc.fancy) {
                         obj = obj.clone();
-                        obj._inners.fancy = desc.fancy.slice();
+                        obj.$_terms.fancy = desc.fancy.slice();
                     }
 
                     return obj;

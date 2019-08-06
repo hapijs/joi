@@ -1198,14 +1198,14 @@ describe('extension', () => {
                 base: joi.object(),
                 initialize: function (schema) {
 
-                    schema._inners.tests = [];
+                    schema.$_terms.tests = [];
                 },
                 rules: {
                     test: {
                         method: function (schema) {
 
                             const obj = this.clone();
-                            obj._inners.tests.push(schema);
+                            obj.$_terms.tests.push(schema);
                             obj.$_mutateRegister(schema);
                             return obj;
                         }
@@ -1213,18 +1213,18 @@ describe('extension', () => {
                 },
                 modify: function (schema, id, replacement) {
 
-                    for (let i = 0; i < schema._inners.tests.length; ++i) {
-                        const item = schema._inners.tests[i];
+                    for (let i = 0; i < schema.$_terms.tests.length; ++i) {
+                        const item = schema.$_terms.tests[i];
                         if (id === item._flags.id) {
                             const obj = schema.clone();
-                            obj._inners.tests[i] = replacement;
+                            obj.$_terms.tests[i] = replacement;
                             return obj.$_mutateRebuild();
                         }
                     }
                 },
                 rebuild: function (schema) {
 
-                    for (const item of schema._inners.tests) {
+                    for (const item of schema.$_terms.tests) {
                         schema.$_mutateRegister(item);
                     }
                 }
@@ -1285,11 +1285,10 @@ describe('extension', () => {
                 factor: {
                     method: function (n) {
 
-                        return this.$_overrideRules('min', (rule) => {
+                        return this.$_replaceRules('min', (rule) => {
 
                             const clone = Hoek.clone(rule);
                             clone.options.args.limit *= n;
-                            clone.args = clone.options.args;
                             return clone;
                         });
                     }
