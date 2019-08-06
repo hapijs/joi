@@ -1,5 +1,7 @@
 'use strict';
 
+const Path = require('path');
+
 module.exports = {
     entry: '../lib/index.js',
     output: {
@@ -9,6 +11,12 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                use: 'null-loader',
+                include: [
+                    Path.join(__dirname, '../lib/types/binary.js')
+                ]
+            },
             {
                 test: /\.js$/,
                 use: {
