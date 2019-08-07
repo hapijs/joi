@@ -26,7 +26,7 @@ module.exports = {
                             [
                                 '@babel/preset-env',
                                 {
-                                    'targets': '> 0.25%, not dead'
+                                    'targets': '> 1%, not IE 11, not dead'
                                 }
                             ]
                         ]
