@@ -1,7 +1,7 @@
 {
   "name": "@hapi/joi",
   "description": "Object schema validation",
-  "version": "16.0.0-rc2",
+  "version": "16.0.0",
   "homepage": "https://github.com/hapijs/joi",
   "repository": "git://github.com/hapijs/joi",
   "main": "lib/index.js",
@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@hapi/code": "6.x.x",
-    "@hapi/lab": "19.x.x",
+    "@hapi/lab": "20.x.x",
     "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x",
     "hapitoc": "1.x.x"
   },

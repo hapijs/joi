@@ -2,12 +2,12 @@
 
 const Fs = require('fs');
 
+const Assert = require('@hapi/hoek/lib/assert');
 const Benchmark = require('benchmark');
 const Bossy = require('@hapi/bossy');
 const Chalk = require('chalk');
 const CliTable = require('cli-table');
 const D3 = require('d3-format');
-const Hoek = require('@hapi/hoek');
 
 
 const definition = {
@@ -74,8 +74,8 @@ const test = ([name, initFn, testFn]) => {
 
     const [schema, valid, invalid] = versionPick(initFn)();
 
-    Hoek.assert(valid === undefined || !testFn(schema, valid).error, 'validation must not fail for: ' + name);
-    Hoek.assert(invalid === undefined || testFn(schema, invalid).error, 'validation must fail for: ' + name);
+    Assert(valid === undefined || !testFn(schema, valid).error, 'validation must not fail for: ' + name);
+    Assert(invalid === undefined || testFn(schema, invalid).error, 'validation must fail for: ' + name);
 
     testFn = versionPick(testFn);
     Suite.add(name + (valid !== undefined ? ' (valid)' : ''), () => {
