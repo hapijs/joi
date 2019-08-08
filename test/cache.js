@@ -37,31 +37,6 @@ describe('Cache', () => {
             schema._definition.rules.pattern.validate = validate;
         });
 
-        it('caches cast objects and clones on return', () => {
-
-            const schema = Joi.object().cache();
-            schema._definition = Object.assign({}, schema._definition);     // Shallow cloned
-
-            const rule = schema._definition.coerce.method;
-            let count = 0;
-            schema._definition.coerce.method = function (...args) {
-
-                ++count;
-                return rule(...args);
-            };
-
-            expect(schema.validate('{"a":"x"}').value).to.equal({ a: 'x' });
-            expect(schema.validate('{"a":"x"}').value).to.equal({ a: 'x' });
-            expect(schema.validate('{"a":"x"}').value).to.equal({ a: 'x' });
-
-            const value = schema.validate('{"a":"x"}').value;
-            value.x = 'y';
-
-            expect(schema.validate('{"a":"x"}').value).to.equal({ a: 'x' });
-
-            expect(count).to.equal(1);
-        });
-
         it('caches errors', () => {
 
             const schema = Joi.string().pattern(/abc/).cache();

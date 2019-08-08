@@ -1964,40 +1964,6 @@ describe('Joi', () => {
         expect(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
     });
 
-    it('fails validation when parameter is required to be of type object but is given as string', () => {
-
-        const obj = {
-            a: 'a string'
-        };
-
-        expect(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
-    });
-
-    it('validates when parameter is required to be of type object and is given correctly as a json string', () => {
-
-        const schema = Joi.object({
-            a: Joi.object({
-                b: Joi.string().required()
-            })
-        });
-
-        const input = {
-            a: '{"b":"string"}'
-        };
-
-        expect(schema.validate(input)).to.equal({ value: { a: { b: 'string' } } });
-        expect(input.a).to.equal('{"b":"string"}');
-    });
-
-    it('fails validation when parameter is required to be of type object but is given as a json string that is incorrect (number instead of string)', () => {
-
-        const obj = {
-            a: '{"b":2}'
-        };
-
-        expect(Joi.object({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
-    });
-
     it('fails validation when parameter is required to be an Array but is given as string', () => {
 
         const obj = {
@@ -2005,15 +1971,6 @@ describe('Joi', () => {
         };
 
         expect(Joi.object({ a: Joi.array() }).validate(obj).error).to.be.an.error();
-    });
-
-    it('validates when parameter is required to be an Array and is given correctly as a json string', () => {
-
-        const obj = {
-            a: '[1,2]'
-        };
-
-        expect(Joi.object({ a: Joi.array() }).validate(obj).error).to.not.exist();
     });
 
     it('fails validation when parameter is required to be an Array but is given as a json that is incorrect (object instead of array)', () => {
@@ -2484,21 +2441,6 @@ describe('Joi', () => {
 
                 Joi.attempt({}, Joi.object().keys({ a: Joi.required(), b: Joi.required() }), new Error('invalid value'), { abortEarly: false });
             }).to.throw('invalid value');
-        });
-
-        it('throws a validation error and not a TypeError when parameter is given as a json string with incorrect property', () => {
-
-            const schema = Joi.object({
-                a: Joi.object({
-                    b: Joi.string()
-                })
-            });
-
-            const input = {
-                a: '{"c":"string"}'
-            };
-
-            expect(() => Joi.attempt(input, schema)).to.throw(/\"a.c\" is not allowed/);
         });
 
         it('throws a custom error from the schema if provided', () => {

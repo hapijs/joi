@@ -1,5 +1,6 @@
 'use strict';
 
+const Bourne = require('@hapi/bourne');
 const Code = require('@hapi/code');
 const Hoek = require('@hapi/hoek');
 const Joi = require('..');
@@ -1422,5 +1423,100 @@ describe('extension', () => {
         expect(custom.number().validate('2,0')).to.equal({ value: 2.0 });
         expect(custom.number().validate('2"0')).to.equal({ value: 2.0 });
         expect(custom.number().validate(0)).to.equal({ value: undefined });
+    });
+
+    it('extends object to support string coerce', () => {
+
+        const custom = Joi.extend({
+            type: 'object',
+            base: Joi.object(),
+            coerce: {
+                from: 'string',
+                method: function (schema, value, helpers) {
+
+                    if (value[0] !== '{' &&
+                        !/^\s*\{/.test(value)) {
+
+                        return;
+                    }
+
+                    try {
+                        return { value: Bourne.parse(value) };
+                    }
+                    catch (ignoreErr) { }
+                }
+            }
+        });
+
+        expect(custom.object().validate('{"hi":true}')).to.equal({ value: { hi: true } });
+        expect(custom.object().validate(' \n\r\t{ \n\r\t"hi" \n\r\t: \n\r\ttrue \n\r\t} \n\r\t')).to.equal({ value: { hi: true } });
+        expect(custom.object().strict().validate('{"hi":true}').error).to.be.an.error('"value" must be of type object');
+        expect(() => custom.attempt({ a: '{"c":"string"}' }, custom.object({ a: custom.object({ b: custom.string() }) }))).to.throw(/\"a.c\" is not allowed/);
+
+        const err1 = custom.object().validate('a string').error;
+        expect(err1).to.be.an.error('"value" must be of type object');
+        expect(err1.details).to.equal([{
+            message: '"value" must be of type object',
+            path: [],
+            type: 'object.base',
+            context: { label: 'value', value: 'a string', type: 'object' }
+        }]);
+
+        const err2 = custom.object({ a: custom.object({ b: custom.object({ c: { d: custom.string() } }) }) }).validate({ a: '{"b":{"c":{"d":1}}}' }, { abortEarly: false }).error;
+        expect(err2).to.be.an.error('"a.b.c.d" must be a string');
+        expect(err2.details).to.equal([{
+            message: '"a.b.c.d" must be a string',
+            path: ['a', 'b', 'c', 'd'],
+            type: 'string.base',
+            context: { value: 1, label: 'a.b.c.d', key: 'd' }
+        }]);
+
+        expect(err2.annotate(true)).to.equal('{\n  "a" [1]: "{\\"b\\":{\\"c\\":{\\"d\\":1}}}"\n}\n\n[1] "a.b.c.d" must be a string');
+    });
+
+    it('extends array to support string coerce', () => {
+
+        const custom = Joi.extend({
+            type: 'array',
+            base: Joi.array(),
+            coerce: {
+                from: 'string',
+                method: function (schema, value, helpers) {
+
+                    if (typeof value !== 'string' ||
+                        value[0] !== '[' && !/^\s*\[/.test(value)) {
+
+                        return;
+                    }
+
+                    try {
+                        return { value: Bourne.parse(value) };
+                    }
+                    catch (ignoreErr) { }
+                }
+            }
+        });
+
+        expect(custom.array().validate('[1,2,3]')).to.equal({ value: [1, 2, 3] });
+        expect(custom.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3] \n\r\t')).to.equal({ value: [1, 2, 3] });
+        expect(custom.object({ a: custom.array() }).validate({ a: '[1,2]' }).error).to.not.exist();
+
+        const err1 = custom.array().validate('{ "something": false }').error;
+        expect(err1).to.be.an.error('"value" must be an array');
+        expect(err1.details).to.equal([{
+            message: '"value" must be an array',
+            path: [],
+            type: 'array.base',
+            context: { label: 'value', value: '{ "something": false }' }
+        }]);
+
+        const err2 = custom.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3 \n\r\t').error;
+        expect(err2).to.be.an.error('"value" must be an array');
+        expect(err2.details).to.equal([{
+            message: '"value" must be an array',
+            path: [],
+            type: 'array.base',
+            context: { label: 'value', value: ' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3 \n\r\t' }
+        }]);
     });
 });

@@ -21,40 +21,6 @@ describe('array', () => {
         expect(() => Joi.array('invalid argument.')).to.throw('The array type does not allow arguments');
     });
 
-    it('converts a string to an array', () => {
-
-        expect(Joi.array().validate('[1,2,3]')).to.equal({ value: [1, 2, 3] });
-    });
-
-    it('converts a string with whitespace to an array', () => {
-
-        expect(Joi.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3] \n\r\t')).to.equal({ value: [1, 2, 3] });
-    });
-
-    it('errors on non-array string', () => {
-
-        const err = Joi.array().validate('{ "something": false }').error;
-        expect(err).to.be.an.error('"value" must be an array');
-        expect(err.details).to.equal([{
-            message: '"value" must be an array',
-            path: [],
-            type: 'array.base',
-            context: { label: 'value', value: '{ "something": false }' }
-        }]);
-    });
-
-    it('errors on invalid array string', () => {
-
-        const err = Joi.array().validate(' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3 \n\r\t').error;
-        expect(err).to.be.an.error('"value" must be an array');
-        expect(err.details).to.equal([{
-            message: '"value" must be an array',
-            path: [],
-            type: 'array.base',
-            context: { label: 'value', value: ' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3 \n\r\t' }
-        }]);
-    });
-
     it('errors on number', () => {
 
         const err = Joi.array().validate(3).error;

@@ -16,33 +16,6 @@ const { expect } = Code;
 
 describe('object', () => {
 
-    it('converts a json string to an object', () => {
-
-        expect(Joi.object().validate('{"hi":true}')).to.equal({ value: { hi: true } });
-    });
-
-    it('converts a json string with whitespace to an object', () => {
-
-        expect(Joi.object().validate(' \n\r\t{ \n\r\t"hi" \n\r\t: \n\r\ttrue \n\r\t} \n\r\t')).to.equal({ value: { hi: true } });
-    });
-
-    it('fails on json string in strict mode', () => {
-
-        expect(Joi.object().strict().validate('{"hi":true}').error).to.be.an.error('"value" must be of type object');
-    });
-
-    it('errors on non-object string', () => {
-
-        const err = Joi.object().validate('a string').error;
-        expect(err).to.be.an.error('"value" must be of type object');
-        expect(err.details).to.equal([{
-            message: '"value" must be of type object',
-            path: [],
-            type: 'object.base',
-            context: { label: 'value', value: 'a string', type: 'object' }
-        }]);
-    });
-
     it('validates an object', () => {
 
         const schema = Joi.object().required();
