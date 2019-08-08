@@ -14,6 +14,7 @@ describe('Joi', () => {
     });
 
     it('fails using binary', () => {
-        Joi.binary().min(1);
+        Assert.throws(() => Joi.binary().min(1));
+        Assert.strictEqual(Joi.binary, undefined);
     });
 });
