@@ -1,6 +1,7 @@
 'use strict';
 
 const Path = require('path');
+const Webpack = require('webpack');
 
 module.exports = {
     entry: '../lib/index.js',
@@ -9,6 +10,11 @@ module.exports = {
         library: 'joi',
         libraryTarget: 'umd'
     },
+    plugins: [
+        new Webpack.DefinePlugin({
+            Buffer: false
+        })
+    ],
     module: {
         rules: [
             {
@@ -34,8 +40,5 @@ module.exports = {
                 }
             }
         ]
-    },
-    node: {
-        Buffer: false
     }
 };

@@ -25,7 +25,7 @@ module.exports = function (config) {
         logLevel: config.LOG_ERROR,
         autoWatch: true,
         browsers: ['Chrome'],
-        singleRun: false,
+        singleRun: true,
         concurrency: Infinity,
         webpack: WebpackMocha,
         webpackMiddleware: {
