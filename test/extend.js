@@ -1325,4 +1325,102 @@ describe('extension', () => {
         expect(() => custom.special().foo('x')).to.throw('"b" must be a number or reference');
         expect(() => custom.special().foo('2')).to.throw('"b" must be a number or reference');
     });
+
+    it('extends number to support comma delimiter', () => {
+
+        const custom = Joi.extend({
+            type: 'number',
+            base: Joi.number(),
+            prepare: function (schema, value, helpers) {
+
+                if (typeof value !== 'string') {
+                    return;
+                }
+
+                return { value: value.replace(',', '.') };
+            }
+        });
+
+        expect(custom.number().validate(2.0)).to.equal({ value: 2.0 });
+        expect(custom.number().validate('2.0')).to.equal({ value: 2.0 });
+        expect(custom.number().validate('2,0')).to.equal({ value: 2.0 });
+        expect(custom.number().validate('2,0', { convert: false }).error).to.be.an.error('"value" must be a number');
+        expect(custom.number().validate(undefined).error).to.not.exist();
+    });
+
+    it('extends number to support only comma delimiter', () => {
+
+        const custom = Joi.extend({
+            type: 'number',
+            base: Joi.number(),
+            prepare: function (schema, value, { error }) {
+
+                if (typeof value !== 'string') {
+                    return;
+                }
+
+                if (value.includes('.')) {
+                    return { errors: error('number.period') };
+                }
+
+                return { value: value.replace(',', '.') };
+            },
+            messages: {
+                'number.period': 'Number cannot use period delimiter'
+            }
+        });
+
+        expect(custom.number().validate('2.0').error).to.be.an.error('Number cannot use period delimiter');
+        expect(custom.number().validate('2,0')).to.equal({ value: 2.0 });
+    });
+
+    it('extends number to support comma delimiter and then " delimiter', () => {
+
+        const custom = Joi.extend(
+            {
+                type: 'number',
+                base: Joi.number(),
+                prepare: function (schema, value, helpers) {
+
+                    if (typeof value !== 'string') {
+                        return;
+                    }
+
+                    return { value: value.replace(',', '.') };
+                }
+            },
+            (joi) => {
+
+                return {
+                    type: 'number',
+                    base: joi.number(),
+                    prepare: function (schema, value, { error }) {
+
+                        if (value === 0) {
+                            return { value: undefined };
+                        }
+
+                        if (typeof value !== 'string') {
+                            return;
+                        }
+
+                        if (value.includes('.')) {
+                            return { errors: error('number.period') };
+                        }
+
+                        return { value: value.replace('"', '.') };
+                    },
+                    messages: {
+                        'number.period': 'Number cannot use period delimiter'
+                    }
+                };
+            }
+        );
+
+        expect(custom.number().validate(2.0)).to.equal({ value: 2.0 });
+        expect(custom.number().validate('2.0').error).to.be.an.error('Number cannot use period delimiter');
+        expect(custom.number().validate('2,0')).to.equal({ value: 2.0 });
+        expect(custom.number().validate('2"0')).to.equal({ value: 2.0 });
+        expect(custom.number().validate(0)).to.equal({ value: undefined });
+    });
 });
