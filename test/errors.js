@@ -987,12 +987,13 @@ describe('errors', () => {
                 }
             };
 
+            const ref = Joi.ref('options.stripUnknown');
             const schema = Joi.object({
                 response: Joi.object({
                     modify: Joi.boolean(),
                     options: Joi.object()
                 })
-                    .assert('options.stripUnknown', Joi.ref('modify'), 'meet requirement of having peer modify set to true')
+                    .assert(ref, Joi.ref('modify'), 'meet requirement of having peer modify set to true')
             });
 
             const err = schema.validate(object, { abortEarly: false }).error;
@@ -1002,7 +1003,7 @@ describe('errors', () => {
                 path: ['response'],
                 type: 'object.assert',
                 context: {
-                    ref: 'options.stripUnknown',
+                    subject: ref,
                     message: 'meet requirement of having peer modify set to true',
                     label: 'response',
                     key: 'response',

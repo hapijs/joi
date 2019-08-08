@@ -1344,13 +1344,12 @@ describe('ref', () => {
                     rules: [{
                         name: 'assert',
                         args: {
-                            message: 'pass the assertion test',
                             schema: {
                                 type: 'any',
                                 flags: { only: true },
                                 allow: [{ ref: { path: ['a', 'b'] } }]
                             },
-                            ref: { path: ['a', 'b'] }
+                            subject: { ref: { path: ['a', 'b'] } }
                         }
                     }],
                     keys: {

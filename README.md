@@ -17,7 +17,7 @@ that stores information) to ensure *validation* of key information.
 
 ## API
 
-See the detailed [API Reference](https://github.com/hapijs/joi/blob/v16.0.0-rc2/API.md).
+See the detailed [API Reference](https://github.com/hapijs/joi/blob/v16.0.0/API.md).
 
 ## Example
 

@@ -1015,9 +1015,9 @@ describe('object', () => {
                 d: {
                     e: Joi.any()
                 }
-            }).assert(Joi.ref('d/e', { separator: '/' }), Joi.ref('a.c'), 'equal to a.c');
+            }).assert(Joi.ref('d/e', { separator: '/' }), Joi.ref('a.c'), 'equal to a/c');
 
-            expect(schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }).error).to.be.an.error('"value" is invalid because "d.e" failed to equal to a.c');
+            expect(schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }).error).to.be.an.error('"value" is invalid because "d/e" failed to equal to a/c');
 
             Helper.validate(schema, [
                 [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
@@ -1026,6 +1026,7 @@ describe('object', () => {
 
         it('validates upwards reference with implicit context', () => {
 
+            const ref = Joi.ref('d.e');
             const schema = Joi.object({
                 a: {
                     b: Joi.string(),
@@ -1034,7 +1035,7 @@ describe('object', () => {
                 d: {
                     e: Joi.any()
                 }
-            }).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
+            }).assert(ref, Joi.ref('a.c'), 'equal to a.c');
 
             const err = schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }).error;
             expect(err).to.be.an.error('"value" is invalid because "d.e" failed to equal to a.c');
@@ -1042,7 +1043,7 @@ describe('object', () => {
                 message: '"value" is invalid because "d.e" failed to equal to a.c',
                 path: [],
                 type: 'object.assert',
-                context: { ref: 'd.e', message: 'equal to a.c', label: 'value', value: { a: { b: 'x', c: 5 }, d: { e: 6 } } }
+                context: { subject: ref, message: 'equal to a.c', label: 'value', value: { a: { b: 'x', c: 5 }, d: { e: 6 } } }
             }]);
 
             Helper.validate(schema, [
@@ -1084,6 +1085,7 @@ describe('object', () => {
 
         it('provides a default message for failed assertions', () => {
 
+            const ref = Joi.ref('d.e');
             const schema = Joi.object({
                 a: {
                     b: Joi.string(),
@@ -1092,7 +1094,7 @@ describe('object', () => {
                 d: {
                     e: Joi.any()
                 }
-            }).assert('d.e', Joi.boolean());
+            }).assert(ref, Joi.boolean());
 
             const err = schema.validate({ d: { e: [] } }).error;
             expect(err).to.be.an.error('"value" is invalid because "d.e" failed to pass the assertion test');
@@ -1101,8 +1103,8 @@ describe('object', () => {
                 path: [],
                 type: 'object.assert',
                 context: {
-                    ref: 'd.e',
-                    message: 'pass the assertion test',
+                    subject: ref,
+                    message: undefined,
                     label: 'value',
                     value: { d: { e: [] } }
                 }
@@ -1118,6 +1120,41 @@ describe('object', () => {
                 .assert('b.c', Joi.number());
 
             expect(schema.validate({ a: { b: 1 }, b: { c: 2 } }).error).to.not.exist();
+        });
+
+        it('uses templates', () => {
+
+            const subject = Joi.x('{a || b || c}');
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.boolean(),
+                c: Joi.boolean()
+            })
+                .assert(subject, true, 'at least one key must be true');
+
+            expect(schema.validate().error).to.not.exist();
+            expect(schema.validate({ a: false, b: true, c: true }).error).to.not.exist();
+
+            Helper.validate(schema, [
+                [{ a: true, b: true, c: true }, true],
+                [{ a: true, b: false, c: false }, true],
+                [{ a: false, b: true, c: false }, true],
+                [{ a: false, b: false, c: true }, true],
+                [{ a: false, b: false, c: false }, false, null, {
+                    message: '"value" is invalid because at least one key must be true',
+                    details: [{
+                        message: '"value" is invalid because at least one key must be true',
+                        path: [],
+                        type: 'object.assert',
+                        context: {
+                            subject,
+                            message: 'at least one key must be true',
+                            label: 'value',
+                            value: { a: false, b: false, c: false }
+                        }
+                    }]
+                }]
+            ]);
         });
     });
 

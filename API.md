@@ -118,7 +118,7 @@
   - [`object` - inherits from `Any`](#object---inherits-from-any)
     - [`object.and(...peers, [options])`](#objectandpeers-options)
     - [`object.append([schema])`](#objectappendschema)
-    - [`object.assert(ref, schema, [message])`](#objectassertref-schema-message)
+    - [`object.assert(subject, schema, [message])`](#objectassertsubject-schema-message)
     - [`object.instance(constructor, [name])`](#objectinstanceconstructor-name)
     - [`object.keys([schema])`](#objectkeysschema)
     - [`object.length(limit)`](#objectlengthlimit)
@@ -2293,12 +2293,12 @@ const extended = base.append({
 });
 ```
 
-#### `object.assert(ref, schema, [message])`
+#### `object.assert(subject, schema, [message])`
 
 Verifies an assertion where:
-- `ref` - the key name or [reference](#refkey-options).
+- `subject` - the key name, [reference](#refkey-options), or template expression to validate.
 - `schema` - the validation rules required to satisfy the assertion. If the `schema` includes references, they are resolved against
-  the object value, not the value of the `ref` target.
+  the object value, not the value of the `subject` target.
 - `message` - optional human-readable message used when the assertion fails. Defaults to 'failed to pass the assertion test'.
 
 ```js
@@ -3804,8 +3804,8 @@ The schema on an [`object.assert()`](#objectassertref-schema-message) failed to 
 Additional local context properties:
 ```ts
 {
-    ref: string, // Dotted path to the property that was checked
-    message: string // Custom message or default one
+    subject: object, // The assertion subject. When it is a reference, use subject.key for the display path.
+    message: string // Custom message when provided
 }
 ```
 
