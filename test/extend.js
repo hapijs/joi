@@ -1177,13 +1177,13 @@ describe('extension', () => {
         Helper.validate(schema, [
             [{ a: 30, b: 3 }, true],
             [{ a: 30 }, false, null, {
-                message: '"a" q references "ref:b" which "value" is required',
+                message: '"a" q references "ref:b" which "q" is required',
                 key: 'a',
                 details: [{
-                    message: '"a" q references "ref:b" which "value" is required',
+                    message: '"a" q references "ref:b" which "q" is required',
                     path: ['a'],
                     type: 'any.ref',
-                    context: { label: 'a', key: 'a', ref, arg: 'q', reason: '"value" is required' }
+                    context: { label: 'a', key: 'a', ref, arg: 'q', reason: '"q" is required' }
                 }]
             }]
         ]);
@@ -1299,5 +1299,30 @@ describe('extension', () => {
         const schema = custom.special().min(1).keep().min(10).factor(2);
         expect(schema.validate(20)).to.equal({ value: 20 });
         expect(schema.validate(19).error).to.be.an.error('"value" must be larger than or equal to 20');
+    });
+
+    it('validates rule arguments', () => {
+
+        const custom = Joi.extend({
+            type: 'special',
+            rules: {
+                foo: {
+                    method: function (b) {
+
+                        return this.$_addRule({ name: 'foo', args: { b } });
+                    },
+                    args: [
+                        {
+                            name: 'b',
+                            assert: Joi.number()
+                        }
+                    ]
+                }
+            }
+        });
+
+        expect(() => custom.special().foo(2)).to.not.throw();
+        expect(() => custom.special().foo('x')).to.throw('"b" must be a number or reference');
+        expect(() => custom.special().foo('2')).to.throw('"b" must be a number or reference');
     });
 });
