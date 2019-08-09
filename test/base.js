@@ -779,11 +779,11 @@ describe('any', () => {
 
             const ref1 = Joi.ref('a.c');
             const ref2 = Joi.ref('c');
-            const schema = {
+            const schema = Joi.object({
                 a: { c: Joi.number() },
                 b: Joi.alternatives(ref1).concat(Joi.alternatives(ref2)),
                 c: Joi.number()
-            };
+            });
 
             Helper.validate(schema, [
                 [{ a: {} }, true],
@@ -1631,10 +1631,10 @@ describe('any', () => {
 
         it('validates forbidden', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.number(),
                 b: Joi.forbidden()
-            };
+            });
 
             Helper.validate(schema, [
                 [{ a: 5 }, true],
@@ -2761,10 +2761,10 @@ describe('any', () => {
 
         it('forks type into alternatives', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.any(),
                 b: Joi.string().valid('x').when('a', { is: 5, then: Joi.valid('y'), otherwise: Joi.valid('z') })
-            };
+            });
 
             Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
@@ -2812,10 +2812,10 @@ describe('any', () => {
 
         it('forks type into alternatives (only then)', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.any(),
                 b: Joi.string().valid('x').when('a', { is: 5, then: Joi.valid('y') })
-            };
+            });
 
             Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
@@ -2871,10 +2871,10 @@ describe('any', () => {
 
         it('forks type into alternatives (only otherwise)', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.any(),
                 b: Joi.string().valid('x').when('a', { is: 5, otherwise: Joi.valid('z') })
-            };
+            });
 
             Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
@@ -2930,10 +2930,10 @@ describe('any', () => {
 
         it('forks type into alternatives (with is as a schema)', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.any(),
                 b: Joi.string().valid('x').when('a', { is: Joi.number().valid(5).required(), then: Joi.valid('y') })
-            };
+            });
 
             Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
@@ -2989,10 +2989,10 @@ describe('any', () => {
 
         it('makes peer required', () => {
 
-            const schema = {
+            const schema = Joi.object({
                 a: Joi.when('b', { is: 5, then: Joi.required() }),
                 b: Joi.any()
-            };
+            });
 
             Helper.validate(schema, [
                 [{ b: 5 }, false, null, {

@@ -965,11 +965,11 @@ describe('alternatives', () => {
 
             it('validates conditional alternatives', () => {
 
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives()
                         .when('b', { is: 5, then: 'x', otherwise: 'y' }),
                     b: Joi.any()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5 }, true],
@@ -1203,11 +1203,11 @@ describe('alternatives', () => {
 
             it('validates conditional alternatives (empty key)', () => {
 
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives()
                         .when('', { is: 5, then: 'x', otherwise: 'y' }),
                     '': Joi.any()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 'x', '': 5 }, true],
@@ -1253,12 +1253,12 @@ describe('alternatives', () => {
 
             it('validates only then', () => {
 
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives()
                         .when(Joi.ref('b'), { is: 5, then: 'x' })
                         .try('z'),
                     b: Joi.any()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5 }, true],
@@ -1304,12 +1304,12 @@ describe('alternatives', () => {
 
             it('validates only otherwise', () => {
 
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives()
                         .when('b', { is: 5, otherwise: 'y' })
                         .try('z'),
                     b: Joi.any()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5 }, false, null, {
@@ -1381,10 +1381,10 @@ describe('alternatives', () => {
 
             it('validates when is is null', () => {
 
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives().when('b', { is: null, then: 'x', otherwise: Joi.number() }),
                     b: Joi.any()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 1 }, true],
@@ -1421,11 +1421,11 @@ describe('alternatives', () => {
 
             it('validates when is has ref', () => {
 
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives().when('b', { is: Joi.ref('c'), then: 'x' }),
                     b: Joi.any(),
                     c: Joi.number()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5, c: '5' }, true],
@@ -1472,11 +1472,11 @@ describe('alternatives', () => {
 
                 const date = new Date(42);
 
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives().when('b', { is: Joi.ref('c'), then: 'x' }),
                     b: Joi.date(),
                     c: Joi.date()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: date, c: date }, true],
@@ -1516,7 +1516,7 @@ describe('alternatives', () => {
                 const date = new Date(42);
                 const now = Date.now();
 
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives().when('b', {
                         is: Joi.valid(
                             new Date(+date), // Intentional cloning of the date to change the reference
@@ -1526,7 +1526,7 @@ describe('alternatives', () => {
                     }),
                     b: Joi.date(),
                     c: Joi.date()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: date, c: date }, true],
@@ -1555,11 +1555,11 @@ describe('alternatives', () => {
             it('validates when then has ref', () => {
 
                 const ref = Joi.ref('c');
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives().when('b', { is: 5, then: ref }),
                     b: Joi.any(),
                     c: Joi.number()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5, c: '1' }, false, null, {
@@ -1587,11 +1587,11 @@ describe('alternatives', () => {
             it('validates when otherwise has ref', () => {
 
                 const ref = Joi.ref('c');
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives().when('b', { is: 6, otherwise: ref }),
                     b: Joi.any(),
                     c: Joi.number()
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5, c: '1' }, false, null, {
@@ -1618,10 +1618,10 @@ describe('alternatives', () => {
 
             it('validates when empty value', () => {
 
-                const schema = {
+                const schema = Joi.object({
                     a: Joi.alternatives().when('b', { is: true, then: Joi.required() }),
                     b: Joi.boolean().default(false)
-                };
+                });
 
                 Helper.validate(schema, [
                     [{ b: false }, true],

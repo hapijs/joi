@@ -430,12 +430,12 @@ describe('Joi', () => {
 
     it('validates required alternatives', () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.alternatives([
                 Joi.string().required(),
                 Joi.boolean().required()
             ])
-        };
+        });
 
         Helper.validate(schema, [
             [{ a: null }, false, null, {
@@ -489,12 +489,12 @@ describe('Joi', () => {
 
     it('validates required [] alternatives', () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: [
                 Joi.string().required(),
                 Joi.boolean().required()
             ]
-        };
+        });
 
         Helper.validate(schema, [
             [{ a: null }, false, null, {
@@ -548,9 +548,9 @@ describe('Joi', () => {
 
     it('validates an array of string with valid', () => {
 
-        const schema = {
+        const schema = Joi.object({
             brand: Joi.array().items(Joi.string().valid('amex', 'visa'))
-        };
+        });
 
         Helper.validate(schema, [
             [{ brand: ['amex'] }, true],

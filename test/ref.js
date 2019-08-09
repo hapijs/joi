@@ -62,11 +62,11 @@ describe('ref', () => {
 
     it('reaches parent', () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.any(),
             a1: Joi.ref('a'),
             a2: Joi.ref('..a')
-        };
+        });
 
         Helper.validate(schema, [
             [
@@ -179,14 +179,14 @@ describe('ref', () => {
 
     it('reaches ancestor literal', () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.any(),
             '...a': Joi.any(),
             b: {
                 '...a': Joi.any(),
                 c: Joi.ref('...a', { separator: false, ancestor: 2 })
             }
-        };
+        });
 
         Helper.validate(schema, [
             [
@@ -206,7 +206,7 @@ describe('ref', () => {
 
         const ix = Joi.ref('...i');
 
-        const schema = {
+        const schema = Joi.object({
             a: {
                 b: {
                     c: {
@@ -225,7 +225,7 @@ describe('ref', () => {
                 g: Joi.any()
             },
             h: Joi.any()
-        };
+        });
 
         Helper.validate(schema, [
             [
@@ -295,7 +295,7 @@ describe('ref', () => {
 
         const ix = Joi.ref('i', { ancestor: 2 });
 
-        const schema = {
+        const schema = Joi.object({
             a: {
                 b: {
                     c: {
@@ -314,7 +314,7 @@ describe('ref', () => {
                 g: Joi.any()
             },
             h: Joi.any()
-        };
+        });
 
         Helper.validate(schema, [
             [
@@ -383,14 +383,14 @@ describe('ref', () => {
     it('reaches own key value', () => {
 
         const object = Joi.object().schema('object');
-        const schema = {
+        const schema = Joi.object({
             key: Joi.object().when('key', {
                 is: Joi.object().schema(),
                 then: object,
                 otherwise: Joi.object().pattern(/.*/, object)
             })
                 .required()
-        };
+        });
 
         Helper.validate(schema, [
             [{ key: object }, true],
@@ -1036,12 +1036,12 @@ describe('ref', () => {
 
         const ref1 = Joi.ref('a.c');
         const ref2 = Joi.ref('c');
-        const a = { c: Joi.number() };
-        const b = [ref1, ref2];
+        const a = Joi.object({ c: Joi.number() });
+        const b = Joi.alternatives([ref1, ref2]);
         const c = Joi.number();
 
         for (const schema of [{ a, b, c }, { b, a, c }, { b, c, a }, { a, c, b }, { c, a, b }, { c, b, a }]) {
-            Helper.validate(schema, [
+            Helper.validate(Joi.object().keys(schema), [
                 [{ a: {} }, true],
                 [{ a: { c: '5' }, b: 5 }, true],
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
@@ -1145,9 +1145,9 @@ describe('ref', () => {
 
     it('uses context in when condition', () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.boolean().when('$x', { is: Joi.exist(), otherwise: Joi.forbidden() })
-        };
+        });
 
         Helper.validate(schema, [
             [{}, true],
@@ -1204,9 +1204,9 @@ describe('ref', () => {
 
     it('uses nested context in when condition', () => {
 
-        const schema = {
+        const schema = Joi.object({
             a: Joi.boolean().when('$x.y', { is: Joi.exist(), otherwise: Joi.forbidden() })
-        };
+        });
 
         Helper.validate(schema, [
             [{}, true],

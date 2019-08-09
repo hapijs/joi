@@ -1,7 +1,6 @@
 'use strict';
 
 const Code = require('@hapi/code');
-const Joi = require('..');
 
 
 const internals = {};
@@ -19,10 +18,7 @@ exports.validate = function (schema, config) {
 exports.validateOptions = function (schema, config, options) {
 
     try {
-        const compiled = Joi.compile(schema);
-        if (compiled.$_root === Joi) {
-            expect(Joi.build(compiled.describe())).to.equal(compiled, { skip: ['_ruleset'] });
-        }
+        expect(schema.$_root.build(schema.describe())).to.equal(schema, { skip: ['_ruleset'] });
 
         for (let i = 0; i < config.length; ++i) {
 
@@ -38,7 +34,7 @@ exports.validateOptions = function (schema, config, options) {
                 expect(expectedValueOrError.details).to.be.an.array();
             }
 
-            const result = compiled.validate(input, validationOptions || options);
+            const result = schema.validate(input, validationOptions || options);
 
             const err = result.error;
             const value = result.value;
@@ -78,7 +74,6 @@ exports.validateOptions = function (schema, config, options) {
         }
     }
     catch (err) {
-
         console.error(err.stack);
         err.at = internals.thrownAt();      // Reframe the error location since we don't care about the helper
         throw err;

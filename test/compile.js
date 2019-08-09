@@ -31,7 +31,7 @@ describe('cast', () => {
 
         it('compiles null schema', () => {
 
-            Helper.validate(null, [
+            Helper.validate(Joi.compile(null), [
                 ['a', false, null, {
                     message: '"value" must be one of [null]',
                     details: [{
@@ -47,7 +47,7 @@ describe('cast', () => {
 
         it('compiles number literal', () => {
 
-            Helper.validate(5, [
+            Helper.validate(Joi.compile(5), [
                 [6, false, null, {
                     message: '"value" must be one of [5]',
                     details: [{
@@ -63,7 +63,7 @@ describe('cast', () => {
 
         it('compiles string literal', () => {
 
-            Helper.validate('5', [
+            Helper.validate(Joi.compile('5'), [
                 ['6', false, null, {
                     message: '"value" must be one of [5]',
                     details: [{
@@ -79,7 +79,7 @@ describe('cast', () => {
 
         it('compiles boolean literal', () => {
 
-            Helper.validate(true, [
+            Helper.validate(Joi.compile(true), [
                 [false, false, null, {
                     message: '"value" must be one of [true]',
                     details: [{
@@ -97,7 +97,7 @@ describe('cast', () => {
 
             const now = Date.now();
             const dnow = new Date(now);
-            Helper.validate(dnow, [
+            Helper.validate(Joi.compile(dnow), [
                 [new Date(now), true],
                 [now, true],
                 [now * 2, false, null, {
@@ -114,7 +114,7 @@ describe('cast', () => {
 
         it('compiles alternatives', () => {
 
-            const schema = ['key', 5, { a: true, b: [/^a/, 'boom'] }];
+            const schema = Joi.compile(['key', 5, { a: true, b: [/^a/, 'boom'] }]);
             Helper.validate(schema, [
                 ['key', true],
                 [5, true],

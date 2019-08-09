@@ -533,7 +533,7 @@ describe('object', () => {
 
     it('should traverse an object several levels with required levels (without Joi.obj())', () => {
 
-        const schema = {
+        const schema = Joi.object({
             obj: {
                 obj: {
                     obj: {
@@ -541,7 +541,7 @@ describe('object', () => {
                     }
                 }
             }
-        };
+        });
 
         Helper.validate(schema, [
             [null, false, null, {
