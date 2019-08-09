@@ -1615,6 +1615,33 @@ describe('any', () => {
         });
     });
 
+    describe('external()', () => {
+
+        it('errors on invalid arguments', () => {
+
+            const method = () => null;
+            expect(() => Joi.any().external(method, '')).to.throw('Description must be a non-empty string');
+            expect(() => Joi.any().external(method, 0)).to.throw('Description must be a non-empty string');
+            expect(() => Joi.any().external(method, [])).to.throw('Description must be a non-empty string');
+            expect(() => Joi.any().external({ method }, 'text')).to.throw('Cannot combine options with description');
+        });
+
+        it('includes description in manifest', () => {
+
+            const method = () => null;
+            const schema = Joi.any().external(method, 'some description');
+            expect(schema.describe()).to.equal({
+                type: 'any',
+                externals: [
+                    {
+                        description: 'some description',
+                        method
+                    }
+                ]
+            });
+        });
+    });
+
     describe('failover()', () => {
 
         it('sets value on error', () => {

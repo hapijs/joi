@@ -34,7 +34,7 @@
     - [`any.empty(schema)`](#anyemptyschema)
     - [`any.error(err)`](#anyerrorerr)
     - [`any.example(example, [options])`](#anyexampleexample-options)
-    - [`any.external(method)`](#anyexternalmethod)
+    - [`any.external(method, [description])`](#anyexternalmethod-description)
     - [`any.extract(path)`](#anyextractpath)
     - [`any.failover(value)`](#anyfailovervalue)
     - [`any.forbidden()`](#anyforbidden)
@@ -843,11 +843,12 @@ Adds examples to the schema where:
 const schema = Joi.string().min(4).example('abcd');
 ```
 
-#### `any.external(method)`
+#### `any.external(method, [description])`
 
 Adds an external validation rule where:
 - `method` - an async or sync function with signature `function(value)` which can either return
   a replacement value, `undefined` to indicate not change, or throw an error.
+- `description` - optional string used to document the purpose of the method.
 
 Note that external validation rules are only called after the all other validation rules for the
 entire schema (from the value root) are checked. This means that any changes made to the value by
@@ -1188,7 +1189,7 @@ Validates a value using the current schema and options where:
       Defaults to `false` for performances reasons. 
       Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api). 
     - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
-  - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod) are
+  - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod-description) are
     ignored, which is required to ignore any external validations in synchronous mode (or an exception
     is thrown). Defaults to `true`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use

@@ -311,7 +311,7 @@ describe('Validator', () => {
 
             const schema = Joi.string().external(append);
             const description = schema.describe();
-            expect(description).to.equal({ type: 'string', externals: [append] });
+            expect(description).to.equal({ type: 'string', externals: [{ method: append }] });
         });
 
         it('skips when used to match', async () => {
