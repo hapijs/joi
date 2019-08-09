@@ -24,7 +24,7 @@ describe('extension', () => {
             type: 'special',
             rules: {
                 hello: {
-                    validate: function (value, helpers, args, options) {
+                    validate(value, helpers, args, options) {
 
                         if (value === 'hello') {
                             return value;
@@ -51,7 +51,7 @@ describe('extension', () => {
             base: Joi.string(),
             rules: {
                 hello: {
-                    validate: function (value, helpers, args, options) {
+                    validate(value, helpers, args, options) {
 
                         if (value === 'hello') {
                             return value;
@@ -90,11 +90,11 @@ describe('extension', () => {
             type: 'special',
             rules: {
                 fail: {
-                    method: function () {
+                    method() {
 
                         return this.$_addRule('fail');
                     },
-                    validate: function (value, helpers) {
+                    validate(value, helpers) {
 
                         return helpers.error('special.fail');
                     }
@@ -149,7 +149,7 @@ describe('extension', () => {
         const custom = Joi.extend({
             type: 'special',
             base: Joi.string(),
-            args: function (schema, limit) {
+            args(schema, limit) {
 
                 return schema.min(limit);
             }
@@ -219,7 +219,7 @@ describe('extension', () => {
         const custom = Joi.extend({
             type: 'special',
             base: Joi.object(),
-            validate: function (schema, value, helpers) {
+            validate(schema, value, helpers) {
 
                 return { value };
             }
@@ -250,7 +250,7 @@ describe('extension', () => {
         const custom = Joi.extend({
             type: 'special',
             base: Joi.number(),
-            validate: function (schema, value, helpers) {
+            validate(schema, value, helpers) {
 
                 return { value };
             }
@@ -281,7 +281,7 @@ describe('extension', () => {
         const custom = Joi.extend({
             type: 'special',
             base: Joi.boolean(),
-            validate: function (schema, value, helpers) {
+            validate(schema, value, helpers) {
 
                 return { value };
             }
@@ -313,13 +313,13 @@ describe('extension', () => {
             type: 'special',
             rules: {
                 foo: {
-                    validate: function (value, helpers, args, options) {
+                    validate(value, helpers, args, options) {
 
                         return null;
                     }
                 },
                 bar: {
-                    validate: function (value, helpers, args, options) {
+                    validate(value, helpers, args, options) {
 
                         return helpers.error('special.bar');
                     }
@@ -345,7 +345,7 @@ describe('extension', () => {
             type: 'special',
             rules: {
                 test: {
-                    validate: function (value, helpers, args, options) {
+                    validate(value, helpers, args, options) {
 
                         return value;
                     },
@@ -395,7 +395,7 @@ describe('extension', () => {
             },
             rules: {
                 foo: {
-                    method: function (first, second) {
+                    method(first, second) {
 
                         Joi.assert(first, Joi.string());
                         Joi.assert(second, Joi.object().ref());
@@ -419,7 +419,7 @@ describe('extension', () => {
             base: Joi.number(),
             rules: {
                 double: {
-                    validate: function (value, helpers, args, options) {
+                    validate(value, helpers, args, options) {
 
                         return value * 2;
                     }
@@ -564,7 +564,7 @@ describe('extension', () => {
             base: Joi.number().prefs({ abortEarly: false }),
             rules: {
                 foo: {
-                    validate: function (value, { error }, args, options) {
+                    validate(value, { error }, args, options) {
 
                         return error('special.foo');
                     }
@@ -584,7 +584,7 @@ describe('extension', () => {
         const custom = Joi.extend({
             type: 'special',
             base: Joi.string(),
-            coerce: function (schema, value, helpers) {
+            coerce(schema, value, helpers) {
 
                 return { value: 'foobar' };
             }
@@ -600,7 +600,7 @@ describe('extension', () => {
             type: 'type1',
             coerce: {
                 from: 'string',
-                method: function (schema, value, { error }) {
+                method(schema, value, { error }) {
 
                     if (value === '1') {
                         return { errors: error('type1.error') };
@@ -620,7 +620,7 @@ describe('extension', () => {
             type: 'type2',
             coerce: {
                 from: 'number',
-                method: function (schema, value, { error }) {
+                method(schema, value, { error }) {
 
                     if (value === 4) {
                         return { errors: error('type2.error') };
@@ -649,7 +649,7 @@ describe('extension', () => {
         const type1 = Joi.any().extend({
             type: 'type1',
             coerce: {
-                method: function (schema, value, { error }) {
+                method(schema, value, { error }) {
 
                     if (value === '1') {
                         return { errors: error('type1.error') };
@@ -669,7 +669,7 @@ describe('extension', () => {
             type: 'type2',
             coerce: {
                 from: 'number',
-                method: function (schema, value, { error }) {
+                method(schema, value, { error }) {
 
                     if (value === 4) {
                         return { errors: error('type2.error') };
@@ -697,7 +697,7 @@ describe('extension', () => {
 
         const type1 = Joi.any().extend({
             type: 'type1',
-            coerce: function (schema, value, { error }) {
+            coerce(schema, value, { error }) {
 
                 if (value === '1') {
                     return { value: undefined };
@@ -708,7 +708,7 @@ describe('extension', () => {
 
         const type2 = type1.extend({
             type: 'type2',
-            coerce: function (schema, value, { error }) {
+            coerce(schema, value, { error }) {
 
                 if (value === '2') {
                     return { value: undefined };
@@ -718,7 +718,7 @@ describe('extension', () => {
 
         const type3 = type2.extend({
             type: 'type3',
-            coerce: function (schema, value, { error }) {
+            coerce(schema, value, { error }) {
 
                 if (value === '3') {
                     return { value: undefined };
@@ -778,7 +778,7 @@ describe('extension', () => {
                 base: joi.number(),
                 rules: {
                     foo: {
-                        validate: function (schema, value, helpers) {
+                        validate(schema, value, helpers) {
 
                             return 1;
                         }
@@ -790,7 +790,7 @@ describe('extension', () => {
                 base: joi.special(),
                 rules: {
                     bar: {
-                        validate: function (schema, value, helpers) {
+                        validate(schema, value, helpers) {
 
                             return 2;
                         }
@@ -995,7 +995,7 @@ describe('extension', () => {
                     'million.round': '"{{#label}}" must be a round number',
                     'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
                 },
-                coerce: function (schema, value, helpers) {
+                coerce(schema, value, helpers) {
 
                     // Only called when prefs.convert is true
 
@@ -1003,7 +1003,7 @@ describe('extension', () => {
                         return { value: Math.round(value) };
                     }
                 },
-                validate: function (schema, value, helpers) {
+                validate(schema, value, helpers) {
 
                     // Base validation regardless of the rules applied
 
@@ -1022,18 +1022,18 @@ describe('extension', () => {
                 rules: {
                     big: {
                         alias: 'large',
-                        method: function () {
+                        method() {
 
                             return this.$_setFlag('big', true);
                         }
                     },
                     round: {
                         convert: true,              // Dual rule: converts or validates
-                        method: function () {
+                        method() {
 
                             return this.$_addRule('round');
                         },
-                        validate: function (value, helpers, args, options) {
+                        validate(value, helpers, args, options) {
 
                             // Only called when prefs.convert is false (due to rule convert option)
 
@@ -1044,7 +1044,7 @@ describe('extension', () => {
                     },
                     dividable: {
                         multi: true,                // Rule supports multiple invocations
-                        method: function (q) {
+                        method(q) {
 
                             return this.$_addRule({ name: 'dividable', args: { q } });
                         },
@@ -1056,7 +1056,7 @@ describe('extension', () => {
                                 message: 'must be a number'
                             }
                         ],
-                        validate: function (value, helpers, args, options) {
+                        validate(value, helpers, args, options) {
 
                             if (value % args.q === 0) {
                                 return value;       // Value is valid
@@ -1066,7 +1066,7 @@ describe('extension', () => {
                         }
                     },
                     even: {
-                        method: function () {
+                        method() {
 
                             // Rule with only method used to alias another rule
 
@@ -1145,7 +1145,7 @@ describe('extension', () => {
                 },
                 rules: {
                     dividable: {
-                        method: function (q) {
+                        method(q) {
 
                             return this.$_addRule({ name: 'dividable', args: { q } });
                         },
@@ -1156,7 +1156,7 @@ describe('extension', () => {
                                 assert: Joi.number().required()
                             }
                         ],
-                        validate: function (value, helpers, args, options) {
+                        validate(value, helpers, args, options) {
 
                             if (value % args.q === 0) {
                                 return value;       // Value is valid
@@ -1197,13 +1197,13 @@ describe('extension', () => {
             return {
                 type: 'special',
                 base: joi.object(),
-                initialize: function (schema) {
+                initialize(schema) {
 
                     schema.$_terms.tests = [];
                 },
                 rules: {
                     test: {
-                        method: function (schema) {
+                        method(schema) {
 
                             const obj = this.clone();
                             obj.$_terms.tests.push(schema);
@@ -1212,7 +1212,7 @@ describe('extension', () => {
                         }
                     }
                 },
-                modify: function (schema, id, replacement) {
+                modify(schema, id, replacement) {
 
                     for (let i = 0; i < schema.$_terms.tests.length; ++i) {
                         const item = schema.$_terms.tests[i];
@@ -1223,7 +1223,7 @@ describe('extension', () => {
                         }
                     }
                 },
-                rebuild: function (schema) {
+                rebuild(schema) {
 
                     for (const item of schema.$_terms.tests) {
                         schema.$_mutateRegister(item);
@@ -1284,7 +1284,7 @@ describe('extension', () => {
             base: Joi.number(),
             rules: {
                 factor: {
-                    method: function (n) {
+                    method(n) {
 
                         return this.$_replaceRules('min', (rule) => {
 
@@ -1308,7 +1308,7 @@ describe('extension', () => {
             type: 'special',
             rules: {
                 foo: {
-                    method: function (b) {
+                    method(b) {
 
                         return this.$_addRule({ name: 'foo', args: { b } });
                     },
@@ -1332,7 +1332,7 @@ describe('extension', () => {
         const custom = Joi.extend({
             type: 'number',
             base: Joi.number(),
-            prepare: function (schema, value, helpers) {
+            prepare(schema, value, helpers) {
 
                 if (typeof value !== 'string') {
                     return;
@@ -1354,7 +1354,7 @@ describe('extension', () => {
         const custom = Joi.extend({
             type: 'number',
             base: Joi.number(),
-            prepare: function (schema, value, { error }) {
+            prepare(schema, value, { error }) {
 
                 if (typeof value !== 'string') {
                     return;
@@ -1381,7 +1381,7 @@ describe('extension', () => {
             {
                 type: 'number',
                 base: Joi.number(),
-                prepare: function (schema, value, helpers) {
+                prepare(schema, value, helpers) {
 
                     if (typeof value !== 'string') {
                         return;
@@ -1395,7 +1395,7 @@ describe('extension', () => {
                 return {
                     type: 'number',
                     base: joi.number(),
-                    prepare: function (schema, value, { error }) {
+                    prepare(schema, value, { error }) {
 
                         if (value === 0) {
                             return { value: undefined };
@@ -1432,7 +1432,7 @@ describe('extension', () => {
             base: Joi.object(),
             coerce: {
                 from: 'string',
-                method: function (schema, value, helpers) {
+                method(schema, value, helpers) {
 
                     if (value[0] !== '{' &&
                         !/^\s*\{/.test(value)) {
@@ -1481,7 +1481,7 @@ describe('extension', () => {
             base: Joi.array(),
             coerce: {
                 from: 'string',
-                method: function (schema, value, helpers) {
+                method(schema, value, helpers) {
 
                     if (typeof value !== 'string' ||
                         value[0] !== '[' && !/^\s*\[/.test(value)) {

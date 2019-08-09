@@ -203,7 +203,7 @@ describe('date', () => {
                 type: 'date',
                 base: Joi.date(),
                 overrides: {
-                    format: function (format) {
+                    format(format) {
 
                         if (['iso', 'javascript', 'unix'].includes(format)) {
                             return this.super.format(format);

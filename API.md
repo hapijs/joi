@@ -3148,7 +3148,7 @@ const custom = Joi.extend((joi) => {
             'million.round': '"{{#label}}" must be a round number',
             'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
         },
-        coerce: function (schema, value, helpers) {
+        coerce(schema, value, helpers) {
 
             // Only called when prefs.convert is true
 
@@ -3156,7 +3156,7 @@ const custom = Joi.extend((joi) => {
                 return { value: Math.round(value) };
             }
         },
-        validate: function (schema, value, helpers) {
+        validate(schema, value, helpers) {
 
             // Base validation regardless of the rules applied
 
@@ -3175,18 +3175,18 @@ const custom = Joi.extend((joi) => {
         rules: {
             big: {
                 alias: 'large',
-                method: function () {
+                method() {
 
                     return this.setFlag('big', true);
                 }
             },
             round: {
                 convert: true,              // Dual rule: converts or validates
-                method: function () {
+                method() {
 
                     return this.addRule('round');
                 },
-                validate: function (value, helpers, args, options) {
+                validate(value, helpers, args, options) {
 
                     // Only called when prefs.convert is false (due to rule convert option)
 
@@ -3197,7 +3197,7 @@ const custom = Joi.extend((joi) => {
             },
             dividable: {
                 multi: true,                // Rule supports multiple invocations
-                method: function (q) {
+                method(q) {
 
                     return this.addRule({ name: 'dividable', args: { q } });
                 },
@@ -3209,7 +3209,7 @@ const custom = Joi.extend((joi) => {
                         message: 'must be a number'
                     }
                 ],
-                validate: function (value, helpers, args, options) {
+                validate(value, helpers, args, options) {
 
                     if (value % args.q === 0) {
                         return value;       // Value is valid
@@ -3219,7 +3219,7 @@ const custom = Joi.extend((joi) => {
                 }
             },
             even: {
-                method: function () {
+                method() {
 
                     // Rule with only method used to alias another rule
 

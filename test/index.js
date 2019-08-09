@@ -704,7 +704,7 @@ describe('Joi', () => {
         expect(err2).to.be.an.error('"module" does not match any of the allowed types');
         expect(err2.details[0].context.message).to.equal('"module.compile" is required. "module" must be a string');
 
-        expect(Joi.compile(config).validate({ module: { compile: function () { } } }).error).to.not.exist();
+        expect(Joi.compile(config).validate({ module: { compile() { } } }).error).to.not.exist();
     });
 
     it('validates key with required alternatives', () => {
@@ -1089,14 +1089,14 @@ describe('Joi', () => {
     it('should work when the skipFunctions setting is enabled', () => {
 
         const schema = Joi.object({ username: Joi.string() }).prefs({ skipFunctions: true });
-        const input = { username: 'test', func: function () { } };
+        const input = { username: 'test', func() { } };
         expect(schema.validate(input).error).to.not.exist();
     });
 
     it('should work when the skipFunctions setting is disabled', () => {
 
         const schema = Joi.object({ username: Joi.string() });
-        const input = { username: 'test', func: function () { } };
+        const input = { username: 'test', func() { } };
 
         const err = schema.validate(input, { skipFunctions: false }).error;
         expect(err.message).to.contain('"func" is not allowed');

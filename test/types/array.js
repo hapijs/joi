@@ -1878,7 +1878,7 @@ describe('array', () => {
                 type: 'extended',
                 rules: {
                     foo: {
-                        method: function () {
+                        method() {
 
                             return this.$_addRule('foo');
                         },
@@ -1908,7 +1908,7 @@ describe('array', () => {
                 type: 'extended',
                 rules: {
                     foo: {
-                        method: function () {
+                        method() {
 
                             return this.$_addRule('foo');
                         },

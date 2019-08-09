@@ -449,20 +449,20 @@ describe('Manifest', () => {
             const custom = Joi.extend({
                 type: 'fancy',
                 base: Joi.object({ a: Joi.number() }),
-                initialize: function (schema) {
+                initialize(schema) {
 
                     schema.$_terms.fancy = [];
                 },
                 rules: {
                     pants: {
-                        method: function (button) {
+                        method(button) {
 
                             this.$_terms.fancy.push(button);
                             return this;
                         }
                     }
                 },
-                build: function (obj, desc) {
+                build(obj, desc) {
 
                     if (desc.fancy) {
                         obj = obj.clone();
@@ -499,7 +499,7 @@ describe('Manifest', () => {
                     'million.round': '"{{#label}}" must be a round number',
                     'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
                 },
-                coerce: function (schema, value, helpers) {
+                coerce(schema, value, helpers) {
 
                     // Only called when prefs.convert is true
 
@@ -507,7 +507,7 @@ describe('Manifest', () => {
                         return { value: Math.round(value) };
                     }
                 },
-                validate: function (schema, value, helpers) {
+                validate(schema, value, helpers) {
 
                     // Base validation regardless of the rules applied
 
@@ -526,18 +526,18 @@ describe('Manifest', () => {
                 rules: {
                     big: {
                         alias: 'large',
-                        method: function () {
+                        method() {
 
                             return this.$_setFlag('big', true);
                         }
                     },
                     round: {
                         convert: true,              // Dual rule: converts or validates
-                        method: function () {
+                        method() {
 
                             return this.$_addRule('round');
                         },
-                        validate: function (value, helpers, args, options) {
+                        validate(value, helpers, args, options) {
 
                             // Only called when prefs.convert is false (due to rule convert option)
 
@@ -548,7 +548,7 @@ describe('Manifest', () => {
                     },
                     dividable: {
                         multi: true,                // Rule supports multiple invocations
-                        method: function (q) {
+                        method(q) {
 
                             return this.$_addRule({ name: 'dividable', args: { q } });
                         },
@@ -560,7 +560,7 @@ describe('Manifest', () => {
                                 message: 'q must be a number or reference'
                             }
                         ],
-                        validate: function (value, helpers, args, options) {
+                        validate(value, helpers, args, options) {
 
                             if (value % args.q === 0) {
                                 return value;       // Value is valid
@@ -570,7 +570,7 @@ describe('Manifest', () => {
                         }
                     },
                     even: {
-                        method: function () {
+                        method() {
 
                             // Rule with only method used to alias another rule
 
