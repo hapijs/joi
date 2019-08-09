@@ -884,14 +884,14 @@ describe('errors', () => {
             };
 
             const err = schema.validate(input).error;
-            expect(err).to.be.an.error('"x.y" must be a number of milliseconds or valid date string');
+            expect(err).to.be.an.error('"x.y" must be a valid date');
             expect(err.details).to.equal([{
-                message: '"x.y" must be a number of milliseconds or valid date string',
+                message: '"x.y" must be a valid date',
                 path: ['x', 'y'],
                 type: 'date.base',
                 context: { label: 'x.y', key: 'y', value: NaN }
             }]);
-            expect(err.annotate().replace(/\\r/g, '')).to.equal('{\n  "x": {\n    "z": Infinity,\n    "u": -Infinity,\n    "g": Symbol(foo),\n    "h": -Infinity,\n    "i": Infinity,\n    "k": (a) => a,\n    "p": Symbol(bar),\n    "f": function (x) {\\n\\n                        return [{ y: 2 }];\\n                    },\n    "y" \u001b[31m[1]\u001b[0m: NaN\n  }\n}\n\u001b[31m\n[1] "x.y" must be a number of milliseconds or valid date string\u001b[0m');
+            expect(err.annotate().replace(/\\r/g, '')).to.equal('{\n  "x": {\n    "z": Infinity,\n    "u": -Infinity,\n    "g": Symbol(foo),\n    "h": -Infinity,\n    "i": Infinity,\n    "k": (a) => a,\n    "p": Symbol(bar),\n    "f": function (x) {\\n\\n                        return [{ y: 2 }];\\n                    },\n    "y" \u001b[31m[1]\u001b[0m: NaN\n  }\n}\n\u001b[31m\n[1] "x.y" must be a valid date\u001b[0m');
         });
 
         it('handles child to uncle relationship inside a child', () => {

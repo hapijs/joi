@@ -6022,27 +6022,27 @@ describe('string', () => {
                 ['+002013-06-07T14:21:46.295Z', true],
                 ['-002013-06-07T14:21:46.295Z', true],
                 ['002013-06-07T14:21:46.295Z', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '002013-06-07T14:21:46.295Z', label: 'value' }
                     }]
                 }],
                 ['+2013-06-07T14:21:46.295Z', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '+2013-06-07T14:21:46.295Z', label: 'value' }
                     }]
                 }],
                 ['-2013-06-07T14:21:46.295Z', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '-2013-06-07T14:21:46.295Z', label: 'value' }
@@ -6050,9 +6050,9 @@ describe('string', () => {
                 }],
                 ['2013-06-07T14:21:46.295Z', true],
                 ['2013-06-07T14:21:46.295Z0', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
@@ -6060,9 +6060,9 @@ describe('string', () => {
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
                 ['2013-06-07T14:21:46.295+07:000', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T14:21:46.295+07:000', label: 'value' }
@@ -6071,9 +6071,9 @@ describe('string', () => {
                 ['2013-06-07T14:21:46.295-07:00', true],
                 ['2013-06-07T14:21:46Z', true],
                 ['2013-06-07T14:21:46Z0', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T14:21:46Z0', label: 'value' }
@@ -6081,9 +6081,9 @@ describe('string', () => {
                 }],
                 ['2013-06-07T14:21:46+07:00', true],
                 ['2013-06-07T14:21:46+07:000', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T14:21:46+07:000', label: 'value' }
@@ -6093,9 +6093,9 @@ describe('string', () => {
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
                 ['2013-06-07T14:21+07:000', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T14:21+07:000', label: 'value' }
@@ -6103,9 +6103,9 @@ describe('string', () => {
                 }],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T14:21Z+7:00', label: 'value' }
@@ -6113,9 +6113,9 @@ describe('string', () => {
                 }],
                 ['2013-06-07', true],
                 ['2013-06-07T', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T', label: 'value' }
@@ -6123,36 +6123,36 @@ describe('string', () => {
                 }],
                 ['2013-06-07T14:21', true],
                 ['1-1-2013', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14.2334,4', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T14.2334,4', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T14,23:34', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T14,23:34', label: 'value' }
                     }]
                 }],
                 ['2013-06-07T24', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T24', label: 'value' }
@@ -6160,108 +6160,108 @@ describe('string', () => {
                 }],
                 ['2013-06-07T24:00', true],
                 ['2013-06-07T24:21', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07T24:21', label: 'value' }
                     }]
                 }],
                 ['2013-06-07 146946.295', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07 146946.295', label: 'value' }
                     }]
                 }],
                 ['2013-06-07 1421,44', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-06-07 1421,44', label: 'value' }
                     }]
                 }],
                 ['2013-W2311', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-W2311', label: 'value' }
                     }]
                 }],
                 ['2013-M231', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-M231', label: 'value' }
                     }]
                 }],
                 ['2013-W23-1T14:21', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-W23-1T14:21', label: 'value' }
                     }]
                 }],
                 ['2013-W23-1T14:21:', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-W23-1T14:21:', label: 'value' }
                     }]
                 }],
                 ['2013-W23-1T14:21:46+07:00', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-W23-1T14:21:46+07:00', label: 'value' }
                     }]
                 }],
                 ['2013-W23-1T14:21:46+07:000', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-W23-1T14:21:46+07:000', label: 'value' }
                     }]
                 }],
                 ['2013-W23-1T14:21:46-07:00', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-W23-1T14:21:46-07:00', label: 'value' }
                     }]
                 }],
                 ['2013-184', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-184', label: 'value' }
                     }]
                 }],
                 ['2013-1841', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-1841', label: 'value' }
@@ -6273,8 +6273,8 @@ describe('string', () => {
         it('validates isoDate with a friendly error message', () => {
 
             const schema = { item: Joi.string().isoDate() };
-            expect(Joi.compile(schema).validate({ item: 'something' }).error).to.be.an.error('"item" must be a valid ISO 8601 date');
-            expect(Joi.compile(schema).validate({ item: 'something' }, { convert: false }).error).to.be.an.error('"item" must be a valid ISO 8601 date');
+            expect(Joi.compile(schema).validate({ item: 'something' }).error).to.be.an.error('"item" must be in iso format');
+            expect(Joi.compile(schema).validate({ item: 'something' }, { convert: false }).error).to.be.an.error('"item" must be in iso format');
         });
 
         it('validates and formats isoDate with convert set to true (default)', () => {
@@ -6295,9 +6295,9 @@ describe('string', () => {
                 ['2013-06-07', true, null, '2013-06-07T00:00:00.000Z'],
                 ['2013-06-07T14:21', true, null, '2013-06-07T14:21:00.000Z'],
                 ['2013-184', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in iso format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in iso format',
                         path: [],
                         type: 'string.isoDate',
                         context: { value: '2013-184', label: 'value' }

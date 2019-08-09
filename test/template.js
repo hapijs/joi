@@ -81,7 +81,7 @@ describe('Template', () => {
 
         expect(template.source).to.equal(source);
         expect(template.render({}, {}, { context: { x: 'hello', y: '!' } })).to.equal('text hello&#x21; {{escaped}} xxx abc {{{ignore}} 123 {{x');
-        expect(template.render({}, {}, { context: { x: 'hello', y: '!' } }, {}, { escapeHtml: false })).to.equal('text hello! {{escaped}} xxx abc {{{ignore}} 123 {{x');
+        expect(template.render({}, {}, { context: { x: 'hello', y: '!' } }, {}, { errors: { escapeHtml: false } })).to.equal('text hello! {{escaped}} xxx abc {{{ignore}} 123 {{x');
     });
 
     it('parses template with single variable', () => {
@@ -130,7 +130,7 @@ describe('Template', () => {
 
     describe('_ref()', () => {
 
-        it('errors on tempalte with invalid formula', () => {
+        it('errors on template with invalid formula', () => {
 
             const source = '{x +}';
             expect(() => Joi.x(source)).to.throw('Invalid template variable "x +" fails due to: Formula contains invalid trailing operator');
@@ -138,6 +138,33 @@ describe('Template', () => {
     });
 
     describe('functions', () => {
+
+        describe('msg()', () => {
+
+            it('ignores missing options', () => {
+
+                const template = Joi.x('{msg("x")}');
+                expect(template.render({}, {}, {}, {})).to.equal('');
+            });
+
+            it('ignores missing codes', () => {
+
+                const template = Joi.x('{msg("x")}');
+                expect(template.render({}, {}, {}, {}, { messages: [] })).to.equal('');
+            });
+
+            it('uses code in first set', () => {
+
+                const template = Joi.x('{msg("x")}');
+                expect(template.render({}, {}, { errors: {} }, {}, { messages: [{ x: Joi.x('X') }] })).to.equal('X');
+            });
+
+            it('uses code in second set', () => {
+
+                const template = Joi.x('{msg("x")}');
+                expect(template.render({}, {}, { errors: {} }, {}, { messages: [null, { x: Joi.x('X') }] })).to.equal('X');
+            });
+        });
 
         describe('number()', () => {
 

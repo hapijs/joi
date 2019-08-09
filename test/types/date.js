@@ -48,18 +48,18 @@ describe('date', () => {
         const schema = Joi.date();
         Helper.validate(schema, [
             [true, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"value" must be a valid date',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"value" must be a valid date',
                     path: [],
                     type: 'date.base',
                     context: { label: 'value', value: true }
                 }]
             }],
             [false, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"value" must be a valid date',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"value" must be a valid date',
                     path: [],
                     type: 'date.base',
                     context: { label: 'value', value: false }
@@ -73,27 +73,27 @@ describe('date', () => {
         const schema = Joi.date();
         Helper.validate(schema, [
             [Infinity, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"value" must be a valid date',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"value" must be a valid date',
                     path: [],
                     type: 'date.base',
                     context: { label: 'value', value: Infinity }
                 }]
             }],
             [-Infinity, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"value" must be a valid date',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"value" must be a valid date',
                     path: [],
                     type: 'date.base',
                     context: { label: 'value', value: -Infinity }
                 }]
             }],
             [NaN, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"value" must be a valid date',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"value" must be a valid date',
                     path: [],
                     type: 'date.base',
                     context: { label: 'value', value: NaN }
@@ -116,7 +116,7 @@ describe('date', () => {
         expect(err.details).to.equal([{
             message: '"value" must be a valid date',
             path: [],
-            type: 'date.strict',
+            type: 'date.base',
             context: { label: 'value', value: '1-1-2013 UTC' }
         }]);
     });
@@ -142,18 +142,18 @@ describe('date', () => {
             [new Date().getTime(), true],
             [new Date().getTime().toFixed(4), true],
             ['not a valid date', false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"value" must be a valid date',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"value" must be a valid date',
                     path: [],
                     type: 'date.base',
                     context: { label: 'value', value: 'not a valid date' }
                 }]
             }],
             [invalidDate, false, null, {
-                message: '"value" must be a number of milliseconds or valid date string',
+                message: '"value" must be a valid date',
                 details: [{
-                    message: '"value" must be a number of milliseconds or valid date string',
+                    message: '"value" must be a valid date',
                     path: [],
                     type: 'date.base',
                     context: { label: 'value', value: invalidDate }
@@ -432,61 +432,61 @@ describe('date', () => {
                 ['+002013-06-07T14:21:46.295Z', true],
                 ['-002013-06-07T14:21:46.295Z', true],
                 ['002013-06-07T14:21:46.295Z', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '002013-06-07T14:21:46.295Z' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '002013-06-07T14:21:46.295Z', format: 'iso' }
                     }]
                 }],
                 ['+2013-06-07T14:21:46.295Z', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '+2013-06-07T14:21:46.295Z' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '+2013-06-07T14:21:46.295Z', format: 'iso' }
                     }]
                 }],
                 ['-2013-06-07T14:21:46.295Z', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '-2013-06-07T14:21:46.295Z' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '-2013-06-07T14:21:46.295Z', format: 'iso' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295Z', true],
                 ['2013-06-07T14:21:46.295Z0', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '2013-06-07T14:21:46.295Z0' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '2013-06-07T14:21:46.295Z0', format: 'iso' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
                 ['2013-06-07T14:21:46.295+07:000', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '2013-06-07T14:21:46.295+07:000' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '2013-06-07T14:21:46.295+07:000', format: 'iso' }
                     }]
                 }],
                 ['2013-06-07T14:21:46.295-07:00', true],
                 ['2013-06-07T14:21:46Z', true],
                 ['2013-06-07T14:21:46Z0', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '2013-06-07T14:21:46Z0' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '2013-06-07T14:21:46Z0', format: 'iso' }
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', true],
@@ -494,42 +494,42 @@ describe('date', () => {
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
                 ['2013-06-07T14:21+07:000', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '2013-06-07T14:21+07:000' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '2013-06-07T14:21+07:000', format: 'iso' }
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '2013-06-07T14:21Z+7:00' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '2013-06-07T14:21Z+7:00', format: 'iso' }
                     }]
                 }],
                 ['2013-06-07', true],
                 ['2013-06-07T', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '2013-06-07T' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '2013-06-07T', format: 'iso' }
                     }]
                 }],
                 ['2013-06-07T14:21', true],
                 ['1-1-2013', false, null, {
-                    message: '"value" must be a valid ISO 8601 date',
+                    message: '"value" must be in ISO 8601 date format',
                     details: [{
-                        message: '"value" must be a valid ISO 8601 date',
+                        message: '"value" must be in ISO 8601 date format',
                         path: [],
-                        type: 'date.isoDate',
-                        context: { label: 'value', value: '1-1-2013' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '1-1-2013', format: 'iso' }
                     }]
                 }],
                 ['2013', true, null, new Date('2013')]
@@ -546,12 +546,12 @@ describe('date', () => {
 
             const schema = { item: Joi.date().iso() };
             const err = Joi.compile(schema).validate({ item: 'something' }).error;
-            expect(err.message).to.equal('"item" must be a valid ISO 8601 date');
+            expect(err.message).to.equal('"item" must be in ISO 8601 date format');
             expect(err.details).to.equal([{
-                message: '"item" must be a valid ISO 8601 date',
+                message: '"item" must be in ISO 8601 date format',
                 path: ['item'],
-                type: 'date.isoDate',
-                context: { label: 'item', key: 'item', value: 'something' }
+                type: 'date.format',
+                context: { label: 'item', key: 'item', value: 'something', format: 'iso' }
             }]);
         });
 
@@ -1175,21 +1175,21 @@ describe('date', () => {
             const schema = Joi.date().timestamp();
             Helper.validate(schema, [
                 ['', false, null, {
-                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"value" must be in timestamp or number of milliseconds format',
                         path: [],
-                        type: 'date.timestamp.javascript',
-                        context: { label: 'value', value: '' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '', format: 'javascript' }
                     }]
                 }],
                 [' \t ', false, null, {
-                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"value" must be in timestamp or number of milliseconds format',
                         path: [],
-                        type: 'date.timestamp.javascript',
-                        context: { label: 'value', value: ' \t ' }
+                        type: 'date.format',
+                        context: { label: 'value', value: ' \t ', format: 'javascript' }
                     }]
                 }]
             ]);
@@ -1239,48 +1239,48 @@ describe('date', () => {
                 [1E3, true],
                 ['1E3', true],
                 [',', false, null, {
-                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"value" must be in timestamp or number of milliseconds format',
                         path: [],
-                        type: 'date.timestamp.javascript',
-                        context: { label: 'value', value: ',' }
+                        type: 'date.format',
+                        context: { label: 'value', value: ',', format: 'javascript' }
                     }]
                 }],
                 ['123A,0xA', false, null, {
-                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"value" must be in timestamp or number of milliseconds format',
                         path: [],
-                        type: 'date.timestamp.javascript',
-                        context: { label: 'value', value: '123A,0xA' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '123A,0xA', format: 'javascript' }
                     }]
                 }],
                 ['1-1-2013 UTC', false, null, {
-                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"value" must be in timestamp or number of milliseconds format',
                         path: [],
-                        type: 'date.timestamp.javascript',
-                        context: { label: 'value', value: '1-1-2013 UTC' }
+                        type: 'date.format',
+                        context: { label: 'value', value: '1-1-2013 UTC', format: 'javascript' }
                     }]
                 }],
                 ['not a valid timestamp', false, null, {
-                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"value" must be in timestamp or number of milliseconds format',
                         path: [],
-                        type: 'date.timestamp.javascript',
-                        context: { label: 'value', value: 'not a valid timestamp' }
+                        type: 'date.format',
+                        context: { label: 'value', value: 'not a valid timestamp', format: 'javascript' }
                     }]
                 }],
                 [invalidDate, false, null, {
-                    message: '"value" must be a valid timestamp or number of milliseconds',
+                    message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
-                        message: '"value" must be a valid timestamp or number of milliseconds',
+                        message: '"value" must be in timestamp or number of milliseconds format',
                         path: [],
-                        type: 'date.timestamp.javascript',
-                        context: { label: 'value', value: invalidDate }
+                        type: 'date.format',
+                        context: { label: 'value', value: invalidDate, format: 'javascript' }
                     }]
                 }]
             ]);

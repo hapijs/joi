@@ -202,14 +202,12 @@
     - [`binary.min`](#binarymin)
     - [`boolean.base`](#booleanbase)
     - [`date.base`](#datebase)
+    - [`date.format`](#dateformat)
     - [`date.greater`](#dategreater)
-    - [`date.isoDate`](#dateisodate)
     - [`date.less`](#dateless)
     - [`date.max`](#datemax)
     - [`date.min`](#datemin)
     - [`date.strict`](#datestrict)
-    - [`date.timestamp.javascript`](#datetimestampjavascript)
-    - [`date.timestamp.unix`](#datetimestampunix)
     - [`function.arity`](#functionarity)
     - [`function.class`](#functionclass)
     - [`function.maxArity`](#functionmaxarity)
@@ -401,7 +399,9 @@ The reference names can have one of the following prefixes:
 - any other variable references a key within the current value being validated.
 
 The formula syntax also supports built-in functions:
-- `if(condition, then, otherwise)`
+- `if(condition, then, otherwise)` - returns `then` when `condition` is truthy, otherwise `otherwise`.
+- `msg(code)` - embeds another error code message.
+- `number(value)` - cast value to a number.
 
 And the following constants:
 - `null`
@@ -1901,7 +1901,7 @@ Requires the string value to be in valid ISO 8601 date format.
 const schema = Joi.date().iso();
 ```
 
-Possible validation errors: [`date.isoDate`](#dateisodate)
+Possible validation errors: [`date.format`](#dateformat)
 
 #### `date.less(date)`
 
@@ -1985,7 +1985,7 @@ const schema = Joi.date().timestamp('javascript'); // also, for javascript times
 const schema = Joi.date().timestamp('unix'); // for unix timestamp (seconds)
 ```
 
-Possible validation errors: [`date.timestamp.javascript`](#datetimestampjavascript), [`date.timestamp.unix`](#datetimestampunix)
+Possible validation errors: [`date.format`](#dateformat)
 
 ### `func` - inherits from `Any`
 
@@ -3568,6 +3568,17 @@ The value is either not a boolean or could not be cast to a boolean from one of 
 
 The value is either not a date or could not be cast to a date from a string or a number.
 
+#### `date.format`
+
+The date does not match the required format.
+
+Additional local context properties:
+```ts
+{
+    format: string // The required format
+}
+```
+
 #### `date.greater`
 
 The date is over the limit that you set.
@@ -3578,10 +3589,6 @@ Additional local context properties:
     limit: Date // Maximum date
 }
 ```
-
-#### `date.isoDate`
-
-The date does not match the ISO 8601 format.
 
 #### `date.less`
 
@@ -3619,14 +3626,6 @@ Additional local context properties:
 #### `date.strict`
 
 Occurs when the input is not a Date type and `convert` is disabled.
-
-#### `date.timestamp.javascript`
-
-Failed to be converted from a string or a number to a date as JavaScript timestamp.
-
-#### `date.timestamp.unix`
-
-Failed to be converted from a string or a number to a date as Unix timestamp.
 
 #### `function.arity`
 
