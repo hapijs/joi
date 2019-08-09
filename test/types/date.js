@@ -195,6 +195,30 @@ describe('date', () => {
         });
     });
 
+    describe('format()', () => {
+
+        it('ignores unknown formats', () => {
+
+            const custom = Joi.extend({
+                type: 'date',
+                base: Joi.date(),
+                overrides: {
+                    format: function (format) {
+
+                        if (['iso', 'javascript', 'unix'].includes(format)) {
+                            return this.super.format(format);
+                        }
+
+                        return this.$_setFlag('format', format);
+                    }
+                }
+            });
+
+            expect(custom.date().format('unknown').validate('x').error).to.be.an.error('"value" must be in unknown format');
+            expect(custom.date().format(['unknown']).validate('x').error).to.be.an.error('"value" must be in [unknown] format');
+        });
+    });
+
     describe('greater()', () => {
 
         it('validates greater', () => {
