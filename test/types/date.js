@@ -216,6 +216,7 @@ describe('date', () => {
 
             expect(custom.date().format('unknown').validate('x').error).to.be.an.error('"value" must be in unknown format');
             expect(custom.date().format(['unknown']).validate('x').error).to.be.an.error('"value" must be in [unknown] format');
+            expect(custom.date().format('unknown').validate(Date.now()).error).to.not.exist();
         });
     });
 
@@ -1299,12 +1300,12 @@ describe('date', () => {
                     }]
                 }],
                 [invalidDate, false, null, {
-                    message: '"value" must be in timestamp or number of milliseconds format',
+                    message: '"value" must be a valid date',
                     details: [{
-                        message: '"value" must be in timestamp or number of milliseconds format',
+                        message: '"value" must be a valid date',
                         path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: invalidDate, format: 'javascript' }
+                        type: 'date.base',
+                        context: { label: 'value', value: invalidDate }
                     }]
                 }]
             ]);
