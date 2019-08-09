@@ -99,6 +99,20 @@ describe('string', () => {
         ]);
     });
 
+    it('validates null', () => {
+
+        const err = Joi.string().validate(null).error;
+        expect(err).to.be.an.error('"value" must be a string');
+        expect(err.details).to.equal([{
+            message: '"value" must be a string',
+            path: [],
+            type: 'string.base',
+            context: { value: null, label: 'value' }
+        }]);
+
+        expect(err.annotate()).to.equal('"value" must be a string');
+    });
+
     describe('allow()', () => {
 
         it('validates combination of allow(\'\') and min', () => {

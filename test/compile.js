@@ -26,6 +26,241 @@ describe('cast', () => {
 
             expect(schema.validate({ a: 5, b: 6 }).error).to.not.exist();
         });
+
+        it('compiles null schema', () => {
+
+            Helper.validate(null, [
+                ['a', false, null, {
+                    message: '"value" must be one of [null]',
+                    details: [{
+                        message: '"value" must be one of [null]',
+                        path: [],
+                        type: 'any.only',
+                        context: { value: 'a', valids: [null], label: 'value' }
+                    }]
+                }],
+                [null, true]
+            ]);
+        });
+
+        it('compiles number literal', () => {
+
+            Helper.validate(5, [
+                [6, false, null, {
+                    message: '"value" must be one of [5]',
+                    details: [{
+                        message: '"value" must be one of [5]',
+                        path: [],
+                        type: 'any.only',
+                        context: { value: 6, valids: [5], label: 'value' }
+                    }]
+                }],
+                [5, true]
+            ]);
+        });
+
+        it('compiles string literal', () => {
+
+            Helper.validate('5', [
+                ['6', false, null, {
+                    message: '"value" must be one of [5]',
+                    details: [{
+                        message: '"value" must be one of [5]',
+                        path: [],
+                        type: 'any.only',
+                        context: { value: '6', valids: ['5'], label: 'value' }
+                    }]
+                }],
+                ['5', true]
+            ]);
+        });
+
+        it('compiles boolean literal', () => {
+
+            Helper.validate(true, [
+                [false, false, null, {
+                    message: '"value" must be one of [true]',
+                    details: [{
+                        message: '"value" must be one of [true]',
+                        path: [],
+                        type: 'any.only',
+                        context: { value: false, valids: [true], label: 'value' }
+                    }]
+                }],
+                [true, true]
+            ]);
+        });
+
+        it('compiles date literal', () => {
+
+            const now = Date.now();
+            const dnow = new Date(now);
+            Helper.validate(dnow, [
+                [new Date(now), true],
+                [now, true],
+                [now * 2, false, null, {
+                    message: `"value" must be one of [${dnow.toISOString()}]`,
+                    details: [{
+                        message: `"value" must be one of [${dnow.toISOString()}]`,
+                        path: [],
+                        type: 'any.only',
+                        context: { value: new Date(now * 2), valids: [dnow], label: 'value' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('compiles alternatives', () => {
+
+            const schema = ['key', 5, { a: true, b: [/^a/, 'boom'] }];
+            Helper.validate(schema, [
+                ['key', true],
+                [5, true],
+                ['other', false, null, {
+                    message: '"value" does not match any of the allowed types',
+                    details: [
+                        {
+                            message: '"value" does not match any of the allowed types',
+                            path: [],
+                            type: 'alternatives.match',
+                            context: {
+                                message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
+                                label: 'value',
+                                value: 'other',
+                                details: [
+                                    {
+                                        message: '"value" must be one of [key]',
+                                        path: [],
+                                        type: 'any.only',
+                                        context: { value: 'other', valids: ['key'], label: 'value' }
+                                    },
+                                    {
+                                        message: '"value" must be one of [5]',
+                                        path: [],
+                                        type: 'any.only',
+                                        context: { value: 'other', valids: [5], label: 'value' }
+                                    },
+                                    {
+                                        message: '"value" must be of type object',
+                                        path: [],
+                                        type: 'object.base',
+                                        context: { label: 'value', value: 'other', type: 'object' }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }],
+                [6, false, null, {
+                    message: '"value" does not match any of the allowed types',
+                    details: [
+                        {
+                            message: '"value" does not match any of the allowed types',
+                            path: [],
+                            type: 'alternatives.match',
+                            context: {
+                                message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
+                                label: 'value',
+                                value: 6,
+                                details: [
+                                    {
+                                        message: '"value" must be one of [key]',
+                                        path: [],
+                                        type: 'any.only',
+                                        context: { value: 6, valids: ['key'], label: 'value' }
+                                    },
+                                    {
+                                        message: '"value" must be one of [5]',
+                                        path: [],
+                                        type: 'any.only',
+                                        context: { value: 6, valids: [5], label: 'value' }
+                                    },
+                                    {
+                                        message: '"value" must be of type object',
+                                        path: [],
+                                        type: 'object.base',
+                                        context: { label: 'value', value: 6, type: 'object' }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }],
+                [{ c: 5 }, false, null, {
+                    message: '"value" does not match any of the allowed types',
+                    details: [
+                        {
+                            message: '"value" does not match any of the allowed types',
+                            path: [],
+                            type: 'alternatives.match',
+                            context: {
+                                message: '"value" must be one of [key]. "value" must be one of [5]. "c" is not allowed',
+                                label: 'value',
+                                value: { c: 5 },
+                                details: [
+                                    {
+                                        message: '"value" must be one of [key]',
+                                        path: [],
+                                        type: 'any.only',
+                                        context: { value: { c: 5 }, valids: ['key'], label: 'value' }
+                                    },
+                                    {
+                                        message: '"value" must be one of [5]',
+                                        path: [],
+                                        type: 'any.only',
+                                        context: { value: { c: 5 }, valids: [5], label: 'value' }
+                                    },
+                                    {
+                                        message: '"c" is not allowed',
+                                        path: ['c'],
+                                        type: 'object.unknown',
+                                        context: { child: 'c', label: 'c', key: 'c', value: 5 }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }],
+                [{}, true],
+                [{ b: 'abc' }, true],
+                [{ a: true, b: 'boom' }, true],
+                [{ a: 5, b: 'a' }, false, null, {
+                    message: '"value" does not match any of the allowed types',
+                    details: [
+                        {
+                            message: '"value" does not match any of the allowed types',
+                            path: [],
+                            type: 'alternatives.match',
+                            context: {
+                                label: 'value',
+                                message: '"value" must be one of [key]. "value" must be one of [5]. "a" must be one of [true]',
+                                value: { a: 5, b: 'a' },
+                                details: [
+                                    {
+                                        message: '"value" must be one of [key]',
+                                        path: [],
+                                        type: 'any.only',
+                                        context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
+                                    },
+                                    {
+                                        message: '"value" must be one of [5]',
+                                        path: [],
+                                        type: 'any.only',
+                                        context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
+                                    },
+                                    {
+                                        message: '"a" must be one of [true]',
+                                        path: ['a'],
+                                        type: 'any.only',
+                                        context: { label: 'a', key: 'a', value: 5, valids: [true] }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }]
+            ]);
+        });
     });
 
     describe('compile()', () => {

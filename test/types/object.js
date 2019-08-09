@@ -34,6 +34,26 @@ describe('object', () => {
         ]);
     });
 
+    it('validates basic object', () => {
+
+        const schema = Joi.object({
+            a: Joi.number().min(0).max(3),
+            b: Joi.string().valid('a', 'b', 'c'),
+            c: Joi.string().email().optional()
+        }).without('a', 'none');
+
+        expect(Joi.isSchema(schema)).to.be.true();
+        expect(Joi.isSchema({})).to.be.false();
+
+        const obj = {
+            a: 1,
+            b: 'a',
+            c: 'joe@example.com'
+        };
+
+        expect(schema.validate(obj).error).to.not.exist();
+    });
+
     it('validates references', () => {
 
         const schema = Joi.object().ref();
@@ -769,7 +789,301 @@ describe('object', () => {
         }]);
     });
 
+    it('errors on unknown key', () => {
+
+        const config = {
+            auth: Joi.object({
+                mode: Joi.string().valid('required', 'optional', 'try').allow(null)
+            }).allow(null)
+        };
+
+        const err = Joi.compile(config).validate({ auth: { unknown: true } }).error;
+        expect(err.message).to.contain('"auth.unknown" is not allowed');
+
+        const err2 = Joi.compile(config).validate({ something: false }).error;
+        expect(err2.message).to.contain('"something" is not allowed');
+    });
+
     describe('and()', () => {
+
+        it('validates and()', () => {
+
+            const schema = Joi.object({
+                txt: Joi.string(),
+                upc: Joi.string().allow(null, ''),
+                code: Joi.number()
+            }).and('txt', 'upc', 'code');
+
+            const err = schema.validate({ txt: 'x' }, { abortEarly: false }).error;
+            expect(err).to.be.an.error('"value" contains [txt] without its required peers [upc, code]');
+            expect(err.details).to.equal([{
+                message: '"value" contains [txt] without its required peers [upc, code]',
+                path: [],
+                type: 'object.and',
+                context: {
+                    present: ['txt'],
+                    presentWithLabels: ['txt'],
+                    missing: ['upc', 'code'],
+                    missingWithLabels: ['upc', 'code'],
+                    label: 'value',
+                    value: { txt: 'x' }
+                }
+            }]);
+
+            Helper.validate(schema, [
+                [{}, true],
+                [{ upc: null }, false, null, {
+                    message: '"value" contains [upc] without its required peers [txt, code]',
+                    details: [{
+                        message: '"value" contains [upc] without its required peers [txt, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['upc'],
+                            presentWithLabels: ['upc'],
+                            missing: ['txt', 'code'],
+                            missingWithLabels: ['txt', 'code'],
+                            label: 'value',
+                            value: { upc: null }
+                        }
+                    }]
+                }],
+                [{ upc: 'test' }, false, null, {
+                    message: '"value" contains [upc] without its required peers [txt, code]',
+                    details: [{
+                        message: '"value" contains [upc] without its required peers [txt, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['upc'],
+                            presentWithLabels: ['upc'],
+                            missing: ['txt', 'code'],
+                            missingWithLabels: ['txt', 'code'],
+                            label: 'value',
+                            value: { upc: 'test' }
+                        }
+                    }]
+                }],
+                [{ txt: null }, false, null, {
+                    message: '"txt" must be a string',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: 'test' }, false, null, {
+                    message: '"value" contains [txt] without its required peers [upc, code]',
+                    details: [{
+                        message: '"value" contains [txt] without its required peers [upc, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt'],
+                            presentWithLabels: ['txt'],
+                            missing: ['upc', 'code'],
+                            missingWithLabels: ['upc', 'code'],
+                            label: 'value',
+                            value: { txt: 'test' }
+                        }
+                    }]
+                }],
+                [{ code: null }, false, null, {
+                    message: '"code" must be a number',
+                    details: [{
+                        message: '"code" must be a number',
+                        path: ['code'],
+                        type: 'number.base',
+                        context: { label: 'code', key: 'code', value: null }
+                    }]
+                }],
+                [{ code: 123 }, false, null, {
+                    message: '"value" contains [code] without its required peers [txt, upc]',
+                    details: [{
+                        message: '"value" contains [code] without its required peers [txt, upc]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['code'],
+                            presentWithLabels: ['code'],
+                            missing: ['txt', 'upc'],
+                            missingWithLabels: ['txt', 'upc'],
+                            label: 'value',
+                            value: { code: 123 }
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            value: { txt: 'test', upc: null }
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            value: { txt: 'test', upc: '' }
+                        }
+                    }]
+                }],
+                [{ txt: '', upc: 'test' }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: null, upc: 'test' }, false, null, {
+                    message: '"txt" must be a string',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: undefined, upc: 'test' }, false, null, {
+                    message: '"value" contains [upc] without its required peers [txt, code]',
+                    details: [{
+                        message: '"value" contains [upc] without its required peers [txt, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['upc'],
+                            presentWithLabels: ['upc'],
+                            missing: ['txt', 'code'],
+                            missingWithLabels: ['txt', 'code'],
+                            label: 'value',
+                            value: { txt: undefined, upc: 'test' }
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: undefined }, false, null, {
+                    message: '"value" contains [txt] without its required peers [upc, code]',
+                    details: [{
+                        message: '"value" contains [txt] without its required peers [upc, code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt'],
+                            presentWithLabels: ['txt'],
+                            missing: ['upc', 'code'],
+                            missingWithLabels: ['upc', 'code'],
+                            label: 'value',
+                            value: { txt: 'test', upc: undefined }
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            value: { txt: 'test', upc: '' }
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            value: { txt: 'test', upc: null }
+                        }
+                    }]
+                }],
+                [{ txt: '', upc: undefined }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: undefined, code: 999 }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: undefined, code: undefined }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: '' }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: 'test', upc: 'test' }, false, null, {
+                    message: '"value" contains [txt, upc] without its required peers [code]',
+                    details: [{
+                        message: '"value" contains [txt, upc] without its required peers [code]',
+                        path: [],
+                        type: 'object.and',
+                        context: {
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            missing: ['code'],
+                            missingWithLabels: ['code'],
+                            label: 'value',
+                            value: { txt: 'test', upc: 'test' }
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: 'test', code: 322 }, true],
+                [{ txt: 'test', upc: null, code: 322 }, true]
+            ]);
+        });
 
         it('should apply labels', () => {
 
@@ -1220,6 +1534,78 @@ describe('object', () => {
                     }
                 ]
             });
+        });
+    });
+
+    describe('instance()', () => {
+
+        it('uses constructor name for default type name', () => {
+
+            const Foo = function Foo() {
+            };
+
+            const schema = Joi.object().instance(Foo);
+            const err = schema.validate({}).error;
+            expect(err).to.be.an.error('"value" must be an instance of "Foo"');
+            expect(err.details).to.equal([{
+                message: '"value" must be an instance of "Foo"',
+                path: [],
+                type: 'object.instance',
+                context: { type: 'Foo', label: 'value', value: {} }
+            }]);
+        });
+
+        it('uses custom type name if supplied', () => {
+
+            const Foo = function () {
+            };
+
+            const schema = Joi.object().instance(Foo, 'Bar');
+            const err = schema.validate({}).error;
+            expect(err).to.be.an.error('"value" must be an instance of "Bar"');
+            expect(err.details).to.equal([{
+                message: '"value" must be an instance of "Bar"',
+                path: [],
+                type: 'object.instance',
+                context: { type: 'Bar', label: 'value', value: {} }
+            }]);
+        });
+
+        it('overrides constructor name with custom name', () => {
+
+            const Foo = function Foo() {
+            };
+
+            const schema = Joi.object().instance(Foo, 'Bar');
+            const err = schema.validate({}).error;
+            expect(err).to.be.an.error('"value" must be an instance of "Bar"');
+            expect(err.details).to.equal([{
+                message: '"value" must be an instance of "Bar"',
+                path: [],
+                type: 'object.instance',
+                context: { type: 'Bar', label: 'value', value: {} }
+            }]);
+        });
+
+        it('throws when constructor is not a function', () => {
+
+            expect(() => Joi.object().instance('')).to.throw('constructor must be a function');
+        });
+
+        it('uses the constructor name in the schema description', () => {
+
+            const description = Joi.object().instance(RegExp).describe();
+
+            expect(description.rules[0]).to.equal({ name: 'instance', args: { name: 'RegExp', constructor: RegExp } });
+        });
+
+        it('uses the constructor reference in the schema description', () => {
+
+            const Foo = function Foo() { };
+
+            const description = Joi.object().instance(Foo).describe();
+
+            expect(new Foo()).to.be.an.instanceof(description.rules[0].args.constructor);
         });
     });
 
@@ -2090,6 +2476,79 @@ describe('object', () => {
 
     describe('nand()', () => {
 
+        it('validates nand()', () => {
+
+            const schema = Joi.object({
+                txt: Joi.string(),
+                upc: Joi.string().allow(null, ''),
+                code: Joi.number()
+            }).nand('txt', 'upc', 'code');
+
+            const err = schema.validate({ txt: 'x', upc: 'y', code: 123 }, { abortEarly: false }).error;
+            expect(err).to.be.an.error('"txt" must not exist simultaneously with [upc, code]');
+            expect(err.details).to.equal([{
+                message: '"txt" must not exist simultaneously with [upc, code]',
+                path: [],
+                type: 'object.nand',
+                context: {
+                    main: 'txt',
+                    mainWithLabel: 'txt',
+                    peers: ['upc', 'code'],
+                    peersWithLabels: ['upc', 'code'],
+                    label: 'value',
+                    value: { txt: 'x', upc: 'y', code: 123 }
+                }
+            }]);
+
+            Helper.validate(schema, [
+                [{}, true],
+                [{ upc: null }, true],
+                [{ upc: 'test' }, true],
+                [{ txt: 'test' }, true],
+                [{ code: 123 }, true],
+                [{ txt: 'test', upc: null }, true],
+                [{ txt: 'test', upc: '' }, true],
+                [{ txt: undefined, upc: 'test' }, true],
+                [{ txt: 'test', upc: undefined }, true],
+                [{ txt: 'test', upc: '' }, true],
+                [{ txt: 'test', upc: null }, true],
+                [{ txt: 'test', upc: undefined, code: 999 }, true],
+                [{ txt: 'test', upc: 'test' }, true],
+                [{ txt: 'test', upc: 'test', code: 322 }, false, null, {
+                    message: '"txt" must not exist simultaneously with [upc, code]',
+                    details: [{
+                        message: '"txt" must not exist simultaneously with [upc, code]',
+                        path: [],
+                        type: 'object.nand',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peers: ['upc', 'code'],
+                            peersWithLabels: ['upc', 'code'],
+                            label: 'value',
+                            value: { txt: 'test', upc: 'test', code: 322 }
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: null, code: 322 }, false, null, {
+                    message: '"txt" must not exist simultaneously with [upc, code]',
+                    details: [{
+                        message: '"txt" must not exist simultaneously with [upc, code]',
+                        path: [],
+                        type: 'object.nand',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peers: ['upc', 'code'],
+                            peersWithLabels: ['upc', 'code'],
+                            label: 'value',
+                            value: { txt: 'test', upc: null, code: 322 }
+                        }
+                    }]
+                }]
+            ]);
+        });
+
         it('should apply labels', () => {
 
             const schema = Joi.object({
@@ -2205,7 +2664,142 @@ describe('object', () => {
         });
     });
 
+    describe('optional()', () => {
+
+        it('does not require optional numbers', () => {
+
+            const config = {
+                position: Joi.number(),
+                suggestion: Joi.string()
+            };
+
+            expect(Joi.compile(config).validate({ suggestion: 'something' }).error).to.not.exist();
+            expect(Joi.compile(config).validate({ position: 1 }).error).to.not.exist();
+        });
+
+        it('does not require optional objects', () => {
+
+            const config = {
+                position: Joi.number(),
+                suggestion: Joi.object()
+            };
+
+            expect(Joi.compile(config).validate({ suggestion: {} }).error).to.not.exist();
+            expect(Joi.compile(config).validate({ position: 1 }).error).to.not.exist();
+        });
+    });
+
     describe('or()', () => {
+
+        it('validates or()', () => {
+
+            const schema = Joi.object({
+                txt: Joi.string(),
+                upc: Joi.string().allow(null, ''),
+                code: Joi.number()
+            }).or('txt', 'upc', 'code');
+
+            const err = schema.validate({}, { abortEarly: false }).error;
+            expect(err).to.be.an.error('"value" must contain at least one of [txt, upc, code]');
+            expect(err.details).to.equal([{
+                message: '"value" must contain at least one of [txt, upc, code]',
+                path: [],
+                type: 'object.missing',
+                context: {
+                    peers: ['txt', 'upc', 'code'],
+                    peersWithLabels: ['txt', 'upc', 'code'],
+                    label: 'value',
+                    value: {}
+                }
+            }]);
+
+            Helper.validate(schema, [
+                [{ upc: null }, true],
+                [{ upc: 'test' }, true],
+                [{ txt: null }, false, null, {
+                    message: '"txt" must be a string',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: 'test' }, true],
+                [{ code: null }, false, null, {
+                    message: '"code" must be a number',
+                    details: [{
+                        message: '"code" must be a number',
+                        path: ['code'],
+                        type: 'number.base',
+                        context: { label: 'code', key: 'code', value: null }
+                    }]
+                }],
+                [{ code: 123 }, true],
+                [{ txt: 'test', upc: null }, true],
+                [{ txt: 'test', upc: '' }, true],
+                [{ txt: '', upc: 'test' }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: null, upc: 'test' }, false, null, {
+                    message: '"txt" must be a string',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: undefined, upc: 'test' }, true],
+                [{ txt: 'test', upc: undefined }, true],
+                [{ txt: 'test', upc: '' }, true],
+                [{ txt: 'test', upc: null }, true],
+                [{ txt: '', upc: undefined }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: undefined, code: 999 }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: undefined, code: undefined }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: '' }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: 'test', upc: 'test' }, true],
+                [{ txt: 'test', upc: 'test', code: 322 }, true]
+            ]);
+        });
 
         it('errors when a parameter is not a string', () => {
 
@@ -3094,78 +3688,6 @@ describe('object', () => {
         });
     });
 
-    describe('type()', () => {
-
-        it('uses constructor name for default type name', () => {
-
-            const Foo = function Foo() {
-            };
-
-            const schema = Joi.object().instance(Foo);
-            const err = schema.validate({}).error;
-            expect(err).to.be.an.error('"value" must be an instance of "Foo"');
-            expect(err.details).to.equal([{
-                message: '"value" must be an instance of "Foo"',
-                path: [],
-                type: 'object.instance',
-                context: { type: 'Foo', label: 'value', value: {} }
-            }]);
-        });
-
-        it('uses custom type name if supplied', () => {
-
-            const Foo = function () {
-            };
-
-            const schema = Joi.object().instance(Foo, 'Bar');
-            const err = schema.validate({}).error;
-            expect(err).to.be.an.error('"value" must be an instance of "Bar"');
-            expect(err.details).to.equal([{
-                message: '"value" must be an instance of "Bar"',
-                path: [],
-                type: 'object.instance',
-                context: { type: 'Bar', label: 'value', value: {} }
-            }]);
-        });
-
-        it('overrides constructor name with custom name', () => {
-
-            const Foo = function Foo() {
-            };
-
-            const schema = Joi.object().instance(Foo, 'Bar');
-            const err = schema.validate({}).error;
-            expect(err).to.be.an.error('"value" must be an instance of "Bar"');
-            expect(err.details).to.equal([{
-                message: '"value" must be an instance of "Bar"',
-                path: [],
-                type: 'object.instance',
-                context: { type: 'Bar', label: 'value', value: {} }
-            }]);
-        });
-
-        it('throws when constructor is not a function', () => {
-
-            expect(() => Joi.object().instance('')).to.throw('constructor must be a function');
-        });
-
-        it('uses the constructor name in the schema description', () => {
-
-            const description = Joi.object().instance(RegExp).describe();
-
-            expect(description.rules[0]).to.equal({ name: 'instance', args: { name: 'RegExp', constructor: RegExp } });
-        });
-
-        it('uses the constructor reference in the schema description', () => {
-
-            const Foo = function Foo() { };
-
-            const description = Joi.object().instance(Foo).describe();
-
-            expect(new Foo()).to.be.an.instanceof(description.rules[0].args.constructor);
-        });
-    });
-
     describe('unknown()', () => {
 
         it('avoids unnecessary cloning when called twice', () => {
@@ -3268,6 +3790,85 @@ describe('object', () => {
     });
 
     describe('with()', () => {
+
+        it('validated with', () => {
+
+            const schema = Joi.object({
+                txt: Joi.string(),
+                upc: Joi.string()
+            }).with('txt', 'upc');
+
+            const err = schema.validate({ txt: 'a' }, { abortEarly: false }).error;
+            expect(err).to.be.an.error('"txt" missing required peer "upc"');
+            expect(err.details).to.equal([{
+                message: '"txt" missing required peer "upc"',
+                path: [],
+                type: 'object.with',
+                context: {
+                    main: 'txt',
+                    mainWithLabel: 'txt',
+                    peer: 'upc',
+                    peerWithLabel: 'upc',
+                    label: 'value',
+                    value: { txt: 'a' }
+                }
+            }]);
+
+            Helper.validate(schema, [
+                [{ upc: 'test' }, true],
+                [{ txt: 'test' }, false, null, {
+                    message: '"txt" missing required peer "upc"',
+                    details: [{
+                        message: '"txt" missing required peer "upc"',
+                        path: [],
+                        type: 'object.with',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peer: 'upc',
+                            peerWithLabel: 'upc',
+                            label: 'value',
+                            value: { txt: 'test' }
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: '"upc" must be a string',
+                    details: [{
+                        message: '"upc" must be a string',
+                        path: ['upc'],
+                        type: 'string.base',
+                        context: { value: null, label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: '"upc" is not allowed to be empty',
+                    details: [{
+                        message: '"upc" is not allowed to be empty',
+                        path: ['upc'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: 'test', upc: undefined }, false, null, {
+                    message: '"txt" missing required peer "upc"',
+                    details: [{
+                        message: '"txt" missing required peer "upc"',
+                        path: [],
+                        type: 'object.with',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peer: 'upc',
+                            peerWithLabel: 'upc',
+                            label: 'value',
+                            value: { txt: 'test', upc: undefined }
+                        }
+                    }]
+                }],
+                [{ txt: 'test', upc: 'test' }, true]
+            ]);
+        });
 
         it('errors when a parameter is not a string', () => {
 
@@ -3476,6 +4077,70 @@ describe('object', () => {
 
     describe('without()', () => {
 
+        it('validated without', () => {
+
+            const schema = Joi.object({
+                txt: Joi.string(),
+                upc: Joi.string()
+            }).without('txt', 'upc');
+
+            const err = schema.validate({ txt: 'a', upc: 'b' }, { abortEarly: false }).error;
+            expect(err).to.be.an.error('"txt" conflict with forbidden peer "upc"');
+            expect(err.details).to.equal([{
+                message: '"txt" conflict with forbidden peer "upc"',
+                path: [],
+                type: 'object.without',
+                context: {
+                    main: 'txt',
+                    mainWithLabel: 'txt',
+                    peer: 'upc',
+                    peerWithLabel: 'upc',
+                    label: 'value',
+                    value: { txt: 'a', upc: 'b' }
+                }
+            }]);
+
+            Helper.validate(schema, [
+                [{ upc: 'test' }, true],
+                [{ txt: 'test' }, true],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: '"upc" must be a string',
+                    details: [{
+                        message: '"upc" must be a string',
+                        path: ['upc'],
+                        type: 'string.base',
+                        context: { value: null, label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: '"upc" is not allowed to be empty',
+                    details: [{
+                        message: '"upc" is not allowed to be empty',
+                        path: ['upc'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: 'test', upc: undefined }, true],
+                [{ txt: 'test', upc: 'test' }, false, null, {
+                    message: '"txt" conflict with forbidden peer "upc"',
+                    details: [{
+                        message: '"txt" conflict with forbidden peer "upc"',
+                        path: [],
+                        type: 'object.without',
+                        context: {
+                            main: 'txt',
+                            mainWithLabel: 'txt',
+                            peer: 'upc',
+                            peerWithLabel: 'upc',
+                            label: 'value',
+                            value: { txt: 'test', upc: 'test' }
+                        }
+                    }]
+                }]
+            ]);
+        });
+
         it('errors when a parameter is not a string', () => {
 
             let error;
@@ -3636,6 +4301,238 @@ describe('object', () => {
     });
 
     describe('xor()', () => {
+
+        it('validates xor', () => {
+
+            const schema = Joi.object({
+                txt: Joi.string(),
+                upc: Joi.string()
+            }).xor('txt', 'upc');
+
+            const err = schema.validate({}, { abortEarly: false }).error;
+            expect(err).to.be.an.error('"value" must contain at least one of [txt, upc]');
+            expect(err.details).to.equal([{
+                message: '"value" must contain at least one of [txt, upc]',
+                path: [],
+                type: 'object.missing',
+                context: {
+                    peers: ['txt', 'upc'],
+                    peersWithLabels: ['txt', 'upc'],
+                    label: 'value',
+                    value: {}
+                }
+            }]);
+
+            Helper.validate(schema, [
+                [{ upc: null }, false, null, {
+                    message: '"upc" must be a string',
+                    details: [{
+                        message: '"upc" must be a string',
+                        path: ['upc'],
+                        type: 'string.base',
+                        context: { value: null, label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ upc: 'test' }, true],
+                [{ txt: null }, false, null, {
+                    message: '"txt" must be a string',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: 'test' }, true],
+                [{ txt: 'test', upc: null }, false, null, {
+                    message: '"upc" must be a string',
+                    details: [{
+                        message: '"upc" must be a string',
+                        path: ['upc'],
+                        type: 'string.base',
+                        context: { value: null, label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: 'test', upc: '' }, false, null, {
+                    message: '"upc" is not allowed to be empty',
+                    details: [{
+                        message: '"upc" is not allowed to be empty',
+                        path: ['upc'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'upc', key: 'upc' }
+                    }]
+                }],
+                [{ txt: '', upc: 'test' }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: null, upc: 'test' }, false, null, {
+                    message: '"txt" must be a string',
+                    details: [{
+                        message: '"txt" must be a string',
+                        path: ['txt'],
+                        type: 'string.base',
+                        context: { value: null, label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: undefined, upc: 'test' }, true],
+                [{ txt: 'test', upc: undefined }, true],
+                [{ txt: '', upc: undefined }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: '', upc: '' }, false, null, {
+                    message: '"txt" is not allowed to be empty',
+                    details: [{
+                        message: '"txt" is not allowed to be empty',
+                        path: ['txt'],
+                        type: 'string.empty',
+                        context: { value: '', label: 'txt', key: 'txt' }
+                    }]
+                }],
+                [{ txt: 'test', upc: 'test' }, false, null, {
+                    message: '"value" contains a conflict between exclusive peers [txt, upc]',
+                    details: [{
+                        message: '"value" contains a conflict between exclusive peers [txt, upc]',
+                        path: [],
+                        type: 'object.xor',
+                        context: {
+                            peers: ['txt', 'upc'],
+                            peersWithLabels: ['txt', 'upc'],
+                            present: ['txt', 'upc'],
+                            presentWithLabels: ['txt', 'upc'],
+                            label: 'value',
+                            value: { txt: 'test', upc: 'test' }
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates multiple peers xor', () => {
+
+            const schema = Joi.object({
+                txt: Joi.string(),
+                upc: Joi.string(),
+                code: Joi.string()
+            }).xor('txt', 'upc', 'code');
+
+            Helper.validate(schema, [
+                [{ upc: 'test' }, true],
+                [{ txt: 'test' }, true],
+                [{}, false, null, {
+                    message: '"value" must contain at least one of [txt, upc, code]',
+                    details: [{
+                        message: '"value" must contain at least one of [txt, upc, code]',
+                        path: [],
+                        type: 'object.missing',
+                        context: {
+                            peers: ['txt', 'upc', 'code'],
+                            peersWithLabels: ['txt', 'upc', 'code'],
+                            label: 'value',
+                            value: {}
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates xor with number types', () => {
+
+            const schema = Joi.object({
+                code: Joi.number(),
+                upc: Joi.number()
+            }).xor('code', 'upc');
+
+            Helper.validate(schema, [
+                [{ upc: 123 }, true],
+                [{ code: 456 }, true],
+                [{ code: 456, upc: 123 }, false, null, {
+                    message: '"value" contains a conflict between exclusive peers [code, upc]',
+                    details: [{
+                        message: '"value" contains a conflict between exclusive peers [code, upc]',
+                        path: [],
+                        type: 'object.xor',
+                        context: {
+                            peers: ['code', 'upc'],
+                            peersWithLabels: ['code', 'upc'],
+                            present: ['code', 'upc'],
+                            presentWithLabels: ['code', 'upc'],
+                            label: 'value',
+                            value: { code: 456, upc: 123 }
+                        }
+                    }]
+                }],
+                [{}, false, null, {
+                    message: '"value" must contain at least one of [code, upc]',
+                    details: [{
+                        message: '"value" must contain at least one of [code, upc]',
+                        path: [],
+                        type: 'object.missing',
+                        context: {
+                            peers: ['code', 'upc'],
+                            peersWithLabels: ['code', 'upc'],
+                            label: 'value',
+                            value: {}
+                        }
+                    }]
+                }]
+            ]);
+        });
+
+        it('validates xor when empty value of peer allowed', () => {
+
+            const schema = Joi.object({
+                code: Joi.string(),
+                upc: Joi.string().allow('')
+            }).xor('code', 'upc');
+
+            Helper.validate(schema, [
+                [{ upc: '' }, true],
+                [{ upc: '123' }, true],
+                [{ code: '456' }, true],
+                [{ code: '456', upc: '' }, false, null, {
+                    message: '"value" contains a conflict between exclusive peers [code, upc]',
+                    details: [{
+                        message: '"value" contains a conflict between exclusive peers [code, upc]',
+                        path: [],
+                        type: 'object.xor',
+                        context: {
+                            peers: ['code', 'upc'],
+                            peersWithLabels: ['code', 'upc'],
+                            present: ['code', 'upc'],
+                            presentWithLabels: ['code', 'upc'],
+                            label: 'value',
+                            value: { code: '456', upc: '' }
+                        }
+                    }]
+                }],
+                [{}, false, null, {
+                    message: '"value" must contain at least one of [code, upc]',
+                    details: [{
+                        message: '"value" must contain at least one of [code, upc]',
+                        path: [],
+                        type: 'object.missing',
+                        context: {
+                            peers: ['code', 'upc'],
+                            peersWithLabels: ['code', 'upc'],
+                            label: 'value',
+                            value: {}
+                        }
+                    }]
+                }]
+            ]);
+        });
 
         it('errors when a parameter is not a string', () => {
 
