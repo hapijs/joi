@@ -2494,6 +2494,198 @@ describe('Joi', () => {
         });
     });
 
+    describe('defaults()', () => {
+
+        it('applies defaults to root', () => {
+
+            const custom = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = custom.optional();
+            expect(schema.describe()).to.equal({
+                type: 'any',
+                flags: {
+                    description: 'defaulted',
+                    presence: 'optional'
+                }
+            });
+        });
+
+        it('applies defaults to standard types', () => {
+
+            const custom = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = custom.string();
+            expect(schema.describe()).to.equal({
+                type: 'string',
+                flags: {
+                    description: 'defaulted',
+                    presence: 'required'
+                }
+            });
+        });
+
+        it('applies defaults to types with arguments', () => {
+
+            const custom = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const schema = custom.object({ foo: 'bar' });
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                flags: {
+                    description: 'defaulted',
+                    presence: 'required'
+                },
+                keys: {
+                    foo: {
+                        type: 'string',
+                        flags: {
+                            description: 'defaulted',
+                            presence: 'required',
+                            only: true
+                        },
+                        allow: ['bar']
+                    }
+                }
+            });
+        });
+
+        it('keeps several defaults separated', () => {
+
+            const custom1 = Joi.defaults((schema) => schema.required().description('defaulted'));
+            const custom2 = Joi.defaults((schema) => schema.required().description('defaulted2'));
+
+            const schema = custom1.object({
+                foo: 'bar',
+                baz: custom2.object().keys({
+                    qux: 'zorg'
+                })
+            });
+
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                flags: {
+                    description: 'defaulted',
+                    presence: 'required'
+                },
+                keys: {
+                    foo: {
+                        type: 'string',
+                        flags: {
+                            presence: 'required',
+                            description: 'defaulted',
+                            only: true
+                        },
+                        allow: ['bar']
+                    },
+                    baz: {
+                        keys: {
+                            qux: {
+                                flags: {
+                                    only: true,
+                                    description: 'defaulted2',
+                                    presence: 'required'
+                                },
+                                type: 'string',
+                                allow: ['zorg']
+                            }
+                        },
+                        flags: {
+                            description: 'defaulted2',
+                            presence: 'required'
+                        },
+                        type: 'object'
+                    }
+                }
+            });
+        });
+
+        it('inherites defaults', () => {
+
+            const custom = Joi
+                .defaults((schema) => schema.required().description('defaulted'))
+                .defaults((schema) => schema.raw());
+
+            const schema = custom.object({
+                foo: 'bar'
+            });
+
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                flags: {
+                    description: 'defaulted',
+                    presence: 'required',
+                    result: 'raw'
+                },
+                keys: {
+                    foo: {
+                        type: 'string',
+                        flags: {
+                            description: 'defaulted',
+                            presence: 'required',
+                            only: true,
+                            result: 'raw'
+                        },
+                        allow: ['bar']
+                    }
+                }
+            });
+        });
+
+        it('keeps defaults on extensions', () => {
+
+            const custom = Joi.defaults((schema) => schema.required().description('defaulted'));
+
+            const extended = custom.extend({ type: 'foobar' });
+            const schema = extended.foobar();
+            expect(schema.describe()).to.equal({
+                type: 'foobar',
+                flags: {
+                    description: 'defaulted',
+                    presence: 'required'
+                }
+            });
+        });
+
+        it('applies defaults on extensions', () => {
+
+            const extended = Joi.extend({ type: 'foobar' });
+            const custom = extended.defaults((schema) => schema.required().description('defaulted'));
+            const schema = custom.foobar();
+            expect(schema.describe()).to.equal({
+                type: 'foobar',
+                flags: {
+                    description: 'defaulted',
+                    presence: 'required'
+                }
+            });
+        });
+
+        it('errors on missing return value (root)', () => {
+
+            expect(() => {
+
+                Joi.defaults((schema) => {
+
+                    switch (schema.type) {
+                        case 'bool':
+                            return schema.required();
+                    }
+                });
+            }).to.throw('modifier must return a valid schema object');
+        });
+
+        it('errors on missing return for a standard type', () => {
+
+            expect(() => {
+
+                Joi.defaults((schema) => {
+
+                    switch (schema.type) {
+                        case 'any':
+                            return schema.required();
+                    }
+                });
+            }).to.throw('modifier must return a valid schema object');
+        });
+    });
+
     describe('ValidationError', () => {
 
         it('should be Joi', () => {

@@ -1,5 +1,5 @@
 <!-- version -->
-# 16.0.0-rc2 API Reference
+# 16.0.0 API Reference
 <!-- versionstop -->
 
 <!-- toc -->
@@ -9,6 +9,7 @@
   - [`cache.provision([options])`](#cacheprovisionoptions)
   - [`checkPreferences(prefs)`](#checkpreferencesprefs)
   - [`compile(schema, [options])`](#compileschema-options)
+  - [`defaults(modifier)`](#defaultsmodifier)
   - [`expression(template, [options])` - aliases: `x`](#expressiontemplate-options---aliases-x)
     - [Template syntax](#template-syntax)
   - [`extend(extension)`](#extendextension)
@@ -345,6 +346,28 @@ const schema = Joi.alternatives().try([
         ])
     })
 ]);
+```
+
+### `defaults(modifier)`
+
+Creates a new **joi** instance that applies the provided modifier function to every new schemas
+where:
+- `modifier` - a function with signature `function(schema)` that must return a schema object.
+
+```js
+const custom = Joi.defaults((schema) => {
+
+    switch (schema.type) {
+        case 'string':
+            return schema.allow('');
+        case 'object':
+            return schema.min(1);
+        default:
+            return schema;
+    }
+});
+
+const schema = custom.object();   // Returns Joi.object().min(1)
 ```
 
 ### `expression(template, [options])` - aliases: `x`
