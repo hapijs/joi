@@ -20,7 +20,7 @@ exports.validateOptions = function (schema, config, options) {
 
     try {
         const compiled = Joi.compile(schema);
-        if (compiled._root === Joi) {
+        if (compiled.$_root === Joi) {
             expect(Joi.build(compiled.describe())).to.equal(compiled, { skip: ['_ruleset'] });
         }
 
