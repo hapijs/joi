@@ -5,6 +5,8 @@ const Joi = require('..');
 const Lab = require('@hapi/lab');
 const Legacy = require('@hapi/joi-legacy-test');
 
+const Helper = require('./helper');
+
 
 const internals = {};
 
