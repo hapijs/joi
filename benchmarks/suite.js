@@ -42,20 +42,6 @@ module.exports = (Joi) => [
         (schema, value) => schema.validate(value)
     ],
     [
-        'JSON object',
-        () => [
-            Joi.object({
-                id: Joi.string().required(),
-                level: Joi.string()
-                    .valid('debug', 'info', 'notice')
-                    .required()
-            }).unknown(false),
-            '{ "id": "1", "level": "info" }',
-            'invalid'
-        ],
-        (schema, value) => schema.validate(value, { convert: true })
-    ],
-    [
         'Schema creation',
         () => [],
         {
