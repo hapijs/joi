@@ -206,7 +206,7 @@ describe('date', () => {
                     format(format) {
 
                         if (['iso', 'javascript', 'unix'].includes(format)) {
-                            return this.super.format(format);
+                            return this.$_super.format(format);
                         }
 
                         return this.$_setFlag('format', format);
