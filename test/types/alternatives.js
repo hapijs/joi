@@ -75,6 +75,16 @@ describe('alternatives', () => {
         expect(schema.validate(input)).to.equal({ value: { a: { b: 'any', d: 'string' } } });
     });
 
+    it('consolidates types only when all coming from top level base errors', () => {
+
+        const schema = Joi.alternatives([
+            Joi.string(),
+            Joi.array().items(Joi.string())
+        ]);
+
+        expect(schema.validate([1]).error).to.be.an.error('"value" does not match any of the allowed types');
+    });
+
     describe('describe()', () => {
 
         it('describes when', () => {
