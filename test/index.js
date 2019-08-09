@@ -1282,14 +1282,8 @@ describe('Joi', () => {
 
         it('throws on invalid value with message and abortEarly: false', () => {
 
-            try {
-                Joi.attempt({}, Joi.object().keys({ a: Joi.required(), b: Joi.required() }), 'the reasons are', { abortEarly: false });
-                throw new Error('should not reach that');
-            }
-            catch (err) {
-                expect(err.message.match(/the reasons are/)).to.not.equal(null);
-                expect(err.details.length).to.equal(2);
-            }
+            const schema = Joi.object({ a: Joi.required(), b: Joi.required() });
+            expect(() => Joi.attempt({}, schema, 'the reasons are', { abortEarly: false })).to.throw('the reasons are "a" is required. "b" is required');
         });
 
         it('throws on invalid value with message as error even with abortEarly: false', () => {
@@ -1308,8 +1302,8 @@ describe('Joi', () => {
         it('throws an error with combined messages', () => {
 
             const schema = Joi.number().error(new Error('Oh noes !'));
-            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('Oh noes !');
-            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('Oh noes !');
+            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('invalid value Oh noes !');
+            expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('invalid value Oh noes !');
         });
     });
 
