@@ -267,6 +267,11 @@ describe('errors', () => {
         expect(schema.validate({ a: 1, lang: 'empty' }).error).to.be.an.error('"a" must be larger than or equal to 10');
     });
 
+    it('supports render preference', () => {
+
+        expect(Joi.number().min(10).validate(1, { errors: { render: false } }).error).to.be.an.error('number.min');
+    });
+
     it('does not prefix with key when messages uses context.key', () => {
 
         const schema = Joi.valid('sad').prefs({ messages: { 'any.only': 'my hero "{{#label}}" is not {{#valids}}' } });

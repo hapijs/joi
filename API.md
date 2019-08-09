@@ -1182,6 +1182,8 @@ Validates a value using the current schema and options where:
       validation function. Note that references to the value are usually not what you want as they move
       around the value structure relative to where the error happens. Instead, either use the global
       context, or the absolute value using local context notation (e.g. `Joi.ref('#variable')`);
+    - `render` - when `false`, skips rendering error templates. Useful when error messages are generated
+      elsewhere to save processing time. Defaults to `true`.
     - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled.
       Defaults to `false` for performances reasons. 
       Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api). 
