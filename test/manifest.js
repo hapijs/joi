@@ -408,7 +408,7 @@ describe('Manifest', () => {
                 Joi.object().and('a', 'b').or('c', 'd').without('e', 'f').xor('g.h', 'i', { separator: false }),
                 Joi.object().pattern(/x/, Joi.number()),
                 Joi.object().pattern(Joi.string(), Joi.number()),
-                Joi.object().pattern(/x/, Joi.number(), { matches: Joi.array().length(Joi.ref('$x')), exclusive: true }),
+                Joi.object().pattern(/x/, Joi.number(), { matches: Joi.array().length(Joi.ref('$x')), fallthrough: true }),
                 Joi.object({ a: 1 }).concat(Joi.object({ a: 3 })),
                 Joi.object().instance(RegExp).default(/x/).allow({}).allow({ x: 1 })
             ]);

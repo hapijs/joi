@@ -3409,7 +3409,7 @@ describe('object', () => {
             const schema = Joi.object({
                 a: Joi.number().required()
             })
-                .pattern(/^x\d+$/, Joi.boolean(), { matches: Joi.array().length(ref1), exclusive: true })
+                .pattern(/^x\d+$/, Joi.boolean(), { matches: Joi.array().length(ref1) })
                 .pattern(/^z\w+$/, Joi.number())
                 .pattern(/^x\w+$/, Joi.number(), { matches: Joi.array().max(ref2) });
 
@@ -3476,8 +3476,7 @@ describe('object', () => {
                                     }
                                 }
                             ]
-                        },
-                        exclusive: true
+                        }
                     },
                     {
                         rule: {
@@ -3513,7 +3512,7 @@ describe('object', () => {
             const schema = Joi.object({
                 a: Joi.number().required()
             })
-                .pattern(/^x\d+$/, Joi.boolean(), { matches: Joi.array().length(Joi.ref('a')), exclusive: true })
+                .pattern(/^x\d+$/, Joi.boolean(), { matches: Joi.array().length(Joi.ref('a')) })
                 .pattern(/^x\w+$/, Joi.number(), { matches: Joi.array().max(Joi.x('{a - 1}')) });
 
             const err = schema.validate({ a: 0, x1: true, xx: 1 }, { abortEarly: false }).error;
@@ -3528,6 +3527,38 @@ describe('object', () => {
                 .keys({ b: Joi.any() });
 
             expect(schema.validate({ a: { b: 1 }, b: { c: 2 } }).error).to.not.exist();
+        });
+
+        it('supports overlapping patterns', () => {
+
+            const schema = Joi.object()
+                .pattern(/^x/, Joi.number().min(1), { fallthrough: true })
+                .pattern(/^x/, Joi.number().max(10));
+
+            Helper.validate(schema, [
+                [{ x1: 1, x2: 2 }, true],
+                [{ x1: 11 }, false, null, {
+                    message: '"x1" must be less than or equal to 10',
+                    details: [{
+                        message: '"x1" must be less than or equal to 10',
+                        path: ['x1'],
+                        type: 'number.max',
+                        context: { limit: 10, value: 11, label: 'x1', key: 'x1' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('ignores overlapping patterns', () => {
+
+            const schema = Joi.object()
+                .pattern(/^x/, Joi.number().min(1))
+                .pattern(/^x/, Joi.number().max(10));
+
+            Helper.validate(schema, [
+                [{ x1: 1, x2: 2 }, true],
+                [{ x1: 11 }, true]
+            ]);
         });
     });
 

@@ -2513,7 +2513,7 @@ Specify validation rules for unknown keys matching a pattern where:
   tested against the unknown key names.
 - `schema` - the schema object matching keys must validate against.
 - `options` - options settings:
-    - `exclusive` - if `true` and the key matches, no other patterns are checked. Defaults to `false`.
+    - `fallthrough` - if `true`, multiple matching patterns are tested against the key, otherwise once a pattern match is found, no other patterns are compared. Defaults to `false`.
     - `matches` - a joi array schema used to validated the array of matching keys. For example,
       `Joi.object().pattern(/\d/, Joi.boolean(), { matches: Joi.array().length(2) })` will require
       two matching keys.
