@@ -1749,6 +1749,15 @@ describe('any', () => {
 
             expect(schema.validate(1, { abortEarly: false }).error).to.be.an.error('"value" must be larger than or equal to 10. "value" must be larger than or equal to 100');
         });
+
+        it('retains both unique rule instances in concat', () => {
+
+            const schema = Joi.number()
+                .min(10).keep()
+                .concat(Joi.number().min(100));
+
+            expect(schema.validate(1, { abortEarly: false }).error).to.be.an.error('"value" must be larger than or equal to 10. "value" must be larger than or equal to 100');
+        });
     });
 
     describe('label()', () => {

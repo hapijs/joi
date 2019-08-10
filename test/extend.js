@@ -1190,7 +1190,7 @@ describe('extension', () => {
         ]);
     });
 
-    it('extends modify', () => {
+    it('extends fork', () => {
 
         const custom = Joi.extend((joi) => {
 
@@ -1212,7 +1212,7 @@ describe('extension', () => {
                         }
                     }
                 },
-                modify(schema, id, replacement) {
+                fork(schema, id, replacement) {
 
                     for (let i = 0; i < schema.$_terms.tests.length; ++i) {
                         const item = schema.$_terms.tests[i];
@@ -1289,9 +1289,31 @@ describe('extension', () => {
                         return this.$_replaceRules('min', (rule) => {
 
                             const clone = Hoek.clone(rule);
-                            clone.options.args.limit *= n;
+                            clone.args.limit *= n;
                             return clone;
                         });
+                    }
+                }
+            }
+        });
+
+        const schema = custom.special().min(1).keep().min(10).factor(2);
+        expect(schema.validate(20)).to.equal({ value: 20 });
+        expect(schema.validate(19).error).to.be.an.error('"value" must be larger than or equal to 20');
+    });
+
+    it('extends modifiers', () => {
+
+        const custom = Joi.extend({
+            type: 'special',
+            base: Joi.number(),
+            modifiers: {
+                factor(rule, n) {
+
+                    if (rule.args &&
+                        rule.args.limit) {
+
+                        rule.args.limit *= n;
                     }
                 }
             }
