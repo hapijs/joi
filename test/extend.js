@@ -412,6 +412,38 @@ describe('extension', () => {
         expect(Joi.isRef(schema.foo('bar', Joi.ref('a.b')).validate(null).value.second)).to.be.true();
     });
 
+    it('extends with flag rule (customer setter)', () => {
+
+        const custom = Joi.extend({
+            type: 'special',
+            flags: {
+                xfoo: {
+                    setter: 'foo'
+                }
+            },
+            validate(schema, value, helpers) {
+
+                return { value: schema.$_getFlag('xfoo') };
+            },
+            rules: {
+                foo: {
+                    method(first, second) {
+
+                        Joi.assert(first, Joi.string());
+                        Joi.assert(second, Joi.object().ref());
+
+                        return this.$_setFlag('xfoo', { first, second });
+                    }
+                }
+            }
+        });
+
+        const schema = custom.special();
+        expect(schema.foo('bar').validate(null)).to.equal({ value: { first: 'bar', second: undefined } });
+        expect(schema.foo('bar', Joi.ref('a.b')).validate(null).value.first).to.equal('bar');
+        expect(Joi.isRef(schema.foo('bar', Joi.ref('a.b')).validate(null).value.second)).to.be.true();
+    });
+
     it('defines a rule that can change the value', () => {
 
         const custom = Joi.extend({

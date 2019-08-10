@@ -449,6 +449,9 @@ describe('Manifest', () => {
             const custom = Joi.extend({
                 type: 'fancy',
                 base: Joi.object({ a: Joi.number() }),
+                flags: {
+                    presence: {}                                // For coverage
+                },
                 initialize(schema) {
 
                     schema.$_terms.fancy = [];
@@ -473,11 +476,14 @@ describe('Manifest', () => {
                 }
             });
 
-            const schema = custom.fancy().pants('green');
+            const schema = custom.fancy().pants('green').required();
             const desc = schema.describe();
 
             expect(desc).to.equal({
                 type: 'fancy',
+                flags: {
+                    presence: 'required'
+                },
                 keys: {
                     a: { type: 'number' }
                 },
@@ -493,6 +499,9 @@ describe('Manifest', () => {
             const custom = Joi.extend({
                 type: 'million',
                 base: Joi.number(),
+                flags: {
+                    sizable: { setter: 'big' }
+                },
                 messages: {
                     'million.base': '"{{#label}}" must be at least a million',
                     'million.big': '"{{#label}}" must be at least five millions',
@@ -517,7 +526,7 @@ describe('Manifest', () => {
 
                     // Check flags for global state
 
-                    if (schema.$_getFlag('big') &&
+                    if (schema.$_getFlag('sizable') &&
                         value < 5000000) {
 
                         return { value, errors: helpers.error('million.big') };
@@ -528,7 +537,7 @@ describe('Manifest', () => {
                         alias: 'large',
                         method() {
 
-                            return this.$_setFlag('big', true);
+                            return this.$_setFlag('sizable', true);
                         }
                     },
                     round: {
@@ -624,7 +633,7 @@ describe('Manifest', () => {
                     e: {
                         type: 'million',
                         flags: {
-                            big: true
+                            sizable: true
                         }
                     }
                 }
