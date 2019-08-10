@@ -258,7 +258,7 @@ describe('errors', () => {
         })
             .prefs({
                 messages,
-                errors: { language: Joi.ref('#lang') }
+                errors: { language: Joi.ref('/lang') }
             });
 
         expect(schema.validate({ a: 1, lang: 'english' }).error).to.be.an.error('a too small');

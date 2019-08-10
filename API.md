@@ -1227,11 +1227,11 @@ Validates a value using the current schema and options where:
     - `escapeHtml` - when `true`, error message templates will escape special characters to HTML
       entities, for security purposes. Defaults to `false`.
     - `language` - the preferred language code for error messages. The value is matched against keys
-      are the root of the `messages` object, and then the error code as a child key of that. Can be
+      at the root of the `messages` object, and then the error code as a child key of that. Can be
       a reference to the value, global context, or local context which is the root value passed to the
       validation function. Note that references to the value are usually not what you want as they move
       around the value structure relative to where the error happens. Instead, either use the global
-      context, or the absolute value using local context notation (e.g. `Joi.ref('#variable')`);
+      context, or the absolute value (e.g. `Joi.ref('/variable')`);
     - `render` - when `false`, skips rendering error templates. Useful when error messages are generated
       elsewhere to save processing time. Defaults to `true`.
     - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled.
