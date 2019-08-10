@@ -1519,4 +1519,9 @@ describe('extension', () => {
             context: { label: 'value', value: ' \n\r\t[ \n\r\t1 \n\r\t, \n\r\t2,3 \n\r\t' }
         }]);
     });
+
+    it('errors on non-type override', () => {
+
+        expect(() => Joi.extend({ type: 'x' })).to.throw('Cannot override name x');
+    });
 });
