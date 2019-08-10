@@ -465,14 +465,17 @@ describe('Manifest', () => {
                         }
                     }
                 },
-                build(obj, desc) {
+                manifest: {
 
-                    if (desc.fancy) {
-                        obj = obj.clone();
-                        obj.$_terms.fancy = desc.fancy.slice();
+                    build(obj, desc) {
+
+                        if (desc.fancy) {
+                            obj = obj.clone();
+                            obj.$_terms.fancy = desc.fancy.slice();
+                        }
+
+                        return obj;
                     }
-
-                    return obj;
                 }
             });
 
