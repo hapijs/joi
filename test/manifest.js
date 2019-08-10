@@ -271,7 +271,6 @@ describe('Manifest', () => {
                 Joi.boolean(),
                 Joi.date(),
                 Joi.func(),
-                Joi.link(),
                 Joi.number(),
                 Joi.object(),
                 Joi.string(),
@@ -390,6 +389,7 @@ describe('Manifest', () => {
 
         it('builds links', () => {
 
+            expect(() => Joi.build(Joi.link().describe())).to.throw('Invalid link description missing link');
             internals.test([
                 Joi.link('....'),
                 Joi.link(Joi.ref('xxx....', { separator: 'x' })),
