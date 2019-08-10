@@ -1,8 +1,7 @@
 {
   "name": "@hapi/joi",
   "description": "Object schema validation",
-  "version": "16.0.0",
-  "homepage": "https://github.com/hapijs/joi",
+  "version": "16.0.0-preview",
   "repository": "git://github.com/hapijs/joi",
   "main": "lib/index.js",
   "keywords": [
@@ -20,14 +19,11 @@
     "@hapi/bourne": "1.x.x",
     "@hapi/code": "6.x.x",
     "@hapi/lab": "20.x.x",
-    "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x",
-    "hapitoc": "1.x.x"
+    "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x"
   },
   "scripts": {
     "test": "lab -t 100 -a @hapi/code -L",
-    "test-cov-html": "lab -r html -o coverage.html -a @hapi/code",
-    "toc": "hapitoc",
-    "version": "npm run toc && git add API.md README.md"
+    "test-cov-html": "lab -r html -o coverage.html -a @hapi/code"
   },
   "license": "BSD-3-Clause"
 }
