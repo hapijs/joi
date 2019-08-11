@@ -338,9 +338,9 @@ describe('function', () => {
         const c = function (x) { };
 
         const err2 = schema.validate(c).error;
-        expect(err2).to.be.an.error('"value" must have at least 1 keys');
+        expect(err2).to.be.an.error('"value" must have at least 1 key');
         expect(err2.details).to.equal([{
-            message: '"value" must have at least 1 keys',
+            message: '"value" must have at least 1 key',
             path: [],
             type: 'object.min',
             context: { value: err2.details[0].context.value, label: 'value', limit: 1 }
