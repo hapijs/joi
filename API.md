@@ -88,7 +88,7 @@
     - [`binary.min(limit)`](#binaryminlimit)
   - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
     - [`boolean.falsy(...values)`](#booleanfalsyvalues)
-    - [`boolean.insensitive([enabled])`](#booleaninsensitiveenabled)
+    - [`boolean.sensitive([enabled])`](#booleansensitiveenabled)
     - [`boolean.truthy(...values)`](#booleantruthyvalues)
   - [`date` - inherits from `Any`](#date---inherits-from-any)
     - [`date.greater(date)`](#dategreaterdate)
@@ -1878,22 +1878,20 @@ Possible validation errors: [`boolean.base`](#booleanbase)
 Allows for additional values to be considered valid booleans by converting them to `false` during validation.
 Requires the validation `convert` option to be `true`.
 
-String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
+String comparisons are by default case insensitive, see [`boolean.sensitive()`](#booleansensitiveenabled) to change this behavior.
 
 ```js
 const boolean = Joi.boolean().falsy('N');
 await boolean.validateAsync('N'); // Valid
 ```
 
-#### `boolean.insensitive([enabled])`
+#### `boolean.sensitive([enabled])`
 
-Allows the values provided to `truthy` and `falsy` as well as the `"true"` and `"false"` default conversion (when not in `strict()` mode) to be matched in a case insensitive manner.
-
-Parameters are:
-- `enabled` - optional parameter defaulting to `true` which allows you to reset the behavior of `insensitive` by providing a falsy value.
+Restrict the values provided to `truthy` and `falsy` as well as the `'true'` and `'false'` default conversions (when not in `strict()` mode) to be matched in a case sensitive manner, where:
+- `enabled` - when `false`, allows insensitive comparison. Defaults to `true`.
 
 ```js
-const schema = Joi.boolean().truthy('yes').falsy('no').insensitive(false);
+const schema = Joi.boolean().truthy('yes').falsy('no').sensitive();
 ```
 
 #### `boolean.truthy(...values)`
@@ -1901,7 +1899,7 @@ const schema = Joi.boolean().truthy('yes').falsy('no').insensitive(false);
 Allows for additional values to be considered valid booleans by converting them to `true` during validation.
 Requires the validation `convert` option to be `true`.
 
-String comparisons are by default case insensitive, see [`boolean.insensitive()`](#booleaninsensitiveenabled) to change this behavior.
+String comparisons are by default case insensitive, see [`boolean.sensitive()`](#booleansensitiveenabled) to change this behavior.
 
 ```js
 const boolean = Joi.boolean().truthy('Y');

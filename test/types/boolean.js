@@ -118,6 +118,13 @@ describe('boolean', () => {
         expect(schema.validate('n', { convert: false }).error).be.an.error('"value" must be a boolean');
     });
 
+    it('respects case for allow', () => {
+
+        const schema = Joi.boolean().allow('X');
+        expect(schema.validate('X').error).to.not.exist();
+        expect(schema.validate('x').error).to.be.an.error('"value" must be a boolean');
+    });
+
     describe('cast()', () => {
 
         it('casts value to number', () => {
@@ -147,7 +154,7 @@ describe('boolean', () => {
         });
     });
 
-    describe('insensitive()', () => {
+    describe('sensitive()', () => {
 
         it('should default to case insensitive', () => {
 
@@ -157,13 +164,13 @@ describe('boolean', () => {
 
         it('should stick to case insensitive if called', () => {
 
-            const schema = Joi.boolean().truthy('Y').insensitive();
+            const schema = Joi.boolean().truthy('Y').sensitive(false);
             expect(schema.validate('y').error).not.to.exist();
         });
 
         it('should be able to do strict comparison', () => {
 
-            const schema = Joi.boolean().truthy('Y').insensitive(false);
+            const schema = Joi.boolean().truthy('Y').sensitive();
             const error = schema.validate('y').error;
             expect(error).to.be.an.error('"value" must be a boolean');
             expect(error.details).to.equal([{
@@ -177,17 +184,17 @@ describe('boolean', () => {
         it('should return the same instance if nothing changed', () => {
 
             const insensitiveSchema = Joi.boolean();
-            expect(insensitiveSchema.insensitive()).to.shallow.equal(insensitiveSchema);
-            expect(insensitiveSchema.insensitive(false)).to.not.shallow.equal(insensitiveSchema);
+            expect(insensitiveSchema.sensitive(false)).to.shallow.equal(insensitiveSchema);
+            expect(insensitiveSchema.sensitive()).to.not.shallow.equal(insensitiveSchema);
 
-            const sensitiveSchema = Joi.boolean().insensitive(false);
-            expect(sensitiveSchema.insensitive(false)).to.shallow.equal(sensitiveSchema);
-            expect(sensitiveSchema.insensitive()).to.not.shallow.equal(sensitiveSchema);
+            const sensitiveSchema = Joi.boolean().sensitive();
+            expect(sensitiveSchema.sensitive()).to.shallow.equal(sensitiveSchema);
+            expect(sensitiveSchema.sensitive(false)).to.not.shallow.equal(sensitiveSchema);
         });
 
         it('converts boolean string to a boolean with a sensitive case', () => {
 
-            Helper.validate(Joi.boolean().insensitive(false), [
+            Helper.validate(Joi.boolean().sensitive(), [
                 ['true', true, null, true],
                 ['false', true, null, false],
                 ['TrUe', false, null, {

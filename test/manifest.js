@@ -376,7 +376,8 @@ describe('Manifest', () => {
                 Joi.boolean().truthy('x'),
                 Joi.boolean().falsy(Joi.ref('$x')),
                 Joi.boolean().truthy(3).falsy(4),
-                Joi.boolean().insensitive(false)
+                Joi.boolean().sensitive(),
+                Joi.boolean().sensitive(false)
             ]);
         });
 
