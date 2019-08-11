@@ -270,7 +270,7 @@ describe('Manifest', () => {
                 Joi.binary(),
                 Joi.boolean(),
                 Joi.date(),
-                Joi.func(),
+                Joi.function(),
                 Joi.number(),
                 Joi.object(),
                 Joi.string(),
@@ -282,7 +282,7 @@ describe('Manifest', () => {
 
             internals.test([
                 Joi.string().required(),
-                Joi.func().default(() => null, { literal: true }),
+                Joi.function().default(() => null, { literal: true }),
                 Joi.object().default(),
                 Joi.boolean().optional(),
                 Joi.string().empty(''),

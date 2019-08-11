@@ -688,8 +688,8 @@ describe('Joi', () => {
         const config = {
             module: Joi.alternatives([
                 Joi.object({
-                    compile: Joi.func().required(),
-                    execute: Joi.func()
+                    compile: Joi.function().required(),
+                    execute: Joi.function()
                 }),
                 Joi.string()
             ]).required()
@@ -712,8 +712,8 @@ describe('Joi', () => {
         const config = {
             module: Joi.alt().try(
                 Joi.object({
-                    compile: Joi.func().required(),
-                    execute: Joi.func()
+                    compile: Joi.function().required(),
+                    execute: Joi.function()
                 }).required(),
                 Joi.string().required()
             )
@@ -727,8 +727,8 @@ describe('Joi', () => {
         const config = {
             module: Joi.alt().try([
                 Joi.object({
-                    compile: Joi.func().required(),
-                    execute: Joi.func()
+                    compile: Joi.function().required(),
+                    execute: Joi.function()
                 }),
                 Joi.string()
             ]).required()

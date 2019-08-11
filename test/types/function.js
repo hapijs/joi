@@ -18,12 +18,28 @@ describe('function', () => {
 
     it('throws an exception if arguments were passed.', () => {
 
-        expect(() => Joi.func('invalid argument.')).to.throw('The function type does not allow arguments');
+        expect(() => Joi.function('invalid argument.')).to.throw('The function type does not allow arguments');
     });
 
     it('validates a function', () => {
 
         Helper.validate(Joi.function().required(), [
+            [function () { }, true],
+            ['', false, null, {
+                message: '"value" must be of type function',
+                details: [{
+                    message: '"value" must be of type function',
+                    path: [],
+                    type: 'object.base',
+                    context: { label: 'value', value: '', type: 'function' }
+                }]
+            }]
+        ]);
+    });
+
+    it('supports func() alias', () => {
+
+        Helper.validate(Joi.func().required(), [
             [function () { }, true],
             ['', false, null, {
                 message: '"value" must be of type function',

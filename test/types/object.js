@@ -1143,7 +1143,7 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.func().keys({ c: Joi.string(), d: Joi.number() }),
+                b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
             }).and('a', 'b.c');
 
@@ -2607,7 +2607,7 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.func().keys({ c: Joi.string(), d: Joi.number() }),
+                b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
             })
                 .nand('a', 'b.c');
@@ -2903,7 +2903,7 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.func().keys({ c: Joi.string() }),
+                b: Joi.function().keys({ c: Joi.string() }),
                 d: Joi.number()
             }).or('a', 'b.c');
 
@@ -3050,7 +3050,7 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.func().keys({ c: Joi.string(), d: Joi.number() }),
+                b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
             }).oxor('a', 'b.c');
 
@@ -4014,7 +4014,7 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.func().keys({ c: Joi.string(), d: Joi.number() }),
+                b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
             }).with('a', 'b.c');
 
@@ -4274,7 +4274,7 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.func().keys({ c: Joi.string(), d: Joi.number() }),
+                b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
             })
                 .without('a', ['b.c', 'b.d']);
@@ -4693,7 +4693,7 @@ describe('object', () => {
 
             const schema = Joi.object({
                 a: Joi.string(),
-                b: Joi.func().keys({ c: Joi.string(), d: Joi.number() }),
+                b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
             }).xor('a', 'b.c');
 

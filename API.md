@@ -97,11 +97,11 @@
     - [`date.max(date)`](#datemaxdate)
     - [`date.min(date)`](#datemindate)
     - [`date.timestamp([type])`](#datetimestamptype)
-  - [`func` - inherits from `Any`](#func---inherits-from-any)
-    - [`func.arity(n)`](#funcarityn)
-    - [`func.class()`](#funcclass)
-    - [`func.maxArity(n)`](#funcmaxarityn)
-    - [`func.minArity(n)`](#funcminarityn)
+  - [`function` - inherits from `object`](#function---inherits-from-object)
+    - [`function.arity(n)`](#funcarityn)
+    - [`function.class()`](#funcclass)
+    - [`function.maxArity(n)`](#funcmaxarityn)
+    - [`function.minArity(n)`](#funcminarityn)
   - [`link(ref)` - inherits from `Any`](#linkref---inherits-from-any)
     - [`link.ref(ref)`](#linkrefref)
   - [`number` - inherits from `Any`](#number---inherits-from-any)
@@ -2037,7 +2037,7 @@ const schema = Joi.date().timestamp('unix'); // for unix timestamp (seconds)
 
 Possible validation errors: [`date.format`](#dateformat)
 
-### `func` - inherits from `Any`
+### `function` - inherits from `object`
 
 Generates a schema object that matches a function type.
 
@@ -2046,51 +2046,51 @@ to be cloned. While the function will retain its prototype and closure, it will 
 set to `0`).
 
 ```js
-const func = Joi.func();
+const func = Joi.function();
 await func.validateAsync(function () {});
 ```
 
 Possible validation errors: [`object.base`](#objectbase)
 
-#### `func.arity(n)`
+#### `function.arity(n)`
 
 Specifies the arity of the function where:
 - `n` - the arity expected.
 
 ```js
-const schema = Joi.func().arity(2);
+const schema = Joi.function().arity(2);
 ```
 
 Possible validation errors: [`function.arity`](#functionarity)
 
-#### `func.class()`
+#### `function.class()`
 
 Requires the function to be a class.
 
 ```js
-const schema = Joi.func().class();
+const schema = Joi.function().class();
 ```
 
 Possible validation errors: [`function.class`](#functionclass)
 
-#### `func.maxArity(n)`
+#### `function.maxArity(n)`
 
 Specifies the maximal arity of the function where:
 - `n` - the maximum arity expected.
 
 ```js
-const schema = Joi.func().maxArity(3);
+const schema = Joi.function().maxArity(3);
 ```
 
 Possible validation errors: [`function.maxArity`](#functionmaxarity)
 
-#### `func.minArity(n)`
+#### `function.minArity(n)`
 
 Specifies the minimal arity of the function where:
 - `n` - the minimal arity expected.
 
 ```js
-const schema = Joi.func().minArity(1);
+const schema = Joi.function().minArity(1);
 ```
 
 Possible validation errors: [`function.minArity`](#functionminarity)

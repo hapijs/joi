@@ -79,7 +79,7 @@ module.exports = (Joi) => [
                     ).single().sparse().required(),
                     bar: Joi.number().min(12).max(353).default(56).positive(),
                     baz: Joi.date().timestamp('unix'),
-                    qux: [Joi.func().minArity(12).strict(), Joi.binary().max(345)],
+                    qux: [Joi.function().minArity(12).strict(), Joi.binary().max(345)],
                     quxx: Joi.string().ip({ version: ['ipv6'] }),
                     quxxx: [554, 'azerty', true]
                 })

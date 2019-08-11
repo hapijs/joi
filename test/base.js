@@ -970,7 +970,7 @@ describe('any', () => {
         it('sets literal function default', () => {
 
             const func = () => 'just a function';
-            const schema = Joi.func().default(func, { literal: true });
+            const schema = Joi.function().default(func, { literal: true });
             expect(schema.validate(undefined)).to.equal({ value: func });
         });
 
@@ -986,7 +986,7 @@ describe('any', () => {
                 return defaultFn;
             };
 
-            const schema = Joi.func().default(defaultGeneratorFn);
+            const schema = Joi.function().default(defaultGeneratorFn);
             expect(schema.validate(undefined)).to.equal({ value: defaultFn });
         });
 
