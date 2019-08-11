@@ -1229,9 +1229,8 @@ describe('extension', () => {
             return {
                 type: 'special',
                 base: joi.object(),
-                initialize(schema) {
-
-                    schema.$_terms.tests = [];
+                terms: {
+                    tests: { init: [] }
                 },
                 rules: {
                     test: {

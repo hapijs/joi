@@ -453,9 +453,8 @@ describe('Manifest', () => {
                 flags: {
                     presence: {}                                // For coverage
                 },
-                initialize(schema) {
-
-                    schema.$_terms.fancy = [];
+                terms: {
+                    fancy: { init: [] }
                 },
                 rules: {
                     pants: {
