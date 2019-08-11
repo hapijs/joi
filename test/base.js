@@ -1830,6 +1830,28 @@ describe('any', () => {
                 context: { child: 'b', label: 'b', key: 'b', value: 'a' }
             }]);
         });
+
+        it('applies only to hierarchy edge', () => {
+
+            const schema = Joi.object({
+                a: Joi.object({
+                    b: Joi.object({
+                        c: Joi.number().label('C')
+                    }).label('B')
+                }).label('A')
+            });
+
+            const err = schema.validate({ a: { b: { c: 'x' } } }).error;
+            expect(err).to.be.an.error('"C" must be a number');
+            expect(err.details).to.equal([
+                {
+                    message: '"C" must be a number',
+                    path: ['a', 'b', 'c'],
+                    type: 'number.base',
+                    context: { label: 'C', value: 'x', key: 'c' }
+                }
+            ]);
+        });
     });
 
     describe('message()', () => {
