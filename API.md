@@ -3163,24 +3163,7 @@ The [`extend()`](#extendextension) method adds custom types to **joi**. Extensio
 - a factory function generating an extension object
 - or an array of those
 
-Extension objects use the following parameters :
-- `type` - name of the new type you are defining, this can be an existing type. **Required**.
-- `base` - an existing **joi** schema. Defaults to `any()`.
-- `coerce` - an optional function that runs before `validate` and used to coerce values of a different
-  type than the base.
-- `validate` - an optional function used to perform general validations.
-- `messages` - an optional object to add error definitions. Every key will be prefixed by the type name.
-- `rules` - an optional object where each key is a rule name and value is:
-    - `method` - the method exposed as the type API.
-    - `validate` - the validation method.
-    - `args`
-    - `multi`
-    - `convert`
-    - `alias`
-
-Factory functions are advised if you intend to publish your extensions for others to use, because they are
-capable of using an extended **joi** being built, thus avoiding any erasure when using multiple extensions
-at the same time. See an example of a factory function in the section below.
+Full documentation is upcoming.
 
 ```js
 const Joi = require('@hapi/joi');
