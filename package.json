@@ -12,7 +12,6 @@
     "@hapi/address": "2.x.x",
     "@hapi/formula": "1.x.x",
     "@hapi/hoek": "8.x.x",
-    "@hapi/marker": "1.x.x",
     "@hapi/topo": "3.x.x"
   },
   "devDependencies": {
