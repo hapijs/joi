@@ -1323,7 +1323,7 @@ describe('Joi', () => {
             expect(() => {
 
                 Joi.compile(undefined);
-            }).to.throw(Error, 'Invalid schema content: ');
+            }).to.throw('Invalid undefined schema');
         });
 
         it('shows path to errors in object', () => {
@@ -1341,7 +1341,7 @@ describe('Joi', () => {
             expect(() => {
 
                 Joi.compile(schema);
-            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+            }).to.throw(Error, 'Invalid undefined schema (a.b.c.d)');
         });
     });
 

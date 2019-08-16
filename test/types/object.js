@@ -1281,7 +1281,7 @@ describe('object', () => {
                         }
                     }
                 });
-            }).to.throw('Invalid schema content: (a.b.c.d)');
+            }).to.throw('Invalid undefined schema (a.b.c.d)');
         });
 
         it('shows errors in schema', () => {
@@ -1289,7 +1289,7 @@ describe('object', () => {
             expect(() => {
 
                 Joi.object().assert('a.b', undefined);
-            }).to.throw('Invalid schema content: ');
+            }).to.throw('Invalid undefined schema');
         });
 
         it('validates upwards reference', () => {
@@ -3093,14 +3093,14 @@ describe('object', () => {
                         }
                     }
                 });
-            }).to.throw('Invalid schema content: (a.b.c.d)');
+            }).to.throw('Invalid undefined schema (a.b.c.d)');
 
             expect(() => {
 
                 Joi.object().pattern(/.*/, () => {
 
                 });
-            }).to.throw('Invalid schema content: ');
+            }).to.throw('Invalid schema content: function');
 
         });
 

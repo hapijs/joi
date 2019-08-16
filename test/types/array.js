@@ -153,12 +153,12 @@ describe('array', () => {
                         }
                     }
                 });
-            }).to.throw(Error, 'Invalid schema content: (a.b.c.d)');
+            }).to.throw(Error, 'Invalid undefined schema (a.b.c.d)');
         });
 
         it('shows errors in schema', () => {
 
-            expect(() => Joi.array().has(undefined)).to.throw(Error, 'Invalid schema content: ');
+            expect(() => Joi.array().has(undefined)).to.throw('Invalid undefined schema');
         });
 
         it('works with object.assert', () => {
@@ -348,9 +348,9 @@ describe('array', () => {
                         }
                     }
                 });
-            }).to.throw(Error, 'Invalid schema content: (0.a.b.c.d)');
+            }).to.throw(Error, 'Invalid undefined schema (0.a.b.c.d)');
 
-            expect(() => Joi.array().items({ foo: 'bar' }, undefined)).to.throw(Error, 'Invalid schema content: (1)');
+            expect(() => Joi.array().items({ foo: 'bar' }, undefined)).to.throw('Invalid undefined schema (1)');
         });
 
         it('allows zero size', () => {
@@ -1045,12 +1045,12 @@ describe('array', () => {
                         }
                     }
                 });
-            }).to.throw(Error, 'Invalid schema content: (0.a.b.c.d)');
+            }).to.throw('Invalid undefined schema (0.a.b.c.d)');
 
             expect(() => {
 
                 Joi.array().ordered({ foo: 'bar' }, undefined);
-            }).to.throw(Error, 'Invalid schema content: (1)');
+            }).to.throw('Invalid undefined schema (1)');
         });
 
         it('validates input against items in order', () => {
