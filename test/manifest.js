@@ -140,7 +140,7 @@ describe('Manifest', () => {
                         type: 'string',
                         flags: {
                             empty: {
-                                type: 'string',
+                                type: 'any',
                                 flags: {
                                     only: true
                                 },

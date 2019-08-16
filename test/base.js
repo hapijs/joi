@@ -414,7 +414,7 @@ describe('any', () => {
                 flags: {
                     only: true,
                     empty: {
-                        type: 'string',
+                        type: 'any',
                         flags: { only: true },
                         allow: ['', ' ']
                     },
@@ -491,7 +491,7 @@ describe('any', () => {
                 flags: {
                     only: true,
                     empty: {
-                        type: 'string',
+                        type: 'any',
                         flags: { only: true },
                         allow: ['']
                     },
@@ -530,7 +530,7 @@ describe('any', () => {
                 flags: {
                     only: true,
                     empty: {
-                        type: 'string',
+                        type: 'any',
                         flags: { only: true },
                         allow: ['']
                     },
@@ -2150,7 +2150,7 @@ describe('any', () => {
                 matches: [{
                     ref: { path: ['a'] },
                     is: {
-                        type: 'number',
+                        type: 'any',
                         flags: {
                             only: true,
                             presence: 'required'
@@ -3082,7 +3082,7 @@ describe('any', () => {
                 matches: [{
                     ref: { path: ['a'] },
                     is: {
-                        type: 'number',
+                        type: 'any',
                         flags: {
                             only: true,
                             presence: 'required'

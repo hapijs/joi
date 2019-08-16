@@ -109,7 +109,7 @@ describe('alternatives', () => {
                             {
                                 ref: { path: ['b'] },
                                 is: {
-                                    type: 'number',
+                                    type: 'any',
                                     flags: {
                                         only: true,
                                         presence: 'required'
@@ -117,7 +117,7 @@ describe('alternatives', () => {
                                     allow: [5]
                                 },
                                 then: {
-                                    type: 'string',
+                                    type: 'any',
                                     flags: {
                                         only: true
                                     },
@@ -127,7 +127,7 @@ describe('alternatives', () => {
                             {
                                 ref: { path: ['b'] },
                                 is: {
-                                    type: 'number',
+                                    type: 'any',
                                     flags: {
                                         only: true,
                                         presence: 'required'
@@ -135,7 +135,7 @@ describe('alternatives', () => {
                                     allow: [6]
                                 },
                                 otherwise: {
-                                    type: 'string',
+                                    type: 'any',
                                     flags: {
                                         only: true
                                     },
@@ -144,7 +144,7 @@ describe('alternatives', () => {
                             },
                             {
                                 schema: {
-                                    type: 'string',
+                                    type: 'any',
                                     flags: {
                                         only: true
                                     },
@@ -178,7 +178,7 @@ describe('alternatives', () => {
                             {
                                 ref: { path: ['b'] },
                                 is: {
-                                    type: 'number',
+                                    type: 'any',
                                     flags: {
                                         only: true,
                                         presence: 'required'
@@ -186,7 +186,7 @@ describe('alternatives', () => {
                                     allow: [5]
                                 },
                                 then: {
-                                    type: 'string',
+                                    type: 'any',
                                     flags: {
                                         only: true
                                     },
@@ -195,7 +195,7 @@ describe('alternatives', () => {
                             },
                             {
                                 schema: {
-                                    type: 'string',
+                                    type: 'any',
                                     flags: {
                                         only: true
                                     },
@@ -229,7 +229,7 @@ describe('alternatives', () => {
                             {
                                 ref: { path: ['b'] },
                                 is: {
-                                    type: 'number',
+                                    type: 'any',
                                     flags: {
                                         only: true,
                                         presence: 'required'
@@ -237,7 +237,7 @@ describe('alternatives', () => {
                                     allow: [5]
                                 },
                                 otherwise: {
-                                    type: 'string',
+                                    type: 'any',
                                     flags: {
                                         only: true
                                     },
@@ -246,7 +246,7 @@ describe('alternatives', () => {
                             },
                             {
                                 schema: {
-                                    type: 'string',
+                                    type: 'any',
                                     flags: {
                                         only: true
                                     },
@@ -312,7 +312,7 @@ describe('alternatives', () => {
                 },
                 matches: [{
                     schema: {
-                        type: 'string',
+                        type: 'any',
                         flags: {
                             only: true
                         },
@@ -440,7 +440,7 @@ describe('alternatives', () => {
                 type: 'alternatives',
                 matches: [{
                     is: {
-                        type: 'boolean',
+                        type: 'any',
                         flags: { only: true, presence: 'required' },
                         allow: [true]
                     },
@@ -450,7 +450,7 @@ describe('alternatives', () => {
                         flags: {
                             empty: {
                                 flags: { only: true },
-                                type: 'string',
+                                type: 'any',
                                 allow: ['']
                             }
                         },
@@ -467,7 +467,7 @@ describe('alternatives', () => {
                 type: 'alternatives',
                 matches: [{
                     is: {
-                        type: 'boolean',
+                        type: 'any',
                         flags: { only: true, presence: 'required' },
                         allow: [true]
                     },
@@ -478,7 +478,7 @@ describe('alternatives', () => {
                             label: 'Label b',
                             empty: {
                                 flags: { only: true },
-                                type: 'string',
+                                type: 'any',
                                 allow: ['']
                             }
                         },
@@ -515,7 +515,7 @@ describe('alternatives', () => {
                         matches: [
                             {
                                 is: {
-                                    type: 'boolean',
+                                    type: 'any',
                                     allow: [true],
                                     flags: {
                                         only: true,
@@ -561,7 +561,7 @@ describe('alternatives', () => {
                         matches: [
                             {
                                 is: {
-                                    type: 'boolean',
+                                    type: 'any',
                                     allow: [true],
                                     flags: {
                                         only: true,

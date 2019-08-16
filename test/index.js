@@ -1385,7 +1385,7 @@ describe('Joi', () => {
                 },
                 keys: {
                     foo: {
-                        type: 'string',
+                        type: 'any',
                         flags: {
                             description: 'defaulted',
                             presence: 'required',
@@ -1417,7 +1417,7 @@ describe('Joi', () => {
                 },
                 keys: {
                     foo: {
-                        type: 'string',
+                        type: 'any',
                         flags: {
                             presence: 'required',
                             description: 'defaulted',
@@ -1433,7 +1433,7 @@ describe('Joi', () => {
                                     description: 'defaulted2',
                                     presence: 'required'
                                 },
-                                type: 'string',
+                                type: 'any',
                                 allow: ['zorg']
                             }
                         },
@@ -1466,7 +1466,7 @@ describe('Joi', () => {
                 },
                 keys: {
                     foo: {
-                        type: 'string',
+                        type: 'any',
                         flags: {
                             description: 'defaulted',
                             presence: 'required',

@@ -91,7 +91,7 @@ describe('object', () => {
     it('retains skipped values', () => {
 
         const schema = Joi.object({ b: 5 }).unknown(true);
-        expect(schema.validate({ b: '5', a: 5 })).to.equal({ value: { a: 5, b: 5 } });
+        expect(schema.validate({ b: 5, a: 5 })).to.equal({ value: { a: 5, b: 5 } });
     });
 
     it('retains symbols', () => {
@@ -1660,7 +1660,7 @@ describe('object', () => {
 
         it('overrides existing keys', () => {
 
-            const a = Joi.object({ a: 1 });
+            const a = Joi.object({ a: Joi.number().valid(1) });
             const b = a.keys({ a: Joi.string() });
 
             Helper.validate(a, [

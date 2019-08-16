@@ -263,6 +263,48 @@ describe('cast', () => {
                 }]
             ]);
         });
+
+        it('compile [null]', () => {
+
+            const schema = Joi.compile([null]);
+            expect(schema).to.equal(Joi.valid(null));
+        });
+
+        it('compile [1]', () => {
+
+            const schema = Joi.compile([1]);
+            expect(schema).to.equal(Joi.valid(1));
+        });
+
+        it('compile ["a"]', () => {
+
+            const schema = Joi.compile(['a']);
+            expect(schema).to.equal(Joi.valid('a'));
+        });
+
+        it('compile [null, null, null]', () => {
+
+            const schema = Joi.compile([null]);
+            expect(schema).to.equal(Joi.valid(null));
+        });
+
+        it('compile [1, 2, 3]', () => {
+
+            const schema = Joi.compile([1, 2, 3]);
+            expect(schema).to.equal(Joi.valid(1, 2, 3));
+        });
+
+        it('compile ["a", "b", "c"]', () => {
+
+            const schema = Joi.compile(['a','b','c']);
+            expect(schema).to.equal(Joi.valid('a', 'b', 'c'));
+        });
+
+        it('compile [null, "a", 1, true]', () => {
+
+            const schema = Joi.compile([null, 'a', 1, true]);
+            expect(schema).to.equal(Joi.valid(null, 'a', 1, true));
+        });
     });
 
     describe('compile()', () => {
