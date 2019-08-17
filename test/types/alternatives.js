@@ -270,7 +270,7 @@ describe('alternatives', () => {
             const outcome = {
                 type: 'alternatives',
                 matches: [{
-                    peek: {
+                    is: {
                         type: 'string',
                         flags: {
                             label: 'foo'

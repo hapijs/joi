@@ -3115,7 +3115,7 @@ describe('any', () => {
             expect(schema).to.equal({
                 type: 'alternatives',
                 matches: [{
-                    peek: {
+                    is: {
                         type: 'number',
                         rules: [{ name: 'min', args: { limit: 5 } }]
                     },
