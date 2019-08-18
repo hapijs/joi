@@ -4,7 +4,19 @@
 
 Object schema description language and validator for JavaScript objects.
 
-[![Build Status](https://travis-ci.org/hapijs/joi.svg?branch=master)](https://travis-ci.org/hapijs/joi)
+  [![NPM Version][npm-image]][npm-url]
+  [![NPM Downloads][downloads-image]][downloads-url]
+  [![Linux Build][travis-image]][travis-url]
+  [![Known Vulnerabilities][snyk-image]][snyk-url]
+
+[npm-image]: https://img.shields.io/npm/v/@hapi/joi.svg
+[npm-url]: https://npmjs.org/package/@hapi/joi
+[downloads-image]: https://img.shields.io/npm/dm/@hapi/joi.svg
+[downloads-url]: https://npmjs.org/package/@hapi/joi
+[travis-image]: https://img.shields.io/travis/hapijs/joi/master.svg
+[travis-url]: https://travis-ci.org/hapijs/joi
+[snyk-image]: https://snyk.io/test/github/hapijs/joi/badge.svg
+[snyk-url]: https://snyk.io/test/github/hapijs/joi
 
 ## Introduction
 
