@@ -24,8 +24,3 @@ before_install:
 
 install:
   - "npm install"
-
-os:
-  - "linux"
-  - "osx"
-  - "windows"
