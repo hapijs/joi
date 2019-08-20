@@ -2803,20 +2803,6 @@ describe('any', () => {
             expect(() => Joi.when('a')).to.throw('Options must be of type object');
         });
 
-        it('throws on multiple whens', () => {
-
-            expect(() => {
-
-                Joi.object({
-                    value: Joi.number()
-                        .when('min', { is: true, then: Joi.number().min(10) })
-                        .when('max', { is: true, then: Joi.number().max(100) }),
-                    min: Joi.boolean(),
-                    max: Joi.boolean()
-                });
-            }).to.throw('Unreachable condition');
-        });
-
         it('forks type into alternatives', () => {
 
             const schema = Joi.object({

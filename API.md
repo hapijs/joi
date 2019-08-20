@@ -68,8 +68,8 @@
     - [`any.warning(code, [context])`](#anywarningcode-context)
     - [`any.when(condition, options)`](#anywhencondition-options)
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
+    - [`alternatives.conditional(condition, options)`](#alternativesconditionalcondition-options)
     - [`alternatives.try(schemas)`](#alternativestryschemas)
-    - [`alternatives.when(condition, options)`](#alternativeswhencondition-options)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.has(schema)`](#arrayhasschema)
     - [`array.items(...types)`](#arrayitemstypes)
@@ -1369,6 +1369,8 @@ If `condition` is a schema:
 - cannot specify `is` or `switch`.
 - one of `then` or `otherwise` is required.
 
+`alternatives.when()` is not supported - use `alternatives.conditional()` instead.
+
 ```js
 const schema = {
     a: Joi.any().valid('x').when('b', { is: Joi.exist(), then: Joi.valid('y'), otherwise: Joi.valid('z') }),
@@ -1512,17 +1514,7 @@ const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
 
 Possible validation errors: [`alternatives.base`](#alternativesbase), [`alternatives.types`](#alternativestypes), [`alternatives.match`](#alternativesmatch)
 
-#### `alternatives.try(schemas)`
-
-Adds an alternative schema type for attempting to match against the validated value where:
-- `schema` - a single or an array of alternative **joi** types.
-
-```js
-const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
-await alt.validateAsync('a');
-```
-
-#### `alternatives.when(condition, options)`
+#### `alternatives.conditional(condition, options)`
 
 Adds a conditional alternative schema type, either based on another key (not the same as `any.when()`) value, or a
 schema peeking into the current value, where:
@@ -1545,20 +1537,19 @@ If `condition` is a schema:
 - cannot specify `is` or `switch`.
 - one of `then` or `otherwise` is required.
 
-Note that `alternatives.when()` is different than `any.when()`. When you use `any.when()` you end
+Note that `alternatives.conditional()` is different than `any.when()`. When you use `any.when()` you end
 up with an alternatives type that is based on the base type `when()` was called on. Each `then` or
-`otherwise` is a concatenation of the base type with the other schemas. You cannot add additional
-conditions to such an alternatives type.
+`otherwise` is a concatenation of the base type with the other schemas.
 
 ```js
 const schema = {
-    a: Joi.alternatives().when('b', { is: 5, then: Joi.string(), otherwise: Joi.number() }),
+    a: Joi.alternatives().conditional('b', { is: 5, then: Joi.string(), otherwise: Joi.number() }),
     b: Joi.any()
 };
 ```
 
 ```js
-const schema = Joi.alternatives().when(Joi.object({ b: 5 }).unknown(), {
+const schema = Joi.alternatives().conditional(Joi.object({ b: 5 }).unknown(), {
     then: Joi.object({
         a: Joi.string(),
         b: Joi.any()
@@ -1570,13 +1561,13 @@ const schema = Joi.alternatives().when(Joi.object({ b: 5 }).unknown(), {
 });
 ```
 
-Note that `when()` only adds additional alternatives to try and does not impact the overall type. Setting
+Note that `conditional()` only adds additional alternatives to try and does not impact the overall type. Setting
 a `required()` rule on a single alternative will not apply to the overall key. For example,
 this definition of `a`:
 
 ```js
 const schema = {
-    a: Joi.alternatives().when('b', { is: true, then: Joi.required() }),
+    a: Joi.alternatives().conditional('b', { is: true, then: Joi.required() }),
     b: Joi.boolean()
 };
 ```
@@ -1590,9 +1581,19 @@ To accomplish the desired result above use:
 
 ```js
 const schema = {
-    a: Joi.when('b', { is: true, then: Joi.required() }),
+    a: Joi.conditional('b', { is: true, then: Joi.required() }),
     b: Joi.boolean()
 };
+```
+
+#### `alternatives.try(schemas)`
+
+Adds an alternative schema type for attempting to match against the validated value where:
+- `schema` - a single or an array of alternative **joi** types.
+
+```js
+const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
+await alt.validateAsync('a');
 ```
 
 ### `array` - inherits from `Any`
