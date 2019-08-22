@@ -1346,18 +1346,13 @@ catch (err) { }
 
 #### `any.when(condition, options)`
 
-Converts the type into an [`alternatives`](#alternatives---inherits-from-any) type with the
-conditions merged into the type definition where:
-- `condition` - the key name or [reference](#refkey-options), or a schema.
+Adds conditions that are evaluated during validation and modify the schema before it is applied to the value, where:
+- `condition` - a key name, [reference](#refkey-options), or a schema.
 - `options` - an object with:
-    - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be
-      converted using [Joi.compile](#compileschema-options). By default, the `is` condition schema allows for
-      `undefined` values. Use `.required()` to override. For example, use `is: Joi.number().required()`
-      to guarantee that a **joi** reference exists and is a number.
+    - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be converted using [Joi.compile](#compileschema-options). By default, the `is` condition schema allows for `undefined` values. Use `.required()` to override. For example, use `is: Joi.number().required()` to guarantee that a **joi** reference exists and is a number.
     - `then` - if the condition is true, the **joi** schema to use.
     - `otherwise` - if the condition is false, the **joi** schema to use.
-    - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`.
-      The last item in the array may also contain `otherwise`.
+    - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`. The last item in the array may also contain `otherwise`.
 
 If `condition` is a reference:
 - one of `is` or `switch` is required.
@@ -1369,12 +1364,18 @@ If `condition` is a schema:
 - cannot specify `is` or `switch`.
 - one of `then` or `otherwise` is required.
 
-`alternatives.when()` is not supported - use `alternatives.conditional()` instead.
+Notes:
+- an invalid combination of schema modifications (e.g. trying to add string rules or a number type) will cause validation to throw an error.
+- because the schema is constructed at validation time, it can have a significant performance impact. Run-time generated schemas are cached, but the first time of each generation will take longer than once it is cached.
 
 ```js
 const schema = {
-    a: Joi.any().valid('x').when('b', { is: Joi.exist(), then: Joi.valid('y'), otherwise: Joi.valid('z') }),
-    b: Joi.any()
+    a: Joi.any()
+        .valid('x')
+        .when('b', { is: Joi.exist(), then: Joi.valid('y'), otherwise: Joi.valid('z') })
+        .when('c', { is: Joi.number().min(10), then: Joi.forbidden() }),
+    b: Joi.any(),
+    c: Joi.number()
 };
 ```
 
@@ -1383,13 +1384,14 @@ Or with a schema:
 const schema = Joi.object({
     a: Joi.any().valid('x'),
     b: Joi.any()
-}).when(Joi.object({ b: Joi.exist() }).unknown(), {
-    then: Joi.object({
-        a: Joi.valid('y')
-    }),
-    otherwise: Joi.object({
-        a: Joi.valid('z')
-    })
+})
+    .when(Joi.object({ b: Joi.exist() }).unknown(), {
+        then: Joi.object({
+            a: Joi.valid('y')
+        }),
+        otherwise: Joi.object({
+            a: Joi.valid('z')
+        })
 });
 ```
 
@@ -1516,16 +1518,13 @@ Possible validation errors: [`alternatives.base`](#alternativesbase), [`alternat
 
 #### `alternatives.conditional(condition, options)`
 
-Adds a conditional alternative schema type, either based on another key (not the same as `any.when()`) value, or a
-schema peeking into the current value, where:
+Adds a conditional alternative schema type, either based on another key value, or a schema peeking into the current value, where:
 - `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
-    - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be
-      converted using [Joi.compile](#compileschema-options).
+    - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be converted using [Joi.compile](#compileschema-options).
     - `then` - if the condition is true, the **joi** schema to use.
     - `otherwise` - if the condition is false, the **joi** schema to use.
-    - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`.
-      The last item in the array may also contain `otherwise`.
+    - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`. The last item in the array may also contain `otherwise`.
 
 If `condition` is a reference:
 - one of `is` or `switch` is required.
@@ -1537,9 +1536,7 @@ If `condition` is a schema:
 - cannot specify `is` or `switch`.
 - one of `then` or `otherwise` is required.
 
-Note that `alternatives.conditional()` is different than `any.when()`. When you use `any.when()` you end
-up with an alternatives type that is based on the base type `when()` was called on. Each `then` or
-`otherwise` is a concatenation of the base type with the other schemas.
+Note that `alternatives.conditional()` is different than `any.when()`. When you use `any.when()` you end up with composite schema of all the matching conditions while `alternatives.conditional()` will use the first matching schema, ignoring other conditional statements.
 
 ```js
 const schema = {
@@ -2370,7 +2367,7 @@ const extended = base.append({
 #### `object.assert(subject, schema, [message])`
 
 Verifies an assertion where:
-- `subject` - the key name, [reference](#refkey-options), or template expression to validate.
+- `subject` - the key name, [reference](#refkey-options), or template expression to validate. Note that the reference is resolved against the object itself as value, which means if you want to reference a key of the object being validated, you have to prefix the reference path with `.`.
 - `schema` - the validation rules required to satisfy the assertion. If the `schema` includes references, they are resolved against
   the object value, not the value of the `subject` target.
 - `message` - optional human-readable message used when the assertion fails. Defaults to 'failed to pass the assertion test'.
@@ -2384,7 +2381,7 @@ const schema = Joi.object({
     d: {
         e: Joi.any()
     }
-}).assert('d.e', Joi.ref('a.c'), 'equal to a.c');
+}).assert('.d.e', Joi.ref('a.c'), 'equal to a.c');
 ```
 
 Possible validation errors: [`object.assert`](#objectassert)
