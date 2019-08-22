@@ -1309,6 +1309,19 @@ describe('any', () => {
                 [{ a: '', b: 'b' }, true, null, { b: 'b' }]
             ]);
         });
+
+        it('supports references', () => {
+
+            const schema = Joi.object({
+                empty: Joi.string(),
+                a: Joi.string().empty(Joi.ref('empty'))
+            });
+
+            Helper.validate(schema, [
+                [{ empty: 'x', a: 'x' }, true, null, { empty: 'x' }],
+                [{ empty: 'y', a: 'x' }, true, null, { empty: 'y', a: 'x' }]
+            ]);
+        });
     });
 
     describe('equal()', () => {
@@ -2134,49 +2147,6 @@ describe('any', () => {
             expect(schema.describe()).to.equal({ type: 'any', preferences: { abortEarly: false, convert: false } });
         });
 
-        it('describes an alternatives schema with options', () => {
-
-            const schema = Joi.number()
-                .min(10)
-                .when('a', { is: 5, then: Joi.number().max(20).required() })
-                .prefs({ abortEarly: false, convert: false });
-
-            expect(schema.describe()).to.equal({
-                type: 'alternatives',
-                preferences: {
-                    abortEarly: false,
-                    convert: false
-                },
-                matches: [{
-                    ref: { path: ['a'] },
-                    is: {
-                        type: 'any',
-                        flags: {
-                            only: true,
-                            presence: 'required'
-                        },
-                        allow: [5]
-                    },
-                    then: {
-                        type: 'number',
-                        flags: {
-                            presence: 'required'
-                        },
-                        rules: [
-                            { name: 'min', args: { limit: 10 } },
-                            { name: 'max', args: { limit: 20 } }
-                        ]
-                    },
-                    otherwise: {
-                        type: 'number',
-                        rules: [
-                            { args: { limit: 10 }, name: 'min' }
-                        ]
-                    }
-                }]
-            });
-        });
-
         it('merges options properly', () => {
 
             const baseSchema = Joi.any();
@@ -2272,9 +2242,9 @@ describe('any', () => {
             expect(() => Joi.string().trim().min(1)._ruleRemove('trim').rule({})).to.not.throw();
             expect(() => Joi.string().trim().$.min(1)._ruleRemove('trim').rule({})).to.not.throw();
 
-            expect(() => Joi.number().ruleset.min(10).concat(Joi.any()).rule({})).to.not.throw();
-            expect(() => Joi.number().concat(Joi.number().min(10)).rule({})).to.not.throw();
-            expect(() => Joi.number().concat(Joi.number().$.min(10)).rule({})).to.not.throw();
+            expect(() => Joi.number().ruleset.min(10).concat(Joi.any())).to.throw('Cannot concatenate onto a schema with open ruleset');
+            expect(() => Joi.number().concat(Joi.number().min(10)).rule({})).to.throw('Cannot apply rules to empty ruleset');
+            expect(() => Joi.number().concat(Joi.number().$.min(10))).to.throw('Cannot concatenate a schema with open ruleset');
 
             expect(() => Joi.any().ruleset.rule({})).to.throw('Cannot apply rules to empty ruleset');
             expect(() => Joi.any().rule({})).to.throw('Cannot apply rules to empty ruleset');
@@ -2552,6 +2522,40 @@ describe('any', () => {
 
             expect(second).to.equal(after2);
         });
+
+        it('customizes nested schema', () => {
+
+            const alterations = {
+                x: (s) => s.min(10),
+                y: (s) => s.max(50)
+            };
+
+            const number = Joi.number().alter(alterations);
+
+            const before = Joi.object({
+                a: number,
+                b: {
+                    c: number
+                },
+                d: Joi.object()
+                    .pattern(/.*/, number)
+            });
+
+            const tailored = before.tailor(['x', 'y']);
+
+            const numberxy = number.min(10).max(50);
+            const after = Joi.object({
+                a: numberxy,
+                b: {
+                    c: numberxy
+                },
+                d: Joi.object()
+                    .pattern(/.*/, numberxy)
+            });
+
+            expect(tailored).to.equal(after, { skip: ['_ruleset'] });
+            expect(tailored.describe()).to.equal(after.describe());
+        });
     });
 
     describe('unit()', () => {
@@ -2803,7 +2807,70 @@ describe('any', () => {
             expect(() => Joi.when('a')).to.throw('Options must be of type object');
         });
 
-        it('forks type into alternatives', () => {
+        it('validates multiple conditions', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.boolean(),
+                c: Joi.number()
+                    .when('a', { is: true, then: Joi.number().max(100) })
+                    .when('b', { is: true, then: Joi.number().min(10) })
+            });
+
+            Helper.validate(schema, [
+                [{ c: 0 }, true],
+                [{ c: 10 }, true],
+                [{ c: 100 }, true],
+                [{ c: 50 }, true],
+                [{ c: 101 }, true],
+                [{ a: true, c: 0 }, true],
+                [{ a: true, c: 100 }, true],
+                [{ a: true, c: 101 }, false, null, {
+                    message: '"c" must be less than or equal to 100',
+                    details: [{
+                        message: '"c" must be less than or equal to 100',
+                        path: ['c'],
+                        type: 'number.max',
+                        context: { value: 101, label: 'c', key: 'c', limit: 100 }
+                    }]
+                }],
+                [{ b: true, c: 10 }, true],
+                [{ b: true, c: 50 }, true],
+                [{ b: true, c: 101 }, true],
+                [{ b: true, c: 0 }, false, null, {
+                    message: '"c" must be larger than or equal to 10',
+                    details: [{
+                        message: '"c" must be larger than or equal to 10',
+                        path: ['c'],
+                        type: 'number.min',
+                        context: { value: 0, label: 'c', key: 'c', limit: 10 }
+                    }]
+                }],
+                [{ a: true, b: true, c: 10 }, true],
+                [{ a: true, b: true, c: 100 }, true],
+                [{ a: true, b: true, c: 50 }, true],
+                [{ a: true, b: true, c: 0 }, false, null, {
+                    message: '"c" must be larger than or equal to 10',
+                    details: [{
+                        message: '"c" must be larger than or equal to 10',
+                        path: ['c'],
+                        type: 'number.min',
+                        context: { value: 0, label: 'c', key: 'c', limit: 10 }
+                    }]
+                }],
+                [{ a: true, b: true, c: 101 }, false, null, {
+                    message: '"c" must be less than or equal to 100',
+                    details: [{
+                        message: '"c" must be less than or equal to 100',
+                        path: ['c'],
+                        type: 'number.max',
+                        context: { value: 101, label: 'c', key: 'c', limit: 100 }
+                    }]
+                }]
+            ]);
+        });
+
+        it('sets type partials', () => {
 
             const schema = Joi.object({
                 a: Joi.any(),
@@ -2854,7 +2921,7 @@ describe('any', () => {
             ]);
         });
 
-        it('forks type into alternatives (only then)', () => {
+        it('sets type partials (only then)', () => {
 
             const schema = Joi.object({
                 a: Joi.any(),
@@ -2913,7 +2980,7 @@ describe('any', () => {
             ]);
         });
 
-        it('forks type into alternatives (only otherwise)', () => {
+        it('sets type partials (only otherwise)', () => {
 
             const schema = Joi.object({
                 a: Joi.any(),
@@ -2972,7 +3039,7 @@ describe('any', () => {
             ]);
         });
 
-        it('forks type into alternatives (with is as a schema)', () => {
+        it('sets type partials (with is as a schema)', () => {
 
             const schema = Joi.object({
                 a: Joi.any(),
@@ -3054,6 +3121,57 @@ describe('any', () => {
             ]);
         });
 
+        it('makes peer required (is ref)', () => {
+
+            const schema = Joi.object({
+                a: Joi.when('b', { is: Joi.ref('c'), then: Joi.required() }),
+                b: Joi.any(),
+                c: Joi.any()
+            });
+
+            Helper.validate(schema, [
+                [{ b: 5, c: 5 }, false, null, {
+                    message: '"a" is required',
+                    details: [{
+                        message: '"a" is required',
+                        path: ['a'],
+                        type: 'any.required',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ b: 6, c: 5 }, true],
+                [{ a: 'b' }, true],
+                [{ b: 5, a: 'x' }, true]
+            ]);
+        });
+
+        it('makes peer required (switch is ref)', () => {
+
+            const schema = Joi.object({
+                a: Joi.when('b', [
+                    { is: Joi.ref('c'), then: Joi.required() },
+                    { is: 10, then: Joi.forbidden() }
+                ]),
+                b: Joi.any(),
+                c: Joi.any()
+            });
+
+            Helper.validate(schema, [
+                [{ b: 5, c: 5 }, false, null, {
+                    message: '"a" is required',
+                    details: [{
+                        message: '"a" is required',
+                        path: ['a'],
+                        type: 'any.required',
+                        context: { label: 'a', key: 'a' }
+                    }]
+                }],
+                [{ b: 6, c: 5 }, true],
+                [{ a: 'b' }, true],
+                [{ b: 5, a: 'x' }, true]
+            ]);
+        });
+
         it('describes the base schema', () => {
 
             const schema = Joi.number()
@@ -3064,8 +3182,11 @@ describe('any', () => {
                 });
 
             expect(schema.describe()).to.equal({
-                type: 'alternatives',
-                matches: [{
+                type: 'number',
+                rules: [
+                    { args: { limit: 10 }, name: 'min' }
+                ],
+                partials: [{
                     ref: { path: ['a'] },
                     is: {
                         type: 'any',
@@ -3080,13 +3201,7 @@ describe('any', () => {
                         flags: {
                             presence: 'required'
                         },
-                        rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
-                    },
-                    otherwise: {
-                        type: 'number',
-                        rules: [
-                            { args: { limit: 10 }, name: 'min' }
-                        ]
+                        rules: [{ name: 'max', args: { limit: 20 } }]
                     }
                 }]
             });
@@ -3096,11 +3211,12 @@ describe('any', () => {
 
             const schema = Joi.number()
                 .min(10)
-                .when(Joi.number().min(5), { then: Joi.number().max(20).required() }).describe();
+                .when(Joi.number().min(5), { then: Joi.number().max(20).required() });
 
-            expect(schema).to.equal({
-                type: 'alternatives',
-                matches: [{
+            expect(schema.describe()).to.equal({
+                type: 'number',
+                rules: [{ args: { limit: 10 }, name: 'min' }],
+                partials: [{
                     is: {
                         type: 'number',
                         rules: [{ name: 'min', args: { limit: 5 } }]
@@ -3108,11 +3224,7 @@ describe('any', () => {
                     then: {
                         type: 'number',
                         flags: { presence: 'required' },
-                        rules: [{ name: 'min', args: { limit: 10 } }, { name: 'max', args: { limit: 20 } }]
-                    },
-                    otherwise: {
-                        type: 'number',
-                        rules: [{ args: { limit: 10 }, name: 'min' }]
+                        rules: [{ name: 'max', args: { limit: 20 } }]
                     }
                 }]
             });
@@ -3337,6 +3449,287 @@ describe('any', () => {
                 }],
                 [{ a: 42, b: 10 }, true]
             ]);
+        });
+
+        it('validates conditional partials (self reference, explicit)', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean().required()
+            })
+                .when(Joi.ref('a', { ancestor: 0 }), {
+                    is: true,
+                    then: {
+                        b: Joi.string().required()
+                    },
+                    otherwise: {
+                        c: Joi.string().required()
+                    }
+                });
+
+            Helper.validate(schema, [
+                [{ a: true, b: 'x' }, true],
+                [{ a: true, b: 5 }, false, null, {
+                    message: '"b" must be a string',
+                    details: [{
+                        message: '"b" must be a string',
+                        path: ['b'],
+                        type: 'string.base',
+                        context: { value: 5, key: 'b', label: 'b' }
+                    }]
+                }],
+                [{ a: true }, false, null, {
+                    message: '"b" is required',
+                    details: [{
+                        message: '"b" is required',
+                        path: ['b'],
+                        type: 'any.required',
+                        context: { key: 'b', label: 'b' }
+                    }]
+                }],
+                [{ a: true, c: 5 }, false, null, {
+                    message: '"b" is required',
+                    details: [{
+                        message: '"b" is required',
+                        path: ['b'],
+                        type: 'any.required',
+                        context: { key: 'b', label: 'b' }
+                    }]
+                }],
+                [{ a: true, c: 'x' }, false, null, {
+                    message: '"b" is required',
+                    details: [{
+                        message: '"b" is required',
+                        path: ['b'],
+                        type: 'any.required',
+                        context: { key: 'b', label: 'b' }
+                    }]
+                }],
+
+                [{ a: false, b: 'x' }, false, null, {
+                    message: '"c" is required',
+                    details: [{
+                        message: '"c" is required',
+                        path: ['c'],
+                        type: 'any.required',
+                        context: { key: 'c', label: 'c' }
+                    }]
+                }],
+                [{ a: false, b: 5 }, false, null, {
+                    message: '"c" is required',
+                    details: [{
+                        message: '"c" is required',
+                        path: ['c'],
+                        type: 'any.required',
+                        context: { key: 'c', label: 'c' }
+                    }]
+                }],
+                [{ a: false }, false, null, {
+                    message: '"c" is required',
+                    details: [{
+                        message: '"c" is required',
+                        path: ['c'],
+                        type: 'any.required',
+                        context: { key: 'c', label: 'c' }
+                    }]
+                }],
+                [{ a: false, c: 5 }, false, null, {
+                    message: '"c" must be a string',
+                    details: [{
+                        message: '"c" must be a string',
+                        path: ['c'],
+                        type: 'string.base',
+                        context: { value: 5, key: 'c', label: 'c' }
+                    }]
+                }],
+                [{ a: false, c: 'x' }, true]
+            ]);
+        });
+
+        it('validates conditional partials (self reference, implicit)', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean().required()
+            })
+                .when('.a', {
+                    is: true,
+                    then: {
+                        b: Joi.string().required()
+                    },
+                    otherwise: {
+                        c: Joi.string().required()
+                    }
+                });
+
+            Helper.validate(schema, [
+                [{ a: true, b: 'x' }, true],
+                [{ a: true, b: 5 }, false, null, {
+                    message: '"b" must be a string',
+                    details: [{
+                        message: '"b" must be a string',
+                        path: ['b'],
+                        type: 'string.base',
+                        context: { value: 5, key: 'b', label: 'b' }
+                    }]
+                }],
+                [{ a: true }, false, null, {
+                    message: '"b" is required',
+                    details: [{
+                        message: '"b" is required',
+                        path: ['b'],
+                        type: 'any.required',
+                        context: { key: 'b', label: 'b' }
+                    }]
+                }],
+                [{ a: true, c: 5 }, false, null, {
+                    message: '"b" is required',
+                    details: [{
+                        message: '"b" is required',
+                        path: ['b'],
+                        type: 'any.required',
+                        context: { key: 'b', label: 'b' }
+                    }]
+                }],
+                [{ a: true, c: 'x' }, false, null, {
+                    message: '"b" is required',
+                    details: [{
+                        message: '"b" is required',
+                        path: ['b'],
+                        type: 'any.required',
+                        context: { key: 'b', label: 'b' }
+                    }]
+                }],
+
+                [{ a: false, b: 'x' }, false, null, {
+                    message: '"c" is required',
+                    details: [{
+                        message: '"c" is required',
+                        path: ['c'],
+                        type: 'any.required',
+                        context: { key: 'c', label: 'c' }
+                    }]
+                }],
+                [{ a: false, b: 5 }, false, null, {
+                    message: '"c" is required',
+                    details: [{
+                        message: '"c" is required',
+                        path: ['c'],
+                        type: 'any.required',
+                        context: { key: 'c', label: 'c' }
+                    }]
+                }],
+                [{ a: false }, false, null, {
+                    message: '"c" is required',
+                    details: [{
+                        message: '"c" is required',
+                        path: ['c'],
+                        type: 'any.required',
+                        context: { key: 'c', label: 'c' }
+                    }]
+                }],
+                [{ a: false, c: 5 }, false, null, {
+                    message: '"c" must be a string',
+                    details: [{
+                        message: '"c" must be a string',
+                        path: ['c'],
+                        type: 'string.base',
+                        context: { value: 5, key: 'c', label: 'c' }
+                    }]
+                }],
+                [{ a: false, c: 'x' }, true]
+            ]);
+        });
+
+        it('validates with nested whens', () => {
+
+            // If ((b === 0 && a === 123) ||
+            //     (b !== 0 && a === anything))
+            // then c === 456
+            // else c === 789
+
+            const schema = Joi.object({
+                a: Joi.number().required(),
+                b: Joi.number().required(),
+                c: Joi.when('a', {
+                    is: Joi.when('b', {
+                        is: Joi.valid(0),
+                        then: Joi.valid(123)
+                    }),
+                    then: Joi.valid(456),
+                    otherwise: Joi.valid(789)
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ a: 123, b: 0, c: 456 }, true],
+                [{ a: 0, b: 1, c: 456 }, true],
+                [{ a: 0, b: 0, c: 789 }, true],
+                [{ a: 123, b: 456, c: 456 }, true],
+                [{ a: 0, b: 0, c: 456 }, false, null, {
+                    message: '"c" must be one of [789]',
+                    details: [{
+                        message: '"c" must be one of [789]',
+                        path: ['c'],
+                        type: 'any.only',
+                        context: { value: 456, valids: [789], label: 'c', key: 'c' }
+                    }]
+                }],
+                [{ a: 123, b: 456, c: 789 }, false, null, {
+                    message: '"c" must be one of [456]',
+                    details: [{
+                        message: '"c" must be one of [456]',
+                        path: ['c'],
+                        type: 'any.only',
+                        context: { value: 789, valids: [456], label: 'c', key: 'c' }
+                    }]
+                }]
+            ]);
+        });
+
+        describe('with schema', () => {
+
+            it('should peek inside a simple value', () => {
+
+                const schema = Joi.number().when(Joi.number().min(0), { then: Joi.number().min(10) });
+                Helper.validate(schema, [
+                    [-1, true, null, -1],
+                    [1, false, null, {
+                        message: '"value" must be larger than or equal to 10',
+                        details: [{
+                            message: '"value" must be larger than or equal to 10',
+                            path: [],
+                            type: 'number.min',
+                            context: { limit: 10, value: 1, label: 'value' }
+                        }]
+                    }],
+                    [10, true, null, 10]
+                ]);
+            });
+
+            it('should peek inside an object', () => {
+
+                const schema = Joi.object().keys({
+                    foo: Joi.string(),
+                    bar: Joi.number()
+                })
+                    .when(Joi.object().keys({ foo: Joi.valid('hasBar').required() }).unknown(), {
+                        then: Joi.object().keys({ bar: Joi.required() })
+                    });
+
+                Helper.validate(schema, [
+                    [{ foo: 'whatever' }, true, null, { foo: 'whatever' }],
+                    [{ foo: 'hasBar' }, false, null, {
+                        message: '"bar" is required',
+                        details: [{
+                            message: '"bar" is required',
+                            path: ['bar'],
+                            type: 'any.required',
+                            context: { key: 'bar', label: 'bar' }
+                        }]
+                    }],
+                    [{ foo: 'hasBar', bar: 42 }, true, null, { foo: 'hasBar', bar: 42 }],
+                    [{}, true, null, {}]
+                ]);
+            });
         });
     });
 

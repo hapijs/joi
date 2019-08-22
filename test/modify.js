@@ -25,9 +25,9 @@ describe('Modify', () => {
             const b = Joi.object({ c });
             const a = Joi.object({ b });
 
-            expect(a.extract('b')).to.shallow.equal(b);
-            expect(a.extract('b.c.d')).to.shallow.equal(d);
-            expect(a.extract(['b', 'c', 'd'])).to.shallow.equal(d);
+            expect(a.extract('b')).to.equal(b);
+            expect(a.extract('b.c.d')).to.equal(d);
+            expect(a.extract(['b', 'c', 'd'])).to.equal(d);
         });
 
         it('extracts nested schema with ids', () => {
@@ -37,8 +37,8 @@ describe('Modify', () => {
             const b = Joi.object({ c }).id('B');
             const a = Joi.object({ b });
 
-            expect(a.extract('B')).to.shallow.equal(b);
-            expect(a.extract('B.C.D')).to.shallow.equal(d);
+            expect(a.extract('B')).to.equal(b);
+            expect(a.extract('B.C.D')).to.equal(d);
         });
 
         it('extracts nested schema from array', () => {
@@ -48,8 +48,8 @@ describe('Modify', () => {
             const b = Joi.object({ c }).id('b');
             const a = Joi.array().items(b);
 
-            expect(a.extract('b')).to.shallow.equal(b);
-            expect(a.extract('b.c.d')).to.shallow.equal(d);
+            expect(a.extract('b')).to.equal(b);
+            expect(a.extract('b.c.d')).to.equal(d);
         });
 
         it('extracts nested schema from alternatives', () => {
@@ -59,8 +59,8 @@ describe('Modify', () => {
             const b = Joi.object({ c }).id('b');
             const a = Joi.alternatives(b);
 
-            expect(a.extract('b')).to.shallow.equal(b);
-            expect(a.extract('b.c.d')).to.shallow.equal(d);
+            expect(a.extract('b')).to.equal(b);
+            expect(a.extract('b.c.d')).to.equal(d);
         });
 
         it('extracts nested schema after object key override', () => {
@@ -71,8 +71,8 @@ describe('Modify', () => {
             const a = Joi.object({ b });
             const x = a.keys({ b: c });
 
-            expect(x.extract('b')).to.shallow.equal(c);
-            expect(x.extract('b.d')).to.shallow.equal(d);
+            expect(x.extract('b')).to.equal(c);
+            expect(x.extract('b.d')).to.equal(d);
         });
 
         it('extracts nested schema after object key override and custom ids', () => {
@@ -83,8 +83,8 @@ describe('Modify', () => {
             const a = Joi.object({ b }).id('A');
             const x = a.keys({ b: c });
 
-            expect(x.extract('C')).to.shallow.equal(c);
-            expect(x.extract('C.D')).to.shallow.equal(d);
+            expect(x.extract('C')).to.equal(c);
+            expect(x.extract('C.D')).to.equal(d);
         });
 
         it('extracts nested schema after object concat', () => {
@@ -95,12 +95,191 @@ describe('Modify', () => {
             const a = Joi.object({ b });
             const x = a.concat(b);
 
-            expect(x.extract('b')).to.shallow.equal(b);
-            expect(x.extract('c')).to.shallow.equal(c);
+            expect(x.extract('b')).to.equal(b);
+            expect(x.extract('c')).to.equal(c);
+        });
+
+        it('errors on missing schema', () => {
+
+            const d = Joi.number();
+            const c = Joi.object({ d });
+            const b = Joi.object({ c });
+            const a = Joi.object({ b });
+
+            expect(() => a.extract(['b', 'c', 'x'])).to.throw('Schema does not contain path b.c.x');
         });
     });
 
     describe('fork()', () => {
+
+        it('adjusts empty', () => {
+
+            const before = Joi.string().empty(Joi.number().id('x'));
+            const after = Joi.string().empty(Joi.number().min(10).id('x'));
+
+            expect(before.fork('x', (schema) => schema.min(10))).to.equal(after, { skip: ['_ruleset'] });
+        });
+
+        describe('alternatives', () => {
+
+            it('adjusts nested schema', () => {
+
+                const before = Joi.alternatives([
+                    Joi.number().positive().id('numbers'),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive()
+                        })
+                    }).id('objects')
+                ]);
+
+                const first = before.fork('objects.c.d', (schema) => schema.max(5));
+
+                const after1 = Joi.alternatives([
+                    Joi.number().positive().id('numbers'),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    }).id('objects')
+                ]);
+
+                expect(first).to.equal(after1, { skip: ['_ruleset'] });
+
+                const second = first.fork('numbers', (schema) => schema.min(10));
+
+                const after2 = Joi.alternatives([
+                    Joi.number().positive().id('numbers').min(10),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    }).id('objects')
+                ]);
+
+                expect(second).to.equal(after2, { skip: ['_ruleset'] });
+            });
+
+            it('adjusts when schema', () => {
+
+                const before = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.boolean()
+                        .when('a', [
+                            { is: 0, then: Joi.valid(0).id('zero') },
+                            { is: 1, then: Joi.valid(1).id('one') }
+                        ])
+                });
+
+                const forked = before.fork('b.one', (schema) => schema.allow(2));
+
+                const after = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.boolean()
+                        .when('a', [
+                            { is: 0, then: Joi.valid(0).id('zero') },
+                            { is: 1, then: Joi.valid(1, 2).id('one') }
+                        ])
+                });
+
+                expect(forked).to.equal(after);
+            });
+
+            it('adjusts alternatives schema', () => {
+
+                const before = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.alternatives()
+                        .conditional('a', {
+                            switch: [
+                                { is: 0, then: Joi.valid(0).id('zero') },
+                                { is: 1, then: Joi.valid(1).id('one'), otherwise: Joi.boolean() }
+                            ]
+                        })
+                });
+
+                const forked = before.fork('b.one', (schema) => schema.allow(2));
+
+                const after = Joi.object({
+                    a: Joi.number(),
+                    b: Joi.alternatives()
+                        .conditional('a', {
+                            switch: [
+                                { is: 0, then: Joi.valid(0).id('zero') },
+                                { is: 1, then: Joi.valid(1, 2).id('one'), otherwise: Joi.boolean() }
+                            ]
+                        })
+                });
+
+                expect(forked).to.equal(after);
+            });
+        });
+
+        describe('array', () => {
+
+            it('adjusts nested schema', () => {
+
+                const before = Joi.array().items(
+                    Joi.number().positive().id('numbers'),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive()
+                        })
+                    })
+                        .id('objects')
+                )
+                    .has(Joi.object())
+                    .has(Joi.valid(5).id('five'));
+
+                const first = before.fork('objects.c.d', (schema) => schema.max(5));
+
+                const after1 = Joi.array().items(
+                    Joi.number().positive().id('numbers'),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    })
+                        .id('objects')
+                )
+                    .has(Joi.object())
+                    .has(Joi.valid(5).id('five'));
+
+                expect(first).to.equal(after1, { skip: ['_ruleset'] });
+
+                const second = first.fork('numbers', (schema) => schema.min(10));
+
+                const after2 = Joi.array().items(
+                    Joi.number().positive().id('numbers').min(10),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    })
+                        .id('objects')
+                )
+                    .has(Joi.object())
+                    .has(Joi.valid(5).id('five'));
+
+                expect(second).to.equal(after2, { skip: ['_ruleset'] });
+
+                const third = second.fork('five', (schema) => schema.allow(-5));
+
+                const after3 = Joi.array().items(
+                    Joi.number().positive().id('numbers').min(10),
+                    Joi.object({
+                        c: Joi.object({
+                            d: Joi.number().positive().max(5)
+                        })
+                    })
+                        .id('objects')
+                )
+                    .has(Joi.object())
+                    .has(Joi.valid(5, -5).id('five'));
+
+                expect(third).to.equal(after3, { skip: ['_ruleset'] });
+            });
+        });
 
         describe('object', () => {
 
@@ -172,12 +351,12 @@ describe('Modify', () => {
             it('forks same schema multiple times', () => {
 
                 const before = Joi.object({
+                    x: Joi.number(),
                     b: Joi.object({
                         c: Joi.object({
                             d: Joi.number()
                         })
-                    }),
-                    x: Joi.number()
+                    })
                 });
 
                 const bd = before.describe();
@@ -227,12 +406,12 @@ describe('Modify', () => {
                 expect(third).to.equal(a3);
 
                 const a4 = Joi.object({
+                    x: Joi.number().required(),
                     b: Joi.object({
                         c: Joi.object({
                             d: Joi.number()
                         })
-                    }),
-                    x: Joi.number().required()
+                    })
                 });
 
                 expect(fourth).to.equal(a4);
@@ -443,134 +622,6 @@ describe('Modify', () => {
                 expect(before.fork('pattern', (schema) => schema.valid('y')).describe()).to.equal(after.describe());
             });
         });
-
-        describe('array', () => {
-
-            it('adjusts nested schema', () => {
-
-                const before = Joi.array().items(
-                    Joi.number().positive().id('numbers'),
-                    Joi.object({
-                        c: Joi.object({
-                            d: Joi.number().positive()
-                        })
-                    }).id('objects')
-                )
-                    .has(Joi.object())
-                    .has(Joi.valid(5).id('five'));
-
-                const first = before.fork('objects.c.d', (schema) => schema.max(5));
-
-                const after1 = Joi.array().items(
-                    Joi.number().positive().id('numbers'),
-                    Joi.object({
-                        c: Joi.object({
-                            d: Joi.number().positive().max(5)
-                        })
-                    }).id('objects')
-                )
-                    .has(Joi.object())
-                    .has(Joi.valid(5).id('five'));
-
-                expect(first).to.equal(after1, { skip: ['_ruleset'] });
-
-                const second = first.fork('numbers', (schema) => schema.min(10));
-
-                const after2 = Joi.array().items(
-                    Joi.number().positive().id('numbers').min(10),
-                    Joi.object({
-                        c: Joi.object({
-                            d: Joi.number().positive().max(5)
-                        })
-                    }).id('objects')
-                )
-                    .has(Joi.object())
-                    .has(Joi.valid(5).id('five'));
-
-                expect(second).to.equal(after2, { skip: ['_ruleset'] });
-
-                const third = second.fork('five', (schema) => schema.allow(-5));
-
-                const after3 = Joi.array().items(
-                    Joi.number().positive().id('numbers').min(10),
-                    Joi.object({
-                        c: Joi.object({
-                            d: Joi.number().positive().max(5)
-                        })
-                    }).id('objects')
-                )
-                    .has(Joi.object())
-                    .has(Joi.valid(5, -5).id('five'));
-
-                expect(third).to.equal(after3, { skip: ['_ruleset'] });
-            });
-        });
-
-        describe('alternatives', () => {
-
-            it('adjusts nested schema', () => {
-
-                const before = Joi.alternatives([
-                    Joi.number().positive().id('numbers'),
-                    Joi.object({
-                        c: Joi.object({
-                            d: Joi.number().positive()
-                        })
-                    }).id('objects')
-                ]);
-
-                const first = before.fork('objects.c.d', (schema) => schema.max(5));
-
-                const after1 = Joi.alternatives([
-                    Joi.number().positive().id('numbers'),
-                    Joi.object({
-                        c: Joi.object({
-                            d: Joi.number().positive().max(5)
-                        })
-                    }).id('objects')
-                ]);
-
-                expect(first).to.equal(after1, { skip: ['_ruleset'] });
-
-                const second = first.fork('numbers', (schema) => schema.min(10));
-
-                const after2 = Joi.alternatives([
-                    Joi.number().positive().id('numbers').min(10),
-                    Joi.object({
-                        c: Joi.object({
-                            d: Joi.number().positive().max(5)
-                        })
-                    }).id('objects')
-                ]);
-
-                expect(second).to.equal(after2, { skip: ['_ruleset'] });
-            });
-
-            it('adjusts when schema', () => {
-
-                const before = Joi.object({
-                    a: Joi.number(),
-                    b: Joi.boolean()
-                        .when('a', [
-                            { is: 0, then: Joi.valid(0).id('zero') },
-                            { is: 1, then: Joi.valid(1).id('one') }
-                        ])
-                });
-
-                const forked = before.fork('b.one', (schema) => schema.allow(2));
-
-                const after = Joi.object({
-                    a: Joi.number(),
-                    b: Joi.boolean()
-                        .when('a', [
-                            { is: 0, then: Joi.valid(0).id('zero') },
-                            { is: 1, then: Joi.valid(1, 2).id('one') }
-                        ])
-                });
-
-                expect(forked).to.equal(after);
-            });
-        });
     });
 
     describe('id()', () => {
@@ -614,6 +665,91 @@ describe('Modify', () => {
 
             expect(a.$_mapLabels('b')).to.equal('B');
             expect(a.$_mapLabels('b.c.d')).to.equal('B.C.D');
+        });
+    });
+
+    describe('schema()', () => {
+
+        it('changes multiple schemas in different sources', () => {
+
+            const custom = Joi.extend({
+                type: 'special',
+                coerce(schema, value, helpers) {
+
+                    const swap = schema.$_getFlag('swap');
+                    if (swap &&
+                        swap.$_match(value, helpers.state.nest(swap), helpers.prefs)) {
+
+                        return { value: ['swapped'] };
+                    }
+                },
+                terms: {
+                    x: { init: [] }
+                },
+                rules: {
+                    swap: {
+                        method(schema) {
+
+                            return this.$_setFlag('swap', this.$_compile(schema));
+                        }
+                    },
+                    pattern: {
+                        method(schema) {
+
+                            return this.$_addRule({ name: 'pattern', args: { schema: this.$_compile(schema) } });
+                        },
+                        validate() { }
+                    },
+                    term: {
+                        method(schema) {
+
+                            this.$_terms.x.push(schema);
+                            return this;
+                        }
+                    }
+                }
+            });
+
+            const schema = custom.special()
+                .swap(Joi.number())
+                .empty(Joi.object())
+                .pattern(Joi.binary())
+                .term(Joi.number());
+
+            const each = (item) => item.min(10);
+
+            expect(schema.$_modify({ each, ref: false, schema: false })).to.equal(schema);
+
+            const modified = schema.$_modify({ each, ref: false });
+
+            expect(modified.describe()).to.equal({
+                type: 'special',
+                flags: {
+                    empty: {
+                        rules: [{ args: { limit: 10 }, name: 'min' }],
+                        type: 'object'
+                    },
+                    swap: {
+                        rules: [{ args: { limit: 10 }, name: 'min' }],
+                        type: 'number'
+                    }
+                },
+                rules: [{
+                    args: {
+                        schema: {
+                            rules: [{ args: { limit: 10 }, name: 'min' }],
+                            type: 'binary'
+                        }
+                    },
+                    name: 'pattern'
+                }],
+                x: [
+                    {
+                        rules: [{ args: { limit: 10 }, name: 'min' }],
+                        type: 'number'
+                    }
+                ]
+            });
         });
     });
 });

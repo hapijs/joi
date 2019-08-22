@@ -172,12 +172,12 @@ describe('Manifest', () => {
                 },
                 dependencies: [
                     {
-                        type: 'without',
+                        rel: 'without',
                         key: 'required',
                         peers: ['xor']
                     },
                     {
-                        type: 'without',
+                        rel: 'without',
                         key: 'xor',
                         peers: ['required']
                     }
@@ -494,7 +494,7 @@ describe('Manifest', () => {
             });
 
             const built = custom.build(desc);
-            expect(built).to.equal(schema, { skip: ['_ruleset'] });
+            expect(built).to.equal(schema, { skip: ['_ruleset', '$_root'] });
         });
 
         it('builds extended schema (complex)', () => {

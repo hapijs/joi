@@ -37,6 +37,28 @@ describe('Cache', () => {
             schema._definition.rules.pattern.validate = validate;
         });
 
+        it('caches values (object key)', () => {
+
+            const a = Joi.string().pattern(/abc/).cache();
+            const schema = Joi.object({ a });
+
+            const validate = a._definition.rules.pattern.validate;
+            let count = 0;
+            a._definition.rules.pattern.validate = function (...args) {
+
+                ++count;
+                return validate(...args);
+            };
+
+            expect(schema.validate({ a: 'xabcd' }).error).to.not.exist();
+            expect(schema.validate({ a: 'xabcd' }).error).to.not.exist();
+            expect(schema.validate({ a: 'xabcd' }).error).to.not.exist();
+
+            expect(count).to.equal(1);
+
+            a._definition.rules.pattern.validate = validate;
+        });
+
         it('caches errors', () => {
 
             const schema = Joi.string().pattern(/abc/).cache();

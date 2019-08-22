@@ -179,15 +179,15 @@ describe('alternatives', () => {
 
             it('validates conditional alternatives (self reference, explicit)', () => {
 
-                const schema = Joi.object({
-                    a: Joi.boolean().required()
-                })
-                    .when(Joi.ref('a', { ancestor: 0 }), {
+                const schema = Joi.alternatives()
+                    .conditional(Joi.ref('a', { ancestor: 0 }), {
                         is: true,
                         then: {
+                            a: Joi.boolean().required(),
                             b: Joi.string().required()
                         },
                         otherwise: {
+                            a: Joi.boolean().required(),
                             c: Joi.string().required()
                         }
                     });
@@ -273,15 +273,15 @@ describe('alternatives', () => {
 
             it('validates conditional alternatives (self reference, implicit)', () => {
 
-                const schema = Joi.object({
-                    a: Joi.boolean().required()
-                })
-                    .when('.a', {
+                const schema = Joi.alternatives()
+                    .conditional('.a', {
                         is: true,
                         then: {
+                            a: Joi.boolean().required(),
                             b: Joi.string().required()
                         },
                         otherwise: {
+                            a: Joi.boolean().required(),
                             c: Joi.string().required()
                         }
                     });
@@ -844,13 +844,15 @@ describe('alternatives', () => {
                 //     (b !== 0 && a === anything))
                 // then c === 456
                 // else c === 789
+
                 const schema = Joi.object({
                     a: Joi.number().required(),
                     b: Joi.number().required(),
-                    c: Joi.when('a', {
-                        is: Joi.when('b', {
+                    c: Joi.alternatives().conditional('a', {
+                        is: Joi.alternatives().conditional('b', {
                             is: Joi.valid(0),
-                            then: Joi.valid(123)
+                            then: Joi.valid(123),
+                            otherwise: Joi.any()
                         }),
                         then: Joi.valid(456),
                         otherwise: Joi.valid(789)
@@ -888,7 +890,9 @@ describe('alternatives', () => {
 
             it('should peek inside a simple value', () => {
 
-                const schema = Joi.number().when(Joi.number().min(0), { then: Joi.number().min(10) });
+                const schema = Joi.alternatives()
+                    .conditional(Joi.number().min(0), { then: Joi.number().min(10), otherwise: Joi.number() });
+
                 Helper.validate(schema, [
                     [-1, true, null, -1],
                     [1, false, null, {
@@ -906,12 +910,16 @@ describe('alternatives', () => {
 
             it('should peek inside an object', () => {
 
-                const schema = Joi.object().keys({
-                    foo: Joi.string(),
-                    bar: Joi.number()
-                })
-                    .when(Joi.object().keys({ foo: Joi.valid('hasBar').required() }).unknown(), {
-                        then: Joi.object().keys({ bar: Joi.required() })
+                const schema = Joi.alternatives()
+                    .conditional(Joi.object().keys({ foo: Joi.valid('hasBar').required() }).unknown(), {
+                        then: Joi.object({
+                            foo: Joi.string(),
+                            bar: Joi.number().required()
+                        }),
+                        otherwise: Joi.object({
+                            foo: Joi.string(),
+                            bar: Joi.number()
+                        })
                     });
 
                 Helper.validate(schema, [
@@ -1284,14 +1292,16 @@ describe('alternatives', () => {
             const schema = Joi.object().keys({
                 a: Joi.boolean(),
 
-                b: Joi.when('a', {
+                b: Joi.alternatives().conditional('a', {
                     is: true,
-                    then: Joi.string().empty('').allow(null)
+                    then: Joi.string().empty('').allow(null),
+                    otherwise: Joi.any()
                 })
                     .label('Label b'),
 
-                c: Joi.when('a', {
+                c: Joi.alternatives().conditional('a', {
                     is: true,
+                    then: Joi.any(),
                     otherwise: Joi.string().empty('').allow(null)
                 })
                     .label('Label c'),
@@ -1335,9 +1345,10 @@ describe('alternatives', () => {
 
         it('does not modify the original schema', () => {
 
-            const schema = Joi.when('a', {
+            const schema = Joi.alternatives().conditional('a', {
                 is: true,
-                then: Joi.string().empty('').allow(null)
+                then: Joi.string().empty('').allow(null),
+                otherwise: Joi.any()
             });
 
             const labeled = schema.label('Label b');
@@ -1839,9 +1850,20 @@ describe('alternatives', () => {
 
     describe('when()', () => {
 
-        it('throws', () => {
+        it('combines when() with tries', () => {
 
-            expect(() => Joi.alternatives().when()).to.throw('Alternatives type does not support when(), use conditional() instead');
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.alternatives([
+                    Joi.string(),
+                    Joi.number()
+                ])
+                    .when('a', { is: true, then: Joi.required() })
+            });
+
+            expect(schema.validate({ a: true }).error).to.be.an.error('"b" is required');
+            expect(schema.validate({ a: true, b: true }).error).to.be.an.error('"b" must be one of [string, number]');
+            expect(schema.validate({ a: false }).error).to.not.exist();
         });
     });
 });

@@ -702,7 +702,7 @@ describe('ref', () => {
             .length(ref)
             .unknown();
 
-        expect(schema._refs.refs).to.equal([]);     // Does not register reference it itself
+        expect(schema._refs.refs).to.equal([]);     // Does not register reference to itself
 
         Helper.validate(schema, [
             [{ length: 1 }, true],
@@ -1314,8 +1314,11 @@ describe('ref', () => {
             });
 
         expect(schema.describe()).to.equal({
-            type: 'alternatives',
-            matches: [{
+            type: 'any',
+            flags: { only: true, default: { ref: { path: ['a', 'b'] } } },
+            allow: [{ ref: { path: ['a', 'b'] } }],
+            invalid: [{ ref: { type: 'global', path: ['b', 'c'] } }],
+            partials: [{
                 ref: { path: ['a', 'b'] },
                 is: {
                     type: 'date',
@@ -1326,9 +1329,6 @@ describe('ref', () => {
                 },
                 then: {
                     type: 'number',
-                    flags: { only: true, default: { ref: { path: ['a', 'b'] } } },
-                    allow: [{ ref: { path: ['a', 'b'] } }],
-                    invalid: [{ ref: { type: 'global', path: ['b', 'c'] } }],
                     rules: [
                         { name: 'min', args: { limit: { ref: { path: ['a', 'b'] } } } },
                         { name: 'max', args: { limit: { ref: { path: ['a', 'b'] } } } },
@@ -1338,9 +1338,6 @@ describe('ref', () => {
                 },
                 otherwise: {
                     type: 'object',
-                    flags: { only: true, default: { ref: { path: ['a', 'b'] } } },
-                    allow: [{ ref: { path: ['a', 'b'] } }],
-                    invalid: [{ ref: { type: 'global', path: ['b', 'c'] } }],
                     rules: [{
                         name: 'assert',
                         args: {
@@ -1363,17 +1360,65 @@ describe('ref', () => {
                         }
                     },
                     dependencies: [{
-                        type: 'with',
+                        rel: 'with',
                         key: 'a',
                         peers: ['b']
                     },
                     {
-                        type: 'without',
+                        rel: 'without',
                         key: 'b',
                         peers: ['c']
                     }]
                 }
             }]
+        });
+    });
+
+    describe('clone()', () => {
+
+        it('clones reference', () => {
+
+            const ref = Joi.ref('a.b.c');
+            const clone = ref.clone();
+            expect(ref).to.equal(clone);
+            expect(ref).to.not.shallow.equal(clone);
+        });
+    });
+
+    describe('context()', () => {
+
+        it('ignores global prefix when conflicts with separator', () => {
+
+            expect(Joi.ref('$a$b', { separator: '$' })).to.equal({
+                adjust: null,
+                iterables: null,
+                map: null,
+                separator: '$',
+                type: 'value',
+                ancestor: 0,
+                path: ['a', 'b'],
+                depth: 2,
+                key: 'a$b',
+                root: 'a',
+                display: 'ref:$a$b'
+            });
+        });
+
+        it('ignores local prefix when conflicts with separator', () => {
+
+            expect(Joi.ref('#a#b', { separator: '#' })).to.equal({
+                adjust: null,
+                iterables: null,
+                map: null,
+                separator: '#',
+                type: 'value',
+                ancestor: 0,
+                path: ['a', 'b'],
+                depth: 2,
+                key: 'a#b',
+                root: 'a',
+                display: 'ref:#a#b'
+            });
         });
     });
 

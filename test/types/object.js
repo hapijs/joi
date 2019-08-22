@@ -1272,7 +1272,7 @@ describe('object', () => {
 
             expect(() => {
 
-                Joi.object().assert('a.b', {
+                Joi.object().assert('.a.b', {
                     a: {
                         b: {
                             c: {
@@ -1288,7 +1288,7 @@ describe('object', () => {
 
             expect(() => {
 
-                Joi.object().assert('a.b', undefined);
+                Joi.object().assert('.a.b', undefined);
             }).to.throw('Invalid undefined schema');
         });
 
@@ -1302,7 +1302,8 @@ describe('object', () => {
                 d: {
                     e: Joi.any()
                 }
-            }).assert(Joi.ref('d/e', { separator: '/' }), Joi.ref('a.c'), 'equal to a/c');
+            })
+                .assert(Joi.ref('/d/e', { separator: '/' }), Joi.ref('a.c'), 'equal to a/c');
 
             expect(schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }).error).to.be.an.error('"value" is invalid because "d/e" failed to equal to a/c');
 
@@ -1313,7 +1314,7 @@ describe('object', () => {
 
         it('validates upwards reference with implicit context', () => {
 
-            const ref = Joi.ref('d.e');
+            const ref = Joi.ref('.d.e');
             const schema = Joi.object({
                 a: {
                     b: Joi.string(),
@@ -1322,7 +1323,8 @@ describe('object', () => {
                 d: {
                     e: Joi.any()
                 }
-            }).assert(ref, Joi.ref('a.c'), 'equal to a.c');
+            })
+                .assert(ref, Joi.ref('a.c'), 'equal to a.c');
 
             const err = schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }).error;
             expect(err).to.be.an.error('"value" is invalid because "d.e" failed to equal to a.c');
@@ -1338,20 +1340,34 @@ describe('object', () => {
             ]);
         });
 
-        it('throws when context is at root level', () => {
+        it('support own keys', () => {
 
-            expect(() => {
+            const subject = Joi.ref('.a');
+            const schema = Joi.object({
+                a: Joi.number(),
+                d: {
+                    e: Joi.any()
+                }
+            })
+                .assert(subject, Joi.ref('d.e'), 'equal to d.e');
 
-                Joi.object({
-                    a: {
-                        b: Joi.string(),
-                        c: Joi.number()
-                    },
-                    d: {
-                        e: Joi.any()
-                    }
-                }).assert('a', Joi.ref('d.e'), 'equal to d.e');
-            }).to.throw('Cannot use assertions for root level references - use direct key rules instead');
+            Helper.validate(schema, [
+                [{ a: 5, d: { e: 5 } }, true],
+                [{ a: 6, d: { e: 5 } }, false, null, {
+                    message: '"value" is invalid because "a" failed to equal to d.e',
+                    details: [{
+                        message: '"value" is invalid because "a" failed to equal to d.e',
+                        path: [],
+                        type: 'object.assert',
+                        context: {
+                            subject,
+                            message: 'equal to d.e',
+                            label: 'value',
+                            value: { a: 6, d: { e: 5 } }
+                        }
+                    }]
+                }]
+            ]);
         });
 
         it('allows root level context ref', () => {
@@ -1366,13 +1382,14 @@ describe('object', () => {
                     d: {
                         e: Joi.any()
                     }
-                }).assert('$a', Joi.ref('d.e'), 'equal to d.e');
+                })
+                    .assert('$a', Joi.ref('d.e'), 'equal to d.e');
             }).to.not.throw();
         });
 
         it('provides a default message for failed assertions', () => {
 
-            const ref = Joi.ref('d.e');
+            const ref = Joi.ref('.d.e');
             const schema = Joi.object({
                 a: {
                     b: Joi.string(),
@@ -1402,16 +1419,16 @@ describe('object', () => {
 
             const schema = Joi.object({ a: { b: Joi.any() } })
                 .min(2)
-                .assert('a.b', Joi.number())
+                .assert('.a.b', Joi.number())
                 .keys({ b: { c: Joi.any() } })
-                .assert('b.c', Joi.number());
+                .assert('.b.c', Joi.number());
 
             expect(schema.validate({ a: { b: 1 }, b: { c: 2 } }).error).to.not.exist();
         });
 
         it('uses templates', () => {
 
-            const subject = Joi.x('{a || b || c}');
+            const subject = Joi.x('{.a || .b || .c}');
             const schema = Joi.object({
                 a: Joi.boolean(),
                 b: Joi.boolean(),
@@ -3646,7 +3663,7 @@ describe('object', () => {
                     x: Joi.number(),
                     y: Joi.number()
                 })
-                    .assert('c.x', Joi.number().alter(alterations))
+                    .assert('.c.x', Joi.number().alter(alterations))
             });
 
             const bd = before.describe();
@@ -3657,7 +3674,7 @@ describe('object', () => {
                 x: Joi.number(),
                 y: Joi.number()
             })
-                .assert('c.x', Joi.number().min(10).alter(alterations));
+                .assert('.c.x', Joi.number().min(10).alter(alterations));
 
             const after1 = Joi.object({
                 a: {
@@ -3690,7 +3707,7 @@ describe('object', () => {
                     x: Joi.number(),
                     y: Joi.number()
                 })
-                    .assert('c.x', Joi.number().alter(alterations))
+                    .assert('.c.x', Joi.number().alter(alterations))
                     .alter(alterations)
             });
 
@@ -3709,7 +3726,7 @@ describe('object', () => {
                     y: Joi.number()
                 })
                     .alter(alterations)
-                    .assert('c.x', Joi.number().min(10).alter(alterations))
+                    .assert('.c.x', Joi.number().min(10).alter(alterations))
                     .min(10)
             });
 

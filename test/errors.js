@@ -909,7 +909,7 @@ describe('errors', () => {
                 }
             };
 
-            const ref = Joi.ref('options.stripUnknown');
+            const ref = Joi.ref('.options.stripUnknown');
             const schema = Joi.object({
                 response: Joi.object({
                     modify: Joi.boolean(),

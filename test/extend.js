@@ -2,7 +2,6 @@
 
 const Bourne = require('@hapi/bourne');
 const Code = require('@hapi/code');
-const Hoek = require('@hapi/hoek');
 const Joi = require('..');
 const Lab = require('@hapi/lab');
 
@@ -26,22 +25,43 @@ describe('extension', () => {
                 hello: {
                     validate(value, helpers, args, options) {
 
-                        if (value === 'hello') {
-                            return value;
+                        if (!/hello/.test(value)) {
+                            return helpers.error('special.hello');
                         }
 
-                        return helpers.error('special.hello');
+                        if (!value.includes('!')) {
+                            helpers.warn('special.excited');
+                        }
+
+                        return value;
                     }
                 }
             },
             messages: {
-                'special.hello': '"{{#label}}" must say hello'
+                'special.hello': '"{{#label}}" must say hello',
+                'special.excited': 'You do not seem excited enough'
             }
         });
 
         expect(special.type).to.equal('special');
         expect(special.hello().validate('HELLO').error).to.be.an.error('"value" must say hello');
-        expect(special.lowercase().hello().validate('HELLO').error).to.not.exist();
+        expect(special.lowercase().hello().validate('HELLO')).to.equal({
+            value: 'hello',
+            warning: {
+                message: 'You do not seem excited enough',
+                details: [
+                    {
+                        context: {
+                            label: 'value',
+                            value: 'hello'
+                        },
+                        message: 'You do not seem excited enough',
+                        path: [],
+                        type: 'special.excited'
+                    }
+                ]
+            }
+        });
     });
 
     it('extends string globally', () => {
@@ -442,6 +462,36 @@ describe('extension', () => {
         expect(schema.foo('bar').validate(null)).to.equal({ value: { first: 'bar', second: undefined } });
         expect(schema.foo('bar', Joi.ref('a.b')).validate(null).value.first).to.equal('bar');
         expect(Joi.isRef(schema.foo('bar', Joi.ref('a.b')).validate(null).value.second)).to.be.true();
+    });
+
+    it('extends with flag rule (schema)', () => {
+
+        const custom = Joi.extend({
+            type: 'special',
+            coerce(schema, value, helpers) {
+
+                const swap = schema.$_getFlag('swap');
+                if (swap &&
+                    swap.$_match(value, helpers.state.nest(swap), helpers.prefs)) {
+
+                    return { value: 'swapped' };
+                }
+            },
+            rules: {
+                swap: {
+                    method(schema) {
+
+                        return this.$_setFlag('swap', this.$_compile(schema));
+                    }
+                }
+            }
+        });
+
+        const schema = custom.special().swap(Joi.number().id('x')).empty(Joi.object());
+        expect(schema.validate(3)).to.equal({ value: 'swapped' });
+        expect(schema.validate({})).to.equal({ value: undefined });
+
+        expect(schema.fork('x', (s) => s.min(10)).validate(3)).to.equal({ value: 3 });
     });
 
     it('defines a rule that can change the value', () => {
@@ -1222,7 +1272,44 @@ describe('extension', () => {
         ]);
     });
 
-    it('extends fork', () => {
+    it('extends rebuild', () => {
+
+        const custom = Joi.extend((joi) => {
+
+            return {
+                type: 'special',
+                base: joi.object(),
+                terms: {
+                    tests: { init: [] }
+                },
+                rules: {
+                    test: {
+                        method(schema) {
+
+                            const obj = this.clone();
+                            obj.$_terms.tests.push(schema);
+                            obj.$_mutateRegister(schema);
+                            return obj.$_mutateRebuild();
+                        }
+                    }
+                },
+                rebuild(schema) {
+
+                    for (const test of schema.$_terms.tests) {
+                        if (test.type === 'number') {
+                            schema.$_setFlag('_hasNumbers', true, { clone: false });
+                            break;
+                        }
+                    }
+                }
+            };
+        });
+
+        const schema = custom.special().test(Joi.number());
+        expect(schema.$_getFlag('_hasNumbers')).to.be.true();
+    });
+
+    it('supports fork', () => {
 
         const custom = Joi.extend((joi) => {
 
@@ -1241,23 +1328,6 @@ describe('extension', () => {
                             obj.$_mutateRegister(schema);
                             return obj;
                         }
-                    }
-                },
-                fork(schema, id, replacement) {
-
-                    for (let i = 0; i < schema.$_terms.tests.length; ++i) {
-                        const item = schema.$_terms.tests[i];
-                        if (id === item._flags.id) {
-                            const obj = schema.clone();
-                            obj.$_terms.tests[i] = replacement;
-                            return obj.$_mutateRebuild();
-                        }
-                    }
-                },
-                rebuild(schema) {
-
-                    for (const item of schema.$_terms.tests) {
-                        schema.$_mutateRegister(item);
                     }
                 }
             };
@@ -1306,31 +1376,6 @@ describe('extension', () => {
                 }
             ]
         });
-    });
-
-    it('extends with rules override', () => {
-
-        const custom = Joi.extend({
-            type: 'special',
-            base: Joi.number(),
-            rules: {
-                factor: {
-                    method(n) {
-
-                        return this.$_replaceRules('min', (rule) => {
-
-                            const clone = Hoek.clone(rule);
-                            clone.args.limit *= n;
-                            return clone;
-                        });
-                    }
-                }
-            }
-        });
-
-        const schema = custom.special().min(1).keep().min(10).factor(2);
-        expect(schema.validate(20)).to.equal({ value: 20 });
-        expect(schema.validate(19).error).to.be.an.error('"value" must be larger than or equal to 20');
     });
 
     it('extends modifiers', () => {
