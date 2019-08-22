@@ -18,7 +18,7 @@ describe('link', () => {
 
     it('errors on uninitialized link', () => {
 
-        expect(Joi.link().validate(1).error).to.be.an.error('uninitialized schema');
+        expect(() => Joi.link().validate(1)).to.throw('Uninitialized link schema');
     });
 
     it('links schema nodes', () => {

@@ -217,7 +217,6 @@
     - [`link.depth`](#linkdepth)
     - [`link.loop`](#linkloop)
     - [`link.ref`](#linkref)
-    - [`link.uninitialized`](#linkuninitialized)
     - [`number.base`](#numberbase)
     - [`number.greater`](#numbergreater)
     - [`number.infinity`](#numberinfinity)
@@ -2122,7 +2121,7 @@ Possible validation errors: [`link.depth`](#linkdepth), [`link.ref`](#linkref), 
 Initializes the schema after constructions for cases where the schema has to be constructed first and
 then initialized. If `ref` was not passed to the constructor, `link.ref()` must be called prior to usaged.
 
-Possible validation errors: [`link.uninitialized`](#linkuninitialized)
+Will throw an error during validation if left uninitialized (e.g. `Joi.link()` called without a link and `link.ref()` not called).
 
 ### `number` - inherits from `Any`
 
@@ -3737,10 +3736,6 @@ Additional local context properties:
     ref: Reference // The link reference
 }
 ```
-
-#### `link.uninitialized`
-
-The link schema was not initialized prior to validation.
 
 #### `number.base`
 

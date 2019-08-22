@@ -3685,6 +3685,17 @@ describe('any', () => {
             ]);
         });
 
+        it('throws when conditions conflict', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.boolean(),
+                c: Joi.when('a', { is: true, then: Joi.number() }).when('b', { is: true, then: Joi.string() })
+            });
+
+            expect(() => schema.validate({ a: true, b: true, c: 'x' })).to.throw('Cannot merge type number with another type: string');
+        });
+
         describe('with schema', () => {
 
             it('should peek inside a simple value', () => {
