@@ -77,10 +77,10 @@ describe('alternatives', () => {
 
     it('consolidates types only when all coming from top level base errors', () => {
 
-        const schema = Joi.alternatives([
+        const schema = Joi.alternatives(
             Joi.string(),
             Joi.array().items(Joi.string())
-        ]);
+        );
 
         expect(schema.validate([1]).error).to.be.an.error('"value" does not match any of the allowed types');
     });
@@ -1307,7 +1307,7 @@ describe('alternatives', () => {
                     .label('Label c'),
 
                 d: Joi.alt()
-                    .try([Joi.string()])
+                    .try(Joi.string())
                     .label('Label d')
             })
                 .or('b', 'c', 'd');
@@ -1594,15 +1594,15 @@ describe('alternatives', () => {
 
         it('validates deep alternatives', () => {
 
-            const schema = Joi.alternatives().try([
+            const schema = Joi.alternatives().try(
                 Joi.boolean(),
                 Joi.object({
-                    p: Joi.alternatives().try([
+                    p: Joi.alternatives().try(
                         Joi.boolean(),
                         Joi.string().valid('foo', 'bar')
-                    ])
+                    )
                 })
-            ]);
+            );
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
@@ -1717,15 +1717,15 @@ describe('alternatives', () => {
 
         it('validates deep alternatives (with wrapArrays false)', () => {
 
-            const schema = Joi.alternatives().try([
+            const schema = Joi.alternatives().try(
                 Joi.boolean(),
                 Joi.object({
-                    p: Joi.alternatives().try([
+                    p: Joi.alternatives().try(
                         Joi.boolean(),
                         Joi.string().valid('foo', 'bar')
-                    ])
+                    )
                 })
-            ]).prefs({ errors: { wrapArrays: false } });
+            ).prefs({ errors: { wrapArrays: false } });
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
@@ -1840,9 +1840,9 @@ describe('alternatives', () => {
 
         it('validates deep alternatives (with custom error)', () => {
 
-            const schema = Joi.alternatives().try([Joi.boolean(), Joi.object({
+            const schema = Joi.alternatives().try(Joi.boolean(), Joi.object({
                 p: Joi.number()
-            })]).error(new Error('oops'));
+            })).error(new Error('oops'));
 
             expect(schema.validate({ p: 'a' }).error).to.be.an.error('oops');
         });

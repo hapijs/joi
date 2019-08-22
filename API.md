@@ -69,7 +69,7 @@
     - [`any.when(condition, options)`](#anywhencondition-options)
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.conditional(condition, options)`](#alternativesconditionalcondition-options)
-    - [`alternatives.try(schemas)`](#alternativestryschemas)
+    - [`alternatives.try(...schemas)`](#alternativestryschemas)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.has(schema)`](#arrayhasschema)
     - [`array.items(...types)`](#arrayitemstypes)
@@ -335,17 +335,17 @@ const schema = Joi.compile(definition);
 
 // Same as:
 
-const schema = Joi.alternatives().try([
+const schema = Joi.alternatives().try(
     Joi.string().valid('key'),
     Joi.number().valid(5),
     Joi.object({
         a: Joi.boolean().valid(true),
-        b: Joi.alternatives().try([
+        b: Joi.alternatives().try(
             Joi.string().pattern(/^a/),
             Joi.string().valid('boom')
-        ])
+        )
     })
-]);
+);
 ```
 
 ### `defaults(modifier)`
@@ -1510,7 +1510,7 @@ Supports the same methods of the [`any()`](#any) type.
 Alternatives can be expressed using the shorter `[]` notation.
 
 ```js
-const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
+const alt = Joi.alternatives().try(Joi.number(), Joi.string());
 // Same as [Joi.number(), Joi.string()]
 ```
 
@@ -1583,13 +1583,13 @@ const schema = {
 };
 ```
 
-#### `alternatives.try(schemas)`
+#### `alternatives.try(...schemas)`
 
 Adds an alternative schema type for attempting to match against the validated value where:
-- `schema` - a single or an array of alternative **joi** types.
+- `schemas` - alternative **joi** types, each as a separate argument.
 
 ```js
-const alt = Joi.alternatives().try([Joi.number(), Joi.string()]);
+const alt = Joi.alternatives().try(Joi.number(), Joi.string());
 await alt.validateAsync('a');
 ```
 

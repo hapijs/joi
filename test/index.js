@@ -725,13 +725,13 @@ describe('Joi', () => {
     it('validates required key with alternatives', () => {
 
         const config = {
-            module: Joi.alt().try([
+            module: Joi.alt().try(
                 Joi.object({
                     compile: Joi.function().required(),
                     execute: Joi.function()
                 }),
                 Joi.string()
-            ]).required()
+            ).required()
         };
 
         const err = Joi.compile(config).validate({}).error;
