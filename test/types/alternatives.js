@@ -28,7 +28,7 @@ describe('alternatives', () => {
                 },
                 message: '"value" does not match any of the allowed types',
                 path: [],
-                type: 'alternatives.base'
+                type: 'alternatives.any'
             }
         ]);
     });
@@ -118,7 +118,7 @@ describe('alternatives', () => {
                     details: [{
                         message: '"b" does not match any of the allowed types',
                         path: ['b'],
-                        type: 'alternatives.base',
+                        type: 'alternatives.any',
                         context: { value: 2, label: 'b', key: 'b' }
                     }]
                 }]
@@ -598,7 +598,7 @@ describe('alternatives', () => {
                         details: [{
                             message: '"a" does not match any of the allowed types',
                             path: ['a'],
-                            type: 'alternatives.base',
+                            type: 'alternatives.any',
                             context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
@@ -607,7 +607,7 @@ describe('alternatives', () => {
                         details: [{
                             message: '"a" does not match any of the allowed types',
                             path: ['a'],
-                            type: 'alternatives.base',
+                            type: 'alternatives.any',
                             context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
@@ -649,7 +649,7 @@ describe('alternatives', () => {
                         details: [{
                             message: '"a" does not match any of the allowed types',
                             path: ['a'],
-                            type: 'alternatives.base',
+                            type: 'alternatives.any',
                             context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
@@ -1499,6 +1499,106 @@ describe('alternatives', () => {
                     }
                 }
             });
+        });
+    });
+
+    describe('match()', () => {
+
+        it('matches one', () => {
+
+            const schema = Joi.alternatives([
+                Joi.number(),
+                Joi.string()
+            ])
+                .match('one');
+
+            Helper.validate(schema, [
+                [0, true, null, 0],
+                ['x', true, null, 'x'],
+                ['2', false, null, {
+                    message: '"value" matches more than one allowed type',
+                    details: [{
+                        message: '"value" matches more than one allowed type',
+                        path: [],
+                        type: 'alternatives.one',
+                        context: { label: 'value', value: '2' }
+                    }]
+                }],
+                [true, false, null, {
+                    message: '"value" does not match any of the allowed types',
+                    details: [{
+                        message: '"value" does not match any of the allowed types',
+                        path: [],
+                        type: 'alternatives.any',
+                        context: { label: 'value', value: true }
+                    }]
+                }]
+            ]);
+        });
+
+        it('matches one (retains coerce)', () => {
+
+            const schema = Joi.alternatives([
+                Joi.number(),
+                Joi.boolean()
+            ])
+                .match('one');
+
+            Helper.validate(schema, [
+                ['2', true, null, 2]
+            ]);
+        });
+
+        it('matches all', () => {
+
+            const schema = Joi.alternatives([
+                Joi.number(),
+                Joi.string()
+            ])
+                .match('all');
+
+            Helper.validate(schema, [
+                ['2', true, null, '2'],
+                ['x', false, null, {
+                    message: '"value" does not match all of the required types',
+                    details: [{
+                        message: '"value" does not match all of the required types',
+                        path: [],
+                        type: 'alternatives.all',
+                        context: { label: 'value', value: 'x' }
+                    }]
+                }],
+                [2, false, null, {
+                    message: '"value" does not match all of the required types',
+                    details: [{
+                        message: '"value" does not match all of the required types',
+                        path: [],
+                        type: 'alternatives.all',
+                        context: { label: 'value', value: 2 }
+                    }]
+                }],
+                [true, false, null, {
+                    message: '"value" does not match any of the allowed types',
+                    details: [{
+                        message: '"value" does not match any of the allowed types',
+                        path: [],
+                        type: 'alternatives.any',
+                        context: { label: 'value', value: true }
+                    }]
+                }]
+            ]);
+        });
+
+        it('errors on mix with conditional', () => {
+
+            expect(() => Joi.alternatives().match('all').conditional('$a', { is: true, then: false })).to.throw('Cannot combine match mode all with conditional rule');
+            expect(() => Joi.alternatives().conditional('$a', { is: true, then: false }).match('all')).to.throw('Cannot combine match mode all with conditional rules');
+
+            expect(() => Joi.alternatives().match('one').conditional('$a', { is: true, then: false })).to.throw('Cannot combine match mode one with conditional rule');
+            expect(() => Joi.alternatives().conditional('$a', { is: true, then: false }).match('one')).to.throw('Cannot combine match mode one with conditional rules');
+
+            expect(() => Joi.alternatives().match('any').conditional('$a', { is: true, then: false })).to.not.throw();
+            expect(() => Joi.alternatives().conditional('$a', { is: true, then: false }).match('any')).to.not.throw();
         });
     });
 

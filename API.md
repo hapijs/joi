@@ -69,6 +69,7 @@
     - [`any.when(condition, options)`](#anywhencondition-options)
   - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
     - [`alternatives.conditional(condition, options)`](#alternativesconditionalcondition-options)
+    - [`alternatives.match(mode)`](#alternativesmatchmode)
     - [`alternatives.try(...schemas)`](#alternativestryschemas)
   - [`array` - inherits from `Any`](#array---inherits-from-any)
     - [`array.has(schema)`](#arrayhasschema)
@@ -170,9 +171,11 @@
 - [Errors](#errors)
   - [`ValidationError`](#validationerror)
   - [List of errors](#list-of-errors)
-    - [`alternatives.base`](#alternativesbase)
-    - [`alternatives.types`](#alternativestypes)
+    - [`alternatives.all`](#alternativesall)
+    - [`alternatives.any`](#alternativesany)
     - [`alternatives.match`](#alternativesmatch)
+    - [`alternatives.one`](#alternativesone)
+    - [`alternatives.types`](#alternativestypes)
     - [`any.custom`](#anycustom)
     - [`any.default`](#anydefault)
     - [`any.failover`](#anyfailover)
@@ -1513,7 +1516,7 @@ const alt = Joi.alternatives().try(Joi.number(), Joi.string());
 // Same as [Joi.number(), Joi.string()]
 ```
 
-Possible validation errors: [`alternatives.base`](#alternativesbase), [`alternatives.types`](#alternativestypes), [`alternatives.match`](#alternativesmatch)
+Possible validation errors: [`alternatives.any`](#alternativesany), [`alternatives.all`](#alternativesall), [`alternatives.one`](#alternativesone), [`alternatives.types`](#alternativestypes), [`alternatives.match`](#alternativesmatch)
 
 #### `alternatives.conditional(condition, options)`
 
@@ -1581,6 +1584,18 @@ const schema = {
     b: Joi.boolean()
 };
 ```
+
+#### `alternatives.match(mode)`
+
+Requires the validated value to match a specific set of the provided `alternative.try()` schemas where:
+- `mode` - the match mode which can be one of:
+    - `'any'` - match any provided schema. This is the default value.
+    - `'all'` - match all of the provided schemas. Note that this will ignore any conversions performed by the matchin schemas and return the raw value provided regardless of the `convert` preference set.
+    - `'one'` - match one and only one of the provided schemas.
+
+Note: Cannot be combined with `alternatives.conditional()`.
+
+Possible validation errors: [`alternatives.any`](#alternativesany), [`alternatives.all`](#alternativesall), [`alternatives.one`](#alternativesone)
 
 #### `alternatives.try(...schemas)`
 
@@ -3289,21 +3304,13 @@ const schema = custom.object({
 
 ### List of errors
 
-<!-- errors -->
-#### `alternatives.base`
+#### `alternatives.all`
+
+The value did not match all of the alternative schemas.
+
+#### `alternatives.any`
 
 No alternative was found to test against the input due to try criteria.
-
-#### `alternatives.types`
-
-The provided input did not match any of the allowed types.
-
-Additional local context properties:
-```ts
-{
-    types: Array<string> // The list of expected types
-}
-```
 
 #### `alternatives.match`
 
@@ -3314,6 +3321,21 @@ Additional local context properties:
 {
     details: Array<object>, // An array of details for each error found while trying to match to each of the alternatives
     message: string // The combined error messages
+}
+```
+
+#### `alternatives.one`
+
+The value matched more than one alternative schema.
+
+#### `alternatives.types`
+
+The provided input did not match any of the allowed types.
+
+Additional local context properties:
+```ts
+{
+    types: Array<string> // The list of expected types
 }
 ```
 
@@ -4278,5 +4300,3 @@ The input is not a Symbol.
 #### `symbol.map`
 
 The input is not a Symbol or could not be converted to one.
-
-<!-- errorsstop -->
