@@ -20,7 +20,8 @@ module.exports = {
             {
                 use: 'null-loader',
                 include: [
-                    Path.join(__dirname, '../lib/types/binary.js')
+                    Path.join(__dirname, '../lib/types/binary.js'),
+                    Path.join(__dirname, '../lib/trace.js')
                 ]
             },
             {

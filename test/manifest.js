@@ -50,7 +50,8 @@ describe('Manifest', () => {
                 empty: Joi.string().empty('').strip(),
                 defaultRef: Joi.string().default(defaultRef),
                 defaultFn: Joi.string().default(defaultFn),
-                defaultDescribedFn: Joi.string().default(defaultDescribedFn)
+                defaultDescribedFn: Joi.string().default(defaultDescribedFn),
+                defaultArray: Joi.array().default(['x'])
             })
                 .prefs({ abortEarly: false, convert: false })
                 .rename('renamed', 'required')
@@ -168,6 +169,12 @@ describe('Manifest', () => {
                         flags: {
                             default: defaultDescribedFn
                         }
+                    },
+                    defaultArray: {
+                        type: 'array',
+                        flags: {
+                            default: ['x']
+                        }
                     }
                 },
                 dependencies: [
@@ -284,6 +291,7 @@ describe('Manifest', () => {
                 Joi.string().required(),
                 Joi.function().default(() => null, { literal: true }),
                 Joi.object().default(),
+                Joi.array().default(['x']),
                 Joi.boolean().optional(),
                 Joi.string().empty(''),
                 Joi.binary().strip(),
