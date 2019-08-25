@@ -1318,7 +1318,7 @@ describe('ref', () => {
             flags: { only: true, default: { ref: { path: ['a', 'b'] } } },
             allow: [{ ref: { path: ['a', 'b'] } }],
             invalid: [{ ref: { type: 'global', path: ['b', 'c'] } }],
-            partials: [{
+            whens: [{
                 ref: { path: ['a', 'b'] },
                 is: {
                     type: 'date',

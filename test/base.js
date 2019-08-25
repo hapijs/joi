@@ -2870,7 +2870,7 @@ describe('any', () => {
             ]);
         });
 
-        it('sets type partials', () => {
+        it('sets type whens', () => {
 
             const schema = Joi.object({
                 a: Joi.any(),
@@ -2921,7 +2921,7 @@ describe('any', () => {
             ]);
         });
 
-        it('sets type partials (only then)', () => {
+        it('sets type whens (only then)', () => {
 
             const schema = Joi.object({
                 a: Joi.any(),
@@ -2980,7 +2980,7 @@ describe('any', () => {
             ]);
         });
 
-        it('sets type partials (only otherwise)', () => {
+        it('sets type whens (only otherwise)', () => {
 
             const schema = Joi.object({
                 a: Joi.any(),
@@ -3039,7 +3039,7 @@ describe('any', () => {
             ]);
         });
 
-        it('sets type partials (with is as a schema)', () => {
+        it('sets type whens (with is as a schema)', () => {
 
             const schema = Joi.object({
                 a: Joi.any(),
@@ -3186,7 +3186,7 @@ describe('any', () => {
                 rules: [
                     { args: { limit: 10 }, name: 'min' }
                 ],
-                partials: [{
+                whens: [{
                     ref: { path: ['a'] },
                     is: {
                         type: 'any',
@@ -3216,7 +3216,7 @@ describe('any', () => {
             expect(schema.describe()).to.equal({
                 type: 'number',
                 rules: [{ args: { limit: 10 }, name: 'min' }],
-                partials: [{
+                whens: [{
                     is: {
                         type: 'number',
                         rules: [{ name: 'min', args: { limit: 5 } }]
@@ -3451,7 +3451,7 @@ describe('any', () => {
             ]);
         });
 
-        it('validates conditional partials (self reference, explicit)', () => {
+        it('validates conditional whens (self reference, explicit)', () => {
 
             const schema = Joi.object({
                 a: Joi.boolean().required()
@@ -3545,7 +3545,7 @@ describe('any', () => {
             ]);
         });
 
-        it('validates conditional partials (self reference, implicit)', () => {
+        it('validates conditional whens (self reference, implicit)', () => {
 
             const schema = Joi.object({
                 a: Joi.boolean().required()

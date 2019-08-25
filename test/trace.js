@@ -425,4 +425,41 @@ describe('Trace', () => {
             }
         ]);
     });
+
+    it('handles when()', () => {
+
+        const tracer = Joi.trace();
+
+        const schema = Joi.object({
+            a: Joi.boolean(),
+            b: Joi.boolean(),
+            c: Joi.string()
+                .when('a', { is: true, then: Joi.string().min(10).allow('y') })
+                .when('b', { is: true, then: Joi.string().max(100) })
+        });
+
+        schema.validate({ a: true, b: true, c: 'x' });
+        schema.validate({ a: true, b: true, c: 'y' });
+
+        expect(tracer.report(__filename)).to.equal([
+            {
+                filename: __filename,
+                line: 441,
+                message: 'Schema missing tests for c.@whens[0]:min (always error), c.@whens[1]:max (never used)',
+                severity: 'error',
+                missing: [
+                    {
+                        paths: [['c', '@whens', 0]],
+                        rule: 'min',
+                        status: 'always error'
+                    },
+                    {
+                        paths: [['c', '@whens', 1]],
+                        rule: 'max',
+                        status: 'never used'
+                    }
+                ]
+            }
+        ]);
+    });
 });
