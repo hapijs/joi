@@ -313,4 +313,116 @@ describe('Trace', () => {
 
         expect(tracer.report(__filename)).to.be.null();
     });
+
+    it('reports coverage with manual location', () => {
+
+        const tracer = Joi.trace();
+
+        const schema = Joi.string().tracer()
+            .lowercase()
+            .pattern(/\d/)
+            .max(20)
+            .min(10);
+
+        schema.validate('123456789012345678901');
+
+        expect(tracer.report(__filename)).to.equal([
+            {
+                filename: __filename,
+                line: 321,
+                message: 'Schema missing tests for pattern (always pass), max (always error), min (never used)',
+                missing: [
+                    {
+                        status: 'always pass',
+                        rule: 'pattern'
+                    },
+                    {
+                        status: 'always error',
+                        rule: 'max'
+                    },
+                    {
+                        status: 'never used',
+                        rule: 'min'
+                    }
+                ],
+                severity: 'error'
+            }
+        ]);
+    });
+
+    it('reports coverage with manual location (concat override)', () => {
+
+        const tracer = Joi.trace();
+
+        const base = Joi.string().lowercase()
+            .pattern(/\d/)
+            .tracer();
+
+        const schema = Joi.any().concat(base).tracer()
+            .max(20)
+            .min(10);
+
+        schema.validate('123456789012345678901');
+
+        expect(tracer.report(__filename)).to.equal([
+            {
+                filename: __filename,
+                line: 361,
+                message: 'Schema missing tests for pattern (always pass), max (always error), min (never used)',
+                missing: [
+                    {
+                        status: 'always pass',
+                        rule: 'pattern'
+                    },
+                    {
+                        status: 'always error',
+                        rule: 'max'
+                    },
+                    {
+                        status: 'never used',
+                        rule: 'min'
+                    }
+                ],
+                severity: 'error'
+            }
+        ]);
+    });
+
+    it('reports coverage with manual location (concat)', () => {
+
+        const tracer = Joi.trace();
+
+        const base = Joi.string().lowercase()
+            .pattern(/\d/)
+            .tracer();
+
+        const schema = Joi.any().concat(base)
+            .max(20)
+            .min(10);
+
+        schema.validate('123456789012345678901');
+
+        expect(tracer.report(__filename)).to.equal([
+            {
+                filename: __filename,
+                line: 397,
+                message: 'Schema missing tests for pattern (always pass), max (always error), min (never used)',
+                missing: [
+                    {
+                        status: 'always pass',
+                        rule: 'pattern'
+                    },
+                    {
+                        status: 'always error',
+                        rule: 'max'
+                    },
+                    {
+                        status: 'never used',
+                        rule: 'min'
+                    }
+                ],
+                severity: 'error'
+            }
+        ]);
+    });
 });
