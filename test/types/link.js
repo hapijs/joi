@@ -66,7 +66,7 @@ describe('link', () => {
         const schema = Joi.object({
             name: Joi.string().required(),
             keys: Joi.array()
-                .items(Joi.link('...'))
+                .items(Joi.link('...'))         // .item .array .schema
         });
 
         expect(schema.validate({ name: 'foo', keys: [{ name: 'bar' }] }).error).to.not.exist();
@@ -112,6 +112,53 @@ describe('link', () => {
                     path: ['keys', 0, 'keys', 0, 'keys', 0, 'name'],
                     type: 'string.base',
                     context: { value: 42, label: 'keys[0].keys[0].keys[0].name', key: 'name' }
+                }]
+            }]
+        ]);
+    });
+
+    it('validates a recursive schema (in alternatives)', () => {
+
+        const schema = Joi.object({
+            happy: Joi.boolean().required(),
+            children: Joi.object()
+                .pattern(/.*/, [
+                    'none',
+                    Joi.link('....')        // .alternatives .child .children .schema
+                ])
+        });
+
+        Helper.validate(schema, [
+            [{ happy: true }, true],
+            [{ happy: true, children: { a: 'none' } }, true],
+            [{ happy: true, children: { a: { happy: false } } }, true],
+            [{ happy: true, children: { a: { happy: false }, b: { happy: true }, c: 'none' } }, true],
+            [{ happy: true, children: { a: { happy: false }, b: { happy: true }, c: {} } }, false, null, {
+                message: '"children.c" does not match any of the allowed types',
+                details: [{
+                    message: '"children.c" does not match any of the allowed types',
+                    path: ['children', 'c'],
+                    type: 'alternatives.match',
+                    context: {
+                        message: '"children.c" must be one of [none]. "children.c.happy" is required',
+                        label: 'children.c',
+                        value: {},
+                        key: 'c',
+                        details: [
+                            {
+                                context: { key: 'c', label: 'children.c', valids: ['none'], value: {} },
+                                message: '"children.c" must be one of [none]',
+                                path: ['children', 'c'],
+                                type: 'any.only'
+                            },
+                            {
+                                context: { key: 'happy', label: 'children.c.happy' },
+                                message: '"children.c.happy" is required',
+                                path: ['children', 'c', 'happy'],
+                                type: 'any.required'
+                            }
+                        ]
+                    }
                 }]
             }]
         ]);
