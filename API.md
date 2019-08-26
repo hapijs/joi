@@ -687,29 +687,21 @@ class {
 }
 ```
 
-Note that `key` and `value` can be anything including objects, array, etc. It is recommended
-to limit the size of the cache when validating external data in order to prevent an attacker
-from increasing the process memory usage by sending large amount of different data to validate.
+Note that `key` and `value` can be anything including objects, array, etc. It is recommended to limit the size of the cache when validating external data in order to prevent an attacker from increasing the process memory usage by sending large amount of different data to validate.
 
 #### `any.cast(to)`
 
 Casts the validated value to the specified type where:
 - `to` - the value target type. Each **joi** schema type supports its own set of cast targets:
-    - `'map'` - supported by the `Joi.object()` type, converts the result to a `Map` object
-      containing the object key-value pairs.
-    - `'number'` - supported by `Joi.boolean()` and `Joi.date()`, converts the result to a number.
-      For dates, number of milliseconds since the epoch and for booleans, `0` for `false` and `1`
-      for `true`.
-    - `'set'` - supported by the `Joi.array()` type, converts the result to a `Set` object
-      containing the array values.
-    - `'string'` - supported by `Joi.binary()`, `Joi.boolean()`, `Joi.date()`, and `Joi.number()`,
-      converts the result to a string.
+    - `'map'` - supported by the `Joi.object()` type, converts the result to a `Map` object containing the object key-value pairs.
+    - `'number'` - supported by `Joi.boolean()` and `Joi.date()`, converts the result to a number. For dates, number of milliseconds since the epoch and for booleans, `0` for `false` and `1` for `true`.
+    - `'set'` - supported by the `Joi.array()` type, converts the result to a `Set` object containing the array values.
+    - `'string'` - supported by `Joi.binary()`, `Joi.boolean()`, `Joi.date()`, and `Joi.number()`, converts the result to a string.
 
 #### `any.concat(schema)`
 
 Returns a new type that is the result of adding the rules of one type to another where:
-- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the
-  context type or `any`. If applied to an `any` type, the schema can be any other schema.
+- `schema` - a **joi** type to merge into the current schema. Can only be of the same type as the context type or `any`. If applied to an `any` type, the schema can be any other schema.
 
 ```js
 const a = Joi.string().valid('a');
@@ -727,8 +719,9 @@ Adds a custom validation function to execute arbitrary code where:
         - `state` - the current validation state.
         - `prefs` - the current preferences.
         - `original` - the original value passed into validation before any conversions.
-        - `error(code, [local])` - a method to generate error codes using a message codes and
-          optional local context.
+        - `error(code, [local])` - a method to generate error codes using a message code and optional local context.
+        - `message(messages, [local])` - a method to generate an error with an internal `'custom'` error code and the provided messages object to use as override. Note that this is much slower than using the preferences `messages` option but is much simpler to write when performance is not important.
+        - `warn(code, [local])` - a method to add a warning using a message code and optional local context.
 
 Note: if the method fails to return a value, the value will be unset or returned as `undefined`.
 
@@ -2504,9 +2497,9 @@ Specify validation rules for unknown keys matching a pattern where:
 - `schema` - the schema object matching keys must validate against.
 - `options` - options settings:
     - `fallthrough` - if `true`, multiple matching patterns are tested against the key, otherwise once a pattern match is found, no other patterns are compared. Defaults to `false`.
-    - `matches` - a joi array schema used to validated the array of matching keys. For example,
-      `Joi.object().pattern(/\d/, Joi.boolean(), { matches: Joi.array().length(2) })` will require
-      two matching keys.
+    - `matches` - a joi array schema used to validated the array of matching keys. For example, `Joi.object().pattern(/\d/, Joi.boolean(), { matches: Joi.array().length(2) })` will require two matching keys. If the `matches` schema is not an array type schema, it will be converted to `Joi.array().items(matches)`. If the `matches` schema contains references, they are resolved against the ancestors as follows:
+        - self - the array of matching keys (`Joi.ref('.length')`)
+        - parent - the object value containing the keys (`Joi.ref('a')`)
 
 ```js
 const schema = Joi.object({
