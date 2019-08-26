@@ -1208,49 +1208,29 @@ Possible validation errors: [`any.only`](#anyonly)
 Validates a value using the current schema and options where:
 - `value` - the value being validated.
 - `options` - an optional object with the following optional keys:
-  - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the
-    errors found. Defaults to `true`.
-  - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults
-    to `false`.
-  - `cache` - when `true`, schema caching is enabled (for schemas with explicit caching rules).
-    Default to `true`.
-  - `context` - provides an external data set to be used in [references](#refkey-options). Can only
-    be set as an external option to `validate()` and not using `any.prefs()`.
-  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a
-    number). Defaults to `true`.
-  - `dateFormat` - sets the string format used when converting dates to strings in error messages
-    and casting. Options are:
+  - `abortEarly` - when `true`, stops validation on the first error, otherwise returns all the errors found. Defaults to `true`.
+  - `allowUnknown` - when `true`, allows object to contain unknown keys which are ignored. Defaults to `false`.
+  - `cache` - when `true`, schema caching is enabled (for schemas with explicit caching rules). Default to `true`.
+  - `context` - provides an external data set to be used in [references](#refkey-options). Can only be set as an external option to `validate()` and not using `any.prefs()`.
+  - `convert` - when `true`, attempts to cast values to the required types (e.g. a string to a number). Defaults to `true`.
+  - `dateFormat` - sets the string format used when converting dates to strings in error messages and casting. Options are:
     - `'date'` - date string.
     - `'iso'` - date time ISO string. This is the default.
     - `'string'` - JS default date time string.
     - `'time'` - time string.
     - `'utc'` - UTC date time string.
+  - `debug` - when `true`, valid results and throw errors are decorated with a `debug` property which includes an array of the validation steps used to generate the returned result. Defaults to `false`.
   - `error` - error formatting settings:
-    - `escapeHtml` - when `true`, error message templates will escape special characters to HTML
-      entities, for security purposes. Defaults to `false`.
-    - `language` - the preferred language code for error messages. The value is matched against keys
-      at the root of the `messages` object, and then the error code as a child key of that. Can be
-      a reference to the value, global context, or local context which is the root value passed to the
-      validation function. Note that references to the value are usually not what you want as they move
-      around the value structure relative to where the error happens. Instead, either use the global
-      context, or the absolute value (e.g. `Joi.ref('/variable')`);
-    - `render` - when `false`, skips rendering error templates. Useful when error messages are generated
-      elsewhere to save processing time. Defaults to `true`.
-    - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled.
-      Defaults to `false` for performances reasons. 
-      Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api). 
+    - `escapeHtml` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
+    - `language` - the preferred language code for error messages. The value is matched against keys at the root of the `messages` object, and then the error code as a child key of that. Can be a reference to the value, global context, or local context which is the root value passed to the validation function. Note that references to the value are usually not what you want as they move around the value structure relative to where the error happens. Instead, either use the global  context, or the absolute value (e.g. `Joi.ref('/variable')`);
+    - `render` - when `false`, skips rendering error templates. Useful when error messages are generated elsewhere to save processing time. Defaults to `true`.
+    - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled. Defaults to `false` for performances reasons. Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api). 
     - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
-  - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod-description) are
-    ignored, which is required to ignore any external validations in synchronous mode (or an exception
-    is thrown). Defaults to `true`.
-  - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use
-    the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML
-    escaped if the option `errors.escapeHtml` is set to `true`.
+  - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod-description) are ignored, which is required to ignore any external validations in synchronous mode (or an exception is thrown). Defaults to `true`.
+  - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML escaped if the option `errors.escapeHtml` is set to `true`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
-  - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties.
-    Defaults to `false`.
-  - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`,
-    and `'forbidden'`. Defaults to `'optional'`.
+  - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties. Defaults to `false`.
+  - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`. Defaults to `'optional'`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
     - when an `object` :
