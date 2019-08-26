@@ -519,7 +519,7 @@ describe('Manifest', () => {
                     'million.round': '"{{#label}}" must be a round number',
                     'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
                 },
-                coerce(schema, value, helpers) {
+                coerce(value, { schema }) {
 
                     // Only called when prefs.convert is true
 
@@ -527,12 +527,12 @@ describe('Manifest', () => {
                         return { value: Math.round(value) };
                     }
                 },
-                validate(schema, value, helpers) {
+                validate(value, { schema, error }) {
 
                     // Base validation regardless of the rules applied
 
                     if (value < 1000000) {
-                        return { value, errors: helpers.error('million.base') };
+                        return { value, errors: error('million.base') };
                     }
 
                     // Check flags for global state
@@ -540,7 +540,7 @@ describe('Manifest', () => {
                     if (schema.$_getFlag('sizable') &&
                         value < 5000000) {
 
-                        return { value, errors: helpers.error('million.big') };
+                        return { value, errors: error('million.big') };
                     }
                 },
                 rules: {
