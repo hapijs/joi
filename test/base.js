@@ -30,7 +30,27 @@ describe('any', () => {
 
         it('throws when passed undefined', () => {
 
-            expect(() => Joi.any().allow(undefined)).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
+            expect(() => Joi.any().allow(undefined)).to.throw('Cannot call allow/valid/invalid with undefined');
+        });
+
+        it('throws when override is not first item', () => {
+
+            expect(() => Joi.any().allow(1, Joi.override)).to.throw('Override must be the first value');
+        });
+
+        it('overrides previous values', () => {
+
+            const schema = Joi.object().allow(1).allow(Joi.override, 2);
+            expect(schema.validate(1).error).to.be.an.error('"value" must be of type object');
+            expect(schema.validate(2).error).to.not.exist();
+        });
+
+        it('clears previous values', () => {
+
+            const schema = Joi.object().allow(1).allow(Joi.override);
+            expect(schema.validate(1).error).to.be.an.error('"value" must be of type object');
+            expect(schema.validate(2).error).to.be.an.error('"value" must be of type object');
+            expect(schema.validate({}).error).to.not.exist();
         });
     });
 
@@ -1749,6 +1769,25 @@ describe('any', () => {
 
             const schema = Joi.any().invalid(1).invalid(2);
             expect(schema.describe()).to.equal({ type: 'any', invalid: [1, 2] });
+        });
+
+        it('throws when override is not first item', () => {
+
+            expect(() => Joi.any().invalid(1, Joi.override)).to.throw('Override must be the first value');
+        });
+
+        it('overrides previous values', () => {
+
+            const schema = Joi.number().invalid(2).invalid(Joi.override, 1);
+            expect(schema.validate(1).error).to.be.an.error('"value" contains an invalid value');
+            expect(schema.validate(2).error).to.not.exist();
+        });
+
+        it('cancels previous values', () => {
+
+            const schema = Joi.number().invalid(2).invalid(Joi.override);
+            expect(schema.validate(1).error).to.not.exist();
+            expect(schema.validate(2).error).to.not.exist();
         });
     });
 

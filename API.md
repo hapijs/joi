@@ -16,6 +16,7 @@
   - [`isExpression(expression)`](#isexpressionexpression)
   - [`isRef(ref)`](#isrefref)
   - [`isSchema(schema, [options])`](#isschemaschema-options)
+  - [`override`](#override)
   - [`ref(key, [options])`](#refkey-options)
     - [Relative references](#relative-references)
   - [`version`](#version)
@@ -430,8 +431,7 @@ Joi.isExpression(expression); // returns true
 
 ### `isRef(ref)`
 
-Checks whether or not the provided argument is a reference.
-It's especially useful if you want to post-process error messages.
+Checks whether or not the provided argument is a reference. Useful if you want to post-process error messages.
 
 ```js
 const ref = Joi.ref('a');
@@ -443,43 +443,50 @@ Joi.isRef(ref); // returns true
 Checks whether or not the provided argument is a **joi** schema where:
 - `schema` - the value being checked.
 - `options` - optional settings:
-    - `legacy` - if `true`, will identify schemas from older versions of joi, otherwise will throw
-      an error. Defaults to `false`.
+    - `legacy` - if `true`, will identify schemas from older versions of joi, otherwise will throw an error. Defaults to `false`.
 
 ```js
 const schema = Joi.any();
 Joi.isSchema(schema); // returns true
 ```
 
+### `override`
+
+A special value used with `any.allow()`, `any.invalid()`, and `any.valid()` as the first value to reset any previously set values.
+
+```js
+Joi.valid(1).valid(Joi.override, 2);
+
+// Same as:
+
+Joi.valid(2);
+
+// Whereas:
+
+Joi.valid(1).valid(2);
+
+// Is the same as:
+
+Joi.valid(1, 2);
+```
+
 ### `ref(key, [options])`
 
-Generates a reference to the value of the named key. References are resolved at validation time and
-in order of dependency so that if one key validation depends on another, the dependent key is
-validated second after the reference is validated.
+Generates a reference to the value of the named key. References are resolved at validation time and in order of dependency so that if one key validation depends on another, the dependent key is validated second after the reference is validated.
 
 References support the following arguments:
-- `key` - the reference target. References can point to sibling keys (`a.b`) or ancestor keys
-  (`...a.b`) using the `.` separator. If a `key` starts with `$` is signifies a context reference
-  which is looked up in the `context` option object. The `key` can start with one or more separator
-  characters to indicate a [relative starting point](#Relative-references).
+- `key` - the reference target. References can point to sibling keys (`a.b`) or ancestor keys (`...a.b`) using the `.` separator. If a `key` starts with `$` is signifies a context reference which is looked up in the `context` option object. The `key` can start with one or more separator characters to indicate a [relative starting point](#Relative-references).
 - `options` - optional settings:
-    - `adjust` - a function with the signature `function(value)` where `value` is the resolved reference value and the return
-      value is the adjusted value to use. For example `(value) => value + 5` will add 5 to the resolved value. Note that the
-      `adjust` feature will not perform any type validation on the adjusted value and it must match the value expected by the
-      rule it is used in. Cannot be used with `map`.
-    - `map` - an array of array pairs using the format `[[key, value], [key, value]]` used to maps
-      the resolved reference value to another value. If the resolved value is not in the map, it is
-      returned as-is. Cannot be used with `adjust`.
+    - `adjust` - a function with the signature `function(value)` where `value` is the resolved reference value and the return value is the adjusted value to use. For example `(value) => value + 5` will add 5 to the resolved value. Note that the `adjust` feature will not perform any type validation on the adjusted value and it must match the value expected by the rule it is used in. Cannot be used with `map`.
+    - `map` - an array of array pairs using the format `[[key, value], [key, value]]` used to maps the resolved reference value to another value. If the resolved value is not in the map, it is returned as-is. Cannot be used with `adjust`.
     - `prefix` - overrides default prefix characters for:
       - `global` - references to the globally provided `context` preference. Defaults to `'$'`.
       - `local` - references to error-specific or rule specific context. Defaults to `'#'`.
       - `root` - references to the root value being validated. Defaults to `'/'`.
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
-    - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined
-      with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
+    - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
 
-Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards
-(parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
+Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards (parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
 
 ```js
 const schema = Joi.object({
@@ -618,8 +625,7 @@ schema.type === 'string';   // === true
 #### `any.allow(...values)`
 
 Allows values where:
-- `values` - one or more allowed values which can be of any type and will be matched against the
-  validated value before applying any other rules. Supports [references](#refkey-options).
+- `values` - one or more allowed values which can be of any type and will be matched against the validated value before applying any other rules. Supports [references](#refkey-options). If the first value is [`Joi.override`](#override), will override any previously set values.
 
 Note that this list of allowed values is in *addition* to any other permitted values.
 To create an exclusive list of values, see [`any.valid(value)`](#anyvalidvalues---aliases-equal).
@@ -965,8 +971,7 @@ used in an array or alternatives type and no id is set, the schema in unreachabl
 #### `any.invalid(...values)` - aliases: `disallow`, `not`
 
 Disallows values where:
-- `values` - the forbidden values which can be of any type and will be matched against the
-  validated value before applying any other rules. Supports [references](#refkey-options).
+- `values` - the forbidden values which can be of any type and will be matched against the validated value before applying any other rules. Supports [references](#refkey-options). If the first value is [`Joi.override`](#override), will override any previously set values.
 
 ```js
 const schema = {
@@ -1182,10 +1187,8 @@ const schema = Joi.number().unit('milliseconds');
 
 #### `any.valid(...values)` - aliases: `equal`
 
-Adds the provided values into the allowed values list and marks them as the only valid values
-allowed where:
-- `values` - one or more allowed values which can be of any type and will be matched against the
-  validated value before applying any other rules. Supports [references](#refkey-options).
+Adds the provided values into the allowed values list and marks them as the only valid values allowed where:
+- `values` - one or more allowed values which can be of any type and will be matched against the validated value before applying any other rules. Supports [references](#refkey-options). If the first value is [`Joi.override`](#override), will override any previously set values. If the only value is [`Joi.override`](#override), will also remove the `only` flag from the schema.
 
 ```js
 const schema = {
