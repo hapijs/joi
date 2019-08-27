@@ -1752,7 +1752,10 @@ describe('any', () => {
         it('validates required values', () => {
 
             Helper.validate(Joi.exist(), [
-                [4, true],
+                [0, true],
+                [null, true],
+                ['', true],
+                [false, true],
                 [undefined, false, null, {
                     message: '"value" is required',
                     details: [{
@@ -3075,6 +3078,65 @@ describe('any', () => {
                         path: ['c'],
                         type: 'any.only',
                         context: { value: 1, label: 'c', key: 'c', valids: [2] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('defaults is to truthy', () => {
+
+            const schema = Joi.object({
+                a: Joi.any(),
+                b: Joi.number()
+                    .when('a', { then: 1, otherwise: 2 })
+            });
+
+            Helper.validate(schema, [
+                [{ b: 2 }, true],
+                [{ a: 1, b: 1 }, true],
+                [{ b: 1 }, false, null, {
+                    message: '"b" must be one of [2]',
+                    details: [{
+                        message: '"b" must be one of [2]',
+                        path: ['b'],
+                        type: 'any.only',
+                        context: { value: 1, label: 'b', key: 'b', valids: [2] }
+                    }]
+                }],
+                [{ a: 0, b: 1 }, false, null, {
+                    message: '"b" must be one of [2]',
+                    details: [{
+                        message: '"b" must be one of [2]',
+                        path: ['b'],
+                        type: 'any.only',
+                        context: { value: 1, label: 'b', key: 'b', valids: [2] }
+                    }]
+                }],
+                [{ a: '', b: 1 }, false, null, {
+                    message: '"b" must be one of [2]',
+                    details: [{
+                        message: '"b" must be one of [2]',
+                        path: ['b'],
+                        type: 'any.only',
+                        context: { value: 1, label: 'b', key: 'b', valids: [2] }
+                    }]
+                }],
+                [{ a: false, b: 1 }, false, null, {
+                    message: '"b" must be one of [2]',
+                    details: [{
+                        message: '"b" must be one of [2]',
+                        path: ['b'],
+                        type: 'any.only',
+                        context: { value: 1, label: 'b', key: 'b', valids: [2] }
+                    }]
+                }],
+                [{ a: null, b: 1 }, false, null, {
+                    message: '"b" must be one of [2]',
+                    details: [{
+                        message: '"b" must be one of [2]',
+                        path: ['b'],
+                        type: 'any.only',
+                        context: { value: 1, label: 'b', key: 'b', valids: [2] }
                     }]
                 }]
             ]);

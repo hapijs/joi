@@ -1333,7 +1333,7 @@ Adds conditions that are evaluated during validation and modify the schema befor
     - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`. The last item in the array may also contain `otherwise`.
 
 If `condition` is a reference:
-- one of `is` or `switch` is required.
+- if both `is` and `switch` are missing, `is` defaults to `Joi.invalid(null, false, 0, '').required()` (value must be a truthy).
 - one of `then`, `otherwise`, or `switch` is required.
 - cannot use `is` or `then` with `switch`.
 - cannot specify `otherwise` both inside the last `switch` statement and outside.
@@ -1507,7 +1507,7 @@ Adds a conditional alternative schema type, either based on another key value, o
     - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`. The last item in the array may also contain `otherwise`.
 
 If `condition` is a reference:
-- one of `is` or `switch` is required.
+- if both `is` and `switch` are missing, `is` defaults to `Joi.invalid(null, false, 0, '').required()` (value must be a truthy).
 - one of `then`, `otherwise`, or `switch` is required.
 - cannot use `is` or `then` with `switch`.
 - cannot specify `otherwise` both inside the last `switch` statement and outside.
