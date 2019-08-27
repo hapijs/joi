@@ -1391,7 +1391,7 @@ describe('Joi', () => {
                             presence: 'required',
                             only: true
                         },
-                        allow: ['bar']
+                        allow: [{ override: true }, 'bar']
                     }
                 }
             });
@@ -1423,7 +1423,7 @@ describe('Joi', () => {
                             description: 'defaulted',
                             only: true
                         },
-                        allow: ['bar']
+                        allow: [{ override: true }, 'bar']
                     },
                     baz: {
                         keys: {
@@ -1434,7 +1434,7 @@ describe('Joi', () => {
                                     presence: 'required'
                                 },
                                 type: 'any',
-                                allow: ['zorg']
+                                allow: [{ override: true }, 'zorg']
                             }
                         },
                         flags: {
@@ -1447,7 +1447,7 @@ describe('Joi', () => {
             });
         });
 
-        it('inherites defaults', () => {
+        it('inherits defaults', () => {
 
             const custom = Joi
                 .defaults((schema) => schema.required().description('defaulted'))
@@ -1473,7 +1473,7 @@ describe('Joi', () => {
                             only: true,
                             result: 'raw'
                         },
-                        allow: ['bar']
+                        allow: [{ override: true }, 'bar']
                     }
                 }
             });

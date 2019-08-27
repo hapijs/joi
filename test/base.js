@@ -52,6 +52,12 @@ describe('any', () => {
             expect(schema.validate(2).error).to.be.an.error('"value" must be of type object');
             expect(schema.validate({}).error).to.not.exist();
         });
+
+        it('ignores empty override', () => {
+
+            const schema = Joi.allow(Joi.override);
+            expect(schema._valids).to.be.null();
+        });
     });
 
     describe('alter()', () => {
@@ -737,8 +743,8 @@ describe('any', () => {
 
         it('merges two objects (same key)', () => {
 
-            const a = Joi.object({ a: 1, b: 2, c: 3 });
-            const b = Joi.object({ b: 1, c: 2, a: 3 });
+            const a = Joi.object({ a: Joi.valid(1), b: Joi.valid(2), c: Joi.valid(3) });
+            const b = Joi.object({ b: Joi.valid(1), c: Joi.valid(2), a: Joi.valid(3) });
 
             const ab = a.concat(b);
 
@@ -779,6 +785,118 @@ describe('any', () => {
                         path: ['c'],
                         type: 'any.only',
                         context: { value: 4, valids: [3, 2], label: 'c', key: 'c' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('merges two objects (same key, implicit override)', () => {
+
+            const a = Joi.object({ a: 1, b: 2, c: 3 });
+            const b = Joi.object({ b: 1, c: 2, a: 3 });
+
+            const ab = a.concat(b);
+
+            Helper.validate(a, [
+                [{ a: 1, b: 2, c: 3 }, true],
+                [{ a: 3, b: 1, c: 2 }, false, null, {
+                    message: '"a" must be one of [1]',
+                    details: [{
+                        message: '"a" must be one of [1]',
+                        path: ['a'],
+                        type: 'any.only',
+                        context: { value: 3, valids: [1], label: 'a', key: 'a' }
+                    }]
+                }]
+            ]);
+
+            Helper.validate(b, [
+                [{ a: 3, b: 1, c: 2 }, true],
+                [{ a: 1, b: 2, c: 3 }, false, null, {
+                    message: '"b" must be one of [1]',
+                    details: [{
+                        message: '"b" must be one of [1]',
+                        path: ['b'],
+                        type: 'any.only',
+                        context: { value: 2, valids: [1], label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+
+            Helper.validate(ab, [
+                [{ a: 3, b: 1, c: 2 }, true],
+                [{ b: 2, c: 3 }, false, null, {
+                    message: '"b" must be one of [1]',
+                    details: [{
+                        message: '"b" must be one of [1]',
+                        path: ['b'],
+                        type: 'any.only',
+                        context: { value: 2, valids: [1], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 1, b: 2, c: 3 }, false, null, {
+                    message: '"a" must be one of [3]',
+                    details: [{
+                        message: '"a" must be one of [3]',
+                        path: ['a'],
+                        type: 'any.only',
+                        context: { value: 1, valids: [3], label: 'a', key: 'a' }
+                    }]
+                }]
+            ]);
+        });
+
+        it('merges two objects (same key, explicit override)', () => {
+
+            const a = Joi.object({ a: Joi.valid(Joi.override, 1), b: Joi.valid(Joi.override, 2), c: Joi.valid(Joi.override, 3) });
+            const b = Joi.object({ b: Joi.valid(Joi.override, 1), c: Joi.valid(Joi.override, 2), a: Joi.valid(Joi.override, 3) });
+
+            const ab = a.concat(b);
+
+            Helper.validate(a, [
+                [{ a: 1, b: 2, c: 3 }, true],
+                [{ a: 3, b: 1, c: 2 }, false, null, {
+                    message: '"a" must be one of [1]',
+                    details: [{
+                        message: '"a" must be one of [1]',
+                        path: ['a'],
+                        type: 'any.only',
+                        context: { value: 3, valids: [1], label: 'a', key: 'a' }
+                    }]
+                }]
+            ]);
+
+            Helper.validate(b, [
+                [{ a: 3, b: 1, c: 2 }, true],
+                [{ a: 1, b: 2, c: 3 }, false, null, {
+                    message: '"b" must be one of [1]',
+                    details: [{
+                        message: '"b" must be one of [1]',
+                        path: ['b'],
+                        type: 'any.only',
+                        context: { value: 2, valids: [1], label: 'b', key: 'b' }
+                    }]
+                }]
+            ]);
+
+            Helper.validate(ab, [
+                [{ a: 3, b: 1, c: 2 }, true],
+                [{ b: 2, c: 3 }, false, null, {
+                    message: '"b" must be one of [1]',
+                    details: [{
+                        message: '"b" must be one of [1]',
+                        path: ['b'],
+                        type: 'any.only',
+                        context: { value: 2, valids: [1], label: 'b', key: 'b' }
+                    }]
+                }],
+                [{ a: 1, b: 2, c: 3 }, false, null, {
+                    message: '"a" must be one of [3]',
+                    details: [{
+                        message: '"a" must be one of [3]',
+                        path: ['a'],
+                        type: 'any.only',
+                        context: { value: 1, valids: [3], label: 'a', key: 'a' }
                     }]
                 }]
             ]);
@@ -1788,6 +1906,12 @@ describe('any', () => {
             const schema = Joi.number().invalid(2).invalid(Joi.override);
             expect(schema.validate(1).error).to.not.exist();
             expect(schema.validate(2).error).to.not.exist();
+        });
+
+        it('ignores empty override', () => {
+
+            const schema = Joi.invalid(Joi.override);
+            expect(schema._invalids).to.be.null();
         });
     });
 
@@ -3233,7 +3357,7 @@ describe('any', () => {
                             only: true,
                             presence: 'required'
                         },
-                        allow: [5]
+                        allow: [{ override: true }, 5]
                     },
                     then: {
                         type: 'number',

@@ -92,10 +92,10 @@ describe('Values', () => {
             const set = new Values();
             set.add(undefined);
             set.add('x');
-            expect(set.values({ stripUndefined: true })).to.not.include(undefined).and.to.equal(['x']);
+            expect(set.values({ display: true })).to.not.include(undefined).and.to.equal(['x']);
         });
 
-        it('ignores absent stripUndefined', () => {
+        it('ignores absent display option', () => {
 
             const set = new Values();
             set.add(undefined);

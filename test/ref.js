@@ -115,14 +115,14 @@ describe('ref', () => {
                                 only: true
                             },
                             type: 'any',
-                            allow: [{ ref: { ancestor: 2, path: ['a'] } }]
+                            allow: [{ override: true }, { ref: { ancestor: 2, path: ['a'] } }]
                         },
                         a2: {
                             flags: {
                                 only: true
                             },
                             type: 'any',
-                            allow: [{ ref: { ancestor: 2, path: ['a'] } }]
+                            allow: [{ override: true }, { ref: { ancestor: 2, path: ['a'] } }]
                         }
                     }
                 }
@@ -169,7 +169,7 @@ describe('ref', () => {
                                 only: true
                             },
                             type: 'any',
-                            allow: [{ ref: { path: ['...a'], separator: false } }]
+                            allow: [{ override: true }, { ref: { path: ['...a'], separator: false } }]
                         }
                     }
                 }
@@ -525,14 +525,14 @@ describe('ref', () => {
                                 only: true
                             },
                             type: 'any',
-                            allow: [{ ref: { ancestor: 'root', path: ['a'] } }]
+                            allow: [{ override: true }, { ref: { ancestor: 'root', path: ['a'] } }]
                         },
                         d: {
                             flags: {
                                 only: true
                             },
                             type: 'any',
-                            allow: [{ ref: { ancestor: 'root', path: ['a'] } }]
+                            allow: [{ override: true }, { ref: { ancestor: 'root', path: ['a'] } }]
                         }
                     }
                 }
@@ -801,7 +801,7 @@ describe('ref', () => {
                 a: {
                     type: 'any',
                     flags: { only: true },
-                    allow: [{ ref: { path: ['b'], adjust } }]
+                    allow: [{ override: true }, { ref: { path: ['b'], adjust } }]
                 }
             }
         });
@@ -849,7 +849,7 @@ describe('ref', () => {
                 a: {
                     type: 'any',
                     flags: { only: true },
-                    allow: [{ ref: { path: ['b'], map } }]
+                    allow: [{ override: true }, { ref: { path: ['b'], map } }]
                 }
             }
         });
@@ -1344,7 +1344,7 @@ describe('ref', () => {
                             schema: {
                                 type: 'any',
                                 flags: { only: true },
-                                allow: [{ ref: { path: ['a', 'b'] } }]
+                                allow: [{ override: true }, { ref: { path: ['a', 'b'] } }]
                             },
                             subject: { ref: { path: ['a', 'b'] } }
                         }

@@ -1342,6 +1342,8 @@ If `condition` is a schema:
 - cannot specify `is` or `switch`.
 - one of `then` or `otherwise` is required.
 
+When `is`, `then`, or `otherwise` are assigned literal values, the values are compiled into override schemas (`'x'` is compiled into `Joi.valid(Joi.override, 'x')`). This means they will override any base schema the rule is applied to. To append a literal value, use the explicit `Joi.valid('x')` format.
+
 Notes:
 - an invalid combination of schema modifications (e.g. trying to add string rules or a number type) will cause validation to throw an error.
 - because the schema is constructed at validation time, it can have a significant performance impact. Run-time generated schemas are cached, but the first time of each generation will take longer than once it is cached.
@@ -1513,6 +1515,8 @@ If `condition` is a reference:
 If `condition` is a schema:
 - cannot specify `is` or `switch`.
 - one of `then` or `otherwise` is required.
+
+When `is`, `then`, or `otherwise` are assigned literal values, the values are compiled into override schemas (`'x'` is compiled into `Joi.valid(Joi.override, 'x')`). This means they will override any base schema the rule is applied to. To append a literal value, use the explicit `Joi.valid('x')` format.
 
 Note that `alternatives.conditional()` is different than `any.when()`. When you use `any.when()` you end up with composite schema of all the matching conditions while `alternatives.conditional()` will use the first matching schema, ignoring other conditional statements.
 

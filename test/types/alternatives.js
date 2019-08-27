@@ -1028,14 +1028,14 @@ describe('alternatives', () => {
                                         only: true,
                                         presence: 'required'
                                     },
-                                    allow: [5]
+                                    allow: [{ override: true }, 5]
                                 },
                                 then: {
                                     type: 'any',
                                     flags: {
                                         only: true
                                     },
-                                    allow: ['x']
+                                    allow: [{ override: true }, 'x']
                                 }
                             },
                             {
@@ -1046,14 +1046,14 @@ describe('alternatives', () => {
                                         only: true,
                                         presence: 'required'
                                     },
-                                    allow: [6]
+                                    allow: [{ override: true }, 6]
                                 },
                                 otherwise: {
                                     type: 'any',
                                     flags: {
                                         only: true
                                     },
-                                    allow: ['y']
+                                    allow: [{ override: true }, 'y']
                                 }
                             },
                             {
@@ -1062,7 +1062,7 @@ describe('alternatives', () => {
                                     flags: {
                                         only: true
                                     },
-                                    allow: ['z']
+                                    allow: [{ override: true }, 'z']
                                 }
                             }
                         ]
@@ -1076,7 +1076,7 @@ describe('alternatives', () => {
             const schema = Joi.object({
                 a: Joi.alternatives()
                     .conditional('b', { is: 5, then: 'x' })
-                    .try('z'),
+                    .try(Joi.valid('z')),
                 b: Joi.any()
             });
 
@@ -1097,14 +1097,14 @@ describe('alternatives', () => {
                                         only: true,
                                         presence: 'required'
                                     },
-                                    allow: [5]
+                                    allow: [{ override: true }, 5]
                                 },
                                 then: {
                                     type: 'any',
                                     flags: {
                                         only: true
                                     },
-                                    allow: ['x']
+                                    allow: [{ override: true }, 'x']
                                 }
                             },
                             {
@@ -1148,14 +1148,14 @@ describe('alternatives', () => {
                                         only: true,
                                         presence: 'required'
                                     },
-                                    allow: [5]
+                                    allow: [{ override: true }, 5]
                                 },
                                 otherwise: {
                                     type: 'any',
                                     flags: {
                                         only: true
                                     },
-                                    allow: ['y']
+                                    allow: [{ override: true }, 'y']
                                 }
                             },
                             {
@@ -1164,7 +1164,7 @@ describe('alternatives', () => {
                                     flags: {
                                         only: true
                                     },
-                                    allow: ['z']
+                                    allow: [{ override: true }, 'z']
                                 }
                             }
                         ]
@@ -1230,7 +1230,7 @@ describe('alternatives', () => {
                         flags: {
                             only: true
                         },
-                        allow: ['a']
+                        allow: [{ override: true }, 'a']
                     }
                 }]
             };
@@ -1359,7 +1359,7 @@ describe('alternatives', () => {
                     is: {
                         type: 'any',
                         flags: { only: true, presence: 'required' },
-                        allow: [true]
+                        allow: [{ override: true }, true]
                     },
                     ref: { path: ['a'] },
                     then: {
@@ -1386,7 +1386,7 @@ describe('alternatives', () => {
                     is: {
                         type: 'any',
                         flags: { only: true, presence: 'required' },
-                        allow: [true]
+                        allow: [{ override: true }, true]
                     },
                     ref: { path: ['a'] },
                     then: {
@@ -1433,7 +1433,7 @@ describe('alternatives', () => {
                             {
                                 is: {
                                     type: 'any',
-                                    allow: [true],
+                                    allow: [{ override: true }, true],
                                     flags: {
                                         only: true,
                                         presence: 'required'
@@ -1479,7 +1479,7 @@ describe('alternatives', () => {
                             {
                                 is: {
                                     type: 'any',
-                                    allow: [true],
+                                    allow: [{ override: true }, true],
                                     flags: {
                                         only: true,
                                         presence: 'required'
