@@ -581,5 +581,30 @@ describe('Trace', () => {
                 { type: 'entry', path: ['c'] }
             ]);
         });
+
+        it('logs when on sub key', () => {
+
+            const building = Joi.object({
+                a: Joi.object({
+                    name: Joi.string(),
+                    lucky: Joi.string()
+                        .when('name', { is: 'thirteen', then: Joi.valid('no') })
+                })
+            });
+
+            const structure = {
+                a: { name: 'first' }
+            };
+
+            const debug = building.validate(structure, { debug: true }).debug;
+            expect(debug).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'entry', path: ['a'] },
+                { type: 'entry', path: ['a', 'name'] },
+                { type: 'entry', path: ['a', 'lucky', '0.is'] },
+                { type: 'rule', name: 'when', result: '', path: ['a', 'lucky'] },
+                { type: 'entry', path: ['a', 'lucky'] }
+            ]);
+        });
     });
 });
