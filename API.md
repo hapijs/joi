@@ -1328,12 +1328,14 @@ Adds conditions that are evaluated during validation and modify the schema befor
 - `condition` - a key name, [reference](#refkey-options), or a schema.
 - `options` - an object with:
     - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be converted using [Joi.compile](#compileschema-options). By default, the `is` condition schema allows for `undefined` values. Use `.required()` to override. For example, use `is: Joi.number().required()` to guarantee that a **joi** reference exists and is a number.
+    - `not` - the negative version of `is` (`then` and `otherwise` have reverse roles).
     - `then` - if the condition is true, the **joi** schema to use.
     - `otherwise` - if the condition is false, the **joi** schema to use.
     - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`. The last item in the array may also contain `otherwise`.
 
 If `condition` is a reference:
-- if both `is` and `switch` are missing, `is` defaults to `Joi.invalid(null, false, 0, '').required()` (value must be a truthy).
+- if `is`, `not`, and `switch` are missing, `is` defaults to `Joi.invalid(null, false, 0, '').required()` (value must be a truthy).
+- `is` and `not` cannot be used together.
 - one of `then`, `otherwise`, or `switch` is required.
 - cannot use `is` or `then` with `switch`.
 - cannot specify `otherwise` both inside the last `switch` statement and outside.
@@ -1502,12 +1504,14 @@ Adds a conditional alternative schema type, either based on another key value, o
 - `condition` - the key name or [reference](#refkey-options), or a schema.
 - `options` - an object with:
     - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be converted using [Joi.compile](#compileschema-options).
+    - `not` - the negative version of `is` (`then` and `otherwise` have reverse roles).
     - `then` - if the condition is true, the **joi** schema to use.
     - `otherwise` - if the condition is false, the **joi** schema to use.
     - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`. The last item in the array may also contain `otherwise`.
 
 If `condition` is a reference:
-- if both `is` and `switch` are missing, `is` defaults to `Joi.invalid(null, false, 0, '').required()` (value must be a truthy).
+- if `is`, `not`, and `switch` are missing, `is` defaults to `Joi.invalid(null, false, 0, '').required()` (value must be a truthy).
+- `is` and `not` cannot be used together.
 - one of `then`, `otherwise`, or `switch` is required.
 - cannot use `is` or `then` with `switch`.
 - cannot specify `otherwise` both inside the last `switch` statement and outside.

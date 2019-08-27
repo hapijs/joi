@@ -3083,6 +3083,53 @@ describe('any', () => {
             ]);
         });
 
+        it('supports not', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.boolean(),
+                c: Joi.number()
+                    .when('a', { not: false, then: 1 })
+                    .when('b', { not: false, then: 2 })
+            });
+
+            Helper.validate(schema, [
+                [{ c: 0 }, true],
+                [{ c: 1 }, true],
+                [{ c: 2 }, true],
+                [{ a: true, c: 1 }, true],
+                [{ a: true, c: 2 }, false, null, {
+                    message: '"c" must be one of [1]',
+                    details: [{
+                        message: '"c" must be one of [1]',
+                        path: ['c'],
+                        type: 'any.only',
+                        context: { value: 2, label: 'c', key: 'c', valids: [1] }
+                    }]
+                }],
+                [{ b: true, c: 2 }, true],
+                [{ b: true, c: 1 }, false, null, {
+                    message: '"c" must be one of [2]',
+                    details: [{
+                        message: '"c" must be one of [2]',
+                        path: ['c'],
+                        type: 'any.only',
+                        context: { value: 1, label: 'c', key: 'c', valids: [2] }
+                    }]
+                }],
+                [{ a: true, b: true, c: 2 }, true],
+                [{ a: true, b: true, c: 1 }, false, null, {
+                    message: '"c" must be one of [2]',
+                    details: [{
+                        message: '"c" must be one of [2]',
+                        path: ['c'],
+                        type: 'any.only',
+                        context: { value: 1, label: 'c', key: 'c', valids: [2] }
+                    }]
+                }]
+            ]);
+        });
+
         it('defaults is to truthy', () => {
 
             const schema = Joi.object({
