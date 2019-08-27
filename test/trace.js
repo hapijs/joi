@@ -548,5 +548,38 @@ describe('Trace', () => {
                 { type: 'entry', path: ['c'] }
             ]);
         });
+
+        it('logs when forks', () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+
+                b: Joi.number()
+                    .when('a', { is: 1, then: 2, otherwise: 3 })
+                    .when('a', { is: 4, then: 5, otherwise: 6 }),       // This conflicts with the first when()
+
+                c: Joi.number()
+                    .when('a', [
+                        { is: 1, then: 2 },
+                        { is: 3, then: 4 }
+                    ])
+            });
+
+            const debug = schema.validate({ a: 1, b: 6 }, { debug: true }).debug;
+            expect(debug).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'entry', path: ['a'] },
+                { type: 'entry', path: ['b', '0.is'] },
+                { type: 'valid', path: ['b', '0.is'], value: 1 },
+                { type: 'entry', path: ['b', '1.is'] },
+                { type: 'rule', name: 'when', result: '0.then, 1.otherwise', path: ['b'] },
+                { type: 'entry', path: ['b'] },
+                { type: 'valid', path: ['b'], value: 6 },
+                { type: 'entry', path: ['c', '0.0.is'] },
+                { type: 'valid', path: ['c', '0.0.is'], value: 1 },
+                { type: 'rule', name: 'when', result: '0.0.then', path: ['c'] },
+                { type: 'entry', path: ['c'] }
+            ]);
+        });
     });
 });
