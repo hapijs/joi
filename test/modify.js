@@ -18,16 +18,16 @@ describe('Modify', () => {
 
     describe('extract()', () => {
 
-        it('extracts nested schema', () => {
+        it('extracts nested schema with keys', () => {
 
             const d = Joi.number();
             const c = Joi.object({ d });
             const b = Joi.object({ c });
             const a = Joi.object({ b });
 
-            expect(a.extract('b')).to.equal(b);
-            expect(a.extract('b.c.d')).to.equal(d);
-            expect(a.extract(['b', 'c', 'd'])).to.equal(d);
+            expect(a.extract('b')).to.shallow.equal(b);
+            expect(a.extract('b.c.d')).to.shallow.equal(d);
+            expect(a.extract(['b', 'c', 'd'])).to.shallow.equal(d);
         });
 
         it('extracts nested schema with ids', () => {
@@ -37,30 +37,53 @@ describe('Modify', () => {
             const b = Joi.object({ c }).id('B');
             const a = Joi.object({ b });
 
-            expect(a.extract('B')).to.equal(b);
-            expect(a.extract('B.C.D')).to.equal(d);
+            expect(a.extract('B')).to.shallow.equal(b);
+            expect(a.extract('B.C.D')).to.shallow.equal(d);
+        });
+
+        it('extracts nested schema with ids by keys', () => {
+
+            const d = Joi.number().id('D');
+            const c = Joi.object({ d }).id('C');
+            const b = Joi.object({ c }).id('B');
+            const a = Joi.object({ b });
+
+            expect(a.extract('b')).to.shallow.equal(b);
+            expect(a.extract('b.c.d')).to.shallow.equal(d);
+        });
+
+        it('extracts nested schema with duplicate ids', () => {
+
+            const d = Joi.number().id('D');
+            const c = Joi.object({ d }).id('C');
+            const b = Joi.object({ c }).id('B');
+            const a = Joi.object({ b, x: b });
+
+            expect(a.extract('b')).to.shallow.equal(b);
+            expect(a.extract('x')).to.shallow.equal(b);
+            expect(a.extract('b.c.d')).to.shallow.equal(d);
         });
 
         it('extracts nested schema from array', () => {
 
-            const d = Joi.number().id('d');
-            const c = Joi.object({ d }).id('c');
+            const d = Joi.number().id('D');
+            const c = Joi.object({ d }).id('C');
             const b = Joi.object({ c }).id('b');
             const a = Joi.array().items(b);
 
-            expect(a.extract('b')).to.equal(b);
-            expect(a.extract('b.c.d')).to.equal(d);
+            expect(a.extract('b')).to.shallow.equal(b);
+            expect(a.extract('b.c.d')).to.shallow.equal(d);
         });
 
         it('extracts nested schema from alternatives', () => {
 
-            const d = Joi.number().id('d');
-            const c = Joi.object({ d }).id('c');
+            const d = Joi.number().id('D');
+            const c = Joi.object({ d }).id('C');
             const b = Joi.object({ c }).id('b');
             const a = Joi.alternatives(b);
 
-            expect(a.extract('b')).to.equal(b);
-            expect(a.extract('b.c.d')).to.equal(d);
+            expect(a.extract('b')).to.shallow.equal(b);
+            expect(a.extract('b.c.d')).to.shallow.equal(d);
         });
 
         it('extracts nested schema after object key override', () => {
@@ -71,8 +94,8 @@ describe('Modify', () => {
             const a = Joi.object({ b });
             const x = a.keys({ b: c });
 
-            expect(x.extract('b')).to.equal(c);
-            expect(x.extract('b.d')).to.equal(d);
+            expect(x.extract('b')).to.shallow.equal(c);
+            expect(x.extract('b.d')).to.shallow.equal(d);
         });
 
         it('extracts nested schema after object key override and custom ids', () => {
@@ -83,11 +106,11 @@ describe('Modify', () => {
             const a = Joi.object({ b }).id('A');
             const x = a.keys({ b: c });
 
-            expect(x.extract('C')).to.equal(c);
-            expect(x.extract('C.D')).to.equal(d);
+            expect(x.extract('C')).to.shallow.equal(c);
+            expect(x.extract('C.D')).to.shallow.equal(d);
         });
 
-        it('extracts nested schema after object concat', () => {
+        it('extracts nested schema after object concat (keys)', () => {
 
             const d = Joi.number();
             const c = Joi.object({ d });
@@ -95,8 +118,20 @@ describe('Modify', () => {
             const a = Joi.object({ b });
             const x = a.concat(b);
 
-            expect(x.extract('b')).to.equal(b);
-            expect(x.extract('c')).to.equal(c);
+            expect(x.extract('b')).to.shallow.equal(b);
+            expect(x.extract('c')).to.shallow.equal(c);
+        });
+
+        it('extracts nested schema after object concat (ids)', () => {
+
+            const d = Joi.number().id('D');
+            const c = Joi.object({ d }).id('C');
+            const b = Joi.object({ c }).id('B');
+            const a = Joi.object({ b }).id('A');
+            const x = a.concat(b);
+
+            expect(x.extract('B')).to.shallow.equal(b);
+            expect(x.extract('C')).to.shallow.equal(c);
         });
 
         it('errors on missing schema', () => {
@@ -108,6 +143,14 @@ describe('Modify', () => {
 
             expect(() => a.extract(['b', 'c', 'x'])).to.throw('Schema does not contain path b.c.x');
         });
+
+        it('errors on conflicting schema ids', () => {
+
+            const a = Joi.number().id('A');
+            const b = Joi.string().id('A');
+
+            expect(() => Joi.object({ a, b })).to.throw('Cannot add different schemas with the same id: A');
+        });
     });
 
     describe('fork()', () => {
@@ -118,6 +161,30 @@ describe('Modify', () => {
             const after = Joi.string().empty(Joi.number().min(10).id('x'));
 
             expect(before.fork('x', (schema) => schema.min(10))).to.equal(after, { skip: ['_ruleset'] });
+        });
+
+        it('adjusts reused schema in multiple places', () => {
+
+            const shared = Joi.number().id('x');
+
+            const before = Joi.object({
+                a: shared,
+                b: shared
+            });
+
+            expect(before.extract('a')).to.shallow.equal(before.extract('b'));
+
+            const sharedAfter = shared.min(10);
+            const after = Joi.object({
+                a: sharedAfter,
+                b: sharedAfter
+            });
+
+            expect(after.extract('a')).to.shallow.equal(after.extract('b'));
+
+            const modified = before.fork('x', (schema) => schema.min(10));
+            expect(modified).to.equal(after);
+            expect(modified.extract('a')).to.shallow.equal(modified.extract('b'));
         });
 
         describe('alternatives', () => {
