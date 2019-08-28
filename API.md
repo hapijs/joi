@@ -2093,13 +2093,26 @@ Possible validation errors: [`function.minArity`](#functionminarity)
 
 ### `link(ref)` - inherits from `Any`
 
-Links to another schema node and reuses it for validation where:
-- `ref` - the reference to the linked schema node. Cannot reference itself or its children as well
-  as other links. Follows the same rules as value references.
+Links to another schema node and reuses it for validation, typically for creative recursive schemas, where:
+- `ref` - the reference to the linked schema node. Cannot reference itself or its children as well as other links. Links can be expressed in relative terms like value references (`Joi.link('...')`), in absolute terms from the schema run-time root (`Joi.link('/a')`), or using schema ids implicitly using object keys or explicitly using `any.id()` (`Joi.link('#a.b.c')`).
 
 Supports the methods of the [`any()`](#any) type.
 
-Link is useful for creating recursive schemas:
+Names links are recommended for most use cases as they are easy to reason and understand, and when mistakes are made, they simply error with invalid link message. Relative links are often hard to follow, especially when they are nested in array or alternatives rules. Absolute links are useful only when the schema is never reused inside another schema as the root is the run-time root of the schema being validated, not the current schema root.
+
+Named links:
+
+```js
+const person = Joi.object({
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    children: Joi.array()
+        .items(Joi.link('#person'))
+})
+  .id('person');
+```
+
+Relative links:
 
 ```js
 const person = Joi.object({
@@ -2110,6 +2123,17 @@ const person = Joi.object({
         // . - the link
         // .. - the children array
         // ... - the person object
+});
+```
+
+Absolute links:
+
+```js
+const person = Joi.object({
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    children: Joi.array()
+        .items(Joi.link('/'))
 });
 ```
 
