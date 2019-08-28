@@ -54,6 +54,23 @@ describe('link', () => {
         expect(schema.validate({ a: { b: { c: { d: {} } }, e: { f: 2 } } }).error).to.be.an.error('"a.b.c.d" must be one of [string, number]');
     });
 
+    it('links shared schema', () => {
+
+        const shared = Joi.number().id('shared');
+
+        const schema = Joi.object({
+            a: [Joi.string(), Joi.link('#shared')],
+            b: Joi.link('#type.a')
+        })
+            .shared(Joi.any().id('ignore'))
+            .shared(shared)
+            .id('type');
+
+        expect(schema.validate({ a: 1, b: 2 }).error).to.not.exist();
+        expect(schema.validate({ a: '1', b: '2' }).error).to.not.exist();
+        expect(schema.validate({ a: [1], b: '2' }).error).to.be.an.error('"a" must be one of [string, number]');
+    });
+
     it('links schema nodes', () => {
 
         const schema = Joi.object({

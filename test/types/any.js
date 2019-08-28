@@ -79,6 +79,15 @@ describe('any', () => {
         });
     });
 
+    describe('shared()', () => {
+
+        it('errors on missing id', () => {
+
+            expect(() => Joi.any().shared(Joi.number())).to.throw('Schema must be a schema with an id');
+            expect(() => Joi.any().shared(1)).to.throw('Schema must be a schema with an id');
+        });
+    });
+
     describe('warning()', () => {
 
         it('errors on invalid code', () => {

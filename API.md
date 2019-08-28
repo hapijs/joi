@@ -57,6 +57,7 @@
     - [`any.result(mode)`](#anyresultmode)
     - [`any.rule(options)`](#anyruleoptions)
     - [`any.ruleset` - aliases: `$`](#anyruleset---aliases-)
+    - [`any.shared(schema)`](#anysharedschema)
     - [`any.strict(isStrict)`](#anystrictisstrict)
     - [`any.strip([enabled])`](#anystripenabled)
     - [`any.tag(...tags)`](#anytagtags)
@@ -1116,6 +1117,20 @@ const schema = Joi.number().ruleset.min(1).max(10).rule({ message: 'Number must 
 
 ```js
 const schema = Joi.number().$.min(1).max(10).rule({ message: 'Number must be between 1 and 10' });
+```
+
+#### `any.shared(schema)`
+
+Registers a schema to be used by decendents of the current schema in named link references, where:
+- `schema` - a **joi** schema with an id.
+
+```js
+  const schema = Joi.object({
+      a: [Joi.string(), Joi.link('#x')],
+      b: Joi.link('#type.a')
+  })
+      .shared(Joi.number().id('x'))
+      .id('type');
 ```
 
 #### `any.strict(isStrict)`
