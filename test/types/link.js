@@ -21,6 +21,39 @@ describe('link', () => {
         expect(() => Joi.link().validate(1)).to.throw('Uninitialized link schema');
     });
 
+    it('links named schema (explicit)', () => {
+
+        const schema = Joi.object({
+            a: [Joi.string(), Joi.number()],
+            b: Joi.link('#type.a')
+        })
+            .id('type');
+
+        expect(schema.validate({ a: 1, b: 2 }).error).to.not.exist();
+        expect(schema.validate({ a: '1', b: '2' }).error).to.not.exist();
+        expect(schema.validate({ a: [1], b: '2' }).error).to.be.an.error('"a" must be one of [string, number]');
+    });
+
+    it('links named schema (implicit)', () => {
+
+        const schema = Joi.object({
+            a: Joi.object({
+                b: Joi.object({
+                    c: Joi.object({
+                        d: Joi.link('#a.e.f')
+                    })
+                }),
+                e: Joi.object({
+                    f: [Joi.string(), Joi.number()]
+                })
+            })
+        });
+
+        expect(schema.validate({ a: { b: { c: { d: '1' } }, e: { f: '2' } } }).error).to.not.exist();
+        expect(schema.validate({ a: { b: { c: { d: 1 } }, e: { f: 2 } } }).error).to.not.exist();
+        expect(schema.validate({ a: { b: { c: { d: {} } }, e: { f: 2 } } }).error).to.be.an.error('"a.b.c.d" must be one of [string, number]');
+    });
+
     it('links schema nodes', () => {
 
         const schema = Joi.object({
@@ -187,7 +220,7 @@ describe('link', () => {
 
     it('errors on invalid reference type', () => {
 
-        expect(() => Joi.link('$x')).to.throw('Invalid reference type');
+        expect(() => Joi.link('$x')).to.throw('Invalid reference type: global');
     });
 
     it('errors on out of boundaries reference', () => {
@@ -199,7 +232,7 @@ describe('link', () => {
         expect(schema.validate({ x: 123 }).error).to.be.an.error('"x" contains link reference "ref:..." outside of schema boundaries');
     });
 
-    it('errors on missing reference', () => {
+    it('errors on missing reference (relative)', () => {
 
         const schema = Joi.object({
             x: Joi.link('y')
@@ -208,7 +241,16 @@ describe('link', () => {
         expect(schema.validate({ x: 123 }).error).to.be.an.error('"x" contains link reference to non-existing "ref:y" schema');
     });
 
-    it('errors on missing reference', () => {
+    it('errors on missing reference (named)', () => {
+
+        const schema = Joi.object({
+            x: Joi.link('#y')
+        });
+
+        expect(schema.validate({ x: 123 }).error).to.be.an.error('"x" contains link reference "ref:local:y" outside of schema boundaries');
+    });
+
+    it('errors on referenced link', () => {
 
         const schema = Joi.object({
             x: Joi.link('y'),
