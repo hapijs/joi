@@ -2100,6 +2100,8 @@ Supports the methods of the [`any()`](#any) type.
 
 Names links are recommended for most use cases as they are easy to reason and understand, and when mistakes are made, they simply error with invalid link message. Relative links are often hard to follow, especially when they are nested in array or alternatives rules. Absolute links are useful only when the schema is never reused inside another schema as the root is the run-time root of the schema being validated, not the current schema root.
 
+Note that named links must be found in a direct ancestor of the link. The names are searched by iterating over the chain of schemas from the current schema to the root. To reach an uncle or cousin, you must use the name of a common ancestor such as a grandparent and then walk down the tree.
+
 Named links:
 
 ```js
