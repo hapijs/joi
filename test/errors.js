@@ -516,6 +516,21 @@ describe('errors', () => {
         }
     });
 
+    it('changes label value', () => {
+
+        const schema = Joi.object({
+            x: Joi.object({
+                y: Joi.object({
+                    z: Joi.valid('z')
+                })
+            })
+        });
+
+        expect(schema.validate({ x: { y: { z: 'o' } } }).error).to.be.an.error('"x.y.z" must be [z]');
+        expect(schema.validate({ x: { y: { z: 'o' } } }, { errors: { label: false } }).error).to.be.an.error('must be [z]');
+        expect(schema.validate({ x: { y: { z: 'o' } } }, { errors: { label: 'key' } }).error).to.be.an.error('"z" must be [z]');
+    });
+
     describe('annotate()', () => {
 
         it('annotates error', () => {
@@ -945,8 +960,8 @@ describe('errors', () => {
 
             const value = Joi.number().min(1);
             const err = schema.validate(value).error;
-            expect(err.message).equal('"type" must be one of [string]');
-            expect(err.annotate()).to.contain('"type" must be one of [string]');
+            expect(err.message).equal('"type" must be [string]');
+            expect(err.annotate()).to.contain('"type" must be [string]');
             expect(value).to.equal(Joi.number().min(1));
         });
     });

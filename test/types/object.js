@@ -631,27 +631,27 @@ describe('object', () => {
             [{ foo: 'bar' }, true, { context: { x: 'bar' } }],
             [{ foo: 'bar' }, true, { context: { x: ['baz', 'bar'] } }],
             [{ foo: 'bar' }, false, { context: { x: 'baz' } }, {
-                message: '"foo" must be one of [ref:global:x]',
+                message: '"foo" must be [ref:global:x]',
                 details: [{
-                    message: '"foo" must be one of [ref:global:x]',
+                    message: '"foo" must be [ref:global:x]',
                     path: ['foo'],
                     type: 'any.only',
                     context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
                 }]
             }],
             [{ foo: 'bar' }, false, { context: { x: ['baz', 'qux'] } }, {
-                message: '"foo" must be one of [ref:global:x]',
+                message: '"foo" must be [ref:global:x]',
                 details: [{
-                    message: '"foo" must be one of [ref:global:x]',
+                    message: '"foo" must be [ref:global:x]',
                     path: ['foo'],
                     type: 'any.only',
                     context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
                 }]
             }],
             [{ foo: 'bar' }, false, null, {
-                message: '"foo" must be one of [ref:global:x]',
+                message: '"foo" must be [ref:global:x]',
                 details: [{
-                    message: '"foo" must be one of [ref:global:x]',
+                    message: '"foo" must be [ref:global:x]',
                     path: ['foo'],
                     type: 'any.only',
                     context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
@@ -1684,9 +1684,9 @@ describe('object', () => {
                 [{ a: 1 }, true, null, { a: 1 }],
                 [{ a: '1' }, true, null, { a: 1 }],
                 [{ a: '2' }, false, null, {
-                    message: '"a" must be one of [1]',
+                    message: '"a" must be [1]',
                     details: [{
-                        message: '"a" must be one of [1]',
+                        message: '"a" must be [1]',
                         path: ['a'],
                         type: 'any.only',
                         context: { value: 2, valids: [1], label: 'a', key: 'a' }
@@ -3126,7 +3126,7 @@ describe('object', () => {
             }).pattern(/\d+/, Joi.boolean()).pattern(/\w\w+/, 'x');
 
             const err = schema.validate({ bb: 'y', 5: 'x' }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"5" must be a boolean. "bb" must be one of [x]');
+            expect(err).to.be.an.error('"5" must be a boolean. "bb" must be [x]');
             expect(err.details).to.equal([
                 {
                     message: '"5" must be a boolean',
@@ -3135,7 +3135,7 @@ describe('object', () => {
                     context: { label: '5', key: '5', value: 'x' }
                 },
                 {
-                    message: '"bb" must be one of [x]',
+                    message: '"bb" must be [x]',
                     path: ['bb'],
                     type: 'any.only',
                     context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
@@ -3185,7 +3185,7 @@ describe('object', () => {
                 .pattern(Joi.string().length(2), 'x');
 
             const err = schema.validate({ bb: 'y', 5: 'x' }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"5" must be a boolean. "bb" must be one of [x]');
+            expect(err).to.be.an.error('"5" must be a boolean. "bb" must be [x]');
             expect(err.details).to.equal([
                 {
                     message: '"5" must be a boolean',
@@ -3194,7 +3194,7 @@ describe('object', () => {
                     context: { label: '5', key: '5', value: 'x' }
                 },
                 {
-                    message: '"bb" must be one of [x]',
+                    message: '"bb" must be [x]',
                     path: ['bb'],
                     type: 'any.only',
                     context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
@@ -3308,7 +3308,7 @@ describe('object', () => {
                     5: 'x'
                 }
             }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"x.5" must be a boolean. "x.bb" must be one of [x]');
+            expect(err).to.be.an.error('"x.5" must be a boolean. "x.bb" must be [x]');
             expect(err.details).to.equal([
                 {
                     message: '"x.5" must be a boolean',
@@ -3317,7 +3317,7 @@ describe('object', () => {
                     context: { label: 'x.5', key: '5', value: 'x' }
                 },
                 {
-                    message: '"x.bb" must be one of [x]',
+                    message: '"x.bb" must be [x]',
                     path: ['x', 'bb'],
                     type: 'any.only',
                     context: { value: 'y', valids: ['x'], label: 'x.bb', key: 'bb' }
@@ -3339,7 +3339,7 @@ describe('object', () => {
                     5: 'x'
                 }
             }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"x.5" must be a boolean. "x.bb" must be one of [x]');
+            expect(err).to.be.an.error('"x.5" must be a boolean. "x.bb" must be [x]');
             expect(err.details).to.equal([
                 {
                     message: '"x.5" must be a boolean',
@@ -3348,7 +3348,7 @@ describe('object', () => {
                     context: { label: 'x.5', key: '5', value: 'x' }
                 },
                 {
-                    message: '"x.bb" must be one of [x]',
+                    message: '"x.bb" must be [x]',
                     path: ['x', 'bb'],
                     type: 'any.only',
                     context: { value: 'y', valids: ['x'], label: 'x.bb', key: 'bb' }

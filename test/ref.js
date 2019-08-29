@@ -271,10 +271,10 @@ describe('ref', () => {
                     },
                     h: 4
                 }, false, null, {
-                    message: '"a.b.ix" must be one of [ref:...i]',
+                    message: '"a.b.ix" must be [ref:...i]',
                     details: [
                         {
-                            message: '"a.b.ix" must be one of [ref:...i]',
+                            message: '"a.b.ix" must be [ref:...i]',
                             path: ['a', 'b', 'ix'],
                             type: 'any.only',
                             context: {
@@ -360,10 +360,10 @@ describe('ref', () => {
                     },
                     h: 4
                 }, false, null, {
-                    message: '"a.b.ix" must be one of [ref:...i]',
+                    message: '"a.b.ix" must be [ref:...i]',
                     details: [
                         {
-                            message: '"a.b.ix" must be one of [ref:...i]',
+                            message: '"a.b.ix" must be [ref:...i]',
                             path: ['a', 'b', 'ix'],
                             type: 'any.only',
                             context: {
@@ -494,7 +494,7 @@ describe('ref', () => {
         expect(schema.validate(value).error).to.not.exist();
 
         value.d = 6;
-        expect(schema.validate(value).error).to.be.an.error('"d" must be one of [ref:a.b.2.y.w]');
+        expect(schema.validate(value).error).to.be.an.error('"d" must be [ref:a.b.2.y.w]');
     });
 
     it('reaches root', () => {
@@ -570,7 +570,7 @@ describe('ref', () => {
             d: 5
         };
 
-        expect(schema.validate(value).error).to.be.an.error('"d" must be one of [ref:a.b.2.y.w]');
+        expect(schema.validate(value).error).to.be.an.error('"d" must be [ref:a.b.2.y.w]');
     });
 
     it('errors on invalid separator)', () => {
@@ -626,10 +626,10 @@ describe('ref', () => {
             [{ x: [1] }, true],
             [{ x: [2, 2] }, true],
             [{ x: [2, 2, 2] }, false, null, {
-                message: '"x[0]" must be one of [ref:length]',
+                message: '"x[0]" must be [ref:length]',
                 details: [
                     {
-                        message: '"x[0]" must be one of [ref:length]',
+                        message: '"x[0]" must be [ref:length]',
                         path: ['x', 0],
                         type: 'any.only',
                         context: {
@@ -658,10 +658,10 @@ describe('ref', () => {
             [{ x: [7, 7, 7] }, true],
             [{ x: [2, 2] }, true],
             [{ x: [2, 2, 2] }, false, null, {
-                message: '"x[0]" must be one of [7]',
+                message: '"x[0]" must be [7]',
                 details: [
                     {
-                        message: '"x[0]" must be one of [7]',
+                        message: '"x[0]" must be [7]',
                         path: ['x', 0],
                         type: 'any.only',
                         context: { value: 2, valids: [7], key: 0, label: 'x[0]' }
@@ -735,9 +735,9 @@ describe('ref', () => {
 
         const err = schema.validate({ a: 5, b: 6 }).error;
 
-        expect(err).to.be.an.error('"a" must be one of [ref:b]');
+        expect(err).to.be.an.error('"a" must be [ref:b]');
         expect(err.details).to.equal([{
-            message: '"a" must be one of [ref:b]',
+            message: '"a" must be [ref:b]',
             path: ['a'],
             type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -745,9 +745,9 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{ a: 5 }, false, null, {
-                message: '"a" must be one of [ref:b]',
+                message: '"a" must be [ref:b]',
                 details: [{
-                    message: '"a" must be one of [ref:b]',
+                    message: '"a" must be [ref:b]',
                     path: ['a'],
                     type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -773,18 +773,18 @@ describe('ref', () => {
             [{ a: 10, b: 5 }, true],
             [{ a: 10, b: '5' }, true],
             [{ a: 5 }, false, null, {
-                message: '"a" must be one of [ref:b]',
+                message: '"a" must be [ref:b]',
                 details: [{
-                    message: '"a" must be one of [ref:b]',
+                    message: '"a" must be [ref:b]',
                     path: ['a'],
                     type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
             [{ a: 5, b: 5 }, false, null, {
-                message: '"a" must be one of [ref:b]',
+                message: '"a" must be [ref:b]',
                 details: [{
-                    message: '"a" must be one of [ref:b]',
+                    message: '"a" must be [ref:b]',
                     path: ['a'],
                     type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -821,18 +821,18 @@ describe('ref', () => {
             [{ a: 10, b: 5 }, true],
             [{ a: 10, b: '5' }, true],
             [{ a: 5 }, false, null, {
-                message: '"a" must be one of [ref:b]',
+                message: '"a" must be [ref:b]',
                 details: [{
-                    message: '"a" must be one of [ref:b]',
+                    message: '"a" must be [ref:b]',
                     path: ['a'],
                     type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
             [{ a: 5, b: 5 }, false, null, {
-                message: '"a" must be one of [ref:b]',
+                message: '"a" must be [ref:b]',
                 details: [{
-                    message: '"a" must be one of [ref:b]',
+                    message: '"a" must be [ref:b]',
                     path: ['a'],
                     type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -864,9 +864,9 @@ describe('ref', () => {
         });
 
         const err = schema.validate({ a: 5, '': 6 }).error;
-        expect(err).to.be.an.error('"a" must be one of [ref:]');
+        expect(err).to.be.an.error('"a" must be [ref:]');
         expect(err.details).to.equal([{
-            message: '"a" must be one of [ref:]',
+            message: '"a" must be [ref:]',
             path: ['a'],
             type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -874,9 +874,9 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{ a: 5 }, false, null, {
-                message: '"a" must be one of [ref:]',
+                message: '"a" must be [ref:]',
                 details: [{
-                    message: '"a" must be one of [ref:]',
+                    message: '"a" must be [ref:]',
                     path: ['a'],
                     type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -900,9 +900,9 @@ describe('ref', () => {
 
         const err = schema.validate({ a: 5, b: { c: 6 } }).error;
 
-        expect(err).to.be.an.error('"a" must be one of [ref:b.c]');
+        expect(err).to.be.an.error('"a" must be [ref:b.c]');
         expect(err.details).to.equal([{
-            message: '"a" must be one of [ref:b.c]',
+            message: '"a" must be [ref:b.c]',
             path: ['a'],
             type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -910,9 +910,9 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{ a: 5 }, false, null, {
-                message: '"a" must be one of [ref:b.c]',
+                message: '"a" must be [ref:b.c]',
                 details: [{
-                    message: '"a" must be one of [ref:b.c]',
+                    message: '"a" must be [ref:b.c]',
                     path: ['a'],
                     type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -1055,17 +1055,17 @@ describe('ref', () => {
                             context: {
                                 key: 'b',
                                 label: 'b',
-                                message: '"b" must be one of [ref:a.c]. "b" must be one of [ref:c]',
+                                message: '"b" must be [ref:a.c]. "b" must be [ref:c]',
                                 value: 7,
                                 details: [
                                     {
-                                        message: '"b" must be one of [ref:a.c]',
+                                        message: '"b" must be [ref:a.c]',
                                         path: ['b'],
                                         type: 'any.only',
                                         context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
                                     },
                                     {
-                                        message: '"b" must be one of [ref:c]',
+                                        message: '"b" must be [ref:c]',
                                         path: ['b'],
                                         type: 'any.only',
                                         context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
@@ -1110,9 +1110,9 @@ describe('ref', () => {
         });
 
         const err = schema.validate({ a: 5, b: 6 }, { context: { x: 22 } }).error;
-        expect(err).to.be.an.error('"a" must be one of [ref:global:x]');
+        expect(err).to.be.an.error('"a" must be [ref:global:x]');
         expect(err.details).to.equal([{
-            message: '"a" must be one of [ref:global:x]',
+            message: '"a" must be [ref:global:x]',
             path: ['a'],
             type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -1120,9 +1120,9 @@ describe('ref', () => {
 
         Helper.validateOptions(schema, [
             [{ a: 5 }, false, null, {
-                message: '"a" must be one of [ref:global:x]',
+                message: '"a" must be [ref:global:x]',
                 details: [{
-                    message: '"a" must be one of [ref:global:x]',
+                    message: '"a" must be [ref:global:x]',
                     path: ['a'],
                     type: 'any.only',
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -1132,9 +1132,9 @@ describe('ref', () => {
             [{ b: 5 }, true],
             [{ a: 22, b: 5 }, true],
             [{ a: '22', b: '5' }, false, null, {
-                message: '"a" must be one of [ref:global:x]',
+                message: '"a" must be [ref:global:x]',
                 details: [{
-                    message: '"a" must be one of [ref:global:x]',
+                    message: '"a" must be [ref:global:x]',
                     path: ['a'],
                     type: 'any.only',
                     context: { value: '22', valids: [ref], label: 'a', key: 'a' }

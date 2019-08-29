@@ -33,9 +33,9 @@ describe('cast', () => {
 
             Helper.validate(Joi.compile(null), [
                 ['a', false, null, {
-                    message: '"value" must be one of [null]',
+                    message: '"value" must be [null]',
                     details: [{
-                        message: '"value" must be one of [null]',
+                        message: '"value" must be [null]',
                         path: [],
                         type: 'any.only',
                         context: { value: 'a', valids: [null], label: 'value' }
@@ -49,9 +49,9 @@ describe('cast', () => {
 
             Helper.validate(Joi.compile(5), [
                 [6, false, null, {
-                    message: '"value" must be one of [5]',
+                    message: '"value" must be [5]',
                     details: [{
-                        message: '"value" must be one of [5]',
+                        message: '"value" must be [5]',
                         path: [],
                         type: 'any.only',
                         context: { value: 6, valids: [5], label: 'value' }
@@ -65,9 +65,9 @@ describe('cast', () => {
 
             Helper.validate(Joi.compile('5'), [
                 ['6', false, null, {
-                    message: '"value" must be one of [5]',
+                    message: '"value" must be [5]',
                     details: [{
-                        message: '"value" must be one of [5]',
+                        message: '"value" must be [5]',
                         path: [],
                         type: 'any.only',
                         context: { value: '6', valids: ['5'], label: 'value' }
@@ -81,9 +81,9 @@ describe('cast', () => {
 
             Helper.validate(Joi.compile(true), [
                 [false, false, null, {
-                    message: '"value" must be one of [true]',
+                    message: '"value" must be [true]',
                     details: [{
-                        message: '"value" must be one of [true]',
+                        message: '"value" must be [true]',
                         path: [],
                         type: 'any.only',
                         context: { value: false, valids: [true], label: 'value' }
@@ -101,9 +101,9 @@ describe('cast', () => {
                 [new Date(now), true],
                 [now, true],
                 [now * 2, false, null, {
-                    message: `"value" must be one of [${dnow.toISOString()}]`,
+                    message: `"value" must be [${dnow.toISOString()}]`,
                     details: [{
-                        message: `"value" must be one of [${dnow.toISOString()}]`,
+                        message: `"value" must be [${dnow.toISOString()}]`,
                         path: [],
                         type: 'any.only',
                         context: { value: new Date(now * 2), valids: [dnow], label: 'value' }
@@ -126,18 +126,18 @@ describe('cast', () => {
                             path: [],
                             type: 'alternatives.match',
                             context: {
-                                message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
+                                message: '"value" must be [key]. "value" must be [5]. "value" must be of type object',
                                 label: 'value',
                                 value: 'other',
                                 details: [
                                     {
-                                        message: '"value" must be one of [key]',
+                                        message: '"value" must be [key]',
                                         path: [],
                                         type: 'any.only',
                                         context: { value: 'other', valids: ['key'], label: 'value' }
                                     },
                                     {
-                                        message: '"value" must be one of [5]',
+                                        message: '"value" must be [5]',
                                         path: [],
                                         type: 'any.only',
                                         context: { value: 'other', valids: [5], label: 'value' }
@@ -161,18 +161,18 @@ describe('cast', () => {
                             path: [],
                             type: 'alternatives.match',
                             context: {
-                                message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
+                                message: '"value" must be [key]. "value" must be [5]. "value" must be of type object',
                                 label: 'value',
                                 value: 6,
                                 details: [
                                     {
-                                        message: '"value" must be one of [key]',
+                                        message: '"value" must be [key]',
                                         path: [],
                                         type: 'any.only',
                                         context: { value: 6, valids: ['key'], label: 'value' }
                                     },
                                     {
-                                        message: '"value" must be one of [5]',
+                                        message: '"value" must be [5]',
                                         path: [],
                                         type: 'any.only',
                                         context: { value: 6, valids: [5], label: 'value' }
@@ -196,18 +196,18 @@ describe('cast', () => {
                             path: [],
                             type: 'alternatives.match',
                             context: {
-                                message: '"value" must be one of [key]. "value" must be one of [5]. "c" is not allowed',
+                                message: '"value" must be [key]. "value" must be [5]. "c" is not allowed',
                                 label: 'value',
                                 value: { c: 5 },
                                 details: [
                                     {
-                                        message: '"value" must be one of [key]',
+                                        message: '"value" must be [key]',
                                         path: [],
                                         type: 'any.only',
                                         context: { value: { c: 5 }, valids: ['key'], label: 'value' }
                                     },
                                     {
-                                        message: '"value" must be one of [5]',
+                                        message: '"value" must be [5]',
                                         path: [],
                                         type: 'any.only',
                                         context: { value: { c: 5 }, valids: [5], label: 'value' }
@@ -235,23 +235,23 @@ describe('cast', () => {
                             type: 'alternatives.match',
                             context: {
                                 label: 'value',
-                                message: '"value" must be one of [key]. "value" must be one of [5]. "a" must be one of [true]',
+                                message: '"value" must be [key]. "value" must be [5]. "a" must be [true]',
                                 value: { a: 5, b: 'a' },
                                 details: [
                                     {
-                                        message: '"value" must be one of [key]',
+                                        message: '"value" must be [key]',
                                         path: [],
                                         type: 'any.only',
                                         context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
                                     },
                                     {
-                                        message: '"value" must be one of [5]',
+                                        message: '"value" must be [5]',
                                         path: [],
                                         type: 'any.only',
                                         context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
                                     },
                                     {
-                                        message: '"a" must be one of [true]',
+                                        message: '"a" must be [true]',
                                         path: ['a'],
                                         type: 'any.only',
                                         context: { label: 'a', key: 'a', value: 5, valids: [true] }

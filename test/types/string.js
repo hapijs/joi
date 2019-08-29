@@ -6869,9 +6869,9 @@ describe('string', () => {
                 [{ a: 'abc', b: 4, c: 42 }, true],
                 [{ a: 'abc', b: 3, c: 0 }, true],
                 [{ a: 'abc', b: 3, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
+                    message: '"c" must be [0]',
                     details: [{
-                        message: '"c" must be one of [0]',
+                        message: '"c" must be [0]',
                         path: ['c'],
                         type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }

@@ -345,9 +345,9 @@ describe('date', () => {
                 [{ a: 456, b: 123, c: 0 }, true],
                 [{ a: 123, b: 123, c: 42 }, true],
                 [{ a: 456, b: 123, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
+                    message: '"c" must be [0]',
                     details: [{
-                        message: '"c" must be one of [0]',
+                        message: '"c" must be [0]',
                         path: ['c'],
                         type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
@@ -1088,18 +1088,18 @@ describe('date', () => {
                 [{ a: 123, b: 456, c: 42 }, true],
                 [{ a: 456, b: 123, c: 0 }, true],
                 [{ a: 123, b: 123, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
+                    message: '"c" must be [0]',
                     details: [{
-                        message: '"c" must be one of [0]',
+                        message: '"c" must be [0]',
                         path: ['c'],
                         type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
                     }]
                 }],
                 [{ a: 456, b: 123, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
+                    message: '"c" must be [0]',
                     details: [{
-                        message: '"c" must be one of [0]',
+                        message: '"c" must be [0]',
                         path: ['c'],
                         type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }

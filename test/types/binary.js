@@ -39,27 +39,27 @@ describe('binary', () => {
             [hello, true],
             [Buffer.from('hello'), true],
             ['goodbye', false, null, {
-                message: '"value" must be one of [hello]',
+                message: '"value" must be [hello]',
                 details: [{
-                    message: '"value" must be one of [hello]',
+                    message: '"value" must be [hello]',
                     path: [],
                     type: 'any.only',
                     context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
                 }]
             }],
             [Buffer.from('goodbye'), false, null, {
-                message: '"value" must be one of [hello]',
+                message: '"value" must be [hello]',
                 details: [{
-                    message: '"value" must be one of [hello]',
+                    message: '"value" must be [hello]',
                     path: [],
                     type: 'any.only',
                     context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
                 }]
             }],
             [Buffer.from('HELLO'), false, null, {
-                message: '"value" must be one of [hello]',
+                message: '"value" must be [hello]',
                 details: [{
-                    message: '"value" must be one of [hello]',
+                    message: '"value" must be [hello]',
                     path: [],
                     type: 'any.only',
                     context: { value: Buffer.from('HELLO'), valids: [hello], label: 'value' }

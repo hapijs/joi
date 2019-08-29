@@ -37,9 +37,9 @@ describe('Joi', () => {
 
         Helper.validate(b, [
             ['a', false, null, {
-                message: '"value" must be one of [b]',
+                message: '"value" must be [b]',
                 details: [{
-                    message: '"value" must be one of [b]',
+                    message: '"value" must be [b]',
                     path: [],
                     type: 'any.only',
                     context: { value: 'a', valids: ['b'], label: 'value' }
@@ -47,9 +47,9 @@ describe('Joi', () => {
             }],
             ['b', true],
             [5, false, null, {
-                message: '"value" must be one of [b]',
+                message: '"value" must be [b]',
                 details: [{
-                    message: '"value" must be one of [b]',
+                    message: '"value" must be [b]',
                     path: [],
                     type: 'any.only',
                     context: { value: 5, valids: ['b'], label: 'value' }
@@ -72,18 +72,18 @@ describe('Joi', () => {
                         path: [],
                         type: 'alternatives.match',
                         context: {
-                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
+                            message: '"value" must be [key]. "value" must be [5]. "value" must be of type object',
                             label: 'value',
                             value: 'other',
                             details: [
                                 {
-                                    message: '"value" must be one of [key]',
+                                    message: '"value" must be [key]',
                                     path: [],
                                     type: 'any.only',
                                     context: { value: 'other', valids: ['key'], label: 'value' }
                                 },
                                 {
-                                    message: '"value" must be one of [5]',
+                                    message: '"value" must be [5]',
                                     path: [],
                                     type: 'any.only',
                                     context: { value: 'other', valids: [5], label: 'value' }
@@ -107,18 +107,18 @@ describe('Joi', () => {
                         path: [],
                         type: 'alternatives.match',
                         context: {
-                            message: '"value" must be one of [key]. "value" must be one of [5]. "value" must be of type object',
+                            message: '"value" must be [key]. "value" must be [5]. "value" must be of type object',
                             label: 'value',
                             value: 6,
                             details: [
                                 {
-                                    message: '"value" must be one of [key]',
+                                    message: '"value" must be [key]',
                                     path: [],
                                     type: 'any.only',
                                     context: { value: 6, valids: ['key'], label: 'value' }
                                 },
                                 {
-                                    message: '"value" must be one of [5]',
+                                    message: '"value" must be [5]',
                                     path: [],
                                     type: 'any.only',
                                     context: { value: 6, valids: [5], label: 'value' }
@@ -142,18 +142,18 @@ describe('Joi', () => {
                         path: [],
                         type: 'alternatives.match',
                         context: {
-                            message: '"value" must be one of [key]. "value" must be one of [5]. "c" is not allowed',
+                            message: '"value" must be [key]. "value" must be [5]. "c" is not allowed',
                             label: 'value',
                             value: { c: 5 },
                             details: [
                                 {
-                                    message: '"value" must be one of [key]',
+                                    message: '"value" must be [key]',
                                     path: [],
                                     type: 'any.only',
                                     context: { value: { c: 5 }, valids: ['key'], label: 'value' }
                                 },
                                 {
-                                    message: '"value" must be one of [5]',
+                                    message: '"value" must be [5]',
                                     path: [],
                                     type: 'any.only',
                                     context: { value: { c: 5 }, valids: [5], label: 'value' }
@@ -180,24 +180,24 @@ describe('Joi', () => {
                         path: [],
                         type: 'alternatives.match',
                         context: {
-                            message: '"value" must be one of [key]. "value" must be one of [5]. "a" must be one of [true]',
+                            message: '"value" must be [key]. "value" must be [5]. "a" must be [true]',
                             label: 'value',
                             value: { a: 5, b: 'a' },
                             details: [
                                 {
-                                    message: '"value" must be one of [key]',
+                                    message: '"value" must be [key]',
                                     path: [],
                                     type: 'any.only',
                                     context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
                                 },
                                 {
-                                    message: '"value" must be one of [5]',
+                                    message: '"value" must be [5]',
                                     path: [],
                                     type: 'any.only',
                                     context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
                                 },
                                 {
-                                    message: '"a" must be one of [true]',
+                                    message: '"a" must be [true]',
                                     path: ['a'],
                                     type: 'any.only',
                                     context: { label: 'a', key: 'a', value: 5, valids: [true] }

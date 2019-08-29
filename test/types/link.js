@@ -190,14 +190,14 @@ describe('link', () => {
                     path: ['children', 'c'],
                     type: 'alternatives.match',
                     context: {
-                        message: '"children.c" must be one of [none]. "children.c.happy" is required',
+                        message: '"children.c" must be [none]. "children.c.happy" is required',
                         label: 'children.c',
                         value: {},
                         key: 'c',
                         details: [
                             {
                                 context: { key: 'c', label: 'children.c', valids: ['none'], value: {} },
-                                message: '"children.c" must be one of [none]',
+                                message: '"children.c" must be [none]',
                                 path: ['children', 'c'],
                                 type: 'any.only'
                             },

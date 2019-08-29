@@ -1231,8 +1231,12 @@ Validates a value using the current schema and options where:
     - `'time'` - time string.
     - `'utc'` - UTC date time string.
   - `debug` - when `true`, valid results and throw errors are decorated with a `debug` property which includes an array of the validation steps used to generate the returned result. Defaults to `false`.
-  - `error` - error formatting settings:
+  - `errors` - error formatting settings:
     - `escapeHtml` - when `true`, error message templates will escape special characters to HTML entities, for security purposes. Defaults to `false`.
+    - `label` - defines the value used to set the `label` context variable:
+      - `'path'` - the full path to the value being validated. This is the default value.
+      - `'key'` - the key of the value being validated.
+      - `false` - remove any label prefix from error message, including the `""`.
     - `language` - the preferred language code for error messages. The value is matched against keys at the root of the `messages` object, and then the error code as a child key of that. Can be a reference to the value, global context, or local context which is the root value passed to the validation function. Note that references to the value are usually not what you want as they move around the value structure relative to where the error happens. Instead, either use the global  context, or the absolute value (e.g. `Joi.ref('/variable')`);
     - `render` - when `false`, skips rendering error templates. Useful when error messages are generated elsewhere to save processing time. Defaults to `true`.
     - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled. Defaults to `false` for performances reasons. Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api). 

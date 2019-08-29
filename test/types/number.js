@@ -622,18 +622,18 @@ describe('number', () => {
                 [{ a: 1, b: 1, c: 0 }, true],
                 [{ a: 2, b: 1, c: 0 }, true],
                 [{ a: 1, b: 1, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
+                    message: '"c" must be [0]',
                     details: [{
-                        message: '"c" must be one of [0]',
+                        message: '"c" must be [0]',
                         path: ['c'],
                         type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
                     }]
                 }],
                 [{ a: 2, b: 1, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
+                    message: '"c" must be [0]',
                     details: [{
-                        message: '"c" must be one of [0]',
+                        message: '"c" must be [0]',
                         path: ['c'],
                         type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
@@ -872,9 +872,9 @@ describe('number', () => {
                 [{ a: 2, b: 4, c: 42 }, true],
                 [{ a: 4, b: 2, c: 0 }, true],
                 [{ a: 4, b: 2, c: 42 }, false, null, {
-                    message: '"c" must be one of [0]',
+                    message: '"c" must be [0]',
                     details: [{
-                        message: '"c" must be one of [0]',
+                        message: '"c" must be [0]',
                         path: ['c'],
                         type: 'any.only',
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
