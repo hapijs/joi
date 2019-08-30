@@ -703,5 +703,17 @@ describe('Trace', () => {
                 { type: 'value', by: 'raw', from: 123, to: '123', path: [] }
             ]);
         });
+
+        it('logs changes in value (with name)', () => {
+
+            const schema = Joi.number().cast('string');
+
+            const debug = schema.validate('123', { debug: true }).debug;
+            expect(debug).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'value', by: 'coerced', from: '123', to: 123, path: [] },
+                { type: 'value', by: 'cast', name: 'string', from: 123, to: '123', path: [] }
+            ]);
+        });
     });
 });
