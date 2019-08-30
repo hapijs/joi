@@ -79,6 +79,20 @@ describe('any', () => {
         });
     });
 
+    describe('messages()', () => {
+
+        it('aliases preferences', () => {
+
+            const messages = {
+                english: {
+                    value: 'it'
+                }
+            };
+
+            expect(Joi.string().valid('x').messages(messages)).to.equal(Joi.string().valid('x').prefs({ messages }));
+        });
+    });
+
     describe('shared()', () => {
 
         it('errors on missing id', () => {

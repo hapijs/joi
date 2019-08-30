@@ -47,6 +47,7 @@
     - [`any.keep()`](#anykeep)
     - [`any.label(name)`](#anylabelname)
     - [`any.message(message)`](#anymessagemessage)
+    - [`any.messages(messages)`](#anymessagesmessages)
     - [`any.meta(meta)`](#anymetameta)
     - [`any.note(...notes)`](#anynotenotes)
     - [`any.only()`](#anyonly)
@@ -1025,6 +1026,12 @@ Same as [`rule({ message })`](#anyruleoptions).
 
 Note that `message()` will terminate the current ruleset and cannot be followed by another
 rule option. Use [`rule()`](#anyruleoptions) to apply multiple rule options.
+
+#### `any.messages(messages)`
+
+Same as [`any.prefs({ messages })`](#anyprefsoptions--aliases-preferences-options).
+
+Note that while [`any.message()`](#anymessagemessage) applies only to the last rule or ruleset, `any.messages()` applies to the entire schema.
 
 #### `any.meta(meta)`
 
