@@ -282,6 +282,39 @@ describe('Trace', () => {
             expect(tracer.report(__filename)).to.be.null();
         });
 
+        it('tracks valid values (refs)', () => {
+
+            const tracer = Joi.trace();
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+                    .allow(Joi.ref('a'), Joi.ref('b'))
+            });
+
+            schema.validate({ a: 'a', b: 'b', c: 'a' });
+
+            expect(tracer.report(__filename)).to.equal([
+                {
+                    filename: __filename,
+                    line: 296,
+                    message: 'Schema missing tests for valids (ref:b)',
+                    missing: [
+                        {
+                            rule: 'valids',
+                            status: ['ref:b']
+                        }
+                    ],
+                    severity: 'error'
+                }
+            ]);
+
+            schema.validate({ a: 'a', b: 'b', c: 'b' });
+
+            expect(tracer.report(__filename)).to.be.null();
+        });
+
         it('tracks default and failover', () => {
 
             const tracer = Joi.trace();
@@ -604,6 +637,57 @@ describe('Trace', () => {
                 { type: 'entry', path: ['a', 'lucky', '0.is'] },
                 { type: 'rule', name: 'when', result: '', path: ['a', 'lucky'] },
                 { type: 'entry', path: ['a', 'lucky'] }
+            ]);
+        });
+
+        it('logs sub when condition (then)', () => {
+
+            const sub = Joi.when('b', { is: true, then: 2, otherwise: 3 });
+            const schema = Joi.object({
+                a: Joi.boolean().required(),
+                b: Joi.boolean().required(),
+                c: Joi.number()
+                    .when('a', { is: true, then: sub, otherwise: 1 })
+            });
+
+            const debug = schema.validate({ a: true, b: true, c: 2 }, { debug: true }).debug;
+            expect(debug).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'entry', path: ['a'] },
+                { type: 'entry', path: ['b'] },
+                { type: 'entry', path: ['c', '0.is'] },
+                { type: 'valid', value: true, path: ['c', '0.is'] },
+                { type: 'entry', path: ['c', '0.then', '0.is'] },
+                { type: 'valid', value: true, path: ['c', '0.then', '0.is'] },
+                { type: 'rule', name: 'when', result: '0.then', path: ['c', '0.then'] },
+                { type: 'rule', name: 'when', result: '0.then(0.then)', path: ['c'] },
+                { type: 'entry', path: ['c'] },
+                { type: 'valid', value: 2, path: ['c'] }
+            ]);
+        });
+
+        it('logs sub when condition (otherwise)', () => {
+
+            const sub = Joi.when('b', { is: true, then: 2, otherwise: 3 });
+            const schema = Joi.object({
+                a: Joi.boolean().required(),
+                b: Joi.boolean().required(),
+                c: Joi.number()
+                    .when('a', { is: true, then: 1, otherwise: sub })
+            });
+
+            const debug = schema.validate({ a: false, b: true, c: 2 }, { debug: true }).debug;
+            expect(debug).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'entry', path: ['a'] },
+                { type: 'entry', path: ['b'] },
+                { type: 'entry', path: ['c', '0.is'] },
+                { type: 'entry', path: ['c', '0.otherwise', '0.is'] },
+                { type: 'valid', value: true, path: ['c', '0.otherwise', '0.is'] },
+                { type: 'rule', name: 'when', result: '0.then', path: ['c', '0.otherwise'] },
+                { type: 'rule', name: 'when', result: '0.otherwise(0.then)', path: ['c'] },
+                { type: 'entry', path: ['c'] },
+                { type: 'valid', value: 2, path: ['c'] }
             ]);
         });
     });

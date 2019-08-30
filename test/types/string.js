@@ -5250,7 +5250,7 @@ describe('string', () => {
             const refSchema = Joi.string().insensitive().valid(Joi.ref('$v'));
             expect(refSchema.validate('a', { context: { v: 'A' } }).value).to.equal('A');
 
-            const refArraySchema = Joi.string().insensitive().valid(Joi.ref('$v'));
+            const refArraySchema = Joi.string().insensitive().valid(Joi.in('$v'));
             expect(refArraySchema.validate('a', { context: { v: ['B', 'A'] } }).value).to.equal('A');
 
             const strictSchema = Joi.string().insensitive().valid('A').strict();

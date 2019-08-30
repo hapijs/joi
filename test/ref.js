@@ -1391,6 +1391,7 @@ describe('ref', () => {
 
             expect(Joi.ref('$a$b', { separator: '$' })).to.equal({
                 adjust: null,
+                in: false,
                 iterables: null,
                 map: null,
                 separator: '$',
@@ -1408,6 +1409,7 @@ describe('ref', () => {
 
             expect(Joi.ref('#a#b', { separator: '#' })).to.equal({
                 adjust: null,
+                in: false,
                 iterables: null,
                 map: null,
                 separator: '#',

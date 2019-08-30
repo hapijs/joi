@@ -1877,7 +1877,7 @@ describe('any', () => {
 
             const o = {};
             expect(Joi.object().invalid(o).clone().validate(o).error).to.be.an.error('"value" contains an invalid value');
-            expect(Joi.object().invalid(o).clone().validate({}).error).to.not.exist();
+            expect(Joi.object().invalid({}).clone().validate({}).error).to.be.an.error('"value" contains an invalid value');
         });
 
         it('errors on blocked schema', () => {
@@ -2756,7 +2756,7 @@ describe('any', () => {
             }).to.throw(Error, 'Cannot call allow/valid/invalid with undefined');
         });
 
-        it('validates differents types of values', () => {
+        it('validates different types of values', () => {
 
             expect(Joi.valid(1).validate(1).error).to.not.exist();
             expect(Joi.valid(1).validate(2).error).to.exist();
@@ -2772,8 +2772,8 @@ describe('any', () => {
             }]);
             expect(Joi.valid(Joi.ref('$a')).validate(d, { context: { a: new Date(d.getTime()) } }).error).to.not.exist();
             expect(Joi.object({ a: Joi.date(), b: Joi.valid(Joi.ref('a')) }).validate({ a: d, b: d }).error).to.not.exist();
-            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.ref('a')) }).validate({ a: d, b: d }).error).to.not.exist();
-            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.ref('a')) }).validate({ a: new Date(0), b: d }).error).to.be.an.error('"b" must be [ref:a]');
+            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }).validate({ a: d, b: d }).error).to.not.exist();
+            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }).validate({ a: new Date(0), b: d }).error).to.be.an.error('"b" must be [ref:a]');
 
             const str = 'foo';
             expect(Joi.valid(str).validate(str).error).to.not.exist();
@@ -2798,12 +2798,13 @@ describe('any', () => {
 
             const o = {};
             expect(Joi.valid(o).validate(o).error).to.not.exist();
-            expect(Joi.valid(o).validate({}).error).to.be.an.error('"value" must be [[object Object]]');
-            expect(Joi.valid(o).validate({}).error.details).to.equal([{
+            expect(Joi.valid(o).validate({}).error).to.not.exist();
+            expect(Joi.valid(o).validate({ x: 1 }).error).to.be.an.error('"value" must be [[object Object]]');
+            expect(Joi.valid(o).validate({ x: 1 }).error.details).to.equal([{
                 message: '"value" must be [[object Object]]',
                 path: [],
                 type: 'any.only',
-                context: { value: o, valids: [o], label: 'value' }
+                context: { value: { x: 1 }, valids: [o], label: 'value' }
             }]);
 
             const f = () => { };
@@ -2826,13 +2827,6 @@ describe('any', () => {
                 type: 'any.only',
                 context: { value: Buffer.from('foobar'), valids: [b], label: 'value' }
             }]);
-        });
-
-        it('preserves passed value when cloned', () => {
-
-            const o = {};
-            expect(Joi.valid(o).clone().validate(o).error).to.not.exist();
-            expect(Joi.valid(o).clone().validate({}).error).to.be.an.error('"value" must be [[object Object]]');
         });
 
         it('supports templates', () => {
@@ -2878,6 +2872,28 @@ describe('any', () => {
 
             expect(schema.validate({ a: 5, b: true, c: 10 }).error).to.not.exist();
             expect(schema.validate({ a: 5, b: false, c: null }).error).to.not.exist();
+        });
+
+        it('looks up values in array (from single value)', () => {
+
+            const schema = Joi.object({
+                a: Joi.array().items(Joi.string()),
+                b: Joi.in('a')
+            });
+
+            expect(schema.validate({ a: ['1', '2'], b: '2' }).error).to.not.exist();
+            expect(schema.validate({ a: ['1', '2'], b: '3' }).error).to.be.an.error('"b" must be [ref:a]');
+        });
+
+        it('looks up values in array (from array value)', () => {
+
+            const schema = Joi.object({
+                a: Joi.array().items(Joi.string()),
+                b: Joi.array().valid(Joi.ref('a'))
+            });
+
+            expect(schema.validate({ a: ['1', '2'], b: ['1', '2'] }).error).to.not.exist();
+            expect(schema.validate({ a: ['1', '2'], b: ['1'] }).error).to.be.an.error('"b" must be [ref:a]');
         });
     });
 
@@ -3767,6 +3783,23 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 42, b: 10 }, true]
+            ]);
+        });
+
+        it('caches partials using variations in sub when conditions', () => {
+
+            const sub = Joi.when('b', { is: true, then: 2, otherwise: 3 });
+            const schema = Joi.object({
+                a: Joi.boolean().required(),
+                b: Joi.boolean().required(),
+                c: Joi.number()
+                    .when('a', { is: true, then: 1, otherwise: sub })
+            });
+
+            Helper.validate(schema, [
+                [{ a: true, b: true, c: 1 }, true],
+                [{ a: false, b: true, c: 2 }, true],
+                [{ a: false, b: false, c: 3 }, true]
             ]);
         });
 

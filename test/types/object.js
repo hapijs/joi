@@ -622,7 +622,7 @@ describe('object', () => {
 
     it('validates referenced arrays in valid()', () => {
 
-        const ref = Joi.ref('$x');
+        const ref = Joi.in('$x');
         const schema = Joi.object({
             foo: Joi.valid(ref)
         });
@@ -3412,7 +3412,7 @@ describe('object', () => {
 
         it('allows using refs in .valid() schema pattern', () => {
 
-            const schema = Joi.object().pattern(Joi.string().valid(Joi.ref('$keys')), Joi.any());
+            const schema = Joi.object().pattern(Joi.string().valid(Joi.in('$keys')), Joi.any());
             expect(schema.validate({ a: 'test' }, { context: { keys: ['a'] } })).to.equal({ value: { a: 'test' } });
         });
 

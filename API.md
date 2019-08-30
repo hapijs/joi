@@ -14,6 +14,7 @@
     - [Template syntax](#template-syntax)
   - [`extend(extension)`](#extendextension)
   - [`isExpression(expression)`](#isexpressionexpression)
+  - [`in(ref, [options])`](#inref-options)
   - [`isRef(ref)`](#isrefref)
   - [`isSchema(schema, [options])`](#isschemaschema-options)
   - [`override`](#override)
@@ -430,6 +431,21 @@ const expression = Joi.x('{a}');
 Joi.isExpression(expression); // returns true
 ```
 
+### `in(ref, [options])`
+
+Creates a [reference](#refkey-options) that when resolved, is used as an array of values to match against the rule, where:
+- `ref` - same as [`Joi.ref()`](#refkey-options).
+- `options` - same as [`Joi.ref()`](#refkey-options).
+
+Can only be used in rules that support in-references.
+
+```js
+const schema = Joi.object({
+    a: Joi.array().items(Joi.number()),
+    b: Joi.number().valid(Joi.in('a'))
+});
+```
+
 ### `isRef(ref)`
 
 Checks whether or not the provided argument is a reference. Useful if you want to post-process error messages.
@@ -486,6 +502,8 @@ References support the following arguments:
       - `root` - references to the root value being validated. Defaults to `'/'`.
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
     - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
+    - `in` - creates an [in-reference](#inref-options).
+    - `iterables` - when `true`, the reference resolves by reaching into maps and sets.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards (parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
 
@@ -626,7 +644,7 @@ schema.type === 'string';   // === true
 #### `any.allow(...values)`
 
 Allows values where:
-- `values` - one or more allowed values which can be of any type and will be matched against the validated value before applying any other rules. Supports [references](#refkey-options). If the first value is [`Joi.override`](#override), will override any previously set values.
+- `values` - one or more allowed values which can be of any type and will be matched against the validated value before applying any other rules. Supports [references](#refkey-options) and [in-references](#inref-options). If the first value is [`Joi.override`](#override), will override any previously set values.
 
 Note that this list of allowed values is in *addition* to any other permitted values.
 To create an exclusive list of values, see [`any.valid(value)`](#anyvalidvalues---aliases-equal).
@@ -972,7 +990,7 @@ used in an array or alternatives type and no id is set, the schema in unreachabl
 #### `any.invalid(...values)` - aliases: `disallow`, `not`
 
 Disallows values where:
-- `values` - the forbidden values which can be of any type and will be matched against the validated value before applying any other rules. Supports [references](#refkey-options). If the first value is [`Joi.override`](#override), will override any previously set values.
+- `values` - the forbidden values which can be of any type and will be matched against the validated value before applying any other rules. Supports [references](#refkey-options) and [in-references](#inref-options). If the first value is [`Joi.override`](#override), will override any previously set values.
 
 ```js
 const schema = {
@@ -1203,7 +1221,7 @@ const schema = Joi.number().unit('milliseconds');
 #### `any.valid(...values)` - aliases: `equal`
 
 Adds the provided values into the allowed values list and marks them as the only valid values allowed where:
-- `values` - one or more allowed values which can be of any type and will be matched against the validated value before applying any other rules. Supports [references](#refkey-options). If the first value is [`Joi.override`](#override), will override any previously set values. If the only value is [`Joi.override`](#override), will also remove the `only` flag from the schema.
+- `values` - one or more allowed values which can be of any type and will be matched against the validated value before applying any other rules. Supports [references](#refkey-options) and [in-references](#inref-options). If the first value is [`Joi.override`](#override), will override any previously set values. If the only value is [`Joi.override`](#override), will also remove the `only` flag from the schema.
 
 ```js
 const schema = {
