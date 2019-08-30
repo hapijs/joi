@@ -1046,31 +1046,17 @@ describe('ref', () => {
                 [{ a: { c: '5' }, b: 5 }, true],
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
                 [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
-                    message: '"b" does not match any of the allowed types',
+                    message: '"b" must be one of [ref:a.c, ref:c]',
                     details: [
                         {
-                            message: '"b" does not match any of the allowed types',
-                            type: 'alternatives.match',
+                            message: '"b" must be one of [ref:a.c, ref:c]',
+                            type: 'alternatives.types',
                             path: ['b'],
                             context: {
                                 key: 'b',
                                 label: 'b',
-                                message: '"b" must be [ref:a.c]. "b" must be [ref:c]',
                                 value: 7,
-                                details: [
-                                    {
-                                        message: '"b" must be [ref:a.c]',
-                                        path: ['b'],
-                                        type: 'any.only',
-                                        context: { value: 7, valids: [ref1], label: 'b', key: 'b' }
-                                    },
-                                    {
-                                        message: '"b" must be [ref:c]',
-                                        path: ['b'],
-                                        type: 'any.only',
-                                        context: { value: 7, valids: [ref2], label: 'b', key: 'b' }
-                                    }
-                                ]
+                                types: [ref1, ref2]
                             }
                         }
                     ]

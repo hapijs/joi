@@ -65,71 +65,31 @@ describe('Joi', () => {
             ['key', true],
             [5, true],
             ['other', false, null, {
-                message: '"value" does not match any of the allowed types',
+                message: '"value" must be one of [key, 5, object]',
                 details: [
                     {
-                        message: '"value" does not match any of the allowed types',
+                        message: '"value" must be one of [key, 5, object]',
                         path: [],
-                        type: 'alternatives.match',
+                        type: 'alternatives.types',
                         context: {
-                            message: '"value" must be [key]. "value" must be [5]. "value" must be of type object',
                             label: 'value',
-                            value: 'other',
-                            details: [
-                                {
-                                    message: '"value" must be [key]',
-                                    path: [],
-                                    type: 'any.only',
-                                    context: { value: 'other', valids: ['key'], label: 'value' }
-                                },
-                                {
-                                    message: '"value" must be [5]',
-                                    path: [],
-                                    type: 'any.only',
-                                    context: { value: 'other', valids: [5], label: 'value' }
-                                },
-                                {
-                                    message: '"value" must be of type object',
-                                    path: [],
-                                    type: 'object.base',
-                                    context: { label: 'value', value: 'other', type: 'object' }
-                                }
-                            ]
+                            types: ['key', 5, 'object'],
+                            value: 'other'
                         }
                     }
                 ]
             }],
             [6, false, null, {
-                message: '"value" does not match any of the allowed types',
+                message: '"value" must be one of [key, 5, object]',
                 details: [
                     {
-                        message: '"value" does not match any of the allowed types',
+                        message: '"value" must be one of [key, 5, object]',
                         path: [],
-                        type: 'alternatives.match',
+                        type: 'alternatives.types',
                         context: {
-                            message: '"value" must be [key]. "value" must be [5]. "value" must be of type object',
                             label: 'value',
-                            value: 6,
-                            details: [
-                                {
-                                    message: '"value" must be [key]',
-                                    path: [],
-                                    type: 'any.only',
-                                    context: { value: 6, valids: ['key'], label: 'value' }
-                                },
-                                {
-                                    message: '"value" must be [5]',
-                                    path: [],
-                                    type: 'any.only',
-                                    context: { value: 6, valids: [5], label: 'value' }
-                                },
-                                {
-                                    message: '"value" must be of type object',
-                                    path: [],
-                                    type: 'object.base',
-                                    context: { label: 'value', value: 6, type: 'object' }
-                                }
-                            ]
+                            types: ['key', 5, 'object'],
+                            value: 6
                         }
                     }
                 ]
