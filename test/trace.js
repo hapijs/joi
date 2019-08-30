@@ -619,7 +619,7 @@ describe('Trace', () => {
 
             const building = Joi.object({
                 a: Joi.object({
-                    name: Joi.string(),
+                    name: Joi.string().cache(),
                     lucky: Joi.string()
                         .when('name', { is: 'thirteen', then: Joi.valid('no') })
                 })
@@ -633,6 +633,7 @@ describe('Trace', () => {
             expect(debug).to.equal([
                 { type: 'entry', path: [] },
                 { type: 'entry', path: ['a'] },
+                { type: 'validate', name: 'cached', result: false, path: ['a', 'name'] },
                 { type: 'entry', path: ['a', 'name'] },
                 { type: 'entry', path: ['a', 'lucky', '0.is'] },
                 { type: 'rule', name: 'when', result: '', path: ['a', 'lucky'] },
@@ -688,6 +689,18 @@ describe('Trace', () => {
                 { type: 'rule', name: 'when', result: '0.otherwise(0.then)', path: ['c'] },
                 { type: 'entry', path: ['c'] },
                 { type: 'valid', value: 2, path: ['c'] }
+            ]);
+        });
+
+        it('logs changes in value', () => {
+
+            const schema = Joi.number().raw();
+
+            const debug = schema.validate('123', { debug: true }).debug;
+            expect(debug).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'value', by: 'coerced', from: '123', to: 123, path: [] },
+                { type: 'value', by: 'raw', from: 123, to: '123', path: [] }
             ]);
         });
     });
