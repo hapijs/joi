@@ -82,7 +82,7 @@ describe('alternatives', () => {
             Joi.array().items(Joi.string())
         );
 
-        expect(schema.validate([1]).error).to.be.an.error('"value" does not match any of the allowed types');
+        expect(schema.validate([1]).error).to.be.an.error('"[0]" must be a string');
     });
 
     it('consolidates types only when all are base or valids', () => {
@@ -92,7 +92,7 @@ describe('alternatives', () => {
             Joi.number().min(1)
         );
 
-        expect(schema.validate(0).error).to.be.an.error('"value" does not match any of the allowed types');
+        expect(schema.validate(0).error).to.be.an.error('"value" must be larger than or equal to 1');
     });
 
     it('consolidates types with valid values', () => {
@@ -107,6 +107,23 @@ describe('alternatives', () => {
         const schema = Joi.alternatives(Joi.boolean(), Joi.binary());
 
         expect(schema.validate([]).error).to.be.an.error('"value" must be one of [boolean, binary]');
+    });
+
+    it('passes errors through when abortEarly is false', () => {
+
+        const schema = Joi.alternatives(Joi.number().min(1).positive(), Joi.binary());
+
+        expect(schema.validate(-1, { abortEarly: false }).error).to.be.an.error('"value" does not match any of the allowed types');
+    });
+
+    it('abstracts multiple complex object errors', () => {
+
+        const schema = Joi.alternatives([
+            Joi.object({ a: Joi.string() }),
+            Joi.object({ b: Joi.string() })
+        ]);
+
+        expect(schema.validate({ c: 1 }).error).to.be.an.error('"value" does not match any of the allowed types');
     });
 
     describe('conditional()', () => {
@@ -1730,75 +1747,33 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"value" does not match any of the allowed types',
+                    message: '"p" must be one of [boolean, foo]',
                     details: [
                         {
-                            message: '"value" does not match any of the allowed types',
-                            path: [],
-                            type: 'alternatives.match',
+                            message: '"p" must be one of [boolean, foo]',
+                            path: ['p'],
+                            type: 'alternatives.types',
                             context: {
-                                message: '"value" must be a boolean. "p" must be one of [boolean, foo]',
-                                label: 'value',
-                                value: { p: 1 },
-                                details: [
-                                    {
-                                        message: '"value" must be a boolean',
-                                        path: [],
-                                        type: 'boolean.base',
-                                        context: {
-                                            label: 'value',
-                                            value: { p: 1 }
-                                        }
-                                    },
-                                    {
-                                        message: '"p" must be one of [boolean, foo]',
-                                        path: ['p'],
-                                        type: 'alternatives.types',
-                                        context: {
-                                            key: 'p',
-                                            label: 'p',
-                                            types: ['boolean', 'foo'],
-                                            value: 1
-                                        }
-                                    }
-                                ]
+                                key: 'p',
+                                label: 'p',
+                                types: ['boolean', 'foo'],
+                                value: 1
                             }
                         }
                     ]
                 }],
                 [{ p: '...' }, false, null, {
-                    message: '"value" does not match any of the allowed types',
+                    message: '"p" must be one of [boolean, foo]',
                     details: [
                         {
-                            message: '"value" does not match any of the allowed types',
-                            path: [],
-                            type: 'alternatives.match',
+                            message: '"p" must be one of [boolean, foo]',
+                            path: ['p'],
+                            type: 'alternatives.types',
                             context: {
-                                message: '"value" must be a boolean. "p" must be one of [boolean, foo]',
-                                label: 'value',
-                                value: { p: '...' },
-                                details: [
-                                    {
-                                        message: '"value" must be a boolean',
-                                        path: [],
-                                        type: 'boolean.base',
-                                        context: {
-                                            label: 'value',
-                                            value: { p: '...' }
-                                        }
-                                    },
-                                    {
-                                        message: '"p" must be one of [boolean, foo]',
-                                        path: ['p'],
-                                        type: 'alternatives.types',
-                                        context: {
-                                            key: 'p',
-                                            label: 'p',
-                                            types: ['boolean', 'foo'],
-                                            value: '...'
-                                        }
-                                    }
-                                ]
+                                key: 'p',
+                                label: 'p',
+                                types: ['boolean', 'foo'],
+                                value: '...'
                             }
                         }
                     ]
@@ -1831,75 +1806,33 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"value" does not match any of the allowed types',
+                    message: '"p" must be one of boolean, foo',
                     details: [
                         {
-                            message: '"value" does not match any of the allowed types',
-                            path: [],
-                            type: 'alternatives.match',
+                            message: '"p" must be one of boolean, foo',
+                            path: ['p'],
+                            type: 'alternatives.types',
                             context: {
-                                message: '"value" must be a boolean. "p" must be one of boolean, foo',
-                                label: 'value',
-                                value: { p: 1 },
-                                details: [
-                                    {
-                                        message: '"value" must be a boolean',
-                                        path: [],
-                                        type: 'boolean.base',
-                                        context: {
-                                            label: 'value',
-                                            value: { p: 1 }
-                                        }
-                                    },
-                                    {
-                                        message: '"p" must be one of boolean, foo',
-                                        path: ['p'],
-                                        type: 'alternatives.types',
-                                        context: {
-                                            key: 'p',
-                                            label: 'p',
-                                            types: ['boolean', 'foo'],
-                                            value: 1
-                                        }
-                                    }
-                                ]
+                                key: 'p',
+                                label: 'p',
+                                types: ['boolean', 'foo'],
+                                value: 1
                             }
                         }
                     ]
                 }],
                 [{ p: '...' }, false, null, {
-                    message: '"value" does not match any of the allowed types',
+                    message: '"p" must be one of boolean, foo',
                     details: [
                         {
-                            message: '"value" does not match any of the allowed types',
-                            path: [],
-                            type: 'alternatives.match',
+                            message: '"p" must be one of boolean, foo',
+                            path: ['p'],
+                            type: 'alternatives.types',
                             context: {
-                                message: '"value" must be a boolean. "p" must be one of boolean, foo',
-                                label: 'value',
-                                value: { p: '...' },
-                                details: [
-                                    {
-                                        message: '"value" must be a boolean',
-                                        path: [],
-                                        type: 'boolean.base',
-                                        context: {
-                                            label: 'value',
-                                            value: { p: '...' }
-                                        }
-                                    },
-                                    {
-                                        message: '"p" must be one of boolean, foo',
-                                        path: ['p'],
-                                        type: 'alternatives.types',
-                                        context: {
-                                            key: 'p',
-                                            label: 'p',
-                                            types: ['boolean', 'foo'],
-                                            value: '...'
-                                        }
-                                    }
-                                ]
+                                key: 'p',
+                                label: 'p',
+                                types: ['boolean', 'foo'],
+                                value: '...'
                             }
                         }
                     ]

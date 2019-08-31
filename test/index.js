@@ -95,37 +95,13 @@ describe('Joi', () => {
                 ]
             }],
             [{ c: 5 }, false, null, {
-                message: '"value" does not match any of the allowed types',
+                message: '"c" is not allowed',
                 details: [
                     {
-                        message: '"value" does not match any of the allowed types',
-                        path: [],
-                        type: 'alternatives.match',
-                        context: {
-                            message: '"value" must be [key]. "value" must be [5]. "c" is not allowed',
-                            label: 'value',
-                            value: { c: 5 },
-                            details: [
-                                {
-                                    message: '"value" must be [key]',
-                                    path: [],
-                                    type: 'any.only',
-                                    context: { value: { c: 5 }, valids: ['key'], label: 'value' }
-                                },
-                                {
-                                    message: '"value" must be [5]',
-                                    path: [],
-                                    type: 'any.only',
-                                    context: { value: { c: 5 }, valids: [5], label: 'value' }
-                                },
-                                {
-                                    message: '"c" is not allowed',
-                                    path: ['c'],
-                                    type: 'object.unknown',
-                                    context: { child: 'c', label: 'c', key: 'c', value: 5 }
-                                }
-                            ]
-                        }
+                        message: '"c" is not allowed',
+                        path: ['c'],
+                        type: 'object.unknown',
+                        context: { child: 'c', label: 'c', key: 'c', value: 5 }
                     }
                 ]
             }],
@@ -133,37 +109,13 @@ describe('Joi', () => {
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
             [{ a: 5, b: 'a' }, false, null, {
-                message: '"value" does not match any of the allowed types',
+                message: '"a" must be [true]',
                 details: [
                     {
-                        message: '"value" does not match any of the allowed types',
-                        path: [],
-                        type: 'alternatives.match',
-                        context: {
-                            message: '"value" must be [key]. "value" must be [5]. "a" must be [true]',
-                            label: 'value',
-                            value: { a: 5, b: 'a' },
-                            details: [
-                                {
-                                    message: '"value" must be [key]',
-                                    path: [],
-                                    type: 'any.only',
-                                    context: { value: { a: 5, b: 'a' }, valids: ['key'], label: 'value' }
-                                },
-                                {
-                                    message: '"value" must be [5]',
-                                    path: [],
-                                    type: 'any.only',
-                                    context: { value: { a: 5, b: 'a' }, valids: [5], label: 'value' }
-                                },
-                                {
-                                    message: '"a" must be [true]',
-                                    path: ['a'],
-                                    type: 'any.only',
-                                    context: { label: 'a', key: 'a', value: 5, valids: [true] }
-                                }
-                            ]
-                        }
+                        message: '"a" must be [true]',
+                        path: ['a'],
+                        type: 'any.only',
+                        context: { label: 'a', key: 'a', value: 5, valids: [true] }
                     }
                 ]
             }]
@@ -201,27 +153,7 @@ describe('Joi', () => {
         });
 
         const err = schema.validate({ auth: { mode: 'none' } }).error;
-        expect(err).to.be.an.error('"auth" does not match any of the allowed types');
-        expect(err.details[0].context.details).to.equal([
-            {
-                message: '"auth.mode" must be one of [required, optional, try, null]',
-                path: ['auth', 'mode'],
-                type: 'any.only',
-                context: { value: 'none', valids: ['required', 'optional', 'try', null], label: 'auth.mode', key: 'mode' }
-            },
-            {
-                message: '"auth" must be a string',
-                path: ['auth'],
-                type: 'string.base',
-                context: { value: { mode: 'none' }, label: 'auth', key: 'auth' }
-            },
-            {
-                message: '"auth" must be a boolean',
-                path: ['auth'],
-                type: 'boolean.base',
-                context: { label: 'auth', key: 'auth', value: { mode: 'none' } }
-            }
-        ]);
+        expect(err).to.be.an.error('"auth.mode" must be one of [required, optional, try, null]');
 
         Helper.validate(schema, [
             [{ auth: { mode: 'try' } }, true],
@@ -235,38 +167,13 @@ describe('Joi', () => {
                 }]
             }],
             [{ auth: { something: undefined } }, false, null, {
-                message: '"auth" does not match any of the allowed types',
+                message: '"auth.something" is not allowed',
                 details: [
                     {
-                        message: '"auth" does not match any of the allowed types',
-                        path: ['auth'],
-                        type: 'alternatives.match',
-                        context: {
-                            message: '"auth.something" is not allowed. "auth" must be a string. "auth" must be a boolean',
-                            label: 'auth',
-                            key: 'auth',
-                            value: { something: undefined },
-                            details: [
-                                {
-                                    message: '"auth.something" is not allowed',
-                                    path: ['auth', 'something'],
-                                    type: 'object.unknown',
-                                    context: { child: 'something', label: 'auth.something', key: 'something' }
-                                },
-                                {
-                                    message: '"auth" must be a string',
-                                    path: ['auth'],
-                                    type: 'string.base',
-                                    context: { value: { something: undefined }, label: 'auth', key: 'auth' }
-                                },
-                                {
-                                    message: '"auth" must be a boolean',
-                                    path: ['auth'],
-                                    type: 'boolean.base',
-                                    context: { label: 'auth', key: 'auth', value: { something: undefined } }
-                                }
-                            ]
-                        }
+                        message: '"auth.something" is not allowed',
+                        path: ['auth', 'something'],
+                        type: 'object.unknown',
+                        context: { child: 'something', label: 'auth.something', key: 'something' }
                     }
                 ]
             }],
@@ -301,27 +208,7 @@ describe('Joi', () => {
         });
 
         const err = schema.validate({ auth: { mode: 'none' } }).error;
-        expect(err).to.be.an.error('"auth" does not match any of the allowed types');
-        expect(err.details[0].context.details).to.equal([
-            {
-                message: '"auth.mode" must be one of [required, optional, try, null]',
-                path: ['auth', 'mode'],
-                type: 'any.only',
-                context: { value: 'none', valids: ['required', 'optional', 'try', null], label: 'auth.mode', key: 'mode' }
-            },
-            {
-                message: '"auth" must be a string',
-                path: ['auth'],
-                type: 'string.base',
-                context: { value: { mode: 'none' }, label: 'auth', key: 'auth' }
-            },
-            {
-                message: '"auth" must be a boolean',
-                path: ['auth'],
-                type: 'boolean.base',
-                context: { label: 'auth', key: 'auth', value: { mode: 'none' } }
-            }
-        ]);
+        expect(err).to.be.an.error('"auth.mode" must be one of [required, optional, try, null]');
 
         Helper.validate(schema, [
             [{ auth: { mode: 'try' } }, true],
@@ -335,38 +222,13 @@ describe('Joi', () => {
                 }]
             }],
             [{ auth: { something: undefined } }, false, null, {
-                message: '"auth" does not match any of the allowed types',
+                message: '"auth.something" is not allowed',
                 details: [
                     {
-                        message: '"auth" does not match any of the allowed types',
-                        path: ['auth'],
-                        type: 'alternatives.match',
-                        context: {
-                            message: '"auth.something" is not allowed. "auth" must be a string. "auth" must be a boolean',
-                            key: 'auth',
-                            label: 'auth',
-                            value: { something: undefined },
-                            details: [
-                                {
-                                    message: '"auth.something" is not allowed',
-                                    path: ['auth', 'something'],
-                                    type: 'object.unknown',
-                                    context: { child: 'something', label: 'auth.something', key: 'something' }
-                                },
-                                {
-                                    message: '"auth" must be a string',
-                                    path: ['auth'],
-                                    type: 'string.base',
-                                    context: { value: { something: undefined }, label: 'auth', key: 'auth' }
-                                },
-                                {
-                                    message: '"auth" must be a boolean',
-                                    path: ['auth'],
-                                    type: 'boolean.base',
-                                    context: { label: 'auth', key: 'auth', value: { something: undefined } }
-                                }
-                            ]
-                        }
+                        message: '"auth.something" is not allowed',
+                        path: ['auth', 'something'],
+                        type: 'object.unknown',
+                        context: { child: 'something', label: 'auth.something', key: 'something' }
                     }
                 ]
             }],
@@ -661,8 +523,7 @@ describe('Joi', () => {
         expect(Joi.compile(config).validate({ module: 'test' }).error).to.not.exist();
 
         const err2 = Joi.compile(config).validate({ module: {} }).error;
-        expect(err2).to.be.an.error('"module" does not match any of the allowed types');
-        expect(err2.details[0].context.message).to.equal('"module.compile" is required. "module" must be a string');
+        expect(err2).to.be.an.error('"module.compile" is required');
 
         expect(Joi.compile(config).validate({ module: { compile() { } } }).error).to.not.exist();
     });

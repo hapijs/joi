@@ -184,31 +184,12 @@ describe('link', () => {
             [{ happy: true, children: { a: { happy: false } } }, true],
             [{ happy: true, children: { a: { happy: false }, b: { happy: true }, c: 'none' } }, true],
             [{ happy: true, children: { a: { happy: false }, b: { happy: true }, c: {} } }, false, null, {
-                message: '"children.c" does not match any of the allowed types',
+                message: '"children.c.happy" is required',
                 details: [{
-                    message: '"children.c" does not match any of the allowed types',
-                    path: ['children', 'c'],
-                    type: 'alternatives.match',
-                    context: {
-                        message: '"children.c" must be [none]. "children.c.happy" is required',
-                        label: 'children.c',
-                        value: {},
-                        key: 'c',
-                        details: [
-                            {
-                                context: { key: 'c', label: 'children.c', valids: ['none'], value: {} },
-                                message: '"children.c" must be [none]',
-                                path: ['children', 'c'],
-                                type: 'any.only'
-                            },
-                            {
-                                context: { key: 'happy', label: 'children.c.happy' },
-                                message: '"children.c.happy" is required',
-                                path: ['children', 'c', 'happy'],
-                                type: 'any.required'
-                            }
-                        ]
-                    }
+                    context: { key: 'happy', label: 'children.c.happy' },
+                    message: '"children.c.happy" is required',
+                    path: ['children', 'c', 'happy'],
+                    type: 'any.required'
                 }]
             }]
         ]);
