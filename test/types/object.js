@@ -3356,6 +3356,50 @@ describe('object', () => {
             ]);
         });
 
+        it('ensures keys are also present in another object', () => {
+
+            const matches = Joi.in('....b');    // .match .matches .a .object
+            const schema = Joi.object({
+                a: Joi.object()
+                    .pattern(/.*/, Joi.number(), { matches }),
+                b: Joi.object()
+                    .pattern(/.*/, Joi.string())
+            });
+
+            Helper.validate(schema, [
+                [{ a: { x: 1 }, b: { x: 'a' } }, true],
+                [{ a: { v: 1 }, b: { x: 'a', v: 'b' } }, true],
+                [{ a: { x: 1 }, b: { y: 'a' } }, false, null, {
+                    message: '"a" keys failed to match pattern requirements',
+                    details: [{
+                        message: '"a" keys failed to match pattern requirements',
+                        path: ['a'],
+                        type: 'object.pattern.match',
+                        context: {
+                            details: [
+                                {
+                                    message: '"a[0]" must be [ref:....b]',
+                                    path: ['a', 0],
+                                    type: 'any.only',
+                                    context: {
+                                        key: 0,
+                                        label: 'a[0]',
+                                        valids: [matches],
+                                        value: 'x'
+                                    }
+                                }
+                            ],
+                            key: 'a',
+                            label: 'a',
+                            matches: ['x'],
+                            message: '"a[0]" must be [ref:....b]',
+                            value: { x: 1 }
+                        }
+                    }]
+                }]
+            ]);
+        });
+
         it('errors when using a pattern on empty schema with unknown(false) and regex pattern mismatch', () => {
 
             const schema = Joi.object().pattern(/\d/, Joi.number()).unknown(false);

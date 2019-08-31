@@ -531,7 +531,8 @@ describe('Trace', () => {
                 { type: 'entry', path: ['b'] },
                 { type: 'rule', name: 'min', result: 'pass', path: ['b'] },
                 { type: 'entry', path: ['c'] },
-                { type: 'invalid', path: ['c'], value: 'y' }
+                { type: 'invalid', value: 'y', path: ['c'] },
+                { type: 'resolve', ref: 'ref:local:label', to: 'c', path: ['c'] }
             ]);
         });
 
@@ -564,7 +565,8 @@ describe('Trace', () => {
                 { type: 'entry', path: ['b'] },
                 { type: 'rule', name: 'min', result: 'pass', path: ['b'] },
                 { type: 'entry', path: ['c'] },
-                { type: 'invalid', path: ['c'], value: 'y' }
+                { type: 'invalid', value: 'y', path: ['c'] },
+                { type: 'resolve', ref: 'ref:local:label', to: 'c', path: ['c'] }
             ]);
 
             const { debug } = await schema.validateAsync({ a: { x: '12345678901234567890' }, b: 110, c: 'x' }, { debug: true });
@@ -602,14 +604,17 @@ describe('Trace', () => {
             expect(debug).to.equal([
                 { type: 'entry', path: [] },
                 { type: 'entry', path: ['a'] },
+                { type: 'resolve', ref: 'ref:a', to: 1, path: ['b'] },
                 { type: 'entry', path: ['b', '0.is'] },
-                { type: 'valid', path: ['b', '0.is'], value: 1 },
+                { type: 'valid', value: 1, path: ['b', '0.is'] },
+                { type: 'resolve', ref: 'ref:a', to: 1, path: ['b'] },
                 { type: 'entry', path: ['b', '1.is'] },
                 { type: 'rule', name: 'when', result: '0.then, 1.otherwise', path: ['b'] },
                 { type: 'entry', path: ['b'] },
-                { type: 'valid', path: ['b'], value: 6 },
+                { type: 'valid', value: 6, path: ['b'] },
+                { type: 'resolve', ref: 'ref:a', to: 1, path: ['c'] },
                 { type: 'entry', path: ['c', '0.0.is'] },
-                { type: 'valid', path: ['c', '0.0.is'], value: 1 },
+                { type: 'valid', value: 1, path: ['c', '0.0.is'] },
                 { type: 'rule', name: 'when', result: '0.0.then', path: ['c'] },
                 { type: 'entry', path: ['c'] }
             ]);
@@ -635,6 +640,7 @@ describe('Trace', () => {
                 { type: 'entry', path: ['a'] },
                 { type: 'validate', name: 'cached', result: false, path: ['a', 'name'] },
                 { type: 'entry', path: ['a', 'name'] },
+                { type: 'resolve', ref: 'ref:name', to: 'first', path: ['a', 'lucky'] },
                 { type: 'entry', path: ['a', 'lucky', '0.is'] },
                 { type: 'rule', name: 'when', result: '', path: ['a', 'lucky'] },
                 { type: 'entry', path: ['a', 'lucky'] }
@@ -656,8 +662,10 @@ describe('Trace', () => {
                 { type: 'entry', path: [] },
                 { type: 'entry', path: ['a'] },
                 { type: 'entry', path: ['b'] },
+                { type: 'resolve', ref: 'ref:a', to: true, path: ['c'] },
                 { type: 'entry', path: ['c', '0.is'] },
                 { type: 'valid', value: true, path: ['c', '0.is'] },
+                { type: 'resolve', ref: 'ref:b', to: true, path: ['c', '0.then'] },
                 { type: 'entry', path: ['c', '0.then', '0.is'] },
                 { type: 'valid', value: true, path: ['c', '0.then', '0.is'] },
                 { type: 'rule', name: 'when', result: '0.then', path: ['c', '0.then'] },
@@ -682,7 +690,9 @@ describe('Trace', () => {
                 { type: 'entry', path: [] },
                 { type: 'entry', path: ['a'] },
                 { type: 'entry', path: ['b'] },
+                { type: 'resolve', ref: 'ref:a', to: false, path: ['c'] },
                 { type: 'entry', path: ['c', '0.is'] },
+                { type: 'resolve', ref: 'ref:b', to: true, path: ['c', '0.otherwise'] },
                 { type: 'entry', path: ['c', '0.otherwise', '0.is'] },
                 { type: 'valid', value: true, path: ['c', '0.otherwise', '0.is'] },
                 { type: 'rule', name: 'when', result: '0.then', path: ['c', '0.otherwise'] },
