@@ -3440,18 +3440,11 @@ describe('object', () => {
             expect(schema.validate({ a1: undefined, a2: null, a3: 'test' })).to.equal({ value: { a1: undefined, a2: undefined, a3: 'test' } });
         });
 
-        it('errors if pattern is not regex or instance of Any', () => {
+        it('compiles if pattern is not regex or schema', () => {
 
-            let error;
-            try {
-                Joi.object().pattern(17, Joi.boolean());
-                error = false;
-            }
-            catch (e) {
-                error = true;
-            }
-
-            expect(error).to.equal(true);
+            const schema = Joi.object().pattern('x', Joi.boolean());
+            expect(schema.validate({ x: true }).error).to.not.exist();
+            expect(schema.validate({ y: true }).error).to.be.an.error('"y" is not allowed');
         });
 
         it('allows using refs in .valid() schema pattern', () => {
@@ -3462,7 +3455,7 @@ describe('object', () => {
 
         it('enforces pattern matches rule', () => {
 
-            const ref1 = Joi.ref('a');
+            const ref1 = Joi.ref('a');              // .matches ..object
             const ref2 = Joi.x('{a - 1}');
 
             const schema = Joi.object({
