@@ -1747,32 +1747,32 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"p" must be one of [boolean, foo]',
+                    message: '"p" must be one of [boolean, foo, bar]',
                     details: [
                         {
-                            message: '"p" must be one of [boolean, foo]',
+                            message: '"p" must be one of [boolean, foo, bar]',
                             path: ['p'],
                             type: 'alternatives.types',
                             context: {
                                 key: 'p',
                                 label: 'p',
-                                types: ['boolean', 'foo'],
+                                types: ['boolean', 'foo', 'bar'],
                                 value: 1
                             }
                         }
                     ]
                 }],
                 [{ p: '...' }, false, null, {
-                    message: '"p" must be one of [boolean, foo]',
+                    message: '"p" must be one of [boolean, foo, bar]',
                     details: [
                         {
-                            message: '"p" must be one of [boolean, foo]',
+                            message: '"p" must be one of [boolean, foo, bar]',
                             path: ['p'],
                             type: 'alternatives.types',
                             context: {
                                 key: 'p',
                                 label: 'p',
-                                types: ['boolean', 'foo'],
+                                types: ['boolean', 'foo', 'bar'],
                                 value: '...'
                             }
                         }
@@ -1806,32 +1806,32 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, null, {
-                    message: '"p" must be one of boolean, foo',
+                    message: '"p" must be one of boolean, foo, bar',
                     details: [
                         {
-                            message: '"p" must be one of boolean, foo',
+                            message: '"p" must be one of boolean, foo, bar',
                             path: ['p'],
                             type: 'alternatives.types',
                             context: {
                                 key: 'p',
                                 label: 'p',
-                                types: ['boolean', 'foo'],
+                                types: ['boolean', 'foo', 'bar'],
                                 value: 1
                             }
                         }
                     ]
                 }],
                 [{ p: '...' }, false, null, {
-                    message: '"p" must be one of boolean, foo',
+                    message: '"p" must be one of boolean, foo, bar',
                     details: [
                         {
-                            message: '"p" must be one of boolean, foo',
+                            message: '"p" must be one of boolean, foo, bar',
                             path: ['p'],
                             type: 'alternatives.types',
                             context: {
                                 key: 'p',
                                 label: 'p',
-                                types: ['boolean', 'foo'],
+                                types: ['boolean', 'foo', 'bar'],
                                 value: '...'
                             }
                         }
