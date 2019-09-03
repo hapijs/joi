@@ -16,7 +16,7 @@ const { expect } = Code;
 
 describe('number', () => {
 
-    it('should throw an exception if arguments were passed.', () => {
+    it('throws an exception if arguments were passed.', () => {
 
         expect(() => Joi.number('invalid argument.')).to.throw('The number type does not allow arguments');
     });
@@ -46,7 +46,7 @@ describe('number', () => {
         ]);
     });
 
-    it('should instantiate separate copies on invocation', () => {
+    it('instantiates separate copies on invocation', () => {
 
         const result1 = Joi.number().min(5);
         const result2 = Joi.number().max(5);
@@ -54,7 +54,7 @@ describe('number', () => {
         expect(Object.keys(result1)).to.not.shallow.equal(Object.keys(result2));
     });
 
-    it('should show resulting object with #valueOf', () => {
+    it('shows resulting object with #valueOf', () => {
 
         const result = Joi.number().min(5);
         expect(result.valueOf()).to.exist();
@@ -62,7 +62,7 @@ describe('number', () => {
 
     describe('error message', () => {
 
-        it('should display correctly for int type', () => {
+        it('displays correctly for int type', () => {
 
             const t = Joi.number().integer();
             expect(Joi.compile(t).validate('1.1').error).to.be.an.error(/integer/);
@@ -94,7 +94,7 @@ describe('number', () => {
 
     describe('describe()', () => {
 
-        it('should describe a minimum of 0', () => {
+        it('describes a minimum of 0', () => {
 
             const schema = Joi.number().min(0);
             expect(schema.describe()).to.equal({
@@ -985,7 +985,7 @@ describe('number', () => {
 
     describe('port()', () => {
 
-        it('should validate correctly', () => {
+        it('validates correctly', () => {
 
             const schema = Joi.object({ port: Joi.number().port() });
 
@@ -1057,7 +1057,7 @@ describe('number', () => {
 
     describe('safe', () => {
 
-        it('should accept safe numbers', () => {
+        it('accepts safe numbers', () => {
 
             const t = Joi.number();
             Helper.validate(t, [
@@ -1069,14 +1069,14 @@ describe('number', () => {
 
     describe('validate()', () => {
 
-        it('should, by default, allow undefined', () => {
+        it('allows undefined', () => {
 
             Helper.validate(Joi.number(), [
                 [undefined, true]
             ]);
         });
 
-        it('should, when .required(), deny undefined', () => {
+        it('denies undefined when .required()', () => {
 
             Helper.validate(Joi.number().required(), [
                 [undefined, false, null, {
@@ -1103,7 +1103,7 @@ describe('number', () => {
             expect(schema.validate('1')).to.equal({ value: 1 });
         });
 
-        it('should return false for denied value', () => {
+        it('returns false for denied value', () => {
 
             const text = Joi.number().invalid(50);
             const err = text.validate(50).error;
@@ -1116,7 +1116,7 @@ describe('number', () => {
             }]);
         });
 
-        it('should validate integer', () => {
+        it('validates integer', () => {
 
             const t = Joi.number().integer();
             Helper.validate(t, [
@@ -1153,7 +1153,7 @@ describe('number', () => {
             ]);
         });
 
-        it('should return false for Infinity', () => {
+        it('returns false for Infinity', () => {
 
             const t = Joi.number();
             Helper.validate(t, [
@@ -1178,7 +1178,7 @@ describe('number', () => {
             ]);
         });
 
-        it('should return true for allowed Infinity', () => {
+        it('returns true for allowed Infinity', () => {
 
             const t = Joi.number().allow(Infinity, -Infinity);
             Helper.validate(t, [
@@ -1187,7 +1187,7 @@ describe('number', () => {
             ]);
         });
 
-        it('should return true for decimal numbers', () => {
+        it('returns true for decimal numbers', () => {
 
             const t = Joi.number();
             Helper.validate(t, [
@@ -2287,7 +2287,7 @@ describe('number', () => {
 
     describe('unsafe', () => {
 
-        it('should return the same instance if nothing changed', () => {
+        it('returns the same instance if nothing changed', () => {
 
             const schema = Joi.number();
             expect(schema.unsafe(false)).to.shallow.equal(schema);
@@ -2295,10 +2295,11 @@ describe('number', () => {
             expect(schema.unsafe(true)).to.not.shallow.equal(schema);
         });
 
-        it('should check unsafe numbers', () => {
+        it('checks unsafe numbers', () => {
 
             const t = Joi.number();
             Helper.validate(t, [
+                ['-0', true, null, 0],
                 ['9007199254740981.1', false, null, {
                     message: '"value" must be a safe number',
                     details: [{
@@ -2365,7 +2366,7 @@ describe('number', () => {
             ]);
         });
 
-        it('should accept unsafe numbers with a loss of precision when disabled', () => {
+        it('accepts unsafe numbers with a loss of precision when disabled', () => {
 
             const t = Joi.number().unsafe();
             Helper.validate(t, [
