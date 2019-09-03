@@ -2146,6 +2146,8 @@ Names links are recommended for most use cases as they are easy to reason and un
 
 Note that named links must be found in a direct ancestor of the link. The names are searched by iterating over the chain of schemas from the current schema to the root. To reach an uncle or cousin, you must use the name of a common ancestor such as a grandparent and then walk down the tree.
 
+Links are resolved once (per runtime) and the result schema cached. If you reuse a link in different places, the first time it is resolved at run-time, the result will be used by all other instances. If you want each link to resolve relative to the place it is used, use a separate `Joi.link()` statement in each place or set the `relative()` flag.
+
 Named links:
 
 ```js

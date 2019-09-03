@@ -167,6 +167,42 @@ describe('link', () => {
         ]);
     });
 
+    it('caches resolved schema', () => {
+
+        const link = Joi.link('x');
+        const schema = Joi.object({
+            a: {
+                y: link,
+                x: 1
+            },
+            b: {
+                y: link,
+                x: 2
+            }
+        });
+
+        expect(schema.validate({ a: { y: 1 }, b: { y: 1 } }).error).to.not.exist();
+        expect(schema.validate({ a: { y: 1 }, b: { y: 2 } }).error).to.be.an.error('"b.y" must be [1]');
+    });
+
+    it('reresolves schema', () => {
+
+        const link = Joi.link('x').relative();
+        const schema = Joi.object({
+            a: {
+                y: link,
+                x: 1
+            },
+            b: {
+                y: link,
+                x: 2
+            }
+        });
+
+        expect(schema.validate({ a: { y: 1 }, b: { y: 2 } }).error).to.not.exist();
+        expect(schema.validate({ a: { y: 1 }, b: { y: 1 } }).error).to.be.an.error('"b.y" must be [2]');
+    });
+
     it('validates a recursive schema (in alternatives)', () => {
 
         const schema = Joi.object({
@@ -227,7 +263,7 @@ describe('link', () => {
             x: Joi.link('...')
         });
 
-        expect(schema.validate({ x: 123 }).error).to.be.an.error('"x" contains link reference "ref:..." outside of schema boundaries');
+        expect(() => schema.validate({ x: 123 })).to.throw('"x" contains link reference "ref:..." which is outside of schema boundaries');
     });
 
     it('errors on missing reference (relative)', () => {
@@ -236,7 +272,7 @@ describe('link', () => {
             x: Joi.link('y')
         });
 
-        expect(schema.validate({ x: 123 }).error).to.be.an.error('"x" contains link reference to non-existing "ref:y" schema');
+        expect(() => schema.validate({ x: 123 })).to.throw('"x" contains link reference "ref:y" to non-existing schema');
     });
 
     it('errors on missing reference (named)', () => {
@@ -245,7 +281,7 @@ describe('link', () => {
             x: Joi.link('#y')
         });
 
-        expect(schema.validate({ x: 123 }).error).to.be.an.error('"x" contains link reference "ref:local:y" outside of schema boundaries');
+        expect(() => schema.validate({ x: 123 })).to.throw('"x" contains link reference "ref:local:y" which is outside of schema boundaries');
     });
 
     it('errors on referenced link', () => {
@@ -256,7 +292,7 @@ describe('link', () => {
             z: Joi.any()
         });
 
-        expect(schema.validate({ x: 123 }).error).to.be.an.error('"x" contains link reference to another link "ref:y"');
+        expect(() => schema.validate({ x: 123 })).to.throw('"x" contains link reference "ref:y" which is another link');
     });
 
     describe('when()', () => {
@@ -276,6 +312,31 @@ describe('link', () => {
                 [{ must: true, child: { must: true, child: { must: false } } }, true]
             ]);
         });
+
+        it('changes the resolved schema', () => {
+
+            const schema = Joi.object({
+                category: Joi.valid('x', 'y').required(),
+                subs: Joi.array()
+                    .items(Joi.link('#unit').when('...category', { is: 'y', then: Joi.object({ subs: Joi.forbidden() }) }))
+                    .min(1)
+            })
+                .id('unit');
+
+            Helper.validate(schema, [
+                [{ category: 'x', subs: [{ category: 'x' }] }, true],
+                [{ category: 'y', subs: [{ category: 'x' }] }, true],
+                [{ category: 'y', subs: [{ category: 'x', subs: [{ category: 'x' }] }] }, false, null, {
+                    message: '"subs[0].subs" is not allowed',
+                    details: [{
+                        message: '"subs[0].subs" is not allowed',
+                        path: ['subs', 0, 'subs'],
+                        type: 'any.unknown',
+                        context: { label: 'subs[0].subs', value: [{ category: 'x' }], key: 'subs' }
+                    }]
+                }]
+            ]);
+        });
     });
 
     describe('concat()', () => {
@@ -283,6 +344,20 @@ describe('link', () => {
         it('errors on concat of link to link', () => {
 
             expect(() => Joi.link('..').concat(Joi.link('..'))).to.throw('Cannot merge type link with another type: link');
+        });
+
+        it('combines link with any', () => {
+
+            const a = Joi.object({
+                x: Joi.link('..')
+            });
+
+            const b = Joi.object({
+                x: Joi.forbidden()
+            });
+
+            expect(a.validate({ x: {} }).error).to.not.exist();
+            expect(a.concat(b).validate({ x: {} }).error).to.be.an.error('"x" is not allowed');
         });
     });
 

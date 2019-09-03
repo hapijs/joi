@@ -402,7 +402,8 @@ describe('Manifest', () => {
             internals.test([
                 Joi.link('....'),
                 Joi.link(Joi.ref('xxx....', { separator: 'x' })),
-                Joi.link('/')
+                Joi.link('/'),
+                Joi.link('..a').relative()
             ]);
         });
 
@@ -419,7 +420,16 @@ describe('Manifest', () => {
                 Joi.object().pattern(Joi.string(), Joi.number()),
                 Joi.object().pattern(/x/, Joi.number(), { matches: Joi.array().length(Joi.ref('$x')), fallthrough: true }),
                 Joi.object({ a: 1 }).concat(Joi.object({ a: 3 })),
-                Joi.object().instance(RegExp).default(/x/).allow({}).allow({ x: 1 })
+                Joi.object().instance(RegExp).default(/x/).allow({}).allow({ x: 1 }),
+                Joi.object({ regex: 'b' }),
+                Joi.object({ buffer: 'c' }),
+                Joi.object({ function: 'd' }),
+                Joi.object({ override: 'e' }),
+                Joi.object({ ref: 'f' }),
+                Joi.object({ special: 'g' }),
+                Joi.object({ value: 'h' }),
+                Joi.object({ type: 'a' }),
+                Joi.object({ type: 'a', regex: 'b', buffer: 'c', function: 'd', override: 'e', ref: 'f', special: 'g', value: 'f' })
             ]);
         });
 
@@ -661,6 +671,6 @@ internals.test = function (schemas) {
 
     for (const schema of schemas) {
         const built = Joi.build(schema.describe());
-        expect(built).to.equal(schema, { skip: ['_ruleset'] });
+        expect(built).to.equal(schema, { skip: ['_ruleset', '_resolved'] });
     }
 };

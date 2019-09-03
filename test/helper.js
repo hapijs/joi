@@ -18,7 +18,7 @@ exports.validate = function (schema, config) {
 exports.validateOptions = function (schema, config, options) {
 
     try {
-        expect(schema.$_root.build(schema.describe())).to.equal(schema, { skip: ['_ruleset'] });
+        expect(schema.$_root.build(schema.describe())).to.equal(schema, { skip: ['_ruleset', '_resolved'] });
 
         for (let i = 0; i < config.length; ++i) {
 
