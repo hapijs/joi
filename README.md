@@ -15,6 +15,18 @@ can be inputted and validate it against the set rules?
 This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object
 that stores information) to ensure *validation* of key information.
 
+## Install
+
+#### for *npm*
+```
+$ npm install @hapi/joi
+```
+
+#### for *yarn*
+```
+$ yarn add @hapi/joi
+```
+
 ## API
 
 See the detailed [API Reference](https://hapi.dev/family/joi/).
