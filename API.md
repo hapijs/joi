@@ -221,9 +221,6 @@
     - [`function.class`](#functionclass)
     - [`function.maxArity`](#functionmaxarity)
     - [`function.minArity`](#functionminarity)
-    - [`link.depth`](#linkdepth)
-    - [`link.loop`](#linkloop)
-    - [`link.ref`](#linkref)
     - [`number.base`](#numberbase)
     - [`number.greater`](#numbergreater)
     - [`number.infinity`](#numberinfinity)
@@ -2142,6 +2139,8 @@ Links to another schema node and reuses it for validation, typically for creativ
 
 Supports the methods of the [`any()`](#any) type.
 
+When links are combined with `any.when()` rules, the rules are applied after the link is resolved to the linked schema.
+
 Names links are recommended for most use cases as they are easy to reason and understand, and when mistakes are made, they simply error with invalid link message. Relative links are often hard to follow, especially when they are nested in array or alternatives rules. Absolute links are useful only when the schema is never reused inside another schema as the root is the run-time root of the schema being validated, not the current schema root.
 
 Note that named links must be found in a direct ancestor of the link. The names are searched by iterating over the chain of schemas from the current schema to the root. To reach an uncle or cousin, you must use the name of a common ancestor such as a grandparent and then walk down the tree.
@@ -2184,8 +2183,6 @@ const person = Joi.object({
         .items(Joi.link('/'))
 });
 ```
-
-Possible validation errors: [`link.depth`](#linkdepth), [`link.ref`](#linkref), [`link.loop`](#linkloop)
 
 #### `link.ref(ref)`
 
@@ -3780,38 +3777,6 @@ Additional local context properties:
 ```ts
 {
     n: number // Minimum expected arity
-}
-```
-#### `link.depth`
-
-The link reference reached outside of the schema root.
-
-Additional local context properties:
-```ts
-{
-    ref: Reference // The link reference
-}
-```
-
-#### `link.loop`
-
-The link reference referenced another link.
-
-Additional local context properties:
-```ts
-{
-    ref: Reference // The link reference
-}
-```
-
-#### `link.ref`
-
-The link reference referenced a missing schema node.
-
-Additional local context properties:
-```ts
-{
-    ref: Reference // The link reference
 }
 ```
 
