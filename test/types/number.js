@@ -1149,6 +1149,15 @@ describe('number', () => {
                         type: 'number.integer',
                         context: { value: 0.01, label: 'value' }
                     }]
+                }],
+                [-0, false, null, {
+                    message: '"value" must be an integer',
+                    details: [{
+                        message: '"value" must be an integer',
+                        path: [],
+                        type: 'number.integer',
+                        context: { value: -0, label: 'value' }
+                    }]
                 }]
             ]);
         });
