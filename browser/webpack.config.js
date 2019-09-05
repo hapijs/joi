@@ -18,6 +18,12 @@ module.exports = {
     module: {
         rules: [
             {
+                use: './lib/version-loader',
+                include: [
+                    Path.join(__dirname, '../package.json')
+                ]
+            },
+            {
                 use: 'null-loader',
                 include: [
                     Path.join(__dirname, '../lib/manifest.js'),
