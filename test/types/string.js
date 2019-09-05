@@ -1521,11 +1521,11 @@ describe('string', () => {
             expect(() => Joi.string().domain({ tlds: { allow: { com: true } } })).to.throw('tlds.allow must be an array, Set, or boolean');
 
             expect(() => Joi.string().domain({ tlds: { deny: ['com'] } })).to.not.throw();
+            expect(() => Joi.string().domain({ tlds: { deny: false } })).to.not.throw();
             expect(() => Joi.string().domain({ tlds: { deny: new Set(['com']) } })).to.not.throw();
-            expect(() => Joi.string().domain({ tlds: { deny: true } })).to.throw('tlds.deny must be an array or Set');
-            expect(() => Joi.string().domain({ tlds: { deny: false } })).to.throw('tlds.deny must be an array or Set');
-            expect(() => Joi.string().domain({ tlds: { deny: 'com' } })).to.throw('tlds.deny must be an array or Set');
-            expect(() => Joi.string().domain({ tlds: { deny: { com: true } } })).to.throw('tlds.deny must be an array or Set');
+            expect(() => Joi.string().domain({ tlds: { deny: true } })).to.throw('tlds.deny must be an array, Set, or boolean');
+            expect(() => Joi.string().domain({ tlds: { deny: 'com' } })).to.throw('tlds.deny must be an array, Set, or boolean');
+            expect(() => Joi.string().domain({ tlds: { deny: { com: true } } })).to.throw('tlds.deny must be an array, Set, or boolean');
         });
 
         it('validates domain', () => {
@@ -1636,10 +1636,10 @@ describe('string', () => {
 
             expect(() => Joi.string().email({ tlds: { deny: ['com'] } })).to.not.throw();
             expect(() => Joi.string().email({ tlds: { deny: new Set(['com']) } })).to.not.throw();
-            expect(() => Joi.string().email({ tlds: { deny: true } })).to.throw('tlds.deny must be an array or Set');
-            expect(() => Joi.string().email({ tlds: { deny: false } })).to.throw('tlds.deny must be an array or Set');
-            expect(() => Joi.string().email({ tlds: { deny: 'com' } })).to.throw('tlds.deny must be an array or Set');
-            expect(() => Joi.string().email({ tlds: { deny: { com: true } } })).to.throw('tlds.deny must be an array or Set');
+            expect(() => Joi.string().email({ tlds: { deny: false } })).to.not.throw();
+            expect(() => Joi.string().email({ tlds: { deny: true } })).to.throw('tlds.deny must be an array, Set, or boolean');
+            expect(() => Joi.string().email({ tlds: { deny: 'com' } })).to.throw('tlds.deny must be an array, Set, or boolean');
+            expect(() => Joi.string().email({ tlds: { deny: { com: true } } })).to.throw('tlds.deny must be an array, Set, or boolean');
 
             expect(() => Joi.string().email({ multiple: true })).to.not.throw();
             expect(() => Joi.string().email({ multiple: false })).to.not.throw();
@@ -1725,6 +1725,15 @@ describe('string', () => {
                         context: { value: 'joe@example.edu', invalids: ['joe@example.edu'], label: 'value' }
                     }]
                 }]
+            ]);
+        });
+
+        it('validates email with tlds false', () => {
+
+            const schema = Joi.string().email({ tlds: false });
+            Helper.validate(schema, [
+                ['joe@example.no-such-domain', true],
+                ['joe@example.org', true]
             ]);
         });
 

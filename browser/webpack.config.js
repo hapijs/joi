@@ -20,8 +20,10 @@ module.exports = {
             {
                 use: 'null-loader',
                 include: [
+                    Path.join(__dirname, '../lib/manifest.js'),
+                    Path.join(__dirname, '../lib/trace.js'),
                     Path.join(__dirname, '../lib/types/binary.js'),
-                    Path.join(__dirname, '../lib/trace.js')
+                    Path.join(__dirname, '../node_modules/@hapi/address/lib/tlds.js')
                 ]
             },
             {
