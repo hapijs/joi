@@ -693,9 +693,10 @@ describe('Modify', () => {
 
     describe('id()', () => {
 
-        it('errors on missing id', () => {
+        it('unsets id', () => {
 
-            expect(() => Joi.any().id()).to.throw('id must be a non-empty string');
+            const schema = Joi.any().id('x');
+            expect(schema.id()).to.equal(Joi.any(), { skip: ['_ruleset'] });
         });
 
         it('errors on invalid id', () => {
@@ -703,9 +704,10 @@ describe('Modify', () => {
             expect(() => Joi.any().id('a.b')).to.throw('id cannot contain period character');
         });
 
-        it('errors on id override', () => {
+        it('overrides id', () => {
 
-            expect(() => Joi.any().id('b').id('b')).to.throw('Cannot override schema id');
+            const schema = Joi.any().id('x');
+            expect(schema.id('y')).to.equal(Joi.any().id('y'), { skip: ['_ruleset'] });
         });
     });
 
