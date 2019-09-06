@@ -392,7 +392,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should traverse an object and validate all properties in the top level', () => {
+    it('traverses an object and validate all properties in the top level', () => {
 
         const schema = Joi.object({
             num: Joi.number()
@@ -412,7 +412,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should traverse an object and child objects and validate all properties', () => {
+    it('traverses an object and child objects and validate all properties', () => {
 
         const schema = Joi.object({
             num: Joi.number(),
@@ -445,7 +445,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should traverse an object several levels', () => {
+    it('traverses an object several levels', () => {
 
         const schema = Joi.object({
             obj: Joi.object({
@@ -483,7 +483,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should traverse an object several levels with required levels', () => {
+    it('traverses an object several levels with required levels', () => {
 
         const schema = Joi.object({
             obj: Joi.object({
@@ -531,7 +531,7 @@ describe('object', () => {
         ]);
     });
 
-    it('should traverse an object several levels with required levels (without Joi.obj())', () => {
+    it('traverses an object several levels with required levels (without Joi.obj())', () => {
 
         const schema = Joi.object({
             obj: {
@@ -1775,6 +1775,26 @@ describe('object', () => {
             });
 
             expect(schema.validate({ a: true })).to.equal({ value: {} });
+        });
+
+        it('keeps keys in ref order', () => {
+
+            const schema = Joi.object({
+                type: Joi.string().required(),
+
+                set: Joi.boolean()
+                    .when('flag', { is: true, then: false }),
+
+                flag: Joi.boolean()
+            })
+                .when('.type', [
+                    { is: 'a', then: Joi.object({ flag: false }) }
+                ]);
+
+            expect(schema.validate({ flag: true }).error).to.be.an.error('"type" is required');
+            expect(schema.validate({ flag: true }).error).to.be.an.error('"type" is required');
+            expect(schema.validate({ type: 'a', flag: true }).error).to.be.an.error('"flag" must be [false]');
+            expect(schema.validate({ type: 'a', set: true, flag: true }).error).to.be.an.error('"flag" must be [false]');
         });
     });
 

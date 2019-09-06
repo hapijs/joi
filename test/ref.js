@@ -384,7 +384,7 @@ describe('ref', () => {
 
         const object = Joi.object().schema('object');
         const schema = Joi.object({
-            key: Joi.object().when('key', {
+            key: Joi.object().when('.', {
                 is: Joi.object().schema(),
                 then: object,
                 otherwise: Joi.object().pattern(/.*/, object)
