@@ -725,5 +725,37 @@ describe('Trace', () => {
                 { type: 'value', by: 'cast', name: 'string', from: 123, to: '123', path: [] }
             ]);
         });
+
+        it('debug multiple time same schema', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.link('a')
+                    .when('a', { then: Joi.forbidden() })
+            });
+
+            const debug1 = schema.validate({ a: true, b: true }, { debug: true }).debug;
+            expect(debug1).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'entry', path: ['a'] },
+                { type: 'resolve', ref: 'ref:a', to: true, path: ['b'] },
+                { type: 'entry', path: ['b', '0.is'] },
+                { type: 'rule', name: 'when', result: '0.then', path: ['b'] },
+                { type: 'entry', path: ['b'] },
+                { type: 'resolve', ref: 'ref:local:label', to: 'b', path: ['b'] }
+            ]);
+
+            const debug2 = schema.validate({ a: false, b: false }, { debug: true }).debug;
+            expect(debug2).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'entry', path: ['a'] },
+                { type: 'resolve', ref: 'ref:a', to: false, path: ['b'] },
+                { type: 'entry', path: ['b', '0.is'] },
+                { type: 'invalid', value: false, path: ['b', '0.is'] },
+                { type: 'rule', name: 'when', result: '', path: ['b'] },
+                { type: 'entry', path: ['b'] },
+                { type: 'entry', path: ['b', 'link:ref:a:boolean'] }
+            ]);
+        });
     });
 });
