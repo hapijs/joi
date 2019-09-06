@@ -343,7 +343,7 @@ describe('link', () => {
 
         it('errors on concat of link to link', () => {
 
-            expect(() => Joi.link('..').concat(Joi.link('..'))).to.throw('Cannot merge type link with another type: link');
+            expect(() => Joi.link('..').concat(Joi.link('..'))).to.throw('Cannot merge type link with another link');
         });
 
         it('combines link with any', () => {
@@ -358,6 +358,64 @@ describe('link', () => {
 
             expect(a.validate({ x: {} }).error).to.not.exist();
             expect(a.concat(b).validate({ x: {} }).error).to.be.an.error('"x" is not allowed');
+        });
+
+        it('applies concat after ref resolved', () => {
+
+            const shared = Joi.object({
+                a: Joi.number()
+            })
+                .id('shared');
+
+            const schema = Joi.object({
+                x: Joi.link('#shared')
+                    .concat(Joi.object({ a: 3 }))
+            })
+                .shared(shared);
+
+            Helper.validate(schema, [
+                [{ x: { a: 3 } }, true],
+                [{ x: { a: 2 } }, false, null, {
+                    message: '"x.a" must be [3]',
+                    details: [{
+                        message: '"x.a" must be [3]',
+                        path: ['x', 'a'],
+                        type: 'any.only',
+                        context: { label: 'x.a', value: 2, key: 'a', valids: [3] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('applies concat after ref resolved (with when)', () => {
+
+            const shared = Joi.object({
+                a: Joi.number()
+            })
+                .id('shared');
+
+            const schema = Joi.object({
+                w: Joi.boolean(),
+                x: Joi.link('#shared')
+                    .when('w', { then: Joi.object({ a: 4 }) })
+                    .concat(Joi.object({ a: Joi.valid(3) }))
+            })
+                .shared(shared);
+
+            Helper.validate(schema, [
+                [{ x: { a: 3 } }, true],
+                [{ w: true, x: { a: 3 } }, true],
+                [{ w: true, x: { a: 4 } }, true],
+                [{ x: { a: 2 } }, false, null, {
+                    message: '"x.a" must be [3]',
+                    details: [{
+                        message: '"x.a" must be [3]',
+                        path: ['x', 'a'],
+                        type: 'any.only',
+                        context: { label: 'x.a', value: 2, key: 'a', valids: [3] }
+                    }]
+                }]
+            ]);
         });
     });
 

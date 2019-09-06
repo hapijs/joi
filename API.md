@@ -109,6 +109,7 @@
     - [`function.minArity(n)`](#funcminarityn)
   - [`link(ref)` - inherits from `Any`](#linkref---inherits-from-any)
     - [`link.ref(ref)`](#linkrefref)
+    - [`link.concat(schema)`](#linkconcatschema)
   - [`number` - inherits from `Any`](#number---inherits-from-any)
     - [`number.greater(limit)`](#numbergreaterlimit)
     - [`number.integer()`](#numberinteger)
@@ -2211,6 +2212,10 @@ await number.validateAsync(5);
 ```
 
 Possible validation errors: [`number.base`](#numberbase), [`number.infinity`](#numberinfinity)
+
+#### `link.concat(schema)`
+
+Same as [`any.concat()`](#anyconcatschema) but the schema is merged after the link is resolved which allows merging with schemas of the same type as the resolved link. Will throw an exception during validation if the merged types are not compatible.
 
 #### `number.greater(limit)`
 
