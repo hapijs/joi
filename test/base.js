@@ -2975,6 +2975,12 @@ describe('any', () => {
             expect(() => Joi.when('a')).to.throw('Options must be of type object');
         });
 
+        it('throws when break used with then and otherwise', () => {
+
+            expect(() => Joi.when('a', { then: 1, otherwise: 2, break: true })).to.throw('Cannot specify then, otherwise, and break all together');
+            expect(() => Joi.when('a', { switch: [{ is: true, then: 1, otherwise: 2 }], break: true })).to.throw('Cannot specify both otherwise and break');
+        });
+
         it('validates multiple conditions', () => {
 
             const schema = Joi.object({
@@ -3490,6 +3496,57 @@ describe('any', () => {
                 [{ b: 6, c: 5 }, true],
                 [{ a: 'b' }, true],
                 [{ b: 5, a: 'x' }, true]
+            ]);
+        });
+
+        it('breaks early', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.boolean(),
+                c: Joi.number()
+                    .when('d', { then: 0, break: true })
+                    .when('a', { then: 1, break: true })
+                    .when('b', { then: 2 })
+            });
+
+            Helper.validate(schema, [
+                [{ a: true, b: true, c: 1 }, true],
+                [{ a: false, b: true, c: 2 }, true],
+                [{ a: false, b: true, c: 1 }, false, null, {
+                    message: '"c" must be [2]',
+                    details: [{
+                        message: '"c" must be [2]',
+                        path: ['c'],
+                        type: 'any.only',
+                        context: { value: 1, label: 'c', key: 'c', valids: [2] }
+                    }]
+                }]
+            ]);
+        });
+
+        it('breaks early (otherwise)', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.boolean(),
+                c: Joi.number()
+                    .when('a', { otherwise: 2, break: true })
+                    .when('b', { then: 1 })
+            });
+
+            Helper.validate(schema, [
+                [{ a: true, b: true, c: 1 }, true],
+                [{ a: false, b: true, c: 2 }, true],
+                [{ a: false, b: true, c: 1 }, false, null, {
+                    message: '"c" must be [2]',
+                    details: [{
+                        message: '"c" must be [2]',
+                        path: ['c'],
+                        type: 'any.only',
+                        context: { value: 1, label: 'c', key: 'c', valids: [2] }
+                    }]
+                }]
             ]);
         });
 

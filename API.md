@@ -1373,6 +1373,7 @@ Adds conditions that are evaluated during validation and modify the schema befor
     - `then` - if the condition is true, the **joi** schema to use.
     - `otherwise` - if the condition is false, the **joi** schema to use.
     - `switch` - an array of `{ is, then }` conditions that are evaluated against the `condition`. The last item in the array may also contain `otherwise`.
+    - `break` - stops processing all other conditions if the rule results in a `then`, `otherwise`, of `switch` match.
 
 If `condition` is a reference:
 - if `is`, `not`, and `switch` are missing, `is` defaults to `Joi.invalid(null, false, 0, '').required()` (value must be a truthy).
