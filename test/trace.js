@@ -244,6 +244,34 @@ describe('Trace', () => {
             ]);
         });
 
+        it('reports array items', () => {
+
+            const tracer = Joi.trace();
+
+            const schema = Joi.array().items(Joi.boolean(), Joi.string());
+
+            schema.validate([true]);
+
+            expect(tracer.report(__filename)).to.equal([
+                {
+                    filename: __filename,
+                    line: Pinpoint.location().line - 5,
+                    severity: 'error',
+                    message: 'Schema missing tests for items (always pass), @items[1] (never reached)',
+                    missing: [
+                        {
+                            rule: 'items',
+                            status: 'always pass'
+                        },
+                        {
+                            paths: [['@items', 1]],
+                            status: 'never reached'
+                        }
+                    ]
+                }
+            ]);
+        });
+
         it('tracks valid and invalid values', () => {
 
             const tracer = Joi.trace();
@@ -298,7 +326,7 @@ describe('Trace', () => {
             expect(tracer.report(__filename)).to.equal([
                 {
                     filename: __filename,
-                    line: 296,
+                    line: Pinpoint.location().line - 5,
                     message: 'Schema missing tests for valids (ref:b)',
                     missing: [
                         {
