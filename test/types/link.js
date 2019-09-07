@@ -417,6 +417,33 @@ describe('link', () => {
                 }]
             ]);
         });
+
+        it('combines link and linked whens', () => {
+
+            const schema = Joi.object({
+                type: Joi.valid('a', 'b').required()
+            })
+                .when('.type', [
+                    {
+                        is: 'a',
+                        then: Joi.object({
+                            x: Joi.boolean()
+                        })
+                    },
+                    {
+                        is: 'b',
+                        then: Joi.object({
+                            y: Joi.link('#root').concat(Joi.object({ type: 'a' }))
+                        })
+                    }
+                ])
+                .id('root');
+
+            Helper.validate(schema, [
+                [{ type: 'b', y: { type: 'a' } }, true],
+                [{ type: 'b', y: { type: 'a', x: true } }, true]
+            ]);
+        });
     });
 
     describe('describe()', () => {
