@@ -192,7 +192,7 @@ describe('array', () => {
 
             const schema = Joi.array().has(Joi.string());
             Helper.validate(schema, [
-                [[0], false, null, {
+                [[0], false, {
                     message: '"value" does not contain at least one required match',
                     details: [{
                         message: '"value" does not contain at least one required match',
@@ -208,7 +208,7 @@ describe('array', () => {
 
             const schema = Joi.array().has(Joi.string().label('foo'));
             Helper.validate(schema, [
-                [[0], false, null, {
+                [[0], false, {
                     message: '"value" does not contain at least one required match for type "foo"',
                     details: [{
                         message: '"value" does not contain at least one required match for type "foo"',
@@ -226,7 +226,7 @@ describe('array', () => {
                 arr: Joi.array().has(Joi.string())
             });
             Helper.validate(schema, [
-                [{ arr: [0] }, false, null, {
+                [{ arr: [0] }, false, {
                     message: '"arr" does not contain at least one required match',
                     details: [{
                         message: '"arr" does not contain at least one required match',
@@ -261,7 +261,7 @@ describe('array', () => {
             Helper.validate(schema, [
                 [{ array: [10, 1, 11, 5] }, true],
                 [{ array: [10, 1, 2, 5, 12] }, true],
-                [{ array: [10, 1, 2, 5, 1] }, false, null, {
+                [{ array: [10, 1, 2, 5, 1] }, false, {
                     message: '"array" does not contain at least one required match',
                     details: [{
                         message: '"array" does not contain at least one required match',
@@ -281,7 +281,7 @@ describe('array', () => {
                 )
             });
             Helper.validate(schema, [
-                [{ arr: [{ foo: [0] }] }, false, null, {
+                [{ arr: [{ foo: [0] }] }, false, {
                     message: '"arr[0].foo" does not contain at least one required match',
                     details: [{
                         message: '"arr[0].foo" does not contain at least one required match',
@@ -301,7 +301,7 @@ describe('array', () => {
             ]);
 
             Helper.validate(schema, [
-                [['foo'], false, null, {
+                [['foo'], false, {
                     message: '"value" does not contain at least one required match',
                     details: [{
                         message: '"value" does not contain at least one required match',
@@ -404,8 +404,8 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.number(), Joi.string()).prefs({ stripUnknown: true });
 
             Helper.validate(schema, [
-                [[1, 2, 'a'], true, null, [1, 2, 'a']],
-                [[1, { foo: 'bar' }, 'a', 2], false, null, {
+                [[1, 2, 'a'], true, [1, 2, 'a']],
+                [[1, { foo: 'bar' }, 'a', 2], false, {
                     message: '"[1]" does not match any of the allowed types',
                     details: [{
                         context: {
@@ -427,8 +427,8 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.number(), Joi.string()).prefs({ stripUnknown: { arrays: true, objects: false } });
 
             Helper.validate(schema, [
-                [[1, 2, 'a'], true, null, [1, 2, 'a']],
-                [[1, { foo: 'bar' }, 'a', 2], true, null, [1, 'a', 2]]
+                [[1, 2, 'a'], true, [1, 2, 'a']],
+                [[1, { foo: 'bar' }, 'a', 2], true, [1, 'a', 2]]
             ]);
         });
 
@@ -624,7 +624,7 @@ describe('array', () => {
             const schema = Joi.array().length(2);
             Helper.validate(schema, [
                 [[1, 2], true],
-                [[1], false, null, {
+                [[1], false, {
                     message: '"value" must contain 2 items',
                     details: [{
                         message: '"value" must contain 2 items',
@@ -641,7 +641,7 @@ describe('array', () => {
             const schema = Joi.array().length(2).length(1);
             Helper.validate(schema, [
                 [[1], true],
-                [[1, 2], false, null, {
+                [[1, 2], false, {
                     message: '"value" must contain 1 items',
                     details: [{
                         message: '"value" must contain 1 items',
@@ -683,7 +683,7 @@ describe('array', () => {
                 [{
                     limit: 2,
                     arr: [1]
-                }, false, null, {
+                }, false, {
                     message: '"arr" must contain ref:limit items',
                     details: [{
                         message: '"arr" must contain ref:limit items',
@@ -727,7 +727,7 @@ describe('array', () => {
                 [{
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
-                }, false, null, {
+                }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
                         message: '"arr" limit references "ref:limit" which must be a positive integer',
@@ -739,7 +739,7 @@ describe('array', () => {
                 [{
                     limit: 'I like turtles',
                     arr: [1]
-                }, false, null, {
+                }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
                         message: '"arr" limit references "ref:limit" which must be a positive integer',
@@ -758,7 +758,7 @@ describe('array', () => {
 
             const schema = Joi.array().max(1);
             Helper.validate(schema, [
-                [[1, 2], false, null, {
+                [[1, 2], false, {
                     message: '"value" must contain less than or equal to 1 items',
                     details: [{
                         message: '"value" must contain less than or equal to 1 items',
@@ -810,7 +810,7 @@ describe('array', () => {
                 [{
                     limit: 2,
                     arr: [1, 2, 3]
-                }, false, null, {
+                }, false, {
                     message: '"arr" must contain less than or equal to ref:limit items',
                     details: [{
                         message: '"arr" must contain less than or equal to ref:limit items',
@@ -854,7 +854,7 @@ describe('array', () => {
                 [{
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
-                }, false, null, {
+                }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
                         message: '"arr" limit references "ref:limit" which must be a positive integer',
@@ -866,7 +866,7 @@ describe('array', () => {
                 [{
                     limit: 'I like turtles',
                     arr: [1]
-                }, false, null, {
+                }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
                         message: '"arr" limit references "ref:limit" which must be a positive integer',
@@ -886,7 +886,7 @@ describe('array', () => {
             const schema = Joi.array().min(2);
             Helper.validate(schema, [
                 [[1, 2], true],
-                [[1], false, null, {
+                [[1], false, {
                     message: '"value" must contain at least 2 items',
                     details: [{
                         message: '"value" must contain at least 2 items',
@@ -946,7 +946,7 @@ describe('array', () => {
                 [{
                     limit: 2,
                     arr: [1]
-                }, false, null, {
+                }, false, {
                     message: '"arr" must contain at least ref:limit items',
                     details: [{
                         message: '"arr" must contain at least ref:limit items',
@@ -990,7 +990,7 @@ describe('array', () => {
                 [{
                     limit: Math.pow(2, 53),
                     arr: [1, 2]
-                }, false, null, {
+                }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
                         message: '"arr" limit references "ref:limit" which must be a positive integer',
@@ -1002,7 +1002,7 @@ describe('array', () => {
                 [{
                     limit: 'I like turtles',
                     arr: [1]
-                }, false, null, {
+                }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
                     details: [{
                         message: '"arr" limit references "ref:limit" which must be a positive integer',
@@ -1262,7 +1262,7 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[0, 'ab', 0, 'ab'], true],
-                [[undefined, 'foo', 2, 'bar'], false, null, {
+                [[undefined, 'foo', 2, 'bar'], false, {
                     message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0',
                     details: [{
                         message: '"[0]" must not be a sparse array item',
@@ -1276,7 +1276,7 @@ describe('array', () => {
                         context: { key: 2, label: '[2]', limit: 0, value: 2 }
                     }]
                 }],
-                [[undefined, 'foo', 2, undefined], false, null, {
+                [[undefined, 'foo', 2, undefined], false, {
                     message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
                     details: [{
                         message: '"[0]" must not be a sparse array item',
@@ -1309,7 +1309,7 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[0, 'ab', 0, 'ab'], true],
-                [[undefined, 'foo', 2, 'bar'], false, null, {
+                [[undefined, 'foo', 2, 'bar'], false, {
                     message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0',
                     details: [{
                         message: '"[0]" must not be a sparse array item',
@@ -1323,7 +1323,7 @@ describe('array', () => {
                         context: { key: 2, label: '[2]', limit: 0, value: 2 }
                     }]
                 }],
-                [[undefined, 'foo', 2, undefined], false, null, {
+                [[undefined, 'foo', 2, undefined], false, {
                     message: '"[0]" must not be a sparse array item. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
                     details: [{
                         message: '"[0]" must not be a sparse array item',
@@ -1342,7 +1342,7 @@ describe('array', () => {
                         context: { key: 3, label: '[3]', path: [3], pos: 3, value: undefined }
                     }]
                 }],
-                [[undefined, false, 2, undefined], false, null, {
+                [[undefined, false, 2, undefined], false, {
                     message: '"[0]" must not be a sparse array item. "[1]" contains an excluded value. "[2]" must be less than or equal to 0. "[3]" must not be a sparse array item',
                     details: [{
                         message: '"[0]" must not be a sparse array item',
@@ -1400,7 +1400,7 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[1, 2, 3], true],
                 [1, true],
-                [['a'], false, null, {
+                [['a'], false, {
                     message: '"[0]" must be a number',
                     details: [{
                         message: '"[0]" must be a number',
@@ -1409,7 +1409,7 @@ describe('array', () => {
                         context: { label: '[0]', key: 0, value: 'a' }
                     }]
                 }],
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" must be a number',
                     details: [{
                         message: '"value" must be a number',
@@ -1418,7 +1418,7 @@ describe('array', () => {
                         context: { label: 'value', value: 'a' }
                     }]
                 }],
-                [true, false, null, {
+                [true, false, {
                     message: '"value" contains an excluded value',
                     details: [{
                         message: '"value" contains an excluded value',
@@ -1439,7 +1439,7 @@ describe('array', () => {
                 [1, true],
                 [[1, 'a'], true],
                 ['a', true],
-                [true, false, null, {
+                [true, false, {
                     message: '"value" does not match any of the allowed types',
                     details: [{
                         message: '"value" does not match any of the allowed types',
@@ -1504,7 +1504,7 @@ describe('array', () => {
                 [['a', 'b', null, null], true],
                 [['a', 'b', undefined], true],
                 [['a', 'b', undefined, undefined], true],
-                [[1, 0], false, null, {
+                [[1, 0], false, {
                     message: '"value" must be sorted in ascending order by value',
                     details: [{
                         message: '"value" must be sorted in ascending order by value',
@@ -1518,7 +1518,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [['1', '0'], false, null, {
+                [['1', '0'], false, {
                     message: '"value" must be sorted in ascending order by value',
                     details: [{
                         message: '"value" must be sorted in ascending order by value',
@@ -1532,7 +1532,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[null, 1, 2], false, null, {
+                [[null, 1, 2], false, {
                     message: '"value" must be sorted in ascending order by value',
                     details: [{
                         message: '"value" must be sorted in ascending order by value',
@@ -1561,7 +1561,7 @@ describe('array', () => {
                 [['a', 'b', undefined], true],
                 [['a', 'b', undefined, undefined], true],
                 [['a', 'b', null, undefined], true],
-                [[1, 0], false, null, {
+                [[1, 0], false, {
                     message: '"value" must be sorted in ascending order by value',
                     details: [{
                         message: '"value" must be sorted in ascending order by value',
@@ -1575,7 +1575,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [['1', '0'], false, null, {
+                [['1', '0'], false, {
                     message: '"value" must be sorted in ascending order by value',
                     details: [{
                         message: '"value" must be sorted in ascending order by value',
@@ -1589,7 +1589,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[null, 1, 2], false, null, {
+                [[null, 1, 2], false, {
                     message: '"value" must be sorted in ascending order by value',
                     details: [{
                         message: '"value" must be sorted in ascending order by value',
@@ -1618,7 +1618,7 @@ describe('array', () => {
                 [['b', 'a', undefined], true],
                 [['b', 'a', undefined, undefined], true],
                 [[null, 'b', 'a', undefined], true],
-                [[0, 1], false, null, {
+                [[0, 1], false, {
                     message: '"value" must be sorted in descending order by value',
                     details: [{
                         message: '"value" must be sorted in descending order by value',
@@ -1632,7 +1632,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [['0', '1'], false, null, {
+                [['0', '1'], false, {
                     message: '"value" must be sorted in descending order by value',
                     details: [{
                         message: '"value" must be sorted in descending order by value',
@@ -1646,7 +1646,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[2, 1, null], false, null, {
+                [[2, 1, null], false, {
                     message: '"value" must be sorted in descending order by value',
                     details: [{
                         message: '"value" must be sorted in descending order by value',
@@ -1675,7 +1675,7 @@ describe('array', () => {
                 [[{ x: 'a' }, { x: 'b' }, undefined], true],
                 [[{ x: 'a' }, { x: 'b' }, undefined, undefined], true],
                 [[{ x: 'a' }, { x: 'b' }, { x: null }, {}, null, undefined, undefined], true],
-                [[{ x: 1 }, { x: 0 }], false, null, {
+                [[{ x: 1 }, { x: 0 }], false, {
                     message: '"value" must be sorted in ascending order by x',
                     details: [{
                         message: '"value" must be sorted in ascending order by x',
@@ -1689,7 +1689,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[{ x: '1' }, { x: '0' }], false, null, {
+                [[{ x: '1' }, { x: '0' }], false, {
                     message: '"value" must be sorted in ascending order by x',
                     details: [{
                         message: '"value" must be sorted in ascending order by x',
@@ -1703,7 +1703,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[{ x: null }, { x: 1 }, { x: 2 }], false, null, {
+                [[{ x: null }, { x: 1 }, { x: 2 }], false, {
                     message: '"value" must be sorted in ascending order by x',
                     details: [{
                         message: '"value" must be sorted in ascending order by x',
@@ -1725,15 +1725,15 @@ describe('array', () => {
             const schema = Joi.array().sort({ order: 'ascending' });
 
             Helper.validate(schema, [
-                [[2, 1], true, null, [1, 2]],
-                [['b', 'a'], true, null, ['a', 'b']],
-                [[null, 'a', 'b'], true, null, ['a', 'b', null]],
-                [[null, 'b', 'a'], true, null, ['a', 'b', null]],
-                [['a', null, 'b'], true, null, ['a', 'b', null]],
-                [[null, 'a', null, 'b'], true, null, ['a', 'b', null, null]],
-                [['b', 'a', undefined], true, null, ['a', 'b', undefined]],
-                [['b', undefined, 'a'], true, null, ['a', 'b', undefined]],
-                [[0, '1'], false, null, {
+                [[2, 1], true, [1, 2]],
+                [['b', 'a'], true, ['a', 'b']],
+                [[null, 'a', 'b'], true, ['a', 'b', null]],
+                [[null, 'b', 'a'], true, ['a', 'b', null]],
+                [['a', null, 'b'], true, ['a', 'b', null]],
+                [[null, 'a', null, 'b'], true, ['a', 'b', null, null]],
+                [['b', 'a', undefined], true, ['a', 'b', undefined]],
+                [['b', undefined, 'a'], true, ['a', 'b', undefined]],
+                [[0, '1'], false, {
                     message: '"value" cannot be sorted due to mismatching types',
                     details: [{
                         message: '"value" cannot be sorted due to mismatching types',
@@ -1753,11 +1753,11 @@ describe('array', () => {
             const schema = Joi.array().sort({ by: 'x' });
 
             Helper.validate(schema, [
-                [[{ x: 1 }, { x: 2 }], true, null, [{ x: 1 }, { x: 2 }]],
-                [[{ x: 'b' }, { x: 'a' }], true, null, [{ x: 'a' }, { x: 'b' }]],
-                [[{ x: 'b' }, { x: null }, { x: 'a' }], true, null, [{ x: 'a' }, { x: 'b' }, { x: null }]],
-                [[{}, { x: 'b' }, undefined, null, { x: null }, { x: 'a' }, undefined], true, null, [{ x: 'a' }, { x: 'b' }, { x: null }, {}, null, undefined, undefined]],
-                [[{ x: 0 }, { x: '1' }], false, null, {
+                [[{ x: 1 }, { x: 2 }], true, [{ x: 1 }, { x: 2 }]],
+                [[{ x: 'b' }, { x: 'a' }], true, [{ x: 'a' }, { x: 'b' }]],
+                [[{ x: 'b' }, { x: null }, { x: 'a' }], true, [{ x: 'a' }, { x: 'b' }, { x: null }]],
+                [[{}, { x: 'b' }, undefined, null, { x: null }, { x: 'a' }, undefined], true, [{ x: 'a' }, { x: 'b' }, { x: null }, {}, null, undefined, undefined]],
+                [[{ x: 0 }, { x: '1' }], false, {
                     message: '"value" cannot be sorted due to mismatching types',
                     details: [{
                         message: '"value" cannot be sorted due to mismatching types',
@@ -1792,7 +1792,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.number());
 
             Helper.validate(schema, [
-                [[undefined], false, null, {
+                [[undefined], false, {
                     message: '"[0]" must not be a sparse array item',
                     details: [{
                         message: '"[0]" must not be a sparse array item',
@@ -1801,7 +1801,7 @@ describe('array', () => {
                         context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
                     }]
                 }],
-                [[2, undefined], false, null, {
+                [[2, undefined], false, {
                     message: '"[1]" must not be a sparse array item',
                     details: [{
                         message: '"[1]" must not be a sparse array item',
@@ -1818,7 +1818,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.object().empty({}));
 
             Helper.validate(schema, [
-                [[{ a: 1 }, {}, { c: 3 }], false, null, {
+                [[{ a: 1 }, {}, { c: 3 }], false, {
                     message: '"[1]" must not be a sparse array item',
                     details: [{
                         message: '"[1]" must not be a sparse array item',
@@ -1835,7 +1835,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.object().empty({})).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
-                [[{ a: 1 }, {}, 3], false, null, {
+                [[{ a: 1 }, {}, 3], false, {
                     message: '"[1]" must not be a sparse array item. "[2]" must be of type object',
                     details: [
                         {
@@ -1860,7 +1860,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.object().empty({}).required());
 
             Helper.validate(schema, [
-                [[{}, { c: 3 }], false, null, {
+                [[{}, { c: 3 }], false, {
                     message: '"[0]" is required',
                     details: [{
                         message: '"[0]" is required',
@@ -1890,7 +1890,7 @@ describe('array', () => {
             const schema = custom.array().items(custom.extended().foo().required());
 
             Helper.validate(schema, [
-                [[{}, { c: 3 }], false, null, {
+                [[{}, { c: 3 }], false, {
                     message: '"[0]" must not be a sparse array item',
                     details: [{
                         message: '"[0]" must not be a sparse array item',
@@ -1920,7 +1920,7 @@ describe('array', () => {
             const schema = custom.array().items(custom.extended().foo().required()).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
-                [[{}, { c: 3 }], false, null, {
+                [[{}, { c: 3 }], false, {
                     message: '"[0]" must not be a sparse array item. "[1]" must not be a sparse array item',
                     details: [
                         {
@@ -1945,7 +1945,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.object().empty({}).required()).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
-                [[{}, 3], false, null, {
+                [[{}, 3], false, {
                     message: '"[0]" is required. "[1]" must be of type object. "value" does not contain 1 required value(s)',
                     details: [
                         {
@@ -1976,7 +1976,7 @@ describe('array', () => {
             const schema = Joi.array().ordered(Joi.object().empty({}));
 
             Helper.validate(schema, [
-                [[{}], false, null, {
+                [[{}], false, {
                     message: '"[0]" must not be a sparse array item',
                     details: [{
                         message: '"[0]" must not be a sparse array item',
@@ -1993,7 +1993,7 @@ describe('array', () => {
             const schema = Joi.array().ordered(Joi.object().empty({})).prefs({ abortEarly: false });
 
             Helper.validate(schema, [
-                [[{}, 3], false, null, {
+                [[{}, 3], false, {
                     message: '"[0]" must not be a sparse array item. "value" must contain at most 1 items',
                     details: [
                         {
@@ -2028,7 +2028,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.object().empty({})).sparse();
 
             Helper.validate(schema, [
-                [[{ a: 1 }, {}, { c: 3 }], true, null, [{ a: 1 }, undefined, { c: 3 }]]
+                [[{ a: 1 }, {}, { c: 3 }], true, [{ a: 1 }, undefined, { c: 3 }]]
             ]);
         });
 
@@ -2037,7 +2037,7 @@ describe('array', () => {
             const schema = Joi.array().items(Joi.object().empty({}).required()).sparse();
 
             Helper.validate(schema, [
-                [[{ a: 1 }, {}, { c: 3 }], false, null, {
+                [[{ a: 1 }, {}, { c: 3 }], false, {
                     message: '"[1]" is required',
                     details: [{
                         message: '"[1]" is required',
@@ -2054,7 +2054,7 @@ describe('array', () => {
             const schema = Joi.array().ordered(Joi.object().empty({})).sparse();
 
             Helper.validate(schema, [
-                [[{}], true, null, [undefined]]
+                [[{}], true, [undefined]]
             ]);
         });
 
@@ -2104,7 +2104,7 @@ describe('array', () => {
             const schema = Joi.array().sparse().unique();
 
             Helper.validate(schema, [
-                [[2, 2], false, null, {
+                [[2, 2], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2120,7 +2120,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[0x2, 2], false, null, {
+                [[0x2, 2], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2136,7 +2136,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [['duplicate', 'duplicate'], false, null, {
+                [['duplicate', 'duplicate'], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2152,7 +2152,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[{ a: 'b' }, { a: 'b' }], false, null, {
+                [[{ a: 'b' }, { a: 'b' }], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2168,7 +2168,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[buffer, buffer], false, null, {
+                [[buffer, buffer], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2184,7 +2184,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[func, func], false, null, {
+                [[func, func], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2200,7 +2200,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[now, now], false, null, {
+                [[now, now], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2216,7 +2216,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[true, true], false, null, {
+                [[true, true], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2232,7 +2232,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[undefined, undefined], false, null, {
+                [[undefined, undefined], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2355,7 +2355,7 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{ a: 'b' }, { a: 'c' }], true],
                 [[{ a: 'b', c: 'd' }, { a: 'c', c: 'd' }], true],
-                [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, null, {
+                [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2371,7 +2371,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, null, {
+                [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2413,7 +2413,7 @@ describe('array', () => {
                 [[{ a: 'b' }, { a: 'c' }], true],
                 [[{ a: 'b' }, 'c'], true],
                 [[{ a: 'b' }, 'c', { a: 'd' }, 'e'], true],
-                [[{ a: 'b' }, { a: 'b' }], false, null, {
+                [[{ a: 'b' }, { a: 'b' }], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2429,7 +2429,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[{ a: 'b' }, 'b'], false, null, {
+                [[{ a: 'b' }, 'b'], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2455,7 +2455,7 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{ id: 1 }, { id: 2 }, { id: 3 }], true],
                 [[{ id: 1 }, { id: 2 }, {}], true],
-                [[{ id: 1 }, { id: 2 }, { id: 1 }], false, null, {
+                [[{ id: 1 }, { id: 2 }, { id: 1 }], false, {
                     message: '"[2]" contains a duplicate value',
                     details: [{
                         context: {
@@ -2472,7 +2472,7 @@ describe('array', () => {
                         type: 'array.unique'
                     }]
                 }],
-                [[{ id: 1 }, { id: 2 }, {}, { id: 3 }, {}], false, null, {
+                [[{ id: 1 }, { id: 2 }, {}, { id: 3 }, {}], false, {
                     message: '"[4]" contains a duplicate value',
                     details: [{
                         context: {
@@ -2496,7 +2496,7 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 3 } }], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}], true],
-                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, null, {
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, {
                     message: '"[2]" contains a duplicate value',
                     details: [{
                         context: {
@@ -2513,7 +2513,7 @@ describe('array', () => {
                         type: 'array.unique'
                     }]
                 }],
-                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, null, {
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, {
                     message: '"[4]" contains a duplicate value',
                     details: [{
                         context: {
@@ -2537,7 +2537,7 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 3 } }], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}], true],
-                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, null, {
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, {
                     message: '"[2]" contains a duplicate value',
                     details: [{
                         context: {
@@ -2554,7 +2554,7 @@ describe('array', () => {
                         type: 'array.unique'
                     }]
                 }],
-                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, null, {
+                [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, {
                     message: '"[4]" contains a duplicate value',
                     details: [{
                         context: {
@@ -2581,7 +2581,7 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{ a: 'b' }, { a: 'c' }], true],
                 [[{ c: 'd' }, { c: 'd' }], true],
-                [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, null, {
+                [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2598,7 +2598,7 @@ describe('array', () => {
                         }
                     }]
                 }],
-                [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, null, {
+                [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, {
                     message: '"[1]" contains a duplicate value',
                     details: [{
                         message: '"[1]" contains a duplicate value',
@@ -2651,7 +2651,7 @@ describe('array', () => {
         it('should, when .required(), deny undefined', () => {
 
             Helper.validate(Joi.array().required(), [
-                [undefined, false, null, {
+                [undefined, false, {
                     message: '"value" is required',
                     details: [{
                         message: '"value" is required',
@@ -2674,7 +2674,7 @@ describe('array', () => {
         it('excludes values when items are forbidden', () => {
 
             Helper.validate(Joi.array().items(Joi.string().forbidden()), [
-                [['2', '1'], false, null, {
+                [['2', '1'], false, {
                     message: '"[0]" contains an excluded value',
                     details: [{
                         message: '"[0]" contains an excluded value',
@@ -2683,7 +2683,7 @@ describe('array', () => {
                         context: { pos: 0, value: '2', label: '[0]', key: 0 }
                     }]
                 }],
-                [['1'], false, null, {
+                [['1'], false, {
                     message: '"[0]" contains an excluded value',
                     details: [{
                         message: '"[0]" contains an excluded value',
@@ -2719,7 +2719,7 @@ describe('array', () => {
             Helper.validate(Joi.array().items(Joi.number()), [
                 [[1, 2, 3], true],
                 [[50, 100, 1000], true],
-                [['a', 1, 2], false, null, {
+                [['a', 1, 2], false, {
                     message: '"[0]" must be a number',
                     details: [{
                         message: '"[0]" must be a number',
@@ -2746,7 +2746,7 @@ describe('array', () => {
 
             Helper.validate(Joi.array().items(Joi.object({ h1: Joi.number().required() })), [
                 [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
-                [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false, null, {
+                [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false, {
                     message: '"[0].h1" is required',
                     details: [{
                         message: '"[0].h1" is required',
@@ -2755,7 +2755,7 @@ describe('array', () => {
                         context: { label: '[0].h1', key: 'h1' }
                     }]
                 }],
-                [[1, 2, [1]], false, null, {
+                [[1, 2, [1]], false, {
                     message: '"[0]" must be of type object',
                     details: [{
                         message: '"[0]" must be of type object',
@@ -2771,7 +2771,7 @@ describe('array', () => {
 
             Helper.validate(Joi.array().items(Joi.number()), [
                 [[1, 2, 3], true],
-                [[1, 2, [1]], false, null, {
+                [[1, 2, [1]], false, {
                     message: '"[2]" must be a number',
                     details: [{
                         message: '"[2]" must be a number',
@@ -2808,7 +2808,7 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
-                [{ array: ['1'] }, false, null, {
+                [{ array: ['1'] }, false, {
                     message: '"array[0]" does not match any of the allowed types',
                     details: [{
                         message: '"array[0]" does not match any of the allowed types',

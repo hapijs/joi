@@ -9,73 +9,62 @@ const internals = {};
 const { expect } = Code;
 
 
-exports.validate = function (schema, config) {
+exports.validate = function (schema, prefs, tests) {
 
-    return exports.validateOptions(schema, config, null);
-};
-
-
-exports.validateOptions = function (schema, config, options) {
+    if (!tests) {
+        tests = prefs;
+        prefs = null;
+    }
 
     try {
         expect(schema.$_root.build(schema.describe())).to.equal(schema, { skip: ['_ruleset', '_resolved'] });
 
-        for (let i = 0; i < config.length; ++i) {
-
-            const item = config[i];
-            const input = item[0];
-            const shouldValidate = item[1];
-            const validationOptions = item[2];
-            const expectedValueOrError = item[3];
-
-            if (!shouldValidate) {
-                expect(expectedValueOrError, 'Failing tests messages must be tested').to.be.an.object();
-                expect(expectedValueOrError.message).to.be.a.string();
-                expect(expectedValueOrError.details).to.be.an.array();
+        for (const [input, pass, expected] of tests) {
+            if (!pass) {
+                expect(expected, 'Failing tests messages must be tested').to.exist();
             }
 
-            const result = schema.validate(input, validationOptions || options);
+            const { error, value } = schema.validate(input, prefs);
 
-            const err = result.error;
-            const value = result.value;
+            if (error &&
+                pass) {
 
-            if (err &&
-                shouldValidate) {
-
-                console.log(err);
+                console.log(error);
             }
 
-            if (!err &&
-                !shouldValidate) {
+            if (!error &&
+                !pass) {
 
                 console.log(input);
             }
 
-            expect(!err).to.equal(shouldValidate);
+            expect(!error).to.equal(pass);
 
-            if (item.length >= 4) {
-                if (shouldValidate) {
-                    expect(value).to.equal(expectedValueOrError);
-                }
-                else {
-                    const message = expectedValueOrError.message || expectedValueOrError;
-                    if (message instanceof RegExp) {
-                        expect(err.message).to.match(message);
-                    }
-                    else {
-                        expect(err.message).to.equal(message);
-                    }
+            if (expected === undefined) {
+                continue;
+            }
 
-                    if (expectedValueOrError.details) {
-                        expect(err.details).to.equal(expectedValueOrError.details);
-                    }
-                }
+            if (pass) {
+                expect(value).to.equal(expected);
+                continue;
+            }
+
+            const message = expected.message || expected;
+            if (message instanceof RegExp) {
+                expect(error.message).to.match(message);
+            }
+            else {
+                expect(error.message).to.equal(message);
+            }
+
+            if (expected.details) {
+                expect(error.details).to.equal(expected.details);
             }
         }
     }
     catch (err) {
         console.error(err.stack);
-        err.at = internals.thrownAt();      // Reframe the error location since we don't care about the helper
+        err.at = internals.thrownAt();      // Adjust error location to test
         throw err;
     }
 };

@@ -35,7 +35,7 @@ describe('string', () => {
 
         const schema = Joi.string();
         Helper.validate(schema, [
-            [true, false, null, {
+            [true, false, {
                 message: '"value" must be a string',
                 details: [{
                     message: '"value" must be a string',
@@ -44,7 +44,7 @@ describe('string', () => {
                     context: { value: true, label: 'value' }
                 }]
             }],
-            [false, false, null, {
+            [false, false, {
                 message: '"value" must be a string',
                 details: [{
                     message: '"value" must be a string',
@@ -60,7 +60,7 @@ describe('string', () => {
 
         const schema = Joi.string();
         Helper.validate(schema, [
-            [123, false, null, {
+            [123, false, {
                 message: '"value" must be a string',
                 details: [{
                     message: '"value" must be a string',
@@ -69,7 +69,7 @@ describe('string', () => {
                     context: { value: 123, label: 'value' }
                 }]
             }],
-            [0, false, null, {
+            [0, false, {
                 message: '"value" must be a string',
                 details: [{
                     message: '"value" must be a string',
@@ -87,7 +87,7 @@ describe('string', () => {
 
         Helper.validate(Joi.string(), [
             [undefined, true],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" is not allowed to be empty',
                 details: [{
                     message: '"value" is not allowed to be empty',
@@ -119,7 +119,7 @@ describe('string', () => {
 
             const rule = Joi.string().allow('').min(3);
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 3 characters long',
                     details: [{
                         message: '"value" length must be at least 3 characters long',
@@ -136,7 +136,7 @@ describe('string', () => {
                 ['123', true],
                 ['1234', true],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -154,7 +154,7 @@ describe('string', () => {
             Helper.validate(rule, [
                 ['x', true],
                 ['123', true],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -169,7 +169,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -187,7 +187,7 @@ describe('string', () => {
             Helper.validate(rule, [
                 ['x', true],
                 ['123', true],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -201,7 +201,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -236,7 +236,7 @@ describe('string', () => {
 
             const schema = Joi.string().alphanum();
             Helper.validate(schema, [
-                ['w0rld of w4lm4rtl4bs', false, null, {
+                ['w0rld of w4lm4rtl4bs', false, {
                     message: '"value" must only contain alpha-numeric characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric characters',
@@ -246,7 +246,7 @@ describe('string', () => {
                     }]
                 }],
                 ['w0rldofw4lm4rtl4bs', true],
-                ['abcd#f?h1j orly?', false, null, {
+                ['abcd#f?h1j orly?', false, {
                     message: '"value" must only contain alpha-numeric characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric characters',
@@ -262,7 +262,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum();
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -277,7 +277,7 @@ describe('string', () => {
                     }]
                 }],
                 ['123', true],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -294,7 +294,7 @@ describe('string', () => {
                 ['12', true],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -308,7 +308,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['*ab', false, null, {
+                ['*ab', false, {
                     message: '"value" must only contain alpha-numeric characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric characters',
@@ -317,7 +317,7 @@ describe('string', () => {
                         context: { value: '*ab', label: 'value' }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -326,7 +326,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -342,7 +342,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().allow('');
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -357,7 +357,7 @@ describe('string', () => {
                     }]
                 }],
                 ['123', true],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -374,7 +374,7 @@ describe('string', () => {
                 ['12', true],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -388,7 +388,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['*ab', false, null, {
+                ['*ab', false, {
                     message: '"value" must only contain alpha-numeric characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric characters',
@@ -398,7 +398,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -414,7 +414,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().required();
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -429,7 +429,7 @@ describe('string', () => {
                     }]
                 }],
                 ['123', true],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -446,7 +446,7 @@ describe('string', () => {
                 ['12', true],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -460,7 +460,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['*ab', false, null, {
+                ['*ab', false, {
                     message: '"value" must only contain alpha-numeric characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric characters',
@@ -469,7 +469,7 @@ describe('string', () => {
                         context: { value: '*ab', label: 'value' }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -478,7 +478,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -494,7 +494,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().regex(/^a/);
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -508,7 +508,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123', false, null, {
+                ['123', false, {
                     message: '"value" with value "123" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
@@ -522,7 +522,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -536,7 +536,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['12', false, null, {
+                ['12', false, {
                     message: '"value" with value "12" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
@@ -553,7 +553,7 @@ describe('string', () => {
                 ['ab', true],
                 ['abc', true],
                 ['a2c', true],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -567,7 +567,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['*ab', false, null, {
+                ['*ab', false, {
                     message: '"value" must only contain alpha-numeric characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric characters',
@@ -576,7 +576,7 @@ describe('string', () => {
                         context: { value: '*ab', label: 'value' }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -585,7 +585,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -601,7 +601,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().required().regex(/^a/);
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -615,7 +615,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123', false, null, {
+                ['123', false, {
                     message: '"value" with value "123" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
@@ -629,7 +629,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -643,7 +643,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['12', false, null, {
+                ['12', false, {
                     message: '"value" with value "12" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
@@ -660,7 +660,7 @@ describe('string', () => {
                 ['ab', true],
                 ['abc', true],
                 ['a2c', true],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -674,7 +674,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['*ab', false, null, {
+                ['*ab', false, {
                     message: '"value" must only contain alpha-numeric characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric characters',
@@ -683,7 +683,7 @@ describe('string', () => {
                         context: { value: '*ab', label: 'value' }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -692,7 +692,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -708,7 +708,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).alphanum().allow('').regex(/^a/);
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -722,7 +722,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123', false, null, {
+                ['123', false, {
                     message: '"value" with value "123" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
@@ -736,7 +736,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -750,7 +750,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['12', false, null, {
+                ['12', false, {
                     message: '"value" with value "12" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
@@ -767,7 +767,7 @@ describe('string', () => {
                 ['ab', true],
                 ['abc', true],
                 ['a2c', true],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -781,7 +781,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['*ab', false, null, {
+                ['*ab', false, {
                     message: '"value" must only contain alpha-numeric characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric characters',
@@ -791,7 +791,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -819,7 +819,7 @@ describe('string', () => {
             Helper.validate(rule, [
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
                 ['YW55IGNh+/5hbCBwbGVhc3VyZS4=', true],
-                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -831,7 +831,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW55IGNhcm5hb-_wbGVhc3VyZS4=', false, null, {
+                ['YW55IGNhcm5hb-_wbGVhc3VyZS4=', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -843,7 +843,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -855,7 +855,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -867,7 +867,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['Y=', false, null, {
+                ['Y=', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -879,7 +879,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['Y===', false, null, {
+                ['Y===', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -891,7 +891,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW', false, null, {
+                ['YW', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -904,7 +904,7 @@ describe('string', () => {
                     }]
                 }],
                 ['YW==', true],
-                ['YW5', false, null, {
+                ['YW5', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -917,7 +917,7 @@ describe('string', () => {
                     }]
                 }],
                 ['YW5=', true],
-                ['$#%#$^$^)(*&^%', false, null, {
+                ['$#%#$^$^)(*&^%', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -937,7 +937,7 @@ describe('string', () => {
             const rule = Joi.string().base64({ paddingRequired: true });
             Helper.validate(rule, [
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
-                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -949,7 +949,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -961,7 +961,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -973,7 +973,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['Y=', false, null, {
+                ['Y=', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -985,7 +985,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['Y===', false, null, {
+                ['Y===', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -997,7 +997,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW', false, null, {
+                ['YW', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1010,7 +1010,7 @@ describe('string', () => {
                     }]
                 }],
                 ['YW==', true],
-                ['YW5', false, null, {
+                ['YW5', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1023,7 +1023,7 @@ describe('string', () => {
                     }]
                 }],
                 ['YW5=', true],
-                ['$#%#$^$^)(*&^%', false, null, {
+                ['$#%#$^$^)(*&^%', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1043,7 +1043,7 @@ describe('string', () => {
             const rule = Joi.string().base64({ paddingRequired: false });
             Helper.validate(rule, [
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4=', true],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1056,7 +1056,7 @@ describe('string', () => {
                     }]
                 }],
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4', true],
-                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                ['=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1068,7 +1068,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1080,7 +1080,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW55IG==cm5hbCBwbGVhc3VyZS4=', false, null, {
+                ['YW55IG==cm5hbCBwbGVhc3VyZS4=', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1092,7 +1092,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['Y$', false, null, {
+                ['Y$', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1104,7 +1104,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['Y', false, null, {
+                ['Y', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1116,7 +1116,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['Y===', false, null, {
+                ['Y===', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1132,7 +1132,7 @@ describe('string', () => {
                 ['YW==', true],
                 ['YW5', true],
                 ['YW5=', true],
-                ['$#%#$^$^)(*&^%', false, null, {
+                ['$#%#$^$^)(*&^%', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1152,7 +1152,7 @@ describe('string', () => {
             const rule = Joi.string().base64({ urlSafe: true, paddingRequired: true });
             Helper.validate(rule, [
                 ['YW55IGNhcm5hb-_wbGVhc3VyZS4=', true],
-                ['=YW55IGNhcm5-_CBwbGVhc3VyZS4', false, null, {
+                ['=YW55IGNhcm5-_CBwbGVhc3VyZS4', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1164,7 +1164,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW55IGNhcm5+/CBwbGVhc3VyZS4=', false, null, {
+                ['YW55IGNhcm5+/CBwbGVhc3VyZS4=', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1187,7 +1187,7 @@ describe('string', () => {
                 ['YW55IGNhcm-_bCBwbGVhc3VyZS4=', true],
                 ['YW55IGNhcm5hbCBwbGVhc3VyZS4', true],
                 ['YW55IGNhc-_hbCBwbGVhc3VyZS4', true],
-                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, null, {
+                ['YW55IGNhcm5hbCBwbGVhc3VyZS4==', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1199,7 +1199,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['YW55IGNhcm-_bCBwbGVhc3VyZS4==', false, null, {
+                ['YW55IGNhcm-_bCBwbGVhc3VyZS4==', false, {
                     message: '"value" must be a valid base64 string',
                     details: [{
                         message: '"value" must be a valid base64 string',
@@ -1243,7 +1243,7 @@ describe('string', () => {
                 ['4222222222222', true],    // visa
                 ['4012888888881881', true], // visa
                 ['4111111111111111', true], // visa
-                ['4111111111111112', false, null, {
+                ['4111111111111112', false, {
                     message: '"value" must be a credit card',
                     details: [{
                         message: '"value" must be a credit card',
@@ -1252,7 +1252,7 @@ describe('string', () => {
                         context: { value: '4111111111111112', label: 'value' }
                     }]
                 }],
-                ['411111111111111X', false, null, {
+                ['411111111111111X', false, {
                     message: '"value" must be a credit card',
                     details: [{
                         message: '"value" must be a credit card',
@@ -1261,7 +1261,7 @@ describe('string', () => {
                         context: { value: '411111111111111X', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -1281,7 +1281,7 @@ describe('string', () => {
             const rule = Joi.string().dataUri();
             Helper.validate(rule, [
                 ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
-                ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1294,7 +1294,7 @@ describe('string', () => {
                     }]
                 }],
                 ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
-                ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1306,7 +1306,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                ['data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1318,7 +1318,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1341,7 +1341,7 @@ describe('string', () => {
             const rule = Joi.string().dataUri({ paddingRequired: true });
             Helper.validate(rule, [
                 ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
-                ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1354,7 +1354,7 @@ describe('string', () => {
                     }]
                 }],
                 ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
-                ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1366,7 +1366,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                ['data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1378,7 +1378,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1401,7 +1401,7 @@ describe('string', () => {
             const rule = Joi.string().dataUri({ paddingRequired: false });
             Helper.validate(rule, [
                 ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
-                ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1414,7 +1414,7 @@ describe('string', () => {
                     }]
                 }],
                 ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
-                ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1426,7 +1426,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, null, {
+                ['data:base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1438,7 +1438,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, null, {
+                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, {
                     message: '"value" must be a valid dataUri string',
                     details: [{
                         message: '"value" must be a valid dataUri string',
@@ -1533,7 +1533,7 @@ describe('string', () => {
             const schema = Joi.string().domain();
             Helper.validate(schema, [
                 ['example.com', true],
-                ['com', false, null, {
+                ['com', false, {
                     message: '"value" must contain a valid domain name',
                     details: [{
                         message: '"value" must contain a valid domain name',
@@ -1542,7 +1542,7 @@ describe('string', () => {
                         context: { value: 'com', label: 'value' }
                     }]
                 }],
-                ['"example.com', false, null, {
+                ['"example.com', false, {
                     message: '"value" must contain a valid domain name',
                     details: [{
                         message: '"value" must contain a valid domain name',
@@ -1560,7 +1560,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['example.com', true],
                 ['example.org', true],
-                ['example.edu', false, null, {
+                ['example.edu', false, {
                     message: '"value" must contain a valid domain name',
                     details: [{
                         message: '"value" must contain a valid domain name',
@@ -1576,7 +1576,7 @@ describe('string', () => {
 
             const schema = Joi.string().domain({ minDomainSegments: 4 });
             Helper.validate(schema, [
-                ['example.com', false, null, {
+                ['example.com', false, {
                     message: '"value" must contain a valid domain name',
                     details: [{
                         message: '"value" must contain a valid domain name',
@@ -1585,7 +1585,7 @@ describe('string', () => {
                         context: { value: 'example.com', label: 'value' }
                     }]
                 }],
-                ['www.example.com', false, null, {
+                ['www.example.com', false, {
                     message: '"value" must contain a valid domain name',
                     details: [{
                         message: '"value" must contain a valid domain name',
@@ -1653,7 +1653,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['êjness@something.com', true],
-                ['"joe"@example.com', false, null, {
+                ['"joe"@example.com', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1662,7 +1662,7 @@ describe('string', () => {
                         context: { value: '"joe"@example.com', invalids: ['"joe"@example.com'], label: 'value' }
                     }]
                 }],
-                ['example@io', false, null, {
+                ['example@io', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1671,7 +1671,7 @@ describe('string', () => {
                         context: { value: 'example@io', invalids: ['example@io'], label: 'value' }
                     }]
                 }],
-                ['@iaminvalid.com', false, null, {
+                ['@iaminvalid.com', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1680,7 +1680,7 @@ describe('string', () => {
                         context: { value: '@iaminvalid.com', invalids: ['@iaminvalid.com'], label: 'value' }
                     }]
                 }],
-                ['joe@[IPv6:2a00:1450:4001:c02::1b]', false, null, {
+                ['joe@[IPv6:2a00:1450:4001:c02::1b]', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1689,7 +1689,7 @@ describe('string', () => {
                         context: { value: 'joe@[IPv6:2a00:1450:4001:c02::1b]', invalids: ['joe@[IPv6:2a00:1450:4001:c02::1b]'], label: 'value' }
                     }]
                 }],
-                ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false, null, {
+                ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1698,7 +1698,7 @@ describe('string', () => {
                         context: { value: '12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com', invalids: ['12345678901234567890123456789012345678901234567890123456789012345@walmartlabs.com'], label: 'value' }
                     }]
                 }],
-                ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', false, null, {
+                ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1716,7 +1716,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['joe@example.com', true],
                 ['joe@example.org', true],
-                ['joe@example.edu', false, null, {
+                ['joe@example.edu', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1741,7 +1741,7 @@ describe('string', () => {
 
             const schema = Joi.string().email({ minDomainSegments: 4 });
             Helper.validate(schema, [
-                ['joe@example.com', false, null, {
+                ['joe@example.com', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1750,7 +1750,7 @@ describe('string', () => {
                         context: { value: 'joe@example.com', invalids: ['joe@example.com'], label: 'value' }
                     }]
                 }],
-                ['joe@www.example.com', false, null, {
+                ['joe@www.example.com', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1771,7 +1771,7 @@ describe('string', () => {
                 ['joe@example.com, joe@example.org, joe@example.com', true],
                 ['joe@example.com , joe@example.org ,joe@example.com', true],
                 ['joe@example.com  , joe@example.org ,  joe@example.com', true],
-                ['joe@example.com, joe@example, joe@example.org, joe@com', false, null, {
+                ['joe@example.com, joe@example, joe@example.org, joe@com', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1791,7 +1791,7 @@ describe('string', () => {
                 ['joe@example.com; joe@example.org; joe@example.com', true],
                 ['joe@example.com ; joe@example.org ;joe@example.com', true],
                 ['joe@example.com  ; joe@example.org ;  joe@example.com', true],
-                ['joe@example.com; joe@example; joe@example.org; joe@com', false, null, {
+                ['joe@example.com; joe@example; joe@example.org; joe@com', false, {
                     message: '"value" must be a valid email',
                     details: [{
                         message: '"value" must be a valid email',
@@ -1820,7 +1820,7 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8);
             Helper.validate(rule, [
-                ['x@x.com', false, null, {
+                ['x@x.com', false, {
                     message: '"value" length must be at least 8 characters long',
                     details: [{
                         message: '"value" length must be at least 8 characters long',
@@ -1835,7 +1835,7 @@ describe('string', () => {
                     }]
                 }],
                 ['123@x.com', true],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -1844,7 +1844,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -1860,7 +1860,7 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10);
             Helper.validate(rule, [
-                ['x@x.com', false, null, {
+                ['x@x.com', false, {
                     message: '"value" length must be at least 8 characters long',
                     details: [{
                         message: '"value" length must be at least 8 characters long',
@@ -1876,7 +1876,7 @@ describe('string', () => {
                 }],
                 ['123@x.com', true],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -1890,7 +1890,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -1899,7 +1899,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -1915,7 +1915,7 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).invalid('123@x.com');
             Helper.validate(rule, [
-                ['x@x.com', false, null, {
+                ['x@x.com', false, {
                     message: '"value" length must be at least 8 characters long',
                     details: [{
                         message: '"value" length must be at least 8 characters long',
@@ -1929,7 +1929,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123@x.com', false, null, {
+                ['123@x.com', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -1939,7 +1939,7 @@ describe('string', () => {
                     }]
                 }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -1953,7 +1953,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -1962,7 +1962,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -1981,7 +1981,7 @@ describe('string', () => {
                 ['x@x.com', true],
                 ['123@x.com', true],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -1995,7 +1995,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -2004,7 +2004,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2021,7 +2021,7 @@ describe('string', () => {
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com');
             Helper.validate(rule, [
                 ['x@x.com', true],
-                ['123@x.com', false, null, {
+                ['123@x.com', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -2031,7 +2031,7 @@ describe('string', () => {
                     }]
                 }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -2045,7 +2045,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -2054,7 +2054,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2071,7 +2071,7 @@ describe('string', () => {
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com').allow('');
             Helper.validate(rule, [
                 ['x@x.com', true],
-                ['123@x.com', false, null, {
+                ['123@x.com', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -2081,7 +2081,7 @@ describe('string', () => {
                     }]
                 }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -2096,7 +2096,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2115,7 +2115,7 @@ describe('string', () => {
                 ['x@x.com', true],
                 ['123@x.com', true],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -2130,7 +2130,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2147,7 +2147,7 @@ describe('string', () => {
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com').regex(/^1/);
             Helper.validate(rule, [
                 ['x@x.com', true],
-                ['123@x.com', false, null, {
+                ['123@x.com', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -2157,7 +2157,7 @@ describe('string', () => {
                     }]
                 }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -2171,7 +2171,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -2180,7 +2180,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2197,7 +2197,7 @@ describe('string', () => {
             const rule = Joi.string().email().min(8).max(10).allow('x@x.com').invalid('123@x.com').regex(/^1/).allow('');
             Helper.validate(rule, [
                 ['x@x.com', true],
-                ['123@x.com', false, null, {
+                ['123@x.com', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -2207,7 +2207,7 @@ describe('string', () => {
                     }]
                 }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -2222,7 +2222,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2238,7 +2238,7 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).allow('');
             Helper.validate(rule, [
-                ['x@x.com', false, null, {
+                ['x@x.com', false, {
                     message: '"value" length must be at least 8 characters long',
                     details: [{
                         message: '"value" length must be at least 8 characters long',
@@ -2254,7 +2254,7 @@ describe('string', () => {
                 }],
                 ['123@x.com', true],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -2269,7 +2269,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2285,7 +2285,7 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).regex(/^1234/);
             Helper.validate(rule, [
-                ['x@x.com', false, null, {
+                ['x@x.com', false, {
                     message: '"value" length must be at least 8 characters long',
                     details: [{
                         message: '"value" length must be at least 8 characters long',
@@ -2299,7 +2299,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123@x.com', false, null, {
+                ['123@x.com', false, {
                     message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                     details: [{
                         message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
@@ -2314,7 +2314,7 @@ describe('string', () => {
                     }]
                 }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -2328,7 +2328,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -2337,7 +2337,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2353,7 +2353,7 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).regex(/^1234/).allow('');
             Helper.validate(rule, [
-                ['x@x.com', false, null, {
+                ['x@x.com', false, {
                     message: '"value" length must be at least 8 characters long',
                     details: [{
                         message: '"value" length must be at least 8 characters long',
@@ -2367,7 +2367,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123@x.com', false, null, {
+                ['123@x.com', false, {
                     message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                     details: [{
                         message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
@@ -2382,7 +2382,7 @@ describe('string', () => {
                     }]
                 }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -2397,7 +2397,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2413,7 +2413,7 @@ describe('string', () => {
 
             const rule = Joi.string().email().min(8).max(10).regex(/^1234/).required();
             Helper.validate(rule, [
-                ['x@x.com', false, null, {
+                ['x@x.com', false, {
                     message: '"value" length must be at least 8 characters long',
                     details: [{
                         message: '"value" length must be at least 8 characters long',
@@ -2427,7 +2427,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123@x.com', false, null, {
+                ['123@x.com', false, {
                     message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
                     details: [{
                         message: '"value" with value "123@x.com" fails to match the required pattern: /^1234/',
@@ -2442,7 +2442,7 @@ describe('string', () => {
                     }]
                 }],
                 ['1234@x.com', true],
-                ['12345@x.com', false, null, {
+                ['12345@x.com', false, {
                     message: '"value" length must be less than or equal to 10 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 10 characters long',
@@ -2456,7 +2456,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -2465,7 +2465,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -2508,7 +2508,7 @@ describe('string', () => {
                 ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
                 ['{D1A5279D-B27D-0CD4-005E-EFDD53D08E8D}', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2520,7 +2520,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2532,7 +2532,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2544,7 +2544,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2556,7 +2556,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2568,7 +2568,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2580,7 +2580,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2592,7 +2592,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2618,7 +2618,7 @@ describe('string', () => {
                 ['{7e9081b59a6d1cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-1c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6241e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2630,7 +2630,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-1CD4-C05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-1CD4-C05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2642,7 +2642,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-1E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-1E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2654,7 +2654,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2666,7 +2666,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D]', false, null, {
+                ['{D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D]', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2678,7 +2678,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-1CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2690,7 +2690,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D:B27D-1CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D:B27D-1CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2702,7 +2702,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D:1CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D:1CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2714,7 +2714,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-1CD4:A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-1CD4:A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2726,7 +2726,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-1CD4-A05E:EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-1CD4-A05E:EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2752,7 +2752,7 @@ describe('string', () => {
                 ['{7e9081b59a6d2cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-2c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6242e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2764,7 +2764,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-2CD4-C05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-2CD4-C05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2776,7 +2776,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-2E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-2E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2788,7 +2788,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2800,7 +2800,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D]', false, null, {
+                ['{D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D]', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2812,7 +2812,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-2CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2824,7 +2824,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D:B27D-2CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D:B27D-2CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2836,7 +2836,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D:2CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D:2CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2848,7 +2848,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-2CD4:A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-2CD4:A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2860,7 +2860,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-2CD4-A05E:EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-2CD4-A05E:EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2886,7 +2886,7 @@ describe('string', () => {
                 ['{7e9081b59a6d3cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-3c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6243e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2898,7 +2898,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-3CD4-C05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-3CD4-C05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2910,7 +2910,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-3E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-3E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2922,7 +2922,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2934,7 +2934,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D]', false, null, {
+                ['{D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D]', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2946,7 +2946,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-3CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2958,7 +2958,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D:B27D-3CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D:B27D-3CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2970,7 +2970,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D:3CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D:3CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2982,7 +2982,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-3CD4:A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-3CD4:A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -2994,7 +2994,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-3CD4-A05E:EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-3CD4-A05E:EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3020,7 +3020,7 @@ describe('string', () => {
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3032,7 +3032,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-C05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-C05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3044,7 +3044,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3056,7 +3056,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3068,7 +3068,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D]', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3080,7 +3080,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3092,7 +3092,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D:B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3104,7 +3104,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D:4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3116,7 +3116,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4:A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3128,7 +3128,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E:EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3154,7 +3154,7 @@ describe('string', () => {
                 ['{7e9081b59a6d5cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-5c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6245e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3166,7 +3166,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3178,7 +3178,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3190,7 +3190,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3202,7 +3202,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, null, {
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3214,7 +3214,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3226,7 +3226,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3238,7 +3238,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3250,7 +3250,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3262,7 +3262,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3290,7 +3290,7 @@ describe('string', () => {
                 ['{7e9081b59a6d5cc1a8c347f69fb4198d}', true],
                 ['0c74f13f-fa83-5c48-9b33-68921dd72463', true],
                 ['b4b2fb69c6245e5eb0698e0c6ec66618', true],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3302,7 +3302,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-5CD4-C05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3314,7 +3314,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-5E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3326,7 +3326,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3338,7 +3338,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, null, {
+                ['{D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D]', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3350,7 +3350,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-5CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3362,7 +3362,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D:B27D-5CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3374,7 +3374,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D:5CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3386,7 +3386,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-5CD4:A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3398,7 +3398,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-5CD4-A05E:EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3431,7 +3431,7 @@ describe('string', () => {
             const rule = Joi.string().guid().min(36);
             Helper.validate(rule, [
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', true],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, {
                     message: '"value" length must be at least 36 characters long',
                     details: [{
                         message: '"value" length must be at least 36 characters long',
@@ -3446,7 +3446,7 @@ describe('string', () => {
                     }]
                 }],
                 ['69593D62-71EA-4548-85E4-04FC71357423', true],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, {
                     message: '"value" length must be at least 36 characters long',
                     details: [{
                         message: '"value" length must be at least 36 characters long',
@@ -3461,7 +3461,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', true],
-                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', false, null, {
+                ['{7e9081b59a6d4cc1a8c347f69fb4198d}', false, {
                     message: '"value" length must be at least 36 characters long',
                     details: [{
                         message: '"value" length must be at least 36 characters long',
@@ -3476,7 +3476,7 @@ describe('string', () => {
                     }]
                 }],
                 ['0c74f13f-fa83-4c48-9b33-68921dd72463', true],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, {
                     message: '"value" length must be at least 36 characters long',
                     details: [{
                         message: '"value" length must be at least 36 characters long',
@@ -3490,7 +3490,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3502,7 +3502,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3514,7 +3514,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3526,7 +3526,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -3535,7 +3535,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -3551,7 +3551,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34);
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3566,7 +3566,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3581,7 +3581,7 @@ describe('string', () => {
                     }]
                 }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3596,7 +3596,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3611,7 +3611,7 @@ describe('string', () => {
                     }]
                 }],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3623,7 +3623,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3635,7 +3635,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3647,7 +3647,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -3656,7 +3656,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -3672,7 +3672,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).invalid('b4b2fb69c6244e5eb0698e0c6ec66618');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3687,7 +3687,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3702,7 +3702,7 @@ describe('string', () => {
                     }]
                 }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3717,7 +3717,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3731,7 +3731,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -3740,7 +3740,7 @@ describe('string', () => {
                         context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3752,7 +3752,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3764,7 +3764,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3776,7 +3776,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -3785,7 +3785,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -3801,7 +3801,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3816,7 +3816,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3831,7 +3831,7 @@ describe('string', () => {
                     }]
                 }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3846,7 +3846,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3861,7 +3861,7 @@ describe('string', () => {
                     }]
                 }],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3874,7 +3874,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3886,7 +3886,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -3895,7 +3895,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -3911,7 +3911,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').invalid('b4b2fb69c6244e5eb0698e0c6ec66618');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3926,7 +3926,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3941,7 +3941,7 @@ describe('string', () => {
                     }]
                 }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3956,7 +3956,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -3970,7 +3970,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -3979,7 +3979,7 @@ describe('string', () => {
                         context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -3992,7 +3992,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4004,7 +4004,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -4013,7 +4013,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -4029,7 +4029,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').invalid('b4b2fb69c6244e5eb0698e0c6ec66618').allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4044,7 +4044,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4059,7 +4059,7 @@ describe('string', () => {
                     }]
                 }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4074,7 +4074,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4088,7 +4088,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -4097,7 +4097,7 @@ describe('string', () => {
                         context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4110,7 +4110,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4123,7 +4123,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -4139,7 +4139,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D').allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4154,7 +4154,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4169,7 +4169,7 @@ describe('string', () => {
                     }]
                 }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4184,7 +4184,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4199,7 +4199,7 @@ describe('string', () => {
                     }]
                 }],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4212,7 +4212,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4225,7 +4225,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -4241,7 +4241,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08').invalid('b4b2fb69c6244e5eb0698e0c6ec66618').regex(/^{7e908/);
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4255,7 +4255,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, {
                     message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
@@ -4269,7 +4269,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4283,7 +4283,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, {
                     message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
@@ -4297,7 +4297,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4312,7 +4312,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4326,7 +4326,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -4335,7 +4335,7 @@ describe('string', () => {
                         context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4348,7 +4348,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4360,7 +4360,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -4369,7 +4369,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -4385,7 +4385,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('{D1A5279D-B27D-4CD4-A05E-EFDD53D08').invalid('b4b2fb69c6244e5eb0698e0c6ec66618').regex(/^{7e908/).allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4399,7 +4399,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, {
                     message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e908/',
@@ -4413,7 +4413,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4427,7 +4427,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, {
                     message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e908/',
@@ -4441,7 +4441,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4456,7 +4456,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4470,7 +4470,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -4479,7 +4479,7 @@ describe('string', () => {
                         context: { value: 'b4b2fb69c6244e5eb0698e0c6ec66618', invalids: ['b4b2fb69c6244e5eb0698e0c6ec66618'], label: 'value' }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4492,7 +4492,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08', true],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4505,7 +4505,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -4521,7 +4521,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4536,7 +4536,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4551,7 +4551,7 @@ describe('string', () => {
                     }]
                 }],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4566,7 +4566,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4581,7 +4581,7 @@ describe('string', () => {
                     }]
                 }],
                 ['b4b2fb69c6244e5eb0698e0c6ec66618', true],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4593,7 +4593,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4605,7 +4605,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4618,7 +4618,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -4634,7 +4634,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i);
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4648,7 +4648,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, {
                     message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
@@ -4662,7 +4662,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4676,7 +4676,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, {
                     message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
@@ -4690,7 +4690,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4705,7 +4705,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4719,7 +4719,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, {
                     message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
                     details: [{
                         message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
@@ -4733,7 +4733,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4745,7 +4745,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4757,7 +4757,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4769,7 +4769,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -4778,7 +4778,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -4794,7 +4794,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i).allow('');
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4808,7 +4808,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, {
                     message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
@@ -4822,7 +4822,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4836,7 +4836,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, {
                     message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
@@ -4850,7 +4850,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4865,7 +4865,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4879,7 +4879,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, {
                     message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
                     details: [{
                         message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
@@ -4893,7 +4893,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4905,7 +4905,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4917,7 +4917,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -4930,7 +4930,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -4946,7 +4946,7 @@ describe('string', () => {
 
             const rule = Joi.string().guid().min(32).max(34).regex(/^{7e9081/i).required();
             Helper.validate(rule, [
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4960,7 +4960,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, null, {
+                ['{B59511BD6A5F4DF09ECF562A108D8A2E}', false, {
                     message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
                     details: [{
                         message: '"value" with value "{B59511BD6A5F4DF09ECF562A108D8A2E}" fails to match the required pattern: /^{7e9081/i',
@@ -4974,7 +4974,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['69593D62-71EA-4548-85E4-04FC71357423', false, null, {
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -4988,7 +4988,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['677E2553DD4D43B09DA77414DB1EB8EA', false, null, {
+                ['677E2553DD4D43B09DA77414DB1EB8EA', false, {
                     message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
                     details: [{
                         message: '"value" with value "677E2553DD4D43B09DA77414DB1EB8EA" fails to match the required pattern: /^{7e9081/i',
@@ -5002,7 +5002,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, null, {
+                ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -5017,7 +5017,7 @@ describe('string', () => {
                     }]
                 }],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
-                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, null, {
+                ['0c74f13f-fa83-4c48-9b33-68921dd72463', false, {
                     message: '"value" length must be less than or equal to 34 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 34 characters long',
@@ -5031,7 +5031,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, null, {
+                ['b4b2fb69c6244e5eb0698e0c6ec66618', false, {
                     message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
                     details: [{
                         message: '"value" with value "b4b2fb69c6244e5eb0698e0c6ec66618" fails to match the required pattern: /^{7e9081/i',
@@ -5045,7 +5045,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, null, {
+                ['{283B67B2-430F-4E6F-97E6-19041992-C1B0}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -5057,7 +5057,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, null, {
+                ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -5069,7 +5069,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, null, {
+                ['D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', false, {
                     message: '"value" must be a valid GUID',
                     details: [{
                         message: '"value" must be a valid GUID',
@@ -5081,7 +5081,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -5090,7 +5090,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -5124,7 +5124,7 @@ describe('string', () => {
             Helper.validate(rule, [
                 ['123456789abcdef', true],
                 ['123456789AbCdEf', true],
-                ['123afg', false, null, {
+                ['123afg', false, {
                     message: '"value" must only contain hexadecimal characters',
                     details: [{
                         message: '"value" must only contain hexadecimal characters',
@@ -5141,7 +5141,7 @@ describe('string', () => {
             const rule = Joi.string().hex({ byteAligned: true }).strict();
             Helper.validate(rule, [
                 ['0123456789abcdef', true],
-                ['123456789abcdef', false, null, {
+                ['123456789abcdef', false, {
                     message: '"value" hex decoded representation must be byte aligned',
                     details: [{
                         message: '"value" hex decoded representation must be byte aligned',
@@ -5150,7 +5150,7 @@ describe('string', () => {
                         context: { value: '123456789abcdef', label: 'value' }
                     }]
                 }],
-                ['0123afg', false, null, {
+                ['0123afg', false, {
                     message: '"value" must only contain hexadecimal characters',
                     details: [{
                         message: '"value" must only contain hexadecimal characters',
@@ -5166,9 +5166,9 @@ describe('string', () => {
 
             const rule = Joi.string().hex({ byteAligned: true });
             Helper.validate(rule, [
-                ['0123456789abcdef', true, null, '0123456789abcdef'],
-                ['123456789abcdef', true, null, '0123456789abcdef'],
-                ['0123afg', false, null, {
+                ['0123456789abcdef', true, '0123456789abcdef'],
+                ['123456789abcdef', true, '0123456789abcdef'],
+                ['0123afg', false, {
                     message: '"value" must only contain hexadecimal characters',
                     details: [{
                         message: '"value" must only contain hexadecimal characters',
@@ -5177,7 +5177,7 @@ describe('string', () => {
                         context: { value: '00123afg', label: 'value' }
                     }]
                 }],
-                ['00123afg', false, null, {
+                ['00123afg', false, {
                     message: '"value" must only contain hexadecimal characters',
                     details: [{
                         message: '"value" must only contain hexadecimal characters',
@@ -5200,7 +5200,7 @@ describe('string', () => {
                 ['domain.local', true],
                 ['3domain.local', true],
                 ['hostname', true],
-                ['host:name', false, null, {
+                ['host:name', false, {
                     message: '"value" must be a valid hostname',
                     details: [{
                         message: '"value" must be a valid hostname',
@@ -5209,7 +5209,7 @@ describe('string', () => {
                         context: { value: 'host:name', label: 'value' }
                     }]
                 }],
-                ['-', false, null, {
+                ['-', false, {
                     message: '"value" must be a valid hostname',
                     details: [{
                         message: '"value" must be a valid hostname',
@@ -5219,7 +5219,7 @@ describe('string', () => {
                     }]
                 }],
                 ['2387628', true],
-                ['01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', false, null, {
+                ['01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', false, {
                     message: '"value" must be a valid hostname',
                     details: [{
                         message: '"value" must be a valid hostname',
@@ -5230,7 +5230,7 @@ describe('string', () => {
                 }],
                 ['::1', true],
                 ['0:0:0:0:0:0:0:1', true],
-                ['0:?:0:0:0:0:0:1', false, null, {
+                ['0:?:0:0:0:0:0:1', false, {
                     message: '"value" must be a valid hostname',
                     details: [{
                         message: '"value" must be a valid hostname',
@@ -5280,7 +5280,7 @@ describe('string', () => {
             const schema = Joi.string().invalid('a', 'b', 'c');
             Helper.validate(schema, [
                 ['x', true],
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -5289,7 +5289,7 @@ describe('string', () => {
                         context: { value: 'a', invalids: ['a', 'b', 'c'], label: 'value' }
                     }]
                 }],
-                ['c', false, null, {
+                ['c', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -5305,7 +5305,7 @@ describe('string', () => {
 
             const schema = Joi.string().valid('a', 'b', 'c');
             Helper.validate(schema, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" must be one of [a, b, c]',
                     details: [{
                         message: '"value" must be one of [a, b, c]',
@@ -5322,7 +5322,7 @@ describe('string', () => {
         it('inverts case sensitive values', () => {
 
             Helper.validate(Joi.string().invalid('a', 'b'), [
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -5331,7 +5331,7 @@ describe('string', () => {
                         context: { value: 'a', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
-                ['b', false, null, {
+                ['b', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -5348,7 +5348,7 @@ describe('string', () => {
         it('inverts case insensitive values', () => {
 
             Helper.validate(Joi.string().invalid('a', 'b').insensitive(), [
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -5357,7 +5357,7 @@ describe('string', () => {
                         context: { value: 'a', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
-                ['b', false, null, {
+                ['b', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -5366,7 +5366,7 @@ describe('string', () => {
                         context: { value: 'b', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
-                ['A', false, null, {
+                ['A', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -5375,7 +5375,7 @@ describe('string', () => {
                         context: { value: 'A', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
-                ['B', false, null, {
+                ['B', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -5394,7 +5394,7 @@ describe('string', () => {
 
             return function (success, message = '', version = ['ipv4', 'ipv6']) {
 
-                return ips.map((ip) => [ip, success, null, !success && message ? {
+                return ips.map((ip) => [ip, success, !success && message ? {
                     message,
                     details: [{
                         message,
@@ -6027,10 +6027,10 @@ describe('string', () => {
 
         it('validates isoDate', () => {
 
-            Helper.validateOptions(Joi.string().isoDate(), [
+            Helper.validate(Joi.string().isoDate(), { convert: false }, [
                 ['+002013-06-07T14:21:46.295Z', true],
                 ['-002013-06-07T14:21:46.295Z', true],
-                ['002013-06-07T14:21:46.295Z', false, null, {
+                ['002013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6039,7 +6039,7 @@ describe('string', () => {
                         context: { value: '002013-06-07T14:21:46.295Z', label: 'value' }
                     }]
                 }],
-                ['+2013-06-07T14:21:46.295Z', false, null, {
+                ['+2013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6048,7 +6048,7 @@ describe('string', () => {
                         context: { value: '+2013-06-07T14:21:46.295Z', label: 'value' }
                     }]
                 }],
-                ['-2013-06-07T14:21:46.295Z', false, null, {
+                ['-2013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6058,7 +6058,7 @@ describe('string', () => {
                     }]
                 }],
                 ['2013-06-07T14:21:46.295Z', true],
-                ['2013-06-07T14:21:46.295Z0', false, null, {
+                ['2013-06-07T14:21:46.295Z0', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6068,7 +6068,7 @@ describe('string', () => {
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                ['2013-06-07T14:21:46.295+07:000', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6079,7 +6079,7 @@ describe('string', () => {
                 }],
                 ['2013-06-07T14:21:46.295-07:00', true],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, {
+                ['2013-06-07T14:21:46Z0', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6089,7 +6089,7 @@ describe('string', () => {
                     }]
                 }],
                 ['2013-06-07T14:21:46+07:00', true],
-                ['2013-06-07T14:21:46+07:000', false, null, {
+                ['2013-06-07T14:21:46+07:000', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6101,7 +6101,7 @@ describe('string', () => {
                 ['2013-06-07T14:21:46-07:00', true],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
-                ['2013-06-07T14:21+07:000', false, null, {
+                ['2013-06-07T14:21+07:000', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6111,7 +6111,7 @@ describe('string', () => {
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, {
+                ['2013-06-07T14:21Z+7:00', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6121,7 +6121,7 @@ describe('string', () => {
                     }]
                 }],
                 ['2013-06-07', true],
-                ['2013-06-07T', false, null, {
+                ['2013-06-07T', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6131,7 +6131,7 @@ describe('string', () => {
                     }]
                 }],
                 ['2013-06-07T14:21', true],
-                ['1-1-2013', false, null, {
+                ['1-1-2013', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6140,7 +6140,7 @@ describe('string', () => {
                         context: { value: '1-1-2013', label: 'value' }
                     }]
                 }],
-                ['2013-06-07T14.2334,4', false, null, {
+                ['2013-06-07T14.2334,4', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6149,7 +6149,7 @@ describe('string', () => {
                         context: { value: '2013-06-07T14.2334,4', label: 'value' }
                     }]
                 }],
-                ['2013-06-07T14,23:34', false, null, {
+                ['2013-06-07T14,23:34', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6158,7 +6158,7 @@ describe('string', () => {
                         context: { value: '2013-06-07T14,23:34', label: 'value' }
                     }]
                 }],
-                ['2013-06-07T24', false, null, {
+                ['2013-06-07T24', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6168,7 +6168,7 @@ describe('string', () => {
                     }]
                 }],
                 ['2013-06-07T24:00', true],
-                ['2013-06-07T24:21', false, null, {
+                ['2013-06-07T24:21', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6177,7 +6177,7 @@ describe('string', () => {
                         context: { value: '2013-06-07T24:21', label: 'value' }
                     }]
                 }],
-                ['2013-06-07 146946.295', false, null, {
+                ['2013-06-07 146946.295', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6186,7 +6186,7 @@ describe('string', () => {
                         context: { value: '2013-06-07 146946.295', label: 'value' }
                     }]
                 }],
-                ['2013-06-07 1421,44', false, null, {
+                ['2013-06-07 1421,44', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6195,7 +6195,7 @@ describe('string', () => {
                         context: { value: '2013-06-07 1421,44', label: 'value' }
                     }]
                 }],
-                ['2013-W2311', false, null, {
+                ['2013-W2311', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6204,7 +6204,7 @@ describe('string', () => {
                         context: { value: '2013-W2311', label: 'value' }
                     }]
                 }],
-                ['2013-M231', false, null, {
+                ['2013-M231', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6213,7 +6213,7 @@ describe('string', () => {
                         context: { value: '2013-M231', label: 'value' }
                     }]
                 }],
-                ['2013-W23-1T14:21', false, null, {
+                ['2013-W23-1T14:21', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6222,7 +6222,7 @@ describe('string', () => {
                         context: { value: '2013-W23-1T14:21', label: 'value' }
                     }]
                 }],
-                ['2013-W23-1T14:21:', false, null, {
+                ['2013-W23-1T14:21:', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6231,7 +6231,7 @@ describe('string', () => {
                         context: { value: '2013-W23-1T14:21:', label: 'value' }
                     }]
                 }],
-                ['2013-W23-1T14:21:46+07:00', false, null, {
+                ['2013-W23-1T14:21:46+07:00', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6240,7 +6240,7 @@ describe('string', () => {
                         context: { value: '2013-W23-1T14:21:46+07:00', label: 'value' }
                     }]
                 }],
-                ['2013-W23-1T14:21:46+07:000', false, null, {
+                ['2013-W23-1T14:21:46+07:000', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6249,7 +6249,7 @@ describe('string', () => {
                         context: { value: '2013-W23-1T14:21:46+07:000', label: 'value' }
                     }]
                 }],
-                ['2013-W23-1T14:21:46-07:00', false, null, {
+                ['2013-W23-1T14:21:46-07:00', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6258,7 +6258,7 @@ describe('string', () => {
                         context: { value: '2013-W23-1T14:21:46-07:00', label: 'value' }
                     }]
                 }],
-                ['2013-184', false, null, {
+                ['2013-184', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6267,7 +6267,7 @@ describe('string', () => {
                         context: { value: '2013-184', label: 'value' }
                     }]
                 }],
-                ['2013-1841', false, null, {
+                ['2013-1841', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6276,7 +6276,7 @@ describe('string', () => {
                         context: { value: '2013-1841', label: 'value' }
                     }]
                 }]
-            ], { convert: false });
+            ]);
         });
 
         it('validates isoDate with a friendly error message', () => {
@@ -6289,21 +6289,21 @@ describe('string', () => {
         it('validates and formats isoDate with convert set to true (default)', () => {
 
             const rule = Joi.string().isoDate();
-            Helper.validateOptions(rule, [
-                ['+002013-06-07T14:21:46.295Z', true, null, '2013-06-07T14:21:46.295Z'],
-                ['-002013-06-07T14:21:46.295Z', true, null, '-002013-06-07T14:21:46.295Z'],
-                ['2013-06-07T14:21:46.295Z', true, null, '2013-06-07T14:21:46.295Z'],
-                ['2013-06-07T14:21:46.295+07:00', true, null, '2013-06-07T07:21:46.295Z'],
-                ['2013-06-07T14:21:46.295-07:00', true, null, '2013-06-07T21:21:46.295Z'],
-                ['2013-06-07T14:21:46Z', true, null, '2013-06-07T14:21:46.000Z'],
-                ['2013-06-07T14:21:46+07:00', true, null, '2013-06-07T07:21:46.000Z'],
-                ['2013-06-07T14:21:46-07:00', true, null, '2013-06-07T21:21:46.000Z'],
-                ['2013-06-07T14:21Z', true, null, '2013-06-07T14:21:00.000Z'],
-                ['2013-06-07T14:21+07:00', true, null, '2013-06-07T07:21:00.000Z'],
-                ['2013-06-07T14:21-07:00', true, null, '2013-06-07T21:21:00.000Z'],
-                ['2013-06-07', true, null, '2013-06-07T00:00:00.000Z'],
-                ['2013-06-07T14:21', true, null, '2013-06-07T14:21:00.000Z'],
-                ['2013-184', false, null, {
+            Helper.validate(rule, { convert: true }, [
+                ['+002013-06-07T14:21:46.295Z', true, '2013-06-07T14:21:46.295Z'],
+                ['-002013-06-07T14:21:46.295Z', true, '-002013-06-07T14:21:46.295Z'],
+                ['2013-06-07T14:21:46.295Z', true, '2013-06-07T14:21:46.295Z'],
+                ['2013-06-07T14:21:46.295+07:00', true, '2013-06-07T07:21:46.295Z'],
+                ['2013-06-07T14:21:46.295-07:00', true, '2013-06-07T21:21:46.295Z'],
+                ['2013-06-07T14:21:46Z', true, '2013-06-07T14:21:46.000Z'],
+                ['2013-06-07T14:21:46+07:00', true, '2013-06-07T07:21:46.000Z'],
+                ['2013-06-07T14:21:46-07:00', true, '2013-06-07T21:21:46.000Z'],
+                ['2013-06-07T14:21Z', true, '2013-06-07T14:21:00.000Z'],
+                ['2013-06-07T14:21+07:00', true, '2013-06-07T07:21:00.000Z'],
+                ['2013-06-07T14:21-07:00', true, '2013-06-07T21:21:00.000Z'],
+                ['2013-06-07', true, '2013-06-07T00:00:00.000Z'],
+                ['2013-06-07T14:21', true, '2013-06-07T14:21:00.000Z'],
+                ['2013-184', false, {
                     message: '"value" must be in iso format',
                     details: [{
                         message: '"value" must be in iso format',
@@ -6312,7 +6312,7 @@ describe('string', () => {
                         context: { value: '2013-184', label: 'value' }
                     }]
                 }]
-            ], { convert: true });
+            ]);
         });
 
         it('supports allowed values', () => {
@@ -6326,7 +6326,7 @@ describe('string', () => {
 
         it('validates isoDuration', () => {
 
-            Helper.validateOptions(Joi.string().isoDuration(), [
+            Helper.validate(Joi.string().isoDuration(), [
                 ['P3Y6M4DT12H30M5S', true],
                 ['P3Y6M4DT12H30M', true],
                 ['P3Y6M4DT12H5S', true],
@@ -6338,7 +6338,7 @@ describe('string', () => {
                 ['PT40S', true],
                 ['PT0S', true],
                 ['P0D', true],
-                ['P30S', false, null, {
+                ['P30S', false, {
                     message: '"value" must be a valid ISO 8601 duration',
                     details: [{
                         message: '"value" must be a valid ISO 8601 duration',
@@ -6347,7 +6347,7 @@ describe('string', () => {
                         context: { value: 'P30S', label: 'value' }
                     }]
                 }],
-                ['P30', false, null, {
+                ['P30', false, {
                     message: '"value" must be a valid ISO 8601 duration',
                     details: [{
                         message: '"value" must be a valid ISO 8601 duration',
@@ -6356,7 +6356,7 @@ describe('string', () => {
                         context: { value: 'P30', label: 'value' }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -6365,7 +6365,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -6384,7 +6384,7 @@ describe('string', () => {
 
             const schema = Joi.string().length(3);
             Helper.validate(schema, [
-                ['test', false, null, {
+                ['test', false, {
                     message: '"value" length must be 3 characters long',
                     details: [{
                         message: '"value" length must be 3 characters long',
@@ -6398,7 +6398,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['0', false, null, {
+                ['0', false, {
                     message: '"value" length must be 3 characters long',
                     details: [{
                         message: '"value" length must be 3 characters long',
@@ -6412,7 +6412,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -6454,7 +6454,7 @@ describe('string', () => {
             const schema = Joi.string().length(2, 'utf8');
             Helper.validate(schema, [
                 ['\u00bd', true],
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" length must be 2 characters long',
                     details: [{
                         message: '"value" length must be 2 characters long',
@@ -6472,7 +6472,7 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.number(), b: Joi.string().length(ref, 'utf8') });
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
-                [{ a: 2, b: 'a' }, false, null, {
+                [{ a: 2, b: 'a' }, false, {
                     message: '"b" length must be ref:a characters long',
                     details: [{
                         message: '"b" length must be ref:a characters long',
@@ -6488,9 +6488,9 @@ describe('string', () => {
 
             const ref = Joi.ref('$a');
             const schema = Joi.object({ b: Joi.string().length(ref, 'utf8') });
-            Helper.validate(schema, [
-                [{ b: '\u00bd' }, true, { context: { a: 2 } }],
-                [{ b: 'a' }, false, { context: { a: 2 } }, {
+            Helper.validate(schema, { context: { a: 2 } }, [
+                [{ b: '\u00bd' }, true],
+                [{ b: 'a' }, false, {
                     message: '"b" length must be ref:global:a characters long',
                     details: [{
                         message: '"b" length must be ref:global:a characters long',
@@ -6499,7 +6499,7 @@ describe('string', () => {
                         context: { limit: ref, value: 'a', encoding: 'utf8', label: 'b', key: 'b' }
                     }]
                 }],
-                [{ b: 'a' }, false, { context: { a: 2 } }, {
+                [{ b: 'a' }, false, {
                     message: '"b" length must be ref:global:a characters long',
                     details: [{
                         message: '"b" length must be ref:global:a characters long',
@@ -6517,7 +6517,7 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(ref, 'utf8') });
 
             Helper.validate(schema, [
-                [{ a: 'Hi there', b: '\u00bd' }, false, null, {
+                [{ a: 'Hi there', b: '\u00bd' }, false, {
                     message: '"b" limit references "ref:a" which must be a positive integer',
                     details: [{
                         message: '"b" limit references "ref:a" which must be a positive integer',
@@ -6534,8 +6534,8 @@ describe('string', () => {
             const ref = Joi.ref('$a');
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().length(ref, 'utf8') });
 
-            Helper.validate(schema, [
-                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
+            Helper.validate(schema, { context: { a: 'Hi there' } }, [
+                [{ b: '\u00bd' }, false, {
                     message: '"b" limit references "ref:global:a" which must be a positive integer',
                     details: [{
                         message: '"b" limit references "ref:global:a" which must be a positive integer',
@@ -6553,11 +6553,11 @@ describe('string', () => {
         it('only allows strings that are entirely lowercase', () => {
 
             const schema = Joi.string().lowercase();
-            Helper.validateOptions(schema, [
+            Helper.validate(schema, { convert: false }, [
                 ['this is all lowercase', true],
                 ['5', true],
                 ['lower\tcase', true],
-                ['Uppercase', false, null, {
+                ['Uppercase', false, {
                     message: '"value" must only contain lowercase characters',
                     details: [{
                         message: '"value" must only contain lowercase characters',
@@ -6566,7 +6566,7 @@ describe('string', () => {
                         context: { value: 'Uppercase', label: 'value' }
                     }]
                 }],
-                ['MixEd cAsE', false, null, {
+                ['MixEd cAsE', false, {
                     message: '"value" must only contain lowercase characters',
                     details: [{
                         message: '"value" must only contain lowercase characters',
@@ -6575,7 +6575,7 @@ describe('string', () => {
                         context: { value: 'MixEd cAsE', label: 'value' }
                     }]
                 }],
-                [1, false, null, {
+                [1, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -6584,7 +6584,7 @@ describe('string', () => {
                         context: { value: 1, label: 'value' }
                     }]
                 }]
-            ], { convert: false });
+            ]);
         });
 
         it('coerce string to lowercase before validation', () => {
@@ -6600,7 +6600,7 @@ describe('string', () => {
                 [' abc', true],
                 [' ABC', true],
                 ['ABC', true],
-                [1, false, null, {
+                [1, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -6616,10 +6616,10 @@ describe('string', () => {
 
             const schema = Joi.string().lowercase().replace(/\s+/g, ' ');
             Helper.validate(schema, [
-                ['a\r b\n c', true, null, 'a b c'],
-                ['A\t B  C', true, null, 'a b c'],
-                ['ABC', true, null, 'abc'],
-                [1, false, null, {
+                ['a\r b\n c', true, 'a b c'],
+                ['A\t B  C', true, 'a b c'],
+                ['ABC', true, 'abc'],
+                [1, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -6638,7 +6638,7 @@ describe('string', () => {
 
             const schema = Joi.string().max(3);
             Helper.validate(schema, [
-                ['test', false, null, {
+                ['test', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -6653,7 +6653,7 @@ describe('string', () => {
                     }]
                 }],
                 ['0', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -6693,7 +6693,7 @@ describe('string', () => {
 
             const schema = Joi.string().max(1, 'utf8');
             Helper.validate(schema, [
-                ['\u00bd', false, null, {
+                ['\u00bd', false, {
                     message: '"value" length must be less than or equal to 1 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 1 characters long',
@@ -6712,7 +6712,7 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.number(), b: Joi.string().max(ref, 'utf8') });
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
-                [{ a: 2, b: 'three' }, false, null, {
+                [{ a: 2, b: 'three' }, false, {
                     message: '"b" length must be less than or equal to ref:a characters long',
                     details: [{
                         message: '"b" length must be less than or equal to ref:a characters long',
@@ -6734,9 +6734,9 @@ describe('string', () => {
 
             const ref = Joi.ref('$a');
             const schema = Joi.object({ b: Joi.string().max(ref, 'utf8') });
-            Helper.validate(schema, [
-                [{ b: '\u00bd' }, true, { context: { a: 2 } }],
-                [{ b: 'three' }, false, { context: { a: 2 } }, {
+            Helper.validate(schema, { context: { a: 2 } }, [
+                [{ b: '\u00bd' }, true],
+                [{ b: 'three' }, false, {
                     message: '"b" length must be less than or equal to ref:global:a characters long',
                     details: [{
                         message: '"b" length must be less than or equal to ref:global:a characters long',
@@ -6760,7 +6760,7 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().max(ref, 'utf8') });
 
             Helper.validate(schema, [
-                [{ a: 'Hi there', b: '\u00bd' }, false, null, {
+                [{ a: 'Hi there', b: '\u00bd' }, false, {
                     message: '"b" limit references "ref:a" which must be a positive integer',
                     details: [{
                         message: '"b" limit references "ref:a" which must be a positive integer',
@@ -6777,8 +6777,8 @@ describe('string', () => {
             const ref = Joi.ref('$a');
             const schema = Joi.object({ b: Joi.string().max(ref, 'utf8') });
 
-            Helper.validate(schema, [
-                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
+            Helper.validate(schema, { context: { a: 'Hi there' } }, [
+                [{ b: '\u00bd' }, false, {
                     message: '"b" limit references "ref:global:a" which must be a positive integer',
                     details: [{
                         message: '"b" limit references "ref:global:a" which must be a positive integer',
@@ -6822,7 +6822,7 @@ describe('string', () => {
             const schema = Joi.string().min(2, 'utf8');
             Helper.validate(schema, [
                 ['\u00bd', true],
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -6845,7 +6845,7 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.number(), b: Joi.string().min(ref, 'utf8') });
             Helper.validate(schema, [
                 [{ a: 2, b: '\u00bd' }, true],
-                [{ a: 2, b: 'a' }, false, null, {
+                [{ a: 2, b: 'a' }, false, {
                     message: '"b" length must be at least ref:a characters long',
                     details: [{
                         message: '"b" length must be at least ref:a characters long',
@@ -6877,7 +6877,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: 4, c: 42 }, true],
                 [{ a: 'abc', b: 3, c: 0 }, true],
-                [{ a: 'abc', b: 3, c: 42 }, false, null, {
+                [{ a: 'abc', b: 3, c: 42 }, false, {
                     message: '"c" must be [0]',
                     details: [{
                         message: '"c" must be [0]',
@@ -6893,9 +6893,9 @@ describe('string', () => {
 
             const ref = Joi.ref('$a');
             const schema = Joi.object({ b: Joi.string().min(ref, 'utf8') });
-            Helper.validate(schema, [
-                [{ b: '\u00bd' }, true, { context: { a: 2 } }],
-                [{ b: 'a' }, false, { context: { a: 2 } }, {
+            Helper.validate(schema, { context: { a: 2 } }, [
+                [{ b: '\u00bd' }, true],
+                [{ b: 'a' }, false, {
                     message: '"b" length must be at least ref:global:a characters long',
                     details: [{
                         message: '"b" length must be at least ref:global:a characters long',
@@ -6919,7 +6919,7 @@ describe('string', () => {
             const schema = Joi.object({ a: Joi.any(), b: Joi.string().min(ref, 'utf8') });
 
             Helper.validate(schema, [
-                [{ a: 'Hi there', b: '\u00bd' }, false, null, {
+                [{ a: 'Hi there', b: '\u00bd' }, false, {
                     message: '"b" limit references "ref:a" which must be a positive integer',
                     details: [{
                         message: '"b" limit references "ref:a" which must be a positive integer',
@@ -6936,8 +6936,8 @@ describe('string', () => {
             const ref = Joi.ref('$a');
             const schema = Joi.object({ b: Joi.string().min(ref, 'utf8') });
 
-            Helper.validate(schema, [
-                [{ b: '\u00bd' }, false, { context: { a: 'Hi there' } }, {
+            Helper.validate(schema, { context: { a: 'Hi there' } }, [
+                [{ b: '\u00bd' }, false, {
                     message: '"b" limit references "ref:global:a" which must be a positive integer',
                     details: [{
                         message: '"b" limit references "ref:global:a" which must be a positive integer',
@@ -6954,7 +6954,7 @@ describe('string', () => {
             const schema = Joi.string().min(3);
             Helper.validate(schema, [
                 ['test', true],
-                ['0', false, null, {
+                ['0', false, {
                     message: '"value" length must be at least 3 characters long',
                     details: [{
                         message: '"value" length must be at least 3 characters long',
@@ -6968,7 +6968,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -6985,7 +6985,7 @@ describe('string', () => {
             const schema = Joi.string().min(0).required();
             Helper.validate(schema, [
                 ['0', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -6994,7 +6994,7 @@ describe('string', () => {
                         context: { value: null, label: 'value' }
                     }]
                 }],
-                [undefined, false, null, {
+                [undefined, false, {
                     message: '"value" is required',
                     details: [{
                         message: '"value" is required',
@@ -7010,7 +7010,7 @@ describe('string', () => {
 
             const schema = Joi.string().min(3);
             Helper.validate(schema, [
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -7034,7 +7034,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3);
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -7049,7 +7049,7 @@ describe('string', () => {
                     }]
                 }],
                 ['123', true],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -7064,7 +7064,7 @@ describe('string', () => {
                     }]
                 }],
                 ['12', true],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -7073,7 +7073,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -7089,7 +7089,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).allow('');
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -7104,7 +7104,7 @@ describe('string', () => {
                     }]
                 }],
                 ['123', true],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -7120,7 +7120,7 @@ describe('string', () => {
                 }],
                 ['12', true],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -7136,7 +7136,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).required();
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -7151,7 +7151,7 @@ describe('string', () => {
                     }]
                 }],
                 ['123', true],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -7166,7 +7166,7 @@ describe('string', () => {
                     }]
                 }],
                 ['12', true],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -7175,7 +7175,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -7191,7 +7191,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).regex(/^a/);
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -7205,7 +7205,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123', false, null, {
+                ['123', false, {
                     message: '"value" with value "123" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
@@ -7219,7 +7219,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -7233,7 +7233,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['12', false, null, {
+                ['12', false, {
                     message: '"value" with value "12" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
@@ -7249,7 +7249,7 @@ describe('string', () => {
                 }],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -7263,7 +7263,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -7272,7 +7272,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -7288,7 +7288,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).regex(/^a/).allow('');
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -7302,7 +7302,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123', false, null, {
+                ['123', false, {
                     message: '"value" with value "123" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
@@ -7316,7 +7316,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -7330,7 +7330,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['12', false, null, {
+                ['12', false, {
                     message: '"value" with value "12" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
@@ -7346,7 +7346,7 @@ describe('string', () => {
                 }],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -7361,7 +7361,7 @@ describe('string', () => {
                     }]
                 }],
                 ['', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -7377,7 +7377,7 @@ describe('string', () => {
 
             const rule = Joi.string().min(2).max(3).regex(/^a/).required();
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" length must be at least 2 characters long',
                     details: [{
                         message: '"value" length must be at least 2 characters long',
@@ -7391,7 +7391,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['123', false, null, {
+                ['123', false, {
                     message: '"value" with value "123" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "123" fails to match the required pattern: /^a/',
@@ -7405,7 +7405,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -7419,7 +7419,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['12', false, null, {
+                ['12', false, {
                     message: '"value" with value "12" fails to match the required pattern: /^a/',
                     details: [{
                         message: '"value" with value "12" fails to match the required pattern: /^a/',
@@ -7435,7 +7435,7 @@ describe('string', () => {
                 }],
                 ['ab', true],
                 ['abc', true],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" length must be less than or equal to 3 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 3 characters long',
@@ -7449,7 +7449,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -7458,7 +7458,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -7498,8 +7498,8 @@ describe('string', () => {
 
             const schema = Joi.string().normalize('NFC');
 
-            Helper.validateOptions(schema, [
-                [normalizations.original, false, null, {
+            Helper.validate(schema, { convert: false }, [
+                [normalizations.original, false, {
                     message: '"value" must be unicode normalized in the NFC form',
                     details: [{
                         message: '"value" must be unicode normalized in the NFC form',
@@ -7513,15 +7513,15 @@ describe('string', () => {
                     }]
                 }],
                 [normalizations.NFC, true]
-            ], { convert: false });
+            ]);
         });
 
         it('only allow strings that are in NFD form', () => {
 
             const schema = Joi.string().normalize('NFD');
 
-            Helper.validateOptions(schema, [
-                [normalizations.original, false, null, {
+            Helper.validate(schema, { convert: false }, [
+                [normalizations.original, false, {
                     message: '"value" must be unicode normalized in the NFD form',
                     details: [{
                         message: '"value" must be unicode normalized in the NFD form',
@@ -7535,15 +7535,15 @@ describe('string', () => {
                     }]
                 }],
                 [normalizations.NFD, true]
-            ], { convert: false });
+            ]);
         });
 
         it('only allow strings that are in NFKC form', () => {
 
             const schema = Joi.string().normalize('NFKC');
 
-            Helper.validateOptions(schema, [
-                [normalizations.original, false, null, {
+            Helper.validate(schema, { convert: false }, [
+                [normalizations.original, false, {
                     message: '"value" must be unicode normalized in the NFKC form',
                     details: [{
                         message: '"value" must be unicode normalized in the NFKC form',
@@ -7557,15 +7557,15 @@ describe('string', () => {
                     }]
                 }],
                 [normalizations.NFKC, true]
-            ], { convert: false });
+            ]);
         });
 
         it('only allow strings that are in NFKD form', () => {
 
             const schema = Joi.string().normalize('NFKD');
 
-            Helper.validateOptions(schema, [
-                [normalizations.original, false, null, {
+            Helper.validate(schema, { convert: false }, [
+                [normalizations.original, false, {
                     message: '"value" must be unicode normalized in the NFKD form',
                     details: [{
                         message: '"value" must be unicode normalized in the NFKD form',
@@ -7579,7 +7579,7 @@ describe('string', () => {
                     }]
                 }],
                 [normalizations.NFKD, true]
-            ], { convert: false });
+            ]);
         });
 
         it('normalizes string using NFC before validation', () => {
@@ -7655,7 +7655,7 @@ describe('string', () => {
             const schema = Joi.string().length(2).normalize('NFC');
 
             Helper.validate(schema, [
-                ['\u00F1', false, null, {
+                ['\u00F1', false, {
                     message: '"value" length must be 2 characters long',
                     details: [{
                         message: '"value" length must be 2 characters long',
@@ -7669,7 +7669,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['n\u0303', false, null, {
+                ['n\u0303', false, {
                     message: '"value" length must be 2 characters long',
                     details: [{
                         message: '"value" length must be 2 characters long',
@@ -7694,7 +7694,7 @@ describe('string', () => {
             const schema = Joi.string().length(2).normalize('NFD');
 
             Helper.validate(schema, [
-                ['\u00F1\u00F1', false, null, {
+                ['\u00F1\u00F1', false, {
                     message: '"value" length must be 2 characters long',
                     details: [{
                         message: '"value" length must be 2 characters long',
@@ -7708,7 +7708,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['\u00F1n\u0303', false, null, {
+                ['\u00F1n\u0303', false, {
                     message: '"value" length must be 2 characters long',
                     details: [{
                         message: '"value" length must be 2 characters long',
@@ -7722,7 +7722,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['n\u0303n\u0303', false, null, {
+                ['n\u0303n\u0303', false, {
                     message: '"value" length must be 2 characters long',
                     details: [{
                         message: '"value" length must be 2 characters long',
@@ -7762,7 +7762,7 @@ describe('string', () => {
 
             const schema = Joi.string().regex(/^[0-9][-][a-z]+$/);
             Helper.validate(schema, [
-                ['van', false, null, {
+                ['van', false, {
                     message: '"value" with value "van" fails to match the required pattern: /^[0-9][-][a-z]+$/',
                     details: [{
                         message: '"value" with value "van" fails to match the required pattern: /^[0-9][-][a-z]+$/',
@@ -7845,7 +7845,7 @@ describe('string', () => {
             const schema = Joi.string().regex(/[a-z]/, { invert: true });
             Helper.validate(schema, [
                 ['0123456789', true],
-                ['abcdefg', false, null, {
+                ['abcdefg', false, {
                     message: '"value" with value "abcdefg" matches the inverted pattern: /[a-z]/',
                     details: [{
                         message: '"value" with value "abcdefg" matches the inverted pattern: /[a-z]/',
@@ -7870,7 +7870,7 @@ describe('string', () => {
             });
             Helper.validate(schema, [
                 ['0123456789', true],
-                ['abcdefg', false, null, {
+                ['abcdefg', false, {
                     message: '"value" with value "abcdefg" matches the inverted lowercase pattern',
                     details: [{
                         message: '"value" with value "abcdefg" matches the inverted lowercase pattern',
@@ -7893,33 +7893,33 @@ describe('string', () => {
         it('successfully replaces the first occurrence of the expression', () => {
 
             const schema = Joi.string().replace(/\s+/, ''); // no "g" flag
-            Helper.validateOptions(schema, [
-                ['\tsomething', true, null, 'something'],
-                ['something\r', true, null, 'something'],
-                ['something  ', true, null, 'something'],
-                ['some  thing', true, null, 'something'],
-                ['so me thing', true, null, 'some thing'] // first occurrence!
-            ], { convert: true });
+            Helper.validate(schema, { convert: true }, [
+                ['\tsomething', true, 'something'],
+                ['something\r', true, 'something'],
+                ['something  ', true, 'something'],
+                ['some  thing', true, 'something'],
+                ['so me thing', true, 'some thing'] // first occurrence!
+            ]);
         });
 
         it('successfully replaces all occurrences of the expression', () => {
 
             const schema = Joi.string().replace(/\s+/g, ''); // has "g" flag
-            Helper.validateOptions(schema, [
-                ['\tsomething', true, null, 'something'],
-                ['something\r', true, null, 'something'],
-                ['something  ', true, null, 'something'],
-                ['some  thing', true, null, 'something'],
-                ['so me thing', true, null, 'something']
-            ], { convert: true });
+            Helper.validate(schema, { convert: true }, [
+                ['\tsomething', true, 'something'],
+                ['something\r', true, 'something'],
+                ['something  ', true, 'something'],
+                ['some  thing', true, 'something'],
+                ['so me thing', true, 'something']
+            ]);
         });
 
         it('successfully replaces all occurrences of a string pattern', () => {
 
             const schema = Joi.string().replace('foo', 'X'); // has "g" flag
-            Helper.validateOptions(schema, [
-                ['foobarfoobazfoo', true, null, 'XbarXbazX']
-            ], { convert: true });
+            Helper.validate(schema, { convert: true }, [
+                ['foobarfoobazfoo', true, 'XbarXbazX']
+            ]);
         });
 
         it('successfully replaces multiple times', () => {
@@ -7941,7 +7941,7 @@ describe('string', () => {
 
             const schema = Joi.string().min(4).replace(/\s+/g, ' ');
             Helper.validate(schema, [
-                ['   a   ', false, null, {
+                ['   a   ', false, {
                     message: '"value" length must be at least 4 characters long',
                     details: [{
                         message: '"value" length must be at least 4 characters long',
@@ -7955,8 +7955,8 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['abc    ', true, null, 'abc '],
-                ['a\t\rbc', true, null, 'a bc']
+                ['abc    ', true, 'abc '],
+                ['a\t\rbc', true, 'a bc']
             ]);
         });
 
@@ -7964,8 +7964,8 @@ describe('string', () => {
 
             const schema = Joi.string().max(5).replace(/ CHANGE ME /g, '-b-');
             Helper.validate(schema, [
-                ['a CHANGE ME c', true, null, 'a-b-c'],
-                ['a-b-c', true, null, 'a-b-c'] // nothing changes here!
+                ['a CHANGE ME c', true, 'a-b-c'],
+                ['a-b-c', true, 'a-b-c'] // nothing changes here!
             ]);
         });
 
@@ -7973,7 +7973,7 @@ describe('string', () => {
 
             const schema = Joi.string().length(5).replace(/\s+/g, ' ');
             Helper.validate(schema, [
-                ['a    bc', false, null, {
+                ['a    bc', false, {
                     message: '"value" length must be 5 characters long',
                     details: [{
                         message: '"value" length must be 5 characters long',
@@ -7987,7 +7987,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['a\tb\nc', true, null, 'a b c']
+                ['a\tb\nc', true, 'a b c']
             ]);
         });
 
@@ -7998,7 +7998,7 @@ describe('string', () => {
         it('denies undefined, deny empty string', () => {
 
             Helper.validate(Joi.string().required(), [
-                [undefined, false, null, {
+                [undefined, false, {
                     message: '"value" is required',
                     details: [{
                         message: '"value" is required',
@@ -8007,7 +8007,7 @@ describe('string', () => {
                         context: { label: 'value' }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -8052,7 +8052,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['test', true],
                 ['0', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -8072,7 +8072,7 @@ describe('string', () => {
             const schema = Joi.string().token();
             Helper.validate(schema, [
                 ['w0rld_of_w4lm4rtl4bs', true],
-                ['w0rld of_w4lm4rtl4bs', false, null, {
+                ['w0rld of_w4lm4rtl4bs', false, {
                     message: '"value" must only contain alpha-numeric and underscore characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric and underscore characters',
@@ -8081,7 +8081,7 @@ describe('string', () => {
                         context: { value: 'w0rld of_w4lm4rtl4bs', label: 'value' }
                     }]
                 }],
-                ['abcd#f?h1j orly?', false, null, {
+                ['abcd#f?h1j orly?', false, {
                     message: '"value" must only contain alpha-numeric and underscore characters',
                     details: [{
                         message: '"value" must only contain alpha-numeric and underscore characters',
@@ -8099,8 +8099,8 @@ describe('string', () => {
         it('only allow strings that have no leading or trailing whitespace', () => {
 
             const schema = Joi.string().trim();
-            Helper.validateOptions(schema, [
-                [' something', false, null, {
+            Helper.validate(schema, { convert: false }, [
+                [' something', false, {
                     message: '"value" must not have leading or trailing whitespace',
                     details: [{
                         message: '"value" must not have leading or trailing whitespace',
@@ -8109,7 +8109,7 @@ describe('string', () => {
                         context: { value: ' something', label: 'value' }
                     }]
                 }],
-                ['something ', false, null, {
+                ['something ', false, {
                     message: '"value" must not have leading or trailing whitespace',
                     details: [{
                         message: '"value" must not have leading or trailing whitespace',
@@ -8118,7 +8118,7 @@ describe('string', () => {
                         context: { value: 'something ', label: 'value' }
                     }]
                 }],
-                ['something\n', false, null, {
+                ['something\n', false, {
                     message: '"value" must not have leading or trailing whitespace',
                     details: [{
                         message: '"value" must not have leading or trailing whitespace',
@@ -8129,14 +8129,14 @@ describe('string', () => {
                 }],
                 ['some thing', true],
                 ['something', true]
-            ], { convert: false });
+            ]);
         });
 
         it('disable existing trim flag when passing enabled: false', () => {
 
             const trimEnabledSchema = Joi.string().trim(true);
-            Helper.validateOptions(trimEnabledSchema, [
-                [' something', false, null, {
+            Helper.validate(trimEnabledSchema, { convert: false }, [
+                [' something', false, {
                     message: '"value" must not have leading or trailing whitespace',
                     details: [{
                         message: '"value" must not have leading or trailing whitespace',
@@ -8145,14 +8145,14 @@ describe('string', () => {
                         context: { value: ' something', label: 'value' }
                     }]
                 }]
-            ], { convert: false });
+            ]);
 
             const trimDisabledSchema = trimEnabledSchema.trim(false);
-            Helper.validateOptions(trimDisabledSchema, [
+            Helper.validate(trimDisabledSchema, { convert: false }, [
                 [' something', true]
-            ], { convert: false });
+            ]);
 
-            Helper.validateOptions(trimDisabledSchema, [
+            Helper.validate(trimDisabledSchema, [
                 [' something', true]
             ]);
         });
@@ -8173,7 +8173,7 @@ describe('string', () => {
 
             const schema = Joi.string().min(4).trim();
             Helper.validate(schema, [
-                [' a ', false, null, {
+                [' a ', false, {
                     message: '"value" length must be at least 4 characters long',
                     details: [{
                         message: '"value" length must be at least 4 characters long',
@@ -8187,7 +8187,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['abc ', false, null, {
+                ['abc ', false, {
                     message: '"value" length must be at least 4 characters long',
                     details: [{
                         message: '"value" length must be at least 4 characters long',
@@ -8209,7 +8209,7 @@ describe('string', () => {
 
             const schema = Joi.string().max(4).trim();
             Helper.validate(schema, [
-                [' abcde ', false, null, {
+                [' abcde ', false, {
                     message: '"value" length must be less than or equal to 4 characters long',
                     details: [{
                         message: '"value" length must be less than or equal to 4 characters long',
@@ -8232,7 +8232,7 @@ describe('string', () => {
 
             const schema = Joi.string().length(4).trim();
             Helper.validate(schema, [
-                [' ab ', false, null, {
+                [' ab ', false, {
                     message: '"value" length must be 4 characters long',
                     details: [{
                         message: '"value" length must be 4 characters long',
@@ -8246,7 +8246,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['abc ', false, null, {
+                ['abc ', false, {
                     message: '"value" length must be 4 characters long',
                     details: [{
                         message: '"value" length must be 4 characters long',
@@ -8331,9 +8331,9 @@ describe('string', () => {
             const schema = Joi.string().max(5).truncate();
 
             Helper.validate(schema, [
-                ['abc', true, null, 'abc'],
-                ['abcde', true, null, 'abcde'],
-                ['abcdef', true, null, 'abcde']
+                ['abc', true, 'abc'],
+                ['abcde', true, 'abcde'],
+                ['abcdef', true, 'abcde']
             ]);
         });
 
@@ -8342,10 +8342,10 @@ describe('string', () => {
             const schema = Joi.string().max(5).truncate().trim().replace(/a/g, 'aa');
 
             Helper.validate(schema, [
-                ['abc', true, null, 'aabc'],
-                ['abcde', true, null, 'aabcd'],
-                ['abcdef', true, null, 'aabcd'],
-                ['  abcdef  ', true, null, 'aabcd']
+                ['abc', true, 'aabc'],
+                ['abcde', true, 'aabcd'],
+                ['abcdef', true, 'aabcd'],
+                ['  abcdef  ', true, 'aabcd']
             ]);
         });
 
@@ -8358,10 +8358,10 @@ describe('string', () => {
             });
 
             Helper.validate(schema, [
-                [{ a: 'abc', b: 4 }, true, null, { a: 'abc', b: 4 }],
-                [{ a: 'abcde', b: 2 }, true, null, { a: 'ab', b: 2 }],
-                [{ a: 'abcdef', b: 5 }, true, null, { a: 'abcde', b: 5 }],
-                [{ a: 'abc' }, false, null, {
+                [{ a: 'abc', b: 4 }, true, { a: 'abc', b: 4 }],
+                [{ a: 'abcde', b: 2 }, true, { a: 'ab', b: 2 }],
+                [{ a: 'abcdef', b: 5 }, true, { a: 'abcde', b: 5 }],
+                [{ a: 'abc' }, false, {
                     message: '"a" limit references "ref:b" which must be a positive integer',
                     details: [{
                         message: '"a" limit references "ref:b" which must be a positive integer',
@@ -8379,11 +8379,11 @@ describe('string', () => {
         it('only allow strings that are entirely uppercase', () => {
 
             const schema = Joi.string().uppercase();
-            Helper.validateOptions(schema, [
+            Helper.validate(schema, { convert: false }, [
                 ['THIS IS ALL UPPERCASE', true],
                 ['5', true],
                 ['UPPER\nCASE', true],
-                ['lOWERCASE', false, null, {
+                ['lOWERCASE', false, {
                     message: '"value" must only contain uppercase characters',
                     details: [{
                         message: '"value" must only contain uppercase characters',
@@ -8392,7 +8392,7 @@ describe('string', () => {
                         context: { value: 'lOWERCASE', label: 'value' }
                     }]
                 }],
-                ['MixEd cAsE', false, null, {
+                ['MixEd cAsE', false, {
                     message: '"value" must only contain uppercase characters',
                     details: [{
                         message: '"value" must only contain uppercase characters',
@@ -8401,7 +8401,7 @@ describe('string', () => {
                         context: { value: 'MixEd cAsE', label: 'value' }
                     }]
                 }],
-                [1, false, null, {
+                [1, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -8410,7 +8410,7 @@ describe('string', () => {
                         context: { value: 1, label: 'value' }
                     }]
                 }]
-            ], { convert: false });
+            ]);
         });
 
         it('coerce string to uppercase before validation', () => {
@@ -8426,7 +8426,7 @@ describe('string', () => {
                 [' abc', true],
                 [' ABC', true],
                 ['ABC', true],
-                [1, false, null, {
+                [1, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -8442,10 +8442,10 @@ describe('string', () => {
 
             const schema = Joi.string().uppercase().replace(/\s+/g, ' ');
             Helper.validate(schema, [
-                ['a\r b\n c', true, null, 'A B C'],
-                ['A\t B  C', true, null, 'A B C'],
-                ['ABC', true, null, 'ABC'],
-                [1, false, null, {
+                ['a\r b\n c', true, 'A B C'],
+                ['A\t B  C', true, 'A B C'],
+                ['ABC', true, 'ABC'],
+                [1, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -8461,7 +8461,7 @@ describe('string', () => {
 
             const rule = Joi.string().uppercase().min(2).max(3).alphanum().valid('AB', 'BC');
             Helper.validate(rule, [
-                ['x', false, null, {
+                ['x', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8470,7 +8470,7 @@ describe('string', () => {
                         context: { value: 'X', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
-                ['123', false, null, {
+                ['123', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8479,7 +8479,7 @@ describe('string', () => {
                         context: { value: '123', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
-                ['1234', false, null, {
+                ['1234', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8488,7 +8488,7 @@ describe('string', () => {
                         context: { value: '1234', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
-                ['12', false, null, {
+                ['12', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8498,7 +8498,7 @@ describe('string', () => {
                     }]
                 }],
                 ['ab', true],
-                ['abc', false, null, {
+                ['abc', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8507,7 +8507,7 @@ describe('string', () => {
                         context: { value: 'ABC', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
-                ['a2c', false, null, {
+                ['a2c', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8516,7 +8516,7 @@ describe('string', () => {
                         context: { value: 'A2C', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
-                ['abcd', false, null, {
+                ['abcd', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8525,7 +8525,7 @@ describe('string', () => {
                         context: { value: 'ABCD', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
-                ['*ab', false, null, {
+                ['*ab', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8534,7 +8534,7 @@ describe('string', () => {
                         context: { value: '*AB', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8545,7 +8545,7 @@ describe('string', () => {
                 }],
                 ['bc', true],
                 ['BC', true],
-                ['de', false, null, {
+                ['de', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8554,7 +8554,7 @@ describe('string', () => {
                         context: { value: 'DE', valids: ['AB', 'BC'], label: 'value' }
                     }]
                 }],
-                ['ABc', false, null, {
+                ['ABc', false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8564,7 +8564,7 @@ describe('string', () => {
                     }]
                 }],
                 ['AB', true],
-                [null, false, null, {
+                [null, false, {
                     message: '"value" must be one of [AB, BC]',
                     details: [{
                         message: '"value" must be one of [AB, BC]',
@@ -8587,7 +8587,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 ['foo://example.com:8042/over/there?name=ferret#nose', true],
-                ['https://example.com?abc[]=123&abc[]=456', false, null, {
+                ['https://example.com?abc[]=123&abc[]=456', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8600,7 +8600,7 @@ describe('string', () => {
                 ['ftp://ftp.is.co.za/rfc/rfc1808.txt', true],
                 ['http://www.ietf.org/rfc/rfc2396.txt', true],
                 ['ldap://[2001:db8::7]/c=GB?objectClass?one', true],
-                ['ldap://2001:db8::7/c=GB?objectClass?one', false, null, {
+                ['ldap://2001:db8::7/c=GB?objectClass?one', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8622,7 +8622,7 @@ describe('string', () => {
                 ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', true],
                 ['http://[1080:0:0:0:8:800:200C:417A]', true],
                 ['http://v1.09azAZ-._~!$&\'()*+,;=:', true], // This doesn't look valid, but it is. The `v1.09azAZ-._~!$&\'()*+,;=` part is a valid registered name as it has no invalid characters
-                ['http://a:b:c:d:e::1.2.3.4', false, null, {
+                ['http://a:b:c:d:e::1.2.3.4', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8631,7 +8631,7 @@ describe('string', () => {
                         context: { value: 'http://a:b:c:d:e::1.2.3.4', label: 'value' }
                     }]
                 }],
-                ['coap://FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', false, null, {
+                ['coap://FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8640,7 +8640,7 @@ describe('string', () => {
                         context: { value: 'coap://FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', label: 'value' }
                     }]
                 }],
-                ['http://1080:0:0:0:8:800:200C:417A', false, null, {
+                ['http://1080:0:0:0:8:800:200C:417A', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8678,7 +8678,7 @@ describe('string', () => {
                 ['http://_jabber._tcp.google.com:80/test', true],
                 ['http://user:pass@_jabber._tcp.google.com:80/test', true],
                 ['http://[fe80::1]/a/b?a=b#abc', true],
-                ['http://fe80::1/a/b?a=b#abc', false, null, {
+                ['http://fe80::1/a/b?a=b#abc', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8689,7 +8689,7 @@ describe('string', () => {
                 }],
                 ['http://user:password@[3ffe:2a00:100:7031::1]:8080', true],
                 ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', true],
-                ['coap://1080:0:0:0:8:800:200C:417A:61616/', false, null, {
+                ['coap://1080:0:0:0:8:800:200C:417A:61616/', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8737,7 +8737,7 @@ describe('string', () => {
                 ['http://a/g', true],
                 ['http://a/g', true],
                 ['file:/asda', true],
-                ['qwerty', false, null, {
+                ['qwerty', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8746,7 +8746,7 @@ describe('string', () => {
                         context: { value: 'qwerty', label: 'value' }
                     }]
                 }],
-                ['invalid uri', false, null, {
+                ['invalid uri', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8755,7 +8755,7 @@ describe('string', () => {
                         context: { value: 'invalid uri', label: 'value' }
                     }]
                 }],
-                ['1http://google.com', false, null, {
+                ['1http://google.com', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8764,7 +8764,7 @@ describe('string', () => {
                         context: { value: '1http://google.com', label: 'value' }
                     }]
                 }],
-                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, {
+                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8773,7 +8773,7 @@ describe('string', () => {
                         context: { value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', label: 'value' }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -8782,7 +8782,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                ['(╯°□°)╯︵ ┻━┻', false, null, {
+                ['(╯°□°)╯︵ ┻━┻', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8791,7 +8791,7 @@ describe('string', () => {
                         context: { value: '(╯°□°)╯︵ ┻━┻', label: 'value' }
                     }]
                 }],
-                ['one/two/three?value=abc&value2=123#david-rules', false, null, {
+                ['one/two/three?value=abc&value2=123#david-rules', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8800,7 +8800,7 @@ describe('string', () => {
                         context: { value: 'one/two/three?value=abc&value2=123#david-rules', label: 'value' }
                     }]
                 }],
-                ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', false, null, {
+                ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8809,7 +8809,7 @@ describe('string', () => {
                         context: { value: '//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', label: 'value' }
                     }]
                 }],
-                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, {
+                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8818,7 +8818,7 @@ describe('string', () => {
                         context: { value: 'http://a\r" \t\n<\'b:b@c\r\nd/e?f', label: 'value' }
                     }]
                 }],
-                ['/absolute', false, null, {
+                ['/absolute', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -8838,7 +8838,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 ['http://google.com', true],
-                ['https://google.com', false, null, {
+                ['https://google.com', false, {
                     message: '"value" must be a valid uri with a scheme matching the http pattern',
                     details: [{
                         message: '"value" must be a valid uri with a scheme matching the http pattern',
@@ -8851,7 +8851,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['ftp://google.com', false, null, {
+                ['ftp://google.com', false, {
                     message: '"value" must be a valid uri with a scheme matching the http pattern',
                     details: [{
                         message: '"value" must be a valid uri with a scheme matching the http pattern',
@@ -8864,7 +8864,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['file:/asdf', false, null, {
+                ['file:/asdf', false, {
                     message: '"value" must be a valid uri with a scheme matching the http pattern',
                     details: [{
                         message: '"value" must be a valid uri with a scheme matching the http pattern',
@@ -8877,7 +8877,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['/path?query=value#hash', false, null, {
+                ['/path?query=value#hash', false, {
                     message: '"value" must be a valid uri with a scheme matching the http pattern',
                     details: [{
                         message: '"value" must be a valid uri with a scheme matching the http pattern',
@@ -8902,7 +8902,7 @@ describe('string', () => {
             Helper.validate(schema, [
                 ['http://google.com', true],
                 ['https://google.com', true],
-                ['ftp://google.com', false, null, {
+                ['ftp://google.com', false, {
                     message: '"value" must be a valid uri with a scheme matching the https? pattern',
                     details: [{
                         message: '"value" must be a valid uri with a scheme matching the https? pattern',
@@ -8915,7 +8915,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['file:/asdf', false, null, {
+                ['file:/asdf', false, {
                     message: '"value" must be a valid uri with a scheme matching the https? pattern',
                     details: [{
                         message: '"value" must be a valid uri with a scheme matching the https? pattern',
@@ -8928,7 +8928,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['/path?query=value#hash', false, null, {
+                ['/path?query=value#hash', false, {
                     message: '"value" must be a valid uri with a scheme matching the https? pattern',
                     details: [{
                         message: '"value" must be a valid uri with a scheme matching the https? pattern',
@@ -8956,7 +8956,7 @@ describe('string', () => {
                 ['ftp://google.com', true],
                 ['file:/asdf', true],
                 ['git+http://github.com/hapijs/joi', true],
-                ['/path?query=value#hash', false, null, {
+                ['/path?query=value#hash', false, {
                     message: '"value" must be a valid uri with a scheme matching the https?|ftp|file|git\\+http pattern',
                     details: [{
                         message: '"value" must be a valid uri with a scheme matching the https?|ftp|file|git\\+http pattern',
@@ -9082,7 +9082,7 @@ describe('string', () => {
 
             Helper.validate(schema, [
                 ['http://test.google.com', true],
-                ['http://google.com', false, null, {
+                ['http://google.com', false, {
                     message: '"value" must contain a valid domain name',
                     details: [{
                         message: '"value" must contain a valid domain name',
@@ -9094,7 +9094,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://test.google.net', false, null, {
+                ['http://test.google.net', false, {
                     message: '"value" must contain a valid domain name',
                     details: [{
                         message: '"value" must contain a valid domain name',
@@ -9201,7 +9201,7 @@ describe('string', () => {
                 ['http://a/g', true],
                 ['file:/asda', true],
                 ['qwerty', true],
-                ['invalid uri', false, null, {
+                ['invalid uri', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -9210,7 +9210,7 @@ describe('string', () => {
                         context: { value: 'invalid uri', label: 'value' }
                     }]
                 }],
-                ['1http://google.com', false, null, {
+                ['1http://google.com', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -9219,7 +9219,7 @@ describe('string', () => {
                         context: { value: '1http://google.com', label: 'value' }
                     }]
                 }],
-                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, {
+                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -9228,7 +9228,7 @@ describe('string', () => {
                         context: { value: 'http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', label: 'value' }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -9237,7 +9237,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                ['(╯°□°)╯︵ ┻━┻', false, null, {
+                ['(╯°□°)╯︵ ┻━┻', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -9248,7 +9248,7 @@ describe('string', () => {
                 }],
                 ['one/two/three?value=abc&value2=123#david-rules', true],
                 ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', true],
-                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, {
+                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -9258,7 +9258,7 @@ describe('string', () => {
                     }]
                 }],
                 ['/absolute', true],
-                ['http://', false, null, {
+                ['http://', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -9267,7 +9267,7 @@ describe('string', () => {
                         context: { value: 'http://', label: 'value' }
                     }]
                 }],
-                ['http:/', false, null, {
+                ['http:/', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -9276,7 +9276,7 @@ describe('string', () => {
                         context: { value: 'http:/', label: 'value' }
                     }]
                 }],
-                ['https:/', false, null, {
+                ['https:/', false, {
                     message: '"value" must be a valid uri',
                     details: [{
                         message: '"value" must be a valid uri',
@@ -9292,7 +9292,7 @@ describe('string', () => {
 
             const schema = Joi.string().uri({ relativeOnly: true });
             Helper.validate(schema, [
-                ['foo://example.com:8042/over/there?name=ferret#nose', false, null, {
+                ['foo://example.com:8042/over/there?name=ferret#nose', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9304,7 +9304,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['urn:example:animal:ferret:nose', false, null, {
+                ['urn:example:animal:ferret:nose', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9316,7 +9316,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['ftp://ftp.is.co.za/rfc/rfc1808.txt', false, null, {
+                ['ftp://ftp.is.co.za/rfc/rfc1808.txt', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9328,7 +9328,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://www.ietf.org/rfc/rfc2396.txt', false, null, {
+                ['http://www.ietf.org/rfc/rfc2396.txt', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9340,7 +9340,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['ldap://[2001:db8::7]/c=GB?objectClass?one', false, null, {
+                ['ldap://[2001:db8::7]/c=GB?objectClass?one', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9352,7 +9352,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['mailto:John.Doe@example.com', false, null, {
+                ['mailto:John.Doe@example.com', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9364,7 +9364,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['news:comp.infosystems.www.servers.unix', false, null, {
+                ['news:comp.infosystems.www.servers.unix', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9376,7 +9376,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['tel:+1-816-555-1212', false, null, {
+                ['tel:+1-816-555-1212', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9388,7 +9388,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['telnet://192.0.2.16:80/', false, null, {
+                ['telnet://192.0.2.16:80/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9400,7 +9400,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['urn:oasis:names:specification:docbook:dtd:xml:4.1.2', false, null, {
+                ['urn:oasis:names:specification:docbook:dtd:xml:4.1.2', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9412,7 +9412,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['file:///example.txt', false, null, {
+                ['file:///example.txt', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9424,7 +9424,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon', false, null, {
+                ['http://asdf:qw%20er@localhost:8000?asdf=12345&asda=fc%2F#bacon', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9436,7 +9436,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://asdf@localhost:8000', false, null, {
+                ['http://asdf@localhost:8000', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9448,7 +9448,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://[v1.09azAZ-._~!$&\'()*+,;=:]', false, null, {
+                ['http://[v1.09azAZ-._~!$&\'()*+,;=:]', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9460,7 +9460,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://[a:b:c:d:e::1.2.3.4]', false, null, {
+                ['http://[a:b:c:d:e::1.2.3.4]', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9472,7 +9472,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', false, null, {
+                ['coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9484,7 +9484,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://[1080:0:0:0:8:800:200C:417A]', false, null, {
+                ['http://[1080:0:0:0:8:800:200C:417A]', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9496,7 +9496,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://127.0.0.1:8000/foo?bar', false, null, {
+                ['http://127.0.0.1:8000/foo?bar', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9508,7 +9508,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://asdf:qwer@localhost:8000', false, null, {
+                ['http://asdf:qwer@localhost:8000', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9520,7 +9520,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://user:pass%3A@localhost:80', false, null, {
+                ['http://user:pass%3A@localhost:80', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9532,7 +9532,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://localhost:123', false, null, {
+                ['http://localhost:123', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9544,7 +9544,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['https://localhost:123', false, null, {
+                ['https://localhost:123', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9556,7 +9556,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['file:///whatever', false, null, {
+                ['file:///whatever', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9568,7 +9568,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['mailto:asdf@asdf.com', false, null, {
+                ['mailto:asdf@asdf.com', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9580,7 +9580,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['ftp://www.example.com', false, null, {
+                ['ftp://www.example.com', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9592,7 +9592,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['javascript:alert(\'hello\');', false, null, {
+                ['javascript:alert(\'hello\');', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9604,7 +9604,7 @@ describe('string', () => {
                         }
                     }]
                 }], // eslint-disable-line no-script-url
-                ['xmpp:isaacschlueter@jabber.org', false, null, {
+                ['xmpp:isaacschlueter@jabber.org', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9616,7 +9616,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['f://some.host/path', false, null, {
+                ['f://some.host/path', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9628,7 +9628,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://localhost:18/asdf', false, null, {
+                ['http://localhost:18/asdf', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9640,7 +9640,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://localhost:42/asdf?qwer=zxcv', false, null, {
+                ['http://localhost:42/asdf?qwer=zxcv', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9652,7 +9652,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['HTTP://www.example.com/', false, null, {
+                ['HTTP://www.example.com/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9664,7 +9664,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['HTTP://www.example.com', false, null, {
+                ['HTTP://www.example.com', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9676,7 +9676,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://www.ExAmPlE.com/', false, null, {
+                ['http://www.ExAmPlE.com/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9688,7 +9688,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://user:pw@www.ExAmPlE.com/', false, null, {
+                ['http://user:pw@www.ExAmPlE.com/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9700,7 +9700,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://USER:PW@www.ExAmPlE.com/', false, null, {
+                ['http://USER:PW@www.ExAmPlE.com/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9712,7 +9712,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://user@www.example.com/', false, null, {
+                ['http://user@www.example.com/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9724,7 +9724,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://user%3Apw@www.example.com/', false, null, {
+                ['http://user%3Apw@www.example.com/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9736,7 +9736,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://x.com/path?that%27s#all,%20folks', false, null, {
+                ['http://x.com/path?that%27s#all,%20folks', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9748,7 +9748,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['HTTP://X.COM/Y', false, null, {
+                ['HTTP://X.COM/Y', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9760,7 +9760,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://www.narwhaljs.org/blog/categories?id=news', false, null, {
+                ['http://www.narwhaljs.org/blog/categories?id=news', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9772,7 +9772,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', false, null, {
+                ['http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9784,7 +9784,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', false, null, {
+                ['http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9796,7 +9796,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', false, null, {
+                ['http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9808,7 +9808,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://_jabber._tcp.google.com:80/test', false, null, {
+                ['http://_jabber._tcp.google.com:80/test', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9820,7 +9820,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://user:pass@_jabber._tcp.google.com:80/test', false, null, {
+                ['http://user:pass@_jabber._tcp.google.com:80/test', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9832,7 +9832,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://[fe80::1]/a/b?a=b#abc', false, null, {
+                ['http://[fe80::1]/a/b?a=b#abc', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9844,7 +9844,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://user:password@[3ffe:2a00:100:7031::1]:8080', false, null, {
+                ['http://user:password@[3ffe:2a00:100:7031::1]:8080', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9856,7 +9856,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', false, null, {
+                ['coap://[1080:0:0:0:8:800:200C:417A]:61616/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9868,7 +9868,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['git+http://github.com/joyent/node.git', false, null, {
+                ['git+http://github.com/joyent/node.git', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9880,7 +9880,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://bucket_name.s3.amazonaws.com/image.jpg', false, null, {
+                ['http://bucket_name.s3.amazonaws.com/image.jpg', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9892,7 +9892,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['dot.test://foo/bar', false, null, {
+                ['dot.test://foo/bar', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9904,7 +9904,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['svn+ssh://foo/bar', false, null, {
+                ['svn+ssh://foo/bar', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9916,7 +9916,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['dash-test://foo/bar', false, null, {
+                ['dash-test://foo/bar', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9928,7 +9928,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['xmpp:isaacschlueter@jabber.org', false, null, {
+                ['xmpp:isaacschlueter@jabber.org', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9940,7 +9940,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', false, null, {
+                ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9952,7 +9952,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['javascript:alert(\'hello\');', false, null, {
+                ['javascript:alert(\'hello\');', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9964,7 +9964,7 @@ describe('string', () => {
                         }
                     }]
                 }], // eslint-disable-line no-script-url
-                ['file://localhost/etc/node/', false, null, {
+                ['file://localhost/etc/node/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9976,7 +9976,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['file:///etc/node/', false, null, {
+                ['file:///etc/node/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -9988,7 +9988,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://USER:PW@www.ExAmPlE.com/', false, null, {
+                ['http://USER:PW@www.ExAmPlE.com/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10000,7 +10000,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['mailto:local1@domain1?query1', false, null, {
+                ['mailto:local1@domain1?query1', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10012,7 +10012,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://example/a/b?c/../d', false, null, {
+                ['http://example/a/b?c/../d', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10024,7 +10024,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://example/x%2Fabc', false, null, {
+                ['http://example/x%2Fabc', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10036,7 +10036,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/d;p=1/g;x=1/y', false, null, {
+                ['http://a/b/c/d;p=1/g;x=1/y', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10048,7 +10048,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/g#s/../x', false, null, {
+                ['http://a/b/c/g#s/../x', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10060,7 +10060,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/.foo', false, null, {
+                ['http://a/b/c/.foo', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10072,7 +10072,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://example.com/b//c//d;p?q#blarg', false, null, {
+                ['http://example.com/b//c//d;p?q#blarg', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10084,7 +10084,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['g:h', false, null, {
+                ['g:h', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10096,7 +10096,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/g', false, null, {
+                ['http://a/b/c/g', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10108,7 +10108,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/g/', false, null, {
+                ['http://a/b/c/g/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10120,7 +10120,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/g', false, null, {
+                ['http://a/g', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10132,7 +10132,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://g', false, null, {
+                ['http://g', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10144,7 +10144,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/d;p?y', false, null, {
+                ['http://a/b/c/d;p?y', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10156,7 +10156,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/g?y', false, null, {
+                ['http://a/b/c/g?y', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10168,7 +10168,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/d;p?q#s', false, null, {
+                ['http://a/b/c/d;p?q#s', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10180,7 +10180,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/g#s', false, null, {
+                ['http://a/b/c/g#s', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10192,7 +10192,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/g?y#s', false, null, {
+                ['http://a/b/c/g?y#s', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10204,7 +10204,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/;x', false, null, {
+                ['http://a/b/c/;x', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10216,7 +10216,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/g;x', false, null, {
+                ['http://a/b/c/g;x', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10228,7 +10228,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/g;x?y#s', false, null, {
+                ['http://a/b/c/g;x?y#s', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10240,7 +10240,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/d;p?q', false, null, {
+                ['http://a/b/c/d;p?q', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10252,7 +10252,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/c/', false, null, {
+                ['http://a/b/c/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10264,7 +10264,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/', false, null, {
+                ['http://a/b/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10276,7 +10276,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/b/g', false, null, {
+                ['http://a/b/g', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10288,7 +10288,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/', false, null, {
+                ['http://a/', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10300,7 +10300,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/g', false, null, {
+                ['http://a/g', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10312,7 +10312,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://a/g', false, null, {
+                ['http://a/g', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10324,7 +10324,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['file:/asda', false, null, {
+                ['file:/asda', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10337,7 +10337,7 @@ describe('string', () => {
                     }]
                 }],
                 ['qwerty', true],
-                ['invalid uri', false, null, {
+                ['invalid uri', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10349,7 +10349,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['1http://google.com', false, null, {
+                ['1http://google.com', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10361,7 +10361,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, null, {
+                ['http://testdomain`,.<>/?\'";{}][++\\|~!@#$%^&*().org', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10373,7 +10373,7 @@ describe('string', () => {
                         }
                     }]
                 }],
-                ['', false, null, {
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -10382,7 +10382,7 @@ describe('string', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                ['(╯°□°)╯︵ ┻━┻', false, null, {
+                ['(╯°□°)╯︵ ┻━┻', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10396,7 +10396,7 @@ describe('string', () => {
                 }],
                 ['one/two/three?value=abc&value2=123#david-rules', true],
                 ['//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', true],
-                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, null, {
+                ['http://a\r" \t\n<\'b:b@c\r\nd/e?f', false, {
                     message: '"value" must be a valid relative uri',
                     details: [{
                         message: '"value" must be a valid relative uri',
@@ -10434,7 +10434,7 @@ describe('string', () => {
             Helper.validate(Joi.string().valid('a', 'b'), [
                 ['a', true],
                 ['b', true],
-                ['A', false, null, {
+                ['A', false, {
                     message: '"value" must be one of [a, b]',
                     details: [{
                         message: '"value" must be one of [a, b]',
@@ -10443,7 +10443,7 @@ describe('string', () => {
                         context: { value: 'A', valids: ['a', 'b'], label: 'value' }
                     }]
                 }],
-                ['B', false, null, {
+                ['B', false, {
                     message: '"value" must be one of [a, b]',
                     details: [{
                         message: '"value" must be one of [a, b]',
@@ -10462,7 +10462,7 @@ describe('string', () => {
                 ['b', true],
                 ['A', true],
                 ['B', true],
-                [4, false, null, {
+                [4, false, {
                     message: '"value" must be one of [a, b]',
                     details: [{
                         message: '"value" must be one of [a, b]',
@@ -10482,7 +10482,7 @@ describe('string', () => {
                 ['b', true],
                 ['A', true],
                 ['B', true],
-                [4, false, null, {
+                [4, false, {
                     message: '"value" must be one of [a, b, 5, c]',
                     details: [{
                         message: '"value" must be one of [a, b, 5, c]',

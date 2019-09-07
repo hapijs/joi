@@ -45,9 +45,9 @@ describe('symbol', () => {
             const symbols = [Symbol(1), Symbol(2)];
             const rule = Joi.symbol();
             Helper.validate(rule, [
-                [symbols[0], true, null, symbols[0]],
-                [symbols[1], true, null, symbols[1]],
-                [1, false, null, {
+                [symbols[0], true, symbols[0]],
+                [symbols[1], true, symbols[1]],
+                [1, false, {
                     message: '"value" must be a symbol',
                     details: [{
                         message: '"value" must be a symbol',
@@ -65,9 +65,9 @@ describe('symbol', () => {
             const otherSymbol = Symbol(1);
             const rule = Joi.symbol().valid(...symbols);
             Helper.validate(rule, [
-                [symbols[0], true, null, symbols[0]],
-                [symbols[1], true, null, symbols[1]],
-                [otherSymbol, false, null, {
+                [symbols[0], true, symbols[0]],
+                [symbols[1], true, symbols[1]],
+                [otherSymbol, false, {
                     message: '"value" must be one of [Symbol(1), Symbol(2)]',
                     details: [{
                         message: '"value" must be one of [Symbol(1), Symbol(2)]',
@@ -88,9 +88,9 @@ describe('symbol', () => {
                 const map = new Map([[1, symbols[0]], ['two', symbols[1]]]);
                 const rule = Joi.symbol().map(map);
                 Helper.validate(rule, [
-                    [1, true, null, symbols[0]],
-                    [symbols[0], true, null, symbols[0]],
-                    ['1', false, null, {
+                    [1, true, symbols[0]],
+                    [symbols[0], true, symbols[0]],
+                    ['1', false, {
                         message: `"value" must be one of [1 -> Symbol(1), two -> Symbol(2)]`,
                         details: [{
                             message: `"value" must be one of [1 -> Symbol(1), two -> Symbol(2)]`,
@@ -99,8 +99,8 @@ describe('symbol', () => {
                             context: { label: 'value', value: '1', map }
                         }]
                     }],
-                    ['two', true, null, symbols[1]],
-                    [otherSymbol, false, null, {
+                    ['two', true, symbols[1]],
+                    [otherSymbol, false, {
                         message: '"value" must be one of [Symbol(1), Symbol(2)]',
                         details: [{
                             message: '"value" must be one of [Symbol(1), Symbol(2)]',
@@ -118,10 +118,10 @@ describe('symbol', () => {
                 const otherSymbol = Symbol('one');
                 const rule = Joi.symbol().map({ one: symbols[0], two: symbols[1] });
                 Helper.validate(rule, [
-                    [symbols[0], true, null, symbols[0]],
-                    ['one', true, null, symbols[0]],
-                    ['two', true, null, symbols[1]],
-                    [otherSymbol, false, null, {
+                    [symbols[0], true, symbols[0]],
+                    ['one', true, symbols[0]],
+                    ['two', true, symbols[1]],
+                    [otherSymbol, false, {
                         message: '"value" must be one of [Symbol(one), Symbol(two)]',
                         details: [{
                             message: '"value" must be one of [Symbol(one), Symbol(two)]',
@@ -130,7 +130,7 @@ describe('symbol', () => {
                             context: { value: otherSymbol, label: 'value', valids: symbols }
                         }]
                     }],
-                    ['toString', false, null, {
+                    ['toString', false, {
                         message: `"value" must be one of [one -> Symbol(one), two -> Symbol(two)]`,
                         details: [{
                             message: `"value" must be one of [one -> Symbol(one), two -> Symbol(two)]`,
@@ -148,9 +148,9 @@ describe('symbol', () => {
                 const otherSymbol = Symbol(1);
                 const rule = Joi.symbol().map([[1, symbols[0]]]).map([[2, symbols[1]]]);
                 Helper.validate(rule, [
-                    [1, true, null, symbols[0]],
-                    [2, true, null, symbols[1]],
-                    [otherSymbol, false, null, {
+                    [1, true, symbols[0]],
+                    [2, true, symbols[1]],
+                    [otherSymbol, false, {
                         message: '"value" must be one of [Symbol(1), Symbol(2)]',
                         details: [{
                             message: '"value" must be one of [Symbol(1), Symbol(2)]',

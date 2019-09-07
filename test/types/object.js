@@ -22,7 +22,7 @@ describe('object', () => {
         Helper.validate(schema, [
             [{}, true],
             [{ hi: true }, true],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type object',
                 details: [{
                     message: '"value" must be of type object',
@@ -59,7 +59,7 @@ describe('object', () => {
         const schema = Joi.object().ref();
 
         Helper.validate(schema, [
-            [{}, false, null, {
+            [{}, false, {
                 message: '"value" must be a Joi reference',
                 details: [{
                     message: '"value" must be a Joi reference',
@@ -175,7 +175,7 @@ describe('object', () => {
         const schema = Joi.object({ item: Joi.string().required() }).required();
         Helper.validate(schema, [
             [{ item: 'something' }, true],
-            [{ item: 'something', item2: 'something else' }, false, null, {
+            [{ item: 'something', item2: 'something else' }, false, {
                 message: '"item2" is not allowed',
                 details: [{
                     message: '"item2" is not allowed',
@@ -184,7 +184,7 @@ describe('object', () => {
                     context: { child: 'item2', label: 'item2', key: 'item2', value: 'something else' }
                 }]
             }],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type object',
                 details: [{
                     message: '"value" must be of type object',
@@ -200,7 +200,7 @@ describe('object', () => {
 
         const schema = Joi.object().min(3);
         Helper.validate(schema, [
-            [{ item: 'something' }, false, null, {
+            [{ item: 'something' }, false, {
                 message: '"value" must have at least 3 keys',
                 details: [{
                     message: '"value" must have at least 3 keys',
@@ -209,7 +209,7 @@ describe('object', () => {
                     context: { limit: 3, label: 'value', value: { item: 'something' } }
                 }]
             }],
-            [{ item: 'something', item2: 'something else' }, false, null, {
+            [{ item: 'something', item2: 'something else' }, false, {
                 message: '"value" must have at least 3 keys',
                 details: [{
                     message: '"value" must have at least 3 keys',
@@ -223,7 +223,7 @@ describe('object', () => {
                 }]
             }],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type object',
                 details: [{
                     message: '"value" must be of type object',
@@ -241,7 +241,7 @@ describe('object', () => {
         Helper.validate(schema, [
             [{ item: 'something' }, true],
             [{ item: 'something', item2: 'something else' }, true],
-            [{ item: 'something', item2: 'something else', item3: 'something something else' }, false, null, {
+            [{ item: 'something', item2: 'something else', item3: 'something something else' }, false, {
                 message: '"value" must have less than or equal to 2 keys',
                 details: [{
                     message: '"value" must have less than or equal to 2 keys',
@@ -254,7 +254,7 @@ describe('object', () => {
                     }
                 }]
             }],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type object',
                 details: [{
                     message: '"value" must be of type object',
@@ -270,7 +270,7 @@ describe('object', () => {
 
         const schema = Joi.object().max(3).min(2);
         Helper.validate(schema, [
-            [{ item: 'something' }, false, null, {
+            [{ item: 'something' }, false, {
                 message: '"value" must have at least 2 keys',
                 details: [{
                     message: '"value" must have at least 2 keys',
@@ -286,7 +286,7 @@ describe('object', () => {
                 item2: 'something else',
                 item3: 'something something else',
                 item4: 'item4'
-            }, false, null, {
+            }, false, {
                 message: '"value" must have less than or equal to 3 keys',
                 details: [{
                     message: '"value" must have less than or equal to 3 keys',
@@ -304,7 +304,7 @@ describe('object', () => {
                     }
                 }]
             }],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type object',
                 details: [{
                     message: '"value" must be of type object',
@@ -320,7 +320,7 @@ describe('object', () => {
 
         const schema = Joi.object().length(2);
         Helper.validate(schema, [
-            [{ item: 'something' }, false, null, {
+            [{ item: 'something' }, false, {
                 message: '"value" must have 2 keys',
                 details: [{
                     message: '"value" must have 2 keys',
@@ -330,7 +330,7 @@ describe('object', () => {
                 }]
             }],
             [{ item: 'something', item2: 'something else' }, true],
-            [{ item: 'something', item2: 'something else', item3: 'something something else' }, false, null, {
+            [{ item: 'something', item2: 'something else', item3: 'something something else' }, false, {
                 message: '"value" must have 2 keys',
                 details: [{
                     message: '"value" must have 2 keys',
@@ -343,7 +343,7 @@ describe('object', () => {
                     }
                 }]
             }],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type object',
                 details: [{
                     message: '"value" must be of type object',
@@ -360,7 +360,7 @@ describe('object', () => {
         const schema = Joi.object().instance(RegExp);
         const d = new Date();
         Helper.validate(schema, [
-            [{ item: 'something' }, false, null, {
+            [{ item: 'something' }, false, {
                 message: '"value" must be an instance of "RegExp"',
                 details: [{
                     message: '"value" must be an instance of "RegExp"',
@@ -369,7 +369,7 @@ describe('object', () => {
                     context: { type: 'RegExp', label: 'value', value: { item: 'something' } }
                 }]
             }],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type object',
                 details: [{
                     message: '"value" must be of type object',
@@ -378,7 +378,7 @@ describe('object', () => {
                     context: { label: 'value', value: '', type: 'object' }
                 }]
             }],
-            [d, false, null, {
+            [d, false, {
                 message: '"value" must be an instance of "RegExp"',
                 details: [{
                     message: '"value" must be an instance of "RegExp"',
@@ -400,7 +400,7 @@ describe('object', () => {
 
         Helper.validate(schema, [
             [{ num: 1 }, true],
-            [{ num: [1, 2, 3] }, false, null, {
+            [{ num: [1, 2, 3] }, false, {
                 message: '"num" must be a number',
                 details: [{
                     message: '"num" must be a number',
@@ -423,7 +423,7 @@ describe('object', () => {
 
         Helper.validate(schema, [
             [{ num: 1 }, true],
-            [{ num: [1, 2, 3] }, false, null, {
+            [{ num: [1, 2, 3] }, false, {
                 message: '"num" must be a number',
                 details: [{
                     message: '"num" must be a number',
@@ -433,7 +433,7 @@ describe('object', () => {
                 }]
             }],
             [{ num: 1, obj: { item: 'something' } }, true],
-            [{ num: 1, obj: { item: 123 } }, false, null, {
+            [{ num: 1, obj: { item: 123 } }, false, {
                 message: '"obj.item" must be a string',
                 details: [{
                     message: '"obj.item" must be a string',
@@ -458,7 +458,7 @@ describe('object', () => {
         });
 
         Helper.validate(schema, [
-            [{ num: 1 }, false, null, {
+            [{ num: 1 }, false, {
                 message: '"num" is not allowed',
                 details: [{
                     message: '"num" is not allowed',
@@ -471,7 +471,7 @@ describe('object', () => {
             [{ obj: { obj: {} } }, true],
             [{ obj: { obj: { obj: {} } } }, true],
             [{ obj: { obj: { obj: { item: true } } } }, true],
-            [{ obj: { obj: { obj: { item: 10 } } } }, false, null, {
+            [{ obj: { obj: { obj: { item: 10 } } } }, false, {
                 message: '"obj.obj.obj.item" must be a boolean',
                 details: [{
                     message: '"obj.obj.obj.item" must be a boolean',
@@ -496,7 +496,7 @@ describe('object', () => {
         });
 
         Helper.validate(schema, [
-            [null, false, null, {
+            [null, false, {
                 message: '"value" must be of type object',
                 details: [{
                     message: '"value" must be of type object',
@@ -507,7 +507,7 @@ describe('object', () => {
             }],
             [undefined, true],
             [{}, true],
-            [{ obj: {} }, false, null, {
+            [{ obj: {} }, false, {
                 message: '"obj.obj" is required',
                 details: [{
                     message: '"obj.obj" is required',
@@ -519,7 +519,7 @@ describe('object', () => {
             [{ obj: { obj: {} } }, true],
             [{ obj: { obj: { obj: {} } } }, true],
             [{ obj: { obj: { obj: { item: true } } } }, true],
-            [{ obj: { obj: { obj: { item: 10 } } } }, false, null, {
+            [{ obj: { obj: { obj: { item: 10 } } } }, false, {
                 message: '"obj.obj.obj.item" must be a boolean',
                 details: [{
                     message: '"obj.obj.obj.item" must be a boolean',
@@ -544,7 +544,7 @@ describe('object', () => {
         });
 
         Helper.validate(schema, [
-            [null, false, null, {
+            [null, false, {
                 message: '"value" must be of type object',
                 details: [{
                     message: '"value" must be of type object',
@@ -557,7 +557,7 @@ describe('object', () => {
             [{}, true],
             [{ obj: {} }, true],
             [{ obj: { obj: {} } }, true],
-            [{ obj: { obj: { obj: {} } } }, false, null, {
+            [{ obj: { obj: { obj: {} } } }, false, {
                 message: '"obj.obj.obj.item" is required',
                 details: [{
                     message: '"obj.obj.obj.item" is required',
@@ -567,7 +567,7 @@ describe('object', () => {
                 }]
             }],
             [{ obj: { obj: { obj: { item: true } } } }, true],
-            [{ obj: { obj: { obj: { item: 10 } } } }, false, null, {
+            [{ obj: { obj: { obj: { item: 10 } } } }, false, {
                 message: '"obj.obj.obj.item" must be a boolean',
                 details: [{
                     message: '"obj.obj.obj.item" must be a boolean',
@@ -601,7 +601,7 @@ describe('object', () => {
         }).with('first', 'second');
 
         Helper.validate(schema, [
-            [{ first: 'value' }, false, null, {
+            [{ first: 'value' }, false, {
                 message: '"first" missing required peer "second"',
                 details: [{
                     message: '"first" missing required peer "second"',
@@ -627,28 +627,40 @@ describe('object', () => {
             foo: Joi.valid(ref)
         });
 
+        Helper.validate(schema, { context: { x: 'bar' } }, [
+            [{ foo: 'bar' }, true]
+        ]);
+
+        Helper.validate(schema, { context: { x: ['baz', 'bar'] } }, [
+            [{ foo: 'bar' }, true]
+        ]);
+
+        Helper.validate(schema, { context: { x: 'baz' } }, [
+            [{ foo: 'bar' }, false, {
+                message: '"foo" must be [ref:global:x]',
+                details: [{
+                    message: '"foo" must be [ref:global:x]',
+                    path: ['foo'],
+                    type: 'any.only',
+                    context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
+                }]
+            }]
+        ]);
+
+        Helper.validate(schema, { context: { x: ['baz', 'qux'] } }, [
+            [{ foo: 'bar' }, false, {
+                message: '"foo" must be [ref:global:x]',
+                details: [{
+                    message: '"foo" must be [ref:global:x]',
+                    path: ['foo'],
+                    type: 'any.only',
+                    context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
+                }]
+            }]
+        ]);
+
         Helper.validate(schema, [
-            [{ foo: 'bar' }, true, { context: { x: 'bar' } }],
-            [{ foo: 'bar' }, true, { context: { x: ['baz', 'bar'] } }],
-            [{ foo: 'bar' }, false, { context: { x: 'baz' } }, {
-                message: '"foo" must be [ref:global:x]',
-                details: [{
-                    message: '"foo" must be [ref:global:x]',
-                    path: ['foo'],
-                    type: 'any.only',
-                    context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
-                }]
-            }],
-            [{ foo: 'bar' }, false, { context: { x: ['baz', 'qux'] } }, {
-                message: '"foo" must be [ref:global:x]',
-                details: [{
-                    message: '"foo" must be [ref:global:x]',
-                    path: ['foo'],
-                    type: 'any.only',
-                    context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
-                }]
-            }],
-            [{ foo: 'bar' }, false, null, {
+            [{ foo: 'bar' }, false, {
                 message: '"foo" must be [ref:global:x]',
                 details: [{
                     message: '"foo" must be [ref:global:x]',
@@ -832,7 +844,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{}, true],
-                [{ upc: null }, false, null, {
+                [{ upc: null }, false, {
                     message: '"value" contains [upc] without its required peers [txt, code]',
                     details: [{
                         message: '"value" contains [upc] without its required peers [txt, code]',
@@ -848,7 +860,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ upc: 'test' }, false, null, {
+                [{ upc: 'test' }, false, {
                     message: '"value" contains [upc] without its required peers [txt, code]',
                     details: [{
                         message: '"value" contains [upc] without its required peers [txt, code]',
@@ -864,7 +876,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: null }, false, null, {
+                [{ txt: null }, false, {
                     message: '"txt" must be a string',
                     details: [{
                         message: '"txt" must be a string',
@@ -873,7 +885,7 @@ describe('object', () => {
                         context: { value: null, label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: 'test' }, false, null, {
+                [{ txt: 'test' }, false, {
                     message: '"value" contains [txt] without its required peers [upc, code]',
                     details: [{
                         message: '"value" contains [txt] without its required peers [upc, code]',
@@ -889,7 +901,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ code: null }, false, null, {
+                [{ code: null }, false, {
                     message: '"code" must be a number',
                     details: [{
                         message: '"code" must be a number',
@@ -898,7 +910,7 @@ describe('object', () => {
                         context: { label: 'code', key: 'code', value: null }
                     }]
                 }],
-                [{ code: 123 }, false, null, {
+                [{ code: 123 }, false, {
                     message: '"value" contains [code] without its required peers [txt, upc]',
                     details: [{
                         message: '"value" contains [code] without its required peers [txt, upc]',
@@ -914,7 +926,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: 'test', upc: null }, false, null, {
+                [{ txt: 'test', upc: null }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
                     details: [{
                         message: '"value" contains [txt, upc] without its required peers [code]',
@@ -930,7 +942,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: 'test', upc: '' }, false, null, {
+                [{ txt: 'test', upc: '' }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
                     details: [{
                         message: '"value" contains [txt, upc] without its required peers [code]',
@@ -946,7 +958,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: '', upc: 'test' }, false, null, {
+                [{ txt: '', upc: 'test' }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -955,7 +967,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: null, upc: 'test' }, false, null, {
+                [{ txt: null, upc: 'test' }, false, {
                     message: '"txt" must be a string',
                     details: [{
                         message: '"txt" must be a string',
@@ -964,7 +976,7 @@ describe('object', () => {
                         context: { value: null, label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: undefined, upc: 'test' }, false, null, {
+                [{ txt: undefined, upc: 'test' }, false, {
                     message: '"value" contains [upc] without its required peers [txt, code]',
                     details: [{
                         message: '"value" contains [upc] without its required peers [txt, code]',
@@ -980,7 +992,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: 'test', upc: undefined }, false, null, {
+                [{ txt: 'test', upc: undefined }, false, {
                     message: '"value" contains [txt] without its required peers [upc, code]',
                     details: [{
                         message: '"value" contains [txt] without its required peers [upc, code]',
@@ -996,7 +1008,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: 'test', upc: '' }, false, null, {
+                [{ txt: 'test', upc: '' }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
                     details: [{
                         message: '"value" contains [txt, upc] without its required peers [code]',
@@ -1012,7 +1024,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: 'test', upc: null }, false, null, {
+                [{ txt: 'test', upc: null }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
                     details: [{
                         message: '"value" contains [txt, upc] without its required peers [code]',
@@ -1028,7 +1040,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: '', upc: undefined }, false, null, {
+                [{ txt: '', upc: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -1037,7 +1049,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: '', upc: undefined, code: 999 }, false, null, {
+                [{ txt: '', upc: undefined, code: 999 }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -1046,7 +1058,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: '', upc: undefined, code: undefined }, false, null, {
+                [{ txt: '', upc: undefined, code: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -1055,7 +1067,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: '', upc: '' }, false, null, {
+                [{ txt: '', upc: '' }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -1064,7 +1076,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: 'test', upc: 'test' }, false, null, {
+                [{ txt: 'test', upc: 'test' }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
                     details: [{
                         message: '"value" contains [txt, upc] without its required peers [code]',
@@ -1353,7 +1365,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ a: 5, d: { e: 5 } }, true],
-                [{ a: 6, d: { e: 5 } }, false, null, {
+                [{ a: 6, d: { e: 5 } }, false, {
                     message: '"value" is invalid because "a" failed to equal to d.e',
                     details: [{
                         message: '"value" is invalid because "a" failed to equal to d.e',
@@ -1444,7 +1456,7 @@ describe('object', () => {
                 [{ a: true, b: false, c: false }, true],
                 [{ a: false, b: true, c: false }, true],
                 [{ a: false, b: false, c: true }, true],
-                [{ a: false, b: false, c: false }, false, null, {
+                [{ a: false, b: false, c: false }, false, {
                     message: '"value" is invalid because at least one key must be true',
                     details: [{
                         message: '"value" is invalid because at least one key must be true',
@@ -1681,9 +1693,9 @@ describe('object', () => {
             const b = a.keys({ a: Joi.string() });
 
             Helper.validate(a, [
-                [{ a: 1 }, true, null, { a: 1 }],
-                [{ a: '1' }, true, null, { a: 1 }],
-                [{ a: '2' }, false, null, {
+                [{ a: 1 }, true, { a: 1 }],
+                [{ a: '1' }, true, { a: 1 }],
+                [{ a: '2' }, false, {
                     message: '"a" must be [1]',
                     details: [{
                         message: '"a" must be [1]',
@@ -1695,7 +1707,7 @@ describe('object', () => {
             ]);
 
             Helper.validate(b, [
-                [{ a: 1 }, false, null, {
+                [{ a: 1 }, false, {
                     message: '"a" must be a string',
                     details: [{
                         message: '"a" must be a string',
@@ -1704,7 +1716,7 @@ describe('object', () => {
                         context: { value: 1, label: 'a', key: 'a' }
                     }]
                 }],
-                [{ a: '1' }, true, null, { a: '1' }]
+                [{ a: '1' }, true, { a: '1' }]
             ]);
         });
 
@@ -2195,11 +2207,11 @@ describe('object', () => {
                 });
 
                 Helper.validate(schema, [
-                    [{ a: { 5: 'x' }, b: { prefix: 'p' } }, true, null, { a: { p5: 'x' }, b: { prefix: 'p' } }],
-                    [{ a: { 5: 'x' }, b: { prefix: 'P' } }, true, null, { a: { p5: 'x' }, b: { prefix: 'p' } }],
-                    [{ b: { prefix: 'P' }, a: { 5: 'x' } }, true, null, { a: { p5: 'x' }, b: { prefix: 'p' } }],
-                    [{ b: {}, a: { 5: 'x' } }, true, null, { a: { 5: 'x' }, b: {} }],
-                    [{ a: { 5: 'x' } }, true, null, { a: { 5: 'x' } }]
+                    [{ a: { 5: 'x' }, b: { prefix: 'p' } }, true, { a: { p5: 'x' }, b: { prefix: 'p' } }],
+                    [{ a: { 5: 'x' }, b: { prefix: 'P' } }, true, { a: { p5: 'x' }, b: { prefix: 'p' } }],
+                    [{ b: { prefix: 'P' }, a: { 5: 'x' } }, true, { a: { p5: 'x' }, b: { prefix: 'p' } }],
+                    [{ b: {}, a: { 5: 'x' } }, true, { a: { 5: 'x' }, b: {} }],
+                    [{ a: { 5: 'x' } }, true, { a: { 5: 'x' } }]
                 ]);
             });
 
@@ -2551,7 +2563,7 @@ describe('object', () => {
                 [{ txt: 'test', upc: null }, true],
                 [{ txt: 'test', upc: undefined, code: 999 }, true],
                 [{ txt: 'test', upc: 'test' }, true],
-                [{ txt: 'test', upc: 'test', code: 322 }, false, null, {
+                [{ txt: 'test', upc: 'test', code: 322 }, false, {
                     message: '"txt" must not exist simultaneously with [upc, code]',
                     details: [{
                         message: '"txt" must not exist simultaneously with [upc, code]',
@@ -2567,7 +2579,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: 'test', upc: null, code: 322 }, false, null, {
+                [{ txt: 'test', upc: null, code: 322 }, false, {
                     message: '"txt" must not exist simultaneously with [upc, code]',
                     details: [{
                         message: '"txt" must not exist simultaneously with [upc, code]',
@@ -2753,7 +2765,7 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{ upc: null }, true],
                 [{ upc: 'test' }, true],
-                [{ txt: null }, false, null, {
+                [{ txt: null }, false, {
                     message: '"txt" must be a string',
                     details: [{
                         message: '"txt" must be a string',
@@ -2763,7 +2775,7 @@ describe('object', () => {
                     }]
                 }],
                 [{ txt: 'test' }, true],
-                [{ code: null }, false, null, {
+                [{ code: null }, false, {
                     message: '"code" must be a number',
                     details: [{
                         message: '"code" must be a number',
@@ -2775,7 +2787,7 @@ describe('object', () => {
                 [{ code: 123 }, true],
                 [{ txt: 'test', upc: null }, true],
                 [{ txt: 'test', upc: '' }, true],
-                [{ txt: '', upc: 'test' }, false, null, {
+                [{ txt: '', upc: 'test' }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -2784,7 +2796,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: null, upc: 'test' }, false, null, {
+                [{ txt: null, upc: 'test' }, false, {
                     message: '"txt" must be a string',
                     details: [{
                         message: '"txt" must be a string',
@@ -2797,7 +2809,7 @@ describe('object', () => {
                 [{ txt: 'test', upc: undefined }, true],
                 [{ txt: 'test', upc: '' }, true],
                 [{ txt: 'test', upc: null }, true],
-                [{ txt: '', upc: undefined }, false, null, {
+                [{ txt: '', upc: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -2806,7 +2818,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: '', upc: undefined, code: 999 }, false, null, {
+                [{ txt: '', upc: undefined, code: 999 }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -2815,7 +2827,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: '', upc: undefined, code: undefined }, false, null, {
+                [{ txt: '', upc: undefined, code: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -2824,7 +2836,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: '', upc: '' }, false, null, {
+                [{ txt: '', upc: '' }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -3164,7 +3176,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ a: 5 }, true],
-                [{ a: 'x' }, false, null, {
+                [{ a: 'x' }, false, {
                     message: '"a" must be a number',
                     details: [{
                         message: '"a" must be a number',
@@ -3173,7 +3185,7 @@ describe('object', () => {
                         context: { label: 'a', key: 'a', value: 'x' }
                     }]
                 }],
-                [{ b: 'x' }, false, null, {
+                [{ b: 'x' }, false, {
                     message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
@@ -3183,7 +3195,7 @@ describe('object', () => {
                     }]
                 }],
                 [{ bb: 'x' }, true],
-                [{ 5: 'x' }, false, null, {
+                [{ 5: 'x' }, false, {
                     message: '"5" must be a boolean',
                     details: [{
                         message: '"5" must be a boolean',
@@ -3223,7 +3235,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ a: 5 }, true],
-                [{ a: 'x' }, false, null, {
+                [{ a: 'x' }, false, {
                     message: '"a" must be a number',
                     details: [{
                         message: '"a" must be a number',
@@ -3232,7 +3244,7 @@ describe('object', () => {
                         context: { label: 'a', key: 'a', value: 'x' }
                     }]
                 }],
-                [{ b: 'x' }, false, null, {
+                [{ b: 'x' }, false, {
                     message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
@@ -3242,7 +3254,7 @@ describe('object', () => {
                     }]
                 }],
                 [{ bb: 'x' }, true],
-                [{ 5: 'x' }, false, null, {
+                [{ 5: 'x' }, false, {
                     message: '"5" must be a boolean',
                     details: [{
                         message: '"5" must be a boolean',
@@ -3265,7 +3277,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ a: 'x' }, true],
-                [{ a: 5 }, false, null, {
+                [{ a: 5 }, false, {
                     message: '"a" must be a string',
                     details: [{
                         message: '"a" must be a string',
@@ -3274,7 +3286,7 @@ describe('object', () => {
                         context: { label: 'a', key: 'a', value: 5 }
                     }]
                 }],
-                [{ b: 'x' }, false, null, {
+                [{ b: 'x' }, false, {
                     message: '"b" must be of type object',
                     details: [{
                         message: '"b" must be of type object',
@@ -3284,7 +3296,7 @@ describe('object', () => {
                     }]
                 }],
                 [{ b: {} }, true],
-                [{ b: { foo: true } }, false, null, {
+                [{ b: { foo: true } }, false, {
                     message: '"b.foo" is not allowed',
                     details: [{
                         message: '"b.foo" is not allowed',
@@ -3293,7 +3305,7 @@ describe('object', () => {
                         context: { child: 'foo', value: true, key: 'foo', label: 'b.foo' }
                     }]
                 }],
-                [{ a: 'x', b: { foo: true } }, false, null, {
+                [{ a: 'x', b: { foo: true } }, false, {
                     message: '"b.foo" is not allowed',
                     details: [{
                         message: '"b.foo" is not allowed',
@@ -3302,7 +3314,7 @@ describe('object', () => {
                         context: { child: 'foo', value: true, key: 'foo', label: 'b.foo' }
                     }]
                 }],
-                [{ a: 'x', b: { x: 'y' } }, false, null, {
+                [{ a: 'x', b: { x: 'y' } }, false, {
                     message: '"b.x" must be a boolean',
                     details: [{
                         message: '"b.x" must be a boolean',
@@ -3389,7 +3401,7 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{ a: { x: 1 }, b: { x: 'a' } }, true],
                 [{ a: { v: 1 }, b: { x: 'a', v: 'b' } }, true],
-                [{ a: { x: 1 }, b: { y: 'a' } }, false, null, {
+                [{ a: { x: 1 }, b: { y: 'a' } }, false, {
                     message: '"a" keys failed to match pattern requirements',
                     details: [{
                         message: '"a" keys failed to match pattern requirements',
@@ -3489,7 +3501,7 @@ describe('object', () => {
                 [{ a: 1, x1: true }, true],
                 [{ a: 2, x1: true, x2: true, xx: 1 }, true],
                 [{ a: 3, x1: true, x2: true, x3: false, xx: 1 }, true],
-                [{ a: 0, x1: true }, false, null, {
+                [{ a: 0, x1: true }, false, {
                     message: '"value" keys failed to match pattern requirements',
                     details: [{
                         message: '"value" keys failed to match pattern requirements',
@@ -3616,7 +3628,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ a: { match: { b: true } }, b: { match: { a: true } } }, true],
-                [{ a: { match: { b: true } } }, false, null, {
+                [{ a: { match: { b: true } } }, false, {
                     message: '"a.match" keys failed to match pattern requirements',
                     details: [{
                         message: '"a.match" keys failed to match pattern requirements',
@@ -3659,7 +3671,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ x1: 1, x2: 2 }, true],
-                [{ x1: 11 }, false, null, {
+                [{ x1: 11 }, false, {
                     message: '"x1" must be less than or equal to 10',
                     details: [{
                         message: '"x1" must be less than or equal to 10',
@@ -3690,7 +3702,7 @@ describe('object', () => {
 
             const schema = Joi.object().schema();
             Helper.validate(schema, [
-                [{}, false, null, {
+                [{}, false, {
                     message: '"value" must be a Joi schema of any type',
                     details: [{
                         message: '"value" must be a Joi schema of any type',
@@ -3699,7 +3711,7 @@ describe('object', () => {
                         context: { label: 'value', type: 'any', value: {} }
                     }]
                 }],
-                [{ isJoi: true }, false, null, {
+                [{ isJoi: true }, false, {
                     message: '"value" must be a Joi schema of any type',
                     details: [{
                         message: '"value" must be a Joi schema of any type',
@@ -3717,7 +3729,7 @@ describe('object', () => {
             const schema = Joi.object().schema('number');
             Helper.validate(schema, [
                 [Joi.number().max(2), true],
-                [{}, false, null, {
+                [{}, false, {
                     message: '"value" must be a Joi schema of number type',
                     details: [{
                         message: '"value" must be a Joi schema of number type',
@@ -3726,7 +3738,7 @@ describe('object', () => {
                         context: { label: 'value', type: 'number', value: {} }
                     }]
                 }],
-                [{ isJoi: true }, false, null, {
+                [{ isJoi: true }, false, {
                     message: '"value" must be a Joi schema of number type',
                     details: [{
                         message: '"value" must be a Joi schema of number type',
@@ -3735,7 +3747,7 @@ describe('object', () => {
                         context: { label: 'value', type: 'number', value: { isJoi: true } }
                     }]
                 }],
-                [Joi.string(), false, null, {
+                [Joi.string(), false, {
                     message: '"value" must be a Joi schema of number type',
                     details: [{
                         message: '"value" must be a Joi schema of number type',
@@ -3859,7 +3871,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ a: { b: 5 } }, true],
-                [{ a: { b: 'x' } }, false, null, {
+                [{ a: { b: 'x' } }, false, {
                     message: '"a.b" must be a number',
                     details: [{
                         message: '"a.b" must be a number',
@@ -3869,7 +3881,7 @@ describe('object', () => {
                     }]
                 }],
                 [{ a: { b: 5 }, c: 'ignore' }, true],
-                [{ a: { b: 5, c: 'ignore' } }, false, null, {
+                [{ a: { b: 5, c: 'ignore' } }, false, {
                     message: '"a.c" is not allowed',
                     details: [{
                         message: '"a.c" is not allowed',
@@ -3891,7 +3903,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ a: { b: 5 } }, true],
-                [{ a: { b: 'x' } }, false, null, {
+                [{ a: { b: 'x' } }, false, {
                     message: '"a.b" must be a number',
                     details: [{
                         message: '"a.b" must be a number',
@@ -3900,7 +3912,7 @@ describe('object', () => {
                         context: { label: 'a.b', key: 'b', value: 'x' }
                     }]
                 }],
-                [{ a: { b: 5 }, c: 'ignore' }, false, null, {
+                [{ a: { b: 5 }, c: 'ignore' }, false, {
                     message: '"c" is not allowed',
                     details: [{
                         message: '"c" is not allowed',
@@ -3925,8 +3937,8 @@ describe('object', () => {
             }).prefs({ allowUnknown: false, stripUnknown: true });
 
             Helper.validate(schema, [
-                [{ a: { b: 5 } }, true, null, { a: { b: 5 } }],
-                [{ a: { b: 'x' } }, false, null, {
+                [{ a: { b: 5 } }, true, { a: { b: 5 } }],
+                [{ a: { b: 'x' } }, false, {
                     message: '"a.b" must be a number',
                     details: [{
                         message: '"a.b" must be a number',
@@ -3935,9 +3947,9 @@ describe('object', () => {
                         context: { label: 'a.b', key: 'b', value: 'x' }
                     }]
                 }],
-                [{ a: { b: 5 }, d: 'ignore' }, true, null, { a: { b: 5 } }],
-                [{ a: { b: 5, d: 'ignore' } }, true, null, { a: { b: 5, d: 'ignore' } }],
-                [{ a: { b: 5, c: { e: 'ignore' } } }, true, null, { a: { b: 5, c: {} } }]
+                [{ a: { b: 5 }, d: 'ignore' }, true, { a: { b: 5 } }],
+                [{ a: { b: 5, d: 'ignore' } }, true, { a: { b: 5, d: 'ignore' } }],
+                [{ a: { b: 5, c: { e: 'ignore' } } }, true, { a: { b: 5, c: {} } }]
             ]);
         });
     });
@@ -3969,7 +3981,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
-                [{ txt: 'test' }, false, null, {
+                [{ txt: 'test' }, false, {
                     message: '"txt" missing required peer "upc"',
                     details: [{
                         message: '"txt" missing required peer "upc"',
@@ -3985,7 +3997,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{ txt: 'test', upc: null }, false, null, {
+                [{ txt: 'test', upc: null }, false, {
                     message: '"upc" must be a string',
                     details: [{
                         message: '"upc" must be a string',
@@ -3994,7 +4006,7 @@ describe('object', () => {
                         context: { value: null, label: 'upc', key: 'upc' }
                     }]
                 }],
-                [{ txt: 'test', upc: '' }, false, null, {
+                [{ txt: 'test', upc: '' }, false, {
                     message: '"upc" is not allowed to be empty',
                     details: [{
                         message: '"upc" is not allowed to be empty',
@@ -4003,7 +4015,7 @@ describe('object', () => {
                         context: { value: '', label: 'upc', key: 'upc' }
                     }]
                 }],
-                [{ txt: 'test', upc: undefined }, false, null, {
+                [{ txt: 'test', upc: undefined }, false, {
                     message: '"txt" missing required peer "upc"',
                     details: [{
                         message: '"txt" missing required peer "upc"',
@@ -4088,7 +4100,7 @@ describe('object', () => {
 
             Helper.validate(schema, [
                 [{ a: 'test', b: { c: 'test2' } }, true],
-                [{ a: 'test', b: { d: 80 } }, false, null, {
+                [{ a: 'test', b: { d: 80 } }, false, {
                     message: '"a" missing required peer "b.c"',
                     details: [{
                         message: '"a" missing required peer "b.c"',
@@ -4113,7 +4125,7 @@ describe('object', () => {
 
             Helper.validate(schema2, [
                 [{ a: { b: 'test' }, b: { c: 'test2' } }, true],
-                [{ a: { b: 'test' }, b: {} }, false, null, {
+                [{ a: { b: 'test' }, b: {} }, false, {
                     message: '"a.b" missing required peer "b.c"',
                     details: [{
                         message: '"a.b" missing required peer "b.c"',
@@ -4256,7 +4268,7 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
                 [{ txt: 'test' }, true],
-                [{ txt: 'test', upc: null }, false, null, {
+                [{ txt: 'test', upc: null }, false, {
                     message: '"upc" must be a string',
                     details: [{
                         message: '"upc" must be a string',
@@ -4265,7 +4277,7 @@ describe('object', () => {
                         context: { value: null, label: 'upc', key: 'upc' }
                     }]
                 }],
-                [{ txt: 'test', upc: '' }, false, null, {
+                [{ txt: 'test', upc: '' }, false, {
                     message: '"upc" is not allowed to be empty',
                     details: [{
                         message: '"upc" is not allowed to be empty',
@@ -4275,7 +4287,7 @@ describe('object', () => {
                     }]
                 }],
                 [{ txt: 'test', upc: undefined }, true],
-                [{ txt: 'test', upc: 'test' }, false, null, {
+                [{ txt: 'test', upc: 'test' }, false, {
                     message: '"txt" conflict with forbidden peer "upc"',
                     details: [{
                         message: '"txt" conflict with forbidden peer "upc"',
@@ -4477,7 +4489,7 @@ describe('object', () => {
             }]);
 
             Helper.validate(schema, [
-                [{ upc: null }, false, null, {
+                [{ upc: null }, false, {
                     message: '"upc" must be a string',
                     details: [{
                         message: '"upc" must be a string',
@@ -4487,7 +4499,7 @@ describe('object', () => {
                     }]
                 }],
                 [{ upc: 'test' }, true],
-                [{ txt: null }, false, null, {
+                [{ txt: null }, false, {
                     message: '"txt" must be a string',
                     details: [{
                         message: '"txt" must be a string',
@@ -4497,7 +4509,7 @@ describe('object', () => {
                     }]
                 }],
                 [{ txt: 'test' }, true],
-                [{ txt: 'test', upc: null }, false, null, {
+                [{ txt: 'test', upc: null }, false, {
                     message: '"upc" must be a string',
                     details: [{
                         message: '"upc" must be a string',
@@ -4506,7 +4518,7 @@ describe('object', () => {
                         context: { value: null, label: 'upc', key: 'upc' }
                     }]
                 }],
-                [{ txt: 'test', upc: '' }, false, null, {
+                [{ txt: 'test', upc: '' }, false, {
                     message: '"upc" is not allowed to be empty',
                     details: [{
                         message: '"upc" is not allowed to be empty',
@@ -4515,7 +4527,7 @@ describe('object', () => {
                         context: { value: '', label: 'upc', key: 'upc' }
                     }]
                 }],
-                [{ txt: '', upc: 'test' }, false, null, {
+                [{ txt: '', upc: 'test' }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -4524,7 +4536,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: null, upc: 'test' }, false, null, {
+                [{ txt: null, upc: 'test' }, false, {
                     message: '"txt" must be a string',
                     details: [{
                         message: '"txt" must be a string',
@@ -4535,7 +4547,7 @@ describe('object', () => {
                 }],
                 [{ txt: undefined, upc: 'test' }, true],
                 [{ txt: 'test', upc: undefined }, true],
-                [{ txt: '', upc: undefined }, false, null, {
+                [{ txt: '', upc: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -4544,7 +4556,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: '', upc: '' }, false, null, {
+                [{ txt: '', upc: '' }, false, {
                     message: '"txt" is not allowed to be empty',
                     details: [{
                         message: '"txt" is not allowed to be empty',
@@ -4553,7 +4565,7 @@ describe('object', () => {
                         context: { value: '', label: 'txt', key: 'txt' }
                     }]
                 }],
-                [{ txt: 'test', upc: 'test' }, false, null, {
+                [{ txt: 'test', upc: 'test' }, false, {
                     message: '"value" contains a conflict between exclusive peers [txt, upc]',
                     details: [{
                         message: '"value" contains a conflict between exclusive peers [txt, upc]',
@@ -4583,7 +4595,7 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
                 [{ txt: 'test' }, true],
-                [{}, false, null, {
+                [{}, false, {
                     message: '"value" must contain at least one of [txt, upc, code]',
                     details: [{
                         message: '"value" must contain at least one of [txt, upc, code]',
@@ -4610,7 +4622,7 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{ upc: 123 }, true],
                 [{ code: 456 }, true],
-                [{ code: 456, upc: 123 }, false, null, {
+                [{ code: 456, upc: 123 }, false, {
                     message: '"value" contains a conflict between exclusive peers [code, upc]',
                     details: [{
                         message: '"value" contains a conflict between exclusive peers [code, upc]',
@@ -4626,7 +4638,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{}, false, null, {
+                [{}, false, {
                     message: '"value" must contain at least one of [code, upc]',
                     details: [{
                         message: '"value" must contain at least one of [code, upc]',
@@ -4654,7 +4666,7 @@ describe('object', () => {
                 [{ upc: '' }, true],
                 [{ upc: '123' }, true],
                 [{ code: '456' }, true],
-                [{ code: '456', upc: '' }, false, null, {
+                [{ code: '456', upc: '' }, false, {
                     message: '"value" contains a conflict between exclusive peers [code, upc]',
                     details: [{
                         message: '"value" contains a conflict between exclusive peers [code, upc]',
@@ -4670,7 +4682,7 @@ describe('object', () => {
                         }
                     }]
                 }],
-                [{}, false, null, {
+                [{}, false, {
                     message: '"value" must contain at least one of [code, upc]',
                     details: [{
                         message: '"value" must contain at least one of [code, upc]',

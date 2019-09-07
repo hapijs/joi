@@ -47,7 +47,7 @@ describe('date', () => {
 
         const schema = Joi.date();
         Helper.validate(schema, [
-            [true, false, null, {
+            [true, false, {
                 message: '"value" must be a valid date',
                 details: [{
                     message: '"value" must be a valid date',
@@ -56,7 +56,7 @@ describe('date', () => {
                     context: { label: 'value', value: true }
                 }]
             }],
-            [false, false, null, {
+            [false, false, {
                 message: '"value" must be a valid date',
                 details: [{
                     message: '"value" must be a valid date',
@@ -72,7 +72,7 @@ describe('date', () => {
 
         const schema = Joi.date();
         Helper.validate(schema, [
-            [Infinity, false, null, {
+            [Infinity, false, {
                 message: '"value" must be a valid date',
                 details: [{
                     message: '"value" must be a valid date',
@@ -81,7 +81,7 @@ describe('date', () => {
                     context: { label: 'value', value: Infinity }
                 }]
             }],
-            [-Infinity, false, null, {
+            [-Infinity, false, {
                 message: '"value" must be a valid date',
                 details: [{
                     message: '"value" must be a valid date',
@@ -90,7 +90,7 @@ describe('date', () => {
                     context: { label: 'value', value: -Infinity }
                 }]
             }],
-            [NaN, false, null, {
+            [NaN, false, {
                 message: '"value" must be a valid date',
                 details: [{
                     message: '"value" must be a valid date',
@@ -141,7 +141,7 @@ describe('date', () => {
             ['1-1-2013 UTC', true],
             [new Date().getTime(), true],
             [new Date().getTime().toFixed(4), true],
-            ['not a valid date', false, null, {
+            ['not a valid date', false, {
                 message: '"value" must be a valid date',
                 details: [{
                     message: '"value" must be a valid date',
@@ -150,7 +150,7 @@ describe('date', () => {
                     context: { label: 'value', value: 'not a valid date' }
                 }]
             }],
-            [invalidDate, false, null, {
+            [invalidDate, false, {
                 message: '"value" must be a valid date',
                 details: [{
                     message: '"value" must be a valid date',
@@ -228,7 +228,7 @@ describe('date', () => {
             const message = `"value" must be greater than "${d.toISOString()}"`;
             Helper.validate(Joi.date().greater('1-1-2000 UTC'), [
                 ['1-1-2001 UTC', true],
-                ['1-1-2000 UTC', false, null, {
+                ['1-1-2000 UTC', false, {
                     message,
                     details: [{
                         message,
@@ -237,7 +237,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date('1-1-2000 UTC') }
                     }]
                 }],
-                [0, false, null, {
+                [0, false, {
                     message,
                     details: [{
                         message,
@@ -246,7 +246,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date(0) }
                     }]
                 }],
-                ['0', false, null, {
+                ['0', false, {
                     message,
                     details: [{
                         message,
@@ -255,7 +255,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date(0) }
                     }]
                 }],
-                ['-1', false, null, {
+                ['-1', false, {
                     message,
                     details: [{
                         message,
@@ -264,7 +264,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date(-1) }
                     }]
                 }],
-                ['1-1-1999 UTC', false, null, {
+                ['1-1-1999 UTC', false, {
                     message,
                     details: [{
                         message,
@@ -305,7 +305,7 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, [
-                [{ a: now, b: now }, false, null, {
+                [{ a: now, b: now }, false, {
                     message: '"b" must be greater than "ref:a"',
                     details: [{
                         message: '"b" must be greater than "ref:a"',
@@ -315,7 +315,7 @@ describe('date', () => {
                     }]
                 }],
                 [{ a: now, b: now + 1e3 }, true],
-                [{ a: now, b: now - 1e3 }, false, null, {
+                [{ a: now, b: now - 1e3 }, false, {
                     message: '"b" must be greater than "ref:a"',
                     details: [{
                         message: '"b" must be greater than "ref:a"',
@@ -344,7 +344,7 @@ describe('date', () => {
                 [{ a: 123, b: 456, c: 42 }, true],
                 [{ a: 456, b: 123, c: 0 }, true],
                 [{ a: 123, b: 123, c: 42 }, true],
-                [{ a: 456, b: 123, c: 42 }, false, null, {
+                [{ a: 456, b: 123, c: 42 }, false, {
                     message: '"c" must be [0]',
                     details: [{
                         message: '"c" must be [0]',
@@ -362,8 +362,8 @@ describe('date', () => {
             const schema = Joi.object({ b: Joi.date().greater(ref) });
             const now = Date.now();
 
-            Helper.validate(schema, [
-                [{ b: now }, false, { context: { a: now } }, {
+            Helper.validate(schema, { context: { a: now } }, [
+                [{ b: now }, false, {
                     message: '"b" must be greater than "ref:global:a"',
                     details: [{
                         message: '"b" must be greater than "ref:global:a"',
@@ -372,8 +372,8 @@ describe('date', () => {
                         context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                     }]
                 }],
-                [{ b: now + 1e3 }, true, { context: { a: now } }],
-                [{ b: now - 1e3 }, false, { context: { a: now } }, {
+                [{ b: now + 1e3 }, true],
+                [{ b: now - 1e3 }, false, {
                     message: '"b" must be greater than "ref:global:a"',
                     details: [{
                         message: '"b" must be greater than "ref:global:a"',
@@ -392,7 +392,7 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, [
-                [{ a: 'abc', b: now }, false, null, {
+                [{ a: 'abc', b: now }, false, {
                     message: '"b" date references "ref:a" which must have a valid date format',
                     details: [{
                         message: '"b" date references "ref:a" which must have a valid date format',
@@ -402,7 +402,7 @@ describe('date', () => {
                     }]
                 }],
                 [{ a: '123', b: now }, true],
-                [{ a: (now + 1e3).toString(), b: now }, false, null, {
+                [{ a: (now + 1e3).toString(), b: now }, false, {
                     message: '"b" must be greater than "ref:a"',
                     details: [{
                         message: '"b" must be greater than "ref:a"',
@@ -420,8 +420,8 @@ describe('date', () => {
             const schema = Joi.object({ b: Joi.date().greater(ref) });
             const now = Date.now();
 
-            Helper.validate(schema, [
-                [{ b: now }, false, { context: { a: 'abc' } }, {
+            Helper.validate(schema, { context: { a: 'abc' } }, [
+                [{ b: now }, false, {
                     message: '"b" date references "ref:global:a" which must have a valid date format',
                     details: [{
                         message: '"b" date references "ref:global:a" which must have a valid date format',
@@ -429,8 +429,11 @@ describe('date', () => {
                         type: 'any.ref',
                         context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
-                }],
-                [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
+                }]
+            ]);
+
+            Helper.validate(schema, { context: { a: (now + 1e3).toString() } }, [
+                [{ b: now }, false, {
                     message: '"b" must be greater than "ref:global:a"',
                     details: [{
                         message: '"b" must be greater than "ref:global:a"',
@@ -456,7 +459,7 @@ describe('date', () => {
             Helper.validate(Joi.date().iso(), [
                 ['+002013-06-07T14:21:46.295Z', true],
                 ['-002013-06-07T14:21:46.295Z', true],
-                ['002013-06-07T14:21:46.295Z', false, null, {
+                ['002013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -465,7 +468,7 @@ describe('date', () => {
                         context: { label: 'value', value: '002013-06-07T14:21:46.295Z', format: 'iso' }
                     }]
                 }],
-                ['+2013-06-07T14:21:46.295Z', false, null, {
+                ['+2013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -474,7 +477,7 @@ describe('date', () => {
                         context: { label: 'value', value: '+2013-06-07T14:21:46.295Z', format: 'iso' }
                     }]
                 }],
-                ['-2013-06-07T14:21:46.295Z', false, null, {
+                ['-2013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -484,7 +487,7 @@ describe('date', () => {
                     }]
                 }],
                 ['2013-06-07T14:21:46.295Z', true],
-                ['2013-06-07T14:21:46.295Z0', false, null, {
+                ['2013-06-07T14:21:46.295Z0', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -494,7 +497,7 @@ describe('date', () => {
                     }]
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
-                ['2013-06-07T14:21:46.295+07:000', false, null, {
+                ['2013-06-07T14:21:46.295+07:000', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -505,7 +508,7 @@ describe('date', () => {
                 }],
                 ['2013-06-07T14:21:46.295-07:00', true],
                 ['2013-06-07T14:21:46Z', true],
-                ['2013-06-07T14:21:46Z0', false, null, {
+                ['2013-06-07T14:21:46Z0', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -518,7 +521,7 @@ describe('date', () => {
                 ['2013-06-07T14:21:46-07:00', true],
                 ['2013-06-07T14:21Z', true],
                 ['2013-06-07T14:21+07:00', true],
-                ['2013-06-07T14:21+07:000', false, null, {
+                ['2013-06-07T14:21+07:000', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -528,7 +531,7 @@ describe('date', () => {
                     }]
                 }],
                 ['2013-06-07T14:21-07:00', true],
-                ['2013-06-07T14:21Z+7:00', false, null, {
+                ['2013-06-07T14:21Z+7:00', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -538,7 +541,7 @@ describe('date', () => {
                     }]
                 }],
                 ['2013-06-07', true],
-                ['2013-06-07T', false, null, {
+                ['2013-06-07T', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -548,7 +551,7 @@ describe('date', () => {
                     }]
                 }],
                 ['2013-06-07T14:21', true],
-                ['1-1-2013', false, null, {
+                ['1-1-2013', false, {
                     message: '"value" must be in ISO 8601 date format',
                     details: [{
                         message: '"value" must be in ISO 8601 date format',
@@ -557,7 +560,7 @@ describe('date', () => {
                         context: { label: 'value', value: '1-1-2013', format: 'iso' }
                     }]
                 }],
-                ['2013', true, null, new Date('2013')]
+                ['2013', true, new Date('2013')]
             ]);
         });
 
@@ -594,7 +597,7 @@ describe('date', () => {
             const d = new Date('1-1-1970 UTC');
             const message = `"value" must be less than "${d}"`;
             Helper.validate(Joi.date().less('1-1-1970 UTC').prefs({ dateFormat: 'string' }), [
-                ['1-1-1971 UTC', false, null, {
+                ['1-1-1971 UTC', false, {
                     message,
                     details: [{
                         message,
@@ -603,7 +606,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
                     }]
                 }],
-                ['1-1-1970 UTC', false, null, {
+                ['1-1-1970 UTC', false, {
                     message,
                     details: [{
                         message,
@@ -612,7 +615,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date('1-1-1970 UTC') }
                     }]
                 }],
-                [0, false, null, {
+                [0, false, {
                     message,
                     details: [{
                         message,
@@ -621,7 +624,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date(0) }
                     }]
                 }],
-                [1, false, null, {
+                [1, false, {
                     message,
                     details: [{
                         message,
@@ -630,7 +633,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date(1) }
                     }]
                 }],
-                ['0', false, null, {
+                ['0', false, {
                     message,
                     details: [{
                         message,
@@ -640,7 +643,7 @@ describe('date', () => {
                     }]
                 }],
                 ['-1', true],
-                ['1-1-2014 UTC', false, null, {
+                ['1-1-2014 UTC', false, {
                     message,
                     details: [{
                         message,
@@ -681,7 +684,7 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, [
-                [{ a: now, b: now }, false, null, {
+                [{ a: now, b: now }, false, {
                     message: '"b" must be less than "ref:a"',
                     details: [{
                         message: '"b" must be less than "ref:a"',
@@ -690,7 +693,7 @@ describe('date', () => {
                         context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                     }]
                 }],
-                [{ a: now, b: now + 1e3 }, false, null, {
+                [{ a: now, b: now + 1e3 }, false, {
                     message: '"b" must be less than "ref:a"',
                     details: [{
                         message: '"b" must be less than "ref:a"',
@@ -709,8 +712,8 @@ describe('date', () => {
             const schema = Joi.object({ b: Joi.date().less(ref) });
             const now = Date.now();
 
-            Helper.validate(schema, [
-                [{ b: now }, false, { context: { a: now } }, {
+            Helper.validate(schema, { context: { a: now } }, [
+                [{ b: now }, false, {
                     message: '"b" must be less than "ref:global:a"',
                     details: [{
                         message: '"b" must be less than "ref:global:a"',
@@ -719,7 +722,7 @@ describe('date', () => {
                         context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                     }]
                 }],
-                [{ b: now + 1e3 }, false, { context: { a: now } }, {
+                [{ b: now + 1e3 }, false, {
                     message: '"b" must be less than "ref:global:a"',
                     details: [{
                         message: '"b" must be less than "ref:global:a"',
@@ -728,7 +731,7 @@ describe('date', () => {
                         context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                     }]
                 }],
-                [{ b: now - 1e3 }, true, { context: { a: now } }]
+                [{ b: now - 1e3 }, true]
             ]);
         });
 
@@ -739,7 +742,7 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, [
-                [{ a: 'abc', b: new Date() }, false, null, {
+                [{ a: 'abc', b: new Date() }, false, {
                     message: '"b" date references "ref:a" which must have a valid date format',
                     details: [{
                         message: '"b" date references "ref:a" which must have a valid date format',
@@ -749,7 +752,7 @@ describe('date', () => {
                     }]
                 }],
                 [{ a: '100000000000000', b: now }, true],
-                [{ a: (now - 1e3).toString(), b: now }, false, null, {
+                [{ a: (now - 1e3).toString(), b: now }, false, {
                     message: '"b" must be less than "ref:a"',
                     details: [{
                         message: '"b" must be less than "ref:a"',
@@ -767,8 +770,8 @@ describe('date', () => {
             const schema = Joi.object({ b: Joi.date().less(ref) });
             const now = Date.now();
 
-            Helper.validate(schema, [
-                [{ b: now }, false, { context: { a: 'abc' } }, {
+            Helper.validate(schema, { context: { a: 'abc' } }, [
+                [{ b: now }, false, {
                     message: '"b" date references "ref:global:a" which must have a valid date format',
                     details: [{
                         message: '"b" date references "ref:global:a" which must have a valid date format',
@@ -776,9 +779,15 @@ describe('date', () => {
                         type: 'any.ref',
                         context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
-                }],
-                [{ b: now }, true, { context: { a: '100000000000000' } }],
-                [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
+                }]
+            ]);
+
+            Helper.validate(schema, { context: { a: '100000000000000' } }, [
+                [{ b: now }, true]
+            ]);
+
+            Helper.validate(schema, { context: { a: (now - 1e3).toString() } }, [
+                [{ b: now }, false, {
                     message: '"b" must be less than "ref:global:a"',
                     details: [{
                         message: '"b" must be less than "ref:global:a"',
@@ -798,7 +807,7 @@ describe('date', () => {
             const d = new Date('1-1-1970 UTC');
             const message = `"value" must be less than or equal to "${d.toISOString()}"`;
             Helper.validate(Joi.date().max('1-1-1970 UTC'), [
-                ['1-1-1971 UTC', false, null, {
+                ['1-1-1971 UTC', false, {
                     message,
                     details: [{
                         message,
@@ -809,7 +818,7 @@ describe('date', () => {
                 }],
                 ['1-1-1970 UTC', true],
                 [0, true],
-                [1, false, null, {
+                [1, false, {
                     message,
                     details: [{
                         message,
@@ -820,7 +829,7 @@ describe('date', () => {
                 }],
                 ['0', true],
                 ['-1', true],
-                ['1-1-2014 UTC', false, null, {
+                ['1-1-2014 UTC', false, {
                     message,
                     details: [{
                         message,
@@ -862,7 +871,7 @@ describe('date', () => {
 
             Helper.validate(schema, [
                 [{ a: now, b: now }, true],
-                [{ a: now, b: now + 1e3 }, false, null, {
+                [{ a: now, b: now + 1e3 }, false, {
                     message: '"b" must be less than or equal to "ref:a"',
                     details: [{
                         message: '"b" must be less than or equal to "ref:a"',
@@ -881,9 +890,9 @@ describe('date', () => {
             const schema = Joi.object({ b: Joi.date().max(ref) });
             const now = Date.now();
 
-            Helper.validate(schema, [
-                [{ b: now }, true, { context: { a: now } }],
-                [{ b: now + 1e3 }, false, { context: { a: now } }, {
+            Helper.validate(schema, { context: { a: now } }, [
+                [{ b: now }, true],
+                [{ b: now + 1e3 }, false, {
                     message: '"b" must be less than or equal to "ref:global:a"',
                     details: [{
                         message: '"b" must be less than or equal to "ref:global:a"',
@@ -892,7 +901,7 @@ describe('date', () => {
                         context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                     }]
                 }],
-                [{ b: now - 1e3 }, true, { context: { a: now } }]
+                [{ b: now - 1e3 }, true]
             ]);
         });
 
@@ -909,7 +918,7 @@ describe('date', () => {
             Helper.validate(schema, [
                 [{ annual: false, from: '2000-01-01', to: '2010-01-01' }, true],
                 [{ annual: true, from: '2000-01-01', to: '2000-12-30' }, true],
-                [{ annual: true, from: '2000-01-01', to: '2010-01-01' }, false, null, {
+                [{ annual: true, from: '2000-01-01', to: '2010-01-01' }, false, {
                     message: '"to" must be less than or equal to "{number(from) + 364 * day}"',
                     details: [{
                         message: '"to" must be less than or equal to "{number(from) + 364 * day}"',
@@ -928,7 +937,7 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, [
-                [{ a: 'abc', b: new Date() }, false, null, {
+                [{ a: 'abc', b: new Date() }, false, {
                     message: '"b" date references "ref:a" which must have a valid date format',
                     details: [{
                         message: '"b" date references "ref:a" which must have a valid date format',
@@ -938,7 +947,7 @@ describe('date', () => {
                     }]
                 }],
                 [{ a: '100000000000000', b: now }, true],
-                [{ a: (now - 1e3).toString(), b: now }, false, null, {
+                [{ a: (now - 1e3).toString(), b: now }, false, {
                     message: '"b" must be less than or equal to "ref:a"',
                     details: [{
                         message: '"b" must be less than or equal to "ref:a"',
@@ -956,8 +965,8 @@ describe('date', () => {
             const schema = Joi.object({ b: Joi.date().max(ref) });
             const now = Date.now();
 
-            Helper.validate(schema, [
-                [{ b: now }, false, { context: { a: 'abc' } }, {
+            Helper.validate(schema, { context: { a: 'abc' } }, [
+                [{ b: now }, false, {
                     message: '"b" date references "ref:global:a" which must have a valid date format',
                     details: [{
                         message: '"b" date references "ref:global:a" which must have a valid date format',
@@ -965,9 +974,15 @@ describe('date', () => {
                         type: 'any.ref',
                         context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
-                }],
-                [{ b: now }, true, { context: { a: '100000000000000' } }],
-                [{ b: now }, false, { context: { a: (now - 1e3).toString() } }, {
+                }]
+            ]);
+
+            Helper.validate(schema, { context: { a: '100000000000000' } }, [
+                [{ b: now }, true]
+            ]);
+
+            Helper.validate(schema, { context: { a: (now - 1e3).toString() } }, [
+                [{ b: now }, false, {
                     message: '"b" must be less than or equal to "ref:global:a"',
                     details: [{
                         message: '"b" must be less than or equal to "ref:global:a"',
@@ -989,7 +1004,7 @@ describe('date', () => {
             Helper.validate(Joi.date().min('1-1-2000 UTC'), [
                 ['1-1-2001 UTC', true],
                 ['1-1-2000 UTC', true],
-                [0, false, null, {
+                [0, false, {
                     message,
                     details: [{
                         message,
@@ -998,7 +1013,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date(0) }
                     }]
                 }],
-                ['0', false, null, {
+                ['0', false, {
                     message,
                     details: [{
                         message,
@@ -1007,7 +1022,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date(0) }
                     }]
                 }],
-                ['-1', false, null, {
+                ['-1', false, {
                     message,
                     details: [{
                         message,
@@ -1016,7 +1031,7 @@ describe('date', () => {
                         context: { limit: d, label: 'value', value: new Date(-1) }
                     }]
                 }],
-                ['1-1-1999 UTC', false, null, {
+                ['1-1-1999 UTC', false, {
                     message,
                     details: [{
                         message,
@@ -1059,7 +1074,7 @@ describe('date', () => {
             Helper.validate(schema, [
                 [{ a: now, b: now }, true],
                 [{ a: now, b: now + 1e3 }, true],
-                [{ a: now, b: now - 1e3 }, false, null, {
+                [{ a: now, b: now - 1e3 }, false, {
                     message: '"b" must be larger than or equal to "ref:a"',
                     details: [{
                         message: '"b" must be larger than or equal to "ref:a"',
@@ -1087,7 +1102,7 @@ describe('date', () => {
                 [{ a: 123, b: 123, c: 0 }, true],
                 [{ a: 123, b: 456, c: 42 }, true],
                 [{ a: 456, b: 123, c: 0 }, true],
-                [{ a: 123, b: 123, c: 42 }, false, null, {
+                [{ a: 123, b: 123, c: 42 }, false, {
                     message: '"c" must be [0]',
                     details: [{
                         message: '"c" must be [0]',
@@ -1096,7 +1111,7 @@ describe('date', () => {
                         context: { value: 42, valids: [0], label: 'c', key: 'c' }
                     }]
                 }],
-                [{ a: 456, b: 123, c: 42 }, false, null, {
+                [{ a: 456, b: 123, c: 42 }, false, {
                     message: '"c" must be [0]',
                     details: [{
                         message: '"c" must be [0]',
@@ -1114,10 +1129,10 @@ describe('date', () => {
             const schema = Joi.object({ b: Joi.date().min(ref) });
             const now = Date.now();
 
-            Helper.validate(schema, [
-                [{ b: now }, true, { context: { a: now } }],
-                [{ b: now + 1e3 }, true, { context: { a: now } }],
-                [{ b: now - 1e3 }, false, { context: { a: now } }, {
+            Helper.validate(schema, { context: { a: now } }, [
+                [{ b: now }, true],
+                [{ b: now + 1e3 }, true],
+                [{ b: now - 1e3 }, false, {
                     message: '"b" must be larger than or equal to "ref:global:a"',
                     details: [{
                         message: '"b" must be larger than or equal to "ref:global:a"',
@@ -1136,7 +1151,7 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, [
-                [{ a: 'abc', b: now }, false, null, {
+                [{ a: 'abc', b: now }, false, {
                     message: '"b" date references "ref:a" which must have a valid date format',
                     details: [{
                         message: '"b" date references "ref:a" which must have a valid date format',
@@ -1146,7 +1161,7 @@ describe('date', () => {
                     }]
                 }],
                 [{ a: '123', b: now }, true],
-                [{ a: (now + 1e3).toString(), b: now }, false, null, {
+                [{ a: (now + 1e3).toString(), b: now }, false, {
                     message: '"b" must be larger than or equal to "ref:a"',
                     details: [{
                         message: '"b" must be larger than or equal to "ref:a"',
@@ -1164,8 +1179,8 @@ describe('date', () => {
             const schema = Joi.object({ b: Joi.date().min(ref) });
             const now = Date.now();
 
-            Helper.validate(schema, [
-                [{ b: now }, false, { context: { a: 'abc' } }, {
+            Helper.validate(schema, { context: { a: 'abc' } }, [
+                [{ b: now }, false, {
                     message: '"b" date references "ref:global:a" which must have a valid date format',
                     details: [{
                         message: '"b" date references "ref:global:a" which must have a valid date format',
@@ -1173,8 +1188,11 @@ describe('date', () => {
                         type: 'any.ref',
                         context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                     }]
-                }],
-                [{ b: now }, false, { context: { a: (now + 1e3).toString() } }, {
+                }]
+            ]);
+
+            Helper.validate(schema, { context: { a: (now + 1e3).toString() } }, [
+                [{ b: now }, false, {
                     message: '"b" must be larger than or equal to "ref:global:a"',
                     details: [{
                         message: '"b" must be larger than or equal to "ref:global:a"',
@@ -1199,7 +1217,7 @@ describe('date', () => {
 
             const schema = Joi.date().timestamp();
             Helper.validate(schema, [
-                ['', false, null, {
+                ['', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
                         message: '"value" must be in timestamp or number of milliseconds format',
@@ -1208,7 +1226,7 @@ describe('date', () => {
                         context: { label: 'value', value: '', format: 'javascript' }
                     }]
                 }],
-                [' \t ', false, null, {
+                [' \t ', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
                         message: '"value" must be in timestamp or number of milliseconds format',
@@ -1263,7 +1281,7 @@ describe('date', () => {
                 [1.452126061677e+12, true],
                 [1E3, true],
                 ['1E3', true],
-                [',', false, null, {
+                [',', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
                         message: '"value" must be in timestamp or number of milliseconds format',
@@ -1272,7 +1290,7 @@ describe('date', () => {
                         context: { label: 'value', value: ',', format: 'javascript' }
                     }]
                 }],
-                ['123A,0xA', false, null, {
+                ['123A,0xA', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
                         message: '"value" must be in timestamp or number of milliseconds format',
@@ -1281,7 +1299,7 @@ describe('date', () => {
                         context: { label: 'value', value: '123A,0xA', format: 'javascript' }
                     }]
                 }],
-                ['1-1-2013 UTC', false, null, {
+                ['1-1-2013 UTC', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
                         message: '"value" must be in timestamp or number of milliseconds format',
@@ -1290,7 +1308,7 @@ describe('date', () => {
                         context: { label: 'value', value: '1-1-2013 UTC', format: 'javascript' }
                     }]
                 }],
-                ['not a valid timestamp', false, null, {
+                ['not a valid timestamp', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
                     details: [{
                         message: '"value" must be in timestamp or number of milliseconds format',
@@ -1299,7 +1317,7 @@ describe('date', () => {
                         context: { label: 'value', value: 'not a valid timestamp', format: 'javascript' }
                     }]
                 }],
-                [invalidDate, false, null, {
+                [invalidDate, false, {
                     message: '"value" must be a valid date',
                     details: [{
                         message: '"value" must be a valid date',

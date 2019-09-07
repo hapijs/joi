@@ -44,10 +44,10 @@ describe('any', () => {
 
             const schema = Joi.string().custom(method, 'custom validation');
             Helper.validate(schema, [
-                ['x', true, null, 'x'],
-                ['2', true, null, '3'],
-                ['5', true, null, undefined],
-                ['1', false, null, {
+                ['x', true, 'x'],
+                ['2', true, '3'],
+                ['5', true, undefined],
+                ['1', false, {
                     message: '"value" failed custom validation because nope',
                     details: [{
                         message: '"value" failed custom validation because nope',
@@ -56,7 +56,7 @@ describe('any', () => {
                         context: { label: 'value', value: '1', error }
                     }]
                 }],
-                ['4', false, null, {
+                ['4', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',

@@ -523,7 +523,7 @@ describe('Modify', () => {
                 ]);
 
                 Helper.validate(schema, [
-                    [{}, false, null, {
+                    [{}, false, {
                         message: '"a" is required',
                         details: [{
                             message: '"a" is required',
@@ -532,7 +532,7 @@ describe('Modify', () => {
                             context: { label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 0 }, false, null, {
+                    [{ a: 0 }, false, {
                         message: '"b" is required',
                         details: [{
                             message: '"b" is required',
@@ -541,7 +541,7 @@ describe('Modify', () => {
                             context: { label: 'b', key: 'b' }
                         }]
                     }],
-                    [{ a: 0, b: 0 }, false, null, {
+                    [{ a: 0, b: 0 }, false, {
                         message: '"g" is required',
                         details: [{
                             message: '"g" is required',
@@ -551,7 +551,7 @@ describe('Modify', () => {
                         }]
                     }],
                     [{ a: 0, b: 0, g: {} }, true],
-                    [{ a: 0, b: 0, c: {}, g: {} }, false, null, {
+                    [{ a: 0, b: 0, c: {}, g: {} }, false, {
                         message: '"c.d" is required',
                         details: [{
                             message: '"c.d" is required',
@@ -561,7 +561,7 @@ describe('Modify', () => {
                         }]
                     }],
                     [{ a: 0, b: 0, c: { d: 0 }, g: {} }, true],
-                    [{ a: 0, b: 0, c: { d: 0, e: {} }, g: {} }, false, null, {
+                    [{ a: 0, b: 0, c: { d: 0, e: {} }, g: {} }, false, {
                         message: '"c.e.f" is required',
                         details: [{
                             message: '"c.e.f" is required',
@@ -601,7 +601,7 @@ describe('Modify', () => {
                     [{}, true],
                     [{ a: undefined }, true],
                     [{ a: undefined, b: undefined }, true],
-                    [{ a: 0 }, false, null, {
+                    [{ a: 0 }, false, {
                         message: '"a" is not allowed',
                         details: [{
                             message: '"a" is not allowed',
@@ -610,7 +610,7 @@ describe('Modify', () => {
                             context: { label: 'a', key: 'a', value: 0 }
                         }]
                     }],
-                    [{ b: 0 }, false, null, {
+                    [{ b: 0 }, false, {
                         message: '"b" is not allowed',
                         details: [{
                             message: '"b" is not allowed',

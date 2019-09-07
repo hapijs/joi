@@ -38,7 +38,7 @@ describe('binary', () => {
             ['hello', true],
             [hello, true],
             [Buffer.from('hello'), true],
-            ['goodbye', false, null, {
+            ['goodbye', false, {
                 message: '"value" must be [hello]',
                 details: [{
                     message: '"value" must be [hello]',
@@ -47,7 +47,7 @@ describe('binary', () => {
                     context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
                 }]
             }],
-            [Buffer.from('goodbye'), false, null, {
+            [Buffer.from('goodbye'), false, {
                 message: '"value" must be [hello]',
                 details: [{
                     message: '"value" must be [hello]',
@@ -56,7 +56,7 @@ describe('binary', () => {
                     context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
                 }]
             }],
-            [Buffer.from('HELLO'), false, null, {
+            [Buffer.from('HELLO'), false, {
                 message: '"value" must be [hello]',
                 details: [{
                     message: '"value" must be [hello]',
@@ -167,7 +167,7 @@ describe('binary', () => {
             const schema = Joi.binary().min(5);
             Helper.validate(schema, [
                 [Buffer.from('testing'), true],
-                [Buffer.from('test'), false, null, {
+                [Buffer.from('test'), false, {
                     message: '"value" must be at least 5 bytes',
                     details: [{
                         message: '"value" must be at least 5 bytes',
@@ -202,7 +202,7 @@ describe('binary', () => {
 
             const schema = Joi.binary().max(5);
             Helper.validate(schema, [
-                [Buffer.from('testing'), false, null, {
+                [Buffer.from('testing'), false, {
                     message: '"value" must be less than or equal to 5 bytes',
                     details: [{
                         message: '"value" must be less than or equal to 5 bytes',
@@ -243,7 +243,7 @@ describe('binary', () => {
             const schema = Joi.binary().length(4);
             Helper.validate(schema, [
                 [Buffer.from('test'), true],
-                [Buffer.from('testing'), false, null, {
+                [Buffer.from('testing'), false, {
                     message: '"value" must be 4 bytes',
                     details: [{
                         message: '"value" must be 4 bytes',

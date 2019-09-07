@@ -270,7 +270,7 @@ describe('ref', () => {
                         g: 3
                     },
                     h: 4
-                }, false, null, {
+                }, false, {
                     message: '"a.b.ix" must be [ref:...i]',
                     details: [
                         {
@@ -359,7 +359,7 @@ describe('ref', () => {
                         g: 3
                     },
                     h: 4
-                }, false, null, {
+                }, false, {
                     message: '"a.b.ix" must be [ref:...i]',
                     details: [
                         {
@@ -394,7 +394,7 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{ key: object }, true],
-            [{ key: 1 }, false, null, {
+            [{ key: 1 }, false, {
                 message: '"key" must be of type object',
                 details: [
                     {
@@ -410,7 +410,7 @@ describe('ref', () => {
                     }
                 ]
             }],
-            [{ key: Joi.number() }, false, null, {
+            [{ key: Joi.number() }, false, {
                 message: '"key" must be a Joi schema of object type',
                 details: [
                     {
@@ -426,7 +426,7 @@ describe('ref', () => {
                     }
                 ]
             }],
-            [{ key: { a: 1 } }, false, null, {
+            [{ key: { a: 1 } }, false, {
                 message: '"key.a" must be of type object',
                 details: [
                     {
@@ -442,7 +442,7 @@ describe('ref', () => {
                     }
                 ]
             }],
-            [{ key: { a: {} } }, false, null, {
+            [{ key: { a: {} } }, false, {
                 message: '"key.a" must be a Joi schema of object type',
                 details: [
                     {
@@ -625,7 +625,7 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{ x: [1] }, true],
             [{ x: [2, 2] }, true],
-            [{ x: [2, 2, 2] }, false, null, {
+            [{ x: [2, 2, 2] }, false, {
                 message: '"x[0]" must be [ref:length]',
                 details: [
                     {
@@ -657,7 +657,7 @@ describe('ref', () => {
             [{ x: [7] }, true],
             [{ x: [7, 7, 7] }, true],
             [{ x: [2, 2] }, true],
-            [{ x: [2, 2, 2] }, false, null, {
+            [{ x: [2, 2, 2] }, false, {
                 message: '"x[0]" must be [7]',
                 details: [
                     {
@@ -679,7 +679,7 @@ describe('ref', () => {
         Helper.validate(schema, [
             [[1, 2], true],
             [[10, 20], true],
-            [[10, 5], false, null, {
+            [[10, 5], false, {
                 message: '"[1]" must be larger than or equal to ref:0',
                 details: [
                     {
@@ -707,7 +707,7 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{ length: 1 }, true],
             [{ length: 2, x: 3 }, true],
-            [{ length: 2, x: 3, y: 4 }, false, null, {
+            [{ length: 2, x: 3, y: 4 }, false, {
                 message: '"value" must have ref:.length keys',
                 details: [
                     {
@@ -744,7 +744,7 @@ describe('ref', () => {
         }]);
 
         Helper.validate(schema, [
-            [{ a: 5 }, false, null, {
+            [{ a: 5 }, false, {
                 message: '"a" must be [ref:b]',
                 details: [{
                     message: '"a" must be [ref:b]',
@@ -772,7 +772,7 @@ describe('ref', () => {
             [{ b: 5 }, true],
             [{ a: 10, b: 5 }, true],
             [{ a: 10, b: '5' }, true],
-            [{ a: 5 }, false, null, {
+            [{ a: 5 }, false, {
                 message: '"a" must be [ref:b]',
                 details: [{
                     message: '"a" must be [ref:b]',
@@ -781,7 +781,7 @@ describe('ref', () => {
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
-            [{ a: 5, b: 5 }, false, null, {
+            [{ a: 5, b: 5 }, false, {
                 message: '"a" must be [ref:b]',
                 details: [{
                     message: '"a" must be [ref:b]',
@@ -820,7 +820,7 @@ describe('ref', () => {
             [{ b: 5 }, true],
             [{ a: 10, b: 5 }, true],
             [{ a: 10, b: '5' }, true],
-            [{ a: 5 }, false, null, {
+            [{ a: 5 }, false, {
                 message: '"a" must be [ref:b]',
                 details: [{
                     message: '"a" must be [ref:b]',
@@ -829,7 +829,7 @@ describe('ref', () => {
                     context: { value: 5, valids: [ref], label: 'a', key: 'a' }
                 }]
             }],
-            [{ a: 5, b: 5 }, false, null, {
+            [{ a: 5, b: 5 }, false, {
                 message: '"a" must be [ref:b]',
                 details: [{
                     message: '"a" must be [ref:b]',
@@ -873,7 +873,7 @@ describe('ref', () => {
         }]);
 
         Helper.validate(schema, [
-            [{ a: 5 }, false, null, {
+            [{ a: 5 }, false, {
                 message: '"a" must be [ref:]',
                 details: [{
                     message: '"a" must be [ref:]',
@@ -909,7 +909,7 @@ describe('ref', () => {
         }]);
 
         Helper.validate(schema, [
-            [{ a: 5 }, false, null, {
+            [{ a: 5 }, false, {
                 message: '"a" must be [ref:b.c]',
                 details: [{
                     message: '"a" must be [ref:b.c]',
@@ -919,7 +919,7 @@ describe('ref', () => {
                 }]
             }],
             [{ b: { c: 5 } }, true],
-            [{ a: 5, b: 5 }, false, null, {
+            [{ a: 5, b: 5 }, false, {
                 message: '"b" must be of type object',
                 details: [{
                     message: '"b" must be of type object',
@@ -1045,7 +1045,7 @@ describe('ref', () => {
                 [{ a: {} }, true],
                 [{ a: { c: '5' }, b: 5 }, true],
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
-                [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
+                [{ a: { c: '5' }, b: 7, c: '6' }, false, {
                     message: '"b" must be one of [ref:a.c, ref:c]',
                     details: [
                         {
@@ -1104,8 +1104,8 @@ describe('ref', () => {
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
         }]);
 
-        Helper.validateOptions(schema, [
-            [{ a: 5 }, false, null, {
+        Helper.validate(schema, { context: { x: 22 } }, [
+            [{ a: 5 }, false, {
                 message: '"a" must be [ref:global:x]',
                 details: [{
                     message: '"a" must be [ref:global:x]',
@@ -1117,7 +1117,7 @@ describe('ref', () => {
             [{ a: 22 }, true],
             [{ b: 5 }, true],
             [{ a: 22, b: 5 }, true],
-            [{ a: '22', b: '5' }, false, null, {
+            [{ a: '22', b: '5' }, false, {
                 message: '"a" must be [ref:global:x]',
                 details: [{
                     message: '"a" must be [ref:global:x]',
@@ -1126,7 +1126,7 @@ describe('ref', () => {
                     context: { value: '22', valids: [ref], label: 'a', key: 'a' }
                 }]
             }]
-        ], { context: { x: 22 } });
+        ]);
     });
 
     it('uses context in when condition', () => {
@@ -1137,7 +1137,7 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{}, true],
-            [{ a: 'x' }, false, null, {
+            [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1146,7 +1146,7 @@ describe('ref', () => {
                     context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
-            [{ a: true }, false, null, {
+            [{ a: true }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1154,9 +1154,12 @@ describe('ref', () => {
                     type: 'any.unknown',
                     context: { label: 'a', key: 'a', value: true }
                 }]
-            }],
-            [{}, true, { context: {} }],
-            [{ a: 'x' }, false, { context: {} }, {
+            }]
+        ]);
+
+        Helper.validate(schema, { context: {} }, [
+            [{}, true],
+            [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1165,7 +1168,7 @@ describe('ref', () => {
                     context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
-            [{ a: true }, false, { context: {} }, {
+            [{ a: true }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1173,9 +1176,12 @@ describe('ref', () => {
                     type: 'any.unknown',
                     context: { label: 'a', key: 'a', value: true }
                 }]
-            }],
-            [{}, true, { context: { x: 1 } }],
-            [{ a: 'x' }, false, { context: { x: 1 } }, {
+            }]
+        ]);
+
+        Helper.validate(schema, { context: { x: 1 } }, [
+            [{}, true],
+            [{ a: 'x' }, false, {
                 message: '"a" must be a boolean',
                 details: [{
                     message: '"a" must be a boolean',
@@ -1184,7 +1190,7 @@ describe('ref', () => {
                     context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
-            [{ a: true }, true, { context: { x: 1 } }]
+            [{ a: true }, true]
         ]);
     });
 
@@ -1196,7 +1202,7 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{}, true],
-            [{ a: 'x' }, false, null, {
+            [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1205,7 +1211,7 @@ describe('ref', () => {
                     context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
-            [{ a: true }, false, null, {
+            [{ a: true }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1213,9 +1219,12 @@ describe('ref', () => {
                     type: 'any.unknown',
                     context: { label: 'a', key: 'a', value: true }
                 }]
-            }],
-            [{}, true, { context: {} }],
-            [{ a: 'x' }, false, { context: {} }, {
+            }]
+        ]);
+
+        Helper.validate(schema, { context: {} }, [
+            [{}, true],
+            [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1224,7 +1233,7 @@ describe('ref', () => {
                     context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
-            [{ a: true }, false, { context: {} }, {
+            [{ a: true }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1232,9 +1241,12 @@ describe('ref', () => {
                     type: 'any.unknown',
                     context: { label: 'a', key: 'a', value: true }
                 }]
-            }],
-            [{}, true, { context: { x: 1 } }],
-            [{ a: 'x' }, false, { context: { x: 1 } }, {
+            }]
+        ]);
+
+        Helper.validate(schema, { context: { x: 1 } }, [
+            [{}, true],
+            [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1243,7 +1255,7 @@ describe('ref', () => {
                     context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
-            [{ a: true }, false, { context: { x: 1 } }, {
+            [{ a: true }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1251,9 +1263,12 @@ describe('ref', () => {
                     type: 'any.unknown',
                     context: { label: 'a', key: 'a', value: true }
                 }]
-            }],
-            [{}, true, { context: { x: {} } }],
-            [{ a: 'x' }, false, { context: { x: {} } }, {
+            }]
+        ]);
+
+        Helper.validate(schema, { context: { x: {} } }, [
+            [{}, true],
+            [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1262,7 +1277,7 @@ describe('ref', () => {
                     context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
-            [{ a: true }, false, { context: { x: {} } }, {
+            [{ a: true }, false, {
                 message: '"a" is not allowed',
                 details: [{
                     message: '"a" is not allowed',
@@ -1270,9 +1285,12 @@ describe('ref', () => {
                     type: 'any.unknown',
                     context: { label: 'a', key: 'a', value: true }
                 }]
-            }],
-            [{}, true, { context: { x: { y: 1 } } }],
-            [{ a: 'x' }, false, { context: { x: { y: 1 } } }, {
+            }]
+        ]);
+
+        Helper.validate(schema, { context: { x: { y: 1 } } }, [
+            [{}, true],
+            [{ a: 'x' }, false, {
                 message: '"a" must be a boolean',
                 details: [{
                     message: '"a" must be a boolean',
@@ -1281,7 +1299,7 @@ describe('ref', () => {
                     context: { label: 'a', key: 'a', value: 'x' }
                 }]
             }],
-            [{ a: true }, true, { context: { x: { y: 1 } } }]
+            [{ a: true }, true]
         ]);
     });
 

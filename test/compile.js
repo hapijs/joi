@@ -32,7 +32,7 @@ describe('cast', () => {
         it('compiles null schema', () => {
 
             Helper.validate(Joi.compile(null), [
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" must be [null]',
                     details: [{
                         message: '"value" must be [null]',
@@ -48,7 +48,7 @@ describe('cast', () => {
         it('compiles number literal', () => {
 
             Helper.validate(Joi.compile(5), [
-                [6, false, null, {
+                [6, false, {
                     message: '"value" must be [5]',
                     details: [{
                         message: '"value" must be [5]',
@@ -64,7 +64,7 @@ describe('cast', () => {
         it('compiles string literal', () => {
 
             Helper.validate(Joi.compile('5'), [
-                ['6', false, null, {
+                ['6', false, {
                     message: '"value" must be [5]',
                     details: [{
                         message: '"value" must be [5]',
@@ -80,7 +80,7 @@ describe('cast', () => {
         it('compiles boolean literal', () => {
 
             Helper.validate(Joi.compile(true), [
-                [false, false, null, {
+                [false, false, {
                     message: '"value" must be [true]',
                     details: [{
                         message: '"value" must be [true]',
@@ -100,7 +100,7 @@ describe('cast', () => {
             Helper.validate(Joi.compile(dnow), [
                 [new Date(now), true],
                 [now, true],
-                [now * 2, false, null, {
+                [now * 2, false, {
                     message: `"value" must be [${dnow.toISOString()}]`,
                     details: [{
                         message: `"value" must be [${dnow.toISOString()}]`,

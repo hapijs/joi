@@ -25,7 +25,7 @@ describe('function', () => {
 
         Helper.validate(Joi.function().required(), [
             [function () { }, true],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type function',
                 details: [{
                     message: '"value" must be of type function',
@@ -41,7 +41,7 @@ describe('function', () => {
 
         Helper.validate(Joi.func().required(), [
             [function () { }, true],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type function',
                 details: [{
                     message: '"value" must be of type function',
@@ -59,7 +59,7 @@ describe('function', () => {
         Helper.validate(schema, [
             [function (a, b) { }, true],
             [(a, b) => { }, true],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type function',
                 details: [{
                     message: '"value" must be of type function',
@@ -131,7 +131,7 @@ describe('function', () => {
             [function (a, b, c) { }, true],
             [(a, b) => { }, true],
             [(a, b, c) => { }, true],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type function',
                 details: [{
                     message: '"value" must be of type function',
@@ -246,7 +246,7 @@ describe('function', () => {
         b.a = 123;
 
         Helper.validate(Joi.function().keys({ a: Joi.string().required() }).required(), [
-            [function () { }, false, null, {
+            [function () { }, false, {
                 message: '"a" is required',
                 details: [{
                     message: '"a" is required',
@@ -256,7 +256,7 @@ describe('function', () => {
                 }]
             }],
             [a, true],
-            [b, false, null, {
+            [b, false, {
                 message: '"a" must be a string',
                 details: [{
                     message: '"a" must be a string',
@@ -265,7 +265,7 @@ describe('function', () => {
                     context: { value: 123, label: 'a', key: 'a' }
                 }]
             }],
-            ['', false, null, {
+            ['', false, {
                 message: '"value" must be of type function',
                 details: [{
                     message: '"value" must be of type function',
@@ -295,7 +295,7 @@ describe('function', () => {
 
         Helper.validate(schema, [
             [a, true],
-            [function (x) { }, false, null, {
+            [function (x) { }, false, {
                 message: '"a" is required',
                 details: [{
                     message: '"a" is required',
@@ -304,7 +304,7 @@ describe('function', () => {
                     context: { label: 'a', key: 'a' }
                 }]
             }],
-            [b, false, null, {
+            [b, false, {
                 message: '"a" must be a string',
                 details: [{
                     message: '"a" must be a string',
@@ -434,7 +434,7 @@ describe('function().class()', () => {
 
         Helper.validate(classSchema, [
             [{ _class: testClass }, true],
-            [{ _class: testFunc }, false, null, {
+            [{ _class: testFunc }, false, {
                 message: '"_class" must be a class',
                 details: [{
                     message: '"_class" must be a class',
@@ -453,7 +453,7 @@ describe('function().class()', () => {
         });
 
         Helper.validate(classSchema, [
-            [{ _class: ['class '] }, false, null, {
+            [{ _class: ['class '] }, false, {
                 message: '"_class" must be of type function',
                 details: [{
                     message: '"_class" must be of type function',
@@ -462,7 +462,7 @@ describe('function().class()', () => {
                     context: { key: '_class', label: '_class', value: ['class '], type: 'function' }
                 }]
             }],
-            [{ _class: null }, false, null, {
+            [{ _class: null }, false, {
                 message: '"_class" must be of type function',
                 details: [{
                     message: '"_class" must be of type function',

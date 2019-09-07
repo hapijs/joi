@@ -110,7 +110,7 @@ describe('any', () => {
 
             Helper.validate(a.concat(b), [
                 [1, true],
-                ['1', false, null, {
+                ['1', false, {
                     message: '"value" must be a number',
                     details: [{
                         message: '"value" must be a number',
@@ -129,7 +129,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 ['a', true],
-                ['b', false, null, {
+                ['b', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -142,7 +142,7 @@ describe('any', () => {
 
             Helper.validate(b, [
                 ['b', true],
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" must be [b]',
                     details: [{
                         message: '"value" must be [b]',
@@ -166,7 +166,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 ['b', true],
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -179,7 +179,7 @@ describe('any', () => {
 
             Helper.validate(b, [
                 ['a', true],
-                ['b', false, null, {
+                ['b', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -191,7 +191,7 @@ describe('any', () => {
             ]);
 
             Helper.validate(a.concat(b), [
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -200,7 +200,7 @@ describe('any', () => {
                         context: { value: 'a', invalids: ['a', 'b'], label: 'value' }
                     }]
                 }],
-                ['b', false, null, {
+                ['b', false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -219,7 +219,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 ['a', true],
-                ['b', false, null, {
+                ['b', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -232,7 +232,7 @@ describe('any', () => {
 
             Helper.validate(b, [
                 ['b', true],
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" must be [b]',
                     details: [{
                         message: '"value" must be [b]',
@@ -245,7 +245,7 @@ describe('any', () => {
 
             Helper.validate(a.concat(b), [
                 ['b', true],
-                ['a', false, null, {
+                ['a', false, {
                     message: '"value" must be [b]',
                     details: [{
                         message: '"value" must be [b]',
@@ -263,7 +263,7 @@ describe('any', () => {
             const b = Joi.number().max(10);
 
             Helper.validate(a, [
-                [4, false, null, {
+                [4, false, {
                     message: '"value" must be larger than or equal to 5',
                     details: [{
                         message: '"value" must be larger than or equal to 5',
@@ -277,7 +277,7 @@ describe('any', () => {
 
             Helper.validate(b, [
                 [6, true],
-                [11, false, null, {
+                [11, false, {
                     message: '"value" must be less than or equal to 10',
                     details: [{
                         message: '"value" must be less than or equal to 10',
@@ -289,7 +289,7 @@ describe('any', () => {
             ]);
 
             Helper.validate(a.concat(b), [
-                [4, false, null, {
+                [4, false, {
                     message: '"value" must be larger than or equal to 5',
                     details: [{
                         message: '"value" must be larger than or equal to 5',
@@ -299,7 +299,7 @@ describe('any', () => {
                     }]
                 }],
                 [6, true],
-                [11, false, null, {
+                [11, false, {
                     message: '"value" must be less than or equal to 10',
                     details: [{
                         message: '"value" must be less than or equal to 10',
@@ -318,7 +318,7 @@ describe('any', () => {
 
             Helper.validate(a.concat(b), [
                 [11, true],
-                [4, false, null, {
+                [4, false, {
                     message: '"value" must be larger than or equal to 10',
                     details: [{
                         message: '"value" must be larger than or equal to 10',
@@ -327,7 +327,7 @@ describe('any', () => {
                         context: { limit: 10, value: 4, label: 'value' }
                     }]
                 }],
-                [6, false, null, {
+                [6, false, {
                     message: '"value" must be larger than or equal to 10',
                     details: [{
                         message: '"value" must be larger than or equal to 10',
@@ -346,7 +346,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 ['a', true],
-                ['A', false, null, {
+                ['A', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -355,7 +355,7 @@ describe('any', () => {
                         context: { value: 'A', valids: ['a'], label: 'value' }
                     }]
                 }],
-                ['b', false, null, {
+                ['b', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -367,9 +367,9 @@ describe('any', () => {
             ]);
 
             Helper.validate(a.concat(b), [
-                ['a', true, null, 'a'],
-                ['A', true, null, 'a'],
-                ['b', false, null, {
+                ['a', true, 'a'],
+                ['A', true, 'a'],
+                ['b', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -388,7 +388,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 ['a', true],
-                ['A', false, null, {
+                ['A', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -397,7 +397,7 @@ describe('any', () => {
                         context: { value: 'A', valids: ['a'], label: 'value' }
                     }]
                 }],
-                ['b', false, null, {
+                ['b', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -406,8 +406,8 @@ describe('any', () => {
                         context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
-                ['', true, null, undefined],
-                [' ', false, null, {
+                ['', true, undefined],
+                [' ', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -420,9 +420,9 @@ describe('any', () => {
 
             const ab = a.concat(b);
             Helper.validate(ab, [
-                ['a', true, null, 'a'],
-                ['A', true, null, 'a'],
-                ['b', false, null, {
+                ['a', true, 'a'],
+                ['A', true, 'a'],
+                ['b', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -431,8 +431,8 @@ describe('any', () => {
                         context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
-                ['', true, null, undefined],
-                [' ', true, null, undefined]
+                ['', true, undefined],
+                [' ', true, undefined]
             ]);
 
             expect(ab.describe()).to.equal({
@@ -457,7 +457,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 ['a', true],
-                ['A', false, null, {
+                ['A', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -466,7 +466,7 @@ describe('any', () => {
                         context: { value: 'A', valids: ['a'], label: 'value' }
                     }]
                 }],
-                ['b', false, null, {
+                ['b', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -475,8 +475,8 @@ describe('any', () => {
                         context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
-                ['', true, null, undefined],
-                [' ', false, null, {
+                ['', true, undefined],
+                [' ', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -489,9 +489,9 @@ describe('any', () => {
 
             const ab = a.concat(b);
             Helper.validate(ab, [
-                ['a', true, null, 'a'],
-                ['A', true, null, 'a'],
-                ['b', false, null, {
+                ['a', true, 'a'],
+                ['A', true, 'a'],
+                ['b', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -500,8 +500,8 @@ describe('any', () => {
                         context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
-                ['', true, null, undefined],
-                [' ', false, null, {
+                ['', true, undefined],
+                [' ', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -528,9 +528,9 @@ describe('any', () => {
 
             const ba = b.concat(a);
             Helper.validate(ba, [
-                ['a', true, null, 'a'],
-                ['A', true, null, 'a'],
-                ['b', false, null, {
+                ['a', true, 'a'],
+                ['A', true, 'a'],
+                ['b', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -539,8 +539,8 @@ describe('any', () => {
                         context: { value: 'b', valids: ['a'], label: 'value' }
                     }]
                 }],
-                ['', true, null, undefined],
-                [' ', false, null, {
+                ['', true, undefined],
+                [' ', false, {
                     message: '"value" must be [a]',
                     details: [{
                         message: '"value" must be [a]',
@@ -595,7 +595,7 @@ describe('any', () => {
 
             Helper.validate(b, [
                 [{ b: 1 }, true],
-                [{ b: 2 }, false, null, {
+                [{ b: 2 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -608,7 +608,7 @@ describe('any', () => {
 
             Helper.validate(a.concat(b), [
                 [{ b: 1 }, true],
-                [{ b: 2 }, false, null, {
+                [{ b: 2 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -621,7 +621,7 @@ describe('any', () => {
 
             Helper.validate(b.concat(a), [
                 [{ b: 1 }, true],
-                [{ b: 2 }, false, null, {
+                [{ b: 2 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -640,7 +640,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 [{}, true],
-                [{ b: 2 }, false, null, {
+                [{ b: 2 }, false, {
                     message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
@@ -658,7 +658,7 @@ describe('any', () => {
 
             Helper.validate(a.concat(b), [
                 [{}, true],
-                [{ b: 2 }, false, null, {
+                [{ b: 2 }, false, {
                     message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
@@ -671,7 +671,7 @@ describe('any', () => {
 
             Helper.validate(b.concat(a), [
                 [{}, true],
-                [{ b: 2 }, false, null, {
+                [{ b: 2 }, false, {
                     message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
@@ -690,7 +690,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 [{ a: 1 }, true],
-                [{ b: 2 }, false, null, {
+                [{ b: 2 }, false, {
                     message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
@@ -702,7 +702,7 @@ describe('any', () => {
             ]);
 
             Helper.validate(b, [
-                [{ a: 1 }, false, null, {
+                [{ a: 1 }, false, {
                     message: '"a" is not allowed',
                     details: [{
                         message: '"a" is not allowed',
@@ -750,7 +750,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 [{ a: 1, b: 2, c: 3 }, true],
-                [{ a: 3, b: 1, c: 2 }, false, null, {
+                [{ a: 3, b: 1, c: 2 }, false, {
                     message: '"a" must be [1]',
                     details: [{
                         message: '"a" must be [1]',
@@ -762,7 +762,7 @@ describe('any', () => {
             ]);
 
             Helper.validate(b, [
-                [{ a: 1, b: 2, c: 3 }, false, null, {
+                [{ a: 1, b: 2, c: 3 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -778,7 +778,7 @@ describe('any', () => {
                 [{ a: 1, b: 2, c: 3 }, true],
                 [{ a: 3, b: 1, c: 2 }, true],
                 [{ a: 1, b: 2, c: 2 }, true],
-                [{ a: 1, b: 2, c: 4 }, false, null, {
+                [{ a: 1, b: 2, c: 4 }, false, {
                     message: '"c" must be one of [3, 2]',
                     details: [{
                         message: '"c" must be one of [3, 2]',
@@ -799,7 +799,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 [{ a: 1, b: 2, c: 3 }, true],
-                [{ a: 3, b: 1, c: 2 }, false, null, {
+                [{ a: 3, b: 1, c: 2 }, false, {
                     message: '"a" must be [1]',
                     details: [{
                         message: '"a" must be [1]',
@@ -812,7 +812,7 @@ describe('any', () => {
 
             Helper.validate(b, [
                 [{ a: 3, b: 1, c: 2 }, true],
-                [{ a: 1, b: 2, c: 3 }, false, null, {
+                [{ a: 1, b: 2, c: 3 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -825,7 +825,7 @@ describe('any', () => {
 
             Helper.validate(ab, [
                 [{ a: 3, b: 1, c: 2 }, true],
-                [{ b: 2, c: 3 }, false, null, {
+                [{ b: 2, c: 3 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -834,7 +834,7 @@ describe('any', () => {
                         context: { value: 2, valids: [1], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ a: 1, b: 2, c: 3 }, false, null, {
+                [{ a: 1, b: 2, c: 3 }, false, {
                     message: '"a" must be [3]',
                     details: [{
                         message: '"a" must be [3]',
@@ -855,7 +855,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 [{ a: 1, b: 2, c: 3 }, true],
-                [{ a: 3, b: 1, c: 2 }, false, null, {
+                [{ a: 3, b: 1, c: 2 }, false, {
                     message: '"a" must be [1]',
                     details: [{
                         message: '"a" must be [1]',
@@ -868,7 +868,7 @@ describe('any', () => {
 
             Helper.validate(b, [
                 [{ a: 3, b: 1, c: 2 }, true],
-                [{ a: 1, b: 2, c: 3 }, false, null, {
+                [{ a: 1, b: 2, c: 3 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -881,7 +881,7 @@ describe('any', () => {
 
             Helper.validate(ab, [
                 [{ a: 3, b: 1, c: 2 }, true],
-                [{ b: 2, c: 3 }, false, null, {
+                [{ b: 2, c: 3 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -890,7 +890,7 @@ describe('any', () => {
                         context: { value: 2, valids: [1], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ a: 1, b: 2, c: 3 }, false, null, {
+                [{ a: 1, b: 2, c: 3 }, false, {
                     message: '"a" must be [3]',
                     details: [{
                         message: '"a" must be [3]',
@@ -927,7 +927,7 @@ describe('any', () => {
                 [{ a: {} }, true],
                 [{ a: { c: '5' }, b: 5 }, true],
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
-                [{ a: { c: '5' }, b: 7, c: '6' }, false, null, {
+                [{ a: { c: '5' }, b: 7, c: '6' }, false, {
                     message: '"b" must be one of [ref:a.c, ref:c]',
                     details: [
                         {
@@ -1198,8 +1198,8 @@ describe('any', () => {
                 .default();
 
             Helper.validate(schema, [
-                [undefined, true, null, { a: 42, b: { c: true } }],
-                [{ a: 24 }, true, null, { a: 24, b: { c: true } }]
+                [undefined, true, { a: 42, b: { c: true } }],
+                [{ a: 24 }, true, { a: 24, b: { c: true } }]
             ]);
         });
 
@@ -1297,9 +1297,9 @@ describe('any', () => {
 
             const schema = Joi.string().empty('');
             Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', true, null, undefined]
+                [undefined, true, undefined],
+                ['abc', true, 'abc'],
+                ['', true, undefined]
             ]);
         });
 
@@ -1307,12 +1307,12 @@ describe('any', () => {
 
             const schema = Joi.string().empty('').trim();
             Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', true, null, undefined],
-                [' ', true, null, undefined],
-                ['       ', true, null, undefined],
-                [42, false, null, {
+                [undefined, true, undefined],
+                ['abc', true, 'abc'],
+                ['', true, undefined],
+                [' ', true, undefined],
+                ['       ', true, undefined],
+                [42, false, {
                     message: '"value" must be a string',
                     details: [{
                         message: '"value" must be a string',
@@ -1324,10 +1324,10 @@ describe('any', () => {
             ]);
 
             Helper.validate(schema.trim(false), [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', true, null, undefined],
-                [' ', true, null, ' ']
+                [undefined, true, undefined],
+                ['abc', true, 'abc'],
+                ['', true, undefined],
+                [' ', true, ' ']
             ]);
         });
 
@@ -1335,9 +1335,9 @@ describe('any', () => {
 
             const schema = Joi.string().empty('').empty('abc');
             Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, undefined],
-                ['', false, null, {
+                [undefined, true, undefined],
+                ['abc', true, undefined],
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -1346,7 +1346,7 @@ describe('any', () => {
                         context: { value: '', label: 'value' }
                     }]
                 }],
-                ['def', true, null, 'def']
+                ['def', true, 'def']
             ]);
         });
 
@@ -1354,9 +1354,9 @@ describe('any', () => {
 
             const schema = Joi.string().empty('').empty();
             Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', false, null, {
+                [undefined, true, undefined],
+                ['abc', true, 'abc'],
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -1372,9 +1372,9 @@ describe('any', () => {
 
             const schema = Joi.string().empty();
             Helper.validate(schema, [
-                [undefined, true, null, undefined],
-                ['abc', true, null, 'abc'],
-                ['', false, null, {
+                [undefined, true, undefined],
+                ['abc', true, 'abc'],
+                ['', false, {
                     message: '"value" is not allowed to be empty',
                     details: [{
                         message: '"value" is not allowed to be empty',
@@ -1401,7 +1401,7 @@ describe('any', () => {
             }).or('a', 'b');
 
             Helper.validate(schema, [
-                [{}, false, null, {
+                [{}, false, {
                     message: '"value" must contain at least one of [a, b]',
                     details: [{
                         message: '"value" must contain at least one of [a, b]',
@@ -1415,7 +1415,7 @@ describe('any', () => {
                         }
                     }]
                 }],
-                [{ a: '' }, false, null, {
+                [{ a: '' }, false, {
                     message: '"value" must contain at least one of [a, b]',
                     details: [{
                         message: '"value" must contain at least one of [a, b]',
@@ -1429,8 +1429,8 @@ describe('any', () => {
                         }
                     }]
                 }],
-                [{ a: 'a' }, true, null, { a: 'a' }],
-                [{ a: '', b: 'b' }, true, null, { b: 'b' }]
+                [{ a: 'a' }, true, { a: 'a' }],
+                [{ a: '', b: 'b' }, true, { b: 'b' }]
             ]);
         });
 
@@ -1442,8 +1442,8 @@ describe('any', () => {
             });
 
             Helper.validate(schema, [
-                [{ empty: 'x', a: 'x' }, true, null, { empty: 'x' }],
-                [{ empty: 'y', a: 'x' }, true, null, { empty: 'y', a: 'x' }]
+                [{ empty: 'x', a: 'x' }, true, { empty: 'x' }],
+                [{ empty: 'y', a: 'x' }, true, { empty: 'y', a: 'x' }]
             ]);
         });
     });
@@ -1454,7 +1454,7 @@ describe('any', () => {
 
             Helper.validate(Joi.equal(4), [
                 [4, true],
-                [5, false, null, {
+                [5, false, {
                     message: '"value" must be [4]',
                     details: [{
                         message: '"value" must be [4]',
@@ -1742,7 +1742,7 @@ describe('any', () => {
                 [null, true],
                 ['', true],
                 [false, true],
-                [undefined, false, null, {
+                [undefined, false, {
                     message: '"value" is required',
                     details: [{
                         message: '"value" is required',
@@ -1805,7 +1805,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: 5 }, true],
-                [{ a: 5, b: 6 }, false, null, {
+                [{ a: 5, b: 6 }, false, {
                     message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
@@ -1814,7 +1814,7 @@ describe('any', () => {
                         context: { label: 'b', key: 'b', value: 6 }
                     }]
                 }],
-                [{ a: 'a' }, false, null, {
+                [{ a: 'a' }, false, {
                     message: '"a" must be a number',
                     details: [{
                         message: '"a" must be a number',
@@ -1825,7 +1825,7 @@ describe('any', () => {
                 }],
                 [{}, true],
                 [{ b: undefined }, true],
-                [{ b: null }, false, null, {
+                [{ b: null }, false, {
                     message: '"b" is not allowed',
                     details: [{
                         message: '"b" is not allowed',
@@ -2137,7 +2137,7 @@ describe('any', () => {
 
             Helper.validate(Joi.not(5), [
                 [4, true],
-                [5, false, null, {
+                [5, false, {
                     message: '"value" contains an invalid value',
                     details: [{
                         message: '"value" contains an invalid value',
@@ -2195,7 +2195,7 @@ describe('any', () => {
             }).prefs({ presence: 'required' });
 
             Helper.validate(schema, [
-                [{ a: 5 }, false, null, {
+                [{ a: 5 }, false, {
                     message: '"b" is required',
                     details: [{
                         message: '"b" is required',
@@ -2204,7 +2204,7 @@ describe('any', () => {
                         context: { label: 'b', key: 'b' }
                     }]
                 }],
-                [{ a: 5, b: 6 }, false, null, {
+                [{ a: 5, b: 6 }, false, {
                     message: '"c" is required',
                     details: [{
                         message: '"c" is required',
@@ -2213,7 +2213,7 @@ describe('any', () => {
                         context: { label: 'c', key: 'c' }
                     }]
                 }],
-                [{ a: 5, b: 6, c: {} }, false, null, {
+                [{ a: 5, b: 6, c: {} }, false, {
                     message: '"c.d" is required',
                     details: [{
                         message: '"c.d" is required',
@@ -2223,7 +2223,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 5, b: 6, c: { d: 7 } }, true],
-                [{}, false, null, {
+                [{}, false, {
                     message: '"a" is required',
                     details: [{
                         message: '"a" is required',
@@ -2232,7 +2232,7 @@ describe('any', () => {
                         context: { label: 'a', key: 'a' }
                     }]
                 }],
-                [{ b: 5 }, false, null, {
+                [{ b: 5 }, false, {
                     message: '"a" is required',
                     details: [{
                         message: '"a" is required',
@@ -2488,7 +2488,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
-                [{ array: ['1'] }, false, null, {
+                [{ array: ['1'] }, false, {
                     message: '"array[0]" does not match any of the allowed types',
                     details: [{
                         message: '"array[0]" does not match any of the allowed types',
@@ -2499,7 +2499,7 @@ describe('any', () => {
                 }],
                 [{ array: [3] }, true],
                 [{ array: ['12345', 3] }, true],
-                [{ array: ['3'] }, false, null, {
+                [{ array: ['3'] }, false, {
                     message: '"array[0]" does not match any of the allowed types',
                     details: [{
                         message: '"array[0]" does not match any of the allowed types',
@@ -2509,7 +2509,7 @@ describe('any', () => {
                     }]
 
                 }],
-                [{ array: [1] }, false, null, {
+                [{ array: [1] }, false, {
                     message: '"array[0]" does not match any of the allowed types',
                     details: [{
                         message: '"array[0]" does not match any of the allowed types',
@@ -2530,7 +2530,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ array: ['12345'] }, true],
-                [{ array: ['1'] }, false, null, {
+                [{ array: ['1'] }, false, {
                     message: '"array[0]" does not match any of the allowed types',
                     details: [{
                         message: '"array[0]" does not match any of the allowed types',
@@ -2542,7 +2542,7 @@ describe('any', () => {
                 [{ array: [3] }, true],
                 [{ array: ['12345', 3] }, true],
                 [{ array: ['3'] }, true],
-                [{ array: [1] }, false, null, {
+                [{ array: [1] }, false, {
                     message: '"array[0]" does not match any of the allowed types',
                     details: [{
                         message: '"array[0]" does not match any of the allowed types',
@@ -2999,7 +2999,7 @@ describe('any', () => {
                 [{ c: 101 }, true],
                 [{ a: true, c: 0 }, true],
                 [{ a: true, c: 100 }, true],
-                [{ a: true, c: 101 }, false, null, {
+                [{ a: true, c: 101 }, false, {
                     message: '"c" must be less than or equal to 100',
                     details: [{
                         message: '"c" must be less than or equal to 100',
@@ -3011,7 +3011,7 @@ describe('any', () => {
                 [{ b: true, c: 10 }, true],
                 [{ b: true, c: 50 }, true],
                 [{ b: true, c: 101 }, true],
-                [{ b: true, c: 0 }, false, null, {
+                [{ b: true, c: 0 }, false, {
                     message: '"c" must be larger than or equal to 10',
                     details: [{
                         message: '"c" must be larger than or equal to 10',
@@ -3023,7 +3023,7 @@ describe('any', () => {
                 [{ a: true, b: true, c: 10 }, true],
                 [{ a: true, b: true, c: 100 }, true],
                 [{ a: true, b: true, c: 50 }, true],
-                [{ a: true, b: true, c: 0 }, false, null, {
+                [{ a: true, b: true, c: 0 }, false, {
                     message: '"c" must be larger than or equal to 10',
                     details: [{
                         message: '"c" must be larger than or equal to 10',
@@ -3032,7 +3032,7 @@ describe('any', () => {
                         context: { value: 0, label: 'c', key: 'c', limit: 10 }
                     }]
                 }],
-                [{ a: true, b: true, c: 101 }, false, null, {
+                [{ a: true, b: true, c: 101 }, false, {
                     message: '"c" must be less than or equal to 100',
                     details: [{
                         message: '"c" must be less than or equal to 100',
@@ -3059,7 +3059,7 @@ describe('any', () => {
                 [{ c: 1 }, true],
                 [{ c: 2 }, true],
                 [{ a: true, c: 1 }, true],
-                [{ a: true, c: 2 }, false, null, {
+                [{ a: true, c: 2 }, false, {
                     message: '"c" must be [1]',
                     details: [{
                         message: '"c" must be [1]',
@@ -3069,7 +3069,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ b: true, c: 2 }, true],
-                [{ b: true, c: 1 }, false, null, {
+                [{ b: true, c: 1 }, false, {
                     message: '"c" must be [2]',
                     details: [{
                         message: '"c" must be [2]',
@@ -3079,7 +3079,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: true, b: true, c: 2 }, true],
-                [{ a: true, b: true, c: 1 }, false, null, {
+                [{ a: true, b: true, c: 1 }, false, {
                     message: '"c" must be [2]',
                     details: [{
                         message: '"c" must be [2]',
@@ -3106,7 +3106,7 @@ describe('any', () => {
                 [{ c: 1 }, true],
                 [{ c: 2 }, true],
                 [{ a: true, c: 1 }, true],
-                [{ a: true, c: 2 }, false, null, {
+                [{ a: true, c: 2 }, false, {
                     message: '"c" must be [1]',
                     details: [{
                         message: '"c" must be [1]',
@@ -3116,7 +3116,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ b: true, c: 2 }, true],
-                [{ b: true, c: 1 }, false, null, {
+                [{ b: true, c: 1 }, false, {
                     message: '"c" must be [2]',
                     details: [{
                         message: '"c" must be [2]',
@@ -3126,7 +3126,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: true, b: true, c: 2 }, true],
-                [{ a: true, b: true, c: 1 }, false, null, {
+                [{ a: true, b: true, c: 1 }, false, {
                     message: '"c" must be [2]',
                     details: [{
                         message: '"c" must be [2]',
@@ -3149,7 +3149,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ b: 2 }, true],
                 [{ a: 1, b: 1 }, true],
-                [{ b: 1 }, false, null, {
+                [{ b: 1 }, false, {
                     message: '"b" must be [2]',
                     details: [{
                         message: '"b" must be [2]',
@@ -3158,7 +3158,7 @@ describe('any', () => {
                         context: { value: 1, label: 'b', key: 'b', valids: [2] }
                     }]
                 }],
-                [{ a: 0, b: 1 }, false, null, {
+                [{ a: 0, b: 1 }, false, {
                     message: '"b" must be [2]',
                     details: [{
                         message: '"b" must be [2]',
@@ -3167,7 +3167,7 @@ describe('any', () => {
                         context: { value: 1, label: 'b', key: 'b', valids: [2] }
                     }]
                 }],
-                [{ a: '', b: 1 }, false, null, {
+                [{ a: '', b: 1 }, false, {
                     message: '"b" must be [2]',
                     details: [{
                         message: '"b" must be [2]',
@@ -3176,7 +3176,7 @@ describe('any', () => {
                         context: { value: 1, label: 'b', key: 'b', valids: [2] }
                     }]
                 }],
-                [{ a: false, b: 1 }, false, null, {
+                [{ a: false, b: 1 }, false, {
                     message: '"b" must be [2]',
                     details: [{
                         message: '"b" must be [2]',
@@ -3185,7 +3185,7 @@ describe('any', () => {
                         context: { value: 1, label: 'b', key: 'b', valids: [2] }
                     }]
                 }],
-                [{ a: null, b: 1 }, false, null, {
+                [{ a: null, b: 1 }, false, {
                     message: '"b" must be [2]',
                     details: [{
                         message: '"b" must be [2]',
@@ -3207,7 +3207,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, true],
-                [{ a: 5, b: 'z' }, false, null, {
+                [{ a: 5, b: 'z' }, false, {
                     message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
@@ -3217,7 +3217,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 'x' }, true],
-                [{ a: 1, b: 'y' }, false, null, {
+                [{ a: 1, b: 'y' }, false, {
                     message: '"b" must be one of [x, z]',
                     details: [{
                         message: '"b" must be one of [x, z]',
@@ -3227,7 +3227,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 'z' }, true],
-                [{ a: 5, b: 'a' }, false, null, {
+                [{ a: 5, b: 'a' }, false, {
                     message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
@@ -3236,7 +3236,7 @@ describe('any', () => {
                         context: { value: 'a', valids: ['x', 'y'], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ b: 'a' }, false, null, {
+                [{ b: 'a' }, false, {
                     message: '"b" must be one of [x, z]',
                     details: [{
                         message: '"b" must be one of [x, z]',
@@ -3258,7 +3258,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, true],
-                [{ a: 5, b: 'z' }, false, null, {
+                [{ a: 5, b: 'z' }, false, {
                     message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
@@ -3268,7 +3268,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 'x' }, true],
-                [{ a: 1, b: 'y' }, false, null, {
+                [{ a: 1, b: 'y' }, false, {
                     message: '"b" must be [x]',
                     details: [{
                         message: '"b" must be [x]',
@@ -3277,7 +3277,7 @@ describe('any', () => {
                         context: { value: 'y', valids: ['x'], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ a: 1, b: 'z' }, false, null, {
+                [{ a: 1, b: 'z' }, false, {
                     message: '"b" must be [x]',
                     details: [{
                         message: '"b" must be [x]',
@@ -3286,7 +3286,7 @@ describe('any', () => {
                         context: { value: 'z', valids: ['x'], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ a: 5, b: 'a' }, false, null, {
+                [{ a: 5, b: 'a' }, false, {
                     message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
@@ -3295,7 +3295,7 @@ describe('any', () => {
                         context: { value: 'a', valids: ['x', 'y'], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ b: 'a' }, false, null, {
+                [{ b: 'a' }, false, {
                     message: '"b" must be [x]',
                     details: [{
                         message: '"b" must be [x]',
@@ -3316,7 +3316,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
-                [{ a: 5, b: 'y' }, false, null, {
+                [{ a: 5, b: 'y' }, false, {
                     message: '"b" must be [x]',
                     details: [{
                         message: '"b" must be [x]',
@@ -3325,7 +3325,7 @@ describe('any', () => {
                         context: { value: 'y', valids: ['x'], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ a: 5, b: 'z' }, false, null, {
+                [{ a: 5, b: 'z' }, false, {
                     message: '"b" must be [x]',
                     details: [{
                         message: '"b" must be [x]',
@@ -3335,7 +3335,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 'x' }, true],
-                [{ a: 1, b: 'y' }, false, null, {
+                [{ a: 1, b: 'y' }, false, {
                     message: '"b" must be one of [x, z]',
                     details: [{
                         message: '"b" must be one of [x, z]',
@@ -3345,7 +3345,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 'z' }, true],
-                [{ a: 5, b: 'a' }, false, null, {
+                [{ a: 5, b: 'a' }, false, {
                     message: '"b" must be [x]',
                     details: [{
                         message: '"b" must be [x]',
@@ -3354,7 +3354,7 @@ describe('any', () => {
                         context: { value: 'a', valids: ['x'], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ b: 'a' }, false, null, {
+                [{ b: 'a' }, false, {
                     message: '"b" must be one of [x, z]',
                     details: [{
                         message: '"b" must be one of [x, z]',
@@ -3376,7 +3376,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: 5, b: 'x' }, true],
                 [{ a: 5, b: 'y' }, true],
-                [{ a: 5, b: 'z' }, false, null, {
+                [{ a: 5, b: 'z' }, false, {
                     message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
@@ -3386,7 +3386,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 'x' }, true],
-                [{ a: 1, b: 'y' }, false, null, {
+                [{ a: 1, b: 'y' }, false, {
                     message: '"b" must be [x]',
                     details: [{
                         message: '"b" must be [x]',
@@ -3395,7 +3395,7 @@ describe('any', () => {
                         context: { value: 'y', valids: ['x'], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ a: 1, b: 'z' }, false, null, {
+                [{ a: 1, b: 'z' }, false, {
                     message: '"b" must be [x]',
                     details: [{
                         message: '"b" must be [x]',
@@ -3404,7 +3404,7 @@ describe('any', () => {
                         context: { value: 'z', valids: ['x'], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ a: 5, b: 'a' }, false, null, {
+                [{ a: 5, b: 'a' }, false, {
                     message: '"b" must be one of [x, y]',
                     details: [{
                         message: '"b" must be one of [x, y]',
@@ -3413,7 +3413,7 @@ describe('any', () => {
                         context: { value: 'a', valids: ['x', 'y'], label: 'b', key: 'b' }
                     }]
                 }],
-                [{ b: 'a' }, false, null, {
+                [{ b: 'a' }, false, {
                     message: '"b" must be [x]',
                     details: [{
                         message: '"b" must be [x]',
@@ -3433,7 +3433,7 @@ describe('any', () => {
             });
 
             Helper.validate(schema, [
-                [{ b: 5 }, false, null, {
+                [{ b: 5 }, false, {
                     message: '"a" is required',
                     details: [{
                         message: '"a" is required',
@@ -3457,7 +3457,7 @@ describe('any', () => {
             });
 
             Helper.validate(schema, [
-                [{ b: 5, c: 5 }, false, null, {
+                [{ b: 5, c: 5 }, false, {
                     message: '"a" is required',
                     details: [{
                         message: '"a" is required',
@@ -3484,7 +3484,7 @@ describe('any', () => {
             });
 
             Helper.validate(schema, [
-                [{ b: 5, c: 5 }, false, null, {
+                [{ b: 5, c: 5 }, false, {
                     message: '"a" is required',
                     details: [{
                         message: '"a" is required',
@@ -3513,7 +3513,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: true, b: true, c: 1 }, true],
                 [{ a: false, b: true, c: 2 }, true],
-                [{ a: false, b: true, c: 1 }, false, null, {
+                [{ a: false, b: true, c: 1 }, false, {
                     message: '"c" must be [2]',
                     details: [{
                         message: '"c" must be [2]',
@@ -3538,7 +3538,7 @@ describe('any', () => {
             Helper.validate(schema, [
                 [{ a: true, b: true, c: 1 }, true],
                 [{ a: false, b: true, c: 2 }, true],
-                [{ a: false, b: true, c: 1 }, false, null, {
+                [{ a: false, b: true, c: 1 }, false, {
                     message: '"c" must be [2]',
                     details: [{
                         message: '"c" must be [2]',
@@ -3622,7 +3622,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: 0, b: 1 }, true],
-                [{ a: 0, b: 2 }, false, null, {
+                [{ a: 0, b: 2 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -3632,7 +3632,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 2 }, true],
-                [{ a: 1, b: 3 }, false, null, {
+                [{ a: 1, b: 3 }, false, {
                     message: '"b" must be [2]',
                     details: [{
                         message: '"b" must be [2]',
@@ -3642,7 +3642,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 2, b: 3 }, true],
-                [{ a: 2, b: 4 }, false, null, {
+                [{ a: 2, b: 4 }, false, {
                     message: '"b" must be [3]',
                     details: [{
                         message: '"b" must be [3]',
@@ -3672,7 +3672,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: 0, b: 1 }, true],
-                [{ a: 0, b: 2 }, false, null, {
+                [{ a: 0, b: 2 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -3682,7 +3682,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 2 }, true],
-                [{ a: 1, b: 3 }, false, null, {
+                [{ a: 1, b: 3 }, false, {
                     message: '"b" must be [2]',
                     details: [{
                         message: '"b" must be [2]',
@@ -3692,7 +3692,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 2, b: 3 }, true],
-                [{ a: 2, b: 2 }, false, null, {
+                [{ a: 2, b: 2 }, false, {
                     message: '"b" must be [3]',
                     details: [{
                         message: '"b" must be [3]',
@@ -3702,7 +3702,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 42, b: 4 }, true],
-                [{ a: 42, b: 128 }, false, null, {
+                [{ a: 42, b: 128 }, false, {
                     message: '"b" must be [4]',
                     details: [{
                         message: '"b" must be [4]',
@@ -3728,7 +3728,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: 0, b: 1 }, true],
-                [{ a: 0, b: 2 }, false, null, {
+                [{ a: 0, b: 2 }, false, {
                     message: '"b" must be [1]',
                     details: [{
                         message: '"b" must be [1]',
@@ -3738,7 +3738,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 1, b: 2 }, true],
-                [{ a: 1, b: 3 }, false, null, {
+                [{ a: 1, b: 3 }, false, {
                     message: '"b" must be [2]',
                     details: [{
                         message: '"b" must be [2]',
@@ -3748,7 +3748,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 2, b: 3 }, true],
-                [{ a: 2, b: 2 }, false, null, {
+                [{ a: 2, b: 2 }, false, {
                     message: '"b" must be [3]',
                     details: [{
                         message: '"b" must be [3]',
@@ -3758,7 +3758,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 42, b: 4 }, true],
-                [{ a: 42, b: 128 }, false, null, {
+                [{ a: 42, b: 128 }, false, {
                     message: '"b" must be [4]',
                     details: [{
                         message: '"b" must be [4]',
@@ -3784,7 +3784,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: 0, b: 1 }, true],
-                [{ a: 0, b: 2 }, false, null, {
+                [{ a: 0, b: 2 }, false, {
                     message: '"b" must be one of [10, 1]',
                     details: [{
                         message: '"b" must be one of [10, 1]',
@@ -3795,7 +3795,7 @@ describe('any', () => {
                 }],
                 [{ a: 0, b: 10 }, true],
                 [{ a: 1, b: 2 }, true],
-                [{ a: 1, b: 3 }, false, null, {
+                [{ a: 1, b: 3 }, false, {
                     message: '"b" must be one of [10, 2]',
                     details: [{
                         message: '"b" must be one of [10, 2]',
@@ -3806,7 +3806,7 @@ describe('any', () => {
                 }],
                 [{ a: 1, b: 10 }, true],
                 [{ a: 2, b: 3 }, true],
-                [{ a: 2, b: 4 }, false, null, {
+                [{ a: 2, b: 4 }, false, {
                     message: '"b" must be one of [10, 3]',
                     details: [{
                         message: '"b" must be one of [10, 3]',
@@ -3816,7 +3816,7 @@ describe('any', () => {
                     }]
                 }],
                 [{ a: 2, b: 10 }, true],
-                [{ a: 42, b: 128 }, false, null, {
+                [{ a: 42, b: 128 }, false, {
                     message: '"b" must be [10]',
                     details: [{
                         message: '"b" must be [10]',
@@ -3863,7 +3863,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: true, b: 'x' }, true],
-                [{ a: true, b: 5 }, false, null, {
+                [{ a: true, b: 5 }, false, {
                     message: '"b" must be a string',
                     details: [{
                         message: '"b" must be a string',
@@ -3872,7 +3872,7 @@ describe('any', () => {
                         context: { value: 5, key: 'b', label: 'b' }
                     }]
                 }],
-                [{ a: true }, false, null, {
+                [{ a: true }, false, {
                     message: '"b" is required',
                     details: [{
                         message: '"b" is required',
@@ -3881,7 +3881,7 @@ describe('any', () => {
                         context: { key: 'b', label: 'b' }
                     }]
                 }],
-                [{ a: true, c: 5 }, false, null, {
+                [{ a: true, c: 5 }, false, {
                     message: '"b" is required',
                     details: [{
                         message: '"b" is required',
@@ -3890,7 +3890,7 @@ describe('any', () => {
                         context: { key: 'b', label: 'b' }
                     }]
                 }],
-                [{ a: true, c: 'x' }, false, null, {
+                [{ a: true, c: 'x' }, false, {
                     message: '"b" is required',
                     details: [{
                         message: '"b" is required',
@@ -3900,7 +3900,7 @@ describe('any', () => {
                     }]
                 }],
 
-                [{ a: false, b: 'x' }, false, null, {
+                [{ a: false, b: 'x' }, false, {
                     message: '"c" is required',
                     details: [{
                         message: '"c" is required',
@@ -3909,7 +3909,7 @@ describe('any', () => {
                         context: { key: 'c', label: 'c' }
                     }]
                 }],
-                [{ a: false, b: 5 }, false, null, {
+                [{ a: false, b: 5 }, false, {
                     message: '"c" is required',
                     details: [{
                         message: '"c" is required',
@@ -3918,7 +3918,7 @@ describe('any', () => {
                         context: { key: 'c', label: 'c' }
                     }]
                 }],
-                [{ a: false }, false, null, {
+                [{ a: false }, false, {
                     message: '"c" is required',
                     details: [{
                         message: '"c" is required',
@@ -3927,7 +3927,7 @@ describe('any', () => {
                         context: { key: 'c', label: 'c' }
                     }]
                 }],
-                [{ a: false, c: 5 }, false, null, {
+                [{ a: false, c: 5 }, false, {
                     message: '"c" must be a string',
                     details: [{
                         message: '"c" must be a string',
@@ -3957,7 +3957,7 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: true, b: 'x' }, true],
-                [{ a: true, b: 5 }, false, null, {
+                [{ a: true, b: 5 }, false, {
                     message: '"b" must be a string',
                     details: [{
                         message: '"b" must be a string',
@@ -3966,7 +3966,7 @@ describe('any', () => {
                         context: { value: 5, key: 'b', label: 'b' }
                     }]
                 }],
-                [{ a: true }, false, null, {
+                [{ a: true }, false, {
                     message: '"b" is required',
                     details: [{
                         message: '"b" is required',
@@ -3975,7 +3975,7 @@ describe('any', () => {
                         context: { key: 'b', label: 'b' }
                     }]
                 }],
-                [{ a: true, c: 5 }, false, null, {
+                [{ a: true, c: 5 }, false, {
                     message: '"b" is required',
                     details: [{
                         message: '"b" is required',
@@ -3984,7 +3984,7 @@ describe('any', () => {
                         context: { key: 'b', label: 'b' }
                     }]
                 }],
-                [{ a: true, c: 'x' }, false, null, {
+                [{ a: true, c: 'x' }, false, {
                     message: '"b" is required',
                     details: [{
                         message: '"b" is required',
@@ -3994,7 +3994,7 @@ describe('any', () => {
                     }]
                 }],
 
-                [{ a: false, b: 'x' }, false, null, {
+                [{ a: false, b: 'x' }, false, {
                     message: '"c" is required',
                     details: [{
                         message: '"c" is required',
@@ -4003,7 +4003,7 @@ describe('any', () => {
                         context: { key: 'c', label: 'c' }
                     }]
                 }],
-                [{ a: false, b: 5 }, false, null, {
+                [{ a: false, b: 5 }, false, {
                     message: '"c" is required',
                     details: [{
                         message: '"c" is required',
@@ -4012,7 +4012,7 @@ describe('any', () => {
                         context: { key: 'c', label: 'c' }
                     }]
                 }],
-                [{ a: false }, false, null, {
+                [{ a: false }, false, {
                     message: '"c" is required',
                     details: [{
                         message: '"c" is required',
@@ -4021,7 +4021,7 @@ describe('any', () => {
                         context: { key: 'c', label: 'c' }
                     }]
                 }],
-                [{ a: false, c: 5 }, false, null, {
+                [{ a: false, c: 5 }, false, {
                     message: '"c" must be a string',
                     details: [{
                         message: '"c" must be a string',
@@ -4059,7 +4059,7 @@ describe('any', () => {
                 [{ a: 0, b: 1, c: 456 }, true],
                 [{ a: 0, b: 0, c: 789 }, true],
                 [{ a: 123, b: 456, c: 456 }, true],
-                [{ a: 0, b: 0, c: 456 }, false, null, {
+                [{ a: 0, b: 0, c: 456 }, false, {
                     message: '"c" must be [789]',
                     details: [{
                         message: '"c" must be [789]',
@@ -4068,7 +4068,7 @@ describe('any', () => {
                         context: { value: 456, valids: [789], label: 'c', key: 'c' }
                     }]
                 }],
-                [{ a: 123, b: 456, c: 789 }, false, null, {
+                [{ a: 123, b: 456, c: 789 }, false, {
                     message: '"c" must be [456]',
                     details: [{
                         message: '"c" must be [456]',
@@ -4097,8 +4097,8 @@ describe('any', () => {
 
                 const schema = Joi.number().when(Joi.number().min(0), { then: Joi.number().min(10) });
                 Helper.validate(schema, [
-                    [-1, true, null, -1],
-                    [1, false, null, {
+                    [-1, true, -1],
+                    [1, false, {
                         message: '"value" must be larger than or equal to 10',
                         details: [{
                             message: '"value" must be larger than or equal to 10',
@@ -4107,7 +4107,7 @@ describe('any', () => {
                             context: { limit: 10, value: 1, label: 'value' }
                         }]
                     }],
-                    [10, true, null, 10]
+                    [10, true, 10]
                 ]);
             });
 
@@ -4122,8 +4122,8 @@ describe('any', () => {
                     });
 
                 Helper.validate(schema, [
-                    [{ foo: 'whatever' }, true, null, { foo: 'whatever' }],
-                    [{ foo: 'hasBar' }, false, null, {
+                    [{ foo: 'whatever' }, true, { foo: 'whatever' }],
+                    [{ foo: 'hasBar' }, false, {
                         message: '"bar" is required',
                         details: [{
                             message: '"bar" is required',
@@ -4132,8 +4132,8 @@ describe('any', () => {
                             context: { key: 'bar', label: 'bar' }
                         }]
                     }],
-                    [{ foo: 'hasBar', bar: 42 }, true, null, { foo: 'hasBar', bar: 42 }],
-                    [{}, true, null, {}]
+                    [{ foo: 'hasBar', bar: 42 }, true, { foo: 'hasBar', bar: 42 }],
+                    [{}, true, {}]
                 ]);
             });
         });

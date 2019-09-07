@@ -137,7 +137,7 @@ describe('extension', () => {
 
         const schema = custom.special();
         Helper.validate(schema, [
-            [123, false, null, {
+            [123, false, {
                 message: '"value" must be a string',
                 details: [{
                     message: '"value" must be a string',
@@ -146,7 +146,7 @@ describe('extension', () => {
                     context: { value: 123, label: 'value' }
                 }]
             }],
-            ['a', false, null, {
+            ['a', false, {
                 message: '"value" length must be at least 2 characters long',
                 details: [{
                     message: '"value" length must be at least 2 characters long',
@@ -180,7 +180,7 @@ describe('extension', () => {
 
         const schema = custom.special(2);
         Helper.validate(schema, [
-            [123, false, null, {
+            [123, false, {
                 message: '"value" must be a string',
                 details: [{
                     message: '"value" must be a string',
@@ -189,7 +189,7 @@ describe('extension', () => {
                     context: { value: 123, label: 'value' }
                 }]
             }],
-            ['a', false, null, {
+            ['a', false, {
                 message: '"value" length must be at least 2 characters long',
                 details: [{
                     message: '"value" length must be at least 2 characters long',
@@ -222,7 +222,7 @@ describe('extension', () => {
             [undefined, true],
             [{}, true],
             [{ a: 1 }, true],
-            [{ a: 'a' }, false, null, {
+            [{ a: 'a' }, false, {
                 message: '"a" must be a number',
                 details: [{
                     message: '"a" must be a number',
@@ -253,7 +253,7 @@ describe('extension', () => {
             [undefined, true],
             [{}, true],
             [{ a: 1 }, true],
-            [{ a: 'a' }, false, null, {
+            [{ a: 'a' }, false, {
                 message: '"a" must be a number',
                 details: [{
                     message: '"a" must be a number',
@@ -284,7 +284,7 @@ describe('extension', () => {
             [undefined, true],
             [1, true],
             ['1', true],
-            [{}, false, null, {
+            [{}, false, {
                 message: '"value" must be a number',
                 details: [{
                     message: '"value" must be a number',
@@ -315,7 +315,7 @@ describe('extension', () => {
             [undefined, true],
             [true, true],
             [false, true],
-            [{}, false, null, {
+            [{}, false, {
                 message: '"value" must be a boolean',
                 details: [{
                     message: '"value" must be a boolean',
@@ -1169,8 +1169,8 @@ describe('extension', () => {
 
         Helper.validate(schema, [
             [{ a: 3000000, b: 3 }, true],
-            [{ a: 1000000.1, b: 10 }, true, null, { a: 1000000, b: 10 }],
-            [{ a: 3000, b: 3 }, false, null, {
+            [{ a: 1000000.1, b: 10 }, true, { a: 1000000, b: 10 }],
+            [{ a: 3000, b: 3 }, false, {
                 message: '"a" must be at least a million',
                 key: 'a',
                 details: [{
@@ -1181,7 +1181,7 @@ describe('extension', () => {
                 }]
             }],
             [{ c: 14000000 }, true],
-            [{ c: 1000000 }, false, null, {
+            [{ c: 1000000 }, false, {
                 message: '"c" must be dividable by 7',
                 key: 'c',
                 details: [{
@@ -1191,7 +1191,7 @@ describe('extension', () => {
                     context: { value: 1000000, label: 'c', key: 'c', q: 7 }
                 }]
             }],
-            [{ d: 1000000.1 }, false, null, {
+            [{ d: 1000000.1 }, false, {
                 message: '"d" must be a round number',
                 key: 'd',
                 details: [{
@@ -1202,7 +1202,7 @@ describe('extension', () => {
                 }]
             }],
             [{ e: 6000000 }, true],
-            [{ e: 1000000 }, false, null, {
+            [{ e: 1000000 }, false, {
                 message: '"e" must be at least five millions',
                 key: 'e',
                 details: [{
@@ -1259,7 +1259,7 @@ describe('extension', () => {
 
         Helper.validate(schema, [
             [{ a: 30, b: 3 }, true],
-            [{ a: 30 }, false, null, {
+            [{ a: 30 }, false, {
                 message: '"a" q references "ref:b" which "q" is required',
                 key: 'a',
                 details: [{

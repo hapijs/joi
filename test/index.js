@@ -24,7 +24,7 @@ describe('Joi', () => {
         Helper.validate(a, [
             ['a', true],
             ['b', true],
-            [5, false, null, {
+            [5, false, {
                 message: '"value" must be a string',
                 details: [{
                     message: '"value" must be a string',
@@ -36,7 +36,7 @@ describe('Joi', () => {
         ]);
 
         Helper.validate(b, [
-            ['a', false, null, {
+            ['a', false, {
                 message: '"value" must be [b]',
                 details: [{
                     message: '"value" must be [b]',
@@ -46,7 +46,7 @@ describe('Joi', () => {
                 }]
             }],
             ['b', true],
-            [5, false, null, {
+            [5, false, {
                 message: '"value" must be [b]',
                 details: [{
                     message: '"value" must be [b]',
@@ -64,7 +64,7 @@ describe('Joi', () => {
         Helper.validate(schema, [
             ['key', true],
             [5, true],
-            ['other', false, null, {
+            ['other', false, {
                 message: '"value" must be one of [key, 5, object]',
                 details: [
                     {
@@ -79,7 +79,7 @@ describe('Joi', () => {
                     }
                 ]
             }],
-            [6, false, null, {
+            [6, false, {
                 message: '"value" must be one of [key, 5, object]',
                 details: [
                     {
@@ -94,7 +94,7 @@ describe('Joi', () => {
                     }
                 ]
             }],
-            [{ c: 5 }, false, null, {
+            [{ c: 5 }, false, {
                 message: '"c" is not allowed',
                 details: [
                     {
@@ -108,7 +108,7 @@ describe('Joi', () => {
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
-            [{ a: 5, b: 'a' }, false, null, {
+            [{ a: 5, b: 'a' }, false, {
                 message: '"a" must be [true]',
                 details: [
                     {
@@ -157,7 +157,7 @@ describe('Joi', () => {
 
         Helper.validate(schema, [
             [{ auth: { mode: 'try' } }, true],
-            [{ something: undefined }, false, null, {
+            [{ something: undefined }, false, {
                 message: '"something" is not allowed',
                 details: [{
                     message: '"something" is not allowed',
@@ -166,7 +166,7 @@ describe('Joi', () => {
                     context: { child: 'something', label: 'something', key: 'something' }
                 }]
             }],
-            [{ auth: { something: undefined } }, false, null, {
+            [{ auth: { something: undefined } }, false, {
                 message: '"auth.something" is not allowed',
                 details: [
                     {
@@ -181,7 +181,7 @@ describe('Joi', () => {
             [{ auth: undefined }, true],
             [{}, true],
             [{ auth: true }, true],
-            [{ auth: 123 }, false, null, {
+            [{ auth: 123 }, false, {
                 message: '"auth" must be one of [object, string, boolean]',
                 details: [
                     {
@@ -212,7 +212,7 @@ describe('Joi', () => {
 
         Helper.validate(schema, [
             [{ auth: { mode: 'try' } }, true],
-            [{ something: undefined }, false, null, {
+            [{ something: undefined }, false, {
                 message: '"something" is not allowed',
                 details: [{
                     message: '"something" is not allowed',
@@ -221,7 +221,7 @@ describe('Joi', () => {
                     context: { child: 'something', label: 'something', key: 'something' }
                 }]
             }],
-            [{ auth: { something: undefined } }, false, null, {
+            [{ auth: { something: undefined } }, false, {
                 message: '"auth.something" is not allowed',
                 details: [
                     {
@@ -236,7 +236,7 @@ describe('Joi', () => {
             [{ auth: undefined }, true],
             [{}, true],
             [{ auth: true }, true],
-            [{ auth: 123 }, false, null, {
+            [{ auth: 123 }, false, {
                 message: '"auth" must be one of [object, string, boolean]',
                 details: [
                     {
@@ -260,7 +260,7 @@ describe('Joi', () => {
         });
 
         Helper.validate(schema, [
-            [{ a: null }, false, null, {
+            [{ a: null }, false, {
                 message: '"a" must be one of [string, boolean]',
                 details: [
                     {
@@ -275,7 +275,7 @@ describe('Joi', () => {
             [{}, true],
             [{ a: true }, true],
             [{ a: 'true' }, true],
-            [{ a: 123 }, false, null, {
+            [{ a: 123 }, false, {
                 message: '"a" must be one of [string, boolean]',
                 details: [
                     {
@@ -286,7 +286,7 @@ describe('Joi', () => {
                     }
                 ]
             }],
-            [{ a: { c: 1 } }, false, null, {
+            [{ a: { c: 1 } }, false, {
                 message: '"a" must be one of [string, boolean]',
                 details: [
                     {
@@ -297,7 +297,7 @@ describe('Joi', () => {
                     }
                 ]
             }],
-            [{ b: undefined }, false, null, {
+            [{ b: undefined }, false, {
                 message: '"b" is not allowed',
                 details: [{
                     message: '"b" is not allowed',
@@ -319,7 +319,7 @@ describe('Joi', () => {
         });
 
         Helper.validate(schema, [
-            [{ a: null }, false, null, {
+            [{ a: null }, false, {
                 message: '"a" must be one of [string, boolean]',
                 details: [
                     {
@@ -334,7 +334,7 @@ describe('Joi', () => {
             [{}, true],
             [{ a: true }, true],
             [{ a: 'true' }, true],
-            [{ a: 123 }, false, null, {
+            [{ a: 123 }, false, {
                 message: '"a" must be one of [string, boolean]',
                 details: [
                     {
@@ -345,7 +345,7 @@ describe('Joi', () => {
                     }
                 ]
             }],
-            [{ a: { c: 1 } }, false, null, {
+            [{ a: { c: 1 } }, false, {
                 message: '"a" must be one of [string, boolean]',
                 details: [
                     {
@@ -356,7 +356,7 @@ describe('Joi', () => {
                     }
                 ]
             }],
-            [{ b: undefined }, false, null, {
+            [{ b: undefined }, false, {
                 message: '"b" is not allowed',
                 details: [{
                     message: '"b" is not allowed',
@@ -376,7 +376,7 @@ describe('Joi', () => {
 
         Helper.validate(schema, [
             [{ brand: ['amex'] }, true],
-            [{ brand: ['visa', 'mc'] }, false, null, {
+            [{ brand: ['visa', 'mc'] }, false, {
                 message: '"brand[1]" must be one of [amex, visa]',
                 details: [{
                     message: '"brand[1]" must be one of [amex, visa]',
@@ -430,7 +430,7 @@ describe('Joi', () => {
         const schema = Joi.number().invalid(5);
 
         Helper.validate(schema, [
-            [5, false, null, {
+            [5, false, {
                 message: '"value" contains an invalid value',
                 details: [{
                     message: '"value" contains an invalid value',
@@ -439,7 +439,7 @@ describe('Joi', () => {
                     context: { value: 5, invalids: [5], label: 'value' }
                 }]
             }],
-            ['5', false, null, {
+            ['5', false, {
                 message: '"value" contains an invalid value',
                 details: [{
                     message: '"value" contains an invalid value',

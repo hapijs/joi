@@ -154,7 +154,7 @@ describe('alternatives', () => {
 
             Helper.validate(schema, [
                 [{ a: 1, b: 1 }, true],
-                [{ a: 0, b: 2 }, false, null, {
+                [{ a: 0, b: 2 }, false, {
                     message: '"b" does not match any of the allowed types',
                     details: [{
                         message: '"b" does not match any of the allowed types',
@@ -178,7 +178,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5 }, true],
-                    [{ a: 'x', b: 6 }, false, null, {
+                    [{ a: 'x', b: 6 }, false, {
                         message: '"a" must be [y]',
                         details: [{
                             message: '"a" must be [y]',
@@ -187,7 +187,7 @@ describe('alternatives', () => {
                             context: { value: 'x', valids: ['y'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'y', b: 5 }, false, null, {
+                    [{ a: 'y', b: 5 }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -197,7 +197,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y', b: 6 }, true],
-                    [{ a: 'z', b: 5 }, false, null, {
+                    [{ a: 'z', b: 5 }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -206,7 +206,7 @@ describe('alternatives', () => {
                             context: { value: 'z', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'z', b: 6 }, false, null, {
+                    [{ a: 'z', b: 6 }, false, {
                         message: '"a" must be [y]',
                         details: [{
                             message: '"a" must be [y]',
@@ -235,7 +235,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: true, b: 'x' }, true],
-                    [{ a: true, b: 5 }, false, null, {
+                    [{ a: true, b: 5 }, false, {
                         message: '"b" must be a string',
                         details: [{
                             message: '"b" must be a string',
@@ -244,7 +244,7 @@ describe('alternatives', () => {
                             context: { value: 5, key: 'b', label: 'b' }
                         }]
                     }],
-                    [{ a: true }, false, null, {
+                    [{ a: true }, false, {
                         message: '"b" is required',
                         details: [{
                             message: '"b" is required',
@@ -253,7 +253,7 @@ describe('alternatives', () => {
                             context: { key: 'b', label: 'b' }
                         }]
                     }],
-                    [{ a: true, c: 5 }, false, null, {
+                    [{ a: true, c: 5 }, false, {
                         message: '"b" is required',
                         details: [{
                             message: '"b" is required',
@@ -262,7 +262,7 @@ describe('alternatives', () => {
                             context: { key: 'b', label: 'b' }
                         }]
                     }],
-                    [{ a: true, c: 'x' }, false, null, {
+                    [{ a: true, c: 'x' }, false, {
                         message: '"b" is required',
                         details: [{
                             message: '"b" is required',
@@ -272,7 +272,7 @@ describe('alternatives', () => {
                         }]
                     }],
 
-                    [{ a: false, b: 'x' }, false, null, {
+                    [{ a: false, b: 'x' }, false, {
                         message: '"c" is required',
                         details: [{
                             message: '"c" is required',
@@ -281,7 +281,7 @@ describe('alternatives', () => {
                             context: { key: 'c', label: 'c' }
                         }]
                     }],
-                    [{ a: false, b: 5 }, false, null, {
+                    [{ a: false, b: 5 }, false, {
                         message: '"c" is required',
                         details: [{
                             message: '"c" is required',
@@ -290,7 +290,7 @@ describe('alternatives', () => {
                             context: { key: 'c', label: 'c' }
                         }]
                     }],
-                    [{ a: false }, false, null, {
+                    [{ a: false }, false, {
                         message: '"c" is required',
                         details: [{
                             message: '"c" is required',
@@ -299,7 +299,7 @@ describe('alternatives', () => {
                             context: { key: 'c', label: 'c' }
                         }]
                     }],
-                    [{ a: false, c: 5 }, false, null, {
+                    [{ a: false, c: 5 }, false, {
                         message: '"c" must be a string',
                         details: [{
                             message: '"c" must be a string',
@@ -329,7 +329,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: true, b: 'x' }, true],
-                    [{ a: true, b: 5 }, false, null, {
+                    [{ a: true, b: 5 }, false, {
                         message: '"b" must be a string',
                         details: [{
                             message: '"b" must be a string',
@@ -338,7 +338,7 @@ describe('alternatives', () => {
                             context: { value: 5, key: 'b', label: 'b' }
                         }]
                     }],
-                    [{ a: true }, false, null, {
+                    [{ a: true }, false, {
                         message: '"b" is required',
                         details: [{
                             message: '"b" is required',
@@ -347,7 +347,7 @@ describe('alternatives', () => {
                             context: { key: 'b', label: 'b' }
                         }]
                     }],
-                    [{ a: true, c: 5 }, false, null, {
+                    [{ a: true, c: 5 }, false, {
                         message: '"b" is required',
                         details: [{
                             message: '"b" is required',
@@ -356,7 +356,7 @@ describe('alternatives', () => {
                             context: { key: 'b', label: 'b' }
                         }]
                     }],
-                    [{ a: true, c: 'x' }, false, null, {
+                    [{ a: true, c: 'x' }, false, {
                         message: '"b" is required',
                         details: [{
                             message: '"b" is required',
@@ -366,7 +366,7 @@ describe('alternatives', () => {
                         }]
                     }],
 
-                    [{ a: false, b: 'x' }, false, null, {
+                    [{ a: false, b: 'x' }, false, {
                         message: '"c" is required',
                         details: [{
                             message: '"c" is required',
@@ -375,7 +375,7 @@ describe('alternatives', () => {
                             context: { key: 'c', label: 'c' }
                         }]
                     }],
-                    [{ a: false, b: 5 }, false, null, {
+                    [{ a: false, b: 5 }, false, {
                         message: '"c" is required',
                         details: [{
                             message: '"c" is required',
@@ -384,7 +384,7 @@ describe('alternatives', () => {
                             context: { key: 'c', label: 'c' }
                         }]
                     }],
-                    [{ a: false }, false, null, {
+                    [{ a: false }, false, {
                         message: '"c" is required',
                         details: [{
                             message: '"c" is required',
@@ -393,7 +393,7 @@ describe('alternatives', () => {
                             context: { key: 'c', label: 'c' }
                         }]
                     }],
-                    [{ a: false, c: 5 }, false, null, {
+                    [{ a: false, c: 5 }, false, {
                         message: '"c" must be a string',
                         details: [{
                             message: '"c" must be a string',
@@ -416,7 +416,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 'x', '': 5 }, true],
-                    [{ a: 'x', '': 6 }, false, null, {
+                    [{ a: 'x', '': 6 }, false, {
                         message: '"a" must be [y]',
                         details: [{
                             message: '"a" must be [y]',
@@ -425,7 +425,7 @@ describe('alternatives', () => {
                             context: { value: 'x', valids: ['y'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'y', '': 5 }, false, null, {
+                    [{ a: 'y', '': 5 }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -435,7 +435,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'y', '': 6 }, true],
-                    [{ a: 'z', '': 5 }, false, null, {
+                    [{ a: 'z', '': 5 }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -444,7 +444,7 @@ describe('alternatives', () => {
                             context: { value: 'z', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'z', '': 6 }, false, null, {
+                    [{ a: 'z', '': 6 }, false, {
                         message: '"a" must be [y]',
                         details: [{
                             message: '"a" must be [y]',
@@ -467,7 +467,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5 }, true],
-                    [{ a: 'x', b: 6 }, false, null, {
+                    [{ a: 'x', b: 6 }, false, {
                         message: '"a" must be [z]',
                         details: [{
                             message: '"a" must be [z]',
@@ -476,7 +476,7 @@ describe('alternatives', () => {
                             context: { value: 'x', valids: ['z'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'y', b: 5 }, false, null, {
+                    [{ a: 'y', b: 5 }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -485,7 +485,7 @@ describe('alternatives', () => {
                             context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'y', b: 6 }, false, null, {
+                    [{ a: 'y', b: 6 }, false, {
                         message: '"a" must be [z]',
                         details: [{
                             message: '"a" must be [z]',
@@ -494,7 +494,7 @@ describe('alternatives', () => {
                             context: { value: 'y', valids: ['z'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'z', b: 5 }, false, null, {
+                    [{ a: 'z', b: 5 }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -517,7 +517,7 @@ describe('alternatives', () => {
                 });
 
                 Helper.validate(schema, [
-                    [{ a: 'x', b: 5 }, false, null, {
+                    [{ a: 'x', b: 5 }, false, {
                         message: '"a" must be [z]',
                         details: [{
                             message: '"a" must be [z]',
@@ -526,7 +526,7 @@ describe('alternatives', () => {
                             context: { value: 'x', valids: ['z'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'x', b: 6 }, false, null, {
+                    [{ a: 'x', b: 6 }, false, {
                         message: '"a" must be [y]',
                         details: [{
                             message: '"a" must be [y]',
@@ -535,7 +535,7 @@ describe('alternatives', () => {
                             context: { value: 'x', valids: ['y'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'y', b: 5 }, false, null, {
+                    [{ a: 'y', b: 5 }, false, {
                         message: '"a" must be [z]',
                         details: [{
                             message: '"a" must be [z]',
@@ -546,7 +546,7 @@ describe('alternatives', () => {
                     }],
                     [{ a: 'y', b: 6 }, true],
                     [{ a: 'z', b: 5 }, true],
-                    [{ a: 'z', b: 6 }, false, null, {
+                    [{ a: 'z', b: 6 }, false, {
                         message: '"a" must be [y]',
                         details: [{
                             message: '"a" must be [y]',
@@ -569,7 +569,7 @@ describe('alternatives', () => {
                 });
 
                 Helper.validate(schema, [
-                    [{ a: 1, b: 1, c: 0 }, false, null, {
+                    [{ a: 1, b: 1, c: 0 }, false, {
                         message: '"c" must be larger than or equal to 1',
                         details: [{
                             message: '"c" must be larger than or equal to 1',
@@ -593,7 +593,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 1 }, true],
-                    [{ a: 'y' }, false, null, {
+                    [{ a: 'y' }, false, {
                         message: '"a" must be a number',
                         details: [{
                             message: '"a" must be a number',
@@ -603,7 +603,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 'x', b: null }, true],
-                    [{ a: 'y', b: null }, false, null, {
+                    [{ a: 'y', b: null }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -612,7 +612,7 @@ describe('alternatives', () => {
                             context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 1, b: null }, false, null, {
+                    [{ a: 1, b: null }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -634,7 +634,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: 5, c: '5' }, true],
-                    [{ a: 'x', b: 5, c: '1' }, false, null, {
+                    [{ a: 'x', b: 5, c: '1' }, false, {
                         message: '"a" does not match any of the allowed types',
                         details: [{
                             message: '"a" does not match any of the allowed types',
@@ -643,7 +643,7 @@ describe('alternatives', () => {
                             context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
-                    [{ a: 'x', b: '5', c: '5' }, false, null, {
+                    [{ a: 'x', b: '5', c: '5' }, false, {
                         message: '"a" does not match any of the allowed types',
                         details: [{
                             message: '"a" does not match any of the allowed types',
@@ -652,7 +652,7 @@ describe('alternatives', () => {
                             context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
-                    [{ a: 'y', b: 5, c: 5 }, false, null, {
+                    [{ a: 'y', b: 5, c: 5 }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -661,7 +661,7 @@ describe('alternatives', () => {
                             context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'y' }, false, null, {
+                    [{ a: 'y' }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -685,7 +685,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: date, c: date }, true],
-                    [{ a: 'x', b: date, c: Date.now() }, false, null, {
+                    [{ a: 'x', b: date, c: Date.now() }, false, {
                         message: '"a" does not match any of the allowed types',
                         details: [{
                             message: '"a" does not match any of the allowed types',
@@ -694,7 +694,7 @@ describe('alternatives', () => {
                             context: { label: 'a', key: 'a', value: 'x' }
                         }]
                     }],
-                    [{ a: 'y', b: date, c: date }, false, null, {
+                    [{ a: 'y', b: date, c: date }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -703,7 +703,7 @@ describe('alternatives', () => {
                             context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'y' }, false, null, {
+                    [{ a: 'y' }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -735,8 +735,8 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 'x', b: date, c: date }, true],
-                    [{ a: 'x', b: date, c: now }, true, null, { a: 'x', b: date, c: new Date(now) }],
-                    [{ a: 'y', b: date, c: date }, false, null, {
+                    [{ a: 'x', b: date, c: now }, true, { a: 'x', b: date, c: new Date(now) }],
+                    [{ a: 'y', b: date, c: date }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -745,7 +745,7 @@ describe('alternatives', () => {
                             context: { value: 'y', valids: ['x'], label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ a: 'y' }, false, null, {
+                    [{ a: 'y' }, false, {
                         message: '"a" must be [x]',
                         details: [{
                             message: '"a" must be [x]',
@@ -767,7 +767,7 @@ describe('alternatives', () => {
                 });
 
                 Helper.validate(schema, [
-                    [{ a: 'x', b: 5, c: '1' }, false, null, {
+                    [{ a: 'x', b: 5, c: '1' }, false, {
                         message: '"a" must be [ref:c]',
                         details: [{
                             message: '"a" must be [ref:c]',
@@ -777,7 +777,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 1, b: 5, c: '1' }, true],
-                    [{ a: '1', b: 5, c: '1' }, false, null, {
+                    [{ a: '1', b: 5, c: '1' }, false, {
                         message: '"a" must be [ref:c]',
                         details: [{
                             message: '"a" must be [ref:c]',
@@ -799,7 +799,7 @@ describe('alternatives', () => {
                 });
 
                 Helper.validate(schema, [
-                    [{ a: 'x', b: 5, c: '1' }, false, null, {
+                    [{ a: 'x', b: 5, c: '1' }, false, {
                         message: '"a" must be [ref:c]',
                         details: [{
                             message: '"a" must be [ref:c]',
@@ -809,7 +809,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 1, b: 5, c: '1' }, true],
-                    [{ a: '1', b: 5, c: '1' }, false, null, {
+                    [{ a: '1', b: 5, c: '1' }, false, {
                         message: '"a" must be [ref:c]',
                         details: [{
                             message: '"a" must be [ref:c]',
@@ -847,7 +847,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 1 }, true],
-                    [{}, false, null, {
+                    [{}, false, {
                         message: '"a" is required',
                         details: [{
                             message: '"a" is required',
@@ -856,7 +856,7 @@ describe('alternatives', () => {
                             context: { label: 'a', key: 'a' }
                         }]
                     }],
-                    [{ b: 1 }, false, null, {
+                    [{ b: 1 }, false, {
                         message: '"a" is required',
                         details: [{
                             message: '"a" is required',
@@ -867,7 +867,7 @@ describe('alternatives', () => {
                     }],
                     [{ a: 1, b: 1 }, true],
                     [{ a: 1, b: 5 }, true],
-                    [{ b: 5 }, false, null, {
+                    [{ b: 5 }, false, {
                         message: '"a" is required',
                         details: [{
                             message: '"a" is required',
@@ -905,7 +905,7 @@ describe('alternatives', () => {
                     [{ a: 0, b: 1, c: 456 }, true],
                     [{ a: 0, b: 0, c: 789 }, true],
                     [{ a: 123, b: 456, c: 456 }, true],
-                    [{ a: 0, b: 0, c: 456 }, false, null, {
+                    [{ a: 0, b: 0, c: 456 }, false, {
                         message: '"c" must be [789]',
                         details: [{
                             message: '"c" must be [789]',
@@ -914,7 +914,7 @@ describe('alternatives', () => {
                             context: { value: 456, valids: [789], label: 'c', key: 'c' }
                         }]
                     }],
-                    [{ a: 123, b: 456, c: 789 }, false, null, {
+                    [{ a: 123, b: 456, c: 789 }, false, {
                         message: '"c" must be [456]',
                         details: [{
                             message: '"c" must be [456]',
@@ -935,8 +935,8 @@ describe('alternatives', () => {
                     .conditional(Joi.number().min(0), { then: Joi.number().min(10), otherwise: Joi.number() });
 
                 Helper.validate(schema, [
-                    [-1, true, null, -1],
-                    [1, false, null, {
+                    [-1, true, -1],
+                    [1, false, {
                         message: '"value" must be larger than or equal to 10',
                         details: [{
                             message: '"value" must be larger than or equal to 10',
@@ -945,7 +945,7 @@ describe('alternatives', () => {
                             context: { limit: 10, value: 1, label: 'value' }
                         }]
                     }],
-                    [10, true, null, 10]
+                    [10, true, 10]
                 ]);
             });
 
@@ -964,8 +964,8 @@ describe('alternatives', () => {
                     });
 
                 Helper.validate(schema, [
-                    [{ foo: 'whatever' }, true, null, { foo: 'whatever' }],
-                    [{ foo: 'hasBar' }, false, null, {
+                    [{ foo: 'whatever' }, true, { foo: 'whatever' }],
+                    [{ foo: 'hasBar' }, false, {
                         message: '"bar" is required',
                         details: [{
                             message: '"bar" is required',
@@ -974,8 +974,8 @@ describe('alternatives', () => {
                             context: { key: 'bar', label: 'bar' }
                         }]
                     }],
-                    [{ foo: 'hasBar', bar: 42 }, true, null, { foo: 'hasBar', bar: 42 }],
-                    [{}, true, null, {}]
+                    [{ foo: 'hasBar', bar: 42 }, true, { foo: 'hasBar', bar: 42 }],
+                    [{}, true, {}]
                 ]);
             });
         });
@@ -996,7 +996,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 0, b: 1 }, true],
-                    [{ a: 0, b: 2 }, false, null, {
+                    [{ a: 0, b: 2 }, false, {
                         message: '"b" must be [1]',
                         details: [{
                             message: '"b" must be [1]',
@@ -1006,7 +1006,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 1, b: 2 }, true],
-                    [{ a: 1, b: 3 }, false, null, {
+                    [{ a: 1, b: 3 }, false, {
                         message: '"b" must be [2]',
                         details: [{
                             message: '"b" must be [2]',
@@ -1016,7 +1016,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 2, b: 3 }, true],
-                    [{ a: 2, b: 2 }, false, null, {
+                    [{ a: 2, b: 2 }, false, {
                         message: '"b" must be [3]',
                         details: [{
                             message: '"b" must be [3]',
@@ -1026,7 +1026,7 @@ describe('alternatives', () => {
                         }]
                     }],
                     [{ a: 42, b: 4 }, true],
-                    [{ a: 42, b: 128 }, false, null, {
+                    [{ a: 42, b: 128 }, false, {
                         message: '"b" must be [4]',
                         details: [{
                             message: '"b" must be [4]',
@@ -1354,7 +1354,7 @@ describe('alternatives', () => {
                 .or('b', 'c', 'd');
 
             Helper.validate(schema, [
-                [{ a: true, b: 1 }, false, null, {
+                [{ a: true, b: 1 }, false, {
                     message: '"Label b" must be a string',
                     details: [{
                         message: '"Label b" must be a string',
@@ -1363,7 +1363,7 @@ describe('alternatives', () => {
                         context: { value: 1, key: 'b', label: 'Label b' }
                     }]
                 }],
-                [{ a: false, b: 1, d: 1 }, false, null, {
+                [{ a: false, b: 1, d: 1 }, false, {
                     message: '"Label d" must be a string',
                     details: [{
                         message: '"Label d" must be a string',
@@ -1372,7 +1372,7 @@ describe('alternatives', () => {
                         context: { value: 1, key: 'd', label: 'Label d' }
                     }]
                 }],
-                [{ a: false, b: 1, c: 1 }, false, null, {
+                [{ a: false, b: 1, c: 1 }, false, {
                     message: '"Label c" must be a string',
                     details: [{
                         message: '"Label c" must be a string',
@@ -1554,9 +1554,9 @@ describe('alternatives', () => {
                 .match('one');
 
             Helper.validate(schema, [
-                [0, true, null, 0],
-                ['x', true, null, 'x'],
-                ['2', false, null, {
+                [0, true, 0],
+                ['x', true, 'x'],
+                ['2', false, {
                     message: '"value" matches more than one allowed type',
                     details: [{
                         message: '"value" matches more than one allowed type',
@@ -1565,7 +1565,7 @@ describe('alternatives', () => {
                         context: { label: 'value', value: '2' }
                     }]
                 }],
-                [true, false, null, {
+                [true, false, {
                     message: '"value" does not match any of the allowed types',
                     details: [{
                         message: '"value" does not match any of the allowed types',
@@ -1586,7 +1586,7 @@ describe('alternatives', () => {
                 .match('one');
 
             Helper.validate(schema, [
-                ['2', true, null, 2]
+                ['2', true, 2]
             ]);
         });
 
@@ -1599,8 +1599,8 @@ describe('alternatives', () => {
                 .match('all');
 
             Helper.validate(schema, [
-                ['2', true, null, '2'],
-                ['x', false, null, {
+                ['2', true, '2'],
+                ['x', false, {
                     message: '"value" does not match all of the required types',
                     details: [{
                         message: '"value" does not match all of the required types',
@@ -1609,7 +1609,7 @@ describe('alternatives', () => {
                         context: { label: 'value', value: 'x' }
                     }]
                 }],
-                [2, false, null, {
+                [2, false, {
                     message: '"value" does not match all of the required types',
                     details: [{
                         message: '"value" does not match all of the required types',
@@ -1618,7 +1618,7 @@ describe('alternatives', () => {
                         context: { label: 'value', value: 2 }
                     }]
                 }],
-                [true, false, null, {
+                [true, false, {
                     message: '"value" does not match any of the allowed types',
                     details: [{
                         message: '"value" does not match any of the allowed types',
@@ -1746,7 +1746,7 @@ describe('alternatives', () => {
             );
 
             Helper.validate(schema, [
-                [{ p: 1 }, false, null, {
+                [{ p: 1 }, false, {
                     message: '"p" must be one of [boolean, foo, bar]',
                     details: [
                         {
@@ -1762,7 +1762,7 @@ describe('alternatives', () => {
                         }
                     ]
                 }],
-                [{ p: '...' }, false, null, {
+                [{ p: '...' }, false, {
                     message: '"p" must be one of [boolean, foo, bar]',
                     details: [
                         {
@@ -1778,7 +1778,7 @@ describe('alternatives', () => {
                         }
                     ]
                 }],
-                [1, false, null, {
+                [1, false, {
                     message: '"value" must be one of [boolean, object]',
                     details: [
                         {
@@ -1805,7 +1805,7 @@ describe('alternatives', () => {
             ).prefs({ errors: { wrapArrays: false } });
 
             Helper.validate(schema, [
-                [{ p: 1 }, false, null, {
+                [{ p: 1 }, false, {
                     message: '"p" must be one of boolean, foo, bar',
                     details: [
                         {
@@ -1821,7 +1821,7 @@ describe('alternatives', () => {
                         }
                     ]
                 }],
-                [{ p: '...' }, false, null, {
+                [{ p: '...' }, false, {
                     message: '"p" must be one of boolean, foo, bar',
                     details: [
                         {
@@ -1837,7 +1837,7 @@ describe('alternatives', () => {
                         }
                     ]
                 }],
-                [1, false, null, {
+                [1, false, {
                     message: '"value" must be one of boolean, object',
                     details: [
                         {
