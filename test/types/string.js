@@ -98,6 +98,18 @@ describe('string', () => {
         expect(err.annotate()).to.equal('"value" must be a string');
     });
 
+    it('supports own properties references', () => {
+
+        const schema = Joi.string()
+            .when('.length', { is: 3, then: 'abc', break: true })
+            .when('.0', { is: 'a', then: 'axxx' });
+
+        Helper.validate(schema, [
+            ['abc', true],
+            ['axxx', true]
+        ]);
+    });
+
     describe('allow()', () => {
 
         it('validates combination of allow(\'\') and min', () => {
