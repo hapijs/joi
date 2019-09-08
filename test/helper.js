@@ -17,7 +17,7 @@ exports.validate = function (schema, prefs, tests) {
     }
 
     try {
-        expect(schema.$_root.build(schema.describe())).to.equal(schema, { skip: ['_ruleset', '_resolved'] });
+        expect(schema.$_root.build(schema.describe())).to.equal(schema, { deepFunction: true, skip: ['_ruleset', '_resolved'] });
 
         for (const [input, pass, expected] of tests) {
             if (!pass) {
@@ -49,16 +49,21 @@ exports.validate = function (schema, prefs, tests) {
                 continue;
             }
 
-            const message = expected.message || expected;
-            if (message instanceof RegExp) {
-                expect(error.message).to.match(message);
-            }
-            else {
-                expect(error.message).to.equal(message);
+            if (typeof expected === 'string') {
+                expect(error.message).to.equal(expected);
+                continue;
             }
 
-            if (expected.details) {
+            if (schema._preferences && schema._preferences.abortEarly === false ||
+                prefs && prefs.abortEarly === false) {
+
+                expect(error.message).to.equal(expected.message);
                 expect(error.details).to.equal(expected.details);
+            }
+            else {
+                expect(error.details).to.have.length(1);
+                expect(error.message).to.equal(error.details[0].message);
+                expect(error.details[0]).to.equal(expected);
             }
         }
     }

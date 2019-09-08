@@ -525,50 +525,35 @@ describe('Modify', () => {
                 Helper.validate(schema, [
                     [{}, false, {
                         message: '"a" is required',
-                        details: [{
-                            message: '"a" is required',
-                            path: ['a'],
-                            type: 'any.required',
-                            context: { label: 'a', key: 'a' }
-                        }]
+                        path: ['a'],
+                        type: 'any.required',
+                        context: { label: 'a', key: 'a' }
                     }],
                     [{ a: 0 }, false, {
                         message: '"b" is required',
-                        details: [{
-                            message: '"b" is required',
-                            path: ['b'],
-                            type: 'any.required',
-                            context: { label: 'b', key: 'b' }
-                        }]
+                        path: ['b'],
+                        type: 'any.required',
+                        context: { label: 'b', key: 'b' }
                     }],
                     [{ a: 0, b: 0 }, false, {
                         message: '"g" is required',
-                        details: [{
-                            message: '"g" is required',
-                            path: ['g'],
-                            type: 'any.required',
-                            context: { label: 'g', key: 'g' }
-                        }]
+                        path: ['g'],
+                        type: 'any.required',
+                        context: { label: 'g', key: 'g' }
                     }],
                     [{ a: 0, b: 0, g: {} }, true],
                     [{ a: 0, b: 0, c: {}, g: {} }, false, {
                         message: '"c.d" is required',
-                        details: [{
-                            message: '"c.d" is required',
-                            path: ['c', 'd'],
-                            type: 'any.required',
-                            context: { label: 'c.d', key: 'd' }
-                        }]
+                        path: ['c', 'd'],
+                        type: 'any.required',
+                        context: { label: 'c.d', key: 'd' }
                     }],
                     [{ a: 0, b: 0, c: { d: 0 }, g: {} }, true],
                     [{ a: 0, b: 0, c: { d: 0, e: {} }, g: {} }, false, {
                         message: '"c.e.f" is required',
-                        details: [{
-                            message: '"c.e.f" is required',
-                            path: ['c', 'e', 'f'],
-                            type: 'any.required',
-                            context: { label: 'c.e.f', key: 'f' }
-                        }]
+                        path: ['c', 'e', 'f'],
+                        type: 'any.required',
+                        context: { label: 'c.e.f', key: 'f' }
                     }],
                     [{ a: 0, b: 0, c: { d: 0, e: { f: 0 } }, g: {} }, true]
                 ]);
@@ -603,21 +588,15 @@ describe('Modify', () => {
                     [{ a: undefined, b: undefined }, true],
                     [{ a: 0 }, false, {
                         message: '"a" is not allowed',
-                        details: [{
-                            message: '"a" is not allowed',
-                            path: ['a'],
-                            type: 'any.unknown',
-                            context: { label: 'a', key: 'a', value: 0 }
-                        }]
+                        path: ['a'],
+                        type: 'any.unknown',
+                        context: { label: 'a', key: 'a', value: 0 }
                     }],
                     [{ b: 0 }, false, {
                         message: '"b" is not allowed',
-                        details: [{
-                            message: '"b" is not allowed',
-                            path: ['b'],
-                            type: 'any.unknown',
-                            context: { label: 'b', key: 'b', value: 0 }
-                        }]
+                        path: ['b'],
+                        type: 'any.unknown',
+                        context: { label: 'b', key: 'b', value: 0 }
                     }]
                 ]);
             });

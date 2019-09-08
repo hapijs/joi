@@ -272,20 +272,14 @@ describe('ref', () => {
                     h: 4
                 }, false, {
                     message: '"a.b.ix" must be [ref:...i]',
-                    details: [
-                        {
-                            message: '"a.b.ix" must be [ref:...i]',
-                            path: ['a', 'b', 'ix'],
-                            type: 'any.only',
-                            context: {
-                                value: 5,
-                                valids: [ix],
-                                key: 'ix',
-                                label: 'a.b.ix'
-                            }
-                        }
-                    ]
-
+                    path: ['a', 'b', 'ix'],
+                    type: 'any.only',
+                    context: {
+                        value: 5,
+                        valids: [ix],
+                        key: 'ix',
+                        label: 'a.b.ix'
+                    }
                 }
             ]
         ]);
@@ -361,20 +355,14 @@ describe('ref', () => {
                     h: 4
                 }, false, {
                     message: '"a.b.ix" must be [ref:...i]',
-                    details: [
-                        {
-                            message: '"a.b.ix" must be [ref:...i]',
-                            path: ['a', 'b', 'ix'],
-                            type: 'any.only',
-                            context: {
-                                value: 5,
-                                valids: [ix],
-                                key: 'ix',
-                                label: 'a.b.ix'
-                            }
-                        }
-                    ]
-
+                    path: ['a', 'b', 'ix'],
+                    type: 'any.only',
+                    context: {
+                        value: 5,
+                        valids: [ix],
+                        key: 'ix',
+                        label: 'a.b.ix'
+                    }
                 }
             ]
         ]);
@@ -396,67 +384,47 @@ describe('ref', () => {
             [{ key: object }, true],
             [{ key: 1 }, false, {
                 message: '"key" must be of type object',
-                details: [
-                    {
-                        message: '"key" must be of type object',
-                        type: 'object.base',
-                        path: ['key'],
-                        context: {
-                            key: 'key',
-                            label: 'key',
-                            value: 1,
-                            type: 'object'
-                        }
-                    }
-                ]
+                type: 'object.base',
+                path: ['key'],
+                context: {
+                    key: 'key',
+                    label: 'key',
+                    value: 1,
+                    type: 'object'
+                }
             }],
             [{ key: Joi.number() }, false, {
                 message: '"key" must be a Joi schema of object type',
-                details: [
-                    {
-                        message: '"key" must be a Joi schema of object type',
-                        type: 'object.schema',
-                        path: ['key'],
-                        context: {
-                            key: 'key',
-                            label: 'key',
-                            type: 'object',
-                            value: Joi.number()
-                        }
-                    }
-                ]
+                type: 'object.schema',
+                path: ['key'],
+                context: {
+                    key: 'key',
+                    label: 'key',
+                    type: 'object',
+                    value: Joi.number()
+                }
             }],
             [{ key: { a: 1 } }, false, {
                 message: '"key.a" must be of type object',
-                details: [
-                    {
-                        message: '"key.a" must be of type object',
-                        type: 'object.base',
-                        path: ['key', 'a'],
-                        context: {
-                            key: 'a',
-                            label: 'key.a',
-                            value: 1,
-                            type: 'object'
-                        }
-                    }
-                ]
+                type: 'object.base',
+                path: ['key', 'a'],
+                context: {
+                    key: 'a',
+                    label: 'key.a',
+                    value: 1,
+                    type: 'object'
+                }
             }],
             [{ key: { a: {} } }, false, {
                 message: '"key.a" must be a Joi schema of object type',
-                details: [
-                    {
-                        message: '"key.a" must be a Joi schema of object type',
-                        type: 'object.schema',
-                        path: ['key', 'a'],
-                        context: {
-                            key: 'a',
-                            label: 'key.a',
-                            type: 'object',
-                            value: {}
-                        }
-                    }
-                ]
+                type: 'object.schema',
+                path: ['key', 'a'],
+                context: {
+                    key: 'a',
+                    label: 'key.a',
+                    type: 'object',
+                    value: {}
+                }
             }]
         ]);
     });
@@ -627,19 +595,14 @@ describe('ref', () => {
             [{ x: [2, 2] }, true],
             [{ x: [2, 2, 2] }, false, {
                 message: '"x[0]" must be [ref:length]',
-                details: [
-                    {
-                        message: '"x[0]" must be [ref:length]',
-                        path: ['x', 0],
-                        type: 'any.only',
-                        context: {
-                            value: 2,
-                            valids: [ref],
-                            key: 0,
-                            label: 'x[0]'
-                        }
-                    }
-                ]
+                path: ['x', 0],
+                type: 'any.only',
+                context: {
+                    value: 2,
+                    valids: [ref],
+                    key: 0,
+                    label: 'x[0]'
+                }
             }]
         ]);
     });
@@ -659,14 +622,9 @@ describe('ref', () => {
             [{ x: [2, 2] }, true],
             [{ x: [2, 2, 2] }, false, {
                 message: '"x[0]" must be [7]',
-                details: [
-                    {
-                        message: '"x[0]" must be [7]',
-                        path: ['x', 0],
-                        type: 'any.only',
-                        context: { value: 2, valids: [7], key: 0, label: 'x[0]' }
-                    }
-                ]
+                path: ['x', 0],
+                type: 'any.only',
+                context: { value: 2, valids: [7], key: 0, label: 'x[0]' }
             }]
         ]);
     });
@@ -681,14 +639,9 @@ describe('ref', () => {
             [[10, 20], true],
             [[10, 5], false, {
                 message: '"[1]" must be larger than or equal to ref:0',
-                details: [
-                    {
-                        message: '"[1]" must be larger than or equal to ref:0',
-                        path: [1],
-                        type: 'number.min',
-                        context: { limit: ref, value: 5, key: 1, label: '[1]' }
-                    }
-                ]
+                path: [1],
+                type: 'number.min',
+                context: { limit: ref, value: 5, key: 1, label: '[1]' }
             }]
         ]);
     });
@@ -709,18 +662,13 @@ describe('ref', () => {
             [{ length: 2, x: 3 }, true],
             [{ length: 2, x: 3, y: 4 }, false, {
                 message: '"value" must have ref:.length keys',
-                details: [
-                    {
-                        message: '"value" must have ref:.length keys',
-                        path: [],
-                        type: 'object.length',
-                        context: {
-                            value: { length: 2, x: 3, y: 4 },
-                            limit: ref,
-                            label: 'value'
-                        }
-                    }
-                ]
+                path: [],
+                type: 'object.length',
+                context: {
+                    value: { length: 2, x: 3, y: 4 },
+                    limit: ref,
+                    label: 'value'
+                }
             }]
         ]);
     });
@@ -746,12 +694,9 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:b]',
-                details: [{
-                    message: '"a" must be [ref:b]',
-                    path: ['a'],
-                    type: 'any.only',
-                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
             }],
             [{ b: 5 }, true],
             [{ a: 5, b: 5 }, true],
@@ -774,21 +719,15 @@ describe('ref', () => {
             [{ a: 10, b: '5' }, true],
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:b]',
-                details: [{
-                    message: '"a" must be [ref:b]',
-                    path: ['a'],
-                    type: 'any.only',
-                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
             }],
             [{ a: 5, b: 5 }, false, {
                 message: '"a" must be [ref:b]',
-                details: [{
-                    message: '"a" must be [ref:b]',
-                    path: ['a'],
-                    type: 'any.only',
-                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
             }]
         ]);
 
@@ -822,21 +761,15 @@ describe('ref', () => {
             [{ a: 10, b: '5' }, true],
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:b]',
-                details: [{
-                    message: '"a" must be [ref:b]',
-                    path: ['a'],
-                    type: 'any.only',
-                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
             }],
             [{ a: 5, b: 5 }, false, {
                 message: '"a" must be [ref:b]',
-                details: [{
-                    message: '"a" must be [ref:b]',
-                    path: ['a'],
-                    type: 'any.only',
-                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
             }]
         ]);
 
@@ -875,12 +808,9 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:]',
-                details: [{
-                    message: '"a" must be [ref:]',
-                    path: ['a'],
-                    type: 'any.only',
-                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
             }],
             [{ '': 5 }, true],
             [{ a: 5, '': 5 }, true],
@@ -911,22 +841,16 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:b.c]',
-                details: [{
-                    message: '"a" must be [ref:b.c]',
-                    path: ['a'],
-                    type: 'any.only',
-                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
             }],
             [{ b: { c: 5 } }, true],
             [{ a: 5, b: 5 }, false, {
                 message: '"b" must be of type object',
-                details: [{
-                    message: '"b" must be of type object',
-                    path: ['b'],
-                    type: 'object.base',
-                    context: { label: 'b', key: 'b', value: 5, type: 'object' }
-                }]
+                path: ['b'],
+                type: 'object.base',
+                context: { label: 'b', key: 'b', value: 5, type: 'object' }
             }],
             [{ a: '5', b: { c: '5' } }, true]
         ]);
@@ -1047,19 +971,14 @@ describe('ref', () => {
                 [{ a: { c: '5' }, b: 6, c: '6' }, true],
                 [{ a: { c: '5' }, b: 7, c: '6' }, false, {
                     message: '"b" must be one of [ref:a.c, ref:c]',
-                    details: [
-                        {
-                            message: '"b" must be one of [ref:a.c, ref:c]',
-                            type: 'alternatives.types',
-                            path: ['b'],
-                            context: {
-                                key: 'b',
-                                label: 'b',
-                                value: 7,
-                                types: [ref1, ref2]
-                            }
-                        }
-                    ]
+                    type: 'alternatives.types',
+                    path: ['b'],
+                    context: {
+                        key: 'b',
+                        label: 'b',
+                        value: 7,
+                        types: [ref1, ref2]
+                    }
                 }]
             ]);
         }
@@ -1107,24 +1026,18 @@ describe('ref', () => {
         Helper.validate(schema, { context: { x: 22 } }, [
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:global:x]',
-                details: [{
-                    message: '"a" must be [ref:global:x]',
-                    path: ['a'],
-                    type: 'any.only',
-                    context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
             }],
             [{ a: 22 }, true],
             [{ b: 5 }, true],
             [{ a: 22, b: 5 }, true],
             [{ a: '22', b: '5' }, false, {
                 message: '"a" must be [ref:global:x]',
-                details: [{
-                    message: '"a" must be [ref:global:x]',
-                    path: ['a'],
-                    type: 'any.only',
-                    context: { value: '22', valids: [ref], label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.only',
+                context: { value: '22', valids: [ref], label: 'a', key: 'a' }
             }]
         ]);
     });
@@ -1139,21 +1052,15 @@ describe('ref', () => {
             [{}, true],
             [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: 'x' }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: 'x' }
             }],
             [{ a: true }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: true }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: true }
             }]
         ]);
 
@@ -1161,21 +1068,15 @@ describe('ref', () => {
             [{}, true],
             [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: 'x' }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: 'x' }
             }],
             [{ a: true }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: true }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: true }
             }]
         ]);
 
@@ -1183,12 +1084,9 @@ describe('ref', () => {
             [{}, true],
             [{ a: 'x' }, false, {
                 message: '"a" must be a boolean',
-                details: [{
-                    message: '"a" must be a boolean',
-                    path: ['a'],
-                    type: 'boolean.base',
-                    context: { label: 'a', key: 'a', value: 'x' }
-                }]
+                path: ['a'],
+                type: 'boolean.base',
+                context: { label: 'a', key: 'a', value: 'x' }
             }],
             [{ a: true }, true]
         ]);
@@ -1204,21 +1102,15 @@ describe('ref', () => {
             [{}, true],
             [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: 'x' }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: 'x' }
             }],
             [{ a: true }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: true }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: true }
             }]
         ]);
 
@@ -1226,21 +1118,15 @@ describe('ref', () => {
             [{}, true],
             [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: 'x' }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: 'x' }
             }],
             [{ a: true }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: true }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: true }
             }]
         ]);
 
@@ -1248,21 +1134,15 @@ describe('ref', () => {
             [{}, true],
             [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: 'x' }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: 'x' }
             }],
             [{ a: true }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: true }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: true }
             }]
         ]);
 
@@ -1270,21 +1150,15 @@ describe('ref', () => {
             [{}, true],
             [{ a: 'x' }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: 'x' }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: 'x' }
             }],
             [{ a: true }, false, {
                 message: '"a" is not allowed',
-                details: [{
-                    message: '"a" is not allowed',
-                    path: ['a'],
-                    type: 'any.unknown',
-                    context: { label: 'a', key: 'a', value: true }
-                }]
+                path: ['a'],
+                type: 'any.unknown',
+                context: { label: 'a', key: 'a', value: true }
             }]
         ]);
 
@@ -1292,12 +1166,9 @@ describe('ref', () => {
             [{}, true],
             [{ a: 'x' }, false, {
                 message: '"a" must be a boolean',
-                details: [{
-                    message: '"a" must be a boolean',
-                    path: ['a'],
-                    type: 'boolean.base',
-                    context: { label: 'a', key: 'a', value: 'x' }
-                }]
+                path: ['a'],
+                type: 'boolean.base',
+                context: { label: 'a', key: 'a', value: 'x' }
             }],
             [{ a: true }, true]
         ]);

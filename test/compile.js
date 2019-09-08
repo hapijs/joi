@@ -34,12 +34,9 @@ describe('cast', () => {
             Helper.validate(Joi.compile(null), [
                 ['a', false, {
                     message: '"value" must be [null]',
-                    details: [{
-                        message: '"value" must be [null]',
-                        path: [],
-                        type: 'any.only',
-                        context: { value: 'a', valids: [null], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.only',
+                    context: { value: 'a', valids: [null], label: 'value' }
                 }],
                 [null, true]
             ]);
@@ -50,12 +47,9 @@ describe('cast', () => {
             Helper.validate(Joi.compile(5), [
                 [6, false, {
                     message: '"value" must be [5]',
-                    details: [{
-                        message: '"value" must be [5]',
-                        path: [],
-                        type: 'any.only',
-                        context: { value: 6, valids: [5], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.only',
+                    context: { value: 6, valids: [5], label: 'value' }
                 }],
                 [5, true]
             ]);
@@ -66,12 +60,9 @@ describe('cast', () => {
             Helper.validate(Joi.compile('5'), [
                 ['6', false, {
                     message: '"value" must be [5]',
-                    details: [{
-                        message: '"value" must be [5]',
-                        path: [],
-                        type: 'any.only',
-                        context: { value: '6', valids: ['5'], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.only',
+                    context: { value: '6', valids: ['5'], label: 'value' }
                 }],
                 ['5', true]
             ]);
@@ -82,12 +73,9 @@ describe('cast', () => {
             Helper.validate(Joi.compile(true), [
                 [false, false, {
                     message: '"value" must be [true]',
-                    details: [{
-                        message: '"value" must be [true]',
-                        path: [],
-                        type: 'any.only',
-                        context: { value: false, valids: [true], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.only',
+                    context: { value: false, valids: [true], label: 'value' }
                 }],
                 [true, true]
             ]);
@@ -102,12 +90,9 @@ describe('cast', () => {
                 [now, true],
                 [now * 2, false, {
                     message: `"value" must be [${dnow.toISOString()}]`,
-                    details: [{
-                        message: `"value" must be [${dnow.toISOString()}]`,
-                        path: [],
-                        type: 'any.only',
-                        context: { value: new Date(now * 2), valids: [dnow], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.only',
+                    context: { value: new Date(now * 2), valids: [dnow], label: 'value' }
                 }]
             ]);
         });
@@ -144,7 +129,7 @@ describe('cast', () => {
 
         it('compile ["a", "b", "c"]', () => {
 
-            const schema = Joi.compile(['a','b','c']);
+            const schema = Joi.compile(['a', 'b', 'c']);
             expect(schema).to.equal(Joi.valid(Joi.override, 'a', 'b', 'c'));
         });
 

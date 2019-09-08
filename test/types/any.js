@@ -49,21 +49,15 @@ describe('any', () => {
                 ['5', true, undefined],
                 ['1', false, {
                     message: '"value" failed custom validation because nope',
-                    details: [{
-                        message: '"value" failed custom validation because nope',
-                        path: [],
-                        type: 'any.custom',
-                        context: { label: 'value', value: '1', error }
-                    }]
+                    path: [],
+                    type: 'any.custom',
+                    context: { label: 'value', value: '1', error }
                 }],
                 ['4', false, {
                     message: '"value" contains an invalid value',
-                    details: [{
-                        message: '"value" contains an invalid value',
-                        path: [],
-                        type: 'any.invalid',
-                        context: { label: 'value', value: '4' }
-                    }]
+                    path: [],
+                    type: 'any.invalid',
+                    context: { label: 'value', value: '4' }
                 }]
             ]);
         });

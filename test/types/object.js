@@ -24,12 +24,9 @@ describe('object', () => {
             [{ hi: true }, true],
             ['', false, {
                 message: '"value" must be of type object',
-                details: [{
-                    message: '"value" must be of type object',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'object' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'object' }
             }]
         ]);
     });
@@ -61,12 +58,9 @@ describe('object', () => {
         Helper.validate(schema, [
             [{}, false, {
                 message: '"value" must be a Joi reference',
-                details: [{
-                    message: '"value" must be a Joi reference',
-                    path: [],
-                    type: 'object.refType',
-                    context: { label: 'value', value: {} }
-                }]
+                path: [],
+                type: 'object.refType',
+                context: { label: 'value', value: {} }
             }],
             [Joi.ref('a.b'), true]
         ]);
@@ -177,21 +171,15 @@ describe('object', () => {
             [{ item: 'something' }, true],
             [{ item: 'something', item2: 'something else' }, false, {
                 message: '"item2" is not allowed',
-                details: [{
-                    message: '"item2" is not allowed',
-                    path: ['item2'],
-                    type: 'object.unknown',
-                    context: { child: 'item2', label: 'item2', key: 'item2', value: 'something else' }
-                }]
+                path: ['item2'],
+                type: 'object.unknown',
+                context: { child: 'item2', label: 'item2', key: 'item2', value: 'something else' }
             }],
             ['', false, {
                 message: '"value" must be of type object',
-                details: [{
-                    message: '"value" must be of type object',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'object' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'object' }
             }]
         ]);
     });
@@ -202,35 +190,26 @@ describe('object', () => {
         Helper.validate(schema, [
             [{ item: 'something' }, false, {
                 message: '"value" must have at least 3 keys',
-                details: [{
-                    message: '"value" must have at least 3 keys',
-                    path: [],
-                    type: 'object.min',
-                    context: { limit: 3, label: 'value', value: { item: 'something' } }
-                }]
+                path: [],
+                type: 'object.min',
+                context: { limit: 3, label: 'value', value: { item: 'something' } }
             }],
             [{ item: 'something', item2: 'something else' }, false, {
                 message: '"value" must have at least 3 keys',
-                details: [{
-                    message: '"value" must have at least 3 keys',
-                    path: [],
-                    type: 'object.min',
-                    context: {
-                        limit: 3,
-                        label: 'value',
-                        value: { item: 'something', item2: 'something else' }
-                    }
-                }]
+                path: [],
+                type: 'object.min',
+                context: {
+                    limit: 3,
+                    label: 'value',
+                    value: { item: 'something', item2: 'something else' }
+                }
             }],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
             ['', false, {
                 message: '"value" must be of type object',
-                details: [{
-                    message: '"value" must be of type object',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'object' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'object' }
             }]
         ]);
     });
@@ -243,25 +222,19 @@ describe('object', () => {
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, false, {
                 message: '"value" must have less than or equal to 2 keys',
-                details: [{
-                    message: '"value" must have less than or equal to 2 keys',
-                    path: [],
-                    type: 'object.max',
-                    context: {
-                        limit: 2,
-                        label: 'value',
-                        value: { item: 'something', item2: 'something else', item3: 'something something else' }
-                    }
-                }]
+                path: [],
+                type: 'object.max',
+                context: {
+                    limit: 2,
+                    label: 'value',
+                    value: { item: 'something', item2: 'something else', item3: 'something something else' }
+                }
             }],
             ['', false, {
                 message: '"value" must be of type object',
-                details: [{
-                    message: '"value" must be of type object',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'object' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'object' }
             }]
         ]);
     });
@@ -272,46 +245,32 @@ describe('object', () => {
         Helper.validate(schema, [
             [{ item: 'something' }, false, {
                 message: '"value" must have at least 2 keys',
-                details: [{
-                    message: '"value" must have at least 2 keys',
-                    path: [],
-                    type: 'object.min',
-                    context: { limit: 2, label: 'value', value: { item: 'something' } }
-                }]
+                path: [],
+                type: 'object.min',
+                context: { limit: 2, label: 'value', value: { item: 'something' } }
             }],
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, true],
-            [{
-                item: 'something',
-                item2: 'something else',
-                item3: 'something something else',
-                item4: 'item4'
-            }, false, {
+            [{ item: 'something', item2: 'something else', item3: 'something something else', item4: 'item4' }, false, {
                 message: '"value" must have less than or equal to 3 keys',
-                details: [{
-                    message: '"value" must have less than or equal to 3 keys',
-                    path: [],
-                    type: 'object.max',
-                    context: {
-                        limit: 3,
-                        label: 'value',
-                        value: {
-                            item: 'something',
-                            item2: 'something else',
-                            item3: 'something something else',
-                            item4: 'item4'
-                        }
+                path: [],
+                type: 'object.max',
+                context: {
+                    limit: 3,
+                    label: 'value',
+                    value: {
+                        item: 'something',
+                        item2: 'something else',
+                        item3: 'something something else',
+                        item4: 'item4'
                     }
-                }]
+                }
             }],
             ['', false, {
                 message: '"value" must be of type object',
-                details: [{
-                    message: '"value" must be of type object',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'object' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'object' }
             }]
         ]);
     });
@@ -322,35 +281,26 @@ describe('object', () => {
         Helper.validate(schema, [
             [{ item: 'something' }, false, {
                 message: '"value" must have 2 keys',
-                details: [{
-                    message: '"value" must have 2 keys',
-                    path: [],
-                    type: 'object.length',
-                    context: { limit: 2, label: 'value', value: { item: 'something' } }
-                }]
+                path: [],
+                type: 'object.length',
+                context: { limit: 2, label: 'value', value: { item: 'something' } }
             }],
             [{ item: 'something', item2: 'something else' }, true],
             [{ item: 'something', item2: 'something else', item3: 'something something else' }, false, {
                 message: '"value" must have 2 keys',
-                details: [{
-                    message: '"value" must have 2 keys',
-                    path: [],
-                    type: 'object.length',
-                    context: {
-                        limit: 2,
-                        label: 'value',
-                        value: { item: 'something', item2: 'something else', item3: 'something something else' }
-                    }
-                }]
+                path: [],
+                type: 'object.length',
+                context: {
+                    limit: 2,
+                    label: 'value',
+                    value: { item: 'something', item2: 'something else', item3: 'something something else' }
+                }
             }],
             ['', false, {
                 message: '"value" must be of type object',
-                details: [{
-                    message: '"value" must be of type object',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'object' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'object' }
             }]
         ]);
     });
@@ -362,30 +312,21 @@ describe('object', () => {
         Helper.validate(schema, [
             [{ item: 'something' }, false, {
                 message: '"value" must be an instance of "RegExp"',
-                details: [{
-                    message: '"value" must be an instance of "RegExp"',
-                    path: [],
-                    type: 'object.instance',
-                    context: { type: 'RegExp', label: 'value', value: { item: 'something' } }
-                }]
+                path: [],
+                type: 'object.instance',
+                context: { type: 'RegExp', label: 'value', value: { item: 'something' } }
             }],
             ['', false, {
                 message: '"value" must be of type object',
-                details: [{
-                    message: '"value" must be of type object',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'object' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'object' }
             }],
             [d, false, {
                 message: '"value" must be an instance of "RegExp"',
-                details: [{
-                    message: '"value" must be an instance of "RegExp"',
-                    path: [],
-                    type: 'object.instance',
-                    context: { type: 'RegExp', label: 'value', value: d }
-                }]
+                path: [],
+                type: 'object.instance',
+                context: { type: 'RegExp', label: 'value', value: d }
             }],
             [/abcd/, true],
             [new RegExp(), true]
@@ -402,12 +343,9 @@ describe('object', () => {
             [{ num: 1 }, true],
             [{ num: [1, 2, 3] }, false, {
                 message: '"num" must be a number',
-                details: [{
-                    message: '"num" must be a number',
-                    path: ['num'],
-                    type: 'number.base',
-                    context: { label: 'num', key: 'num', value: [1, 2, 3] }
-                }]
+                path: ['num'],
+                type: 'number.base',
+                context: { label: 'num', key: 'num', value: [1, 2, 3] }
             }]
         ]);
     });
@@ -425,22 +363,16 @@ describe('object', () => {
             [{ num: 1 }, true],
             [{ num: [1, 2, 3] }, false, {
                 message: '"num" must be a number',
-                details: [{
-                    message: '"num" must be a number',
-                    path: ['num'],
-                    type: 'number.base',
-                    context: { label: 'num', key: 'num', value: [1, 2, 3] }
-                }]
+                path: ['num'],
+                type: 'number.base',
+                context: { label: 'num', key: 'num', value: [1, 2, 3] }
             }],
             [{ num: 1, obj: { item: 'something' } }, true],
             [{ num: 1, obj: { item: 123 } }, false, {
                 message: '"obj.item" must be a string',
-                details: [{
-                    message: '"obj.item" must be a string',
-                    path: ['obj', 'item'],
-                    type: 'string.base',
-                    context: { value: 123, label: 'obj.item', key: 'item' }
-                }]
+                path: ['obj', 'item'],
+                type: 'string.base',
+                context: { value: 123, label: 'obj.item', key: 'item' }
             }]
         ]);
     });
@@ -460,12 +392,9 @@ describe('object', () => {
         Helper.validate(schema, [
             [{ num: 1 }, false, {
                 message: '"num" is not allowed',
-                details: [{
-                    message: '"num" is not allowed',
-                    path: ['num'],
-                    type: 'object.unknown',
-                    context: { child: 'num', label: 'num', key: 'num', value: 1 }
-                }]
+                path: ['num'],
+                type: 'object.unknown',
+                context: { child: 'num', label: 'num', key: 'num', value: 1 }
             }],
             [{ obj: {} }, true],
             [{ obj: { obj: {} } }, true],
@@ -473,12 +402,9 @@ describe('object', () => {
             [{ obj: { obj: { obj: { item: true } } } }, true],
             [{ obj: { obj: { obj: { item: 10 } } } }, false, {
                 message: '"obj.obj.obj.item" must be a boolean',
-                details: [{
-                    message: '"obj.obj.obj.item" must be a boolean',
-                    path: ['obj', 'obj', 'obj', 'item'],
-                    type: 'boolean.base',
-                    context: { label: 'obj.obj.obj.item', key: 'item', value: 10 }
-                }]
+                path: ['obj', 'obj', 'obj', 'item'],
+                type: 'boolean.base',
+                context: { label: 'obj.obj.obj.item', key: 'item', value: 10 }
             }]
         ]);
     });
@@ -498,35 +424,26 @@ describe('object', () => {
         Helper.validate(schema, [
             [null, false, {
                 message: '"value" must be of type object',
-                details: [{
-                    message: '"value" must be of type object',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: null, type: 'object' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: null, type: 'object' }
             }],
             [undefined, true],
             [{}, true],
             [{ obj: {} }, false, {
                 message: '"obj.obj" is required',
-                details: [{
-                    message: '"obj.obj" is required',
-                    path: ['obj', 'obj'],
-                    type: 'any.required',
-                    context: { label: 'obj.obj', key: 'obj' }
-                }]
+                path: ['obj', 'obj'],
+                type: 'any.required',
+                context: { label: 'obj.obj', key: 'obj' }
             }],
             [{ obj: { obj: {} } }, true],
             [{ obj: { obj: { obj: {} } } }, true],
             [{ obj: { obj: { obj: { item: true } } } }, true],
             [{ obj: { obj: { obj: { item: 10 } } } }, false, {
                 message: '"obj.obj.obj.item" must be a boolean',
-                details: [{
-                    message: '"obj.obj.obj.item" must be a boolean',
-                    path: ['obj', 'obj', 'obj', 'item'],
-                    type: 'boolean.base',
-                    context: { label: 'obj.obj.obj.item', key: 'item', value: 10 }
-                }]
+                path: ['obj', 'obj', 'obj', 'item'],
+                type: 'boolean.base',
+                context: { label: 'obj.obj.obj.item', key: 'item', value: 10 }
             }]
         ]);
     });
@@ -546,12 +463,9 @@ describe('object', () => {
         Helper.validate(schema, [
             [null, false, {
                 message: '"value" must be of type object',
-                details: [{
-                    message: '"value" must be of type object',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: null, type: 'object' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: null, type: 'object' }
             }],
             [undefined, true],
             [{}, true],
@@ -559,22 +473,16 @@ describe('object', () => {
             [{ obj: { obj: {} } }, true],
             [{ obj: { obj: { obj: {} } } }, false, {
                 message: '"obj.obj.obj.item" is required',
-                details: [{
-                    message: '"obj.obj.obj.item" is required',
-                    path: ['obj', 'obj', 'obj', 'item'],
-                    type: 'any.required',
-                    context: { label: 'obj.obj.obj.item', key: 'item' }
-                }]
+                path: ['obj', 'obj', 'obj', 'item'],
+                type: 'any.required',
+                context: { label: 'obj.obj.obj.item', key: 'item' }
             }],
             [{ obj: { obj: { obj: { item: true } } } }, true],
             [{ obj: { obj: { obj: { item: 10 } } } }, false, {
                 message: '"obj.obj.obj.item" must be a boolean',
-                details: [{
-                    message: '"obj.obj.obj.item" must be a boolean',
-                    path: ['obj', 'obj', 'obj', 'item'],
-                    type: 'boolean.base',
-                    context: { label: 'obj.obj.obj.item', key: 'item', value: 10 }
-                }]
+                path: ['obj', 'obj', 'obj', 'item'],
+                type: 'boolean.base',
+                context: { label: 'obj.obj.obj.item', key: 'item', value: 10 }
             }]
         ]);
     });
@@ -603,19 +511,16 @@ describe('object', () => {
         Helper.validate(schema, [
             [{ first: 'value' }, false, {
                 message: '"first" missing required peer "second"',
-                details: [{
-                    message: '"first" missing required peer "second"',
-                    path: [],
-                    type: 'object.with',
-                    context: {
-                        main: 'first',
-                        mainWithLabel: 'first',
-                        peer: 'second',
-                        peerWithLabel: 'second',
-                        label: 'value',
-                        value: { first: 'value' }
-                    }
-                }]
+                path: [],
+                type: 'object.with',
+                context: {
+                    main: 'first',
+                    mainWithLabel: 'first',
+                    peer: 'second',
+                    peerWithLabel: 'second',
+                    label: 'value',
+                    value: { first: 'value' }
+                }
             }]
         ]);
     });
@@ -638,36 +543,27 @@ describe('object', () => {
         Helper.validate(schema, { context: { x: 'baz' } }, [
             [{ foo: 'bar' }, false, {
                 message: '"foo" must be [ref:global:x]',
-                details: [{
-                    message: '"foo" must be [ref:global:x]',
-                    path: ['foo'],
-                    type: 'any.only',
-                    context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
-                }]
+                path: ['foo'],
+                type: 'any.only',
+                context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
             }]
         ]);
 
         Helper.validate(schema, { context: { x: ['baz', 'qux'] } }, [
             [{ foo: 'bar' }, false, {
                 message: '"foo" must be [ref:global:x]',
-                details: [{
-                    message: '"foo" must be [ref:global:x]',
-                    path: ['foo'],
-                    type: 'any.only',
-                    context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
-                }]
+                path: ['foo'],
+                type: 'any.only',
+                context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
             }]
         ]);
 
         Helper.validate(schema, [
             [{ foo: 'bar' }, false, {
                 message: '"foo" must be [ref:global:x]',
-                details: [{
-                    message: '"foo" must be [ref:global:x]',
-                    path: ['foo'],
-                    type: 'any.only',
-                    context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
-                }]
+                path: ['foo'],
+                type: 'any.only',
+                context: { value: 'bar', valids: [ref], label: 'foo', key: 'foo' }
             }]
         ]);
     });
@@ -846,251 +742,194 @@ describe('object', () => {
                 [{}, true],
                 [{ upc: null }, false, {
                     message: '"value" contains [upc] without its required peers [txt, code]',
-                    details: [{
-                        message: '"value" contains [upc] without its required peers [txt, code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['upc'],
-                            presentWithLabels: ['upc'],
-                            missing: ['txt', 'code'],
-                            missingWithLabels: ['txt', 'code'],
-                            label: 'value',
-                            value: { upc: null }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['upc'],
+                        presentWithLabels: ['upc'],
+                        missing: ['txt', 'code'],
+                        missingWithLabels: ['txt', 'code'],
+                        label: 'value',
+                        value: { upc: null }
+                    }
                 }],
                 [{ upc: 'test' }, false, {
                     message: '"value" contains [upc] without its required peers [txt, code]',
-                    details: [{
-                        message: '"value" contains [upc] without its required peers [txt, code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['upc'],
-                            presentWithLabels: ['upc'],
-                            missing: ['txt', 'code'],
-                            missingWithLabels: ['txt', 'code'],
-                            label: 'value',
-                            value: { upc: 'test' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['upc'],
+                        presentWithLabels: ['upc'],
+                        missing: ['txt', 'code'],
+                        missingWithLabels: ['txt', 'code'],
+                        label: 'value',
+                        value: { upc: 'test' }
+                    }
                 }],
                 [{ txt: null }, false, {
                     message: '"txt" must be a string',
-                    details: [{
-                        message: '"txt" must be a string',
-                        path: ['txt'],
-                        type: 'string.base',
-                        context: { value: null, label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.base',
+                    context: { value: null, label: 'txt', key: 'txt' }
                 }],
                 [{ txt: 'test' }, false, {
                     message: '"value" contains [txt] without its required peers [upc, code]',
-                    details: [{
-                        message: '"value" contains [txt] without its required peers [upc, code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['txt'],
-                            presentWithLabels: ['txt'],
-                            missing: ['upc', 'code'],
-                            missingWithLabels: ['upc', 'code'],
-                            label: 'value',
-                            value: { txt: 'test' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['txt'],
+                        presentWithLabels: ['txt'],
+                        missing: ['upc', 'code'],
+                        missingWithLabels: ['upc', 'code'],
+                        label: 'value',
+                        value: { txt: 'test' }
+                    }
                 }],
                 [{ code: null }, false, {
                     message: '"code" must be a number',
-                    details: [{
-                        message: '"code" must be a number',
-                        path: ['code'],
-                        type: 'number.base',
-                        context: { label: 'code', key: 'code', value: null }
-                    }]
+                    path: ['code'],
+                    type: 'number.base',
+                    context: { label: 'code', key: 'code', value: null }
                 }],
                 [{ code: 123 }, false, {
                     message: '"value" contains [code] without its required peers [txt, upc]',
-                    details: [{
-                        message: '"value" contains [code] without its required peers [txt, upc]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['code'],
-                            presentWithLabels: ['code'],
-                            missing: ['txt', 'upc'],
-                            missingWithLabels: ['txt', 'upc'],
-                            label: 'value',
-                            value: { code: 123 }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['code'],
+                        presentWithLabels: ['code'],
+                        missing: ['txt', 'upc'],
+                        missingWithLabels: ['txt', 'upc'],
+                        label: 'value',
+                        value: { code: 123 }
+                    }
                 }],
                 [{ txt: 'test', upc: null }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
-                    details: [{
-                        message: '"value" contains [txt, upc] without its required peers [code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['txt', 'upc'],
-                            presentWithLabels: ['txt', 'upc'],
-                            missing: ['code'],
-                            missingWithLabels: ['code'],
-                            label: 'value',
-                            value: { txt: 'test', upc: null }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['txt', 'upc'],
+                        presentWithLabels: ['txt', 'upc'],
+                        missing: ['code'],
+                        missingWithLabels: ['code'],
+                        label: 'value',
+                        value: { txt: 'test', upc: null }
+                    }
                 }],
                 [{ txt: 'test', upc: '' }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
-                    details: [{
-                        message: '"value" contains [txt, upc] without its required peers [code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['txt', 'upc'],
-                            presentWithLabels: ['txt', 'upc'],
-                            missing: ['code'],
-                            missingWithLabels: ['code'],
-                            label: 'value',
-                            value: { txt: 'test', upc: '' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['txt', 'upc'],
+                        presentWithLabels: ['txt', 'upc'],
+                        missing: ['code'],
+                        missingWithLabels: ['code'],
+                        label: 'value',
+                        value: { txt: 'test', upc: '' }
+                    }
                 }],
                 [{ txt: '', upc: 'test' }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: null, upc: 'test' }, false, {
                     message: '"txt" must be a string',
-                    details: [{
-                        message: '"txt" must be a string',
-                        path: ['txt'],
-                        type: 'string.base',
-                        context: { value: null, label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.base',
+                    context: { value: null, label: 'txt', key: 'txt' }
                 }],
                 [{ txt: undefined, upc: 'test' }, false, {
                     message: '"value" contains [upc] without its required peers [txt, code]',
-                    details: [{
-                        message: '"value" contains [upc] without its required peers [txt, code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['upc'],
-                            presentWithLabels: ['upc'],
-                            missing: ['txt', 'code'],
-                            missingWithLabels: ['txt', 'code'],
-                            label: 'value',
-                            value: { txt: undefined, upc: 'test' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['upc'],
+                        presentWithLabels: ['upc'],
+                        missing: ['txt', 'code'],
+                        missingWithLabels: ['txt', 'code'],
+                        label: 'value',
+                        value: { txt: undefined, upc: 'test' }
+                    }
                 }],
                 [{ txt: 'test', upc: undefined }, false, {
                     message: '"value" contains [txt] without its required peers [upc, code]',
-                    details: [{
-                        message: '"value" contains [txt] without its required peers [upc, code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['txt'],
-                            presentWithLabels: ['txt'],
-                            missing: ['upc', 'code'],
-                            missingWithLabels: ['upc', 'code'],
-                            label: 'value',
-                            value: { txt: 'test', upc: undefined }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['txt'],
+                        presentWithLabels: ['txt'],
+                        missing: ['upc', 'code'],
+                        missingWithLabels: ['upc', 'code'],
+                        label: 'value',
+                        value: { txt: 'test', upc: undefined }
+                    }
                 }],
                 [{ txt: 'test', upc: '' }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
-                    details: [{
-                        message: '"value" contains [txt, upc] without its required peers [code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['txt', 'upc'],
-                            presentWithLabels: ['txt', 'upc'],
-                            missing: ['code'],
-                            missingWithLabels: ['code'],
-                            label: 'value',
-                            value: { txt: 'test', upc: '' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['txt', 'upc'],
+                        presentWithLabels: ['txt', 'upc'],
+                        missing: ['code'],
+                        missingWithLabels: ['code'],
+                        label: 'value',
+                        value: { txt: 'test', upc: '' }
+                    }
                 }],
                 [{ txt: 'test', upc: null }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
-                    details: [{
-                        message: '"value" contains [txt, upc] without its required peers [code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['txt', 'upc'],
-                            presentWithLabels: ['txt', 'upc'],
-                            missing: ['code'],
-                            missingWithLabels: ['code'],
-                            label: 'value',
-                            value: { txt: 'test', upc: null }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['txt', 'upc'],
+                        presentWithLabels: ['txt', 'upc'],
+                        missing: ['code'],
+                        missingWithLabels: ['code'],
+                        label: 'value',
+                        value: { txt: 'test', upc: null }
+                    }
                 }],
                 [{ txt: '', upc: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: '', upc: undefined, code: 999 }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: '', upc: undefined, code: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: '', upc: '' }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: 'test', upc: 'test' }, false, {
                     message: '"value" contains [txt, upc] without its required peers [code]',
-                    details: [{
-                        message: '"value" contains [txt, upc] without its required peers [code]',
-                        path: [],
-                        type: 'object.and',
-                        context: {
-                            present: ['txt', 'upc'],
-                            presentWithLabels: ['txt', 'upc'],
-                            missing: ['code'],
-                            missingWithLabels: ['code'],
-                            label: 'value',
-                            value: { txt: 'test', upc: 'test' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['txt', 'upc'],
+                        presentWithLabels: ['txt', 'upc'],
+                        missing: ['code'],
+                        missingWithLabels: ['code'],
+                        label: 'value',
+                        value: { txt: 'test', upc: 'test' }
+                    }
                 }],
                 [{ txt: 'test', upc: 'test', code: 322 }, true],
                 [{ txt: 'test', upc: null, code: 322 }, true]
@@ -1367,17 +1206,14 @@ describe('object', () => {
                 [{ a: 5, d: { e: 5 } }, true],
                 [{ a: 6, d: { e: 5 } }, false, {
                     message: '"value" is invalid because "a" failed to equal to d.e',
-                    details: [{
-                        message: '"value" is invalid because "a" failed to equal to d.e',
-                        path: [],
-                        type: 'object.assert',
-                        context: {
-                            subject,
-                            message: 'equal to d.e',
-                            label: 'value',
-                            value: { a: 6, d: { e: 5 } }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.assert',
+                    context: {
+                        subject,
+                        message: 'equal to d.e',
+                        label: 'value',
+                        value: { a: 6, d: { e: 5 } }
+                    }
                 }]
             ]);
         });
@@ -1458,17 +1294,14 @@ describe('object', () => {
                 [{ a: false, b: false, c: true }, true],
                 [{ a: false, b: false, c: false }, false, {
                     message: '"value" is invalid because at least one key must be true',
-                    details: [{
-                        message: '"value" is invalid because at least one key must be true',
-                        path: [],
-                        type: 'object.assert',
-                        context: {
-                            subject,
-                            message: 'at least one key must be true',
-                            label: 'value',
-                            value: { a: false, b: false, c: false }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.assert',
+                    context: {
+                        subject,
+                        message: 'at least one key must be true',
+                        label: 'value',
+                        value: { a: false, b: false, c: false }
+                    }
                 }]
             ]);
         });
@@ -1697,24 +1530,18 @@ describe('object', () => {
                 [{ a: '1' }, true, { a: 1 }],
                 [{ a: '2' }, false, {
                     message: '"a" must be [1]',
-                    details: [{
-                        message: '"a" must be [1]',
-                        path: ['a'],
-                        type: 'any.only',
-                        context: { value: 2, valids: [1], label: 'a', key: 'a' }
-                    }]
+                    path: ['a'],
+                    type: 'any.only',
+                    context: { value: 2, valids: [1], label: 'a', key: 'a' }
                 }]
             ]);
 
             Helper.validate(b, [
                 [{ a: 1 }, false, {
                     message: '"a" must be a string',
-                    details: [{
-                        message: '"a" must be a string',
-                        path: ['a'],
-                        type: 'string.base',
-                        context: { value: 1, label: 'a', key: 'a' }
-                    }]
+                    path: ['a'],
+                    type: 'string.base',
+                    context: { value: 1, label: 'a', key: 'a' }
                 }],
                 [{ a: '1' }, true, { a: '1' }]
             ]);
@@ -2565,35 +2392,29 @@ describe('object', () => {
                 [{ txt: 'test', upc: 'test' }, true],
                 [{ txt: 'test', upc: 'test', code: 322 }, false, {
                     message: '"txt" must not exist simultaneously with [upc, code]',
-                    details: [{
-                        message: '"txt" must not exist simultaneously with [upc, code]',
-                        path: [],
-                        type: 'object.nand',
-                        context: {
-                            main: 'txt',
-                            mainWithLabel: 'txt',
-                            peers: ['upc', 'code'],
-                            peersWithLabels: ['upc', 'code'],
-                            label: 'value',
-                            value: { txt: 'test', upc: 'test', code: 322 }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.nand',
+                    context: {
+                        main: 'txt',
+                        mainWithLabel: 'txt',
+                        peers: ['upc', 'code'],
+                        peersWithLabels: ['upc', 'code'],
+                        label: 'value',
+                        value: { txt: 'test', upc: 'test', code: 322 }
+                    }
                 }],
                 [{ txt: 'test', upc: null, code: 322 }, false, {
                     message: '"txt" must not exist simultaneously with [upc, code]',
-                    details: [{
-                        message: '"txt" must not exist simultaneously with [upc, code]',
-                        path: [],
-                        type: 'object.nand',
-                        context: {
-                            main: 'txt',
-                            mainWithLabel: 'txt',
-                            peers: ['upc', 'code'],
-                            peersWithLabels: ['upc', 'code'],
-                            label: 'value',
-                            value: { txt: 'test', upc: null, code: 322 }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.nand',
+                    context: {
+                        main: 'txt',
+                        mainWithLabel: 'txt',
+                        peers: ['upc', 'code'],
+                        peersWithLabels: ['upc', 'code'],
+                        label: 'value',
+                        value: { txt: 'test', upc: null, code: 322 }
+                    }
                 }]
             ]);
         });
@@ -2767,43 +2588,31 @@ describe('object', () => {
                 [{ upc: 'test' }, true],
                 [{ txt: null }, false, {
                     message: '"txt" must be a string',
-                    details: [{
-                        message: '"txt" must be a string',
-                        path: ['txt'],
-                        type: 'string.base',
-                        context: { value: null, label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.base',
+                    context: { value: null, label: 'txt', key: 'txt' }
                 }],
                 [{ txt: 'test' }, true],
                 [{ code: null }, false, {
                     message: '"code" must be a number',
-                    details: [{
-                        message: '"code" must be a number',
-                        path: ['code'],
-                        type: 'number.base',
-                        context: { label: 'code', key: 'code', value: null }
-                    }]
+                    path: ['code'],
+                    type: 'number.base',
+                    context: { label: 'code', key: 'code', value: null }
                 }],
                 [{ code: 123 }, true],
                 [{ txt: 'test', upc: null }, true],
                 [{ txt: 'test', upc: '' }, true],
                 [{ txt: '', upc: 'test' }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: null, upc: 'test' }, false, {
                     message: '"txt" must be a string',
-                    details: [{
-                        message: '"txt" must be a string',
-                        path: ['txt'],
-                        type: 'string.base',
-                        context: { value: null, label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.base',
+                    context: { value: null, label: 'txt', key: 'txt' }
                 }],
                 [{ txt: undefined, upc: 'test' }, true],
                 [{ txt: 'test', upc: undefined }, true],
@@ -2811,39 +2620,27 @@ describe('object', () => {
                 [{ txt: 'test', upc: null }, true],
                 [{ txt: '', upc: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: '', upc: undefined, code: 999 }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: '', upc: undefined, code: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: '', upc: '' }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: 'test', upc: 'test' }, true],
                 [{ txt: 'test', upc: 'test', code: 322 }, true]
@@ -3178,31 +2975,22 @@ describe('object', () => {
                 [{ a: 5 }, true],
                 [{ a: 'x' }, false, {
                     message: '"a" must be a number',
-                    details: [{
-                        message: '"a" must be a number',
-                        path: ['a'],
-                        type: 'number.base',
-                        context: { label: 'a', key: 'a', value: 'x' }
-                    }]
+                    path: ['a'],
+                    type: 'number.base',
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }],
                 [{ b: 'x' }, false, {
                     message: '"b" is not allowed',
-                    details: [{
-                        message: '"b" is not allowed',
-                        path: ['b'],
-                        type: 'object.unknown',
-                        context: { child: 'b', label: 'b', key: 'b', value: 'x' }
-                    }]
+                    path: ['b'],
+                    type: 'object.unknown',
+                    context: { child: 'b', label: 'b', key: 'b', value: 'x' }
                 }],
                 [{ bb: 'x' }, true],
                 [{ 5: 'x' }, false, {
                     message: '"5" must be a boolean',
-                    details: [{
-                        message: '"5" must be a boolean',
-                        path: ['5'],
-                        type: 'boolean.base',
-                        context: { label: '5', key: '5', value: 'x' }
-                    }]
+                    path: ['5'],
+                    type: 'boolean.base',
+                    context: { label: '5', key: '5', value: 'x' }
                 }],
                 [{ 5: false }, true],
                 [{ 5: undefined }, true]
@@ -3237,31 +3025,22 @@ describe('object', () => {
                 [{ a: 5 }, true],
                 [{ a: 'x' }, false, {
                     message: '"a" must be a number',
-                    details: [{
-                        message: '"a" must be a number',
-                        path: ['a'],
-                        type: 'number.base',
-                        context: { label: 'a', key: 'a', value: 'x' }
-                    }]
+                    path: ['a'],
+                    type: 'number.base',
+                    context: { label: 'a', key: 'a', value: 'x' }
                 }],
                 [{ b: 'x' }, false, {
                     message: '"b" is not allowed',
-                    details: [{
-                        message: '"b" is not allowed',
-                        path: ['b'],
-                        type: 'object.unknown',
-                        context: { child: 'b', label: 'b', key: 'b', value: 'x' }
-                    }]
+                    path: ['b'],
+                    type: 'object.unknown',
+                    context: { child: 'b', label: 'b', key: 'b', value: 'x' }
                 }],
                 [{ bb: 'x' }, true],
                 [{ 5: 'x' }, false, {
                     message: '"5" must be a boolean',
-                    details: [{
-                        message: '"5" must be a boolean',
-                        path: ['5'],
-                        type: 'boolean.base',
-                        context: { label: '5', key: '5', value: 'x' }
-                    }]
+                    path: ['5'],
+                    type: 'boolean.base',
+                    context: { label: '5', key: '5', value: 'x' }
                 }],
                 [{ 5: false }, true],
                 [{ 5: undefined }, true]
@@ -3279,49 +3058,34 @@ describe('object', () => {
                 [{ a: 'x' }, true],
                 [{ a: 5 }, false, {
                     message: '"a" must be a string',
-                    details: [{
-                        message: '"a" must be a string',
-                        path: ['a'],
-                        type: 'string.base',
-                        context: { label: 'a', key: 'a', value: 5 }
-                    }]
+                    path: ['a'],
+                    type: 'string.base',
+                    context: { label: 'a', key: 'a', value: 5 }
                 }],
                 [{ b: 'x' }, false, {
                     message: '"b" must be of type object',
-                    details: [{
-                        message: '"b" must be of type object',
-                        path: ['b'],
-                        type: 'object.base',
-                        context: { label: 'b', key: 'b', value: 'x', type: 'object' }
-                    }]
+                    path: ['b'],
+                    type: 'object.base',
+                    context: { label: 'b', key: 'b', value: 'x', type: 'object' }
                 }],
                 [{ b: {} }, true],
                 [{ b: { foo: true } }, false, {
                     message: '"b.foo" is not allowed',
-                    details: [{
-                        message: '"b.foo" is not allowed',
-                        path: ['b', 'foo'],
-                        type: 'object.unknown',
-                        context: { child: 'foo', value: true, key: 'foo', label: 'b.foo' }
-                    }]
+                    path: ['b', 'foo'],
+                    type: 'object.unknown',
+                    context: { child: 'foo', value: true, key: 'foo', label: 'b.foo' }
                 }],
                 [{ a: 'x', b: { foo: true } }, false, {
                     message: '"b.foo" is not allowed',
-                    details: [{
-                        message: '"b.foo" is not allowed',
-                        path: ['b', 'foo'],
-                        type: 'object.unknown',
-                        context: { child: 'foo', value: true, key: 'foo', label: 'b.foo' }
-                    }]
+                    path: ['b', 'foo'],
+                    type: 'object.unknown',
+                    context: { child: 'foo', value: true, key: 'foo', label: 'b.foo' }
                 }],
                 [{ a: 'x', b: { x: 'y' } }, false, {
                     message: '"b.x" must be a boolean',
-                    details: [{
-                        message: '"b.x" must be a boolean',
-                        path: ['b', 'x'],
-                        type: 'boolean.base',
-                        context: { value: 'y', key: 'x', label: 'b.x' }
-                    }]
+                    path: ['b', 'x'],
+                    type: 'boolean.base',
+                    context: { value: 'y', key: 'x', label: 'b.x' }
                 }]
             ]);
         });
@@ -3403,31 +3167,28 @@ describe('object', () => {
                 [{ a: { v: 1 }, b: { x: 'a', v: 'b' } }, true],
                 [{ a: { x: 1 }, b: { y: 'a' } }, false, {
                     message: '"a" keys failed to match pattern requirements',
-                    details: [{
-                        message: '"a" keys failed to match pattern requirements',
-                        path: ['a'],
-                        type: 'object.pattern.match',
-                        context: {
-                            details: [
-                                {
-                                    message: '"a[0]" must be [ref:....b]',
-                                    path: ['a', 0],
-                                    type: 'any.only',
-                                    context: {
-                                        key: 0,
-                                        label: 'a[0]',
-                                        valids: [matches],
-                                        value: 'x'
-                                    }
+                    path: ['a'],
+                    type: 'object.pattern.match',
+                    context: {
+                        details: [
+                            {
+                                message: '"a[0]" must be [ref:....b]',
+                                path: ['a', 0],
+                                type: 'any.only',
+                                context: {
+                                    key: 0,
+                                    label: 'a[0]',
+                                    valids: [matches],
+                                    value: 'x'
                                 }
-                            ],
-                            key: 'a',
-                            label: 'a',
-                            matches: ['x'],
-                            message: '"a[0]" must be [ref:....b]',
-                            value: { x: 1 }
-                        }
-                    }]
+                            }
+                        ],
+                        key: 'a',
+                        label: 'a',
+                        matches: ['x'],
+                        message: '"a[0]" must be [ref:....b]',
+                        value: { x: 1 }
+                    }
                 }]
             ]);
         });
@@ -3503,29 +3264,26 @@ describe('object', () => {
                 [{ a: 3, x1: true, x2: true, x3: false, xx: 1 }, true],
                 [{ a: 0, x1: true }, false, {
                     message: '"value" keys failed to match pattern requirements',
-                    details: [{
-                        message: '"value" keys failed to match pattern requirements',
-                        path: [],
-                        type: 'object.pattern.match',
-                        context: {
-                            message: '"value" must contain ref:a items',
-                            label: 'value',
-                            value: { a: 0, x1: true },
-                            matches: ['x1'],
-                            details: [
-                                {
-                                    context: {
-                                        label: 'value',
-                                        limit: ref1,
-                                        value: ['x1']
-                                    },
-                                    message: '"value" must contain ref:a items',
-                                    path: [],
-                                    type: 'array.length'
-                                }
-                            ]
-                        }
-                    }]
+                    path: [],
+                    type: 'object.pattern.match',
+                    context: {
+                        message: '"value" must contain ref:a items',
+                        label: 'value',
+                        value: { a: 0, x1: true },
+                        matches: ['x1'],
+                        details: [
+                            {
+                                context: {
+                                    label: 'value',
+                                    limit: ref1,
+                                    value: ['x1']
+                                },
+                                message: '"value" must contain ref:a items',
+                                path: [],
+                                type: 'array.length'
+                            }
+                        ]
+                    }
                 }]
             ]);
 
@@ -3630,26 +3388,23 @@ describe('object', () => {
                 [{ a: { match: { b: true } }, b: { match: { a: true } } }, true],
                 [{ a: { match: { b: true } } }, false, {
                     message: '"a.match" keys failed to match pattern requirements',
-                    details: [{
-                        message: '"a.match" keys failed to match pattern requirements',
-                        path: ['a', 'match'],
-                        type: 'object.pattern.match',
-                        context: {
-                            key: 'match',
-                            label: 'a.match',
-                            matches: ['b'],
-                            message: 'a.match[0] does not have a matching grandparent',
-                            value: { b: true },
-                            details: [
-                                {
-                                    context: { key: 0, label: 'a.match[0]', value: 'b' },
-                                    message: 'a.match[0] does not have a matching grandparent',
-                                    path: ['a', 'match', 0],
-                                    type: 'custom'
-                                }
-                            ]
-                        }
-                    }]
+                    path: ['a', 'match'],
+                    type: 'object.pattern.match',
+                    context: {
+                        key: 'match',
+                        label: 'a.match',
+                        matches: ['b'],
+                        message: 'a.match[0] does not have a matching grandparent',
+                        value: { b: true },
+                        details: [
+                            {
+                                context: { key: 0, label: 'a.match[0]', value: 'b' },
+                                message: 'a.match[0] does not have a matching grandparent',
+                                path: ['a', 'match', 0],
+                                type: 'custom'
+                            }
+                        ]
+                    }
                 }]
             ]);
         });
@@ -3673,12 +3428,9 @@ describe('object', () => {
                 [{ x1: 1, x2: 2 }, true],
                 [{ x1: 11 }, false, {
                     message: '"x1" must be less than or equal to 10',
-                    details: [{
-                        message: '"x1" must be less than or equal to 10',
-                        path: ['x1'],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'x1', key: 'x1' }
-                    }]
+                    path: ['x1'],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'x1', key: 'x1' }
                 }]
             ]);
         });
@@ -3704,21 +3456,15 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{}, false, {
                     message: '"value" must be a Joi schema of any type',
-                    details: [{
-                        message: '"value" must be a Joi schema of any type',
-                        path: [],
-                        type: 'object.schema',
-                        context: { label: 'value', type: 'any', value: {} }
-                    }]
+                    path: [],
+                    type: 'object.schema',
+                    context: { label: 'value', type: 'any', value: {} }
                 }],
                 [{ isJoi: true }, false, {
                     message: '"value" must be a Joi schema of any type',
-                    details: [{
-                        message: '"value" must be a Joi schema of any type',
-                        path: [],
-                        type: 'object.schema',
-                        context: { label: 'value', type: 'any', value: { isJoi: true } }
-                    }]
+                    path: [],
+                    type: 'object.schema',
+                    context: { label: 'value', type: 'any', value: { isJoi: true } }
                 }],
                 [Joi.number().max(2), true]
             ]);
@@ -3731,30 +3477,21 @@ describe('object', () => {
                 [Joi.number().max(2), true],
                 [{}, false, {
                     message: '"value" must be a Joi schema of number type',
-                    details: [{
-                        message: '"value" must be a Joi schema of number type',
-                        path: [],
-                        type: 'object.schema',
-                        context: { label: 'value', type: 'number', value: {} }
-                    }]
+                    path: [],
+                    type: 'object.schema',
+                    context: { label: 'value', type: 'number', value: {} }
                 }],
                 [{ isJoi: true }, false, {
                     message: '"value" must be a Joi schema of number type',
-                    details: [{
-                        message: '"value" must be a Joi schema of number type',
-                        path: [],
-                        type: 'object.schema',
-                        context: { label: 'value', type: 'number', value: { isJoi: true } }
-                    }]
+                    path: [],
+                    type: 'object.schema',
+                    context: { label: 'value', type: 'number', value: { isJoi: true } }
                 }],
                 [Joi.string(), false, {
                     message: '"value" must be a Joi schema of number type',
-                    details: [{
-                        message: '"value" must be a Joi schema of number type',
-                        path: [],
-                        type: 'object.schema',
-                        context: { label: 'value', type: 'number', value: Joi.string() }
-                    }]
+                    path: [],
+                    type: 'object.schema',
+                    context: { label: 'value', type: 'number', value: Joi.string() }
                 }]
             ]);
         });
@@ -3873,22 +3610,16 @@ describe('object', () => {
                 [{ a: { b: 5 } }, true],
                 [{ a: { b: 'x' } }, false, {
                     message: '"a.b" must be a number',
-                    details: [{
-                        message: '"a.b" must be a number',
-                        path: ['a', 'b'],
-                        type: 'number.base',
-                        context: { label: 'a.b', key: 'b', value: 'x' }
-                    }]
+                    path: ['a', 'b'],
+                    type: 'number.base',
+                    context: { label: 'a.b', key: 'b', value: 'x' }
                 }],
                 [{ a: { b: 5 }, c: 'ignore' }, true],
                 [{ a: { b: 5, c: 'ignore' } }, false, {
                     message: '"a.c" is not allowed',
-                    details: [{
-                        message: '"a.c" is not allowed',
-                        path: ['a', 'c'],
-                        type: 'object.unknown',
-                        context: { child: 'c', label: 'a.c', key: 'c', value: 'ignore' }
-                    }]
+                    path: ['a', 'c'],
+                    type: 'object.unknown',
+                    context: { child: 'c', label: 'a.c', key: 'c', value: 'ignore' }
                 }]
             ]);
         });
@@ -3905,21 +3636,15 @@ describe('object', () => {
                 [{ a: { b: 5 } }, true],
                 [{ a: { b: 'x' } }, false, {
                     message: '"a.b" must be a number',
-                    details: [{
-                        message: '"a.b" must be a number',
-                        path: ['a', 'b'],
-                        type: 'number.base',
-                        context: { label: 'a.b', key: 'b', value: 'x' }
-                    }]
+                    path: ['a', 'b'],
+                    type: 'number.base',
+                    context: { label: 'a.b', key: 'b', value: 'x' }
                 }],
                 [{ a: { b: 5 }, c: 'ignore' }, false, {
                     message: '"c" is not allowed',
-                    details: [{
-                        message: '"c" is not allowed',
-                        path: ['c'],
-                        type: 'object.unknown',
-                        context: { child: 'c', label: 'c', key: 'c', value: 'ignore' }
-                    }]
+                    path: ['c'],
+                    type: 'object.unknown',
+                    context: { child: 'c', label: 'c', key: 'c', value: 'ignore' }
                 }],
                 [{ a: { b: 5, c: 'ignore' } }, true]
             ]);
@@ -3940,12 +3665,9 @@ describe('object', () => {
                 [{ a: { b: 5 } }, true, { a: { b: 5 } }],
                 [{ a: { b: 'x' } }, false, {
                     message: '"a.b" must be a number',
-                    details: [{
-                        message: '"a.b" must be a number',
-                        path: ['a', 'b'],
-                        type: 'number.base',
-                        context: { label: 'a.b', key: 'b', value: 'x' }
-                    }]
+                    path: ['a', 'b'],
+                    type: 'number.base',
+                    context: { label: 'a.b', key: 'b', value: 'x' }
                 }],
                 [{ a: { b: 5 }, d: 'ignore' }, true, { a: { b: 5 } }],
                 [{ a: { b: 5, d: 'ignore' } }, true, { a: { b: 5, d: 'ignore' } }],
@@ -3983,53 +3705,41 @@ describe('object', () => {
                 [{ upc: 'test' }, true],
                 [{ txt: 'test' }, false, {
                     message: '"txt" missing required peer "upc"',
-                    details: [{
-                        message: '"txt" missing required peer "upc"',
-                        path: [],
-                        type: 'object.with',
-                        context: {
-                            main: 'txt',
-                            mainWithLabel: 'txt',
-                            peer: 'upc',
-                            peerWithLabel: 'upc',
-                            label: 'value',
-                            value: { txt: 'test' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.with',
+                    context: {
+                        main: 'txt',
+                        mainWithLabel: 'txt',
+                        peer: 'upc',
+                        peerWithLabel: 'upc',
+                        label: 'value',
+                        value: { txt: 'test' }
+                    }
                 }],
                 [{ txt: 'test', upc: null }, false, {
                     message: '"upc" must be a string',
-                    details: [{
-                        message: '"upc" must be a string',
-                        path: ['upc'],
-                        type: 'string.base',
-                        context: { value: null, label: 'upc', key: 'upc' }
-                    }]
+                    path: ['upc'],
+                    type: 'string.base',
+                    context: { value: null, label: 'upc', key: 'upc' }
                 }],
                 [{ txt: 'test', upc: '' }, false, {
                     message: '"upc" is not allowed to be empty',
-                    details: [{
-                        message: '"upc" is not allowed to be empty',
-                        path: ['upc'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'upc', key: 'upc' }
-                    }]
+                    path: ['upc'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'upc', key: 'upc' }
                 }],
                 [{ txt: 'test', upc: undefined }, false, {
                     message: '"txt" missing required peer "upc"',
-                    details: [{
-                        message: '"txt" missing required peer "upc"',
-                        path: [],
-                        type: 'object.with',
-                        context: {
-                            main: 'txt',
-                            mainWithLabel: 'txt',
-                            peer: 'upc',
-                            peerWithLabel: 'upc',
-                            label: 'value',
-                            value: { txt: 'test', upc: undefined }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.with',
+                    context: {
+                        main: 'txt',
+                        mainWithLabel: 'txt',
+                        peer: 'upc',
+                        peerWithLabel: 'upc',
+                        label: 'value',
+                        value: { txt: 'test', upc: undefined }
+                    }
                 }],
                 [{ txt: 'test', upc: 'test' }, true]
             ]);
@@ -4102,19 +3812,16 @@ describe('object', () => {
                 [{ a: 'test', b: { c: 'test2' } }, true],
                 [{ a: 'test', b: { d: 80 } }, false, {
                     message: '"a" missing required peer "b.c"',
-                    details: [{
-                        message: '"a" missing required peer "b.c"',
-                        path: [],
-                        type: 'object.with',
-                        context: {
-                            main: 'a',
-                            mainWithLabel: 'a',
-                            peer: 'b.c',
-                            peerWithLabel: 'b.c',
-                            label: 'value',
-                            value: { a: 'test', b: { d: 80 } }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.with',
+                    context: {
+                        main: 'a',
+                        mainWithLabel: 'a',
+                        peer: 'b.c',
+                        peerWithLabel: 'b.c',
+                        label: 'value',
+                        value: { a: 'test', b: { d: 80 } }
+                    }
                 }]
             ]);
 
@@ -4127,19 +3834,16 @@ describe('object', () => {
                 [{ a: { b: 'test' }, b: { c: 'test2' } }, true],
                 [{ a: { b: 'test' }, b: {} }, false, {
                     message: '"a.b" missing required peer "b.c"',
-                    details: [{
-                        message: '"a.b" missing required peer "b.c"',
-                        path: [],
-                        type: 'object.with',
-                        context: {
-                            main: 'a.b',
-                            mainWithLabel: 'a.b',
-                            peer: 'b.c',
-                            peerWithLabel: 'b.c',
-                            label: 'value',
-                            value: { a: { b: 'test' }, b: {} }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.with',
+                    context: {
+                        main: 'a.b',
+                        mainWithLabel: 'a.b',
+                        peer: 'b.c',
+                        peerWithLabel: 'b.c',
+                        label: 'value',
+                        value: { a: { b: 'test' }, b: {} }
+                    }
                 }]
             ]);
         });
@@ -4270,38 +3974,29 @@ describe('object', () => {
                 [{ txt: 'test' }, true],
                 [{ txt: 'test', upc: null }, false, {
                     message: '"upc" must be a string',
-                    details: [{
-                        message: '"upc" must be a string',
-                        path: ['upc'],
-                        type: 'string.base',
-                        context: { value: null, label: 'upc', key: 'upc' }
-                    }]
+                    path: ['upc'],
+                    type: 'string.base',
+                    context: { value: null, label: 'upc', key: 'upc' }
                 }],
                 [{ txt: 'test', upc: '' }, false, {
                     message: '"upc" is not allowed to be empty',
-                    details: [{
-                        message: '"upc" is not allowed to be empty',
-                        path: ['upc'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'upc', key: 'upc' }
-                    }]
+                    path: ['upc'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'upc', key: 'upc' }
                 }],
                 [{ txt: 'test', upc: undefined }, true],
                 [{ txt: 'test', upc: 'test' }, false, {
                     message: '"txt" conflict with forbidden peer "upc"',
-                    details: [{
-                        message: '"txt" conflict with forbidden peer "upc"',
-                        path: [],
-                        type: 'object.without',
-                        context: {
-                            main: 'txt',
-                            mainWithLabel: 'txt',
-                            peer: 'upc',
-                            peerWithLabel: 'upc',
-                            label: 'value',
-                            value: { txt: 'test', upc: 'test' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.without',
+                    context: {
+                        main: 'txt',
+                        mainWithLabel: 'txt',
+                        peer: 'upc',
+                        peerWithLabel: 'upc',
+                        label: 'value',
+                        value: { txt: 'test', upc: 'test' }
+                    }
                 }]
             ]);
         });
@@ -4491,95 +4186,68 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{ upc: null }, false, {
                     message: '"upc" must be a string',
-                    details: [{
-                        message: '"upc" must be a string',
-                        path: ['upc'],
-                        type: 'string.base',
-                        context: { value: null, label: 'upc', key: 'upc' }
-                    }]
+                    path: ['upc'],
+                    type: 'string.base',
+                    context: { value: null, label: 'upc', key: 'upc' }
                 }],
                 [{ upc: 'test' }, true],
                 [{ txt: null }, false, {
                     message: '"txt" must be a string',
-                    details: [{
-                        message: '"txt" must be a string',
-                        path: ['txt'],
-                        type: 'string.base',
-                        context: { value: null, label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.base',
+                    context: { value: null, label: 'txt', key: 'txt' }
                 }],
                 [{ txt: 'test' }, true],
                 [{ txt: 'test', upc: null }, false, {
                     message: '"upc" must be a string',
-                    details: [{
-                        message: '"upc" must be a string',
-                        path: ['upc'],
-                        type: 'string.base',
-                        context: { value: null, label: 'upc', key: 'upc' }
-                    }]
+                    path: ['upc'],
+                    type: 'string.base',
+                    context: { value: null, label: 'upc', key: 'upc' }
                 }],
                 [{ txt: 'test', upc: '' }, false, {
                     message: '"upc" is not allowed to be empty',
-                    details: [{
-                        message: '"upc" is not allowed to be empty',
-                        path: ['upc'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'upc', key: 'upc' }
-                    }]
+                    path: ['upc'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'upc', key: 'upc' }
                 }],
                 [{ txt: '', upc: 'test' }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: null, upc: 'test' }, false, {
                     message: '"txt" must be a string',
-                    details: [{
-                        message: '"txt" must be a string',
-                        path: ['txt'],
-                        type: 'string.base',
-                        context: { value: null, label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.base',
+                    context: { value: null, label: 'txt', key: 'txt' }
                 }],
                 [{ txt: undefined, upc: 'test' }, true],
                 [{ txt: 'test', upc: undefined }, true],
                 [{ txt: '', upc: undefined }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: '', upc: '' }, false, {
                     message: '"txt" is not allowed to be empty',
-                    details: [{
-                        message: '"txt" is not allowed to be empty',
-                        path: ['txt'],
-                        type: 'string.empty',
-                        context: { value: '', label: 'txt', key: 'txt' }
-                    }]
+                    path: ['txt'],
+                    type: 'string.empty',
+                    context: { value: '', label: 'txt', key: 'txt' }
                 }],
                 [{ txt: 'test', upc: 'test' }, false, {
                     message: '"value" contains a conflict between exclusive peers [txt, upc]',
-                    details: [{
-                        message: '"value" contains a conflict between exclusive peers [txt, upc]',
-                        path: [],
-                        type: 'object.xor',
-                        context: {
-                            peers: ['txt', 'upc'],
-                            peersWithLabels: ['txt', 'upc'],
-                            present: ['txt', 'upc'],
-                            presentWithLabels: ['txt', 'upc'],
-                            label: 'value',
-                            value: { txt: 'test', upc: 'test' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.xor',
+                    context: {
+                        peers: ['txt', 'upc'],
+                        peersWithLabels: ['txt', 'upc'],
+                        present: ['txt', 'upc'],
+                        presentWithLabels: ['txt', 'upc'],
+                        label: 'value',
+                        value: { txt: 'test', upc: 'test' }
+                    }
                 }]
             ]);
         });
@@ -4597,17 +4265,14 @@ describe('object', () => {
                 [{ txt: 'test' }, true],
                 [{}, false, {
                     message: '"value" must contain at least one of [txt, upc, code]',
-                    details: [{
-                        message: '"value" must contain at least one of [txt, upc, code]',
-                        path: [],
-                        type: 'object.missing',
-                        context: {
-                            peers: ['txt', 'upc', 'code'],
-                            peersWithLabels: ['txt', 'upc', 'code'],
-                            label: 'value',
-                            value: {}
-                        }
-                    }]
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['txt', 'upc', 'code'],
+                        peersWithLabels: ['txt', 'upc', 'code'],
+                        label: 'value',
+                        value: {}
+                    }
                 }]
             ]);
         });
@@ -4624,33 +4289,27 @@ describe('object', () => {
                 [{ code: 456 }, true],
                 [{ code: 456, upc: 123 }, false, {
                     message: '"value" contains a conflict between exclusive peers [code, upc]',
-                    details: [{
-                        message: '"value" contains a conflict between exclusive peers [code, upc]',
-                        path: [],
-                        type: 'object.xor',
-                        context: {
-                            peers: ['code', 'upc'],
-                            peersWithLabels: ['code', 'upc'],
-                            present: ['code', 'upc'],
-                            presentWithLabels: ['code', 'upc'],
-                            label: 'value',
-                            value: { code: 456, upc: 123 }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.xor',
+                    context: {
+                        peers: ['code', 'upc'],
+                        peersWithLabels: ['code', 'upc'],
+                        present: ['code', 'upc'],
+                        presentWithLabels: ['code', 'upc'],
+                        label: 'value',
+                        value: { code: 456, upc: 123 }
+                    }
                 }],
                 [{}, false, {
                     message: '"value" must contain at least one of [code, upc]',
-                    details: [{
-                        message: '"value" must contain at least one of [code, upc]',
-                        path: [],
-                        type: 'object.missing',
-                        context: {
-                            peers: ['code', 'upc'],
-                            peersWithLabels: ['code', 'upc'],
-                            label: 'value',
-                            value: {}
-                        }
-                    }]
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['code', 'upc'],
+                        peersWithLabels: ['code', 'upc'],
+                        label: 'value',
+                        value: {}
+                    }
                 }]
             ]);
         });
@@ -4668,33 +4327,27 @@ describe('object', () => {
                 [{ code: '456' }, true],
                 [{ code: '456', upc: '' }, false, {
                     message: '"value" contains a conflict between exclusive peers [code, upc]',
-                    details: [{
-                        message: '"value" contains a conflict between exclusive peers [code, upc]',
-                        path: [],
-                        type: 'object.xor',
-                        context: {
-                            peers: ['code', 'upc'],
-                            peersWithLabels: ['code', 'upc'],
-                            present: ['code', 'upc'],
-                            presentWithLabels: ['code', 'upc'],
-                            label: 'value',
-                            value: { code: '456', upc: '' }
-                        }
-                    }]
+                    path: [],
+                    type: 'object.xor',
+                    context: {
+                        peers: ['code', 'upc'],
+                        peersWithLabels: ['code', 'upc'],
+                        present: ['code', 'upc'],
+                        presentWithLabels: ['code', 'upc'],
+                        label: 'value',
+                        value: { code: '456', upc: '' }
+                    }
                 }],
                 [{}, false, {
                     message: '"value" must contain at least one of [code, upc]',
-                    details: [{
-                        message: '"value" must contain at least one of [code, upc]',
-                        path: [],
-                        type: 'object.missing',
-                        context: {
-                            peers: ['code', 'upc'],
-                            peersWithLabels: ['code', 'upc'],
-                            label: 'value',
-                            value: {}
-                        }
-                    }]
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['code', 'upc'],
+                        peersWithLabels: ['code', 'upc'],
+                        label: 'value',
+                        value: {}
+                    }
                 }]
             ]);
         });

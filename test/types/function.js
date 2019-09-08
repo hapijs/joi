@@ -27,12 +27,9 @@ describe('function', () => {
             [function () { }, true],
             ['', false, {
                 message: '"value" must be of type function',
-                details: [{
-                    message: '"value" must be of type function',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'function' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'function' }
             }]
         ]);
     });
@@ -43,12 +40,9 @@ describe('function', () => {
             [function () { }, true],
             ['', false, {
                 message: '"value" must be of type function',
-                details: [{
-                    message: '"value" must be of type function',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'function' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'function' }
             }]
         ]);
     });
@@ -61,12 +55,9 @@ describe('function', () => {
             [(a, b) => { }, true],
             ['', false, {
                 message: '"value" must be of type function',
-                details: [{
-                    message: '"value" must be of type function',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'function' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'function' }
             }]
         ]);
 
@@ -133,12 +124,9 @@ describe('function', () => {
             [(a, b, c) => { }, true],
             ['', false, {
                 message: '"value" must be of type function',
-                details: [{
-                    message: '"value" must be of type function',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'function' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'function' }
             }]
         ]);
 
@@ -248,31 +236,22 @@ describe('function', () => {
         Helper.validate(Joi.function().keys({ a: Joi.string().required() }).required(), [
             [function () { }, false, {
                 message: '"a" is required',
-                details: [{
-                    message: '"a" is required',
-                    path: ['a'],
-                    type: 'any.required',
-                    context: { label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.required',
+                context: { label: 'a', key: 'a' }
             }],
             [a, true],
             [b, false, {
                 message: '"a" must be a string',
-                details: [{
-                    message: '"a" must be a string',
-                    path: ['a'],
-                    type: 'string.base',
-                    context: { value: 123, label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'string.base',
+                context: { value: 123, label: 'a', key: 'a' }
             }],
             ['', false, {
                 message: '"value" must be of type function',
-                details: [{
-                    message: '"value" must be of type function',
-                    path: [],
-                    type: 'object.base',
-                    context: { label: 'value', value: '', type: 'function' }
-                }]
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'function' }
             }]
         ]);
     });
@@ -297,21 +276,15 @@ describe('function', () => {
             [a, true],
             [function (x) { }, false, {
                 message: '"a" is required',
-                details: [{
-                    message: '"a" is required',
-                    path: ['a'],
-                    type: 'any.required',
-                    context: { label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'any.required',
+                context: { label: 'a', key: 'a' }
             }],
             [b, false, {
                 message: '"a" must be a string',
-                details: [{
-                    message: '"a" must be a string',
-                    path: ['a'],
-                    type: 'string.base',
-                    context: { value: 123, label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'string.base',
+                context: { value: 123, label: 'a', key: 'a' }
             }]
         ]);
 
@@ -436,12 +409,9 @@ describe('function().class()', () => {
             [{ _class: testClass }, true],
             [{ _class: testFunc }, false, {
                 message: '"_class" must be a class',
-                details: [{
-                    message: '"_class" must be a class',
-                    path: ['_class'],
-                    type: 'function.class',
-                    context: { key: '_class', label: '_class', value: testFunc }
-                }]
+                path: ['_class'],
+                type: 'function.class',
+                context: { key: '_class', label: '_class', value: testFunc }
             }]
         ]);
     });
@@ -455,21 +425,15 @@ describe('function().class()', () => {
         Helper.validate(classSchema, [
             [{ _class: ['class '] }, false, {
                 message: '"_class" must be of type function',
-                details: [{
-                    message: '"_class" must be of type function',
-                    path: ['_class'],
-                    type: 'object.base',
-                    context: { key: '_class', label: '_class', value: ['class '], type: 'function' }
-                }]
+                path: ['_class'],
+                type: 'object.base',
+                context: { key: '_class', label: '_class', value: ['class '], type: 'function' }
             }],
             [{ _class: null }, false, {
                 message: '"_class" must be of type function',
-                details: [{
-                    message: '"_class" must be of type function',
-                    path: ['_class'],
-                    type: 'object.base',
-                    context: { key: '_class', label: '_class', value: null, type: 'function' }
-                }]
+                path: ['_class'],
+                type: 'object.base',
+                context: { key: '_class', label: '_class', value: null, type: 'function' }
             }]
         ]);
     });

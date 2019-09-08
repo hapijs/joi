@@ -129,12 +129,9 @@ describe('link', () => {
             [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz', keys: [{ name: 'qux' }] }] }] }, true],
             [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz', keys: [{ name: 42 }] }] }] }, false, {
                 message: '"keys[0].keys[0].keys[0].name" must be a string',
-                details: [{
-                    message: '"keys[0].keys[0].keys[0].name" must be a string',
-                    path: ['keys', 0, 'keys', 0, 'keys', 0, 'name'],
-                    type: 'string.base',
-                    context: { value: 42, label: 'keys[0].keys[0].keys[0].name', key: 'name' }
-                }]
+                path: ['keys', 0, 'keys', 0, 'keys', 0, 'name'],
+                type: 'string.base',
+                context: { value: 42, label: 'keys[0].keys[0].keys[0].name', key: 'name' }
             }]
         ]);
     });
@@ -157,12 +154,9 @@ describe('link', () => {
             [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz', keys: [{ name: 'qux' }] }] }] }, true],
             [{ name: 'foo', keys: [{ name: 'bar', keys: [{ name: 'baz', keys: [{ name: 42 }] }] }] }, false, {
                 message: '"keys[0].keys[0].keys[0].name" must be a string',
-                details: [{
-                    message: '"keys[0].keys[0].keys[0].name" must be a string',
-                    path: ['keys', 0, 'keys', 0, 'keys', 0, 'name'],
-                    type: 'string.base',
-                    context: { value: 42, label: 'keys[0].keys[0].keys[0].name', key: 'name' }
-                }]
+                path: ['keys', 0, 'keys', 0, 'keys', 0, 'name'],
+                type: 'string.base',
+                context: { value: 42, label: 'keys[0].keys[0].keys[0].name', key: 'name' }
             }]
         ]);
     });
@@ -220,13 +214,10 @@ describe('link', () => {
             [{ happy: true, children: { a: { happy: false } } }, true],
             [{ happy: true, children: { a: { happy: false }, b: { happy: true }, c: 'none' } }, true],
             [{ happy: true, children: { a: { happy: false }, b: { happy: true }, c: {} } }, false, {
+                context: { key: 'happy', label: 'children.c.happy' },
                 message: '"children.c.happy" is required',
-                details: [{
-                    context: { key: 'happy', label: 'children.c.happy' },
-                    message: '"children.c.happy" is required',
-                    path: ['children', 'c', 'happy'],
-                    type: 'any.required'
-                }]
+                path: ['children', 'c', 'happy'],
+                type: 'any.required'
             }]
         ]);
     });
@@ -328,12 +319,9 @@ describe('link', () => {
                 [{ category: 'y', subs: [{ category: 'x' }] }, true],
                 [{ category: 'y', subs: [{ category: 'x', subs: [{ category: 'x' }] }] }, false, {
                     message: '"subs[0].subs" is not allowed',
-                    details: [{
-                        message: '"subs[0].subs" is not allowed',
-                        path: ['subs', 0, 'subs'],
-                        type: 'any.unknown',
-                        context: { label: 'subs[0].subs', value: [{ category: 'x' }], key: 'subs' }
-                    }]
+                    path: ['subs', 0, 'subs'],
+                    type: 'any.unknown',
+                    context: { label: 'subs[0].subs', value: [{ category: 'x' }], key: 'subs' }
                 }]
             ]);
         });
@@ -377,12 +365,9 @@ describe('link', () => {
                 [{ x: { a: 3 } }, true],
                 [{ x: { a: 2 } }, false, {
                     message: '"x.a" must be [3]',
-                    details: [{
-                        message: '"x.a" must be [3]',
-                        path: ['x', 'a'],
-                        type: 'any.only',
-                        context: { label: 'x.a', value: 2, key: 'a', valids: [3] }
-                    }]
+                    path: ['x', 'a'],
+                    type: 'any.only',
+                    context: { label: 'x.a', value: 2, key: 'a', valids: [3] }
                 }]
             ]);
         });
@@ -408,12 +393,9 @@ describe('link', () => {
                 [{ w: true, x: { a: 4 } }, true],
                 [{ x: { a: 2 } }, false, {
                     message: '"x.a" must be [3]',
-                    details: [{
-                        message: '"x.a" must be [3]',
-                        path: ['x', 'a'],
-                        type: 'any.only',
-                        context: { label: 'x.a', value: 2, key: 'a', valids: [3] }
-                    }]
+                    path: ['x', 'a'],
+                    type: 'any.only',
+                    context: { label: 'x.a', value: 2, key: 'a', valids: [3] }
                 }]
             ]);
         });

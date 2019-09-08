@@ -139,26 +139,20 @@ describe('extension', () => {
         Helper.validate(schema, [
             [123, false, {
                 message: '"value" must be a string',
-                details: [{
-                    message: '"value" must be a string',
-                    path: [],
-                    type: 'string.base',
-                    context: { value: 123, label: 'value' }
-                }]
+                path: [],
+                type: 'string.base',
+                context: { value: 123, label: 'value' }
             }],
             ['a', false, {
                 message: '"value" length must be at least 2 characters long',
-                details: [{
-                    message: '"value" length must be at least 2 characters long',
-                    path: [],
-                    type: 'string.min',
-                    context: {
-                        limit: 2,
-                        value: 'a',
-                        encoding: undefined,
-                        label: 'value'
-                    }
-                }]
+                path: [],
+                type: 'string.min',
+                context: {
+                    limit: 2,
+                    value: 'a',
+                    encoding: undefined,
+                    label: 'value'
+                }
             }],
             ['abc', true]
         ]);
@@ -182,26 +176,20 @@ describe('extension', () => {
         Helper.validate(schema, [
             [123, false, {
                 message: '"value" must be a string',
-                details: [{
-                    message: '"value" must be a string',
-                    path: [],
-                    type: 'string.base',
-                    context: { value: 123, label: 'value' }
-                }]
+                path: [],
+                type: 'string.base',
+                context: { value: 123, label: 'value' }
             }],
             ['a', false, {
                 message: '"value" length must be at least 2 characters long',
-                details: [{
-                    message: '"value" length must be at least 2 characters long',
-                    path: [],
-                    type: 'string.min',
-                    context: {
-                        limit: 2,
-                        value: 'a',
-                        encoding: undefined,
-                        label: 'value'
-                    }
-                }]
+                path: [],
+                type: 'string.min',
+                context: {
+                    limit: 2,
+                    value: 'a',
+                    encoding: undefined,
+                    label: 'value'
+                }
             }],
             ['abc', true]
         ]);
@@ -224,12 +212,9 @@ describe('extension', () => {
             [{ a: 1 }, true],
             [{ a: 'a' }, false, {
                 message: '"a" must be a number',
-                details: [{
-                    message: '"a" must be a number',
-                    path: ['a'],
-                    type: 'number.base',
-                    context: { key: 'a', label: 'a', value: 'a' }
-                }]
+                path: ['a'],
+                type: 'number.base',
+                context: { key: 'a', label: 'a', value: 'a' }
             }]
         ]);
     });
@@ -255,12 +240,9 @@ describe('extension', () => {
             [{ a: 1 }, true],
             [{ a: 'a' }, false, {
                 message: '"a" must be a number',
-                details: [{
-                    message: '"a" must be a number',
-                    path: ['a'],
-                    type: 'number.base',
-                    context: { key: 'a', label: 'a', value: 'a' }
-                }]
+                path: ['a'],
+                type: 'number.base',
+                context: { key: 'a', label: 'a', value: 'a' }
             }]
         ]);
     });
@@ -286,12 +268,9 @@ describe('extension', () => {
             ['1', true],
             [{}, false, {
                 message: '"value" must be a number',
-                details: [{
-                    message: '"value" must be a number',
-                    path: [],
-                    type: 'number.base',
-                    context: { label: 'value', value: {} }
-                }]
+                path: [],
+                type: 'number.base',
+                context: { label: 'value', value: {} }
             }]
         ]);
     });
@@ -317,12 +296,9 @@ describe('extension', () => {
             [false, true],
             [{}, false, {
                 message: '"value" must be a boolean',
-                details: [{
-                    message: '"value" must be a boolean',
-                    path: [],
-                    type: 'boolean.base',
-                    context: { label: 'value', value: {} }
-                }]
+                path: [],
+                type: 'boolean.base',
+                context: { label: 'value', value: {} }
             }]
         ]);
     });
@@ -1172,45 +1148,29 @@ describe('extension', () => {
             [{ a: 1000000.1, b: 10 }, true, { a: 1000000, b: 10 }],
             [{ a: 3000, b: 3 }, false, {
                 message: '"a" must be at least a million',
-                key: 'a',
-                details: [{
-                    message: '"a" must be at least a million',
-                    path: ['a'],
-                    type: 'million.base',
-                    context: { value: 3000, label: 'a', key: 'a' }
-                }]
+                path: ['a'],
+                type: 'million.base',
+                context: { value: 3000, label: 'a', key: 'a' }
             }],
             [{ c: 14000000 }, true],
             [{ c: 1000000 }, false, {
                 message: '"c" must be dividable by 7',
-                key: 'c',
-                details: [{
-                    message: '"c" must be dividable by 7',
-                    path: ['c'],
-                    type: 'million.dividable',
-                    context: { value: 1000000, label: 'c', key: 'c', q: 7 }
-                }]
+                path: ['c'],
+                type: 'million.dividable',
+                context: { value: 1000000, label: 'c', key: 'c', q: 7 }
             }],
             [{ d: 1000000.1 }, false, {
                 message: '"d" must be a round number',
-                key: 'd',
-                details: [{
-                    message: '"d" must be a round number',
-                    path: ['d'],
-                    type: 'million.round',
-                    context: { value: 1000000.1, label: 'd', key: 'd' }
-                }]
+                path: ['d'],
+                type: 'million.round',
+                context: { value: 1000000.1, label: 'd', key: 'd' }
             }],
             [{ e: 6000000 }, true],
             [{ e: 1000000 }, false, {
                 message: '"e" must be at least five millions',
-                key: 'e',
-                details: [{
-                    message: '"e" must be at least five millions',
-                    path: ['e'],
-                    type: 'million.big',
-                    context: { value: 1000000, label: 'e', key: 'e' }
-                }]
+                path: ['e'],
+                type: 'million.big',
+                context: { value: 1000000, label: 'e', key: 'e' }
             }]
         ]);
     });
@@ -1261,13 +1221,9 @@ describe('extension', () => {
             [{ a: 30, b: 3 }, true],
             [{ a: 30 }, false, {
                 message: '"a" q references "ref:b" which "q" is required',
-                key: 'a',
-                details: [{
-                    message: '"a" q references "ref:b" which "q" is required',
-                    path: ['a'],
-                    type: 'any.ref',
-                    context: { label: 'a', key: 'a', ref, arg: 'q', reason: '"q" is required' }
-                }]
+                path: ['a'],
+                type: 'any.ref',
+                context: { label: 'a', key: 'a', ref, arg: 'q', reason: '"q" is required' }
             }]
         ]);
     });

@@ -21,27 +21,30 @@ describe('number', () => {
         expect(() => Joi.number('invalid argument.')).to.throw('The number type does not allow arguments');
     });
 
+    it('validates 0', () => {
+
+        Helper.validate(Joi.number(), [
+            [0, true, 0],
+            [-0, true, 0],
+            [parseFloat('-0'), true, 0]
+        ]);
+    });
+
     it('fails on boolean', () => {
 
         const schema = Joi.number();
         Helper.validate(schema, [
             [true, false, {
                 message: '"value" must be a number',
-                details: [{
-                    message: '"value" must be a number',
-                    path: [],
-                    type: 'number.base',
-                    context: { label: 'value', value: true }
-                }]
+                path: [],
+                type: 'number.base',
+                context: { label: 'value', value: true }
             }],
             [false, false, {
                 message: '"value" must be a number',
-                details: [{
-                    message: '"value" must be a number',
-                    path: [],
-                    type: 'number.base',
-                    context: { label: 'value', value: false }
-                }]
+                path: [],
+                type: 'number.base',
+                context: { label: 'value', value: false }
             }]
         ]);
     });
@@ -128,41 +131,29 @@ describe('number', () => {
                 [{ a: 42, b: 1337 }, true],
                 [{ a: 1337, b: 42 }, false, {
                     message: '"b" must be greater than ref:a',
-                    details: [{
-                        message: '"b" must be greater than ref:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.greater',
+                    context: { limit: ref, value: 42, label: 'b', key: 'b' }
                 }],
                 [{ a: '1337', b: 42 }, false, {
                     message: '"b" must be greater than ref:a',
-                    details: [{
-                        message: '"b" must be greater than ref:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.greater',
+                    context: { limit: ref, value: 42, label: 'b', key: 'b' }
                 }],
                 [{ a: 2.4, b: 4.2 }, true],
                 [{ a: 4.2, b: 4.20000001 }, true],
                 [{ a: 4.20000001, b: 4.2 }, false, {
                     message: '"b" must be greater than ref:a',
-                    details: [{
-                        message: '"b" must be greater than ref:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.greater',
+                    context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                 }],
                 [{ a: 4.2, b: 2.4 }, false, {
                     message: '"b" must be greater than ref:a',
-                    details: [{
-                        message: '"b" must be greater than ref:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.greater',
+                    context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
                 }]
             ]);
         });
@@ -179,12 +170,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 1337 } }, [
                 [{ b: 42 }, false, {
                     message: '"b" must be greater than ref:global:a',
-                    details: [{
-                        message: '"b" must be greater than ref:global:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.greater',
+                    context: { limit: ref, value: 42, label: 'b', key: 'b' }
                 }]
             ]);
 
@@ -199,24 +187,18 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 4.20000001 } }, [
                 [{ b: 4.2 }, false, {
                     message: '"b" must be greater than ref:global:a',
-                    details: [{
-                        message: '"b" must be greater than ref:global:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.greater',
+                    context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                 }]
             ]);
 
             Helper.validate(schema, { context: { a: 4.2 } }, [
                 [{ b: 2.4 }, false, {
                     message: '"b" must be greater than ref:global:a',
-                    details: [{
-                        message: '"b" must be greater than ref:global:a',
-                        path: ['b'],
-                        type: 'number.greater',
-                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.greater',
+                    context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
                 }]
             ]);
         });
@@ -229,12 +211,9 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, {
                     message: '"b" limit references "ref:a" which must be a number',
-                    details: [{
-                        message: '"b" limit references "ref:a" which must be a number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                 }]
             ]);
         });
@@ -247,12 +226,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 'abc' } }, [
                 [{ b: 42 }, false, {
                     message: '"b" limit references "ref:global:a" which must be a number',
-                    details: [{
-                        message: '"b" limit references "ref:global:a" which must be a number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                 }]
             ]);
         });
@@ -277,41 +253,29 @@ describe('number', () => {
                 [{ a: 1337, b: 42 }, true],
                 [{ a: 42, b: 1337 }, false, {
                     message: '"b" must be less than ref:a',
-                    details: [{
-                        message: '"b" must be less than ref:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.less',
+                    context: { limit: ref, value: 1337, label: 'b', key: 'b' }
                 }],
                 [{ a: '42', b: 1337 }, false, {
                     message: '"b" must be less than ref:a',
-                    details: [{
-                        message: '"b" must be less than ref:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.less',
+                    context: { limit: ref, value: 1337, label: 'b', key: 'b' }
                 }],
                 [{ a: 4.2, b: 2.4 }, true],
                 [{ a: 4.2, b: 4.20000001 }, false, {
                     message: '"b" must be less than ref:a',
-                    details: [{
-                        message: '"b" must be less than ref:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.less',
+                    context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
                 }],
                 [{ a: 4.20000001, b: 4.2 }, true],
                 [{ a: 2.4, b: 4.2 }, false, {
                     message: '"b" must be less than ref:a',
-                    details: [{
-                        message: '"b" must be less than ref:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.less',
+                    context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                 }]
             ]);
         });
@@ -328,12 +292,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 42 } }, [
                 [{ b: 1337 }, false, {
                     message: '"b" must be less than ref:global:a',
-                    details: [{
-                        message: '"b" must be less than ref:global:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.less',
+                    context: { limit: ref, value: 1337, label: 'b', key: 'b' }
                 }]
             ]);
 
@@ -341,12 +302,9 @@ describe('number', () => {
                 [{ b: 2.4 }, true],
                 [{ b: 4.20000001 }, false, {
                     message: '"b" must be less than ref:global:a',
-                    details: [{
-                        message: '"b" must be less than ref:global:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.less',
+                    context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
                 }]
             ]);
 
@@ -357,12 +315,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 2.4 } }, [
                 [{ b: 4.2 }, false, {
                     message: '"b" must be less than ref:global:a',
-                    details: [{
-                        message: '"b" must be less than ref:global:a',
-                        path: ['b'],
-                        type: 'number.less',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.less',
+                    context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                 }]
             ]);
         });
@@ -375,12 +330,9 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, {
                     message: '"b" limit references "ref:a" which must be a number',
-                    details: [{
-                        message: '"b" limit references "ref:a" which must be a number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                 }]
             ]);
         });
@@ -393,12 +345,9 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: null, b: 42 }, false, {
                     message: '"b" limit references "ref:a" which must be a number',
-                    details: [{
-                        message: '"b" limit references "ref:a" which must be a number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: null, arg: 'limit', reason: 'must be a number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: null, arg: 'limit', reason: 'must be a number' }
                 }]
             ]);
         });
@@ -411,12 +360,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 'abc' } }, [
                 [{ b: 42 }, false, {
                     message: '"b" limit references "ref:global:a" which must be a number',
-                    details: [{
-                        message: '"b" limit references "ref:global:a" which must be a number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                 }]
             ]);
         });
@@ -441,41 +387,29 @@ describe('number', () => {
                 [{ a: 1337, b: 42 }, true],
                 [{ a: 42, b: 1337 }, false, {
                     message: '"b" must be less than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.max',
+                    context: { limit: ref, value: 1337, label: 'b', key: 'b' }
                 }],
                 [{ a: '42', b: 1337 }, false, {
                     message: '"b" must be less than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.max',
+                    context: { limit: ref, value: 1337, label: 'b', key: 'b' }
                 }],
                 [{ a: 4.2, b: 2.4 }, true],
                 [{ a: 4.2, b: 4.20000001 }, false, {
                     message: '"b" must be less than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.max',
+                    context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
                 }],
                 [{ a: 4.20000001, b: 4.2 }, true],
                 [{ a: 2.4, b: 4.2 }, false, {
                     message: '"b" must be less than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.max',
+                    context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                 }]
             ]);
         });
@@ -492,12 +426,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 42 } }, [
                 [{ b: 1337 }, false, {
                     message: '"b" must be less than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 1337, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.max',
+                    context: { limit: ref, value: 1337, label: 'b', key: 'b' }
                 }]
             ]);
 
@@ -505,12 +436,9 @@ describe('number', () => {
                 [{ b: 2.4 }, true],
                 [{ b: 4.20000001 }, false, {
                     message: '"b" must be less than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.max',
+                    context: { limit: ref, value: 4.20000001, label: 'b', key: 'b' }
                 }]
             ]);
 
@@ -521,12 +449,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 2.4 } }, [
                 [{ b: 4.2 }, false, {
                     message: '"b" must be less than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be less than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.max',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.max',
+                    context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                 }]
             ]);
         });
@@ -539,12 +464,9 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, {
                     message: '"b" limit references "ref:a" which must be a number',
-                    details: [{
-                        message: '"b" limit references "ref:a" which must be a number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                 }]
             ]);
         });
@@ -557,12 +479,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 'abc' } }, [
                 [{ b: 42 }, false, {
                     message: '"b" limit references "ref:global:a" which must be a number',
-                    details: [{
-                        message: '"b" limit references "ref:global:a" which must be a number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                 }]
             ]);
         });
@@ -603,41 +522,29 @@ describe('number', () => {
                 [{ a: 42, b: 1337 }, true],
                 [{ a: 1337, b: 42 }, false, {
                     message: '"b" must be larger than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.min',
+                    context: { limit: ref, value: 42, label: 'b', key: 'b' }
                 }],
                 [{ a: '1337', b: 42 }, false, {
                     message: '"b" must be larger than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.min',
+                    context: { limit: ref, value: 42, label: 'b', key: 'b' }
                 }],
                 [{ a: 2.4, b: 4.2 }, true],
                 [{ a: 4.2, b: 4.20000001 }, true],
                 [{ a: 4.20000001, b: 4.2 }, false, {
                     message: '"b" must be larger than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.min',
+                    context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                 }],
                 [{ a: 4.2, b: 2.4 }, false, {
                     message: '"b" must be larger than or equal to ref:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.min',
+                    context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
                 }]
             ]);
         });
@@ -659,21 +566,15 @@ describe('number', () => {
                 [{ a: 2, b: 1, c: 0 }, true],
                 [{ a: 1, b: 1, c: 42 }, false, {
                     message: '"c" must be [0]',
-                    details: [{
-                        message: '"c" must be [0]',
-                        path: ['c'],
-                        type: 'any.only',
-                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                    }]
+                    path: ['c'],
+                    type: 'any.only',
+                    context: { value: 42, valids: [0], label: 'c', key: 'c' }
                 }],
                 [{ a: 2, b: 1, c: 42 }, false, {
                     message: '"c" must be [0]',
-                    details: [{
-                        message: '"c" must be [0]',
-                        path: ['c'],
-                        type: 'any.only',
-                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                    }]
+                    path: ['c'],
+                    type: 'any.only',
+                    context: { value: 42, valids: [0], label: 'c', key: 'c' }
                 }]
             ]);
         });
@@ -690,12 +591,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 1337 } }, [
                 [{ b: 42 }, false, {
                     message: '"b" must be larger than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 42, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.min',
+                    context: { limit: ref, value: 42, label: 'b', key: 'b' }
                 }]
             ]);
 
@@ -710,24 +608,18 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 4.20000001 } }, [
                 [{ b: 4.2 }, false, {
                     message: '"b" must be larger than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.min',
+                    context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                 }]
             ]);
 
             Helper.validate(schema, { context: { a: 4.2 } }, [
                 [{ b: 2.4 }, false, {
                     message: '"b" must be larger than or equal to ref:global:a',
-                    details: [{
-                        message: '"b" must be larger than or equal to ref:global:a',
-                        path: ['b'],
-                        type: 'number.min',
-                        context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.min',
+                    context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
                 }]
             ]);
         });
@@ -740,12 +632,9 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: 42 }, false, {
                     message: '"b" limit references "ref:a" which must be a number',
-                    details: [{
-                        message: '"b" limit references "ref:a" which must be a number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                 }]
             ]);
         });
@@ -758,12 +647,9 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 'abc' } }, [
                 [{ b: 42 }, false, {
                     message: '"b" limit references "ref:global:a" which must be a number',
-                    details: [{
-                        message: '"b" limit references "ref:global:a" which must be a number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'limit', reason: 'must be a number' }
                 }]
             ]);
         });
@@ -795,40 +681,28 @@ describe('number', () => {
                 [3, true],
                 [4, false, {
                     message: '"value" must be a multiple of 3',
-                    details: [{
-                        message: '"value" must be a multiple of 3',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3, value: 4, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.multiple',
+                    context: { multiple: 3, value: 4, label: 'value' }
                 }],
                 [9, true],
                 ['a', false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'a' }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: 'a' }
                 }],
                 [9.1, false, {
                     message: '"value" must be a multiple of 3',
-                    details: [{
-                        message: '"value" must be a multiple of 3',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3, value: 9.1, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.multiple',
+                    context: { multiple: 3, value: 9.1, label: 'value' }
                 }],
                 [8.9, false, {
                     message: '"value" must be a multiple of 3',
-                    details: [{
-                        message: '"value" must be a multiple of 3',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3, value: 8.9, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.multiple',
+                    context: { multiple: 3, value: 8.9, label: 'value' }
                 }]
             ]);
         });
@@ -841,40 +715,28 @@ describe('number', () => {
                 [3.5, true],
                 [3.6, false, {
                     message: '"value" must be a multiple of 3.5',
-                    details: [{
-                        message: '"value" must be a multiple of 3.5',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3.5, value: 3.6, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.multiple',
+                    context: { multiple: 3.5, value: 3.6, label: 'value' }
                 }],
                 [10.5, true],
                 ['a', false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'a' }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: 'a' }
                 }],
                 [10.501, false, {
                     message: '"value" must be a multiple of 3.5',
-                    details: [{
-                        message: '"value" must be a multiple of 3.5',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3.5, value: 10.501, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.multiple',
+                    context: { multiple: 3.5, value: 10.501, label: 'value' }
                 }],
                 [10.499, false, {
                     message: '"value" must be a multiple of 3.5',
-                    details: [{
-                        message: '"value" must be a multiple of 3.5',
-                        path: [],
-                        type: 'number.multiple',
-                        context: { multiple: 3.5, value: 10.499, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.multiple',
+                    context: { multiple: 3.5, value: 10.499, label: 'value' }
                 }]
             ]);
         });
@@ -888,21 +750,15 @@ describe('number', () => {
                 [{ a: 43, b: 0 }, true],
                 [{ a: 4, b: 25 }, false, {
                     message: '"b" must be a multiple of ref:a',
-                    details: [{
-                        message: '"b" must be a multiple of ref:a',
-                        path: ['b'],
-                        type: 'number.multiple',
-                        context: { multiple: ref, value: 25, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.multiple',
+                    context: { multiple: ref, value: 25, label: 'b', key: 'b' }
                 }],
                 [{ a: 0, b: 0 }, false, {
                     message: '"b" base references "ref:a" which must be a positive number',
-                    details: [{
-                        message: '"b" base references "ref:a" which must be a positive number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, key: 'b', label: 'b', value: 0, arg: 'base', reason: 'must be a positive number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, key: 'b', label: 'b', value: 0, arg: 'base', reason: 'must be a positive number' }
                 }]
             ]);
         });
@@ -924,12 +780,9 @@ describe('number', () => {
                 [{ a: 4, b: 2, c: 0 }, true],
                 [{ a: 4, b: 2, c: 42 }, false, {
                     message: '"c" must be [0]',
-                    details: [{
-                        message: '"c" must be [0]',
-                        path: ['c'],
-                        type: 'any.only',
-                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                    }]
+                    path: ['c'],
+                    type: 'any.only',
+                    context: { value: 42, valids: [0], label: 'c', key: 'c' }
                 }]
             ]);
         });
@@ -941,30 +794,21 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 'test', b: 32 }, false, {
                     message: '"b" base references "ref:a" which must be a positive number',
-                    details: [{
-                        message: '"b" base references "ref:a" which must be a positive number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
                 }],
                 [{ a: 'test', b: 0 }, false, {
                     message: '"b" base references "ref:a" which must be a positive number',
-                    details: [{
-                        message: '"b" base references "ref:a" which must be a positive number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
                 }],
                 [{ a: 'test', b: NaN }, false, {
                     message: '"b" must be a number',
-                    details: [{
-                        message: '"b" must be a number',
-                        path: ['b'],
-                        type: 'number.base',
-                        context: { label: 'b', key: 'b', value: NaN }
-                    }]
+                    path: ['b'],
+                    type: 'number.base',
+                    context: { label: 'b', key: 'b', value: NaN }
                 }]
             ]);
         });
@@ -985,66 +829,48 @@ describe('number', () => {
             Helper.validate(schema, { context: { a: 4 } }, [
                 [{ b: 25 }, false, {
                     message: '"b" must be a multiple of ref:global:a',
-                    details: [{
-                        message: '"b" must be a multiple of ref:global:a',
-                        path: ['b'],
-                        type: 'number.multiple',
-                        context: { multiple: ref, value: 25, label: 'b', key: 'b' }
-                    }]
+                    path: ['b'],
+                    type: 'number.multiple',
+                    context: { multiple: ref, value: 25, label: 'b', key: 'b' }
                 }]
             ]);
 
             Helper.validate(schema, { context: { a: 0 } }, [
                 [{ b: 31 }, false, {
                     message: '"b" base references "ref:global:a" which must be a positive number',
-                    details: [{
-                        message: '"b" base references "ref:global:a" which must be a positive number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, key: 'b', label: 'b', value: 0, arg: 'base', reason: 'must be a positive number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, key: 'b', label: 'b', value: 0, arg: 'base', reason: 'must be a positive number' }
                 }],
                 [{ b: 0 }, false, {
                     message: '"b" base references "ref:global:a" which must be a positive number',
-                    details: [{
-                        message: '"b" base references "ref:global:a" which must be a positive number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, key: 'b', label: 'b', value: 0, arg: 'base', reason: 'must be a positive number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, key: 'b', label: 'b', value: 0, arg: 'base', reason: 'must be a positive number' }
                 }]
             ]);
 
             Helper.validate(schema, { context: { a: 'test' } }, [
                 [{ b: 32 }, false, {
                     message: '"b" base references "ref:global:a" which must be a positive number',
-                    details: [{
-                        message: '"b" base references "ref:global:a" which must be a positive number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
                 }],
                 [{ b: 0 }, false, {
                     message: '"b" base references "ref:global:a" which must be a positive number',
-                    details: [{
-                        message: '"b" base references "ref:global:a" which must be a positive number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'test', arg: 'base', reason: 'must be a positive number' }
                 }]
             ]);
 
             Helper.validate(schema, { context: { a: NaN } }, [
                 [{ b: 0 }, false, {
                     message: '"b" base references "ref:global:a" which must be a positive number',
-                    details: [{
-                        message: '"b" base references "ref:global:a" which must be a positive number',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: NaN, arg: 'base', reason: 'must be a positive number' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: NaN, arg: 'base', reason: 'must be a positive number' }
                 }]
             ]);
         });
@@ -1060,30 +886,21 @@ describe('number', () => {
                 [{ port: 1337 }, true],
                 [{ port: -1 }, false, {
                     message: '"port" must be a valid port',
-                    details: [{
-                        message: '"port" must be a valid port',
-                        path: ['port'],
-                        type: 'number.port',
-                        context: { value: -1, label: 'port', key: 'port' }
-                    }]
+                    path: ['port'],
+                    type: 'number.port',
+                    context: { value: -1, label: 'port', key: 'port' }
                 }],
                 [{ port: 65536 }, false, {
                     message: '"port" must be a valid port',
-                    details: [{
-                        message: '"port" must be a valid port',
-                        path: ['port'],
-                        type: 'number.port',
-                        context: { value: 65536, label: 'port', key: 'port' }
-                    }]
+                    path: ['port'],
+                    type: 'number.port',
+                    context: { value: 65536, label: 'port', key: 'port' }
                 }],
                 [{ port: 8.88 }, false, {
                     message: '"port" must be a valid port',
-                    details: [{
-                        message: '"port" must be a valid port',
-                        path: ['port'],
-                        type: 'number.port',
-                        context: { value: 8.88, label: 'port', key: 'port' }
-                    }]
+                    path: ['port'],
+                    type: 'number.port',
+                    context: { value: 8.88, label: 'port', key: 'port' }
                 }]
             ]);
         });
@@ -1102,21 +919,15 @@ describe('number', () => {
                 ['123456.123456', true, 123456.1235],
                 ['abc', false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'abc' }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: 'abc' }
                 }],
                 [NaN, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: NaN }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: NaN }
                 }]
             ]);
         });
@@ -1148,12 +959,9 @@ describe('number', () => {
             Helper.validate(Joi.number().required(), [
                 [undefined, false, {
                     message: '"value" is required',
-                    details: [{
-                        message: '"value" is required',
-                        path: [],
-                        type: 'any.required',
-                        context: { label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.required',
+                    context: { label: 'value' }
                 }]
             ]);
         });
@@ -1192,30 +1000,21 @@ describe('number', () => {
                 ['+42', true, 42],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }],
                 [1.02, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 1.02, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 1.02, label: 'value' }
                 }],
                 [0.01, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 0.01, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 0.01, label: 'value' }
                 }]
             ]);
         });
@@ -1226,21 +1025,15 @@ describe('number', () => {
             Helper.validate(t, [
                 [Infinity, false, {
                     message: '"value" cannot be infinity',
-                    details: [{
-                        message: '"value" cannot be infinity',
-                        path: [],
-                        type: 'number.infinity',
-                        context: { value: Infinity, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.infinity',
+                    context: { value: Infinity, label: 'value' }
                 }],
                 [-Infinity, false, {
                     message: '"value" cannot be infinity',
-                    details: [{
-                        message: '"value" cannot be infinity',
-                        path: [],
-                        type: 'number.infinity',
-                        context: { value: -Infinity, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.infinity',
+                    context: { value: -Infinity, label: 'value' }
                 }]
             ]);
         });
@@ -1271,6 +1064,7 @@ describe('number', () => {
                 ['+100', true, 100],
                 ['+00100', true, 100],
                 ['1e3', true, 1000],
+                ['1E3', true, 1000],
                 ['1e003', true, 1000],
                 ['1e-003', true, 0.001],
                 ['-1e+3', true, -1000],
@@ -1288,42 +1082,30 @@ describe('number', () => {
                 ['.5', true, 0.5],
                 ['1 some text', false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: '1 some text' }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: '1 some text' }
                 }],
                 ['\t\r', false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: '\t\r' }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: '\t\r' }
                 }],
                 [' ', false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: ' ' }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: ' ' }
                 }],
                 [' 2', true],
                 ['\t\r43', true],
                 ['43 ', true],
                 ['', false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: '' }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: '' }
                 }]
             ]);
         });
@@ -1334,12 +1116,9 @@ describe('number', () => {
             Helper.validate(t, [
                 [NaN, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: NaN }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: NaN }
                 }],
                 ['100', true]
             ]);
@@ -1376,32 +1155,23 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, false, {
                     message: '"value" must be larger than or equal to 8',
-                    details: [{
-                        message: '"value" must be larger than or equal to 8',
-                        path: [],
-                        type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.min',
+                    context: { limit: 8, value: 1, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, true],
                 [9, true],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1412,21 +1182,15 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, false, {
                     message: '"value" must be larger than or equal to 8',
-                    details: [{
-                        message: '"value" must be larger than or equal to 8',
-                        path: [],
-                        type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.min',
+                    context: { limit: 8, value: 1, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, true],
                 [9, true],
@@ -1441,22 +1205,16 @@ describe('number', () => {
                 [1, true],
                 [-2, false, {
                     message: '"value" must be a positive number',
-                    details: [{
-                        message: '"value" must be a positive number',
-                        path: [],
-                        type: 'number.positive',
-                        context: { value: -2, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.positive',
+                    context: { value: -2, label: 'value' }
                 }],
                 [8, true],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1468,30 +1226,21 @@ describe('number', () => {
                 [4, true],
                 [-2, false, {
                     message: '"value" must be a positive number',
-                    details: [{
-                        message: '"value" must be a positive number',
-                        path: [],
-                        type: 'number.positive',
-                        context: { value: -2, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.positive',
+                    context: { value: -2, label: 'value' }
                 }],
                 [8, false, {
                     message: '"value" must be less than or equal to 5',
-                    details: [{
-                        message: '"value" must be less than or equal to 5',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 5, value: 8, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 5, value: 8, label: 'value' }
                 }],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1502,31 +1251,22 @@ describe('number', () => {
             Helper.validate(rule, [
                 [4, false, {
                     message: '"value" must be a negative number',
-                    details: [{
-                        message: '"value" must be a negative number',
-                        path: [],
-                        type: 'number.negative',
-                        context: { value: 4, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.negative',
+                    context: { value: 4, label: 'value' }
                 }],
                 [-2, true],
                 [-4, false, {
                     message: '"value" must be larger than or equal to -3',
-                    details: [{
-                        message: '"value" must be larger than or equal to -3',
-                        path: [],
-                        type: 'number.min',
-                        context: { limit: -3, value: -4, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.min',
+                    context: { limit: -3, value: -4, label: 'value' }
                 }],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1539,30 +1279,21 @@ describe('number', () => {
                 [-10, true],
                 [8, false, {
                     message: '"value" must be a negative number',
-                    details: [{
-                        message: '"value" must be a negative number',
-                        path: [],
-                        type: 'number.negative',
-                        context: { value: 8, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.negative',
+                    context: { value: 8, label: 'value' }
                 }],
                 [0, false, {
                     message: '"value" must be a negative number',
-                    details: [{
-                        message: '"value" must be a negative number',
-                        path: [],
-                        type: 'number.negative',
-                        context: { value: 0, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.negative',
+                    context: { value: 0, label: 'value' }
                 }],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1576,21 +1307,15 @@ describe('number', () => {
                 [8, true],
                 [-10, false, {
                     message: '"value" must be a positive number',
-                    details: [{
-                        message: '"value" must be a positive number',
-                        path: [],
-                        type: 'number.positive',
-                        context: { value: -10, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.positive',
+                    context: { value: -10, label: 'value' }
                 }],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1604,12 +1329,9 @@ describe('number', () => {
                 [8, true],
                 [-10, false, {
                     message: '"value" must be a positive number',
-                    details: [{
-                        message: '"value" must be a positive number',
-                        path: [],
-                        type: 'number.positive',
-                        context: { value: -10, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.positive',
+                    context: { value: -10, label: 'value' }
                 }],
                 [null, true]
             ]);
@@ -1623,21 +1345,15 @@ describe('number', () => {
                 [-10, true],
                 [8, false, {
                     message: '"value" must be a negative number',
-                    details: [{
-                        message: '"value" must be a negative number',
-                        path: [],
-                        type: 'number.negative',
-                        context: { value: 8, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.negative',
+                    context: { value: 8, label: 'value' }
                 }],
                 [0, false, {
                     message: '"value" must be a negative number',
-                    details: [{
-                        message: '"value" must be a negative number',
-                        path: [],
-                        type: 'number.negative',
-                        context: { value: 0, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.negative',
+                    context: { value: 0, label: 'value' }
                 }],
                 [null, true]
             ]);
@@ -1649,23 +1365,17 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, false, {
                     message: '"value" contains an invalid value',
-                    details: [{
-                        message: '"value" contains an invalid value',
-                        path: [],
-                        type: 'any.invalid',
-                        context: { value: 1, invalids: [1], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: 1, invalids: [1], label: 'value' }
                 }],
                 [-1, true],
                 [8, true],
                 [-10, false, {
                     message: '"value" must be a positive number',
-                    details: [{
-                        message: '"value" must be a positive number',
-                        path: [],
-                        type: 'number.positive',
-                        context: { value: -10, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.positive',
+                    context: { value: -10, label: 'value' }
                 }],
                 [null, true]
             ]);
@@ -1679,30 +1389,21 @@ describe('number', () => {
                 [-10, true],
                 [-5, false, {
                     message: '"value" contains an invalid value',
-                    details: [{
-                        message: '"value" contains an invalid value',
-                        path: [],
-                        type: 'any.invalid',
-                        context: { value: -5, invalids: [-5], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: -5, invalids: [-5], label: 'value' }
                 }],
                 [8, false, {
                     message: '"value" must be a negative number',
-                    details: [{
-                        message: '"value" must be a negative number',
-                        path: [],
-                        type: 'number.negative',
-                        context: { value: 8, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.negative',
+                    context: { value: 8, label: 'value' }
                 }],
                 [0, false, {
                     message: '"value" must be a negative number',
-                    details: [{
-                        message: '"value" must be a negative number',
-                        path: [],
-                        type: 'number.negative',
-                        context: { value: 0, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.negative',
+                    context: { value: 0, label: 'value' }
                 }],
                 [null, true]
             ]);
@@ -1715,23 +1416,17 @@ describe('number', () => {
                 [1, true],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, true],
                 [9, true],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1743,12 +1438,9 @@ describe('number', () => {
                 [1, true],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, true],
                 [9, true],
@@ -1763,31 +1455,22 @@ describe('number', () => {
                 [1, true],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, true],
                 [9, false, {
                     message: '"value" contains an invalid value',
-                    details: [{
-                        message: '"value" contains an invalid value',
-                        path: [],
-                        type: 'any.invalid',
-                        context: { value: 9, invalids: [9], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: 9, invalids: [9], label: 'value' }
                 }],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1799,22 +1482,16 @@ describe('number', () => {
                 [1, true],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, true],
                 [9, false, {
                     message: '"value" contains an invalid value',
-                    details: [{
-                        message: '"value" contains an invalid value',
-                        path: [],
-                        type: 'any.invalid',
-                        context: { value: 9, invalids: [9], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: 9, invalids: [9], label: 'value' }
                 }],
                 [null, true]
             ]);
@@ -1826,41 +1503,29 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, false, {
                     message: '"value" must be larger than or equal to 8',
-                    details: [{
-                        message: '"value" must be larger than or equal to 8',
-                        path: [],
-                        type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.min',
+                    context: { limit: 8, value: 1, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, true],
                 [9, true],
                 [9.1, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 9.1, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 9.1, label: 'value' }
                 }],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1871,42 +1536,30 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, false, {
                     message: '"value" must be larger than or equal to 8',
-                    details: [{
-                        message: '"value" must be larger than or equal to 8',
-                        path: [],
-                        type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.min',
+                    context: { limit: 8, value: 1, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, true],
                 [9, true],
                 [9.1, true],
                 [9.2, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 9.2, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 9.2, label: 'value' }
                 }],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1917,50 +1570,35 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, false, {
                     message: '"value" must be larger than or equal to 8',
-                    details: [{
-                        message: '"value" must be larger than or equal to 8',
-                        path: [],
-                        type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.min',
+                    context: { limit: 8, value: 1, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, false, {
                     message: '"value" contains an invalid value',
-                    details: [{
-                        message: '"value" contains an invalid value',
-                        path: [],
-                        type: 'any.invalid',
-                        context: { value: 8, invalids: [8], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: 8, invalids: [8], label: 'value' }
                 }],
                 [9, true],
                 [9.1, true],
                 [9.2, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 9.2, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 9.2, label: 'value' }
                 }],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -1971,41 +1609,29 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, false, {
                     message: '"value" must be larger than or equal to 8',
-                    details: [{
-                        message: '"value" must be larger than or equal to 8',
-                        path: [],
-                        type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.min',
+                    context: { limit: 8, value: 1, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, false, {
                     message: '"value" contains an invalid value',
-                    details: [{
-                        message: '"value" contains an invalid value',
-                        path: [],
-                        type: 'any.invalid',
-                        context: { value: 8, invalids: [8], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: 8, invalids: [8], label: 'value' }
                 }],
                 [9, true],
                 [9.1, true],
                 [9.2, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 9.2, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 9.2, label: 'value' }
                 }],
                 [null, true]
             ]);
@@ -2019,40 +1645,28 @@ describe('number', () => {
                 [9.1, true],
                 [9.21, false, {
                     message: '"value" must have no more than 1 decimal places',
-                    details: [{
-                        message: '"value" must have no more than 1 decimal places',
-                        path: [],
-                        type: 'number.precision',
-                        context: { limit: 1, value: 9.21, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.precision',
+                    context: { limit: 1, value: 9.21, label: 'value' }
                 }],
                 [9.9999, false, {
                     message: '"value" must have no more than 1 decimal places',
-                    details: [{
-                        message: '"value" must have no more than 1 decimal places',
-                        path: [],
-                        type: 'number.precision',
-                        context: { limit: 1, value: 9.9999, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.precision',
+                    context: { limit: 1, value: 9.9999, label: 'value' }
                 }],
                 [9.9e-99, false, {
                     message: '"value" must have no more than 1 decimal places',
-                    details: [{
-                        message: '"value" must have no more than 1 decimal places',
-                        path: [],
-                        type: 'number.precision',
-                        context: { limit: 1, value: 9.9e-99, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.precision',
+                    context: { limit: 1, value: 9.9e-99, label: 'value' }
                 }],
                 [9.9e3, true],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -2063,59 +1677,41 @@ describe('number', () => {
             Helper.validate(rule, [
                 [1, false, {
                     message: '"value" must be larger than or equal to 8',
-                    details: [{
-                        message: '"value" must be larger than or equal to 8',
-                        path: [],
-                        type: 'number.min',
-                        context: { limit: 8, value: 1, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.min',
+                    context: { limit: 8, value: 1, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than or equal to 10',
-                    details: [{
-                        message: '"value" must be less than or equal to 10',
-                        path: [],
-                        type: 'number.max',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.max',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [8, false, {
                     message: '"value" contains an invalid value',
-                    details: [{
-                        message: '"value" contains an invalid value',
-                        path: [],
-                        type: 'any.invalid',
-                        context: { value: 8, invalids: [8], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: 8, invalids: [8], label: 'value' }
                 }],
                 [9, true],
                 [9.1, true],
                 [9.11, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 9.11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 9.11, label: 'value' }
                 }],
                 [9.2, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 9.2, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 9.2, label: 'value' }
                 }],
                 [9.22, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 9.22, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 9.22, label: 'value' }
                 }],
                 [null, true]
             ]);
@@ -2127,51 +1723,36 @@ describe('number', () => {
             Helper.validate(rule, [
                 [0, false, {
                     message: '"value" must be greater than 5',
-                    details: [{
-                        message: '"value" must be greater than 5',
-                        path: [],
-                        type: 'number.greater',
-                        context: { limit: 5, value: 0, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.greater',
+                    context: { limit: 5, value: 0, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than 10',
-                    details: [{
-                        message: '"value" must be less than 10',
-                        path: [],
-                        type: 'number.less',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.less',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [5, false, {
                     message: '"value" must be greater than 5',
-                    details: [{
-                        message: '"value" must be greater than 5',
-                        path: [],
-                        type: 'number.greater',
-                        context: { limit: 5, value: 5, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.greater',
+                    context: { limit: 5, value: 5, label: 'value' }
                 }],
                 [10, false, {
                     message: '"value" must be less than 10',
-                    details: [{
-                        message: '"value" must be less than 10',
-                        path: [],
-                        type: 'number.less',
-                        context: { limit: 10, value: 10, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.less',
+                    context: { limit: 10, value: 10, label: 'value' }
                 }],
                 [8, true],
                 [5.01, true],
                 [9.99, true],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -2182,59 +1763,41 @@ describe('number', () => {
             Helper.validate(rule, [
                 [0, false, {
                     message: '"value" must be greater than 5',
-                    details: [{
-                        message: '"value" must be greater than 5',
-                        path: [],
-                        type: 'number.greater',
-                        context: { limit: 5, value: 0, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.greater',
+                    context: { limit: 5, value: 0, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than 10',
-                    details: [{
-                        message: '"value" must be less than 10',
-                        path: [],
-                        type: 'number.less',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.less',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [5, false, {
                     message: '"value" must be greater than 5',
-                    details: [{
-                        message: '"value" must be greater than 5',
-                        path: [],
-                        type: 'number.greater',
-                        context: { limit: 5, value: 5, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.greater',
+                    context: { limit: 5, value: 5, label: 'value' }
                 }],
                 [10, false, {
                     message: '"value" must be less than 10',
-                    details: [{
-                        message: '"value" must be less than 10',
-                        path: [],
-                        type: 'number.less',
-                        context: { limit: 10, value: 10, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.less',
+                    context: { limit: 10, value: 10, label: 'value' }
                 }],
                 [6, true],
                 [9, true],
                 [5.01, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 5.01, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 5.01, label: 'value' }
                 }],
                 [9.99, false, {
                     message: '"value" must be an integer',
-                    details: [{
-                        message: '"value" must be an integer',
-                        path: [],
-                        type: 'number.integer',
-                        context: { value: 9.99, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.integer',
+                    context: { value: 9.99, label: 'value' }
                 }]
             ]);
         });
@@ -2245,39 +1808,27 @@ describe('number', () => {
             Helper.validate(rule, [
                 [0, false, {
                     message: '"value" must be greater than 5',
-                    details: [{
-                        message: '"value" must be greater than 5',
-                        path: [],
-                        type: 'number.greater',
-                        context: { limit: 5, value: 0, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.greater',
+                    context: { limit: 5, value: 0, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than 10',
-                    details: [{
-                        message: '"value" must be less than 10',
-                        path: [],
-                        type: 'number.less',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.less',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [5, false, {
                     message: '"value" must be greater than 5',
-                    details: [{
-                        message: '"value" must be greater than 5',
-                        path: [],
-                        type: 'number.greater',
-                        context: { limit: 5, value: 5, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.greater',
+                    context: { limit: 5, value: 5, label: 'value' }
                 }],
                 [10, false, {
                     message: '"value" must be less than 10',
-                    details: [{
-                        message: '"value" must be less than 10',
-                        path: [],
-                        type: 'number.less',
-                        context: { limit: 10, value: 10, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.less',
+                    context: { limit: 10, value: 10, label: 'value' }
                 }],
                 [8, true],
                 [5.01, true],
@@ -2292,48 +1843,33 @@ describe('number', () => {
             Helper.validate(rule, [
                 [0, false, {
                     message: '"value" must be greater than 5',
-                    details: [{
-                        message: '"value" must be greater than 5',
-                        path: [],
-                        type: 'number.greater',
-                        context: { limit: 5, value: 0, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.greater',
+                    context: { limit: 5, value: 0, label: 'value' }
                 }],
                 [11, false, {
                     message: '"value" must be less than 10',
-                    details: [{
-                        message: '"value" must be less than 10',
-                        path: [],
-                        type: 'number.less',
-                        context: { limit: 10, value: 11, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.less',
+                    context: { limit: 10, value: 11, label: 'value' }
                 }],
                 [5, false, {
                     message: '"value" must be greater than 5',
-                    details: [{
-                        message: '"value" must be greater than 5',
-                        path: [],
-                        type: 'number.greater',
-                        context: { limit: 5, value: 5, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.greater',
+                    context: { limit: 5, value: 5, label: 'value' }
                 }],
                 [10, false, {
                     message: '"value" must be less than 10',
-                    details: [{
-                        message: '"value" must be less than 10',
-                        path: [],
-                        type: 'number.less',
-                        context: { limit: 10, value: 10, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.less',
+                    context: { limit: 10, value: 10, label: 'value' }
                 }],
                 [6, false, {
                     message: '"value" contains an invalid value',
-                    details: [{
-                        message: '"value" contains an invalid value',
-                        path: [],
-                        type: 'any.invalid',
-                        context: { value: 6, invalids: [6], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: 6, invalids: [6], label: 'value' }
                 }],
                 [8, true],
                 [5.01, true],
@@ -2341,12 +1877,9 @@ describe('number', () => {
                 [-3, true],
                 [null, false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: null }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
                 }]
             ]);
         });
@@ -2369,66 +1902,45 @@ describe('number', () => {
                 ['-0', true, 0],
                 ['9007199254740981.1', false, {
                     message: '"value" must be a safe number',
-                    details: [{
-                        message: '"value" must be a safe number',
-                        path: [],
-                        type: 'number.unsafe',
-                        context: { value: '9007199254740981.1', label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.unsafe',
+                    context: { value: '9007199254740981.1', label: 'value' }
                 }],
                 ['90071992547409811e-1', false, {
                     message: '"value" must be a safe number',
-                    details: [{
-                        message: '"value" must be a safe number',
-                        path: [],
-                        type: 'number.unsafe',
-                        context: { value: '90071992547409811e-1', label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.unsafe',
+                    context: { value: '90071992547409811e-1', label: 'value' }
                 }],
                 ['9007199254740992', false, {
                     message: '"value" must be a safe number',
-                    details: [{
-                        message: '"value" must be a safe number',
-                        path: [],
-                        type: 'number.unsafe',
-                        context: { value: 9007199254740992, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.unsafe',
+                    context: { value: 9007199254740992, label: 'value' }
                 }],
                 ['-9007199254740992', false, {
                     message: '"value" must be a safe number',
-                    details: [{
-                        message: '"value" must be a safe number',
-                        path: [],
-                        type: 'number.unsafe',
-                        context: { value: -9007199254740992, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.unsafe',
+                    context: { value: -9007199254740992, label: 'value' }
                 }],
                 ['90.071992549e+15', false, {
                     message: '"value" must be a safe number',
-                    details: [{
-                        message: '"value" must be a safe number',
-                        path: [],
-                        type: 'number.unsafe',
-                        context: { value: 90071992549000000, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.unsafe',
+                    context: { value: 90071992549000000, label: 'value' }
                 }],
                 [9007199254740992, false, {
                     message: '"value" must be a safe number',
-                    details: [{
-                        message: '"value" must be a safe number',
-                        path: [],
-                        type: 'number.unsafe',
-                        context: { value: 9007199254740992, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.unsafe',
+                    context: { value: 9007199254740992, label: 'value' }
                 }],
                 [-9007199254740992, false, {
                     message: '"value" must be a safe number',
-                    details: [{
-                        message: '"value" must be a safe number',
-                        path: [],
-                        type: 'number.unsafe',
-                        context: { value: -9007199254740992, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'number.unsafe',
+                    context: { value: -9007199254740992, label: 'value' }
                 }]
             ]);
         });

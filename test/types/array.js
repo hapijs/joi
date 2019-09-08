@@ -194,12 +194,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[0], false, {
                     message: '"value" does not contain at least one required match',
-                    details: [{
-                        message: '"value" does not contain at least one required match',
-                        path: [],
-                        type: 'array.hasUnknown',
-                        context: { label: 'value', value: [0] }
-                    }]
+                    path: [],
+                    type: 'array.hasUnknown',
+                    context: { label: 'value', value: [0] }
                 }]
             ]);
         });
@@ -210,12 +207,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[0], false, {
                     message: '"value" does not contain at least one required match for type "foo"',
-                    details: [{
-                        message: '"value" does not contain at least one required match for type "foo"',
-                        path: [],
-                        type: 'array.hasKnown',
-                        context: { label: 'value', patternLabel: 'foo', value: [0] }
-                    }]
+                    path: [],
+                    type: 'array.hasKnown',
+                    context: { label: 'value', patternLabel: 'foo', value: [0] }
                 }]
             ]);
         });
@@ -228,12 +222,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [{ arr: [0] }, false, {
                     message: '"arr" does not contain at least one required match',
-                    details: [{
-                        message: '"arr" does not contain at least one required match',
-                        path: ['arr'],
-                        type: 'array.hasUnknown',
-                        context: { label: 'arr', key: 'arr', value: [0] }
-                    }]
+                    path: ['arr'],
+                    type: 'array.hasUnknown',
+                    context: { label: 'arr', key: 'arr', value: [0] }
                 }]
             ]);
         });
@@ -263,12 +254,9 @@ describe('array', () => {
                 [{ array: [10, 1, 2, 5, 12] }, true],
                 [{ array: [10, 1, 2, 5, 1] }, false, {
                     message: '"array" does not contain at least one required match',
-                    details: [{
-                        message: '"array" does not contain at least one required match',
-                        path: ['array'],
-                        type: 'array.hasUnknown',
-                        context: { label: 'array', key: 'array', value: [10, 1, 2, 5, 1] }
-                    }]
+                    path: ['array'],
+                    type: 'array.hasUnknown',
+                    context: { label: 'array', key: 'array', value: [10, 1, 2, 5, 1] }
                 }]
             ]);
         });
@@ -283,12 +271,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [{ arr: [{ foo: [0] }] }, false, {
                     message: '"arr[0].foo" does not contain at least one required match',
-                    details: [{
-                        message: '"arr[0].foo" does not contain at least one required match',
-                        path: ['arr', 0, 'foo'],
-                        type: 'array.hasUnknown',
-                        context: { label: 'arr[0].foo', key: 'foo', value: [0] }
-                    }]
+                    path: ['arr', 0, 'foo'],
+                    type: 'array.hasUnknown',
+                    context: { label: 'arr[0].foo', key: 'foo', value: [0] }
                 }]
             ]);
         });
@@ -303,12 +288,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [['foo'], false, {
                     message: '"value" does not contain at least one required match',
-                    details: [{
-                        message: '"value" does not contain at least one required match',
-                        path: [],
-                        type: 'array.hasUnknown',
-                        context: { label: 'value', value: ['foo'] }
-                    }]
+                    path: [],
+                    type: 'array.hasUnknown',
+                    context: { label: 'value', value: ['foo'] }
                 }]
             ]);
         });
@@ -406,18 +388,15 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[1, 2, 'a'], true, [1, 2, 'a']],
                 [[1, { foo: 'bar' }, 'a', 2], false, {
+                    context: {
+                        key: 1,
+                        label: '[1]',
+                        pos: 1,
+                        value: { foo: 'bar' }
+                    },
                     message: '"[1]" does not match any of the allowed types',
-                    details: [{
-                        context: {
-                            key: 1,
-                            label: '[1]',
-                            pos: 1,
-                            value: { foo: 'bar' }
-                        },
-                        message: '"[1]" does not match any of the allowed types',
-                        path: [1],
-                        type: 'array.includes'
-                    }]
+                    path: [1],
+                    type: 'array.includes'
                 }]
             ]);
         });
@@ -626,12 +605,9 @@ describe('array', () => {
                 [[1, 2], true],
                 [[1], false, {
                     message: '"value" must contain 2 items',
-                    details: [{
-                        message: '"value" must contain 2 items',
-                        path: [],
-                        type: 'array.length',
-                        context: { limit: 2, value: [1], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'array.length',
+                    context: { limit: 2, value: [1], label: 'value' }
                 }]
             ]);
         });
@@ -643,12 +619,9 @@ describe('array', () => {
                 [[1], true],
                 [[1, 2], false, {
                     message: '"value" must contain 1 items',
-                    details: [{
-                        message: '"value" must contain 1 items',
-                        path: [],
-                        type: 'array.length',
-                        context: { limit: 1, value: [1, 2], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'array.length',
+                    context: { limit: 1, value: [1, 2], label: 'value' }
                 }]
             ]);
         });
@@ -676,21 +649,12 @@ describe('array', () => {
                 arr: Joi.array().length(ref)
             });
             Helper.validate(schema, [
-                [{
-                    limit: 2,
-                    arr: [1, 2]
-                }, true],
-                [{
-                    limit: 2,
-                    arr: [1]
-                }, false, {
+                [{ limit: 2, arr: [1, 2] }, true],
+                [{ limit: 2, arr: [1] }, false, {
                     message: '"arr" must contain ref:limit items',
-                    details: [{
-                        message: '"arr" must contain ref:limit items',
-                        path: ['arr'],
-                        type: 'array.length',
-                        context: { limit: ref, value: [1], label: 'arr', key: 'arr' }
-                    }]
+                    path: ['arr'],
+                    type: 'array.length',
+                    context: { limit: ref, value: [1], label: 'arr', key: 'arr' }
                 }]
             ]);
         });
@@ -707,11 +671,7 @@ describe('array', () => {
             });
 
             Helper.validate(schema, [
-                [{
-                    limit: 2,
-                    arr: [1, 2],
-                    arr2: [1, 2]
-                }, true]
+                [{ limit: 2, arr: [1, 2], arr2: [1, 2] }, true]
             ]);
         });
 
@@ -724,29 +684,17 @@ describe('array', () => {
             });
 
             Helper.validate(schema, [
-                [{
-                    limit: Math.pow(2, 53),
-                    arr: [1, 2]
-                }, false, {
+                [{ limit: Math.pow(2, 53), arr: [1, 2] }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
-                    details: [{
-                        message: '"arr" limit references "ref:limit" which must be a positive integer',
-                        path: ['arr'],
-                        type: 'any.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53), arg: 'limit', reason: 'must be a positive integer' }
-                    }]
+                    path: ['arr'],
+                    type: 'any.ref',
+                    context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53), arg: 'limit', reason: 'must be a positive integer' }
                 }],
-                [{
-                    limit: 'I like turtles',
-                    arr: [1]
-                }, false, {
+                [{ limit: 'I like turtles', arr: [1] }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
-                    details: [{
-                        message: '"arr" limit references "ref:limit" which must be a positive integer',
-                        path: ['arr'],
-                        type: 'any.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles', arg: 'limit', reason: 'must be a positive integer' }
-                    }]
+                    path: ['arr'],
+                    type: 'any.ref',
+                    context: { ref, label: 'arr', key: 'arr', value: 'I like turtles', arg: 'limit', reason: 'must be a positive integer' }
                 }]
             ]);
         });
@@ -760,12 +708,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[1, 2], false, {
                     message: '"value" must contain less than or equal to 1 items',
-                    details: [{
-                        message: '"value" must contain less than or equal to 1 items',
-                        path: [],
-                        type: 'array.max',
-                        context: { limit: 1, value: [1, 2], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'array.max',
+                    context: { limit: 1, value: [1, 2], label: 'value' }
                 }],
                 [[1], true]
             ]);
@@ -803,21 +748,12 @@ describe('array', () => {
                 arr: Joi.array().max(ref)
             });
             Helper.validate(schema, [
-                [{
-                    limit: 2,
-                    arr: [1, 2]
-                }, true],
-                [{
-                    limit: 2,
-                    arr: [1, 2, 3]
-                }, false, {
+                [{ limit: 2, arr: [1, 2] }, true],
+                [{ limit: 2, arr: [1, 2, 3] }, false, {
                     message: '"arr" must contain less than or equal to ref:limit items',
-                    details: [{
-                        message: '"arr" must contain less than or equal to ref:limit items',
-                        path: ['arr'],
-                        type: 'array.max',
-                        context: { limit: ref, value: [1, 2, 3], label: 'arr', key: 'arr' }
-                    }]
+                    path: ['arr'],
+                    type: 'array.max',
+                    context: { limit: ref, value: [1, 2, 3], label: 'arr', key: 'arr' }
                 }]
             ]);
         });
@@ -834,11 +770,7 @@ describe('array', () => {
             });
 
             Helper.validate(schema, [
-                [{
-                    limit: 2,
-                    arr: [1, 2],
-                    arr2: [1, 2]
-                }, true]
+                [{ limit: 2, arr: [1, 2], arr2: [1, 2] }, true]
             ]);
         });
 
@@ -851,29 +783,17 @@ describe('array', () => {
             });
 
             Helper.validate(schema, [
-                [{
-                    limit: Math.pow(2, 53),
-                    arr: [1, 2]
-                }, false, {
+                [{ limit: Math.pow(2, 53), arr: [1, 2] }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
-                    details: [{
-                        message: '"arr" limit references "ref:limit" which must be a positive integer',
-                        path: ['arr'],
-                        type: 'any.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53), arg: 'limit', reason: 'must be a positive integer' }
-                    }]
+                    path: ['arr'],
+                    type: 'any.ref',
+                    context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53), arg: 'limit', reason: 'must be a positive integer' }
                 }],
-                [{
-                    limit: 'I like turtles',
-                    arr: [1]
-                }, false, {
+                [{ limit: 'I like turtles', arr: [1] }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
-                    details: [{
-                        message: '"arr" limit references "ref:limit" which must be a positive integer',
-                        path: ['arr'],
-                        type: 'any.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles', arg: 'limit', reason: 'must be a positive integer' }
-                    }]
+                    path: ['arr'],
+                    type: 'any.ref',
+                    context: { ref, label: 'arr', key: 'arr', value: 'I like turtles', arg: 'limit', reason: 'must be a positive integer' }
                 }]
             ]);
         });
@@ -888,12 +808,9 @@ describe('array', () => {
                 [[1, 2], true],
                 [[1], false, {
                     message: '"value" must contain at least 2 items',
-                    details: [{
-                        message: '"value" must contain at least 2 items',
-                        path: [],
-                        type: 'array.min',
-                        context: { limit: 2, value: [1], label: 'value' }
-                    }]
+                    path: [],
+                    type: 'array.min',
+                    context: { limit: 2, value: [1], label: 'value' }
                 }]
             ]);
         });
@@ -939,21 +856,12 @@ describe('array', () => {
                 arr: Joi.array().min(ref)
             });
             Helper.validate(schema, [
-                [{
-                    limit: 2,
-                    arr: [1, 2]
-                }, true],
-                [{
-                    limit: 2,
-                    arr: [1]
-                }, false, {
+                [{ limit: 2, arr: [1, 2] }, true],
+                [{ limit: 2, arr: [1] }, false, {
                     message: '"arr" must contain at least ref:limit items',
-                    details: [{
-                        message: '"arr" must contain at least ref:limit items',
-                        path: ['arr'],
-                        type: 'array.min',
-                        context: { limit: ref, value: [1], label: 'arr', key: 'arr' }
-                    }]
+                    path: ['arr'],
+                    type: 'array.min',
+                    context: { limit: ref, value: [1], label: 'arr', key: 'arr' }
                 }]
             ]);
         });
@@ -970,11 +878,7 @@ describe('array', () => {
             });
 
             Helper.validate(schema, [
-                [{
-                    limit: 2,
-                    arr: [1, 2],
-                    arr2: [1, 2]
-                }, true]
+                [{ limit: 2, arr: [1, 2], arr2: [1, 2] }, true]
             ]);
         });
 
@@ -987,29 +891,17 @@ describe('array', () => {
             });
 
             Helper.validate(schema, [
-                [{
-                    limit: Math.pow(2, 53),
-                    arr: [1, 2]
-                }, false, {
+                [{ limit: Math.pow(2, 53), arr: [1, 2] }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
-                    details: [{
-                        message: '"arr" limit references "ref:limit" which must be a positive integer',
-                        path: ['arr'],
-                        type: 'any.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53), arg: 'limit', reason: 'must be a positive integer' }
-                    }]
+                    path: ['arr'],
+                    type: 'any.ref',
+                    context: { ref, label: 'arr', key: 'arr', value: Math.pow(2, 53), arg: 'limit', reason: 'must be a positive integer' }
                 }],
-                [{
-                    limit: 'I like turtles',
-                    arr: [1]
-                }, false, {
+                [{ limit: 'I like turtles', arr: [1] }, false, {
                     message: '"arr" limit references "ref:limit" which must be a positive integer',
-                    details: [{
-                        message: '"arr" limit references "ref:limit" which must be a positive integer',
-                        path: ['arr'],
-                        type: 'any.ref',
-                        context: { ref, label: 'arr', key: 'arr', value: 'I like turtles', arg: 'limit', reason: 'must be a positive integer' }
-                    }]
+                    path: ['arr'],
+                    type: 'any.ref',
+                    context: { ref, label: 'arr', key: 'arr', value: 'I like turtles', arg: 'limit', reason: 'must be a positive integer' }
                 }]
             ]);
         });
@@ -1402,30 +1294,21 @@ describe('array', () => {
                 [1, true],
                 [['a'], false, {
                     message: '"[0]" must be a number',
-                    details: [{
-                        message: '"[0]" must be a number',
-                        path: [0],
-                        type: 'number.base',
-                        context: { label: '[0]', key: 0, value: 'a' }
-                    }]
+                    path: [0],
+                    type: 'number.base',
+                    context: { label: '[0]', key: 0, value: 'a' }
                 }],
                 ['a', false, {
                     message: '"value" must be a number',
-                    details: [{
-                        message: '"value" must be a number',
-                        path: [],
-                        type: 'number.base',
-                        context: { label: 'value', value: 'a' }
-                    }]
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: 'a' }
                 }],
                 [true, false, {
                     message: '"value" contains an excluded value',
-                    details: [{
-                        message: '"value" contains an excluded value',
-                        path: [],
-                        type: 'array.excludes',
-                        context: { pos: 0, value: true, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'array.excludes',
+                    context: { pos: 0, value: true, label: 'value' }
                 }]
             ]);
         });
@@ -1441,12 +1324,9 @@ describe('array', () => {
                 ['a', true],
                 [true, false, {
                     message: '"value" does not match any of the allowed types',
-                    details: [{
-                        message: '"value" does not match any of the allowed types',
-                        path: [],
-                        type: 'array.includes',
-                        context: { pos: 0, value: true, label: 'value' }
-                    }]
+                    path: [],
+                    type: 'array.includes',
+                    context: { pos: 0, value: true, label: 'value' }
                 }]
             ]);
         });
@@ -1506,45 +1386,36 @@ describe('array', () => {
                 [['a', 'b', undefined, undefined], true],
                 [[1, 0], false, {
                     message: '"value" must be sorted in ascending order by value',
-                    details: [{
-                        message: '"value" must be sorted in ascending order by value',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'ascending',
-                            by: 'value',
-                            label: 'value',
-                            value: [1, 0]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'ascending',
+                        by: 'value',
+                        label: 'value',
+                        value: [1, 0]
+                    }
                 }],
                 [['1', '0'], false, {
                     message: '"value" must be sorted in ascending order by value',
-                    details: [{
-                        message: '"value" must be sorted in ascending order by value',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'ascending',
-                            by: 'value',
-                            label: 'value',
-                            value: ['1', '0']
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'ascending',
+                        by: 'value',
+                        label: 'value',
+                        value: ['1', '0']
+                    }
                 }],
                 [[null, 1, 2], false, {
                     message: '"value" must be sorted in ascending order by value',
-                    details: [{
-                        message: '"value" must be sorted in ascending order by value',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'ascending',
-                            by: 'value',
-                            label: 'value',
-                            value: [null, 1, 2]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'ascending',
+                        by: 'value',
+                        label: 'value',
+                        value: [null, 1, 2]
+                    }
                 }]
             ]);
         });
@@ -1563,45 +1434,36 @@ describe('array', () => {
                 [['a', 'b', null, undefined], true],
                 [[1, 0], false, {
                     message: '"value" must be sorted in ascending order by value',
-                    details: [{
-                        message: '"value" must be sorted in ascending order by value',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'ascending',
-                            by: 'value',
-                            label: 'value',
-                            value: [1, 0]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'ascending',
+                        by: 'value',
+                        label: 'value',
+                        value: [1, 0]
+                    }
                 }],
                 [['1', '0'], false, {
                     message: '"value" must be sorted in ascending order by value',
-                    details: [{
-                        message: '"value" must be sorted in ascending order by value',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'ascending',
-                            by: 'value',
-                            label: 'value',
-                            value: ['1', '0']
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'ascending',
+                        by: 'value',
+                        label: 'value',
+                        value: ['1', '0']
+                    }
                 }],
                 [[null, 1, 2], false, {
                     message: '"value" must be sorted in ascending order by value',
-                    details: [{
-                        message: '"value" must be sorted in ascending order by value',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'ascending',
-                            by: 'value',
-                            label: 'value',
-                            value: [null, 1, 2]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'ascending',
+                        by: 'value',
+                        label: 'value',
+                        value: [null, 1, 2]
+                    }
                 }]
             ]);
         });
@@ -1620,45 +1482,36 @@ describe('array', () => {
                 [[null, 'b', 'a', undefined], true],
                 [[0, 1], false, {
                     message: '"value" must be sorted in descending order by value',
-                    details: [{
-                        message: '"value" must be sorted in descending order by value',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'descending',
-                            by: 'value',
-                            label: 'value',
-                            value: [0, 1]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'descending',
+                        by: 'value',
+                        label: 'value',
+                        value: [0, 1]
+                    }
                 }],
                 [['0', '1'], false, {
                     message: '"value" must be sorted in descending order by value',
-                    details: [{
-                        message: '"value" must be sorted in descending order by value',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'descending',
-                            by: 'value',
-                            label: 'value',
-                            value: ['0', '1']
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'descending',
+                        by: 'value',
+                        label: 'value',
+                        value: ['0', '1']
+                    }
                 }],
                 [[2, 1, null], false, {
                     message: '"value" must be sorted in descending order by value',
-                    details: [{
-                        message: '"value" must be sorted in descending order by value',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'descending',
-                            by: 'value',
-                            label: 'value',
-                            value: [2, 1, null]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'descending',
+                        by: 'value',
+                        label: 'value',
+                        value: [2, 1, null]
+                    }
                 }]
             ]);
         });
@@ -1677,45 +1530,36 @@ describe('array', () => {
                 [[{ x: 'a' }, { x: 'b' }, { x: null }, {}, null, undefined, undefined], true],
                 [[{ x: 1 }, { x: 0 }], false, {
                     message: '"value" must be sorted in ascending order by x',
-                    details: [{
-                        message: '"value" must be sorted in ascending order by x',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'ascending',
-                            by: 'x',
-                            label: 'value',
-                            value: [{ x: 1 }, { x: 0 }]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'ascending',
+                        by: 'x',
+                        label: 'value',
+                        value: [{ x: 1 }, { x: 0 }]
+                    }
                 }],
                 [[{ x: '1' }, { x: '0' }], false, {
                     message: '"value" must be sorted in ascending order by x',
-                    details: [{
-                        message: '"value" must be sorted in ascending order by x',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'ascending',
-                            by: 'x',
-                            label: 'value',
-                            value: [{ x: '1' }, { x: '0' }]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'ascending',
+                        by: 'x',
+                        label: 'value',
+                        value: [{ x: '1' }, { x: '0' }]
+                    }
                 }],
                 [[{ x: null }, { x: 1 }, { x: 2 }], false, {
                     message: '"value" must be sorted in ascending order by x',
-                    details: [{
-                        message: '"value" must be sorted in ascending order by x',
-                        path: [],
-                        type: 'array.sort',
-                        context: {
-                            order: 'ascending',
-                            by: 'x',
-                            label: 'value',
-                            value: [{ x: null }, { x: 1 }, { x: 2 }]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort',
+                    context: {
+                        order: 'ascending',
+                        by: 'x',
+                        label: 'value',
+                        value: [{ x: null }, { x: 1 }, { x: 2 }]
+                    }
                 }]
             ]);
         });
@@ -1735,15 +1579,12 @@ describe('array', () => {
                 [['b', undefined, 'a'], true, ['a', 'b', undefined]],
                 [[0, '1'], false, {
                     message: '"value" cannot be sorted due to mismatching types',
-                    details: [{
-                        message: '"value" cannot be sorted due to mismatching types',
-                        path: [],
-                        type: 'array.sort.mismatching',
-                        context: {
-                            label: 'value',
-                            value: [0, '1']
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort.mismatching',
+                    context: {
+                        label: 'value',
+                        value: [0, '1']
+                    }
                 }]
             ]);
         });
@@ -1759,15 +1600,12 @@ describe('array', () => {
                 [[{}, { x: 'b' }, undefined, null, { x: null }, { x: 'a' }, undefined], true, [{ x: 'a' }, { x: 'b' }, { x: null }, {}, null, undefined, undefined]],
                 [[{ x: 0 }, { x: '1' }], false, {
                     message: '"value" cannot be sorted due to mismatching types',
-                    details: [{
-                        message: '"value" cannot be sorted due to mismatching types',
-                        path: [],
-                        type: 'array.sort.mismatching',
-                        context: {
-                            label: 'value',
-                            value: [{ x: 0 }, { x: '1' }]
-                        }
-                    }]
+                    path: [],
+                    type: 'array.sort.mismatching',
+                    context: {
+                        label: 'value',
+                        value: [{ x: 0 }, { x: '1' }]
+                    }
                 }]
             ]);
         });
@@ -1794,21 +1632,15 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[undefined], false, {
                     message: '"[0]" must not be a sparse array item',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
-                    }]
+                    path: [0],
+                    type: 'array.sparse',
+                    context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
                 }],
                 [[2, undefined], false, {
                     message: '"[1]" must not be a sparse array item',
-                    details: [{
-                        message: '"[1]" must not be a sparse array item',
-                        path: [1],
-                        type: 'array.sparse',
-                        context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
-                    }]
+                    path: [1],
+                    type: 'array.sparse',
+                    context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
                 }]
             ]);
         });
@@ -1820,12 +1652,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{ a: 1 }, {}, { c: 3 }], false, {
                     message: '"[1]" must not be a sparse array item',
-                    details: [{
-                        message: '"[1]" must not be a sparse array item',
-                        path: [1],
-                        type: 'array.sparse',
-                        context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
-                    }]
+                    path: [1],
+                    type: 'array.sparse',
+                    context: { label: '[1]', key: 1, path: [1], pos: 1, value: undefined }
                 }]
             ]);
         });
@@ -1862,12 +1691,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, {
                     message: '"[0]" is required',
-                    details: [{
-                        message: '"[0]" is required',
-                        path: [0],
-                        type: 'any.required',
-                        context: { label: '[0]', key: 0 }
-                    }]
+                    path: [0],
+                    type: 'any.required',
+                    context: { label: '[0]', key: 0 }
                 }]
             ]);
         });
@@ -1892,12 +1718,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{}, { c: 3 }], false, {
                     message: '"[0]" must not be a sparse array item',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
-                    }]
+                    path: [0],
+                    type: 'array.sparse',
+                    context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
                 }]
             ]);
         });
@@ -1978,12 +1801,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{}], false, {
                     message: '"[0]" must not be a sparse array item',
-                    details: [{
-                        message: '"[0]" must not be a sparse array item',
-                        path: [0],
-                        type: 'array.sparse',
-                        context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
-                    }]
+                    path: [0],
+                    type: 'array.sparse',
+                    context: { label: '[0]', key: 0, path: [0], pos: 0, value: undefined }
                 }]
             ]);
         });
@@ -2039,12 +1859,9 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[{ a: 1 }, {}, { c: 3 }], false, {
                     message: '"[1]" is required',
-                    details: [{
-                        message: '"[1]" is required',
-                        path: [1],
-                        type: 'any.required',
-                        context: { label: '[1]', key: 1 }
-                    }]
+                    path: [1],
+                    type: 'any.required',
+                    context: { label: '[1]', key: 1 }
                 }]
             ]);
         });
@@ -2106,147 +1923,120 @@ describe('array', () => {
             Helper.validate(schema, [
                 [[2, 2], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: 2,
-                            dupePos: 0,
-                            dupeValue: 2,
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: 2,
+                        dupePos: 0,
+                        dupeValue: 2,
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [[0x2, 2], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: 2,
-                            dupePos: 0,
-                            dupeValue: 0x2,
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: 2,
+                        dupePos: 0,
+                        dupeValue: 0x2,
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [['duplicate', 'duplicate'], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: 'duplicate',
-                            dupePos: 0,
-                            dupeValue: 'duplicate',
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: 'duplicate',
+                        dupePos: 0,
+                        dupeValue: 'duplicate',
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [[{ a: 'b' }, { a: 'b' }], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: { a: 'b' },
-                            dupePos: 0,
-                            dupeValue: { a: 'b' },
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: { a: 'b' },
+                        dupePos: 0,
+                        dupeValue: { a: 'b' },
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [[buffer, buffer], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: buffer,
-                            dupePos: 0,
-                            dupeValue: buffer,
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: buffer,
+                        dupePos: 0,
+                        dupeValue: buffer,
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [[func, func], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: func,
-                            dupePos: 0,
-                            dupeValue: func,
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: func,
+                        dupePos: 0,
+                        dupeValue: func,
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [[now, now], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: now,
-                            dupePos: 0,
-                            dupeValue: now,
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: now,
+                        dupePos: 0,
+                        dupeValue: now,
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [[true, true], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: true,
-                            dupePos: 0,
-                            dupeValue: true,
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: true,
+                        dupePos: 0,
+                        dupeValue: true,
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [[undefined, undefined], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            dupePos: 0,
-                            dupeValue: undefined,
-                            label: '[1]',
-                            key: 1,
-                            value: undefined
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        dupePos: 0,
+                        dupeValue: undefined,
+                        label: '[1]',
+                        key: 1,
+                        value: undefined
+                    }
                 }]
             ]);
         });
@@ -2357,35 +2147,29 @@ describe('array', () => {
                 [[{ a: 'b', c: 'd' }, { a: 'c', c: 'd' }], true],
                 [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: { a: 'b', c: 'd' },
-                            dupePos: 0,
-                            dupeValue: { a: 'b', c: 'd' },
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: { a: 'b', c: 'd' },
+                        dupePos: 0,
+                        dupeValue: { a: 'b', c: 'd' },
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: { a: 'b', c: 'd' },
-                            dupePos: 0,
-                            dupeValue: { a: 'b', c: 'c' },
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: { a: 'b', c: 'd' },
+                        dupePos: 0,
+                        dupeValue: { a: 'b', c: 'c' },
+                        label: '[1]',
+                        key: 1
+                    }
                 }]
             ]);
         });
@@ -2415,35 +2199,29 @@ describe('array', () => {
                 [[{ a: 'b' }, 'c', { a: 'd' }, 'e'], true],
                 [[{ a: 'b' }, { a: 'b' }], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: { a: 'b' },
-                            dupePos: 0,
-                            dupeValue: { a: 'b' },
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: { a: 'b' },
+                        dupePos: 0,
+                        dupeValue: { a: 'b' },
+                        label: '[1]',
+                        key: 1
+                    }
                 }],
                 [[{ a: 'b' }, 'b'], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: 'b',
-                            dupePos: 0,
-                            dupeValue: { a: 'b' },
-                            label: '[1]',
-                            key: 1
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: 'b',
+                        dupePos: 0,
+                        dupeValue: { a: 'b' },
+                        label: '[1]',
+                        key: 1
+                    }
                 }]
             ]);
         });
@@ -2456,38 +2234,32 @@ describe('array', () => {
                 [[{ id: 1 }, { id: 2 }, { id: 3 }], true],
                 [[{ id: 1 }, { id: 2 }, {}], true],
                 [[{ id: 1 }, { id: 2 }, { id: 1 }], false, {
+                    context: {
+                        dupePos: 0,
+                        dupeValue: { id: 1 },
+                        key: 2,
+                        label: '[2]',
+                        path: 'id',
+                        pos: 2,
+                        value: { id: 1 }
+                    },
                     message: '"[2]" contains a duplicate value',
-                    details: [{
-                        context: {
-                            dupePos: 0,
-                            dupeValue: { id: 1 },
-                            key: 2,
-                            label: '[2]',
-                            path: 'id',
-                            pos: 2,
-                            value: { id: 1 }
-                        },
-                        message: '"[2]" contains a duplicate value',
-                        path: [2],
-                        type: 'array.unique'
-                    }]
+                    path: [2],
+                    type: 'array.unique'
                 }],
                 [[{ id: 1 }, { id: 2 }, {}, { id: 3 }, {}], false, {
+                    context: {
+                        dupePos: 2,
+                        dupeValue: {},
+                        key: 4,
+                        label: '[4]',
+                        path: 'id',
+                        pos: 4,
+                        value: {}
+                    },
                     message: '"[4]" contains a duplicate value',
-                    details: [{
-                        context: {
-                            dupePos: 2,
-                            dupeValue: {},
-                            key: 4,
-                            label: '[4]',
-                            path: 'id',
-                            pos: 4,
-                            value: {}
-                        },
-                        message: '"[4]" contains a duplicate value',
-                        path: [4],
-                        type: 'array.unique'
-                    }]
+                    path: [4],
+                    type: 'array.unique'
                 }]
             ]);
 
@@ -2497,38 +2269,32 @@ describe('array', () => {
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 3 } }], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, {
+                    context: {
+                        dupePos: 0,
+                        dupeValue: { nested: { id: 1 } },
+                        key: 2,
+                        label: '[2]',
+                        path: 'nested.id',
+                        pos: 2,
+                        value: { nested: { id: 1 } }
+                    },
                     message: '"[2]" contains a duplicate value',
-                    details: [{
-                        context: {
-                            dupePos: 0,
-                            dupeValue: { nested: { id: 1 } },
-                            key: 2,
-                            label: '[2]',
-                            path: 'nested.id',
-                            pos: 2,
-                            value: { nested: { id: 1 } }
-                        },
-                        message: '"[2]" contains a duplicate value',
-                        path: [2],
-                        type: 'array.unique'
-                    }]
+                    path: [2],
+                    type: 'array.unique'
                 }],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, {
+                    context: {
+                        dupePos: 2,
+                        dupeValue: {},
+                        key: 4,
+                        label: '[4]',
+                        path: 'nested.id',
+                        pos: 4,
+                        value: {}
+                    },
                     message: '"[4]" contains a duplicate value',
-                    details: [{
-                        context: {
-                            dupePos: 2,
-                            dupeValue: {},
-                            key: 4,
-                            label: '[4]',
-                            path: 'nested.id',
-                            pos: 4,
-                            value: {}
-                        },
-                        message: '"[4]" contains a duplicate value',
-                        path: [4],
-                        type: 'array.unique'
-                    }]
+                    path: [4],
+                    type: 'array.unique'
                 }]
             ]);
 
@@ -2538,38 +2304,32 @@ describe('array', () => {
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 3 } }], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}], true],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, { nested: { id: 1 } }], false, {
+                    context: {
+                        dupePos: 0,
+                        dupeValue: { nested: { id: 1 } },
+                        key: 2,
+                        label: '[2]',
+                        path: 'nested',
+                        pos: 2,
+                        value: { nested: { id: 1 } }
+                    },
                     message: '"[2]" contains a duplicate value',
-                    details: [{
-                        context: {
-                            dupePos: 0,
-                            dupeValue: { nested: { id: 1 } },
-                            key: 2,
-                            label: '[2]',
-                            path: 'nested',
-                            pos: 2,
-                            value: { nested: { id: 1 } }
-                        },
-                        message: '"[2]" contains a duplicate value',
-                        path: [2],
-                        type: 'array.unique'
-                    }]
+                    path: [2],
+                    type: 'array.unique'
                 }],
                 [[{ nested: { id: 1 } }, { nested: { id: 2 } }, {}, { nested: { id: 3 } }, {}], false, {
+                    context: {
+                        dupePos: 2,
+                        dupeValue: {},
+                        key: 4,
+                        label: '[4]',
+                        path: 'nested',
+                        pos: 4,
+                        value: {}
+                    },
                     message: '"[4]" contains a duplicate value',
-                    details: [{
-                        context: {
-                            dupePos: 2,
-                            dupeValue: {},
-                            key: 4,
-                            label: '[4]',
-                            path: 'nested',
-                            pos: 4,
-                            value: {}
-                        },
-                        message: '"[4]" contains a duplicate value',
-                        path: [4],
-                        type: 'array.unique'
-                    }]
+                    path: [4],
+                    type: 'array.unique'
                 }]
             ]);
         });
@@ -2583,37 +2343,31 @@ describe('array', () => {
                 [[{ c: 'd' }, { c: 'd' }], true],
                 [[{ a: 'b', c: 'd' }, { a: 'b', c: 'd' }], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: { a: 'b', c: 'd' },
-                            dupePos: 0,
-                            dupeValue: { a: 'b', c: 'd' },
-                            label: '[1]',
-                            key: 1,
-                            path: 'a'
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: { a: 'b', c: 'd' },
+                        dupePos: 0,
+                        dupeValue: { a: 'b', c: 'd' },
+                        label: '[1]',
+                        key: 1,
+                        path: 'a'
+                    }
                 }],
                 [[{ a: 'b', c: 'c' }, { a: 'b', c: 'd' }], false, {
                     message: '"[1]" contains a duplicate value',
-                    details: [{
-                        message: '"[1]" contains a duplicate value',
-                        path: [1],
-                        type: 'array.unique',
-                        context: {
-                            pos: 1,
-                            value: { a: 'b', c: 'd' },
-                            dupePos: 0,
-                            dupeValue: { a: 'b', c: 'c' },
-                            label: '[1]',
-                            key: 1,
-                            path: 'a'
-                        }
-                    }]
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        value: { a: 'b', c: 'd' },
+                        dupePos: 0,
+                        dupeValue: { a: 'b', c: 'c' },
+                        label: '[1]',
+                        key: 1,
+                        path: 'a'
+                    }
                 }]
             ]);
         });
@@ -2653,12 +2407,9 @@ describe('array', () => {
             Helper.validate(Joi.array().required(), [
                 [undefined, false, {
                     message: '"value" is required',
-                    details: [{
-                        message: '"value" is required',
-                        path: [],
-                        type: 'any.required',
-                        context: { label: 'value' }
-                    }]
+                    path: [],
+                    type: 'any.required',
+                    context: { label: 'value' }
                 }]
             ]);
         });
@@ -2676,21 +2427,15 @@ describe('array', () => {
             Helper.validate(Joi.array().items(Joi.string().forbidden()), [
                 [['2', '1'], false, {
                     message: '"[0]" contains an excluded value',
-                    details: [{
-                        message: '"[0]" contains an excluded value',
-                        path: [0],
-                        type: 'array.excludes',
-                        context: { pos: 0, value: '2', label: '[0]', key: 0 }
-                    }]
+                    path: [0],
+                    type: 'array.excludes',
+                    context: { pos: 0, value: '2', label: '[0]', key: 0 }
                 }],
                 [['1'], false, {
                     message: '"[0]" contains an excluded value',
-                    details: [{
-                        message: '"[0]" contains an excluded value',
-                        path: [0],
-                        type: 'array.excludes',
-                        context: { pos: 0, value: '1', label: '[0]', key: 0 }
-                    }]
+                    path: [0],
+                    type: 'array.excludes',
+                    context: { pos: 0, value: '1', label: '[0]', key: 0 }
                 }],
                 [[2], true]
             ]);
@@ -2721,12 +2466,9 @@ describe('array', () => {
                 [[50, 100, 1000], true],
                 [['a', 1, 2], false, {
                     message: '"[0]" must be a number',
-                    details: [{
-                        message: '"[0]" must be a number',
-                        path: [0],
-                        type: 'number.base',
-                        context: { label: '[0]', key: 0, value: 'a' }
-                    }]
+                    path: [0],
+                    type: 'number.base',
+                    context: { label: '[0]', key: 0, value: 'a' }
                 }],
                 [['1', '2', 4], true]
             ]);
@@ -2748,21 +2490,15 @@ describe('array', () => {
                 [[{ h1: 1 }, { h1: 2 }, { h1: 3 }], true],
                 [[{ h2: 1, h3: 'somestring' }, { h1: 2 }, { h1: 3 }], false, {
                     message: '"[0].h1" is required',
-                    details: [{
-                        message: '"[0].h1" is required',
-                        path: [0, 'h1'],
-                        type: 'any.required',
-                        context: { label: '[0].h1', key: 'h1' }
-                    }]
+                    path: [0, 'h1'],
+                    type: 'any.required',
+                    context: { label: '[0].h1', key: 'h1' }
                 }],
                 [[1, 2, [1]], false, {
                     message: '"[0]" must be of type object',
-                    details: [{
-                        message: '"[0]" must be of type object',
-                        path: [0],
-                        type: 'object.base',
-                        context: { label: '[0]', key: 0, value: 1, type: 'object' }
-                    }]
+                    path: [0],
+                    type: 'object.base',
+                    context: { label: '[0]', key: 0, value: 1, type: 'object' }
                 }]
             ]);
         });
@@ -2773,12 +2509,9 @@ describe('array', () => {
                 [[1, 2, 3], true],
                 [[1, 2, [1]], false, {
                     message: '"[2]" must be a number',
-                    details: [{
-                        message: '"[2]" must be a number',
-                        path: [2],
-                        type: 'number.base',
-                        context: { label: '[2]', key: 2, value: [1] }
-                    }]
+                    path: [2],
+                    type: 'number.base',
+                    context: { label: '[2]', key: 2, value: [1] }
                 }]
             ]);
         });
@@ -2810,12 +2543,9 @@ describe('array', () => {
                 [{ array: ['12345'] }, true],
                 [{ array: ['1'] }, false, {
                     message: '"array[0]" does not match any of the allowed types',
-                    details: [{
-                        message: '"array[0]" does not match any of the allowed types',
-                        path: ['array', 0],
-                        type: 'array.includes',
-                        context: { pos: 0, value: '1', label: 'array[0]', key: 0 }
-                    }]
+                    path: ['array', 0],
+                    type: 'array.includes',
+                    context: { pos: 0, value: '1', label: 'array[0]', key: 0 }
                 }],
                 [{ array: [3] }, true],
                 [{ array: ['12345', 3] }, true]

@@ -49,21 +49,15 @@ describe('date', () => {
         Helper.validate(schema, [
             [true, false, {
                 message: '"value" must be a valid date',
-                details: [{
-                    message: '"value" must be a valid date',
-                    path: [],
-                    type: 'date.base',
-                    context: { label: 'value', value: true }
-                }]
+                path: [],
+                type: 'date.base',
+                context: { label: 'value', value: true }
             }],
             [false, false, {
                 message: '"value" must be a valid date',
-                details: [{
-                    message: '"value" must be a valid date',
-                    path: [],
-                    type: 'date.base',
-                    context: { label: 'value', value: false }
-                }]
+                path: [],
+                type: 'date.base',
+                context: { label: 'value', value: false }
             }]
         ]);
     });
@@ -74,30 +68,21 @@ describe('date', () => {
         Helper.validate(schema, [
             [Infinity, false, {
                 message: '"value" must be a valid date',
-                details: [{
-                    message: '"value" must be a valid date',
-                    path: [],
-                    type: 'date.base',
-                    context: { label: 'value', value: Infinity }
-                }]
+                path: [],
+                type: 'date.base',
+                context: { label: 'value', value: Infinity }
             }],
             [-Infinity, false, {
                 message: '"value" must be a valid date',
-                details: [{
-                    message: '"value" must be a valid date',
-                    path: [],
-                    type: 'date.base',
-                    context: { label: 'value', value: -Infinity }
-                }]
+                path: [],
+                type: 'date.base',
+                context: { label: 'value', value: -Infinity }
             }],
             [NaN, false, {
                 message: '"value" must be a valid date',
-                details: [{
-                    message: '"value" must be a valid date',
-                    path: [],
-                    type: 'date.base',
-                    context: { label: 'value', value: NaN }
-                }]
+                path: [],
+                type: 'date.base',
+                context: { label: 'value', value: NaN }
             }]
         ]);
     });
@@ -143,21 +128,15 @@ describe('date', () => {
             [new Date().getTime().toFixed(4), true],
             ['not a valid date', false, {
                 message: '"value" must be a valid date',
-                details: [{
-                    message: '"value" must be a valid date',
-                    path: [],
-                    type: 'date.base',
-                    context: { label: 'value', value: 'not a valid date' }
-                }]
+                path: [],
+                type: 'date.base',
+                context: { label: 'value', value: 'not a valid date' }
             }],
             [invalidDate, false, {
                 message: '"value" must be a valid date',
-                details: [{
-                    message: '"value" must be a valid date',
-                    path: [],
-                    type: 'date.base',
-                    context: { label: 'value', value: invalidDate }
-                }]
+                path: [],
+                type: 'date.base',
+                context: { label: 'value', value: invalidDate }
             }]
         ]);
     });
@@ -230,48 +209,33 @@ describe('date', () => {
                 ['1-1-2001 UTC', true],
                 ['1-1-2000 UTC', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.greater',
-                        context: { limit: d, label: 'value', value: new Date('1-1-2000 UTC') }
-                    }]
+                    path: [],
+                    type: 'date.greater',
+                    context: { limit: d, label: 'value', value: new Date('1-1-2000 UTC') }
                 }],
                 [0, false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.greater',
-                        context: { limit: d, label: 'value', value: new Date(0) }
-                    }]
+                    path: [],
+                    type: 'date.greater',
+                    context: { limit: d, label: 'value', value: new Date(0) }
                 }],
                 ['0', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.greater',
-                        context: { limit: d, label: 'value', value: new Date(0) }
-                    }]
+                    path: [],
+                    type: 'date.greater',
+                    context: { limit: d, label: 'value', value: new Date(0) }
                 }],
                 ['-1', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.greater',
-                        context: { limit: d, label: 'value', value: new Date(-1) }
-                    }]
+                    path: [],
+                    type: 'date.greater',
+                    context: { limit: d, label: 'value', value: new Date(-1) }
                 }],
                 ['1-1-1999 UTC', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.greater',
-                        context: { limit: d, label: 'value', value: new Date('1-1-1999 UTC') }
-                    }]
+                    path: [],
+                    type: 'date.greater',
+                    context: { limit: d, label: 'value', value: new Date('1-1-1999 UTC') }
                 }]
             ]);
         });
@@ -307,22 +271,16 @@ describe('date', () => {
             Helper.validate(schema, [
                 [{ a: now, b: now }, false, {
                     message: '"b" must be greater than "ref:a"',
-                    details: [{
-                        message: '"b" must be greater than "ref:a"',
-                        path: ['b'],
-                        type: 'date.greater',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.greater',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }],
                 [{ a: now, b: now + 1e3 }, true],
                 [{ a: now, b: now - 1e3 }, false, {
                     message: '"b" must be greater than "ref:a"',
-                    details: [{
-                        message: '"b" must be greater than "ref:a"',
-                        path: ['b'],
-                        type: 'date.greater',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
-                    }]
+                    path: ['b'],
+                    type: 'date.greater',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
                 }]
             ]);
         });
@@ -346,12 +304,9 @@ describe('date', () => {
                 [{ a: 123, b: 123, c: 42 }, true],
                 [{ a: 456, b: 123, c: 42 }, false, {
                     message: '"c" must be [0]',
-                    details: [{
-                        message: '"c" must be [0]',
-                        path: ['c'],
-                        type: 'any.only',
-                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                    }]
+                    path: ['c'],
+                    type: 'any.only',
+                    context: { value: 42, valids: [0], label: 'c', key: 'c' }
                 }]
             ]);
         });
@@ -365,22 +320,16 @@ describe('date', () => {
             Helper.validate(schema, { context: { a: now } }, [
                 [{ b: now }, false, {
                     message: '"b" must be greater than "ref:global:a"',
-                    details: [{
-                        message: '"b" must be greater than "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.greater',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.greater',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }],
                 [{ b: now + 1e3 }, true],
                 [{ b: now - 1e3 }, false, {
                     message: '"b" must be greater than "ref:global:a"',
-                    details: [{
-                        message: '"b" must be greater than "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.greater',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
-                    }]
+                    path: ['b'],
+                    type: 'date.greater',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
                 }]
             ]);
         });
@@ -394,22 +343,16 @@ describe('date', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: now }, false, {
                     message: '"b" date references "ref:a" which must have a valid date format',
-                    details: [{
-                        message: '"b" date references "ref:a" which must have a valid date format',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }],
                 [{ a: '123', b: now }, true],
                 [{ a: (now + 1e3).toString(), b: now }, false, {
                     message: '"b" must be greater than "ref:a"',
-                    details: [{
-                        message: '"b" must be greater than "ref:a"',
-                        path: ['b'],
-                        type: 'date.greater',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.greater',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }]
             ]);
         });
@@ -423,24 +366,18 @@ describe('date', () => {
             Helper.validate(schema, { context: { a: 'abc' } }, [
                 [{ b: now }, false, {
                     message: '"b" date references "ref:global:a" which must have a valid date format',
-                    details: [{
-                        message: '"b" date references "ref:global:a" which must have a valid date format',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }]
             ]);
 
             Helper.validate(schema, { context: { a: (now + 1e3).toString() } }, [
                 [{ b: now }, false, {
                     message: '"b" must be greater than "ref:global:a"',
-                    details: [{
-                        message: '"b" must be greater than "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.greater',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.greater',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }]
             ]);
         });
@@ -461,61 +398,43 @@ describe('date', () => {
                 ['-002013-06-07T14:21:46.295Z', true],
                 ['002013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '002013-06-07T14:21:46.295Z', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '002013-06-07T14:21:46.295Z', format: 'iso' }
                 }],
                 ['+2013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '+2013-06-07T14:21:46.295Z', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '+2013-06-07T14:21:46.295Z', format: 'iso' }
                 }],
                 ['-2013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '-2013-06-07T14:21:46.295Z', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '-2013-06-07T14:21:46.295Z', format: 'iso' }
                 }],
                 ['2013-06-07T14:21:46.295Z', true],
                 ['2013-06-07T14:21:46.295Z0', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '2013-06-07T14:21:46.295Z0', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '2013-06-07T14:21:46.295Z0', format: 'iso' }
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
                 ['2013-06-07T14:21:46.295+07:000', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '2013-06-07T14:21:46.295+07:000', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '2013-06-07T14:21:46.295+07:000', format: 'iso' }
                 }],
                 ['2013-06-07T14:21:46.295-07:00', true],
                 ['2013-06-07T14:21:46Z', true],
                 ['2013-06-07T14:21:46Z0', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '2013-06-07T14:21:46Z0', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '2013-06-07T14:21:46Z0', format: 'iso' }
                 }],
                 ['2013-06-07T14:21:46+07:00', true],
                 ['2013-06-07T14:21:46-07:00', true],
@@ -523,42 +442,30 @@ describe('date', () => {
                 ['2013-06-07T14:21+07:00', true],
                 ['2013-06-07T14:21+07:000', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '2013-06-07T14:21+07:000', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '2013-06-07T14:21+07:000', format: 'iso' }
                 }],
                 ['2013-06-07T14:21-07:00', true],
                 ['2013-06-07T14:21Z+7:00', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '2013-06-07T14:21Z+7:00', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '2013-06-07T14:21Z+7:00', format: 'iso' }
                 }],
                 ['2013-06-07', true],
                 ['2013-06-07T', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '2013-06-07T', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '2013-06-07T', format: 'iso' }
                 }],
                 ['2013-06-07T14:21', true],
                 ['1-1-2013', false, {
                     message: '"value" must be in ISO 8601 date format',
-                    details: [{
-                        message: '"value" must be in ISO 8601 date format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '1-1-2013', format: 'iso' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '1-1-2013', format: 'iso' }
                 }],
                 ['2013', true, new Date('2013')]
             ]);
@@ -599,58 +506,40 @@ describe('date', () => {
             Helper.validate(Joi.date().less('1-1-1970 UTC').prefs({ dateFormat: 'string' }), [
                 ['1-1-1971 UTC', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.less',
-                        context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
-                    }]
+                    path: [],
+                    type: 'date.less',
+                    context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
                 }],
                 ['1-1-1970 UTC', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.less',
-                        context: { limit: d, label: 'value', value: new Date('1-1-1970 UTC') }
-                    }]
+                    path: [],
+                    type: 'date.less',
+                    context: { limit: d, label: 'value', value: new Date('1-1-1970 UTC') }
                 }],
                 [0, false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.less',
-                        context: { limit: d, label: 'value', value: new Date(0) }
-                    }]
+                    path: [],
+                    type: 'date.less',
+                    context: { limit: d, label: 'value', value: new Date(0) }
                 }],
                 [1, false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.less',
-                        context: { limit: d, label: 'value', value: new Date(1) }
-                    }]
+                    path: [],
+                    type: 'date.less',
+                    context: { limit: d, label: 'value', value: new Date(1) }
                 }],
                 ['0', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.less',
-                        context: { limit: d, label: 'value', value: new Date(0) }
-                    }]
+                    path: [],
+                    type: 'date.less',
+                    context: { limit: d, label: 'value', value: new Date(0) }
                 }],
                 ['-1', true],
                 ['1-1-2014 UTC', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.less',
-                        context: { limit: d, label: 'value', value: new Date('1-1-2014 UTC') }
-                    }]
+                    path: [],
+                    type: 'date.less',
+                    context: { limit: d, label: 'value', value: new Date('1-1-2014 UTC') }
                 }]
             ]);
         });
@@ -686,21 +575,15 @@ describe('date', () => {
             Helper.validate(schema, [
                 [{ a: now, b: now }, false, {
                     message: '"b" must be less than "ref:a"',
-                    details: [{
-                        message: '"b" must be less than "ref:a"',
-                        path: ['b'],
-                        type: 'date.less',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.less',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }],
                 [{ a: now, b: now + 1e3 }, false, {
                     message: '"b" must be less than "ref:a"',
-                    details: [{
-                        message: '"b" must be less than "ref:a"',
-                        path: ['b'],
-                        type: 'date.less',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
-                    }]
+                    path: ['b'],
+                    type: 'date.less',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                 }],
                 [{ a: now, b: now - 1e3 }, true]
             ]);
@@ -715,21 +598,15 @@ describe('date', () => {
             Helper.validate(schema, { context: { a: now } }, [
                 [{ b: now }, false, {
                     message: '"b" must be less than "ref:global:a"',
-                    details: [{
-                        message: '"b" must be less than "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.less',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.less',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }],
                 [{ b: now + 1e3 }, false, {
                     message: '"b" must be less than "ref:global:a"',
-                    details: [{
-                        message: '"b" must be less than "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.less',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
-                    }]
+                    path: ['b'],
+                    type: 'date.less',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                 }],
                 [{ b: now - 1e3 }, true]
             ]);
@@ -744,22 +621,16 @@ describe('date', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: new Date() }, false, {
                     message: '"b" date references "ref:a" which must have a valid date format',
-                    details: [{
-                        message: '"b" date references "ref:a" which must have a valid date format',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }],
                 [{ a: '100000000000000', b: now }, true],
                 [{ a: (now - 1e3).toString(), b: now }, false, {
                     message: '"b" must be less than "ref:a"',
-                    details: [{
-                        message: '"b" must be less than "ref:a"',
-                        path: ['b'],
-                        type: 'date.less',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.less',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }]
             ]);
         });
@@ -773,12 +644,9 @@ describe('date', () => {
             Helper.validate(schema, { context: { a: 'abc' } }, [
                 [{ b: now }, false, {
                     message: '"b" date references "ref:global:a" which must have a valid date format',
-                    details: [{
-                        message: '"b" date references "ref:global:a" which must have a valid date format',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }]
             ]);
 
@@ -789,12 +657,9 @@ describe('date', () => {
             Helper.validate(schema, { context: { a: (now - 1e3).toString() } }, [
                 [{ b: now }, false, {
                     message: '"b" must be less than "ref:global:a"',
-                    details: [{
-                        message: '"b" must be less than "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.less',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.less',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }]
             ]);
         });
@@ -809,34 +674,25 @@ describe('date', () => {
             Helper.validate(Joi.date().max('1-1-1970 UTC'), [
                 ['1-1-1971 UTC', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.max',
-                        context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
-                    }]
+                    path: [],
+                    type: 'date.max',
+                    context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
                 }],
                 ['1-1-1970 UTC', true],
                 [0, true],
                 [1, false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.max',
-                        context: { limit: d, label: 'value', value: new Date(1) }
-                    }]
+                    path: [],
+                    type: 'date.max',
+                    context: { limit: d, label: 'value', value: new Date(1) }
                 }],
                 ['0', true],
                 ['-1', true],
                 ['1-1-2014 UTC', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.max',
-                        context: { limit: d, label: 'value', value: new Date('1-1-2014 UTC') }
-                    }]
+                    path: [],
+                    type: 'date.max',
+                    context: { limit: d, label: 'value', value: new Date('1-1-2014 UTC') }
                 }]
             ]);
         });
@@ -873,12 +729,9 @@ describe('date', () => {
                 [{ a: now, b: now }, true],
                 [{ a: now, b: now + 1e3 }, false, {
                     message: '"b" must be less than or equal to "ref:a"',
-                    details: [{
-                        message: '"b" must be less than or equal to "ref:a"',
-                        path: ['b'],
-                        type: 'date.max',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
-                    }]
+                    path: ['b'],
+                    type: 'date.max',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                 }],
                 [{ a: now, b: now - 1e3 }, true]
             ]);
@@ -894,12 +747,9 @@ describe('date', () => {
                 [{ b: now }, true],
                 [{ b: now + 1e3 }, false, {
                     message: '"b" must be less than or equal to "ref:global:a"',
-                    details: [{
-                        message: '"b" must be less than or equal to "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.max',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
-                    }]
+                    path: ['b'],
+                    type: 'date.max',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                 }],
                 [{ b: now - 1e3 }, true]
             ]);
@@ -920,12 +770,9 @@ describe('date', () => {
                 [{ annual: true, from: '2000-01-01', to: '2000-12-30' }, true],
                 [{ annual: true, from: '2000-01-01', to: '2010-01-01' }, false, {
                     message: '"to" must be less than or equal to "{number(from) + 364 * day}"',
-                    details: [{
-                        message: '"to" must be less than or equal to "{number(from) + 364 * day}"',
-                        path: ['to'],
-                        type: 'date.max',
-                        context: { limit: ref, label: 'to', key: 'to', value: new Date('2010-01-01') }
-                    }]
+                    path: ['to'],
+                    type: 'date.max',
+                    context: { limit: ref, label: 'to', key: 'to', value: new Date('2010-01-01') }
                 }]
             ]);
         });
@@ -939,22 +786,16 @@ describe('date', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: new Date() }, false, {
                     message: '"b" date references "ref:a" which must have a valid date format',
-                    details: [{
-                        message: '"b" date references "ref:a" which must have a valid date format',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }],
                 [{ a: '100000000000000', b: now }, true],
                 [{ a: (now - 1e3).toString(), b: now }, false, {
                     message: '"b" must be less than or equal to "ref:a"',
-                    details: [{
-                        message: '"b" must be less than or equal to "ref:a"',
-                        path: ['b'],
-                        type: 'date.max',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.max',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }]
             ]);
         });
@@ -968,12 +809,9 @@ describe('date', () => {
             Helper.validate(schema, { context: { a: 'abc' } }, [
                 [{ b: now }, false, {
                     message: '"b" date references "ref:global:a" which must have a valid date format',
-                    details: [{
-                        message: '"b" date references "ref:global:a" which must have a valid date format',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }]
             ]);
 
@@ -984,12 +822,9 @@ describe('date', () => {
             Helper.validate(schema, { context: { a: (now - 1e3).toString() } }, [
                 [{ b: now }, false, {
                     message: '"b" must be less than or equal to "ref:global:a"',
-                    details: [{
-                        message: '"b" must be less than or equal to "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.max',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.max',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }]
             ]);
         });
@@ -1006,39 +841,27 @@ describe('date', () => {
                 ['1-1-2000 UTC', true],
                 [0, false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.min',
-                        context: { limit: d, label: 'value', value: new Date(0) }
-                    }]
+                    path: [],
+                    type: 'date.min',
+                    context: { limit: d, label: 'value', value: new Date(0) }
                 }],
                 ['0', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.min',
-                        context: { limit: d, label: 'value', value: new Date(0) }
-                    }]
+                    path: [],
+                    type: 'date.min',
+                    context: { limit: d, label: 'value', value: new Date(0) }
                 }],
                 ['-1', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.min',
-                        context: { limit: d, label: 'value', value: new Date(-1) }
-                    }]
+                    path: [],
+                    type: 'date.min',
+                    context: { limit: d, label: 'value', value: new Date(-1) }
                 }],
                 ['1-1-1999 UTC', false, {
                     message,
-                    details: [{
-                        message,
-                        path: [],
-                        type: 'date.min',
-                        context: { limit: d, label: 'value', value: new Date('1-1-1999 UTC') }
-                    }]
+                    path: [],
+                    type: 'date.min',
+                    context: { limit: d, label: 'value', value: new Date('1-1-1999 UTC') }
                 }]
             ]);
         });
@@ -1076,12 +899,9 @@ describe('date', () => {
                 [{ a: now, b: now + 1e3 }, true],
                 [{ a: now, b: now - 1e3 }, false, {
                     message: '"b" must be larger than or equal to "ref:a"',
-                    details: [{
-                        message: '"b" must be larger than or equal to "ref:a"',
-                        path: ['b'],
-                        type: 'date.min',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
-                    }]
+                    path: ['b'],
+                    type: 'date.min',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
                 }]
             ]);
         });
@@ -1104,21 +924,15 @@ describe('date', () => {
                 [{ a: 456, b: 123, c: 0 }, true],
                 [{ a: 123, b: 123, c: 42 }, false, {
                     message: '"c" must be [0]',
-                    details: [{
-                        message: '"c" must be [0]',
-                        path: ['c'],
-                        type: 'any.only',
-                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                    }]
+                    path: ['c'],
+                    type: 'any.only',
+                    context: { value: 42, valids: [0], label: 'c', key: 'c' }
                 }],
                 [{ a: 456, b: 123, c: 42 }, false, {
                     message: '"c" must be [0]',
-                    details: [{
-                        message: '"c" must be [0]',
-                        path: ['c'],
-                        type: 'any.only',
-                        context: { value: 42, valids: [0], label: 'c', key: 'c' }
-                    }]
+                    path: ['c'],
+                    type: 'any.only',
+                    context: { value: 42, valids: [0], label: 'c', key: 'c' }
                 }]
             ]);
         });
@@ -1134,12 +948,9 @@ describe('date', () => {
                 [{ b: now + 1e3 }, true],
                 [{ b: now - 1e3 }, false, {
                     message: '"b" must be larger than or equal to "ref:global:a"',
-                    details: [{
-                        message: '"b" must be larger than or equal to "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.min',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
-                    }]
+                    path: ['b'],
+                    type: 'date.min',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
                 }]
             ]);
         });
@@ -1153,22 +964,16 @@ describe('date', () => {
             Helper.validate(schema, [
                 [{ a: 'abc', b: now }, false, {
                     message: '"b" date references "ref:a" which must have a valid date format',
-                    details: [{
-                        message: '"b" date references "ref:a" which must have a valid date format',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }],
                 [{ a: '123', b: now }, true],
                 [{ a: (now + 1e3).toString(), b: now }, false, {
                     message: '"b" must be larger than or equal to "ref:a"',
-                    details: [{
-                        message: '"b" must be larger than or equal to "ref:a"',
-                        path: ['b'],
-                        type: 'date.min',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.min',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }]
             ]);
         });
@@ -1182,24 +987,18 @@ describe('date', () => {
             Helper.validate(schema, { context: { a: 'abc' } }, [
                 [{ b: now }, false, {
                     message: '"b" date references "ref:global:a" which must have a valid date format',
-                    details: [{
-                        message: '"b" date references "ref:global:a" which must have a valid date format',
-                        path: ['b'],
-                        type: 'any.ref',
-                        context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
-                    }]
+                    path: ['b'],
+                    type: 'any.ref',
+                    context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }]
             ]);
 
             Helper.validate(schema, { context: { a: (now + 1e3).toString() } }, [
                 [{ b: now }, false, {
                     message: '"b" must be larger than or equal to "ref:global:a"',
-                    details: [{
-                        message: '"b" must be larger than or equal to "ref:global:a"',
-                        path: ['b'],
-                        type: 'date.min',
-                        context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
-                    }]
+                    path: ['b'],
+                    type: 'date.min',
+                    context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }]
             ]);
         });
@@ -1219,21 +1018,15 @@ describe('date', () => {
             Helper.validate(schema, [
                 ['', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
-                    details: [{
-                        message: '"value" must be in timestamp or number of milliseconds format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '', format: 'javascript' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '', format: 'javascript' }
                 }],
                 [' \t ', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
-                    details: [{
-                        message: '"value" must be in timestamp or number of milliseconds format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: ' \t ', format: 'javascript' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: ' \t ', format: 'javascript' }
                 }]
             ]);
         });
@@ -1283,48 +1076,33 @@ describe('date', () => {
                 ['1E3', true],
                 [',', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
-                    details: [{
-                        message: '"value" must be in timestamp or number of milliseconds format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: ',', format: 'javascript' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: ',', format: 'javascript' }
                 }],
                 ['123A,0xA', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
-                    details: [{
-                        message: '"value" must be in timestamp or number of milliseconds format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '123A,0xA', format: 'javascript' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '123A,0xA', format: 'javascript' }
                 }],
                 ['1-1-2013 UTC', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
-                    details: [{
-                        message: '"value" must be in timestamp or number of milliseconds format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: '1-1-2013 UTC', format: 'javascript' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: '1-1-2013 UTC', format: 'javascript' }
                 }],
                 ['not a valid timestamp', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
-                    details: [{
-                        message: '"value" must be in timestamp or number of milliseconds format',
-                        path: [],
-                        type: 'date.format',
-                        context: { label: 'value', value: 'not a valid timestamp', format: 'javascript' }
-                    }]
+                    path: [],
+                    type: 'date.format',
+                    context: { label: 'value', value: 'not a valid timestamp', format: 'javascript' }
                 }],
                 [invalidDate, false, {
                     message: '"value" must be a valid date',
-                    details: [{
-                        message: '"value" must be a valid date',
-                        path: [],
-                        type: 'date.base',
-                        context: { label: 'value', value: invalidDate }
-                    }]
+                    path: [],
+                    type: 'date.base',
+                    context: { label: 'value', value: invalidDate }
                 }]
             ]);
         });

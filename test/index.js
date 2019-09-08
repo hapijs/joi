@@ -26,34 +26,25 @@ describe('Joi', () => {
             ['b', true],
             [5, false, {
                 message: '"value" must be a string',
-                details: [{
-                    message: '"value" must be a string',
-                    path: [],
-                    type: 'string.base',
-                    context: { value: 5, label: 'value' }
-                }]
+                path: [],
+                type: 'string.base',
+                context: { value: 5, label: 'value' }
             }]
         ]);
 
         Helper.validate(b, [
             ['a', false, {
                 message: '"value" must be [b]',
-                details: [{
-                    message: '"value" must be [b]',
-                    path: [],
-                    type: 'any.only',
-                    context: { value: 'a', valids: ['b'], label: 'value' }
-                }]
+                path: [],
+                type: 'any.only',
+                context: { value: 'a', valids: ['b'], label: 'value' }
             }],
             ['b', true],
             [5, false, {
                 message: '"value" must be [b]',
-                details: [{
-                    message: '"value" must be [b]',
-                    path: [],
-                    type: 'any.only',
-                    context: { value: 5, valids: ['b'], label: 'value' }
-                }]
+                path: [],
+                type: 'any.only',
+                context: { value: 5, valids: ['b'], label: 'value' }
             }]
         ]);
     });
@@ -66,58 +57,38 @@ describe('Joi', () => {
             [5, true],
             ['other', false, {
                 message: '"value" must be one of [key, 5, object]',
-                details: [
-                    {
-                        message: '"value" must be one of [key, 5, object]',
-                        path: [],
-                        type: 'alternatives.types',
-                        context: {
-                            label: 'value',
-                            types: ['key', 5, 'object'],
-                            value: 'other'
-                        }
-                    }
-                ]
+                path: [],
+                type: 'alternatives.types',
+                context: {
+                    label: 'value',
+                    types: ['key', 5, 'object'],
+                    value: 'other'
+                }
             }],
             [6, false, {
                 message: '"value" must be one of [key, 5, object]',
-                details: [
-                    {
-                        message: '"value" must be one of [key, 5, object]',
-                        path: [],
-                        type: 'alternatives.types',
-                        context: {
-                            label: 'value',
-                            types: ['key', 5, 'object'],
-                            value: 6
-                        }
-                    }
-                ]
+                path: [],
+                type: 'alternatives.types',
+                context: {
+                    label: 'value',
+                    types: ['key', 5, 'object'],
+                    value: 6
+                }
             }],
             [{ c: 5 }, false, {
                 message: '"c" is not allowed',
-                details: [
-                    {
-                        message: '"c" is not allowed',
-                        path: ['c'],
-                        type: 'object.unknown',
-                        context: { child: 'c', label: 'c', key: 'c', value: 5 }
-                    }
-                ]
+                path: ['c'],
+                type: 'object.unknown',
+                context: { child: 'c', label: 'c', key: 'c', value: 5 }
             }],
             [{}, true],
             [{ b: 'abc' }, true],
             [{ a: true, b: 'boom' }, true],
             [{ a: 5, b: 'a' }, false, {
                 message: '"a" must be [true]',
-                details: [
-                    {
-                        message: '"a" must be [true]',
-                        path: ['a'],
-                        type: 'any.only',
-                        context: { label: 'a', key: 'a', value: 5, valids: [true] }
-                    }
-                ]
+                path: ['a'],
+                type: 'any.only',
+                context: { label: 'a', key: 'a', value: 5, valids: [true] }
             }]
         ]);
     });
@@ -159,23 +130,15 @@ describe('Joi', () => {
             [{ auth: { mode: 'try' } }, true],
             [{ something: undefined }, false, {
                 message: '"something" is not allowed',
-                details: [{
-                    message: '"something" is not allowed',
-                    path: ['something'],
-                    type: 'object.unknown',
-                    context: { child: 'something', label: 'something', key: 'something' }
-                }]
+                path: ['something'],
+                type: 'object.unknown',
+                context: { child: 'something', label: 'something', key: 'something' }
             }],
             [{ auth: { something: undefined } }, false, {
                 message: '"auth.something" is not allowed',
-                details: [
-                    {
-                        message: '"auth.something" is not allowed',
-                        path: ['auth', 'something'],
-                        type: 'object.unknown',
-                        context: { child: 'something', label: 'auth.something', key: 'something' }
-                    }
-                ]
+                path: ['auth', 'something'],
+                type: 'object.unknown',
+                context: { child: 'something', label: 'auth.something', key: 'something' }
             }],
             [{ auth: null }, true],
             [{ auth: undefined }, true],
@@ -183,14 +146,9 @@ describe('Joi', () => {
             [{ auth: true }, true],
             [{ auth: 123 }, false, {
                 message: '"auth" must be one of [object, string, boolean]',
-                details: [
-                    {
-                        message: '"auth" must be one of [object, string, boolean]',
-                        path: ['auth'],
-                        type: 'alternatives.types',
-                        context: { types: ['object', 'string', 'boolean'], label: 'auth', key: 'auth', value: 123 }
-                    }
-                ]
+                path: ['auth'],
+                type: 'alternatives.types',
+                context: { types: ['object', 'string', 'boolean'], label: 'auth', key: 'auth', value: 123 }
             }]
         ]);
     });
@@ -214,23 +172,15 @@ describe('Joi', () => {
             [{ auth: { mode: 'try' } }, true],
             [{ something: undefined }, false, {
                 message: '"something" is not allowed',
-                details: [{
-                    message: '"something" is not allowed',
-                    path: ['something'],
-                    type: 'object.unknown',
-                    context: { child: 'something', label: 'something', key: 'something' }
-                }]
+                path: ['something'],
+                type: 'object.unknown',
+                context: { child: 'something', label: 'something', key: 'something' }
             }],
             [{ auth: { something: undefined } }, false, {
                 message: '"auth.something" is not allowed',
-                details: [
-                    {
-                        message: '"auth.something" is not allowed',
-                        path: ['auth', 'something'],
-                        type: 'object.unknown',
-                        context: { child: 'something', label: 'auth.something', key: 'something' }
-                    }
-                ]
+                path: ['auth', 'something'],
+                type: 'object.unknown',
+                context: { child: 'something', label: 'auth.something', key: 'something' }
             }],
             [{ auth: null }, true],
             [{ auth: undefined }, true],
@@ -238,14 +188,9 @@ describe('Joi', () => {
             [{ auth: true }, true],
             [{ auth: 123 }, false, {
                 message: '"auth" must be one of [object, string, boolean]',
-                details: [
-                    {
-                        message: '"auth" must be one of [object, string, boolean]',
-                        path: ['auth'],
-                        type: 'alternatives.types',
-                        context: { types: ['object', 'string', 'boolean'], label: 'auth', key: 'auth', value: 123 }
-                    }
-                ]
+                path: ['auth'],
+                type: 'alternatives.types',
+                context: { types: ['object', 'string', 'boolean'], label: 'auth', key: 'auth', value: 123 }
             }]
         ]);
     });
@@ -262,14 +207,9 @@ describe('Joi', () => {
         Helper.validate(schema, [
             [{ a: null }, false, {
                 message: '"a" must be one of [string, boolean]',
-                details: [
-                    {
-                        message: '"a" must be one of [string, boolean]',
-                        path: ['a'],
-                        type: 'alternatives.types',
-                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: null }
-                    }
-                ]
+                path: ['a'],
+                type: 'alternatives.types',
+                context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: null }
             }],
             [{ a: undefined }, true],
             [{}, true],
@@ -277,34 +217,21 @@ describe('Joi', () => {
             [{ a: 'true' }, true],
             [{ a: 123 }, false, {
                 message: '"a" must be one of [string, boolean]',
-                details: [
-                    {
-                        message: '"a" must be one of [string, boolean]',
-                        path: ['a'],
-                        type: 'alternatives.types',
-                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: 123 }
-                    }
-                ]
+                path: ['a'],
+                type: 'alternatives.types',
+                context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: 123 }
             }],
             [{ a: { c: 1 } }, false, {
                 message: '"a" must be one of [string, boolean]',
-                details: [
-                    {
-                        message: '"a" must be one of [string, boolean]',
-                        path: ['a'],
-                        type: 'alternatives.types',
-                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: { c: 1 } }
-                    }
-                ]
+                path: ['a'],
+                type: 'alternatives.types',
+                context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: { c: 1 } }
             }],
             [{ b: undefined }, false, {
                 message: '"b" is not allowed',
-                details: [{
-                    message: '"b" is not allowed',
-                    path: ['b'],
-                    type: 'object.unknown',
-                    context: { child: 'b', label: 'b', key: 'b' }
-                }]
+                path: ['b'],
+                type: 'object.unknown',
+                context: { child: 'b', label: 'b', key: 'b' }
             }]
         ]);
     });
@@ -321,14 +248,9 @@ describe('Joi', () => {
         Helper.validate(schema, [
             [{ a: null }, false, {
                 message: '"a" must be one of [string, boolean]',
-                details: [
-                    {
-                        message: '"a" must be one of [string, boolean]',
-                        path: ['a'],
-                        type: 'alternatives.types',
-                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: null }
-                    }
-                ]
+                path: ['a'],
+                type: 'alternatives.types',
+                context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: null }
             }],
             [{ a: undefined }, true],
             [{}, true],
@@ -336,34 +258,21 @@ describe('Joi', () => {
             [{ a: 'true' }, true],
             [{ a: 123 }, false, {
                 message: '"a" must be one of [string, boolean]',
-                details: [
-                    {
-                        message: '"a" must be one of [string, boolean]',
-                        path: ['a'],
-                        type: 'alternatives.types',
-                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: 123 }
-                    }
-                ]
+                path: ['a'],
+                type: 'alternatives.types',
+                context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: 123 }
             }],
             [{ a: { c: 1 } }, false, {
                 message: '"a" must be one of [string, boolean]',
-                details: [
-                    {
-                        message: '"a" must be one of [string, boolean]',
-                        path: ['a'],
-                        type: 'alternatives.types',
-                        context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: { c: 1 } }
-                    }
-                ]
+                path: ['a'],
+                type: 'alternatives.types',
+                context: { types: ['string', 'boolean'], label: 'a', key: 'a', value: { c: 1 } }
             }],
             [{ b: undefined }, false, {
                 message: '"b" is not allowed',
-                details: [{
-                    message: '"b" is not allowed',
-                    path: ['b'],
-                    type: 'object.unknown',
-                    context: { child: 'b', label: 'b', key: 'b' }
-                }]
+                path: ['b'],
+                type: 'object.unknown',
+                context: { child: 'b', label: 'b', key: 'b' }
             }]
         ]);
     });
@@ -378,12 +287,9 @@ describe('Joi', () => {
             [{ brand: ['amex'] }, true],
             [{ brand: ['visa', 'mc'] }, false, {
                 message: '"brand[1]" must be one of [amex, visa]',
-                details: [{
-                    message: '"brand[1]" must be one of [amex, visa]',
-                    path: ['brand', 1],
-                    type: 'any.only',
-                    context: { value: 'mc', valids: ['amex', 'visa'], label: 'brand[1]', key: 1 }
-                }]
+                path: ['brand', 1],
+                type: 'any.only',
+                context: { value: 'mc', valids: ['amex', 'visa'], label: 'brand[1]', key: 1 }
             }]
         ]);
     });
@@ -432,21 +338,15 @@ describe('Joi', () => {
         Helper.validate(schema, [
             [5, false, {
                 message: '"value" contains an invalid value',
-                details: [{
-                    message: '"value" contains an invalid value',
-                    path: [],
-                    type: 'any.invalid',
-                    context: { value: 5, invalids: [5], label: 'value' }
-                }]
+                path: [],
+                type: 'any.invalid',
+                context: { value: 5, invalids: [5], label: 'value' }
             }],
             ['5', false, {
                 message: '"value" contains an invalid value',
-                details: [{
-                    message: '"value" contains an invalid value',
-                    path: [],
-                    type: 'any.invalid',
-                    context: { value: 5, invalids: [5], label: 'value' }
-                }]
+                path: [],
+                type: 'any.invalid',
+                context: { value: 5, invalids: [5], label: 'value' }
             }]
         ]);
     });

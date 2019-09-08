@@ -352,9 +352,17 @@ describe('Manifest', () => {
         it('builds alternatives', () => {
 
             internals.test([
+                Joi.alternatives().try(Joi.boolean()),
+                Joi.alternatives(Joi.boolean(), Joi.object({ p: Joi.number() })),
+                Joi.alternatives(Joi.object()).error(new Error())
+            ]);
+        });
+
+        it('builds whens', () => {
+
+            internals.test([
                 Joi.number().when('$x', { is: true, then: Joi.required(), otherwise: Joi.forbidden() }),
                 Joi.number().when(Joi.valid('x'), { then: Joi.required(), otherwise: Joi.forbidden() }),
-                Joi.alternatives().try(Joi.boolean()),
                 Joi.when('$x', { is: true, then: Joi.string() }),
                 Joi.number().when('a', { switch: [{ is: 0, then: Joi.valid(1) }], otherwise: Joi.valid(4) })
             ]);
@@ -411,6 +419,7 @@ describe('Manifest', () => {
 
             internals.test([
                 Joi.object({}),
+                Joi.object({ p: Joi.number() }),
                 Joi.object({ a: Joi.string(), b: Joi.number() }),
                 Joi.object().rename('a', 'b'),
                 Joi.object().rename(/a/, 'b'),

@@ -40,30 +40,21 @@ describe('binary', () => {
             [Buffer.from('hello'), true],
             ['goodbye', false, {
                 message: '"value" must be [hello]',
-                details: [{
-                    message: '"value" must be [hello]',
-                    path: [],
-                    type: 'any.only',
-                    context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
-                }]
+                path: [],
+                type: 'any.only',
+                context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
             }],
             [Buffer.from('goodbye'), false, {
                 message: '"value" must be [hello]',
-                details: [{
-                    message: '"value" must be [hello]',
-                    path: [],
-                    type: 'any.only',
-                    context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
-                }]
+                path: [],
+                type: 'any.only',
+                context: { value: Buffer.from('goodbye'), valids: [hello], label: 'value' }
             }],
             [Buffer.from('HELLO'), false, {
                 message: '"value" must be [hello]',
-                details: [{
-                    message: '"value" must be [hello]',
-                    path: [],
-                    type: 'any.only',
-                    context: { value: Buffer.from('HELLO'), valids: [hello], label: 'value' }
-                }]
+                path: [],
+                type: 'any.only',
+                context: { value: Buffer.from('HELLO'), valids: [hello], label: 'value' }
             }]
         ]);
     });
@@ -169,12 +160,9 @@ describe('binary', () => {
                 [Buffer.from('testing'), true],
                 [Buffer.from('test'), false, {
                     message: '"value" must be at least 5 bytes',
-                    details: [{
-                        message: '"value" must be at least 5 bytes',
-                        path: [],
-                        type: 'binary.min',
-                        context: { limit: 5, value: Buffer.from('test'), label: 'value' }
-                    }]
+                    path: [],
+                    type: 'binary.min',
+                    context: { limit: 5, value: Buffer.from('test'), label: 'value' }
                 }]
             ]);
         });
@@ -204,16 +192,13 @@ describe('binary', () => {
             Helper.validate(schema, [
                 [Buffer.from('testing'), false, {
                     message: '"value" must be less than or equal to 5 bytes',
-                    details: [{
-                        message: '"value" must be less than or equal to 5 bytes',
-                        path: [],
-                        type: 'binary.max',
-                        context: {
-                            limit: 5,
-                            value: Buffer.from('testing'),
-                            label: 'value'
-                        }
-                    }]
+                    path: [],
+                    type: 'binary.max',
+                    context: {
+                        limit: 5,
+                        value: Buffer.from('testing'),
+                        label: 'value'
+                    }
                 }],
                 [Buffer.from('test'), true]
             ]);
@@ -245,16 +230,13 @@ describe('binary', () => {
                 [Buffer.from('test'), true],
                 [Buffer.from('testing'), false, {
                     message: '"value" must be 4 bytes',
-                    details: [{
-                        message: '"value" must be 4 bytes',
-                        path: [],
-                        type: 'binary.length',
-                        context: {
-                            limit: 4,
-                            value: Buffer.from('testing'),
-                            label: 'value'
-                        }
-                    }]
+                    path: [],
+                    type: 'binary.length',
+                    context: {
+                        limit: 4,
+                        value: Buffer.from('testing'),
+                        label: 'value'
+                    }
                 }]
             ]);
         });

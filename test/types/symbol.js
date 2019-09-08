@@ -49,12 +49,9 @@ describe('symbol', () => {
                 [symbols[1], true, symbols[1]],
                 [1, false, {
                     message: '"value" must be a symbol',
-                    details: [{
-                        message: '"value" must be a symbol',
-                        path: [],
-                        type: 'symbol.base',
-                        context: { label: 'value', value: 1 }
-                    }]
+                    path: [],
+                    type: 'symbol.base',
+                    context: { label: 'value', value: 1 }
                 }]
             ]);
         });
@@ -69,12 +66,9 @@ describe('symbol', () => {
                 [symbols[1], true, symbols[1]],
                 [otherSymbol, false, {
                     message: '"value" must be one of [Symbol(1), Symbol(2)]',
-                    details: [{
-                        message: '"value" must be one of [Symbol(1), Symbol(2)]',
-                        path: [],
-                        type: 'any.only',
-                        context: { value: otherSymbol, label: 'value', valids: symbols }
-                    }]
+                    path: [],
+                    type: 'any.only',
+                    context: { value: otherSymbol, label: 'value', valids: symbols }
                 }]
             ]);
         });
@@ -92,22 +86,16 @@ describe('symbol', () => {
                     [symbols[0], true, symbols[0]],
                     ['1', false, {
                         message: `"value" must be one of [1 -> Symbol(1), two -> Symbol(2)]`,
-                        details: [{
-                            message: `"value" must be one of [1 -> Symbol(1), two -> Symbol(2)]`,
-                            path: [],
-                            type: 'symbol.map',
-                            context: { label: 'value', value: '1', map }
-                        }]
+                        path: [],
+                        type: 'symbol.map',
+                        context: { label: 'value', value: '1', map }
                     }],
                     ['two', true, symbols[1]],
                     [otherSymbol, false, {
                         message: '"value" must be one of [Symbol(1), Symbol(2)]',
-                        details: [{
-                            message: '"value" must be one of [Symbol(1), Symbol(2)]',
-                            path: [],
-                            type: 'any.only',
-                            context: { value: otherSymbol, label: 'value', valids: symbols }
-                        }]
+                        path: [],
+                        type: 'any.only',
+                        context: { value: otherSymbol, label: 'value', valids: symbols }
                     }]
                 ]);
             });
@@ -123,21 +111,15 @@ describe('symbol', () => {
                     ['two', true, symbols[1]],
                     [otherSymbol, false, {
                         message: '"value" must be one of [Symbol(one), Symbol(two)]',
-                        details: [{
-                            message: '"value" must be one of [Symbol(one), Symbol(two)]',
-                            path: [],
-                            type: 'any.only',
-                            context: { value: otherSymbol, label: 'value', valids: symbols }
-                        }]
+                        path: [],
+                        type: 'any.only',
+                        context: { value: otherSymbol, label: 'value', valids: symbols }
                     }],
                     ['toString', false, {
                         message: `"value" must be one of [one -> Symbol(one), two -> Symbol(two)]`,
-                        details: [{
-                            message: `"value" must be one of [one -> Symbol(one), two -> Symbol(two)]`,
-                            path: [],
-                            type: 'symbol.map',
-                            context: { label: 'value', value: 'toString', map: new Map([['one', symbols[0]], ['two', symbols[1]]]) }
-                        }]
+                        path: [],
+                        type: 'symbol.map',
+                        context: { label: 'value', value: 'toString', map: new Map([['one', symbols[0]], ['two', symbols[1]]]) }
                     }]
                 ]);
             });
@@ -152,12 +134,9 @@ describe('symbol', () => {
                     [2, true, symbols[1]],
                     [otherSymbol, false, {
                         message: '"value" must be one of [Symbol(1), Symbol(2)]',
-                        details: [{
-                            message: '"value" must be one of [Symbol(1), Symbol(2)]',
-                            path: [],
-                            type: 'any.only',
-                            context: { value: otherSymbol, label: 'value', valids: symbols }
-                        }]
+                        path: [],
+                        type: 'any.only',
+                        context: { value: otherSymbol, label: 'value', valids: symbols }
                     }]
                 ]);
             });
