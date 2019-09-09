@@ -2485,7 +2485,7 @@ describe('any', () => {
                     .pattern(/.*/, numberxy)
             });
 
-            expect(tailored).to.equal(after, { skip: ['_ruleset'] });
+            expect(tailored).to.equal(after, { skip: ['$_temp'] });
             expect(tailored.describe()).to.equal(after.describe());
         });
     });

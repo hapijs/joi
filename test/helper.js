@@ -17,7 +17,7 @@ exports.validate = function (schema, prefs, tests) {
     }
 
     try {
-        expect(schema.$_root.build(schema.describe())).to.equal(schema, { deepFunction: true, skip: ['_ruleset', '_resolved'] });
+        expect(schema.$_root.build(schema.describe())).to.equal(schema, { deepFunction: true, skip: ['$_temp'] });
 
         for (const [input, pass, expected] of tests) {
             if (!pass) {

@@ -521,7 +521,7 @@ describe('Manifest', () => {
             });
 
             const built = custom.build(desc);
-            expect(built).to.equal(schema, { skip: ['_ruleset', '$_root'] });
+            expect(built).to.equal(schema, { skip: ['$_temp', '$_root'] });
         });
 
         it('builds extended schema (complex)', () => {
@@ -670,7 +670,7 @@ describe('Manifest', () => {
             });
 
             const built = custom.build(desc);
-            expect(built).to.equal(schema, { skip: ['_ruleset'] });
+            expect(built).to.equal(schema, { skip: ['$_temp'] });
         });
     });
 });
@@ -680,6 +680,6 @@ internals.test = function (schemas) {
 
     for (const schema of schemas) {
         const built = Joi.build(schema.describe());
-        expect(built).to.equal(schema, { skip: ['_ruleset', '_resolved'] });
+        expect(built).to.equal(schema, { skip: ['$_temp'] });
     }
 };
