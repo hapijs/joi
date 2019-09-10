@@ -13,3 +13,5 @@ coverage.*
 **/.idea
 
 sandbox.js
+
+dist
