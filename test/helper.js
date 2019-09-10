@@ -25,6 +25,10 @@ exports.validate = function (schema, prefs, tests) {
             }
 
             const { error, value } = schema.validate(input, prefs);
+            const { error: errord, value: valued } = schema.validate(input, Object.assign({ debug: true }, prefs));
+
+            expect(error).to.equal(errord);
+            expect(value).to.equal(valued);
 
             if (error &&
                 pass) {

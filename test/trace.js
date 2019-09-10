@@ -730,6 +730,41 @@ describe('Trace', () => {
             ]);
         });
 
+        it('logs compounded whens', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.boolean()
+            })
+                .when('.a', {
+                    is: 'x',
+                    then: Joi.object({
+                        c: Joi.boolean()
+                    })
+                })
+                .when('.b', {
+                    is: true,
+                    then: Joi.object({
+                        c: Joi.forbidden()
+                    })
+                });
+
+            const debug = schema.validate({ a: 'x', b: true }, { debug: true }).debug;
+            expect(debug).to.equal([
+                { type: 'resolve', ref: 'ref:.a', to: 'x', path: [] },
+                { type: 'entry', path: ['0.is'] },
+                { type: 'valid', value: 'x', path: ['0.is'] },
+                { type: 'resolve', ref: 'ref:.b', to: true, path: [] },
+                { type: 'entry', path: ['1.is'] },
+                { type: 'valid', value: true, path: ['1.is'] },
+                { type: 'rule', name: 'when', result: '0.then, 1.then', path: [] },
+                { type: 'entry', path: [] },
+                { type: 'entry', path: ['a'] },
+                { type: 'entry', path: ['b'] },
+                { type: 'entry', path: ['c'] }
+            ]);
+        });
+
         it('logs changes in value', () => {
 
             const schema = Joi.number().raw();
@@ -802,6 +837,33 @@ describe('Trace', () => {
                 { a: 2, b: 3 }
             ];
 
+            schema.validate({ a: 1, b: 2 });        // No debug
+
+            for (const value of values) {
+                schema.validate(value, { debug: true });
+            }
+        });
+
+        it('debugs multiple time same schema (whens + partial validate)', () => {
+
+            const x = Joi.object({
+                a: Joi.number(),
+                b: Joi.number()
+                    .when('a', { is: 1, then: 2 })
+                    .when('a', { is: 2, then: 3 })
+            });
+
+            const values = [
+                { x: { a: 1, b: 2 } },
+                { x: { a: 1, b: 3 } },
+                { x: { a: 2, b: 2 } },
+                { x: { a: 2, b: 3 } }
+            ];
+
+            x.validate({ a: 1, b: 2 });         // No debug
+
+            const schema = Joi.object({ x });
+
             for (const value of values) {
                 schema.validate(value, { debug: true });
             }
@@ -819,7 +881,7 @@ describe('Trace', () => {
                 { type: 'entry', path: [] },
                 { type: 'entry', path: ['a'] },
                 { type: 'entry', path: ['b'] },
-                { type: 'entry', path: ['b', 'link:ref::object'] },
+                { type: 'entry', path: ['b', 'link:ref:..:object'] },
                 { type: 'entry', path: ['b', 'a'] },
                 { type: 'entry', path: ['b', 'b'] }
             ]);
@@ -829,32 +891,55 @@ describe('Trace', () => {
                 { type: 'entry', path: [] },
                 { type: 'entry', path: ['a'] },
                 { type: 'entry', path: ['b'] },
-                { type: 'entry', path: ['b', 'link:ref::object'] },
+                { type: 'entry', path: ['b', 'link:ref:..:object'] },
                 { type: 'entry', path: ['b', 'a'] },
                 { type: 'entry', path: ['b', 'b'] },
-                { type: 'entry', path: ['b', 'b', 'link:ref::object'] },
+                { type: 'entry', path: ['b', 'b', 'link:ref:..:object'] },
                 { type: 'entry', path: ['b', 'b', 'a'] },
                 { type: 'entry', path: ['b', 'b', 'b'] }
             ]);
         });
 
-        it('handles alternatives with when', () => {
+        it('handles array item exclusions', () => {
+
+            const schema = Joi.array().items(Joi.string().forbidden());
+
+            const debug = schema.validate(['x'], { debug: true }).debug;
+            expect(debug).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'entry', path: [0] },
+                { type: 'rule', name: 'items', result: 'error', path: [] },
+                { type: 'resolve', ref: 'ref:local:label', to: '[0]', path: [0] }
+            ]);
+        });
+
+        it('handles recursive links with when', () => {
 
             const schema = Joi.object({
-                a: Joi.boolean(),
-                b: Joi.alternatives(Joi.boolean(), Joi.number())
-                    .when('a', { then: Joi.forbidden() })
+                must: Joi.boolean().required(),
+                child: Joi.link('..')
+                    .when('must', { then: Joi.required() })
             });
 
-            const debug1 = schema.validate({ a: true, b: true }, { debug: true }).debug;
-            expect(debug1).to.equal([
+            const debug = schema.validate({ must: true, child: { must: true, child: { must: false } } }, { debug: true }).debug;
+            expect(debug).to.equal([
                 { type: 'entry', path: [] },
-                { type: 'entry', path: ['a'] },
-                { type: 'resolve', ref: 'ref:a', to: true, path: ['b'] },
-                { type: 'entry', path: ['b', '0.is'] },
-                { type: 'rule', name: 'when', result: '0.then', path: ['b'] },
-                { type: 'entry', path: ['b'] },
-                { type: 'resolve', ref: 'ref:local:label', to: 'b', path: ['b'] }
+                { type: 'entry', path: ['must'] },
+                { type: 'resolve', ref: 'ref:must', to: true, path: ['child'] },
+                { type: 'entry', path: ['child', '0.is'] },
+                { type: 'rule', name: 'when', result: '0.then', path: ['child'] },
+                { type: 'entry', path: ['child'] },
+                { type: 'entry', path: ['child', 'must'] },
+                { type: 'resolve', ref: 'ref:must', to: true, path: ['child', 'child'] },
+                { type: 'entry', path: ['child', 'child', '0.is'] },
+                { type: 'rule', name: 'when', result: '0.then', path: ['child', 'child'] },
+                { type: 'entry', path: ['child', 'child'] },
+                { type: 'entry', path: ['child', 'child', 'must'] },
+                { type: 'resolve', ref: 'ref:must', to: false, path: ['child', 'child', 'child'] },
+                { type: 'entry', path: ['child', 'child', 'child', '0.is'] },
+                { type: 'invalid', value: false, path: ['child', 'child', 'child', '0.is'] },
+                { type: 'rule', name: 'when', result: '', path: ['child', 'child', 'child'] },
+                { type: 'entry', path: ['child', 'child', 'child'] }
             ]);
         });
     });

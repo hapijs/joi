@@ -1,19 +1,14 @@
-<a href="http://hapijs.com"><img src="https://raw.githubusercontent.com/hapijs/assets/master/images/family.png" width="180px" align="right" /></a>
+<a href="https://hapi.dev"><img src="https://raw.githubusercontent.com/hapijs/assets/master/images/family.png" width="180px" align="right" /></a>
 
 # joi
 
-Object schema description language and validator for JavaScript objects.
+The most powerful schema description language and data validator for JavaScript.
 
 [![Build Status](https://travis-ci.org/hapijs/joi.svg?branch=master)](https://travis-ci.org/hapijs/joi)
 
 ## Introduction
 
-Imagine you run facebook and you want visitors to sign up on the website with real names and not
-something like `l337_p@nda` in the first name field. How would you define the limitations of what
-can be inputted and validate it against the set rules?
-
-This is joi, joi allows you to create *blueprints* or *schemas* for JavaScript objects (an object
-that stores information) to ensure *validation* of key information.
+**joi** lets you describe your data using a simple, intuitive, and readable language. Like the rest of the [hapi ecosystem](https://hapi.dev) it fits in, **joi** allows you to describe your data for both input and output validation, as part of a hapi HTTP server or standalone.
 
 ## API
 
@@ -24,21 +19,48 @@ See the detailed [API Reference](https://hapi.dev/family/joi/).
 ```js
 const Joi = require('@hapi/joi');
 
-const schema = Joi.object().keys({
-    username: Joi.string().alphanum().min(3).max(30).required(),
-    password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
-    access_token: [Joi.string(), Joi.number()],
-    birthyear: Joi.number().integer().min(1900).max(2013),
-    email: Joi.string().email({ minDomainSegments: 2 })
-}).with('username', 'birthyear').without('password', 'access_token');
+const schema = Joi.object({
+    username: Joi.string()
+        .alphanum()
+        .min(3)
+        .max(30)
+        .required(),
 
-// Return result.
-const result = schema.validate({ username: 'abc', birthyear: 1994 });
-// result.error === null -> valid
+    password: Joi.string()
+        .pattern(/^[a-zA-Z0-9]{3,30}$/),
 
-// You can also pass a callback which will be called synchronously with the validation result.
-schema.validate({ username: 'abc', birthyear: 1994 }, function (err, value) { });  // err === null -> valid
+    repeat_password: Joi.ref('password'),
 
+    access_token: [
+        Joi.string(),
+        Joi.number()
+    ],
+
+    birth_year: Joi.number()
+        .integer()
+        .min(1900)
+        .max(2013),
+
+    email: Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+})
+    .with('username', 'birth_year')
+    .xor('password', 'access_token')
+    .with('password', 'repeat_password');
+
+
+schema.validate({ username: 'abc', birth_year: 1994 });
+// -> { value: { username: 'abc', birth_year: 1994 } }
+
+schema.validate({});
+// -> { value: {}, error: '"username" is required' }
+
+// Also -
+
+try {
+    const value = await schema.validate({ username: 'abc', birth_year: 1994 });
+}
+catch (err) { }
 ```
 
 The above schema defines the following constraints:
@@ -46,18 +68,20 @@ The above schema defines the following constraints:
     * a required string
     * must contain only alphanumeric characters
     * at least 3 characters long but no more than 30
-    * must be accompanied by `birthyear`
+    * must be accompanied by `birth_year`
 * `password`
     * an optional string
-    * must satisfy the custom regex
+    * must satisfy the custom regex pattern
     * cannot appear together with `access_token`
+    * must be accompanied by `repeat_password` and equal to it
 * `access_token`
     * an optional, unconstrained string or number
-* `birthyear`
+* `birth_year`
     * an integer between 1900 and 2013
 * `email`
     * a valid email address string
     * must have two domain parts e.g. `example.com`
+    * TLD must be `.com` or `.net`
 
 ## Usage
 
@@ -121,7 +145,3 @@ When validating a schema:
 
 * Strings are utf-8 encoded by default.
 * Rules are defined in an additive fashion and evaluated in order, first the inclusive rules, then the exclusive rules.
-
-## Browsers
-
-Joi doesn't directly support browsers, but you could use [joi-browser](https://github.com/jeffbski/joi-browser) for an ES5 build of Joi that works in browsers, or as a source of inspiration for your own builds.

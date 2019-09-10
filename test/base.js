@@ -25,7 +25,38 @@ describe('any', () => {
 
         it('allows valid values to be set', () => {
 
-            expect(() => Joi.any().allow(true, 1, 'hello', new Date())).not.to.throw();
+            const schema = Joi.any().allow(true, 1, 'hello', new Date());
+            Helper.validate(schema, [
+                [true, true],
+                [1, true],
+                ['hello', true],
+                [new Date(), true]
+            ]);
+        });
+
+        it('overrides previous values', () => {
+
+            const schema = Joi.object().allow(1).allow(Joi.override, 2);
+            Helper.validate(schema, [
+                [1, false, '"value" must be of type object'],
+                [2, true]
+            ]);
+        });
+
+        it('clears previous values', () => {
+
+            const schema = Joi.object().allow(1).allow(Joi.override);
+            Helper.validate(schema, [
+                [1, false, '"value" must be of type object'],
+                [2, false, '"value" must be of type object'],
+                [{}, true]
+            ]);
+        });
+
+        it('ignores empty override', () => {
+
+            const schema = Joi.allow(Joi.override);
+            expect(schema._valids).to.be.null();
         });
 
         it('throws when passed undefined', () => {
@@ -36,27 +67,6 @@ describe('any', () => {
         it('throws when override is not first item', () => {
 
             expect(() => Joi.any().allow(1, Joi.override)).to.throw('Override must be the first value');
-        });
-
-        it('overrides previous values', () => {
-
-            const schema = Joi.object().allow(1).allow(Joi.override, 2);
-            expect(schema.validate(1).error).to.be.an.error('"value" must be of type object');
-            expect(schema.validate(2).error).to.not.exist();
-        });
-
-        it('clears previous values', () => {
-
-            const schema = Joi.object().allow(1).allow(Joi.override);
-            expect(schema.validate(1).error).to.be.an.error('"value" must be of type object');
-            expect(schema.validate(2).error).to.be.an.error('"value" must be of type object');
-            expect(schema.validate({}).error).to.not.exist();
-        });
-
-        it('ignores empty override', () => {
-
-            const schema = Joi.allow(Joi.override);
-            expect(schema._valids).to.be.null();
         });
     });
 
@@ -77,7 +87,9 @@ describe('any', () => {
         it('cancels cast', () => {
 
             const schema = Joi.number().cast('string').cast(false);
-            expect(schema.validate('123')).to.equal({ value: 123 });
+            Helper.validate(schema, [
+                ['123', true, 123]
+            ]);
         });
     });
 
@@ -616,7 +628,10 @@ describe('any', () => {
             const a = Joi.object({ a: 1 }).rename('c', 'a');
             const b = Joi.object({ b: 2 }).rename('d', 'b');
 
-            expect(a.concat(b).validate({ c: 1, d: 2 })).to.equal({ value: { a: 1, b: 2 } });
+            const schema = a.concat(b);
+            Helper.validate(schema, [
+                [{ c: 1, d: 2 }, true, { a: 1, b: 2 }]
+            ]);
         });
 
         it('merges two objects (deps)', () => {
@@ -624,7 +639,10 @@ describe('any', () => {
             const a = Joi.object({ a: 1 });
             const b = Joi.object({ b: 2 }).and('b', 'a');
 
-            expect(a.concat(b).validate({ a: 1, b: 2 }).error).to.not.exist();
+            const schema = a.concat(b);
+            Helper.validate(schema, [
+                [{ a: 1, b: 2 }, true]
+            ]);
         });
 
         it('merges two objects (same key)', () => {
@@ -760,10 +778,7 @@ describe('any', () => {
             const a = Joi.object({ a: Joi.number() });
             const b = Joi.object({ a: Joi.string() });
 
-            expect(() => {
-
-                a.concat(b);
-            }).to.throw('Cannot merge type number with another type: string');
+            expect(() => a.concat(b)).to.throw('Cannot merge type number with another type: string');
         });
 
         it('merges two alternatives with references', () => {
@@ -814,27 +829,23 @@ describe('any', () => {
             const a = Joi.any().required();
             const b = Joi.number().valid(0);
 
-            expect(() => {
-
-                a.concat(b);
-            }).to.not.throw();
+            expect(() => a.concat(b)).to.not.throw();
 
             const schema = a.concat(b);
-            expect(schema.validate().error.message).to.equal('"value" is required');
-            expect(schema.validate().error.details).to.equal([{
-                message: '"value" is required',
-                path: [],
-                type: 'any.required',
-                context: { label: 'value' }
-            }]);
-
-            expect(schema.validate(1).error.message).to.equal('"value" must be [0]');
-            expect(schema.validate(1).error.details).to.equal([{
-                message: '"value" must be [0]',
-                path: [],
-                type: 'any.only',
-                context: { value: 1, valids: [0], label: 'value' }
-            }]);
+            Helper.validate(schema, [
+                [undefined, false, {
+                    message: '"value" is required',
+                    path: [],
+                    type: 'any.required',
+                    context: { label: 'value' }
+                }],
+                [1, false, {
+                    message: '"value" must be [0]',
+                    path: [],
+                    type: 'any.only',
+                    context: { value: 1, valids: [0], label: 'value' }
+                }]
+            ]);
         });
     });
 
@@ -843,8 +854,9 @@ describe('any', () => {
         it('sets the value', () => {
 
             const schema = Joi.object({ foo: Joi.string().default('test') });
-            const input = {};
-            expect(schema.validate(input)).to.equal({ value: { foo: 'test' } });
+            Helper.validate(schema, [
+                [{}, true, { foo: 'test' }]
+            ]);
         });
 
         it('allows passing description as a property of a default method', () => {
@@ -856,10 +868,7 @@ describe('any', () => {
 
             defaultFn.description = 'test';
 
-            expect(() => {
-
-                Joi.object({ foo: Joi.string().default(defaultFn) });
-            }).to.not.throw();
+            expect(() => Joi.object({ foo: Joi.string().default(defaultFn) })).to.not.throw();
         });
 
         it('sets the value when passing a method', () => {
@@ -871,18 +880,16 @@ describe('any', () => {
                 })
             });
 
-            const input = {};
-            expect(schema.validate(input)).to.equal({ value: { foo: 'test' } });
+            Helper.validate(schema, [
+                [{}, true, { foo: 'test' }]
+            ]);
         });
 
         it('executes the default method each time validate is called', () => {
 
             let count = 0;
             const schema = Joi.object({
-                foo: Joi.number().default(() => {
-
-                    return ++count;
-                })
+                foo: Joi.number().default(() => ++count)
             });
 
             const input = {};
@@ -900,8 +907,9 @@ describe('any', () => {
                 bar: Joi.string()
             });
 
-            const input = { bar: 'test' };
-            expect(schema.validate(input)).to.equal({ value: { bar: 'test', foo: 'testing' } });
+            Helper.validate(schema, [
+                [{ bar: 'test' }, true, { bar: 'test', foo: 'testing' }]
+            ]);
         });
 
         it('does not modify the original object when modifying the clone in a default method', () => {
@@ -919,8 +927,9 @@ describe('any', () => {
                 bar: Joi.string()
             });
 
-            const input = { bar: 'test' };
-            expect(schema.validate(input)).to.equal({ value: { bar: 'test', foo: 'test' } });
+            Helper.validate(schema, [
+                [{ bar: 'test' }, true, { bar: 'test', foo: 'test' }]
+            ]);
         });
 
         it('passes undefined as the context if the default method has no parent', () => {
@@ -934,7 +943,10 @@ describe('any', () => {
                 return 'test';
             });
 
-            expect(schema.validate(undefined)).to.equal({ value: 'test' });
+            Helper.validate(schema, [
+                [undefined, true, 'test']
+            ]);
+
             expect(methodCalled).to.equal(true);
             expect(c).to.equal(undefined);
         });
@@ -943,7 +955,10 @@ describe('any', () => {
 
             const func = () => 'just a function';
             const schema = Joi.function().default(func, { literal: true });
-            expect(schema.validate(undefined)).to.equal({ value: func });
+
+            Helper.validate(schema, [
+                [undefined, true, func]
+            ]);
         });
 
         it('allows passing a method that generates a default method when validating a function', () => {

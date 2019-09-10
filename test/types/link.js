@@ -293,7 +293,7 @@ describe('link', () => {
             const schema = Joi.object({
                 must: Joi.boolean().required(),
                 child: Joi.link('..')
-                    .when('must', { is: true, then: Joi.required() })
+                    .when('must', { then: Joi.required() })
             });
 
             Helper.validate(schema, [

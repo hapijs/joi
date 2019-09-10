@@ -52,7 +52,7 @@
     - [`any.note(...notes)`](#anynotenotes)
     - [`any.only()`](#anyonly)
     - [`any.optional()`](#anyoptional)
-    - [`any.prefs(options)` = aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
+    - [`any.prefs(options)` - aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
     - [`any.presence(mode)`](#anypresencemode)
     - [`any.raw([enabled])`](#anyrawenabled)
     - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
@@ -71,11 +71,11 @@
     - [`any.warn()`](#anywarn)
     - [`any.warning(code, [context])`](#anywarningcode-context)
     - [`any.when(condition, options)`](#anywhencondition-options)
-  - [`alternatives` - inherits from `Any`](#alternatives---inherits-from-any)
+  - [`alternatives`](#alternatives)
     - [`alternatives.conditional(condition, options)`](#alternativesconditionalcondition-options)
     - [`alternatives.match(mode)`](#alternativesmatchmode)
     - [`alternatives.try(...schemas)`](#alternativestryschemas)
-  - [`array` - inherits from `Any`](#array---inherits-from-any)
+  - [`array`](#array)
     - [`array.has(schema)`](#arrayhasschema)
     - [`array.items(...types)`](#arrayitemstypes)
     - [`array.length(limit)`](#arraylengthlimit)
@@ -86,16 +86,16 @@
     - [`array.sort([options])`](#arraysortoptions)
     - [`array.sparse([enabled])`](#arraysparseenabled)
     - [`array.unique([comparator, [options]])`](#arrayuniquecomparator-options)
-  - [`binary` - inherits from `Any`](#binary---inherits-from-any)
+  - [`binary`](#binary)
     - [`binary.encoding(encoding)`](#binaryencodingencoding)
     - [`binary.length(limit)`](#binarylengthlimit)
     - [`binary.max(limit)`](#binarymaxlimit)
     - [`binary.min(limit)`](#binaryminlimit)
-  - [`boolean` - inherits from `Any`](#boolean---inherits-from-any)
+  - [`boolean`](#boolean)
     - [`boolean.falsy(...values)`](#booleanfalsyvalues)
     - [`boolean.sensitive([enabled])`](#booleansensitiveenabled)
     - [`boolean.truthy(...values)`](#booleantruthyvalues)
-  - [`date` - inherits from `Any`](#date---inherits-from-any)
+  - [`date`](#date)
     - [`date.greater(date)`](#dategreaterdate)
     - [`date.iso()`](#dateiso)
     - [`date.less(date)`](#datelessdate)
@@ -107,10 +107,10 @@
     - [`function.class()`](#funcclass)
     - [`function.maxArity(n)`](#funcmaxarityn)
     - [`function.minArity(n)`](#funcminarityn)
-  - [`link(ref)` - inherits from `Any`](#linkref---inherits-from-any)
+  - [`link(ref)`](#linkref)
     - [`link.ref(ref)`](#linkrefref)
     - [`link.concat(schema)`](#linkconcatschema)
-  - [`number` - inherits from `Any`](#number---inherits-from-any)
+  - [`number`](#number)
     - [`number.greater(limit)`](#numbergreaterlimit)
     - [`number.integer()`](#numberinteger)
     - [`number.less(limit)`](#numberlesslimit)
@@ -123,7 +123,7 @@
     - [`number.precision(limit)`](#numberprecisionlimit)
     - [`number.sign(sign)`](#numbersignsign)
     - [`number.unsafe([enabled])`](#numberunsafeenabled)
-  - [`object` - inherits from `Any`](#object---inherits-from-any)
+  - [`object`](#object)
     - [`object.and(...peers, [options])`](#objectandpeers-options)
     - [`object.append([schema])`](#objectappendschema)
     - [`object.assert(subject, schema, [message])`](#objectassertsubject-schema-message)
@@ -143,7 +143,7 @@
     - [`object.with(key, peers, [options])`](#objectwithkey-peers-options)
     - [`object.without(key, peers, [options])`](#objectwithoutkey-peers-options)
     - [`object.xor(...peers, [options])`](#objectxorpeers-options)
-  - [`string` - inherits from `Any`](#string---inherits-from-any)
+  - [`string`](#string)
     - [`string.alphanum()`](#stringalphanum)
     - [`string.base64([options])`](#stringbase64options)
     - [`string.case(direction)`](#stringcasedirection)
@@ -170,7 +170,7 @@
     - [`string.truncate([enabled])`](#stringtruncateenabled)
     - [`string.uppercase()`](#stringuppercase)
     - [`string.uri([options])`](#stringurioptions)
-  - [`symbol` - inherits from `Any`](#symbol---inherits-from-any)
+  - [`symbol`](#symbol)
     - [`symbol.map(map)`](#symbolmapmap)
 - [Extensions](#extensions)
 - [Errors](#errors)
@@ -1065,7 +1065,7 @@ Note: this does not allow a `null` value. To do that, use [`any.allow(value)`](#
 const schema = Joi.any().optional();
 ```
 
-#### `any.prefs(options)` = aliases: `preferences`, `options`
+#### `any.prefs(options)` - aliases: `preferences`, `options`
 
 Overrides the global `validate()` options for the current key and any sub-key where:
 - `options` - an object with the same optional keys as [`any.validate()`](#anyvalidatevalue-options).
@@ -1084,8 +1084,7 @@ Same as calling `any.optional()`, `any.required()`, or `any.forbidden()`.
 #### `any.raw([enabled])`
 
 Outputs the original untouched value instead of the casted value where:
-- `enabled` - if `true`, the original result is returned, otherwise the validated value. Defaults
-  to `true`.
+- `enabled` - if `true`, the original result is returned, otherwise the validated value. Defaults to `true`.
 
 Note that the raw value is only applied after validation and any references to the value use the
 validated value, not the raw value.
@@ -1117,17 +1116,11 @@ Set the result mode where:
 
 Applies a set of rule options to the current ruleset or last rule added where:
 - `options` - the rules to apply where:
-  - `keep` - if `true`, the rules will not be replaced by the same unique rule later. For example,
-    `Joi.number().min(1).rule({ keep: true }).min(2)` will keep both `min()` rules instead of the later
-    rule overriding the first. Defaults to `false`.
-  - `message` - a single message string or a messages object where each key is an error code and
-    corresponding message string as value. The object is the same as the `messages` used as an option in
-    [`any.validate()`](#anyvalidatevalue-options). The strings can be plain messages or a message template.
+  - `keep` - if `true`, the rules will not be replaced by the same unique rule later. For example, `Joi.number().min(1).rule({ keep: true }).min(2)` will keep both `min()` rules instead of the later rule overriding the first. Defaults to `false`.
+  - `message` - a single message string or a messages object where each key is an error code and corresponding message string as value. The object is the same as the `messages` used as an option in [`any.validate()`](#anyvalidatevalue-options). The strings can be plain messages or a message template.
   - `warn` - if `true`, turns any error generated by the ruleset to warnings.
 
-When applying rule options, the last rule (e.g. `min()`) is used unless there is an active ruleset defined
-(e.g. `$.min().max()`) in which case the options are applied to all the provided rules. Once `rule()` is
-called, the previous rules can no longer be modified and any active ruleset is terminated.
+When applying rule options, the last rule (e.g. `min()`) is used unless there is an active ruleset defined (e.g. `$.min().max()`) in which case the options are applied to all the provided rules. Once `rule()` is called, the previous rules can no longer be modified and any active ruleset is terminated.
 
 #### `any.ruleset` - aliases: `$`
 
@@ -1525,7 +1518,7 @@ const schema = Joi.object({
 });
 ```
 
-### `alternatives` - inherits from `Any`
+### `alternatives`
 
 Generates a type that will match one of the provided alternative schemas via the [`try()`](#alternativestryschemas)
 method. If no schemas are added, the type will not match any value except for `undefined`.
@@ -1634,7 +1627,7 @@ const alt = Joi.alternatives().try(Joi.number(), Joi.string());
 await alt.validateAsync('a');
 ```
 
-### `array` - inherits from `Any`
+### `array`
 
 Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by
 default but can be by using `sparse()`. If the validation `convert` option is on (enabled by default), a string will be
@@ -1841,7 +1834,7 @@ schema.validate([{}, {}]);
 
 Possible validation errors: [`array.unique`](#arrayunique)
 
-### `binary` - inherits from `Any`
+### `binary`
 
 Generates a schema object that matches a Buffer data type. If the validation `convert` option is on (enabled by default), a string
 will be converted to a Buffer if specified.
@@ -1896,7 +1889,7 @@ const schema = Joi.binary().min(2);
 
 Possible validation errors: [`binary.min`](#binarymin), [`binary.ref`](#binaryref)
 
-### `boolean` - inherits from `Any`
+### `boolean`
 
 Generates a schema object that matches a boolean data type. Can also be called via `bool()`. If the validation `convert`
 option is on (enabled by default), a string (either "true" or "false") will be converted to a `boolean` if specified.
@@ -1945,7 +1938,7 @@ const boolean = Joi.boolean().truthy('Y');
 await boolean.validateAsync('Y'); // Valid
 ```
 
-### `date` - inherits from `Any`
+### `date`
 
 Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). If
 the validation `convert` option is on (enabled by default), a string or number will be converted to a Date if specified.
@@ -2134,7 +2127,7 @@ const schema = Joi.function().minArity(1);
 
 Possible validation errors: [`function.minArity`](#functionminarity)
 
-### `link(ref)` - inherits from `Any`
+### `link(ref)`
 
 Links to another schema node and reuses it for validation, typically for creative recursive schemas, where:
 - `ref` - the reference to the linked schema node. Cannot reference itself or its children as well as other links. Links can be expressed in relative terms like value references (`Joi.link('...')`), in absolute terms from the schema run-time root (`Joi.link('/a')`), or using schema ids implicitly using object keys or explicitly using `any.id()` (`Joi.link('#a.b.c')`).
@@ -2193,7 +2186,7 @@ then initialized. If `ref` was not passed to the constructor, `link.ref()` must 
 
 Will throw an error during validation if left uninitialized (e.g. `Joi.link()` called without a link and `link.ref()` not called).
 
-### `number` - inherits from `Any`
+### `number`
 
 Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). 
 
@@ -2378,7 +2371,7 @@ unsafeNumber.validate(90071992547409924);
 
 Possible validation errors: [`number.unsafe`](#numberunsafe)
 
-### `object` - inherits from `Any`
+### `object`
 
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
 to allowing any child key. If the validation `convert` option is on (enabled by default), a string will be converted to
@@ -2747,14 +2740,21 @@ const schema = Joi.object({
 
 Possible validation errors: [`object.xor`](#objectxor), [`object.missing`](#objectmissing)
 
-### `string` - inherits from `Any`
+### `string`
 
-Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must
-be enabled with `allow('')`. However, if you want to specify a default value in case of empty string you have to use a
-different pattern: `Joi.string().empty('').default('default value')`. This tells **joi** that the empty string should be
-considered as an empty value (instead of invalid) and which value to use as default.
+Generates a schema object that matches a string data type.
 
-If the validation `convert` option is on (enabled by default), a string will be converted using the specified modifiers
+**Note that the empty string is not allowed by default and must be enabled with `allow('')`. Don't over think, just remember that the empty string is not a valid string by default. Also, don't ask to change it or argue why it doesn't make sense. This topic is closed.**
+
+To specify a default value in case of the empty string use:
+
+```js
+Joi.string()
+    .empty('')
+    .default('default value');
+```
+
+If the `convert` preference is `true` (the default value), a string will be converted using the specified modifiers
 for `string.lowercase()`, `string.uppercase()`, `string.trim()`, and each replacement specified with `string.replace()`.
 
 Supports the same methods of the [`any()`](#any) type.
@@ -3195,7 +3195,7 @@ const schema = Joi.string().uri({
 
 Possible validation errors: [`string.uri`](#stringuri), [`string.uriCustomScheme`](#stringuricustomscheme), [`string.uriRelativeOnly`](#stringurirelativeonly), [`string.domain`](#stringdomain)
 
-### `symbol` - inherits from `Any`
+### `symbol`
 
 Generates a schema object that matches a `Symbol` data type.
 

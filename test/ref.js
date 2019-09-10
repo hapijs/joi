@@ -797,9 +797,9 @@ describe('ref', () => {
         });
 
         const err = schema.validate({ a: 5, '': 6 }).error;
-        expect(err).to.be.an.error('"a" must be [ref:]');
+        expect(err).to.be.an.error('"a" must be [ref:..]');
         expect(err.details).to.equal([{
-            message: '"a" must be [ref:]',
+            message: '"a" must be [ref:..]',
             path: ['a'],
             type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
@@ -807,7 +807,7 @@ describe('ref', () => {
 
         Helper.validate(schema, [
             [{ a: 5 }, false, {
-                message: '"a" must be [ref:]',
+                message: '"a" must be [ref:..]',
                 path: ['a'],
                 type: 'any.only',
                 context: { value: 5, valids: [ref], label: 'a', key: 'a' }
