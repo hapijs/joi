@@ -61,41 +61,36 @@ describe('function', () => {
             }]
         ]);
 
-        const error1 = schema.validate(function (a, b, c) { }).error;                   // eslint-disable-line prefer-arrow-callback
-        expect(error1).to.be.an.error('"value" must have an arity of 2');
-        expect(error1.details).to.equal([{
-            message: '"value" must have an arity of 2',
-            path: [],
-            type: 'function.arity',
-            context: { n: 2, label: 'value', value: error1.details[0].context.value }
-        }]);
+        const f1 = function (a, b, c) {};
+        const f2 = function (a) { };
+        const f3 = (a, b, c) => { };
+        const f4 = (a) => { };
 
-        const error2 = schema.validate(function (a) { }).error;                         // eslint-disable-line prefer-arrow-callback
-        expect(error2).to.be.an.error('"value" must have an arity of 2');
-        expect(error2.details).to.equal([{
-            message: '"value" must have an arity of 2',
-            path: [],
-            type: 'function.arity',
-            context: { n: 2, label: 'value', value: error2.details[0].context.value }
-        }]);
-
-        const error3 = schema.validate((a, b, c) => { }).error;
-        expect(error3).to.be.an.error('"value" must have an arity of 2');
-        expect(error3.details).to.equal([{
-            message: '"value" must have an arity of 2',
-            path: [],
-            type: 'function.arity',
-            context: { n: 2, label: 'value', value: error3.details[0].context.value }
-        }]);
-
-        const error4 = schema.validate((a) => { }).error;
-        expect(error4).to.be.an.error('"value" must have an arity of 2');
-        expect(error4.details).to.equal([{
-            message: '"value" must have an arity of 2',
-            path: [],
-            type: 'function.arity',
-            context: { n: 2, label: 'value', value: error4.details[0].context.value }
-        }]);
+        Helper.validate(schema, [
+            [f1, false, {
+                message: '"value" must have an arity of 2',
+                path: [],
+                type: 'function.arity',
+                context: { n: 2, label: 'value', value: f1 }
+            }],
+            [f2, false, {
+                message: '"value" must have an arity of 2',
+                path: [],
+                type: 'function.arity',
+                context: { n: 2, label: 'value', value: f2 }
+            }],
+            [f3, false, {
+                message: '"value" must have an arity of 2',
+                path: [],
+                type: 'function.arity',
+                context: { n: 2, label: 'value', value: f3 }
+            }], [f4, false, {
+                message: '"value" must have an arity of 2',
+                path: [],
+                type: 'function.arity',
+                context: { n: 2, label: 'value', value: f4 }
+            }]
+        ]);
     });
 
     it('validates a function arity unless values are illegal', () => {
@@ -117,6 +112,9 @@ describe('function', () => {
     it('validates a function min arity', () => {
 
         const schema = Joi.function().minArity(2).required();
+        const f1 = function (a) { };
+        const f2 = (a) => { };
+
         Helper.validate(schema, [
             [function (a, b) { }, true],
             [function (a, b, c) { }, true],
@@ -127,26 +125,20 @@ describe('function', () => {
                 path: [],
                 type: 'object.base',
                 context: { label: 'value', value: '', type: 'function' }
+            }],
+            [f1, false, {
+                message: '"value" must have an arity greater or equal to 2',
+                path: [],
+                type: 'function.minArity',
+                context: { n: 2, label: 'value', value: f1 }
+            }],
+            [f2, false, {
+                message: '"value" must have an arity greater or equal to 2',
+                path: [],
+                type: 'function.minArity',
+                context: { n: 2, label: 'value', value: f2 }
             }]
         ]);
-
-        const error1 = schema.validate(function (a) { }).error;                         // eslint-disable-line prefer-arrow-callback
-        expect(error1).to.be.an.error('"value" must have an arity greater or equal to 2');
-        expect(error1.details).to.equal([{
-            message: '"value" must have an arity greater or equal to 2',
-            path: [],
-            type: 'function.minArity',
-            context: { n: 2, label: 'value', value: error1.details[0].context.value }
-        }]);
-
-        const error2 = schema.validate((a) => { }).error;
-        expect(error2).to.be.an.error('"value" must have an arity greater or equal to 2');
-        expect(error2.details).to.equal([{
-            message: '"value" must have an arity greater or equal to 2',
-            path: [],
-            type: 'function.minArity',
-            context: { n: 2, label: 'value', value: error2.details[0].context.value }
-        }]);
     });
 
     it('validates a function arity unless values are illegal', () => {
@@ -174,39 +166,33 @@ describe('function', () => {
     it('validates a function max arity', () => {
 
         const schema = Joi.function().maxArity(2).required();
+        const f1 = function (a, b, c) { };
+        const f2 = (a, b, c) => { };
+
         Helper.validate(schema, [
             [function (a, b) { }, true],
             [function (a) { }, true],
             [(a, b) => { }, true],
-            [(a) => { }, true]
+            [(a) => { }, true],
+            [f1, false, {
+                message: '"value" must have an arity lesser or equal to 2',
+                path: [],
+                type: 'function.maxArity',
+                context: { n: 2, label: 'value', value: f1 }
+            }],
+            [f2, false, {
+                message: '"value" must have an arity lesser or equal to 2',
+                path: [],
+                type: 'function.maxArity',
+                context: { n: 2, label: 'value', value: f2 }
+            }],
+            ['', false, {
+                message: '"value" must be of type function',
+                path: [],
+                type: 'object.base',
+                context: { label: 'value', value: '', type: 'function' }
+            }]
         ]);
-
-        const error1 = schema.validate(function (a, b, c) { }).error;                       // eslint-disable-line prefer-arrow-callback
-        expect(error1).to.be.an.error('"value" must have an arity lesser or equal to 2');
-        expect(error1.details).to.equal([{
-            message: '"value" must have an arity lesser or equal to 2',
-            path: [],
-            type: 'function.maxArity',
-            context: { n: 2, label: 'value', value: error1.details[0].context.value }
-        }]);
-
-        const error2 = schema.validate((a, b, c) => { }).error;
-        expect(error2).to.be.an.error('"value" must have an arity lesser or equal to 2');
-        expect(error2.details).to.equal([{
-            message: '"value" must have an arity lesser or equal to 2',
-            path: [],
-            type: 'function.maxArity',
-            context: { n: 2, label: 'value', value: error2.details[0].context.value }
-        }]);
-
-        const error3 = schema.validate('').error;
-        expect(error3).to.be.an.error('"value" must be of type function');
-        expect(error3.details).to.equal([{
-            message: '"value" must be of type function',
-            path: [],
-            type: 'object.base',
-            context: { label: 'value', value: '', type: 'function' }
-        }]);
     });
 
     it('validates a function arity unless values are illegal', () => {
@@ -311,29 +297,23 @@ describe('function', () => {
         const b = function () { };
         b.a = 'abc';
 
-        Helper.validate(schema, [
-            [a, true]
-        ]);
-
-        const err1 = schema.validate(b).error;
-        expect(err1).to.be.an.error('"value" must have an arity greater or equal to 1');
-        expect(err1.details).to.equal([{
-            message: '"value" must have an arity greater or equal to 1',
-            path: [],
-            type: 'function.minArity',
-            context: { value: err1.details[0].context.value, label: 'value', n: 1 }
-        }]);
-
         const c = function (x) { };
 
-        const err2 = schema.validate(c).error;
-        expect(err2).to.be.an.error('"value" must have at least 1 key');
-        expect(err2.details).to.equal([{
-            message: '"value" must have at least 1 key',
-            path: [],
-            type: 'object.min',
-            context: { value: err2.details[0].context.value, label: 'value', limit: 1 }
-        }]);
+        Helper.validate(schema, [
+            [a, true],
+            [b, false, {
+                message: '"value" must have an arity greater or equal to 1',
+                path: [],
+                type: 'function.minArity',
+                context: { value: b, label: 'value', n: 1 }
+            }],
+            [c, false, {
+                message: '"value" must have at least 1 key',
+                path: [],
+                type: 'object.min',
+                context: { value: c, label: 'value', limit: 1 }
+            }]
+        ]);
     });
 
     it('keeps validated value as a function', () => {

@@ -26,7 +26,7 @@ describe('cast', () => {
                 b: Joi.x('{a + 1}')
             });
 
-            expect(schema.validate({ a: 5, b: 6 }).error).to.not.exist();
+            Helper.validate(schema, [[{ a: 5, b: 6 }, true]]);
         });
 
         it('compiles null schema', () => {

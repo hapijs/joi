@@ -68,7 +68,14 @@ describe('number', () => {
         it('displays correctly for int type', () => {
 
             const t = Joi.number().integer();
-            expect(Joi.compile(t).validate('1.1').error).to.be.an.error(/integer/);
+            Helper.validate(Joi.compile(t), [
+                ['1.1', false, {
+                    message: '"value" must be an integer',
+                    path: [],
+                    type: 'number.integer',
+                    context: { label: 'value', value: 1.1 }
+                }]
+            ]);
         });
     });
 
@@ -77,21 +84,23 @@ describe('number', () => {
         it('casts value to string', () => {
 
             const schema = Joi.number().cast('string');
-            expect(schema.validate(0).value).to.equal('0');
-            expect(schema.validate(0.01).value).to.equal('0.01');
-            expect(schema.validate(-12).value).to.equal('-12');
+            Helper.validate(schema, [
+                [0, true, '0'],
+                [0.01, true, '0.01'],
+                [-12, true, '-12']
+            ]);
         });
 
         it('ignores null', () => {
 
             const schema = Joi.number().allow(null).cast('string');
-            expect(schema.validate(null).value).to.be.null();
+            Helper.validate(schema, [[null, true, null]]);
         });
 
         it('ignores string', () => {
 
             const schema = Joi.number().allow('x').cast('string');
-            expect(schema.validate('x').value).to.equal('x');
+            Helper.validate(schema, [['x', true, 'x']]);
         });
     });
 
@@ -510,7 +519,7 @@ describe('number', () => {
             const schema = Joi.number().min(1394035612500);
             const input = 1394035612552;
 
-            expect(schema.validate(input)).to.equal({ value: input });
+            Helper.validate(schema, [[input, true, input]]);
         });
 
         it('accepts references as min value', () => {
@@ -969,26 +978,26 @@ describe('number', () => {
         it('compares valid matching post-coerce value', () => {
 
             const schema = Joi.number().valid(1, 2, 3);
-            expect(schema.validate('1')).to.equal({ value: 1 });
+            Helper.validate(schema, [['1', true, 1]]);
         });
 
         it('ignores invalid matching of pre-coerce value', () => {
 
             const schema = Joi.number().invalid('1');
-            expect(schema.validate('1')).to.equal({ value: 1 });
+            Helper.validate(schema, [['1', true, 1]]);
         });
 
         it('returns false for denied value', () => {
 
             const text = Joi.number().invalid(50);
-            const err = text.validate(50).error;
-            expect(err).to.be.an.error('"value" contains an invalid value');
-            expect(err.details).to.equal([{
-                message: '"value" contains an invalid value',
-                path: [],
-                type: 'any.invalid',
-                context: { value: 50, invalids: [50], label: 'value' }
-            }]);
+            Helper.validate(text, [
+                [50, false, {
+                    message: '"value" contains an invalid value',
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: 50, invalids: [50], label: 'value' }
+                }]
+            ]);
         });
 
         it('validates integer', () => {
@@ -1128,25 +1137,26 @@ describe('number', () => {
 
             const config = { a: Joi.number() };
             const obj = { a: '123' };
-
-            expect(Joi.compile(config).validate(obj)).to.equal({ value: { a: 123 } });
+            Helper.validate(Joi.compile(config), [
+                [obj, true, { a: 123 }]
+            ]);
         });
 
         it('converts a string to a number', () => {
 
-            expect(Joi.number().validate('1')).to.equal({ value: 1 });
+            Helper.validate(Joi.number(), [['1', true, 1]]);
         });
 
         it('errors on null', () => {
 
-            const err = Joi.number().validate(null).error;
-            expect(err).to.be.an.error('"value" must be a number');
-            expect(err.details).to.equal([{
-                message: '"value" must be a number',
-                path: [],
-                type: 'number.base',
-                context: { label: 'value', value: null }
-            }]);
+            Helper.validate(Joi.number(), [
+                [null, false, {
+                    message: '"value" must be a number',
+                    path: [],
+                    type: 'number.base',
+                    context: { label: 'value', value: null }
+                }]
+            ]);
         });
 
         it('handles combination of min and max', () => {

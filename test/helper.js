@@ -32,7 +32,8 @@ exports.validate = function (schema, prefs, tests) {
     try {
         expect(schema.$_root.build(schema.describe())).to.equal(schema, { deepFunction: true, skip: ['$_temp'] });
 
-        for (const [input, pass, expected] of tests) {
+        for (const test of tests) {
+            const [input, pass, expected] = test;
             if (!pass) {
                 expect(expected, 'Failing tests messages must be tested').to.exist();
             }
@@ -57,7 +58,7 @@ exports.validate = function (schema, prefs, tests) {
 
             expect(!error).to.equal(pass);
 
-            if (expected === undefined) {
+            if (test.length === 2) {
                 continue;
             }
 

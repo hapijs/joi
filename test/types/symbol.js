@@ -181,21 +181,19 @@ describe('symbol', () => {
 
             const symbols = [Symbol(1), Symbol(2)];
             const schema = Joi.symbol().map([[1, symbols[0]], ['two', symbols[1]]]).prefs({ convert: false });
-            expect(schema.validate(symbols[1])).to.equal({ value: symbols[1] });
+            Helper.validate(schema, [[symbols[1], true, symbols[1]]]);
         });
 
         it('errors on mapped input and convert is disabled', () => {
 
             const symbols = [Symbol(1), Symbol(2)];
             const schema = Joi.symbol().map([[1, symbols[0]], ['two', symbols[1]]]).prefs({ convert: false });
-            const err = schema.validate(1).error;
-            expect(err).to.be.an.error('"value" must be one of [Symbol(1), Symbol(2)]');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[1, false, {
                 message: '"value" must be one of [Symbol(1), Symbol(2)]',
                 path: [],
                 type: 'any.only',
                 context: { value: 1, valids: symbols, label: 'value' }
-            }]);
+            }]]);
         });
     });
 });

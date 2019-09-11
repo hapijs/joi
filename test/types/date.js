@@ -90,25 +90,25 @@ describe('date', () => {
     it('matches specific date', () => {
 
         const now = Date.now();
-        expect(Joi.date().valid(new Date(now)).validate(new Date(now)).error).to.not.exist();
-        expect(Joi.date().valid(new Date(now)).validate(new Date(now).toISOString()).error).to.not.exist();
+        Helper.validate(Joi.date().valid(new Date(now)), [
+            [new Date(now), true],
+            [new Date(now).toISOString(), true]
+        ]);
     });
 
     it('errors on invalid input and convert disabled', () => {
 
-        const err = Joi.date().prefs({ convert: false }).validate('1-1-2013 UTC').error;
-        expect(err).to.be.an.error('"value" must be a valid date');
-        expect(err.details).to.equal([{
+        Helper.validate(Joi.date().prefs({ convert: false }), [['1-1-2013 UTC', false, {
             message: '"value" must be a valid date',
             path: [],
             type: 'date.base',
             context: { label: 'value', value: '1-1-2013 UTC' }
-        }]);
+        }]]);
     });
 
     it('validates date', () => {
 
-        expect(Joi.date().validate(new Date()).error).to.not.exist();
+        Helper.validate(Joi.date(), [[new Date(), true]]);
     });
 
     it('validates millisecond date as a string', () => {
@@ -116,7 +116,7 @@ describe('date', () => {
         const now = new Date();
         const mili = now.getTime();
 
-        expect(Joi.date().validate(mili.toString())).to.equal({ value: now });
+        Helper.validate(Joi.date(), [[mili.toString(), true, now]]);
     });
 
     it('validates only valid dates', () => {
@@ -146,31 +146,31 @@ describe('date', () => {
         it('casts value to number', () => {
 
             const schema = Joi.date().cast('number');
-            expect(schema.validate(new Date('1974-05-07')).value).to.equal(137116800000);
+            Helper.validate(schema, [[new Date('1974-05-07'), true, 137116800000]]);
         });
 
         it('casts value to string', () => {
 
             const schema = Joi.date().cast('string');
-            expect(schema.validate(new Date('1974-05-07')).value).to.equal('1974-05-07T00:00:00.000Z');
+            Helper.validate(schema, [[new Date('1974-05-07'), true, '1974-05-07T00:00:00.000Z']]);
         });
 
         it('casts value to string (custom format)', () => {
 
             const schema = Joi.date().prefs({ dateFormat: 'date' }).cast('string');
-            expect(schema.validate(new Date('1974-05-07')).value).to.equal('Tue May 07 1974');
+            Helper.validate(schema, [[new Date('1974-05-07'), true, 'Tue May 07 1974']]);
         });
 
         it('ignores null', () => {
 
             const schema = Joi.date().allow(null).cast('string');
-            expect(schema.validate(null).value).to.be.null();
+            Helper.validate(schema, [[null, true, null]]);
         });
 
         it('ignores string', () => {
 
             const schema = Joi.date().allow('x').cast('string');
-            expect(schema.validate('x').value).to.equal('x');
+            Helper.validate(schema, [['x', true, 'x']]);
         });
     });
 
@@ -193,9 +193,11 @@ describe('date', () => {
                 }
             });
 
-            expect(custom.date().format('unknown').validate('x').error).to.be.an.error('"value" must be in unknown format');
-            expect(custom.date().format(['unknown']).validate('x').error).to.be.an.error('"value" must be in [unknown] format');
-            expect(custom.date().format('unknown').validate(Date.now()).error).to.not.exist();
+            Helper.validate(custom.date().format('unknown'), [
+                ['x', false, '"value" must be in unknown format'],
+                [Date.now(), true]
+            ]);
+            Helper.validate(custom.date().format(['unknown']), [['x', false, '"value" must be in [unknown] format']]);
         });
     });
 
@@ -251,15 +253,14 @@ describe('date', () => {
             const now = Date.now();
             const past = new Date(now - 1000000);
 
-            const err = Joi.date().greater('now').validate(past).error;
-            const message = '"value" must be greater than "now"';
-            expect(err).to.be.an.error(message);
-            expect(err.details).to.equal([{
-                message: '"value" must be greater than "now"',
-                path: [],
-                type: 'date.greater',
-                context: { limit: 'now', label: 'value', value: past }
-            }]);
+            Helper.validate(Joi.date().greater('now'), [
+                [past, false, {
+                    message: '"value" must be greater than "now"',
+                    path: [],
+                    type: 'date.greater',
+                    context: { limit: 'now', label: 'value', value: past }
+                }]
+            ]);
         });
 
         it('accepts references as greater date', () => {
@@ -480,20 +481,20 @@ describe('date', () => {
         it('validates isoDate with a friendly error message', () => {
 
             const schema = { item: Joi.date().iso() };
-            const err = Joi.compile(schema).validate({ item: 'something' }).error;
-            expect(err.message).to.equal('"item" must be in ISO 8601 date format');
-            expect(err.details).to.equal([{
-                message: '"item" must be in ISO 8601 date format',
-                path: ['item'],
-                type: 'date.format',
-                context: { label: 'item', key: 'item', value: 'something', format: 'iso' }
-            }]);
+            Helper.validate(Joi.compile(schema), [
+                [{ item: 'something' }, false, {
+                    message: '"item" must be in ISO 8601 date format',
+                    path: ['item'],
+                    type: 'date.format',
+                    context: { label: 'item', key: 'item', value: 'something', format: 'iso' }
+                }]
+            ]);
         });
 
         it('validates isoDate after clone', () => {
 
             const schema = { item: Joi.date().iso().clone() };
-            expect(Joi.compile(schema).validate({ item: '2013-06-07T14:21:46.295Z' }).error).to.not.exist();
+            Helper.validate(Joi.compile(schema), [[{ item: '2013-06-07T14:21:46.295Z' }, true]]);
         });
     });
 
@@ -547,7 +548,7 @@ describe('date', () => {
         it('accepts "now" as the less date', () => {
 
             const past = new Date(Date.now() - 1000000);
-            expect(Joi.date().less('now').validate(past)).to.equal({ value: past });
+            Helper.validate(Joi.date().less('now'), [[past, true, past]]);
         });
 
         it('errors if .less("now") is used with a future date', () => {
@@ -555,15 +556,12 @@ describe('date', () => {
             const now = Date.now();
             const future = new Date(now + 1000000);
 
-            const err = Joi.date().less('now').validate(future).error;
-            const message = '"value" must be less than "now"';
-            expect(err).to.be.an.error(message);
-            expect(err.details).to.equal([{
+            Helper.validate(Joi.date().less('now'), [[future, false, {
                 message: '"value" must be less than "now"',
                 path: [],
                 type: 'date.less',
                 context: { limit: 'now', label: 'value', value: future }
-            }]);
+            }]]);
         });
 
         it('accepts references as less date', () => {
@@ -700,7 +698,7 @@ describe('date', () => {
         it('accepts "now" as the max date', () => {
 
             const past = new Date(Date.now() - 1000000);
-            expect(Joi.date().max('now').validate(past)).to.equal({ value: past });
+            Helper.validate(Joi.date().max('now'), [[past, true, past]]);
         });
 
         it('errors if .max("now") is used with a future date', () => {
@@ -708,15 +706,12 @@ describe('date', () => {
             const now = Date.now();
             const future = new Date(now + 1000000);
 
-            const err = Joi.date().max('now').validate(future).error;
-            const message = '"value" must be less than or equal to "now"';
-            expect(err).to.be.an.error(message);
-            expect(err.details).to.equal([{
-                message,
+            Helper.validate(Joi.date().max('now'), [[future, false, {
+                message: '"value" must be less than or equal to "now"',
                 path: [],
                 type: 'date.max',
                 context: { limit: 'now', label: 'value', value: future }
-            }]);
+            }]]);
         });
 
         it('accepts references as max date', () => {
@@ -877,15 +872,12 @@ describe('date', () => {
             const now = Date.now();
             const past = new Date(now - 1000000);
 
-            const err = Joi.date().min('now').validate(past).error;
-            const message = '"value" must be larger than or equal to "now"';
-            expect(err).to.be.an.error(message);
-            expect(err.details).to.equal([{
-                message,
+            Helper.validate(Joi.date().min('now'), [[past, false, {
+                message: '"value" must be larger than or equal to "now"',
                 path: [],
                 type: 'date.min',
                 context: { limit: 'now', label: 'value', value: past }
-            }]);
+            }]]);
         });
 
         it('accepts references as min date', () => {
@@ -1036,9 +1028,9 @@ describe('date', () => {
             const now = new Date();
             const milliseconds = now.getTime();
 
-            expect(Joi.date().timestamp().validate(milliseconds)).to.equal({ value: now });
-            expect(Joi.date().timestamp('javascript').validate(milliseconds)).to.equal({ value: now });
-            expect(Joi.date().timestamp('unix').timestamp('javascript').validate(milliseconds)).to.equal({ value: now });
+            Helper.validate(Joi.date().timestamp(), [[milliseconds, true, now]]);
+            Helper.validate(Joi.date().timestamp('javascript'), [[milliseconds, true, now]]);
+            Helper.validate(Joi.date().timestamp('unix').timestamp('javascript'), [[milliseconds, true, now]]);
         });
 
         it('validates unix timestamp', () => {
@@ -1046,9 +1038,9 @@ describe('date', () => {
             const now = new Date();
             const seconds = now.getTime() / 1000;
 
-            expect(Joi.date().timestamp('unix').validate(seconds)).to.equal({ value: now });
-            expect(Joi.date().timestamp().timestamp('unix').validate(seconds)).to.equal({ value: now });
-            expect(Joi.date().timestamp('javascript').timestamp('unix').validate(seconds)).to.equal({ value: now });
+            Helper.validate(Joi.date().timestamp('unix'), [[seconds, true, now]]);
+            Helper.validate(Joi.date().timestamp().timestamp('unix'), [[seconds, true, now]]);
+            Helper.validate(Joi.date().timestamp('javascript').timestamp('unix'), [[seconds, true, now]]);
         });
 
         it('validates timestamps with decimals', () => {

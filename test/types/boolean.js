@@ -88,8 +88,10 @@ describe('boolean', () => {
     it('respects case for allow', () => {
 
         const schema = Joi.boolean().allow('X');
-        expect(schema.validate('X').error).to.not.exist();
-        expect(schema.validate('x').error).to.be.an.error('"value" must be a boolean');
+        Helper.validate(schema, [
+            ['X', true],
+            ['x', false, '"value" must be a boolean']
+        ]);
     });
 
     describe('cast()', () => {
@@ -97,27 +99,31 @@ describe('boolean', () => {
         it('casts value to number', () => {
 
             const schema = Joi.boolean().cast('number');
-            expect(schema.validate(true).value).to.equal(1);
-            expect(schema.validate(false).value).to.equal(0);
+            Helper.validate(schema, [
+                [true, true, 1],
+                [false, true, 0]
+            ]);
         });
 
         it('casts value to string', () => {
 
             const schema = Joi.boolean().cast('string');
-            expect(schema.validate(true).value).to.equal('true');
-            expect(schema.validate(false).value).to.equal('false');
+            Helper.validate(schema, [
+                [true, true, 'true'],
+                [false, true, 'false']
+            ]);
         });
 
         it('ignores null', () => {
 
             const schema = Joi.boolean().allow(null).cast('string');
-            expect(schema.validate(null).value).to.be.null();
+            Helper.validate(schema, [[null, true, null]]);
         });
 
         it('ignores string', () => {
 
             const schema = Joi.boolean().allow('x').cast('string');
-            expect(schema.validate('x').value).to.equal('x');
+            Helper.validate(schema, [['x', true, 'x']]);
         });
     });
 
@@ -203,7 +209,7 @@ describe('boolean', () => {
         it('should default to case insensitive', () => {
 
             const schema = Joi.boolean().truthy('Y');
-            expect(schema.validate('y').error).not.to.exist();
+            Helper.validate(schema, [['y', true, true]]);
         });
 
         it('should stick to case insensitive if called', () => {
@@ -215,14 +221,12 @@ describe('boolean', () => {
         it('should be able to do strict comparison', () => {
 
             const schema = Joi.boolean().truthy('Y').sensitive();
-            const error = schema.validate('y').error;
-            expect(error).to.be.an.error('"value" must be a boolean');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [['y', false, {
                 message: '"value" must be a boolean',
                 path: [],
                 type: 'boolean.base',
                 context: { label: 'value', value: 'y' }
-            }]);
+            }]]);
         });
 
         it('should return the same instance if nothing changed', () => {
@@ -599,7 +603,7 @@ describe('boolean', () => {
         it('errors on truthy without convert', () => {
 
             const schema = Joi.boolean().truthy('y');
-            expect(schema.validate('y', { convert: false }).error).be.an.error('"value" must be a boolean');
+            Helper.validate(schema, { convert: false }, [['y', false, '"value" must be a boolean']]);
         });
     });
 });

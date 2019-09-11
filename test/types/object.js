@@ -48,7 +48,7 @@ describe('object', () => {
             c: 'joe@example.com'
         };
 
-        expect(schema.validate(obj).error).to.not.exist();
+        Helper.validate(schema, [[obj, true]]);
     });
 
     it('validates references', () => {
@@ -73,19 +73,19 @@ describe('object', () => {
         });
 
         const item = { x: 5 };
-        expect(schema.validate({ a: item })).to.equal({ value: { a: item } });
+        Helper.validate(schema, [[{ a: item }, true, { a: item }]]);
     });
 
     it('retains ignored values', () => {
 
         const schema = Joi.object();
-        expect(schema.validate({ a: 5 })).to.equal({ value: { a: 5 } });
+        Helper.validate(schema, [[{ a: 5 }, true, { a: 5 }]]);
     });
 
     it('retains skipped values', () => {
 
         const schema = Joi.object({ b: 5 }).unknown(true);
-        expect(schema.validate({ b: 5, a: 5 })).to.equal({ value: { a: 5, b: 5 } });
+        Helper.validate(schema, [[{ b: 5, a: 5 }, true, { a: 5, b: 5 }]]);
     });
 
     it('retains symbols', () => {
@@ -93,7 +93,7 @@ describe('object', () => {
         const schema = Joi.object({ a: Joi.number() });
 
         const symbol = Symbol();
-        expect(schema.validate({ [symbol]: 5, a: 5 })).to.equal({ value: { [symbol]: 5, a: 5 } });
+        Helper.validate(schema, [[{ [symbol]: 5, a: 5 }, true, { [symbol]: 5, a: 5 }]]);
     });
 
     it('retains non-enumerable', () => {
@@ -103,7 +103,7 @@ describe('object', () => {
         const obj = { a: 100 };
         Object.defineProperty(obj, 'test', { value: 42, enumerable: false });
         expect(obj.test).to.equal(42);
-        expect(schema.validate(obj, { nonEnumerables: true })).to.equal({ value: { a: 100 } });
+        Helper.validate(schema, { nonEnumerables: true }, [[obj, true, { a: 100 }]]);
     });
 
     it('retains prototype', () => {
@@ -122,13 +122,13 @@ describe('object', () => {
 
     it('allows any key when schema is undefined', () => {
 
-        expect(Joi.object().validate({ a: 4 }).error).to.not.exist();
-        expect(Joi.object(undefined).validate({ a: 4 }).error).to.not.exist();
+        Helper.validate(Joi.object(), [[{ a: 4 }, true]]);
+        Helper.validate(Joi.object(undefined), [[{ a: 4 }, true]]);
     });
 
     it('allows any key when schema is null', () => {
 
-        expect(Joi.object(null).validate({ a: 4 }).error).to.not.exist();
+        Helper.validate(Joi.object(null), [[{ a: 4 }, true]]);
     });
 
     it('throws on invalid object schema', () => {
@@ -149,19 +149,17 @@ describe('object', () => {
 
     it('skips conversion when value is undefined', () => {
 
-        expect(Joi.object({ a: Joi.object() }).validate(undefined)).to.equal({ value: undefined });
+        Helper.validate(Joi.object({ a: Joi.object() }), [[undefined, true, undefined]]);
     });
 
     it('errors on array', () => {
 
-        const err = Joi.object().validate([1, 2, 3]).error;
-        expect(err).to.be.an.error('"value" must be of type object');
-        expect(err.details).to.equal([{
+        Helper.validate(Joi.object(), [[[1, 2, 3], false, {
             message: '"value" must be of type object',
             path: [],
             type: 'object.base',
             context: { label: 'value', value: [1, 2, 3], type: 'object' }
-        }]);
+        }]]);
     });
 
     it('should prevent extra keys from existing by default', () => {
@@ -491,14 +489,12 @@ describe('object', () => {
 
         const schema = Joi.object({ a: Joi.number() }).prefs({ skipFunctions: true });
         const obj = { a: 5, b: 'value' };
-        const err = schema.validate(obj).error;
-        expect(err).to.be.an.error('"b" is not allowed');
-        expect(err.details).to.equal([{
+        Helper.validate(schema, [[obj, false, {
             message: '"b" is not allowed',
             path: ['b'],
             type: 'object.unknown',
             context: { child: 'b', label: 'b', key: 'b', value: 'value' }
-        }]);
+        }]]);
     });
 
     it('validates both valid() and with()', () => {
@@ -572,28 +568,24 @@ describe('object', () => {
 
         const schema = Joi.object({ a: Joi.object().keys({}) });
         const obj = { a: { b: 'value' } };
-        const err = schema.validate(obj).error;
-        expect(err).to.be.an.error('"a.b" is not allowed');
-        expect(err.details).to.equal([{
+        Helper.validate(schema, [[obj, false, {
             message: '"a.b" is not allowed',
             path: ['a', 'b'],
             type: 'object.unknown',
             context: { child: 'b', label: 'a.b', key: 'b', value: 'value' }
-        }]);
+        }]]);
     });
 
     it('errors on unknown nested keys with the correct path at the root level', () => {
 
         const schema = Joi.object({ a: Joi.object().keys({}) });
         const obj = { c: 'hello' };
-        const err = schema.validate(obj).error;
-        expect(err).to.be.an.error('"c" is not allowed');
-        expect(err.details).to.equal([{
+        Helper.validate(schema, [[obj, false, {
             message: '"c" is not allowed',
             path: ['c'],
             type: 'object.unknown',
             context: { child: 'c', label: 'c', key: 'c', value: 'hello' }
-        }]);
+        }]]);
     });
 
     it('should work on prototype-less objects', () => {
@@ -605,7 +597,7 @@ describe('object', () => {
 
         input.a = 1337;
 
-        expect(schema.validate(input).error).to.not.exist();
+        Helper.validate(schema, [[input, true]]);
     });
 
     it('should be able to use rename safely with a fake hasOwnProperty', () => {
@@ -615,14 +607,12 @@ describe('object', () => {
 
         const input = { b: 2, a: 1, hasOwnProperty: 'foo' };
 
-        const err = schema.validate(input).error;
-        expect(err).to.be.an.error('"value" cannot rename "b" because override is disabled and target "a" exists');
-        expect(err.details).to.equal([{
+        Helper.validate(schema, [[input, false, {
             message: '"value" cannot rename "b" because override is disabled and target "a" exists',
             path: [],
             type: 'object.rename.override',
             context: { from: 'b', to: 'a', label: 'value', pattern: false, value: input }
-        }]);
+        }]]);
     });
 
     it('should be able to use object.with() safely with a fake hasOwnProperty', () => {
@@ -630,35 +620,35 @@ describe('object', () => {
         const input = { a: 1, hasOwnProperty: 'foo' };
         const schema = Joi.object({ a: 1 }).with('a', 'b');
 
-        const err = schema.validate(input, { abortEarly: false }).error;
-        expect(err).to.be.an.error();
-        expect(err).to.be.an.error('"hasOwnProperty" is not allowed. "a" missing required peer "b"');
-        expect(err.details).to.equal([
-            {
-                message: '"hasOwnProperty" is not allowed',
-                path: ['hasOwnProperty'],
-                type: 'object.unknown',
-                context: {
-                    child: 'hasOwnProperty',
-                    label: 'hasOwnProperty',
-                    key: 'hasOwnProperty',
-                    value: 'foo'
+        Helper.validate(schema, { abortEarly: false }, [[input, false, {
+            message: '"hasOwnProperty" is not allowed. "a" missing required peer "b"',
+            details: [
+                {
+                    message: '"hasOwnProperty" is not allowed',
+                    path: ['hasOwnProperty'],
+                    type: 'object.unknown',
+                    context: {
+                        child: 'hasOwnProperty',
+                        label: 'hasOwnProperty',
+                        key: 'hasOwnProperty',
+                        value: 'foo'
+                    }
+                },
+                {
+                    message: '"a" missing required peer "b"',
+                    path: [],
+                    type: 'object.with',
+                    context: {
+                        main: 'a',
+                        mainWithLabel: 'a',
+                        peer: 'b',
+                        peerWithLabel: 'b',
+                        label: 'value',
+                        value: input
+                    }
                 }
-            },
-            {
-                message: '"a" missing required peer "b"',
-                path: [],
-                type: 'object.with',
-                context: {
-                    main: 'a',
-                    mainWithLabel: 'a',
-                    peer: 'b',
-                    peerWithLabel: 'b',
-                    label: 'value',
-                    value: input
-                }
-            }
-        ]);
+            ]
+        }]]);
     });
 
     it('aborts early on unknown keys', () => {
@@ -666,7 +656,7 @@ describe('object', () => {
         const input = { a: 1, unknown: 2 };
         const schema = Joi.object({ a: 1 }).with('a', 'b');
 
-        expect(schema.validate(input).error).to.be.an.error('"unknown" is not allowed');
+        Helper.validate(schema, [[input, false, '"unknown" is not allowed']]);
     });
 
     it('should apply labels with nested objects', () => {
@@ -680,9 +670,7 @@ describe('object', () => {
         })
             .with('a', ['b.c']);
 
-        const error = schema.validate({ a: 1, b: { d: 2 } }).error;
-        expect(error).to.be.an.error('"first" missing required peer "b.second"');
-        expect(error.details).to.equal([{
+        Helper.validate(schema, [[{ a: 1, b: { d: 2 } }, false, {
             message: '"first" missing required peer "b.second"',
             path: [],
             type: 'object.with',
@@ -694,7 +682,7 @@ describe('object', () => {
                 label: 'value',
                 value: { a: 1, b: { d: 2 } }
             }
-        }]);
+        }]]);
     });
 
     it('errors on unknown key', () => {
@@ -705,11 +693,10 @@ describe('object', () => {
             }).allow(null)
         };
 
-        const err = Joi.compile(config).validate({ auth: { unknown: true } }).error;
-        expect(err.message).to.contain('"auth.unknown" is not allowed');
-
-        const err2 = Joi.compile(config).validate({ something: false }).error;
-        expect(err2.message).to.contain('"something" is not allowed');
+        Helper.validate(Joi.compile(config), [
+            [{ auth: { unknown: true } }, false, '"auth.unknown" is not allowed'],
+            [{ something: false }, false, '"something" is not allowed']
+        ]);
     });
 
     describe('and()', () => {
@@ -942,9 +929,7 @@ describe('object', () => {
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
             }).and('a', 'b');
-            const error = schema.validate({ a: 1 }).error;
-            expect(error).to.be.an.error('"value" contains [first] without its required peers [second]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1 }, false, {
                 message: '"value" contains [first] without its required peers [second]',
                 path: [],
                 type: 'object.and',
@@ -956,7 +941,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1 }
                 }
-            }]);
+            }]]);
         });
 
         it('allows nested objects', () => {
@@ -970,24 +955,22 @@ describe('object', () => {
             const sampleObject = { a: 'test', b: { c: 'test2' } };
             const sampleObject2 = { a: 'test', b: { d: 80 } };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
-
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"value" contains [a] without its required peers [b.c]');
-            expect(error2.details).to.equal([{
-                message: '"value" contains [a] without its required peers [b.c]',
-                path: [],
-                type: 'object.and',
-                context: {
-                    present: ['a'],
-                    presentWithLabels: ['a'],
-                    missing: ['b.c'],
-                    missingWithLabels: ['b.c'],
-                    label: 'value',
-                    value: sampleObject2
-                }
-            }]);
+            Helper.validate(schema, [
+                [sampleObject, true],
+                [sampleObject2, false, {
+                    message: '"value" contains [a] without its required peers [b.c]',
+                    path: [],
+                    type: 'object.and',
+                    context: {
+                        present: ['a'],
+                        presentWithLabels: ['a'],
+                        missing: ['b.c'],
+                        missingWithLabels: ['b.c'],
+                        label: 'value',
+                        value: sampleObject2
+                    }
+                }]
+            ]);
         });
 
         it('allows nested keys in functions', () => {
@@ -1001,8 +984,7 @@ describe('object', () => {
             const sampleObject = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
             const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
+            Helper.validate(schema, [[sampleObject, true]]);
 
             const error2 = schema.validate(sampleObject2).error;
             expect(error2).to.be.an.error('"value" contains [a] without its required peers [b.c]');
@@ -1060,9 +1042,7 @@ describe('object', () => {
             })
                 .and('a', 'c.d');
 
-            const error = schema.validate({ a: 1, b: { d: 1 } }).error;
-            expect(error).to.be.an.error('"value" contains [first] without its required peers [c.d]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1, b: { d: 1 } }, false, {
                 message: '"value" contains [first] without its required peers [c.d]',
                 path: [],
                 type: 'object.and',
@@ -1074,7 +1054,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1, b: { d: 1 } }
                 }
-            }]);
+            }]]);
         });
     });
 
@@ -1086,7 +1066,7 @@ describe('object', () => {
                 .keys({ a: Joi.string() })
                 .append({ b: Joi.string() });
 
-            expect(schema.validate({ a: 'x', b: 'y' }).error).to.not.exist();
+            Helper.validate(schema, [[{ a: 'x', b: 'y' }, true]]);
         });
 
         it('should not change schema if it is null', () => {
@@ -1095,7 +1075,7 @@ describe('object', () => {
                 .keys({ a: Joi.string() })
                 .append(null);
 
-            expect(schema.validate({ a: 'x' }).error).to.not.exist();
+            Helper.validate(schema, [[{ a: 'x' }, true]]);
         });
 
         it('should not change schema if it is undefined', () => {
@@ -1104,7 +1084,7 @@ describe('object', () => {
                 .keys({ a: Joi.string() })
                 .append(undefined);
 
-            expect(schema.validate({ a: 'x' }).error).to.not.exist();
+            Helper.validate(schema, [[{ a: 'x' }, true]]);
         });
 
         it('should not change schema if it is empty-object', () => {
@@ -1113,7 +1093,7 @@ describe('object', () => {
                 .keys({ a: Joi.string() })
                 .append({});
 
-            expect(schema.validate({ a: 'x' }).error).to.not.exist();
+            Helper.validate(schema, [[{ a: 'x' }, true]]);
         });
     });
 
@@ -1156,7 +1136,7 @@ describe('object', () => {
             })
                 .assert(Joi.ref('/d/e', { separator: '/' }), Joi.ref('a.c'), 'equal to a/c');
 
-            expect(schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }).error).to.be.an.error('"value" is invalid because "d/e" failed to equal to a/c');
+            Helper.validate(schema, [[{ a: { b: 'x', c: 5 }, d: { e: 6 } }, false, '"value" is invalid because "d/e" failed to equal to a/c']]);
 
             Helper.validate(schema, [
                 [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
@@ -1177,16 +1157,18 @@ describe('object', () => {
             })
                 .assert(ref, Joi.ref('a.c'), 'equal to a.c');
 
-            const err = schema.validate({ a: { b: 'x', c: 5 }, d: { e: 6 } }).error;
-            expect(err).to.be.an.error('"value" is invalid because "d.e" failed to equal to a.c');
-            expect(err.details).to.equal([{
-                message: '"value" is invalid because "d.e" failed to equal to a.c',
-                path: [],
-                type: 'object.assert',
-                context: { subject: ref, message: 'equal to a.c', label: 'value', value: { a: { b: 'x', c: 5 }, d: { e: 6 } } }
-            }]);
-
             Helper.validate(schema, [
+                [{ a: { b: 'x', c: 5 }, d: { e: 6 } }, false, {
+                    message: '"value" is invalid because "d.e" failed to equal to a.c',
+                    path: [],
+                    type: 'object.assert',
+                    context: {
+                        subject: ref,
+                        message: 'equal to a.c',
+                        label: 'value',
+                        value: { a: { b: 'x', c: 5 }, d: { e: 6 } }
+                    }
+                }],
                 [{ a: { b: 'x', c: 5 }, d: { e: 5 } }, true]
             ]);
         });
@@ -1248,9 +1230,7 @@ describe('object', () => {
                 }
             }).assert(ref, Joi.boolean());
 
-            const err = schema.validate({ d: { e: [] } }).error;
-            expect(err).to.be.an.error('"value" is invalid because "d.e" failed to pass the assertion test');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[{ d: { e: [] } }, false, {
                 message: '"value" is invalid because "d.e" failed to pass the assertion test',
                 path: [],
                 type: 'object.assert',
@@ -1260,7 +1240,7 @@ describe('object', () => {
                     label: 'value',
                     value: { d: { e: [] } }
                 }
-            }]);
+            }]]);
         });
 
         it('works with keys()', () => {
@@ -1271,7 +1251,7 @@ describe('object', () => {
                 .keys({ b: { c: Joi.any() } })
                 .assert('.b.c', Joi.number());
 
-            expect(schema.validate({ a: { b: 1 }, b: { c: 2 } }).error).to.not.exist();
+            Helper.validate(schema, [[{ a: { b: 1 }, b: { c: 2 } }, true]]);
         });
 
         it('uses templates', () => {
@@ -1284,10 +1264,8 @@ describe('object', () => {
             })
                 .assert(subject, true, 'at least one key must be true');
 
-            expect(schema.validate().error).to.not.exist();
-            expect(schema.validate({ a: false, b: true, c: true }).error).to.not.exist();
-
             Helper.validate(schema, [
+                [undefined, true],
                 [{ a: true, b: true, c: true }, true],
                 [{ a: true, b: false, c: false }, true],
                 [{ a: false, b: true, c: false }, true],
@@ -1318,13 +1296,13 @@ describe('object', () => {
         it('ignores null', () => {
 
             const schema = Joi.object({ a: Joi.number(), b: Joi.number() }).allow(null).cast('map');
-            expect(schema.validate(null).value).to.be.null();
+            Helper.validate(schema, [[null, true, null]]);
         });
 
         it('ignores string', () => {
 
             const schema = Joi.object({ a: Joi.number(), b: Joi.number() }).allow('x').cast('map');
-            expect(schema.validate('x').value).to.equal('x');
+            Helper.validate(schema, [['x', true, 'x']]);
         });
 
         it('does not leak casts to any', () => {
@@ -1407,14 +1385,12 @@ describe('object', () => {
             };
 
             const schema = Joi.object().instance(Foo);
-            const err = schema.validate({}).error;
-            expect(err).to.be.an.error('"value" must be an instance of "Foo"');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[{}, false, {
                 message: '"value" must be an instance of "Foo"',
                 path: [],
                 type: 'object.instance',
                 context: { type: 'Foo', label: 'value', value: {} }
-            }]);
+            }]]);
         });
 
         it('uses custom type name if supplied', () => {
@@ -1423,14 +1399,12 @@ describe('object', () => {
             };
 
             const schema = Joi.object().instance(Foo, 'Bar');
-            const err = schema.validate({}).error;
-            expect(err).to.be.an.error('"value" must be an instance of "Bar"');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[{}, false, {
                 message: '"value" must be an instance of "Bar"',
                 path: [],
                 type: 'object.instance',
                 context: { type: 'Bar', label: 'value', value: {} }
-            }]);
+            }]]);
         });
 
         it('overrides constructor name with custom name', () => {
@@ -1439,14 +1413,12 @@ describe('object', () => {
             };
 
             const schema = Joi.object().instance(Foo, 'Bar');
-            const err = schema.validate({}).error;
-            expect(err).to.be.an.error('"value" must be an instance of "Bar"');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[{}, false, {
                 message: '"value" must be an instance of "Bar"',
                 path: [],
                 type: 'object.instance',
                 context: { type: 'Bar', label: 'value', value: {} }
-            }]);
+            }]]);
         });
 
         it('throws when constructor is not a function', () => {
@@ -1477,47 +1449,41 @@ describe('object', () => {
 
             const a = Joi.object({ a: 4 });
             const b = a.keys();
-            const err = a.validate({ b: 3 }).error;
-            expect(err).to.be.an.error('"b" is not allowed');
-            expect(err.details).to.equal([{
+            Helper.validate(a, [[{ b: 3 }, false, {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.unknown',
                 context: { child: 'b', label: 'b', key: 'b', value: 3 }
-            }]);
+            }]]);
 
-            expect(b.validate({ b: 3 }).error).to.not.exist();
+            Helper.validate(b, [[{ b: 3 }, true]]);
         });
 
         it('forbids all keys', () => {
 
             const a = Joi.object();
             const b = a.keys({});
-            expect(a.validate({ b: 3 }).error).to.not.exist();
-            const err = b.validate({ b: 3 }).error;
-            expect(err).to.be.an.error('"b" is not allowed');
-            expect(err.details).to.equal([{
+            Helper.validate(a, [[{ b: 3 }, true]]);
+            Helper.validate(b, [[{ b: 3 }, false, {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.unknown',
                 context: { child: 'b', label: 'b', key: 'b', value: 3 }
-            }]);
+            }]]);
         });
 
         it('adds to existing keys', () => {
 
             const a = Joi.object({ a: 1 });
             const b = a.keys({ b: 2 });
-            const err = a.validate({ a: 1, b: 2 }).error;
-            expect(err).to.be.an.error('"b" is not allowed');
-            expect(err.details).to.equal([{
+            Helper.validate(a, [[{ a: 1, b: 2 }, false, {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.unknown',
                 context: { child: 'b', label: 'b', key: 'b', value: 2 }
-            }]);
+            }]]);
 
-            expect(b.validate({ a: 1, b: 2 }).error).to.not.exist();
+            Helper.validate(b, [[{ a: 1, b: 2 }, true]]);
         });
 
         it('overrides existing keys', () => {
@@ -1554,7 +1520,7 @@ describe('object', () => {
                 b: Joi.string()
             });
 
-            expect(schema.validate({ a: 'test', b: 'test' })).to.equal({ value: { b: 'test' } });
+            Helper.validate(schema, [[{ a: 'test', b: 'test' }, true, { b: 'test' }]]);
         });
 
         it('strips keys after validation', () => {
@@ -1564,7 +1530,7 @@ describe('object', () => {
                 b: Joi.string().default(Joi.ref('a'))
             });
 
-            expect(schema.validate({ a: 'test' })).to.equal({ value: { b: 'test' } });
+            Helper.validate(schema, [[{ a: 'test' }, true, { b: 'test' }]]);
         });
 
         it('strips keys while preserving transformed values', () => {
@@ -1575,19 +1541,15 @@ describe('object', () => {
                 b: Joi.number().min(ref)
             });
 
-            const result = schema.validate({ a: '1', b: '2' });
-            expect(result.error).to.not.exist();
-            expect(result.value.a).to.not.exist();
-            expect(result.value.b).to.equal(2);
-
-            const result2 = schema.validate({ a: '1', b: '0' });
-            expect(result2.error).to.be.an.error('"b" must be larger than or equal to ref:a');
-            expect(result2.error.details).to.equal([{
-                message: '"b" must be larger than or equal to ref:a',
-                path: ['b'],
-                type: 'number.min',
-                context: { limit: ref, value: 0, label: 'b', key: 'b' }
-            }]);
+            Helper.validate(schema, [
+                [{ a: '1', b: '2' }, true, { b: 2 }],
+                [{ a: '1', b: '0' }, false, {
+                    message: '"b" must be larger than or equal to ref:a',
+                    path: ['b'],
+                    type: 'number.min',
+                    context: { limit: ref, value: 0, label: 'b', key: 'b' }
+                }]
+            ]);
         });
 
         it('does not alter the original object when stripping keys', () => {
@@ -1613,7 +1575,7 @@ describe('object', () => {
                 a: [Joi.boolean().strip()]
             });
 
-            expect(schema.validate({ a: true })).to.equal({ value: {} });
+            Helper.validate(schema, [[{ a: true }, true, {}]]);
         });
 
         it('keeps keys in ref order', () => {
@@ -1630,10 +1592,12 @@ describe('object', () => {
                     { is: 'a', then: Joi.object({ flag: false }) }
                 ]);
 
-            expect(schema.validate({ flag: true }).error).to.be.an.error('"type" is required');
-            expect(schema.validate({ flag: true }).error).to.be.an.error('"type" is required');
-            expect(schema.validate({ type: 'a', flag: true }).error).to.be.an.error('"flag" must be [false]');
-            expect(schema.validate({ type: 'a', set: true, flag: true }).error).to.be.an.error('"flag" must be [false]');
+            Helper.validate(schema, [
+                [{ flag: true }, false, '"type" is required'],
+                [{ flag: true }, false, '"type" is required'],
+                [{ type: 'a', flag: true }, false, '"flag" must be [false]'],
+                [{ type: 'a', set: true, flag: true }, false, '"flag" must be [false]']
+            ]);
         });
     });
 

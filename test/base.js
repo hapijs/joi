@@ -974,7 +974,7 @@ describe('any', () => {
             };
 
             const schema = Joi.function().default(defaultGeneratorFn);
-            expect(schema.validate(undefined)).to.equal({ value: defaultFn });
+            Helper.validate(schema, [[undefined, true, defaultFn]]);
         });
 
         it('allows passing a ref as a default without a description', () => {
@@ -984,7 +984,7 @@ describe('any', () => {
                 b: Joi.string().default(Joi.ref('a'))
             });
 
-            expect(schema.validate({ a: 'test' })).to.equal({ value: { a: 'test', b: 'test' } });
+            Helper.validate(schema, [[{ a: 'test' }, true, { a: 'test', b: 'test' }]]);
         });
 
         it('ignores description when passing a ref as a default', () => {
@@ -994,7 +994,7 @@ describe('any', () => {
                 b: Joi.string().default(Joi.ref('a'))
             });
 
-            expect(schema.validate({ a: 'test' })).to.equal({ value: { a: 'test', b: 'test' } });
+            Helper.validate(schema, [[{ a: 'test' }, true, { a: 'test', b: 'test' }]]);
         });
 
         it('catches errors in default methods', () => {
@@ -1009,21 +1009,21 @@ describe('any', () => {
 
             const schema = Joi.string().default(defaultFn);
 
-            const err = schema.validate(undefined).error;
-            expect(err.details).to.have.length(1);
-            expect(err.details).to.equal([{
-                message: '"value" threw an error when running default method',
-                path: [],
-                type: 'any.default',
-                context: { error, label: 'value', value: null }
-            }]);
+            Helper.validate(schema, [
+                [undefined, false, {
+                    message: '"value" threw an error when running default method',
+                    path: [],
+                    type: 'any.default',
+                    context: { error, label: 'value', value: null }
+                }]
+            ]);
         });
 
         it('should not overide a value when value is given', () => {
 
             const schema = Joi.object({ foo: Joi.string().default('bar') });
             const input = { foo: 'test' };
-            expect(schema.validate(input)).to.equal({ value: { foo: 'test' } });
+            Helper.validate(schema, [[input, true, { foo: 'test' }]]);
         });
 
         it('sets value based on condition (outer)', () => {
@@ -1035,7 +1035,7 @@ describe('any', () => {
                     .when('a', { is: true, then: Joi.required(), otherwise: Joi.forbidden() })
             });
 
-            expect(schema.validate({ a: false })).to.equal({ value: { a: false, b: false } });
+            Helper.validate(schema, [[{ a: false }, true, { a: false, b: false }]]);
         });
 
         it('sets value based on condition (inner)', () => {
@@ -1045,7 +1045,7 @@ describe('any', () => {
                 b: Joi.boolean().when('a', { is: true, then: Joi.any().default(false), otherwise: Joi.forbidden() })
             });
 
-            expect(schema.validate({ a: true })).to.equal({ value: { a: true, b: false } });
+            Helper.validate(schema, [[{ a: true }, true, { a: true, b: false }]]);
         });
 
         it('creates deep defaults', () => {
@@ -1096,7 +1096,7 @@ describe('any', () => {
             });
 
             const input = { b: 42 };
-            expect(schema.validate(input, { noDefaults: true })).to.equal({ value: { b: 42 } });
+            Helper.validate(schema, { noDefaults: true }, [[input, true, { b: 42 }]]);
         });
 
         it('should not apply default values from functions if the noDefaults option is enquire', () => {
@@ -1114,7 +1114,7 @@ describe('any', () => {
             });
 
             const input = { b: 42 };
-            expect(schema.validate(input, { noDefaults: true })).to.equal({ value: { b: 42 } });
+            Helper.validate(schema, { noDefaults: true }, [[input, true, { b: 42 }]]);
         });
 
         it('should not apply default values from references if the noDefaults option is enquire', () => {
@@ -1125,7 +1125,7 @@ describe('any', () => {
             });
 
             const input = { b: 42 };
-            expect(schema.validate(input, { noDefaults: true })).to.equal({ value: { b: 42 } });
+            Helper.validate(schema, { noDefaults: true }, [[input, true, { b: 42 }]]);
         });
 
         it('should be able to support both empty and noDefaults', () => {
@@ -1136,7 +1136,7 @@ describe('any', () => {
             });
 
             const input = { a: 'foo', b: 42 };
-            expect(schema.validate(input, { noDefaults: true })).to.equal({ value: { b: 42 } });
+            Helper.validate(schema, { noDefaults: true }, [[input, true, { b: 42 }]]);
         });
     });
 
@@ -1627,9 +1627,11 @@ describe('any', () => {
 
             const schema = Joi.object({ x: Joi.number().default(1).failover(2) });
 
-            expect(schema.validate({})).to.equal({ value: { x: 1 } });
-            expect(schema.validate({ x: 3 })).to.equal({ value: { x: 3 } });
-            expect(schema.validate({ x: [] })).to.equal({ value: { x: 2 } });
+            Helper.validate(schema, [
+                [{}, true, { x: 1 }],
+                [{ x: 3 }, true, { x: 3 }],
+                [{ x: [] }, true, { x: 2 }]
+            ]);
         });
     });
 
@@ -1692,8 +1694,8 @@ describe('any', () => {
         it('preserves passed value when cloned', () => {
 
             const o = {};
-            expect(Joi.object().invalid(o).clone().validate(o).error).to.be.an.error('"value" contains an invalid value');
-            expect(Joi.object().invalid({}).clone().validate({}).error).to.be.an.error('"value" contains an invalid value');
+            Helper.validate(Joi.object().invalid(o).clone(), [[o, false, '"value" contains an invalid value']]);
+            Helper.validate(Joi.object().invalid({}).clone(), [[{}, false, '"value" contains an invalid value']]);
         });
 
         it('errors on blocked schema', () => {
@@ -1716,15 +1718,19 @@ describe('any', () => {
         it('overrides previous values', () => {
 
             const schema = Joi.number().invalid(2).invalid(Joi.override, 1);
-            expect(schema.validate(1).error).to.be.an.error('"value" contains an invalid value');
-            expect(schema.validate(2).error).to.not.exist();
+            Helper.validate(schema, [
+                [1, false , '"value" contains an invalid value'],
+                [2, true, 2]
+            ]);
         });
 
         it('cancels previous values', () => {
 
             const schema = Joi.number().invalid(2).invalid(Joi.override);
-            expect(schema.validate(1).error).to.not.exist();
-            expect(schema.validate(2).error).to.not.exist();
+            Helper.validate(schema, [
+                [1, true, 1],
+                [2, true, 2]
+            ]);
         });
 
         it('ignores empty override', () => {
@@ -1742,7 +1748,7 @@ describe('any', () => {
                 .min(10).keep()
                 .min(100);
 
-            expect(schema.validate(1, { abortEarly: false }).error).to.be.an.error('"value" must be larger than or equal to 10. "value" must be larger than or equal to 100');
+            Helper.validate(schema, { abortEarly: false }, [[1, false, '"value" must be larger than or equal to 10. "value" must be larger than or equal to 100']]);
         });
 
         it('retains both unique rule instances in concat', () => {
@@ -1751,7 +1757,7 @@ describe('any', () => {
                 .min(10).keep()
                 .concat(Joi.number().min(100));
 
-            expect(schema.validate(1, { abortEarly: false }).error).to.be.an.error('"value" must be larger than or equal to 10. "value" must be larger than or equal to 100');
+            Helper.validate(schema, { abortEarly: false }, [[1, false, '"value" must be larger than or equal to 10. "value" must be larger than or equal to 100']]);
         });
     });
 
@@ -1761,13 +1767,12 @@ describe('any', () => {
 
             const schema = Joi.object({ b: Joi.string().email().label('Custom label') });
             const input = { b: 'not_a_valid_email' };
-            const err = schema.validate(input).error;
-            expect(err.details[0]).to.equal({
+            Helper.validate(schema, [[input, false, {
                 message: '"Custom label" must be a valid email',
                 path: ['b'],
                 type: 'string.email',
                 context: { value: 'not_a_valid_email', invalids: ['not_a_valid_email'], label: 'Custom label', key: 'b' }
-            });
+            }]]);
         });
 
         it('throws when label is missing', () => {
@@ -1787,14 +1792,12 @@ describe('any', () => {
         it('does not leak into sub objects', () => {
 
             const schema = Joi.object({ a: Joi.number() }).label('foo');
-            const err = schema.validate({ a: 'a' }).error;
-            expect(err).to.be.an.error('"a" must be a number');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[{ a: 'a' }, false, {
                 message: '"a" must be a number',
                 path: ['a'],
                 type: 'number.base',
                 context: { label: 'a', key: 'a', value: 'a' }
-            }]);
+            }]]);
         });
 
         it('does not leak into sub objects from an array', () => {
@@ -1803,27 +1806,23 @@ describe('any', () => {
                 Joi.object({ a: Joi.number() }).label('foo')
             ).label('bar');
 
-            const err = schema.validate([{ a: 'a' }]).error;
-            expect(err).to.be.an.error('"[0].a" must be a number');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[[{ a: 'a' }], false, {
                 message: '"[0].a" must be a number',
                 path: [0, 'a'],
                 type: 'number.base',
                 context: { label: '[0].a', key: 'a', value: 'a' }
-            }]);
+            }]]);
         });
 
         it('does not leak into unknown keys', () => {
 
             const schema = Joi.object({ a: Joi.number() }).label('foo');
-            const err = schema.validate({ b: 'a' }).error;
-            expect(err).to.be.an.error('"b" is not allowed');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[{ b: 'a' }, false, {
                 message: '"b" is not allowed',
                 path: ['b'],
                 type: 'object.unknown',
                 context: { child: 'b', label: 'b', key: 'b', value: 'a' }
-            }]);
+            }]]);
         });
 
         it('applies only to hierarchy edge', () => {
@@ -1836,16 +1835,12 @@ describe('any', () => {
                 }).label('A')
             });
 
-            const err = schema.validate({ a: { b: { c: 'x' } } }).error;
-            expect(err).to.be.an.error('"C" must be a number');
-            expect(err.details).to.equal([
-                {
-                    message: '"C" must be a number',
-                    path: ['a', 'b', 'c'],
-                    type: 'number.base',
-                    context: { label: 'C', value: 'x', key: 'c' }
-                }
-            ]);
+            Helper.validate(schema, [[{ a: { b: { c: 'x' } } }, false, {
+                message: '"C" must be a number',
+                path: ['a', 'b', 'c'],
+                type: 'number.base',
+                context: { label: 'C', value: 'x', key: 'c' }
+            }]]);
         });
     });
 
@@ -1857,8 +1852,10 @@ describe('any', () => {
                 .min(10).message('way too small')
                 .max(100).message('way too big');
 
-            expect(schema.validate(1).error).to.be.an.error('way too small');
-            expect(schema.validate(1000).error).to.be.an.error('way too big');
+            Helper.validate(schema, [
+                [1, false, 'way too small'],
+                [1000, false, 'way too big']
+            ]);
         });
 
         it('overrides message with template', () => {
@@ -1866,7 +1863,7 @@ describe('any', () => {
             const schema = Joi.number()
                 .min(10).message(Joi.x('way too small'));
 
-            expect(schema.validate(1).error).to.be.an.error('way too small');
+            Helper.validate(schema, [[1, false, 'way too small']]);
         });
 
         it('overrides message in multiple language', () => {
@@ -1918,7 +1915,7 @@ describe('any', () => {
             };
 
             const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
-            expect(schema.validate({ a: 1 }).error).to.be.an.error('a angustus');
+            Helper.validate(schema, [[{ a: 1 }, false, 'a angustus']]);
         });
 
         it('overrides message in multiple language (flat template)', () => {
@@ -1929,7 +1926,7 @@ describe('any', () => {
             };
 
             const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
-            expect(schema.validate({ a: 1 }).error).to.be.an.error('a angustus');
+            Helper.validate(schema, [[{ a: 1 }, false, 'a angustus']]);
         });
 
         it('errors on invalid message value', () => {
@@ -2003,9 +2000,11 @@ describe('any', () => {
 
             const schema = Joi.number().allow(1, 'x').only();
 
-            expect(schema.validate(1).error).to.not.exist();
-            expect(schema.validate('x').error).to.not.exist();
-            expect(schema.validate(2).error).to.be.an.error('"value" must be one of [1, x]');
+            Helper.validate(schema, [
+                [1, true],
+                ['x', true],
+                [2, false, '"value" must be one of [1, x]']
+            ]);
         });
     });
 
@@ -2082,7 +2081,7 @@ describe('any', () => {
 
             const schema = Joi.object({ b: Joi.number().strict().prefs({ convert: true }) });
             const input = { b: '2' };
-            expect(schema.validate(input)).to.equal({ value: { b: 2 } });
+            Helper.validate(schema, [[input, true, { b: 2 }]]);
         });
 
         it('throws with an invalid option', () => {
@@ -2169,14 +2168,14 @@ describe('any', () => {
             for (const test of tests) {
                 const input = test[1];
                 const schema = test[0].raw();
-                expect(schema.raw().validate(input)).to.equal({ value: input });
+                Helper.validate(schema.raw(), [[input, true, input]]);
             }
         });
 
         it('cancels raw mode', () => {
 
             const schema = Joi.number().raw().raw(false);
-            expect(schema.validate('123')).to.equal({ value: 123 });
+            Helper.validate(schema, [['123', true, 123]]);
         });
 
         it('avoids unnecessary cloning when called twice', () => {
@@ -2232,8 +2231,10 @@ describe('any', () => {
                     .min(10).rule({ message: 'way too small', keep: true })
                     .min(100).message('still too small');
 
-                expect(schema.validate(1).error).to.be.an.error('way too small');
-                expect(schema.validate(90).error).to.be.an.error('still too small');
+                Helper.validate(schema, [
+                    [1, false, 'way too small'],
+                    [90, false, 'still too small']
+                ]);
             });
         });
 
@@ -2249,15 +2250,19 @@ describe('any', () => {
             it('overrides ruleset with single message', () => {
 
                 const schema = Joi.number().$.max(100).min(10).rule({ message: 'number out of bound' });
-                expect(schema.validate(1).error).to.be.an.error('number out of bound');
-                expect(schema.validate(101).error).to.be.an.error('number out of bound');
+                Helper.validate(schema, [
+                    [1, false, 'number out of bound'],
+                    [101, false, 'number out of bound']
+                ]);
             });
 
             it('overrides ruleset messages', () => {
 
                 const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': 'way too big', 'number.min': 'way too small' } });
-                expect(schema.validate(1).error).to.be.an.error('way too small');
-                expect(schema.validate(101).error).to.be.an.error('way too big');
+                Helper.validate(schema, [
+                    [1, false, 'way too small'],
+                    [101, false, 'way too big']
+                ]);
             });
 
             it('overrides template', () => {
@@ -2270,22 +2275,28 @@ describe('any', () => {
             it('overrides ruleset with single template', () => {
 
                 const schema = Joi.number().$.max(100).min(10).rule({ message: '{{#label}} number out of bound' });
-                expect(schema.validate(1).error).to.be.an.error('value number out of bound');
-                expect(schema.validate(101).error).to.be.an.error('value number out of bound');
+                Helper.validate(schema, [
+                    [1, false, 'value number out of bound'],
+                    [101, false, 'value number out of bound']
+                ]);
             });
 
             it('overrides ruleset templates', () => {
 
                 const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': '{{#label}} way too big', 'number.min': '{{#label}} way too small' } });
-                expect(schema.validate(1).error).to.be.an.error('value way too small');
-                expect(schema.validate(101).error).to.be.an.error('value way too big');
+                Helper.validate(schema, [
+                    [1, false, 'value way too small'],
+                    [101, false, 'value way too big']
+                ]);
             });
 
             it('overrides ruleset with both message and template', () => {
 
                 const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': 'way too big', 'number.min': '{{#label}} way too small' } });
-                expect(schema.validate(1).error).to.be.an.error('value way too small');
-                expect(schema.validate(101).error).to.be.an.error('way too big');
+                Helper.validate(schema, [
+                    [1, false, 'value way too small'],
+                    [101, false, 'way too big']
+                ]);
             });
         });
     });
@@ -2353,14 +2364,12 @@ describe('any', () => {
 
             const schema = Joi.object({ b: Joi.number().prefs({ convert: true }).strict() });
             const input = { b: '2' };
-            const err = schema.validate(input).error;
-            expect(err.message).to.equal('"b" must be a number');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[input, false, {
                 message: '"b" must be a number',
                 path: ['b'],
                 type: 'number.base',
                 context: { label: 'b', key: 'b', value: '2' }
-            }]);
+            }]]);
         });
     });
 
@@ -2369,21 +2378,19 @@ describe('any', () => {
         it('validates and returns undefined', () => {
 
             const schema = Joi.string().strip();
-            expect(schema.validate('test')).to.equal({ value: undefined });
+            Helper.validate(schema, [['test', true, undefined]]);
         });
 
         it('validates and returns an error', () => {
 
             const schema = Joi.string().strip();
 
-            const err = schema.validate(1).error;
-            expect(err.message).to.equal('"value" must be a string');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[1, false, {
                 message: '"value" must be a string',
                 path: [],
                 type: 'string.base',
                 context: { value: 1, label: 'value' }
-            }]);
+            }]]);
         });
 
         it('avoids unnecessary cloning when called twice', () => {
@@ -2539,75 +2546,81 @@ describe('any', () => {
 
         it('validates different types of values', () => {
 
-            expect(Joi.valid(1).validate(1).error).to.not.exist();
-            expect(Joi.valid(1).validate(2).error).to.exist();
+            Helper.validate(Joi.valid(1), [[1, true]]);
+            Helper.validate(Joi.valid(1), [[2, false, '"value" must be [1]']]);
 
             const d = new Date();
-            expect(Joi.valid(d).validate(new Date(d.getTime())).error).to.not.exist();
-            expect(Joi.valid(d).validate(new Date(d.getTime() + 1)).error).to.be.an.error(`"value" must be [${d.toISOString()}]`);
-            expect(Joi.valid(d).validate(new Date(d.getTime() + 1)).error.details).to.equal([{
-                message: `"value" must be [${d.toISOString()}]`,
-                path: [],
-                type: 'any.only',
-                context: { value: new Date(d.getTime() + 1), valids: [d], label: 'value' }
-            }]);
-            expect(Joi.valid(Joi.ref('$a')).validate(d, { context: { a: new Date(d.getTime()) } }).error).to.not.exist();
-            expect(Joi.object({ a: Joi.date(), b: Joi.valid(Joi.ref('a')) }).validate({ a: d, b: d }).error).to.not.exist();
-            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }).validate({ a: d, b: d }).error).to.not.exist();
-            expect(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }).validate({ a: new Date(0), b: d }).error).to.be.an.error('"b" must be [ref:a]');
+            Helper.validate(Joi.valid(d), [
+                [new Date(d.getTime()), true],
+                [new Date(d.getTime() + 1), false, {
+                    message: `"value" must be [${d.toISOString()}]`,
+                    path: [],
+                    type: 'any.only',
+                    context: { value: new Date(d.getTime() + 1), valids: [d], label: 'value' }
+                }]
+            ]);
+            Helper.validate(Joi.valid(Joi.ref('$a')), { context: { a: new Date(d.getTime()) } }, [[d, true]]);
+            Helper.validate(Joi.object({ a: Joi.date(), b: Joi.valid(Joi.ref('a')) }), [[{ a: d, b: d }, true]]);
+            Helper.validate(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }), [[{ a: d, b: d }, true]]);
+            Helper.validate(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }), [[{ a: new Date(0), b: d }, false, '"b" must be [ref:a]']]);
 
             const str = 'foo';
-            expect(Joi.valid(str).validate(str).error).to.not.exist();
-            expect(Joi.valid(str).validate('foobar').error).to.be.an.error('"value" must be [foo]');
-            expect(Joi.valid(str).validate('foobar').error.details).to.equal([{
-                message: '"value" must be [foo]',
-                path: [],
-                type: 'any.only',
-                context: { value: 'foobar', valids: [str], label: 'value' }
-            }]);
+            Helper.validate(Joi.valid(str), [
+                [str, true],
+                ['foobar', false, {
+                    message: '"value" must be [foo]',
+                    path: [],
+                    type: 'any.only',
+                    context: { value: 'foobar', valids: [str], label: 'value' }
+                }]
+            ]);
 
             const s = Symbol('foo');
-            expect(Joi.valid(s).validate(s).error).to.not.exist();
             const otherSymbol = Symbol('foo');
-            expect(Joi.valid(s).validate(otherSymbol).error).to.be.an.error('"value" must be [Symbol(foo)]');
-            expect(Joi.valid(s).validate(otherSymbol).error.details).to.equal([{
-                message: '"value" must be [Symbol(foo)]',
-                path: [],
-                type: 'any.only',
-                context: { value: otherSymbol, valids: [s], label: 'value' }
-            }]);
+            Helper.validate(Joi.valid(s), [
+                [s, true],
+                [otherSymbol, false, {
+                    message: '"value" must be [Symbol(foo)]',
+                    path: [],
+                    type: 'any.only',
+                    context: { value: otherSymbol, valids: [s], label: 'value' }
+                }]
+            ]);
 
             const o = {};
-            expect(Joi.valid(o).validate(o).error).to.not.exist();
-            expect(Joi.valid(o).validate({}).error).to.not.exist();
-            expect(Joi.valid(o).validate({ x: 1 }).error).to.be.an.error('"value" must be [[object Object]]');
-            expect(Joi.valid(o).validate({ x: 1 }).error.details).to.equal([{
-                message: '"value" must be [[object Object]]',
-                path: [],
-                type: 'any.only',
-                context: { value: { x: 1 }, valids: [o], label: 'value' }
-            }]);
+            Helper.validate(Joi.valid(o), [
+                [o, true],
+                [{}, true],
+                [{ x: 1 }, false, {
+                    message: '"value" must be [[object Object]]',
+                    path: [],
+                    type: 'any.only',
+                    context: { value: { x: 1 }, valids: [o], label: 'value' }
+                }]
+            ]);
 
             const f = () => { };
-            expect(Joi.valid(f).validate(f).error).to.not.exist();
             const otherFunction = () => { };
-            expect(Joi.valid(f).validate(otherFunction).error).to.be.an.error('"value" must be [() => { }]');
-            expect(Joi.valid(f).validate(otherFunction).error.details).to.equal([{
-                message: '"value" must be [() => { }]',
-                path: [],
-                type: 'any.only',
-                context: { value: otherFunction, valids: [f], label: 'value' }
-            }]);
+            Helper.validate(Joi.valid(f), [
+                [f, true],
+                [otherFunction, false, {
+                    message: '"value" must be [() => { }]',
+                    path: [],
+                    type: 'any.only',
+                    context: { value: otherFunction, valids: [f], label: 'value' }
+                }]
+            ]);
 
             const b = Buffer.from('foo');
-            expect(Joi.valid(b).validate(b).error).to.not.exist();
-            expect(Joi.valid(b).validate(Buffer.from('foobar')).error).to.be.an.error('"value" must be [foo]');
-            expect(Joi.valid(b).validate(Buffer.from('foobar')).error.details).to.equal([{
-                message: '"value" must be [foo]',
-                path: [],
-                type: 'any.only',
-                context: { value: Buffer.from('foobar'), valids: [b], label: 'value' }
-            }]);
+            Helper.validate(Joi.valid(b), [
+                [b, true],
+                [Buffer.from('foobar'), false, {
+                    message: '"value" must be [foo]',
+                    path: [],
+                    type: 'any.only',
+                    context: { value: Buffer.from('foobar'), valids: [b], label: 'value' }
+                }]
+            ]);
         });
 
         it('supports templates', () => {
@@ -2617,8 +2630,10 @@ describe('any', () => {
                 b: Joi.valid(Joi.x('{a + 1}'))
             });
 
-            expect(schema.validate({ a: 5, b: 6 }).error).to.not.exist();
-            expect(schema.validate({ a: 5, b: 5 }).error).to.be.an.error('"b" must be [{a + 1}]');
+            Helper.validate(schema, [
+                [{ a: 5, b: 6 }, true],
+                [{ a: 5, b: 5 }, false, '"b" must be [{a + 1}]']
+            ]);
         });
 
         it('supports templates with literals', () => {
@@ -2628,8 +2643,10 @@ describe('any', () => {
                 b: Joi.valid(Joi.x('x{a + 1}'))
             });
 
-            expect(schema.validate({ a: 5, b: 'x6' }).error).to.not.exist();
-            expect(schema.validate({ a: 5, b: 'x5' }).error).to.be.an.error('"b" must be [x{a + 1}]');
+            Helper.validate(schema, [
+                [{ a: 5, b: 'x6' }, true],
+                [{ a: 5, b: 'x5' }, false, '"b" must be [x{a + 1}]']
+            ]);
         });
 
         it('supports pure literal templates', () => {
@@ -2639,8 +2656,10 @@ describe('any', () => {
                 b: Joi.valid(Joi.x('x'))
             });
 
-            expect(schema.validate({ a: 5, b: 'x' }).error).to.not.exist();
-            expect(schema.validate({ a: 5, b: 'y' }).error).to.be.an.error('"b" must be [x]');
+            Helper.validate(schema, [
+                [{ a: 5, b: 'x' }, true],
+                [{ a: 5, b: 'y' }, false, '"b" must be [x]']
+            ]);
         });
 
         it('supports templates with functions', () => {
@@ -2651,8 +2670,10 @@ describe('any', () => {
                 c: Joi.valid(Joi.x('{if(a == 5 && b == true, a * 2, null)}'))
             });
 
-            expect(schema.validate({ a: 5, b: true, c: 10 }).error).to.not.exist();
-            expect(schema.validate({ a: 5, b: false, c: null }).error).to.not.exist();
+            Helper.validate(schema, [
+                [{ a: 5, b: true, c: 10 }, true],
+                [{ a: 5, b: false, c: null }, true]
+            ]);
         });
 
         it('looks up values in array (from single value)', () => {
@@ -2662,8 +2683,10 @@ describe('any', () => {
                 b: Joi.in('a')
             });
 
-            expect(schema.validate({ a: ['1', '2'], b: '2' }).error).to.not.exist();
-            expect(schema.validate({ a: ['1', '2'], b: '3' }).error).to.be.an.error('"b" must be [ref:a]');
+            Helper.validate(schema, [
+                [{ a: ['1', '2'], b: '2' }, true],
+                [{ a: ['1', '2'], b: '3' }, false, '"b" must be [ref:a]']
+            ]);
         });
 
         it('looks up values in array (from array value)', () => {
@@ -2673,8 +2696,10 @@ describe('any', () => {
                 b: Joi.array().valid(Joi.ref('a'))
             });
 
-            expect(schema.validate({ a: ['1', '2'], b: ['1', '2'] }).error).to.not.exist();
-            expect(schema.validate({ a: ['1', '2'], b: ['1'] }).error).to.be.an.error('"b" must be [ref:a]');
+            Helper.validate(schema, [
+                [{ a: ['1', '2'], b: ['1', '2'] }, true],
+                [{ a: ['1', '2'], b: ['1'] }, false, '"b" must be [ref:a]']
+            ]);
         });
     });
 
@@ -2683,14 +2708,15 @@ describe('any', () => {
         it('checks value after conversion', () => {
 
             const schema = Joi.number().invalid(2);
-            const err = schema.validate('2', { abortEarly: false }).error;
-            expect(err).to.be.an.error('"value" contains an invalid value');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, { abortEarly: false }, [['2', false, {
                 message: '"value" contains an invalid value',
-                path: [],
-                type: 'any.invalid',
-                context: { value: 2, invalids: [2], label: 'value' }
-            }]);
+                details: [{
+                    message: '"value" contains an invalid value',
+                    path: [],
+                    type: 'any.invalid',
+                    context: { value: 2, invalids: [2], label: 'value' }
+                }]
+            }]]);
         });
     });
 
@@ -2699,40 +2725,29 @@ describe('any', () => {
         it('accepts only value (sync way)', () => {
 
             const schema = Joi.number();
-            const result = schema.validate('2');
-            expect(result).to.contain({ value: 2 });
-        });
-
-        it('accepts value and callback', () => {
-
-            const schema = Joi.number();
-            expect(schema.validate('2')).to.equal({ value: 2 });
+            Helper.validate(schema, [['2', true, 2]]);
         });
 
         it('accepts value and options', () => {
 
             const schema = Joi.number();
-            const result = schema.validate('2', { convert: false });
-            expect(result.error).to.be.an.error('"value" must be a number');
-            expect(result.error.details).to.equal([{
+            Helper.validate(schema, { convert: false }, [['2', false, {
                 message: '"value" must be a number',
                 path: [],
                 type: 'number.base',
                 context: { label: 'value', value: '2' }
-            }]);
+            }]]);
         });
 
         it('accepts value, options and callback', () => {
 
             const schema = Joi.number();
-            const err = schema.validate('2', { convert: false }).error;
-            expect(err).to.be.an.error('"value" must be a number');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, { convert: false }, [['2', false, {
                 message: '"value" must be a number',
                 path: [],
                 type: 'number.base',
                 context: { label: 'value', value: '2' }
-            }]);
+            }]]);
         });
     });
 
