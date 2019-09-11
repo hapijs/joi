@@ -86,16 +86,14 @@ describe('string', () => {
 
     it('validates null', () => {
 
-        const err = Joi.string().validate(null).error;
-        expect(err).to.be.an.error('"value" must be a string');
-        expect(err.details).to.equal([{
+        Helper.validate(Joi.string(), [[null, false, {
             message: '"value" must be a string',
             path: [],
             type: 'string.base',
             context: { value: null, label: 'value' }
-        }]);
+        }]]);
 
-        expect(err.annotate()).to.equal('"value" must be a string');
+        expect(Joi.string().validate(null).error.annotate()).to.equal('"value" must be a string');
     });
 
     it('supports own properties references', () => {
@@ -1306,14 +1304,12 @@ describe('string', () => {
         it('validates domain with a friendly error message', () => {
 
             const schema = { item: Joi.string().domain() };
-            const err = Joi.compile(schema).validate({ item: 'something' }).error;
-            expect(err).to.be.an.error('"item" must contain a valid domain name');
-            expect(err.details).to.equal([{
+            Helper.validate(Joi.compile(schema), [[{ item: 'something' }, false, {
                 message: '"item" must contain a valid domain name',
                 path: ['item'],
                 type: 'string.domain',
                 context: { value: 'something', label: 'item', key: 'item' }
-            }]);
+            }]]);
         });
     });
 
@@ -5122,7 +5118,7 @@ describe('string', () => {
         it('supports allowed values', () => {
 
             const schema = Joi.string().isoDate().allow('x');
-            expect(schema.validate('x').error).to.not.exist();
+            Helper.validate(schema, [['x', true]]);
         });
     });
 
