@@ -1536,10 +1536,7 @@ describe('alternatives', () => {
 
         it('throws when missing alternatives', () => {
 
-            expect(() => {
-
-                Joi.alternatives().try();
-            }).to.throw('Missing alternative schemas');
+            expect(() => Joi.alternatives().try()).to.throw('Missing alternative schemas');
         });
 
         it('throws on unreachable condition', () => {

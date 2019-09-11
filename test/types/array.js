@@ -21,40 +21,22 @@ describe('array', () => {
         expect(() => Joi.array('invalid argument.')).to.throw('The array type does not allow arguments');
     });
 
-    it('errors on number', () => {
+    it('errors on invalid type', () => {
 
-        const err = Joi.array().validate(3).error;
-        expect(err).to.be.an.error('"value" must be an array');
-        expect(err.details).to.equal([{
-            message: '"value" must be an array',
-            path: [],
-            type: 'array.base',
-            context: { label: 'value', value: 3 }
-        }]);
-    });
-
-    it('converts a non-array string with number type', () => {
-
-        const err = Joi.array().validate('3').error;
-        expect(err).to.be.an.error('"value" must be an array');
-        expect(err.details).to.equal([{
-            message: '"value" must be an array',
-            path: [],
-            type: 'array.base',
-            context: { label: 'value', value: '3' }
-        }]);
-    });
-
-    it('errors on a non-array string', () => {
-
-        const err = Joi.array().validate('asdf').error;
-        expect(err).to.be.an.error('"value" must be an array');
-        expect(err.details).to.equal([{
-            message: '"value" must be an array',
-            path: [],
-            type: 'array.base',
-            context: { label: 'value', value: 'asdf' }
-        }]);
+        Helper.validate(Joi.array(), [
+            [3, false, {
+                message: '"value" must be an array',
+                path: [],
+                type: 'array.base',
+                context: { label: 'value', value: 3 }
+            }],
+            ['3', false, {
+                message: '"value" must be an array',
+                path: [],
+                type: 'array.base',
+                context: { label: 'value', value: '3' }
+            }]
+        ]);
     });
 
     describe('cast()', () => {
