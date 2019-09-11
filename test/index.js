@@ -95,10 +95,8 @@ describe('Joi', () => {
 
     it('validates regex directly', () => {
 
-        expect(Joi.compile(/^5$/).validate('5').error).to.not.exist();
-        const err = Joi.compile(/.{2}/).validate('6').error;
-        expect(err).to.be.an.error('"value" with value "6" fails to match the required pattern: /.{2}/');
-        expect(err.details).to.equal([{
+        Helper.validate(Joi.compile(/^5$/), [['5', true]]);
+        Helper.validate(Joi.compile(/.{2}/), [['6', false, {
             message: '"value" with value "6" fails to match the required pattern: /.{2}/',
             path: [],
             type: 'string.pattern.base',
@@ -108,7 +106,7 @@ describe('Joi', () => {
                 value: '6',
                 label: 'value'
             }
-        }]);
+        }]]);
     });
 
     it('validates an array of valid types', () => {
@@ -123,10 +121,8 @@ describe('Joi', () => {
             ]
         });
 
-        const err = schema.validate({ auth: { mode: 'none' } }).error;
-        expect(err).to.be.an.error('"auth.mode" must be one of [required, optional, try, null]');
-
         Helper.validate(schema, [
+            [{ auth: { mode: 'none' } }, false, '"auth.mode" must be one of [required, optional, try, null]'],
             [{ auth: { mode: 'try' } }, true],
             [{ something: undefined }, false, {
                 message: '"something" is not allowed',
@@ -300,7 +296,7 @@ describe('Joi', () => {
 
         Helper.validate(schema, [
             [5, true],
-            ['5', true]
+            ['5', true, 5]
         ]);
     });
 
@@ -358,17 +354,17 @@ describe('Joi', () => {
             password: Joi.string()
         }).with('username', 'password').without('password', 'access_token');
 
-        expect(schema.validate({ username: 'bob' }).error).to.be.an.error();
+        Helper.validate(schema, [[{ username: 'bob' }, false, '"username" missing required peer "password"']]);
     });
 
     it('validates config where the root item is a joi type', () => {
 
-        expect(Joi.boolean().allow(null).validate(true).error).to.not.exist();
-        expect(Joi.object().validate({ auth: { mode: 'try' } }).error).to.not.exist();
-        expect(Joi.object().validate(true).error).to.be.an.error('"value" must be of type object');
-        expect(Joi.string().validate(true).error).to.be.an.error('"value" must be a string');
-        expect(Joi.string().email().validate('test@test.com').error).to.not.exist();
-        expect(Joi.object({ param: Joi.string().required() }).validate({ param: 'item' }).error).to.not.exist();
+        Helper.validate(Joi.boolean().allow(null), [[true, true]]);
+        Helper.validate(Joi.object(), [[{ auth: { mode: 'try' } }, true]]);
+        Helper.validate(Joi.object(), [[true, false, '"value" must be of type object']]);
+        Helper.validate(Joi.string(), [[true, false, '"value" must be a string']]);
+        Helper.validate(Joi.string().email(), [['test@test.com', true]]);
+        Helper.validate(Joi.object({ param: Joi.string().required() }), [[{ param: 'item' }, true]]);
     });
 
     it('converts string to number', () => {
@@ -378,31 +374,27 @@ describe('Joi', () => {
         });
 
         const input = { a: '5' };
-        expect(schema.validate(input)).to.equal({ value: { a: 5 } });
+        Helper.validate(schema, [[input, true, { a: 5 }]]);
         expect(input.a).to.equal('5');
     });
 
     it('allows unknown keys in objects if no schema was given', () => {
 
-        expect(Joi.object().validate({ foo: 'bar' }).error).to.not.exist();
+        Helper.validate(Joi.object(), [[{ foo: 'bar' }, true]]);
     });
 
     it('fails on unknown keys in objects if a schema was given', () => {
 
-        const err = Joi.object({}).validate({ foo: 'bar' }).error;
-        expect(err).to.be.an.error('"foo" is not allowed');
-        expect(err.details).to.equal([{
+        Helper.validate(Joi.object({}), [[{ foo: 'bar' }, false, {
             message: '"foo" is not allowed',
             path: ['foo'],
             type: 'object.unknown',
             context: { child: 'foo', label: 'foo', key: 'foo', value: 'bar' }
-        }]);
+        }]]);
 
-        const err2 = Joi.compile({}).validate({ foo: 'bar' }).error;
-        expect(err2.message).to.equal('"foo" is not allowed');
+        Helper.validate(Joi.compile({}), [[{ foo: 'bar' }, false, '"foo" is not allowed']]);
 
-        const err3 = Joi.compile({ other: Joi.number() }).validate({ foo: 'bar' }).error;
-        expect(err3.message).to.equal('"foo" is not allowed');
+        Helper.validate(Joi.compile({ other: Joi.number() }), [[{ foo: 'bar' }, false, '"foo" is not allowed']]);
     });
 
     it('validates required key with multiple options', () => {
@@ -417,15 +409,12 @@ describe('Joi', () => {
             ]).required()
         };
 
-        const err = Joi.compile(config).validate({}).error;
-        expect(err.message).to.contain('"module" is required');
-
-        expect(Joi.compile(config).validate({ module: 'test' }).error).to.not.exist();
-
-        const err2 = Joi.compile(config).validate({ module: {} }).error;
-        expect(err2).to.be.an.error('"module.compile" is required');
-
-        expect(Joi.compile(config).validate({ module: { compile() { } } }).error).to.not.exist();
+        Helper.validate(Joi.compile(config), [
+            [{}, false, '"module" is required'],
+            [{ module: 'test' }, true],
+            [{ module: {} }, false, '"module.compile" is required'],
+            [{ module: { compile() { } } }, true]
+        ]);
     });
 
     it('validates key with required alternatives', () => {
@@ -455,8 +444,7 @@ describe('Joi', () => {
             ).required()
         };
 
-        const err = Joi.compile(config).validate({}).error;
-        expect(err.message).to.contain('"module" is required');
+        Helper.validate(Joi.compile(config), [[{}, false, '"module" is required']]);
     });
 
     it('validates object successfully when config has an array of types', () => {
@@ -471,7 +459,7 @@ describe('Joi', () => {
             g: 'test'
         };
 
-        expect(Joi.compile(schema).validate(obj).error).to.not.exist();
+        Helper.validate(Joi.compile(schema), [[obj, true]]);
     });
 
     it('validates object successfully when config allows for optional key and key is missing', () => {
@@ -487,7 +475,7 @@ describe('Joi', () => {
             i: 'test'
         };
 
-        expect(Joi.compile(schema).validate(obj).error).to.not.exist();
+        Helper.validate(Joi.compile(schema), [[obj, true]]);
     });
 
     it('fails validation', () => {
@@ -504,7 +492,7 @@ describe('Joi', () => {
             c: 'joe@example.com'
         };
 
-        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
+        Helper.validate(Joi.compile(schema), [[obj, false, '"a" must be less than or equal to 3']]);
     });
 
     it('fails validation when the wrong types are supplied', () => {
@@ -521,7 +509,7 @@ describe('Joi', () => {
             c: 'joe@example.com'
         };
 
-        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
+        Helper.validate(Joi.compile(schema), [[obj, false, '"a" must be a number']]);
     });
 
     it('fails validation when missing a required parameter', () => {
@@ -530,7 +518,7 @@ describe('Joi', () => {
             c: 10
         };
 
-        expect(Joi.compile({ a: Joi.string().required() }).validate(obj).error).to.be.an.error();
+        Helper.validate(Joi.compile({ a: Joi.string().required() }), [[obj, false, '"a" is required']]);
     });
 
     it('fails validation when missing a required parameter within an object config', () => {
@@ -539,7 +527,7 @@ describe('Joi', () => {
             a: {}
         };
 
-        expect(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
+        Helper.validate(Joi.compile({ a: Joi.object({ b: Joi.string().required() }) }), [[obj, false, '"a.b" is required']]);
     });
 
     it('fails validation when parameter is required to be an Array but is given as string', () => {
@@ -548,7 +536,7 @@ describe('Joi', () => {
             a: 'an array'
         };
 
-        expect(Joi.object({ a: Joi.array() }).validate(obj).error).to.be.an.error();
+        Helper.validate(Joi.object({ a: Joi.array() }), [[obj, false, '"a" must be an array']]);
     });
 
     it('fails validation when parameter is required to be an Array but is given as a json that is incorrect (object instead of array)', () => {
@@ -557,7 +545,7 @@ describe('Joi', () => {
             a: '{"b":2}'
         };
 
-        expect(Joi.object({ a: Joi.object({ b: Joi.string().required() }) }).validate(obj).error).to.be.an.error();
+        Helper.validate(Joi.object({ a: Joi.object({ b: Joi.string().required() }) }), [[obj, false, '"a" must be of type object']]);
     });
 
     it('fails validation when config is an array and fails', () => {
@@ -572,7 +560,7 @@ describe('Joi', () => {
             e: 'a'
         };
 
-        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
+        Helper.validate(Joi.compile(schema), [[obj, false, '"d" must be one of [string, boolean]']]);
     });
 
     it('fails validation when config is an array and fails with extra keys', () => {
@@ -587,7 +575,7 @@ describe('Joi', () => {
             b: 'a'
         };
 
-        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
+        Helper.validate(Joi.compile(schema), [[obj, false, '"a" is not allowed']]);
     });
 
     it('fails validation with extra keys', () => {
@@ -601,7 +589,7 @@ describe('Joi', () => {
             b: 'a'
         };
 
-        expect(Joi.compile(schema).validate(obj).error).to.be.an.error();
+        Helper.validate(Joi.compile(schema), [[obj, false, '"b" is not allowed']]);
     });
 
     it('validates missing optional key with string condition', () => {
@@ -610,7 +598,7 @@ describe('Joi', () => {
             key: Joi.string().alphanum(false).min(8)
         };
 
-        expect(Joi.compile(schema).validate({}).error).to.not.exist();
+        Helper.validate(Joi.compile(schema), [[{}, true]]);
     });
 
     it('validates with extra keys and remove them when stripUnknown is set', () => {
@@ -627,7 +615,7 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        expect(schema.validate(obj, { stripUnknown: true, allowUnknown: true })).to.equal({ value: { a: 1, b: 'a' } });
+        Helper.validate(schema, { stripUnknown: true, allowUnknown: true }, [[obj, true, { a: 1, b: 'a' }]]);
     });
 
     it('validates with extra keys and remove them when stripUnknown (as an object) is set', () => {
@@ -644,7 +632,7 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        expect(schema.validate(obj, { stripUnknown: { arrays: false, objects: true }, allowUnknown: true })).to.equal({ value: { a: 1, b: 'a' } });
+        Helper.validate(schema, { stripUnknown: { arrays: false, objects: true }, allowUnknown: true }, [[obj, true, { a: 1, b: 'a' }]]);
     });
 
     it('validates dependencies when stripUnknown is set', () => {
@@ -659,9 +647,7 @@ describe('Joi', () => {
             foo: 'bar'
         };
 
-        const err = schema.validate(obj, { stripUnknown: true }).error;
-        expect(err).to.be.an.error('"value" contains [a] without its required peers [b]');
-        expect(err.details).to.equal([{
+        Helper.validate(schema, { stripUnknown: true }, [[obj, false, {
             message: '"value" contains [a] without its required peers [b]',
             path: [],
             type: 'object.and',
@@ -673,7 +659,7 @@ describe('Joi', () => {
                 label: 'value',
                 value: { a: 1 }
             }
-        }]);
+        }]]);
     });
 
     it('validates dependencies when stripUnknown (as an object) is set', () => {
@@ -689,9 +675,7 @@ describe('Joi', () => {
             foo: 'bar'
         };
 
-        const err = schema.validate(obj, { stripUnknown: { arrays: false, objects: true } }).error;
-        expect(err).to.be.an.error('"value" contains [a] without its required peers [b]');
-        expect(err.details).to.equal([{
+        Helper.validate(schema, { stripUnknown: { arrays: false, objects: true } }, [[obj, false, {
             message: '"value" contains [a] without its required peers [b]',
             path: [],
             type: 'object.and',
@@ -703,7 +687,7 @@ describe('Joi', () => {
                 label: 'value',
                 value: { a: 1 }
             }
-        }]);
+        }]]);
     });
 
     it('fails to validate with incorrect property when asked to strip unknown keys without aborting early', () => {
@@ -720,7 +704,7 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        expect(schema.validate(obj, { stripUnknown: true, abortEarly: false }).error).to.be.an.error();
+        Helper.validate(schema, { stripUnknown: true, abortEarly: false }, [[obj, false, '"b" must be one of [a, b, c]']]);
     });
 
     it('fails to validate with incorrect property when asked to strip unknown keys (as an object) without aborting early', () => {
@@ -737,7 +721,7 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        expect(schema.validate(obj, { stripUnknown: { arrays: false, objects: true }, abortEarly: false }).error).to.be.an.error();
+        Helper.validate(schema, { stripUnknown: { arrays: false, objects: true }, abortEarly: false }, [[obj, false, '"b" must be one of [a, b, c]']]);
     });
 
     it('should pass validation with extra keys when allowUnknown is set', () => {
@@ -754,7 +738,7 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        expect(schema.validate(obj, { allowUnknown: true })).to.equal({ value: { a: 1, b: 'a', d: 'c' } });
+        Helper.validate(schema, { allowUnknown: true }, [[obj, true, { a: 1, b: 'a', d: 'c' }]]);
     });
 
     it('should pass validation with extra keys set', () => {
@@ -770,7 +754,7 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        expect(localConfig.validate(obj)).to.equal({ value: { a: 1, b: 'a', d: 'c' } });
+        Helper.validate(localConfig, [[obj, true, { a: 1, b: 'a', d: 'c' }]]);
     });
 
     it('should pass validation with extra keys and remove them when stripUnknown is set locally', () => {
@@ -786,8 +770,10 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        expect(localConfig.validate(obj)).to.equal({ value: { a: 1, b: 'a' } });
-        expect(localConfig.validate({ a: 1, b: 'a' })).to.equal({ value: { a: 1, b: 'a' } });
+        Helper.validate(localConfig, [
+            [obj, true, { a: 1, b: 'a' }],
+            [{ a: 1, b: 'a' }, true, { a: 1, b: 'a' }]
+        ]);
     });
 
     it('should pass validation with extra keys and remove them when stripUnknown (as an object) is set locally', () => {
@@ -803,15 +789,17 @@ describe('Joi', () => {
             d: 'c'
         };
 
-        expect(localConfig.validate(obj)).to.equal({ value: { a: 1, b: 'a' } });
-        expect(localConfig.validate({ a: 1, b: 'a' })).to.equal({ value: { a: 1, b: 'a' } });
+        Helper.validate(localConfig, [
+            [obj, true, { a: 1, b: 'a' }],
+            [{ a: 1, b: 'a' }, true, { a: 1, b: 'a' }]
+        ]);
     });
 
     it('should work when the skipFunctions setting is enabled', () => {
 
         const schema = Joi.object({ username: Joi.string() }).prefs({ skipFunctions: true });
         const input = { username: 'test', func() { } };
-        expect(schema.validate(input).error).to.not.exist();
+        Helper.validate(schema, [[input, true]]);
     });
 
     it('should work when the skipFunctions setting is disabled', () => {
@@ -819,8 +807,7 @@ describe('Joi', () => {
         const schema = Joi.object({ username: Joi.string() });
         const input = { username: 'test', func() { } };
 
-        const err = schema.validate(input, { skipFunctions: false }).error;
-        expect(err.message).to.contain('"func" is not allowed');
+        Helper.validate(schema, { skipFunctions: false }, [[input, false, '"func" is not allowed']]);
     });
 
     it('should not convert values when convert is false', () => {
@@ -830,7 +817,7 @@ describe('Joi', () => {
         });
 
         const input = { arr: 'foo' };
-        expect(schema.validate(input, { convert: false }).error).to.be.an.error();
+        Helper.validate(schema, { convert: false }, [[input, false, '"arr" must be an array']]);
     });
 
     it('full errors when abortEarly is false', () => {
@@ -891,56 +878,62 @@ describe('Joi', () => {
             }
         };
 
-        const err = schema.validate(input, { abortEarly: false }).error;
-        expect(err.details).to.have.length(6);
-        expect(err.details).to.equal([{
-            message: '"test[0].foo" length must be less than or equal to 3 characters long',
-            path: ['test', 0, 'foo'],
-            type: 'string.max',
-            context: { limit: 3, value: 'test1', key: 'foo', label: 'test[0].foo', encoding: undefined }
-        }, {
-            message: '"test[0].bar" length must be less than or equal to 5 characters long',
-            path: ['test', 0, 'bar'],
-            type: 'string.max',
-            context: { limit: 5, value: 'testfailed', key: 'bar', label: 'test[0].bar', encoding: undefined }
-        }, {
-            message: '"test2.test3[1].foo" length must be less than or equal to 3 characters long',
-            path: ['test2', 'test3', 1, 'foo'],
-            type: 'string.max',
-            context: { limit: 3, value: 'test1', key: 'foo', label: 'test2.test3[1].foo', encoding: undefined }
-        }, {
-            message: '"test2.test3[1].bar" length must be less than or equal to 5 characters long',
-            path: ['test2', 'test3', 1, 'bar'],
-            type: 'string.max',
-            context: { limit: 5, value: 'testfailed', key: 'bar', label: 'test2.test3[1].bar', encoding: undefined }
-        }, {
-            message: '"test2.test3[2].baz.test4[0].foo" length must be less than or equal to 3 characters long',
-            path: ['test2', 'test3', 2, 'baz', 'test4', 0, 'foo'],
-            type: 'string.max',
-            context: { limit: 3, value: 'test1', key: 'foo', label: 'test2.test3[2].baz.test4[0].foo', encoding: undefined }
-        }, {
-            message: '"test2.test3[2].baz.test4[0].baz" is not allowed',
-            path: ['test2', 'test3', 2, 'baz', 'test4', 0, 'baz'],
-            type: 'object.unknown',
-            context: { key: 'baz', label: 'test2.test3[2].baz.test4[0].baz', child: 'baz', value: '123' }
-        }]);
+        Helper.validate(schema, { abortEarly: false }, [[input, false, {
+            message: '"test[0].foo" length must be less than or equal to 3 characters long. "test[0].bar" length must be less than or equal to 5 characters long. "test2.test3[1].foo" length must be less than or equal to 3 characters long. "test2.test3[1].bar" length must be less than or equal to 5 characters long. "test2.test3[2].baz.test4[0].foo" length must be less than or equal to 3 characters long. "test2.test3[2].baz.test4[0].baz" is not allowed',
+            details: [{
+                message: '"test[0].foo" length must be less than or equal to 3 characters long',
+                path: ['test', 0, 'foo'],
+                type: 'string.max',
+                context: { limit: 3, value: 'test1', key: 'foo', label: 'test[0].foo', encoding: undefined }
+            }, {
+                message: '"test[0].bar" length must be less than or equal to 5 characters long',
+                path: ['test', 0, 'bar'],
+                type: 'string.max',
+                context: { limit: 5, value: 'testfailed', key: 'bar', label: 'test[0].bar', encoding: undefined }
+            }, {
+                message: '"test2.test3[1].foo" length must be less than or equal to 3 characters long',
+                path: ['test2', 'test3', 1, 'foo'],
+                type: 'string.max',
+                context: { limit: 3, value: 'test1', key: 'foo', label: 'test2.test3[1].foo', encoding: undefined }
+            }, {
+                message: '"test2.test3[1].bar" length must be less than or equal to 5 characters long',
+                path: ['test2', 'test3', 1, 'bar'],
+                type: 'string.max',
+                context: { limit: 5, value: 'testfailed', key: 'bar', label: 'test2.test3[1].bar', encoding: undefined }
+            }, {
+                message: '"test2.test3[2].baz.test4[0].foo" length must be less than or equal to 3 characters long',
+                path: ['test2', 'test3', 2, 'baz', 'test4', 0, 'foo'],
+                type: 'string.max',
+                context: {
+                    limit: 3,
+                    value: 'test1',
+                    key: 'foo',
+                    label: 'test2.test3[2].baz.test4[0].foo',
+                    encoding: undefined
+                }
+            }, {
+                message: '"test2.test3[2].baz.test4[0].baz" is not allowed',
+                path: ['test2', 'test3', 2, 'baz', 'test4', 0, 'baz'],
+                type: 'object.unknown',
+                context: { key: 'baz', label: 'test2.test3[2].baz.test4[0].baz', child: 'baz', value: '123' }
+            }]
+        }]]);
     });
 
     it('accepts no options', () => {
 
-        expect(Joi.string().validate('test').error).to.not.exist();
-        expect(Joi.string().validate('test')).to.equal({ value: 'test' });
-        expect(Joi.number().validate('5', { convert: false }).error).to.be.an.error();
+        Helper.validate(Joi.string(), [['test', true]]);
+        Helper.validate(Joi.number(), { convert: false }, [['5', false, '"value" must be a number']]);
     });
 
     it('accepts null options', () => {
 
-        expect(Joi.string().validate('test', null).error).to.not.exist();
+        Helper.validate(Joi.string(), null, [['test', true]]);
     });
 
     it('accepts undefined options', () => {
 
-        expect(Joi.string().validate('test', undefined).error).to.not.exist();
+        Helper.validate(Joi.string(), undefined, [['test', true]]);
     });
 
     describe('assert()', () => {
@@ -1286,8 +1279,7 @@ describe('Joi', () => {
             const { string } = Joi.types();
             expect(() => string.allow('x')).to.not.throw();
 
-            const { error } = string.validate(0);
-            expect(error).to.be.an.error('"value" must be a string');
+            Helper.validate(string, [[0, false, '"value" must be a string']]);
         });
     });
 });

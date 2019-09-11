@@ -4,6 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Joi = require('..');
 
+const Helper = require('./helper');
 
 const internals = {};
 
@@ -171,8 +172,8 @@ describe('Template', () => {
             it('casts values to numbers', () => {
 
                 const schema = Joi.valid(Joi.x('{number(1) + number(true) + number(false) + number("1") + number($x)}'));
-                expect(schema.validate(3, { context: { x: {} } }).error).to.not.exist();
-                expect(schema.validate(4, { context: { x: {} } }).error).to.be.an.error('"value" must be [{number(1) + number(true) + number(false) + number("1") + number($x)}]');
+                Helper.validate(schema, { context: { x: {} } }, [[3, true]]);
+                Helper.validate(schema, { context: { x: {} } }, [[4, false, '"value" must be [{number(1) + number(true) + number(false) + number("1") + number($x)}]']]);
             });
         });
     });
