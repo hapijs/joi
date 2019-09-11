@@ -93,7 +93,7 @@ describe('Values', () => {
             });
 
             Helper.validate(schema, [
-                [{ b: '' }, true],
+                [{ b: '' }, true, { b: '', a: '' }],
                 [{ b: 'x' }, false, '"b" must be [ref:a]'],
                 [{ b: 2 }, false, '"b" must be [ref:a]'],
                 [{ a: 3, b: 3 }, true]
@@ -148,11 +148,11 @@ describe('Values', () => {
             expect(set.has(o)).to.be.true();
             expect(set.has({})).to.be.true();
 
-            const f = () => {};
+            const f = () => { };
             set = new Values();
             set.add(f);
             expect(set.has(f)).to.be.true();
-            expect(set.has(() => {})).to.be.false();
+            expect(set.has(() => { })).to.be.false();
 
             const b = Buffer.from('foo');
             set = new Values();

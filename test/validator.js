@@ -483,7 +483,7 @@ describe('Validator', () => {
         it('ignores result flags on root values', () => {
 
             const schema = Joi.string().strip();
-            Helper.validate(schema, [['xyz', true]]);
+            Helper.validate(schema, [['xyz', true, undefined]]);
         });
 
         it('reaches deep into shadow', async () => {
