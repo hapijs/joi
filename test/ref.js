@@ -34,7 +34,7 @@ describe('ref', () => {
     it('reaches self', () => {
 
         const schema = Joi.number().min(10).message('"{#label}" is {[.]} and that is not good enough');
-        expect(schema.validate(1).error).to.be.an.error('"value" is 1 and that is not good enough');
+        Helper.validate(schema, [[1, false, '"value" is 1 and that is not good enough']]);
     });
 
     it('reaches own property', () => {
@@ -459,10 +459,24 @@ describe('ref', () => {
             d: 5
         };
 
-        expect(schema.validate(value).error).to.not.exist();
+        Helper.validate(schema, [[value, true, {
+            a: {
+                b: new Set([
+                    { x: 1 },
+                    { x: 2 },
+                    {
+                        y: new Map([
+                            ['v', 4],
+                            ['w', 5]
+                        ])
+                    }
+                ])
+            },
+            d: 5
+        }]]);
 
         value.d = 6;
-        expect(schema.validate(value).error).to.be.an.error('"d" must be [ref:a.b.2.y.w]');
+        Helper.validate(schema, [[value, false, '"d" must be [ref:a.b.2.y.w]']]);
     });
 
     it('reaches root', () => {
@@ -538,7 +552,7 @@ describe('ref', () => {
             d: 5
         };
 
-        expect(schema.validate(value).error).to.be.an.error('"d" must be [ref:a.b.2.y.w]');
+        Helper.validate(schema, [[value, false, '"d" must be [ref:a.b.2.y.w]']]);
     });
 
     it('errors on invalid separator)', () => {
@@ -681,15 +695,12 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const err = schema.validate({ a: 5, b: 6 }).error;
-
-        expect(err).to.be.an.error('"a" must be [ref:b]');
-        expect(err.details).to.equal([{
+        Helper.validate(schema, [[{ a: 5, b: 6 }, false, {
             message: '"a" must be [ref:b]',
             path: ['a'],
             type: 'any.only',
             context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-        }]);
+        }]]);
 
         Helper.validate(schema, [
             [{ a: 5 }, false, {
@@ -796,16 +807,13 @@ describe('ref', () => {
             '': Joi.any()
         });
 
-        const err = schema.validate({ a: 5, '': 6 }).error;
-        expect(err).to.be.an.error('"a" must be [ref:..]');
-        expect(err.details).to.equal([{
-            message: '"a" must be [ref:..]',
-            path: ['a'],
-            type: 'any.only',
-            context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-        }]);
-
         Helper.validate(schema, [
+            [{ a: 5, '': 6 }, false, {
+                message: '"a" must be [ref:..]',
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
+            }],
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:..]',
                 path: ['a'],
@@ -869,13 +877,13 @@ describe('ref', () => {
         });
 
         const input = { a: 5, b: { c: 5 } };
-        expect(schema.validate(input).error).to.not.exist();
+        Helper.validate(schema, [[input, true]]);
 
         const parent = Joi.object({
             e: schema
         });
 
-        expect(parent.validate({ e: input }).error).to.not.exist();
+        Helper.validate(parent, [[{ e: input }, true]]);
     });
 
     it('uses ref reach options', () => {
@@ -890,7 +898,7 @@ describe('ref', () => {
             }
         });
 
-        expect(schema.validate({ a: 5, b: { c: 5 } }).error).to.not.exist();
+        Helper.validate(schema, [[{ a: 5, b: { c: 5 } }, true]]);
     });
 
     it('ignores the order in which keys are defined', () => {
@@ -902,7 +910,7 @@ describe('ref', () => {
             b: Joi.ref('a.c')
         });
 
-        expect(ab.validate({ a: { c: '5' }, b: 5 }).error).to.not.exist();
+        Helper.validate(ab, [[{ a: { c: '5' }, b: 5 }, true, { a: { c: 5 }, b: 5 }]]);
 
         const ba = Joi.object({
             b: Joi.ref('a.c'),
@@ -911,7 +919,7 @@ describe('ref', () => {
             }
         });
 
-        expect(ba.validate({ a: { c: '5' }, b: 5 }).error).to.not.exist();
+        Helper.validate(ba, [[{ a: { c: '5' }, b: 5 }, true, { a: { c: 5 }, b: 5 }]]);
     });
 
     it('uses ref as default value', async () => {
@@ -934,7 +942,7 @@ describe('ref', () => {
 
         expect(await schema.validateAsync({ a: 6, b: 6 })).to.equal({ a: 6, b: 6 });
         expect(await schema.validateAsync({ a: 1, b: 6 })).to.equal({ a: 1, b: 6 });
-        expect(schema.validate({ a: 6, b: 1 }).error).to.be.an.error();
+        Helper.validate(schema, [[{ a: 6, b: 1 }, false, '"a" must be one of [1, ref:b]']]);
     });
 
     it('uses ref as default value regardless of order', async () => {
@@ -1014,16 +1022,13 @@ describe('ref', () => {
             b: Joi.any()
         });
 
-        const err = schema.validate({ a: 5, b: 6 }, { context: { x: 22 } }).error;
-        expect(err).to.be.an.error('"a" must be [ref:global:x]');
-        expect(err.details).to.equal([{
-            message: '"a" must be [ref:global:x]',
-            path: ['a'],
-            type: 'any.only',
-            context: { value: 5, valids: [ref], label: 'a', key: 'a' }
-        }]);
-
         Helper.validate(schema, { context: { x: 22 } }, [
+            [{ a: 5, b: 6 }, false, {
+                message: '"a" must be [ref:global:x]',
+                path: ['a'],
+                type: 'any.only',
+                context: { value: 5, valids: [ref], label: 'a', key: 'a' }
+            }],
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:global:x]',
                 path: ['a'],

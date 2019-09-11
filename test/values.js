@@ -4,6 +4,7 @@ const Code = require('@hapi/code');
 const Joi = require('..');
 const Lab = require('@hapi/lab');
 
+const Helper = require('./helper');
 const Values = require('../lib/values');
 
 
@@ -91,10 +92,12 @@ describe('Values', () => {
                 b: Joi.string().insensitive().valid(Joi.ref('a'))
             });
 
-            expect(schema.validate({ b: '' }).error).to.not.exist();
-            expect(schema.validate({ b: 'x' }).error).to.be.an.error('"b" must be [ref:a]');
-            expect(schema.validate({ b: 2 }).error).to.be.an.error('"b" must be [ref:a]');
-            expect(schema.validate({ a: 3, b: 3 }).error).to.not.exist();
+            Helper.validate(schema, [
+                [{ b: '' }, true],
+                [{ b: 'x' }, false, '"b" must be [ref:a]'],
+                [{ b: 2 }, false, '"b" must be [ref:a]'],
+                [{ a: 3, b: 3 }, true]
+            ]);
         });
     });
 

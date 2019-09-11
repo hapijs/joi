@@ -5,6 +5,7 @@ const Hoek = require('@hapi/hoek');
 const Joi = require('..');
 const Lab = require('@hapi/lab');
 
+const Helper = require('./helper');
 
 const internals = {};
 
@@ -482,7 +483,7 @@ describe('Validator', () => {
         it('ignores result flags on root values', () => {
 
             const schema = Joi.string().strip();
-            expect(schema.validate('xyz').value).to.not.exist();
+            Helper.validate(schema, [['xyz', true]]);
         });
 
         it('reaches deep into shadow', async () => {
