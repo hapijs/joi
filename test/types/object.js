@@ -1618,14 +1618,12 @@ describe('object', () => {
                 test: Joi.string()
             }).rename('test1', 'test').rename('test2', 'test');
 
-            const err = Joi.compile(schema).validate({ test1: 'a', test2: 'b' }).error;
-            expect(err).to.be.an.error('"value" cannot rename "test2" because multiple renames are disabled and another key was already renamed to "test"');
-            expect(err.details).to.equal([{
+            Helper.validate(Joi.compile(schema), [[{ test1: 'a', test2: 'b' }, false, {
                 message: '"value" cannot rename "test2" because multiple renames are disabled and another key was already renamed to "test"',
                 path: [],
                 type: 'object.rename.multiple',
                 context: { from: 'test2', to: 'test', label: 'value', pattern: false, value: { test: 'a', test2: 'b' } }
-            }]);
+            }]]);
         });
 
         it('errors multiple times when abortEarly is false', () => {
@@ -1636,22 +1634,23 @@ describe('object', () => {
                 .rename('d', 'b')
                 .prefs({ abortEarly: false });
 
-            const err = schema.validate({ a: 1, c: 1, d: 1 }).error;
-            expect(err).to.be.an.error('"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"');
-            expect(err.details).to.equal([
-                {
-                    message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
-                    path: [],
-                    type: 'object.rename.multiple',
-                    context: { from: 'c', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
-                },
-                {
-                    message: '"value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"',
-                    path: [],
-                    type: 'object.rename.multiple',
-                    context: { from: 'd', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
-                }
-            ]);
+            Helper.validate(schema, [[{ a: 1, c: 1, d: 1 }, false, {
+                message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"',
+                details: [
+                    {
+                        message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
+                        path: [],
+                        type: 'object.rename.multiple',
+                        context: { from: 'c', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
+                    },
+                    {
+                        message: '"value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"',
+                        path: [],
+                        type: 'object.rename.multiple',
+                        context: { from: 'd', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
+                    }
+                ]
+            }]]);
         });
 
         it('aliases a key', () => {
@@ -1662,7 +1661,7 @@ describe('object', () => {
             }).rename('a', 'b', { alias: true });
 
             const obj = { a: 10 };
-            expect(Joi.compile(schema).validate(obj)).to.equal({ value: { a: 10, b: 10 } });
+            Helper.validate(Joi.compile(schema), [[obj, true, { a: 10, b: 10 }]]);
         });
 
         it('with override disabled should not allow overwriting existing value', () => {
@@ -1671,14 +1670,12 @@ describe('object', () => {
                 test1: Joi.string()
             }).rename('test', 'test1');
 
-            const err = schema.validate({ test: 'b', test1: 'a' }).error;
-            expect(err).to.be.an.error('"value" cannot rename "test" because override is disabled and target "test1" exists');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[{ test: 'b', test1: 'a' }, false, {
                 message: '"value" cannot rename "test" because override is disabled and target "test1" exists',
                 path: [],
                 type: 'object.rename.override',
                 context: { from: 'test', to: 'test1', label: 'value', pattern: false, value: { test: 'b', test1: 'a' } }
-            }]);
+            }]]);
         });
 
         it('with override enabled should allow overwriting existing value', () => {
@@ -1687,7 +1684,7 @@ describe('object', () => {
                 test1: Joi.string()
             }).rename('test', 'test1', { override: true });
 
-            expect(schema.validate({ test: 'b', test1: 'a' }).error).to.not.exist();
+            Helper.validate(schema, [[{ test: 'b', test1: 'a' }, true]]);
         });
 
         it('renames when data is nested in an array via items', () => {
@@ -1700,7 +1697,7 @@ describe('object', () => {
             };
 
             const data = { arr: [{ uno: '1', dos: '2' }] };
-            expect(Joi.object(schema).validate(data)).to.equal({ value: { arr: [{ one: '1', two: '2' }] } });
+            Helper.validate(Joi.object(schema), [[data, true, { arr: [{ one: '1', two: '2' }] }]]);
         });
 
         it('applies rename and validation in the correct order regardless of key order', () => {
@@ -1710,11 +1707,11 @@ describe('object', () => {
             }).rename('b', 'a');
 
             const input1 = { b: '5' };
-            expect(schema1.validate(input1)).to.equal({ value: { a: 5 } });
+            Helper.validate(schema1, [[input1, true, { a: 5 }]]);
 
             const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
             const input2 = { b: '5' };
-            expect(schema2.validate(input2)).to.equal({ value: { a: 5 } });
+            Helper.validate(schema2, [[input2, true, { a: 5 }]]);
         });
 
         it('sets the default value after key is renamed', () => {
@@ -1724,7 +1721,7 @@ describe('object', () => {
             }).rename('foo', 'foo2');
 
             const input = {};
-            expect(schema.validate(input)).to.equal({ value: { foo2: 'test' } });
+            Helper.validate(schema, [[input, true, { foo2: 'test' }]]);
         });
 
         it('renames keys that are empty strings', () => {
@@ -1734,7 +1731,7 @@ describe('object', () => {
                 '': 'something'
             };
 
-            expect(schema.validate(input)).to.equal({ value: { notEmpty: 'something' } });
+            Helper.validate(schema, [[input, true, { notEmpty: 'something' }]]);
         });
 
         it('should not create new keys when the key in question does not exist', () => {
@@ -1746,7 +1743,7 @@ describe('object', () => {
                 a: 'something'
             };
 
-            expect(schema.validate(input)).to.equal({ value: input });
+            Helper.validate(schema, [[input, true, input]]);
         });
 
         it('ignores a key with ignoredUndefined if from does not exist', () => {
@@ -1757,7 +1754,7 @@ describe('object', () => {
                 a: 'something'
             };
 
-            expect(schema.validate(input)).to.equal({ value: { a: 'something' } });
+            Helper.validate(schema, [[input, true, { a: 'something' }]]);
         });
 
         it('deletes a key with override and ignoredUndefined if from exists', () => {
@@ -1770,7 +1767,7 @@ describe('object', () => {
                 b: 'something else'
             };
 
-            expect(schema.validate(input)).to.equal({ value: { a: 'something else' } });
+            Helper.validate(schema, [[input, true, { a: 'something else' }]]);
         });
 
         it('deletes a key with override if present and undefined', () => {
@@ -1783,7 +1780,7 @@ describe('object', () => {
                 b: undefined
             };
 
-            expect(schema.validate(input)).to.equal({ value: {} });
+            Helper.validate(schema, [[input, true, {}]]);
         });
 
         it('leaves target if source is present and undefined and ignoreUndefined is set', () => {
@@ -1796,7 +1793,7 @@ describe('object', () => {
                 b: undefined
             };
 
-            expect(schema.validate(input)).to.equal({ value: input });
+            Helper.validate(schema, [[input, true, input]]);
         });
 
         it('should fulfill describe() with defaults', () => {
@@ -1846,7 +1843,7 @@ describe('object', () => {
                 a: 'something'
             };
 
-            expect(schema.validate(input)).to.equal({ value: input });
+            Helper.validate(schema, [[input, true, input]]);
         });
 
         describe('using regex', () => {
@@ -1859,7 +1856,7 @@ describe('object', () => {
                     fooBar: Joi.string()
                 }).rename(regex, 'fooBar');
 
-                expect(Joi.compile(schema).validate({ FOOBAR: 'a' }).error).to.not.exist();
+                Helper.validate(Joi.compile(schema), [[{ FOOBAR: 'a' }, true, { fooBar: 'a' }]]);
             });
 
             it('aliases a key', () => {
@@ -1873,7 +1870,7 @@ describe('object', () => {
                     c: Joi.number()
                 }).rename(regex, 'b', { alias: true });
 
-                expect(Joi.compile(schema).validate({ other: 'here', A: 100, c: 50 })).to.equal({ value: { other: 'here', A: 100, b: 100, c: 50 } });
+                Helper.validate(Joi.compile(schema), [[{ other: 'here', A: 100, c: 50 }, true, { other: 'here', A: 100, b: 100, c: 50 }]]);
             });
 
             it('uses template', () => {
@@ -1889,14 +1886,12 @@ describe('object', () => {
                     x4x: 'test'
                 };
 
-                expect(Joi.compile(schema).validate(input)).to.equal({
-                    value: {
-                        x123x: 'x',
-                        x1x: 'y',
-                        x0x: 'z',
-                        x4x: 'test'
-                    }
-                });
+                Helper.validate(Joi.compile(schema), [[input, true, {
+                    x123x: 'x',
+                    x1x: 'y',
+                    x0x: 'z',
+                    x4x: 'test'
+                }]]);
 
                 expect(schema.describe()).to.equal({
                     type: 'object',
@@ -1931,14 +1926,12 @@ describe('object', () => {
                     x4x: 'test'
                 };
 
-                expect(Joi.compile(schema).validate(input)).to.equal({
-                    value: {
-                        x123x: 'x',
-                        x1x: 'y',
-                        x0x: 'z',
-                        x4x: 'test'
-                    }
-                });
+                Helper.validate(Joi.compile(schema), [[input, true, {
+                    x123x: 'x',
+                    x1x: 'y',
+                    x0x: 'z',
+                    x4x: 'test'
+                }]]);
 
                 expect(schema.describe()).to.equal({
                     type: 'object',
@@ -1976,14 +1969,12 @@ describe('object', () => {
                     prefix: 'TEST'
                 };
 
-                expect(Joi.compile(schema).validate(input)).to.equal({
-                    value: {
-                        TEST123: 'x',
-                        TEST1: 'y',
-                        TEST0: 'z',
-                        prefix: 'test'
-                    }
-                });
+                Helper.validate(Joi.compile(schema), [[input, true, {
+                    TEST123: 'x',
+                    TEST1: 'y',
+                    TEST0: 'z',
+                    prefix: 'test'
+                }]]);
             });
 
             it('uses template that references peer key', () => {
@@ -2012,7 +2003,7 @@ describe('object', () => {
                     .rename(/^(\d+)$/, Joi.x('x'))
                     .unknown();
 
-                expect(Joi.compile(schema).validate({ 1: 'x' })).to.equal({ value: { x: 'x' } });
+                Helper.validate(Joi.compile(schema), [[{ 1: 'x' }, true, { x: 'x' }]]);
             });
 
             it('deletes a key with override if present and undefined', () => {
@@ -2025,7 +2016,7 @@ describe('object', () => {
                     b: undefined
                 };
 
-                expect(schema.validate(input)).to.equal({ value: {} });
+                Helper.validate(schema, [[input, true, {}]]);
             });
 
             it('with override disabled it should not allow overwriting existing value', () => {
@@ -2040,14 +2031,12 @@ describe('object', () => {
                     test1: 'a'
                 };
 
-                const err = Joi.compile(schema).validate(item).error;
-                expect(err).to.be.an.error('"value" cannot rename "test1" because override is disabled and target "test" exists');
-                expect(err.details).to.equal([{
+                Helper.validate(Joi.compile(schema), [[item, false, {
                     message: '"value" cannot rename "test1" because override is disabled and target "test" exists',
                     path: [],
                     type: 'object.rename.override',
                     context: { from: 'test1', to: 'test', label: 'value', pattern: true, value: item }
-                }]);
+                }]]);
             });
 
             it('with override enabled should allow overwriting existing value', () => {
@@ -2058,7 +2047,7 @@ describe('object', () => {
                     test1: Joi.string()
                 }).rename(regex, 'test1', { override: true });
 
-                expect(schema.validate({ test: 'b', test1: 'a' }).error).to.not.exist();
+                Helper.validate(schema, [[{ test: 'b', test1: 'a' }, true, { test1: 'b' }]]);
             });
 
             it('renames when data is nested in an array via items', () => {
@@ -2074,7 +2063,7 @@ describe('object', () => {
                 };
 
                 const data = { arr: [{ uno: '1', dos: '2' }] };
-                expect(Joi.object(schema).validate(data)).to.equal({ value: { arr: [{ one: '1', two: '2' }] } });
+                Helper.validate(Joi.object(schema), [[data, true, { arr: [{ one: '1', two: '2' }] }]]);
             });
 
             it('skips when existing name matches', () => {
@@ -2083,8 +2072,10 @@ describe('object', () => {
 
                 const schema = Joi.object({ abc: Joi.string() }).rename(regex, 'abc', { override: true });
 
-                expect(schema.validate({ ABC: 'x' })).to.equal({ value: { abc: 'x' } });
-                expect(schema.validate({ abc: 'x' })).to.equal({ value: { abc: 'x' } });
+                Helper.validate(schema, [
+                    [{ ABC: 'x' }, true, { abc: 'x' }],
+                    [{ abc: 'x' }, true, { abc: 'x' }]
+                ]);
             });
 
             it('applies rename and validation in the correct order regardless of key order', () => {
@@ -2096,11 +2087,11 @@ describe('object', () => {
                 }).rename(regex, 'a');
 
                 const input1 = { b: '5' };
-                expect(schema1.validate(input1)).to.equal({ value: { a: 5 } });
+                Helper.validate(schema1, [[input1, true, { a: 5 }]]);
 
                 const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
                 const input2 = { b: '5' };
-                expect(schema2.validate(input2)).to.equal({ value: { a: 5 } });
+                Helper.validate(schema2, [[input2, true, { a: 5 }]]);
             });
 
             it('sets the default value after key is renamed', () => {
@@ -2112,7 +2103,7 @@ describe('object', () => {
                 }).rename(regex, 'foo2');
 
                 const input = {};
-                expect(schema.validate(input)).to.equal({ value: { foo2: 'test' } });
+                Helper.validate(schema, [[input, true, { foo2: 'test' }]]);
             });
 
             it('should not create new keys when the key in question does not exist', () => {
@@ -2124,7 +2115,7 @@ describe('object', () => {
                     a: 'something'
                 };
 
-                expect(schema.validate(input)).to.equal({ value: { a: 'something' } });
+                Helper.validate(schema, [[input, true, { a: 'something' }]]);
             });
 
             it('should leave key if from does not exist regardless of override', () => {
@@ -2136,7 +2127,7 @@ describe('object', () => {
                     a: 'something'
                 };
 
-                expect(schema.validate(input)).to.equal({ value: input });
+                Helper.validate(schema, [[input, true, input]]);
             });
 
             it('skips when all matches are undefined and ignoredUndefined is true', () => {
@@ -2151,7 +2142,7 @@ describe('object', () => {
                     b: undefined
                 };
 
-                expect(schema.validate(input)).to.equal({ value: { b: undefined } });
+                Helper.validate(schema, [[input, true, { b: undefined }]]);
             });
 
             it('deletes a key with override and ignoredUndefined if from exists', () => {
@@ -2167,7 +2158,7 @@ describe('object', () => {
                     b: 'something else'
                 };
 
-                expect(schema.validate(input)).to.equal({ value: { a: 'something else' } });
+                Helper.validate(schema, [[input, true, { a: 'something else' }]]);
             });
 
             it('should fulfill describe() with non-defaults', () => {
@@ -2218,7 +2209,7 @@ describe('object', () => {
                     fooBar: Joi.string()
                 }).rename(/foobar/i, 'fooBar', { multiple: true });
 
-                expect(Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' })).to.equal({ value: { fooBar: 'b' } });
+                Helper.validate(Joi.compile(schema), [[{ FOOBAR: 'a', FooBar: 'b' }, true, { fooBar: 'b' }]]);
             });
 
             it('errors renaming multiple times with multiple disabled', () => {
@@ -2229,14 +2220,12 @@ describe('object', () => {
                     .rename(/foobar/i, 'fooBar')
                     .rename(/foobar/i, 'fooBar');
 
-                const err = Joi.compile(schema).validate({ FOOBAR: 'a', FooBar: 'b' }).error;
-                expect(err.message).to.equal('"value" cannot rename "FooBar" because multiple renames are disabled and another key was already renamed to "fooBar"');
-                expect(err.details).to.equal([{
+                Helper.validate(Joi.compile(schema), [[{ FOOBAR: 'a', FooBar: 'b' }, false, {
                     message: '"value" cannot rename "FooBar" because multiple renames are disabled and another key was already renamed to "fooBar"',
                     path: [],
                     type: 'object.rename.multiple',
                     context: { from: 'FooBar', to: 'fooBar', label: 'value', pattern: true, value: { FooBar: 'b', fooBar: 'a' } }
-                }]);
+                }]]);
             });
 
             it('errors multiple times when abortEarly is false', () => {
@@ -2249,34 +2238,35 @@ describe('object', () => {
                     .rename(/z/i, 'z')
                     .prefs({ abortEarly: false });
 
-                const err = schema.validate({ a: 1, c: 1, d: 1, z: 1 }).error;
-                expect(err).to.be.an.error('"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "z" must be a string. "d" is not allowed. "b" is not allowed');
-                expect(err.details).to.equal([
-                    {
-                        message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
-                        path: [],
-                        type: 'object.rename.multiple',
-                        context: { from: 'c', to: 'b', label: 'value', pattern: true, value: { b: 1, d: 1, z: 1 } }
-                    },
-                    {
-                        message: '"z" must be a string',
-                        path: ['z'],
-                        type: 'string.base',
-                        context: { value: 1, key: 'z', label: 'z' }
-                    },
-                    {
-                        message: '"d" is not allowed',
-                        path: ['d'],
-                        type: 'object.unknown',
-                        context: { child: 'd', key: 'd', label: 'd', value: 1 }
-                    },
-                    {
-                        message: '"b" is not allowed',
-                        path: ['b'],
-                        type: 'object.unknown',
-                        context: { child: 'b', key: 'b', label: 'b', value: 1 }
-                    }
-                ]);
+                Helper.validate(schema, [[{ a: 1, c: 1, d: 1, z: 1 }, false, {
+                    message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "z" must be a string. "d" is not allowed. "b" is not allowed',
+                    details: [
+                        {
+                            message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
+                            path: [],
+                            type: 'object.rename.multiple',
+                            context: { from: 'c', to: 'b', label: 'value', pattern: true, value: { b: 1, d: 1, z: 1 } }
+                        },
+                        {
+                            message: '"z" must be a string',
+                            path: ['z'],
+                            type: 'string.base',
+                            context: { value: 1, key: 'z', label: 'z' }
+                        },
+                        {
+                            message: '"d" is not allowed',
+                            path: ['d'],
+                            type: 'object.unknown',
+                            context: { child: 'd', key: 'd', label: 'd', value: 1 }
+                        },
+                        {
+                            message: '"b" is not allowed',
+                            path: ['b'],
+                            type: 'object.unknown',
+                            context: { child: 'b', key: 'b', label: 'b', value: 1 }
+                        }
+                    ]
+                }]]);
             });
         });
     });
@@ -2324,21 +2314,22 @@ describe('object', () => {
                 code: Joi.number()
             }).nand('txt', 'upc', 'code');
 
-            const err = schema.validate({ txt: 'x', upc: 'y', code: 123 }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"txt" must not exist simultaneously with [upc, code]');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, { abortEarly: false }, [[{ txt: 'x', upc: 'y', code: 123 }, false, {
                 message: '"txt" must not exist simultaneously with [upc, code]',
-                path: [],
-                type: 'object.nand',
-                context: {
-                    main: 'txt',
-                    mainWithLabel: 'txt',
-                    peers: ['upc', 'code'],
-                    peersWithLabels: ['upc', 'code'],
-                    label: 'value',
-                    value: { txt: 'x', upc: 'y', code: 123 }
-                }
-            }]);
+                details: [{
+                    message: '"txt" must not exist simultaneously with [upc, code]',
+                    path: [],
+                    type: 'object.nand',
+                    context: {
+                        main: 'txt',
+                        mainWithLabel: 'txt',
+                        peers: ['upc', 'code'],
+                        peersWithLabels: ['upc', 'code'],
+                        label: 'value',
+                        value: { txt: 'x', upc: 'y', code: 123 }
+                    }
+                }]
+            }]]);
 
             Helper.validate(schema, [
                 [{}, true],
@@ -2389,9 +2380,7 @@ describe('object', () => {
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
             }).nand('a', 'b');
-            const error = schema.validate({ a: 1, b: 'b' }).error;
-            expect(error).to.be.an.error('"first" must not exist simultaneously with [second]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1, b: 'b' }, false, {
                 message: '"first" must not exist simultaneously with [second]',
                 path: [],
                 type: 'object.nand',
@@ -2403,7 +2392,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1, b: 'b' }
                 }
-            }]);
+            }]]);
         });
 
         it('allows nested objects', () => {
@@ -2417,24 +2406,22 @@ describe('object', () => {
             const sampleObject = { a: 'test', b: { d: 80 } };
             const sampleObject2 = { a: 'test', b: { c: 'test2' } };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
-
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"a" must not exist simultaneously with [b.c]');
-            expect(error2.details).to.equal([{
-                message: '"a" must not exist simultaneously with [b.c]',
-                path: [],
-                type: 'object.nand',
-                context: {
-                    main: 'a',
-                    mainWithLabel: 'a',
-                    peers: ['b.c'],
-                    peersWithLabels: ['b.c'],
-                    label: 'value',
-                    value: sampleObject2
-                }
-            }]);
+            Helper.validate(schema, [
+                [sampleObject, true],
+                [sampleObject2, false, {
+                    message: '"a" must not exist simultaneously with [b.c]',
+                    path: [],
+                    type: 'object.nand',
+                    context: {
+                        main: 'a',
+                        mainWithLabel: 'a',
+                        peers: ['b.c'],
+                        peersWithLabels: ['b.c'],
+                        label: 'value',
+                        value: sampleObject2
+                    }
+                }]
+            ]);
         });
 
         it('allows nested keys in functions', () => {
@@ -2449,12 +2436,11 @@ describe('object', () => {
             const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
             const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
+            Helper.validate(schema, [[sampleObject, true]]);
 
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"a" must not exist simultaneously with [b.c]');
-            expect(error2.details).to.equal([{
+            const error = schema.validate(sampleObject2).error;
+            expect(error).to.be.an.error('"a" must not exist simultaneously with [b.c]');
+            expect(error.details).to.equal([{
                 message: '"a" must not exist simultaneously with [b.c]',
                 path: [],
                 type: 'object.nand',
@@ -2464,7 +2450,7 @@ describe('object', () => {
                     peers: ['b.c'],
                     peersWithLabels: ['b.c'],
                     label: 'value',
-                    value: error2.details[0].context.value
+                    value: error.details[0].context.value
                 }
             }]);
         });
@@ -2507,8 +2493,10 @@ describe('object', () => {
                 suggestion: Joi.string()
             };
 
-            expect(Joi.compile(config).validate({ suggestion: 'something' }).error).to.not.exist();
-            expect(Joi.compile(config).validate({ position: 1 }).error).to.not.exist();
+            Helper.validate(Joi.compile(config), [
+                [{ suggestion: 'something' }, true],
+                [{ position: 1 }, true]
+            ]);
         });
 
         it('does not require optional objects', () => {
@@ -2518,8 +2506,10 @@ describe('object', () => {
                 suggestion: Joi.object()
             };
 
-            expect(Joi.compile(config).validate({ suggestion: {} }).error).to.not.exist();
-            expect(Joi.compile(config).validate({ position: 1 }).error).to.not.exist();
+            Helper.validate(Joi.compile(config), [
+                [{ suggestion: {} }, true],
+                [{ position: 1 }, true]
+            ]);
         });
     });
 
@@ -2533,19 +2523,20 @@ describe('object', () => {
                 code: Joi.number()
             }).or('txt', 'upc', 'code');
 
-            const err = schema.validate({}, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"value" must contain at least one of [txt, upc, code]');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, { abortEarly: false }, [[{}, false, {
                 message: '"value" must contain at least one of [txt, upc, code]',
-                path: [],
-                type: 'object.missing',
-                context: {
-                    peers: ['txt', 'upc', 'code'],
-                    peersWithLabels: ['txt', 'upc', 'code'],
-                    label: 'value',
-                    value: {}
-                }
-            }]);
+                details: [{
+                    message: '"value" must contain at least one of [txt, upc, code]',
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['txt', 'upc', 'code'],
+                        peersWithLabels: ['txt', 'upc', 'code'],
+                        label: 'value',
+                        value: {}
+                    }
+                }]
+            }]]);
 
             Helper.validate(schema, [
                 [{ upc: null }, true],
@@ -2643,9 +2634,7 @@ describe('object', () => {
                 }
             });
 
-            const err = schema.validate({ a: { b: { c: 1 } } }).error;
-            expect(err).to.be.an.error('"a.b" must contain at least one of [x, y]');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, [[{ a: { b: { c: 1 } } }, false, {
                 message: '"a.b" must contain at least one of [x, y]',
                 path: ['a', 'b'],
                 type: 'object.missing',
@@ -2656,7 +2645,7 @@ describe('object', () => {
                     key: 'b',
                     value: { c: 1 }
                 }
-            }]);
+            }]]);
         });
 
         it('should apply labels', () => {
@@ -2665,9 +2654,7 @@ describe('object', () => {
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
             }).or('a', 'b');
-            const error = schema.validate({}).error;
-            expect(error).to.be.an.error('"value" must contain at least one of [first, second]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{}, false, {
                 message: '"value" must contain at least one of [first, second]',
                 path: [],
                 type: 'object.missing',
@@ -2677,7 +2664,7 @@ describe('object', () => {
                     label: 'value',
                     value: {}
                 }
-            }]);
+            }]]);
         });
 
         it('allows nested objects', () => {
@@ -2691,22 +2678,20 @@ describe('object', () => {
             const sampleObject = { b: { c: 'bc' } };
             const sampleObject2 = { d: 90 };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
-
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"value" must contain at least one of [a, b.c]');
-            expect(error2.details).to.equal([{
-                message: '"value" must contain at least one of [a, b.c]',
-                path: [],
-                type: 'object.missing',
-                context: {
-                    peers: ['a', 'b.c'],
-                    peersWithLabels: ['a', 'b.c'],
-                    label: 'value',
-                    value: sampleObject2
-                }
-            }]);
+            Helper.validate(schema, [
+                [sampleObject, true],
+                [sampleObject2, false, {
+                    message: '"value" must contain at least one of [a, b.c]',
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['a', 'b.c'],
+                        peersWithLabels: ['a', 'b.c'],
+                        label: 'value',
+                        value: sampleObject2
+                    }
+                }]
+            ]);
         });
 
         it('allows nested keys in functions', () => {
@@ -2720,22 +2705,20 @@ describe('object', () => {
             const sampleObject = { b: Object.assign(() => { }, { c: 'bc' }) };
             const sampleObject2 = { d: 90 };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
-
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"value" must contain at least one of [a, b.c]');
-            expect(error2.details).to.equal([{
-                message: '"value" must contain at least one of [a, b.c]',
-                path: [],
-                type: 'object.missing',
-                context: {
-                    peers: ['a', 'b.c'],
-                    peersWithLabels: ['a', 'b.c'],
-                    label: 'value',
-                    value: sampleObject2
-                }
-            }]);
+            Helper.validate(schema, [
+                [sampleObject, true],
+                [sampleObject2, false, {
+                    message: '"value" must contain at least one of [a, b.c]',
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['a', 'b.c'],
+                        peersWithLabels: ['a', 'b.c'],
+                        label: 'value',
+                        value: sampleObject2
+                    }
+                }]
+            ]);
         });
 
         it('should apply labels with nested objects', () => {
@@ -2749,9 +2732,7 @@ describe('object', () => {
             })
                 .or('a', 'b.c');
 
-            const error = schema.validate({}).error;
-            expect(error).to.be.an.error('"value" must contain at least one of [first, b.second]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{}, false, {
                 message: '"value" must contain at least one of [first, b.second]',
                 path: [],
                 type: 'object.missing',
@@ -2761,7 +2742,7 @@ describe('object', () => {
                     label: 'value',
                     value: {}
                 }
-            }]);
+            }]]);
         });
     });
 
@@ -2798,8 +2779,7 @@ describe('object', () => {
                 b: Joi.string()
             }).oxor('a', 'b');
 
-            const error = schema.validate({}).error;
-            expect(error).to.not.exist();
+            Helper.validate(schema, [[{}, true]]);
         });
 
         it('should apply labels with too many peers', () => {
@@ -2808,9 +2788,7 @@ describe('object', () => {
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
             }).oxor('a', 'b');
-            const error = schema.validate({ a: 1, b: 'b' }).error;
-            expect(error).to.be.an.error('"value" contains a conflict between optional exclusive peers [first, second]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1, b: 'b' }, false, {
                 message: '"value" contains a conflict between optional exclusive peers [first, second]',
                 path: [],
                 type: 'object.oxor',
@@ -2822,7 +2800,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1, b: 'b' }
                 }
-            }]);
+            }]]);
         });
 
         it('allows nested objects', () => {
@@ -2836,24 +2814,22 @@ describe('object', () => {
             const sampleObject = { a: 'test', b: { d: 80 } };
             const sampleObject2 = { a: 'test', b: { c: 'test2' } };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
-
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"value" contains a conflict between optional exclusive peers [a, b.c]');
-            expect(error2.details).to.equal([{
-                message: '"value" contains a conflict between optional exclusive peers [a, b.c]',
-                path: [],
-                type: 'object.oxor',
-                context: {
-                    peers: ['a', 'b.c'],
-                    peersWithLabels: ['a', 'b.c'],
-                    present: ['a', 'b.c'],
-                    presentWithLabels: ['a', 'b.c'],
-                    label: 'value',
-                    value: sampleObject2
-                }
-            }]);
+            Helper.validate(schema, [
+                [sampleObject, true],
+                [sampleObject2, false, {
+                    message: '"value" contains a conflict between optional exclusive peers [a, b.c]',
+                    path: [],
+                    type: 'object.oxor',
+                    context: {
+                        peers: ['a', 'b.c'],
+                        peersWithLabels: ['a', 'b.c'],
+                        present: ['a', 'b.c'],
+                        presentWithLabels: ['a', 'b.c'],
+                        label: 'value',
+                        value: sampleObject2
+                    }
+                }]
+            ]);
         });
 
         it('allows nested keys in functions', () => {
@@ -2867,12 +2843,11 @@ describe('object', () => {
             const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
             const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
+            Helper.validate(schema, [[sampleObject, true]]);
 
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"value" contains a conflict between optional exclusive peers [a, b.c]');
-            expect(error2.details).to.equal([{
+            const error = schema.validate(sampleObject2).error;
+            expect(error).to.be.an.error('"value" contains a conflict between optional exclusive peers [a, b.c]');
+            expect(error.details).to.equal([{
                 message: '"value" contains a conflict between optional exclusive peers [a, b.c]',
                 path: [],
                 type: 'object.oxor',
@@ -2882,7 +2857,7 @@ describe('object', () => {
                     present: ['a', 'b.c'],
                     presentWithLabels: ['a', 'b.c'],
                     label: 'value',
-                    value: error2.details[0].context.value
+                    value: error.details[0].context.value
                 }
             }]);
         });
@@ -2918,22 +2893,23 @@ describe('object', () => {
                 a: Joi.number()
             }).pattern(/\d+/, Joi.boolean()).pattern(/\w\w+/, 'x');
 
-            const err = schema.validate({ bb: 'y', 5: 'x' }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"5" must be a boolean. "bb" must be [x]');
-            expect(err.details).to.equal([
-                {
-                    message: '"5" must be a boolean',
-                    path: ['5'],
-                    type: 'boolean.base',
-                    context: { label: '5', key: '5', value: 'x' }
-                },
-                {
-                    message: '"bb" must be [x]',
-                    path: ['bb'],
-                    type: 'any.only',
-                    context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
-                }
-            ]);
+            Helper.validate(schema, { abortEarly: false }, [[{ bb: 'y', 5: 'x' }, false, {
+                message: '"5" must be a boolean. "bb" must be [x]',
+                details: [
+                    {
+                        message: '"5" must be a boolean',
+                        path: ['5'],
+                        type: 'boolean.base',
+                        context: { label: '5', key: '5', value: 'x' }
+                    },
+                    {
+                        message: '"bb" must be [x]',
+                        path: ['bb'],
+                        type: 'any.only',
+                        context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
+                    }
+                ]
+            }]]);
 
             Helper.validate(schema, [
                 [{ a: 5 }, true],
@@ -2968,22 +2944,23 @@ describe('object', () => {
             }).pattern(Joi.number().positive(), Joi.boolean())
                 .pattern(Joi.string().length(2), 'x');
 
-            const err = schema.validate({ bb: 'y', 5: 'x' }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"5" must be a boolean. "bb" must be [x]');
-            expect(err.details).to.equal([
-                {
-                    message: '"5" must be a boolean',
-                    path: ['5'],
-                    type: 'boolean.base',
-                    context: { label: '5', key: '5', value: 'x' }
-                },
-                {
-                    message: '"bb" must be [x]',
-                    path: ['bb'],
-                    type: 'any.only',
-                    context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
-                }
-            ]);
+            Helper.validate(schema, { abortEarly: false }, [[{ bb: 'y', 5: 'x' }, false, {
+                message: '"5" must be a boolean. "bb" must be [x]',
+                details: [
+                    {
+                        message: '"5" must be a boolean',
+                        path: ['5'],
+                        type: 'boolean.base',
+                        context: { label: '5', key: '5', value: 'x' }
+                    },
+                    {
+                        message: '"bb" must be [x]',
+                        path: ['bb'],
+                        type: 'any.only',
+                        context: { value: 'y', valids: ['x'], label: 'bb', key: 'bb' }
+                    }
+                ]
+            }]]);
 
             Helper.validate(schema, [
                 [{ a: 5 }, true],
@@ -3062,27 +3039,23 @@ describe('object', () => {
                 }).pattern(/\d+/, Joi.boolean()).pattern(/\w\w+/, 'x')
             });
 
-            const err = schema.validate({
-                x: {
-                    bb: 'y',
-                    5: 'x'
-                }
-            }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"x.5" must be a boolean. "x.bb" must be [x]');
-            expect(err.details).to.equal([
-                {
-                    message: '"x.5" must be a boolean',
-                    path: ['x', '5'],
-                    type: 'boolean.base',
-                    context: { label: 'x.5', key: '5', value: 'x' }
-                },
-                {
-                    message: '"x.bb" must be [x]',
-                    path: ['x', 'bb'],
-                    type: 'any.only',
-                    context: { value: 'y', valids: ['x'], label: 'x.bb', key: 'bb' }
-                }
-            ]);
+            Helper.validate(schema, { abortEarly: false }, [[{ x: { bb: 'y', 5: 'x' } }, false, {
+                message: '"x.5" must be a boolean. "x.bb" must be [x]',
+                details: [
+                    {
+                        message: '"x.5" must be a boolean',
+                        path: ['x', '5'],
+                        type: 'boolean.base',
+                        context: { label: 'x.5', key: '5', value: 'x' }
+                    },
+                    {
+                        message: '"x.bb" must be [x]',
+                        path: ['x', 'bb'],
+                        type: 'any.only',
+                        context: { value: 'y', valids: ['x'], label: 'x.bb', key: 'bb' }
+                    }
+                ]
+            }]]);
         });
 
         it('validates unknown keys using a pattern (nested)', () => {
@@ -3093,27 +3066,28 @@ describe('object', () => {
                 }).pattern(Joi.number().positive(), Joi.boolean()).pattern(Joi.string().length(2), 'x')
             });
 
-            const err = schema.validate({
+            Helper.validate(schema, { abortEarly: false }, [[{
                 x: {
                     bb: 'y',
                     5: 'x'
                 }
-            }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"x.5" must be a boolean. "x.bb" must be [x]');
-            expect(err.details).to.equal([
-                {
-                    message: '"x.5" must be a boolean',
-                    path: ['x', '5'],
-                    type: 'boolean.base',
-                    context: { label: 'x.5', key: '5', value: 'x' }
-                },
-                {
-                    message: '"x.bb" must be [x]',
-                    path: ['x', 'bb'],
-                    type: 'any.only',
-                    context: { value: 'y', valids: ['x'], label: 'x.bb', key: 'bb' }
-                }
-            ]);
+            }, false, {
+                message: '"x.5" must be a boolean. "x.bb" must be [x]',
+                details: [
+                    {
+                        message: '"x.5" must be a boolean',
+                        path: ['x', '5'],
+                        type: 'boolean.base',
+                        context: { label: 'x.5', key: '5', value: 'x' }
+                    },
+                    {
+                        message: '"x.bb" must be [x]',
+                        path: ['x', 'bb'],
+                        type: 'any.only',
+                        context: { value: 'y', valids: ['x'], label: 'x.bb', key: 'bb' }
+                    }
+                ]
+            }]]);
         });
 
         it('ensures keys are also present in another object', () => {
@@ -3161,28 +3135,30 @@ describe('object', () => {
 
             const schema = Joi.object().pattern(/\d/, Joi.number()).unknown(false);
 
-            const err = schema.validate({ a: 5 }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"a" is not allowed');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, { abortEarly: false }, [[{ a: 5 }, false, {
                 message: '"a" is not allowed',
-                path: ['a'],
-                type: 'object.unknown',
-                context: { child: 'a', label: 'a', key: 'a', value: 5 }
-            }]);
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'object.unknown',
+                    context: { child: 'a', label: 'a', key: 'a', value: 5 }
+                }]
+            }]]);
         });
 
         it('errors when using a pattern on empty schema with unknown(false) and schema pattern mismatch', () => {
 
             const schema = Joi.object().pattern(Joi.number().positive(), Joi.number()).unknown(false);
 
-            const err = schema.validate({ a: 5 }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"a" is not allowed');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, { abortEarly: false }, [[{ a: 5 }, false, {
                 message: '"a" is not allowed',
-                path: ['a'],
-                type: 'object.unknown',
-                context: { child: 'a', label: 'a', key: 'a', value: 5 }
-            }]);
+                details: [{
+                    message: '"a" is not allowed',
+                    path: ['a'],
+                    type: 'object.unknown',
+                    context: { child: 'a', label: 'a', key: 'a', value: 5 }
+                }]
+            }]]);
         });
 
         it('reject global and sticky flags from patterns', () => {
@@ -3194,14 +3170,16 @@ describe('object', () => {
         it('allows using empty() on values', () => {
 
             const schema = Joi.object().pattern(/a/, Joi.any().empty(null));
-            expect(schema.validate({ a1: undefined, a2: null, a3: 'test' })).to.equal({ value: { a1: undefined, a2: undefined, a3: 'test' } });
+            Helper.validate(schema, [[{ a1: undefined, a2: null, a3: 'test' }, true, { a1: undefined, a2: undefined, a3: 'test' }]]);
         });
 
         it('compiles if pattern is not regex or schema', () => {
 
             const schema = Joi.object().pattern('x', Joi.boolean());
-            expect(schema.validate({ x: true }).error).to.not.exist();
-            expect(schema.validate({ y: true }).error).to.be.an.error('"y" is not allowed');
+            Helper.validate(schema, [
+                [{ x: true }, true],
+                [{ y: true }, false, '"y" is not allowed']
+            ]);
         });
 
         it('allows using refs in .valid() schema pattern', () => {
@@ -3649,21 +3627,22 @@ describe('object', () => {
                 upc: Joi.string()
             }).with('txt', 'upc');
 
-            const err = schema.validate({ txt: 'a' }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"txt" missing required peer "upc"');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, { abortEarly: false }, [[{ txt: 'a' }, false, {
                 message: '"txt" missing required peer "upc"',
-                path: [],
-                type: 'object.with',
-                context: {
-                    main: 'txt',
-                    mainWithLabel: 'txt',
-                    peer: 'upc',
-                    peerWithLabel: 'upc',
-                    label: 'value',
-                    value: { txt: 'a' }
-                }
-            }]);
+                details: [{
+                    message: '"txt" missing required peer "upc"',
+                    path: [],
+                    type: 'object.with',
+                    context: {
+                        main: 'txt',
+                        mainWithLabel: 'txt',
+                        peer: 'upc',
+                        peerWithLabel: 'upc',
+                        label: 'value',
+                        value: { txt: 'a' }
+                    }
+                }]
+            }]]);
 
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
@@ -3747,9 +3726,7 @@ describe('object', () => {
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
             }).with('a', ['b']);
-            const error = schema.validate({ a: 1 }).error;
-            expect(error).to.be.an.error('"first" missing required peer "second"');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1 }, false, {
                 message: '"first" missing required peer "second"',
                 path: [],
                 type: 'object.with',
@@ -3761,7 +3738,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1 }
                 }
-            }]);
+            }]]);
         });
 
         it('allows nested objects', () => {
@@ -3852,9 +3829,7 @@ describe('object', () => {
             })
                 .with('a', ['b.c']);
 
-            const error = schema.validate({ a: 1, b: { d: 2 } }).error;
-            expect(error).to.be.an.error('"first" missing required peer "b.second"');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1, b: { d: 2 } }, false, {
                 message: '"first" missing required peer "b.second"',
                 path: [],
                 type: 'object.with',
@@ -3866,7 +3841,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1, b: { d: 2 } }
                 }
-            }]);
+            }]]);
 
             const schema2 = Joi.object({
                 a: Joi.object({
@@ -3878,9 +3853,7 @@ describe('object', () => {
             })
                 .with('a.b', ['b.c']);
 
-            const error2 = schema2.validate({ a: { b: 'test' }, b: {} }).error;
-            expect(error2).to.be.an.error('"a.first" missing required peer "b.second"');
-            expect(error2.details).to.equal([{
+            Helper.validate(schema2, [[{ a: { b: 'test' }, b: {} }, false, {
                 message: '"a.first" missing required peer "b.second"',
                 path: [],
                 type: 'object.with',
@@ -3892,7 +3865,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: { b: 'test' }, b: {} }
                 }
-            }]);
+            }]]);
         });
 
         it('handles period in key names', () => {
@@ -3904,7 +3877,7 @@ describe('object', () => {
                 .with('x.from', 'x.url', { separator: false });
 
             const test = { 'x.url': 'https://example.com', 'x.from': 'test@example.com' };
-            expect(schema.validate(test)).to.equal({ value: test });
+            Helper.validate(schema, [[test, true, test]]);
         });
     });
 
@@ -3917,21 +3890,22 @@ describe('object', () => {
                 upc: Joi.string()
             }).without('txt', 'upc');
 
-            const err = schema.validate({ txt: 'a', upc: 'b' }, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"txt" conflict with forbidden peer "upc"');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, { abortEarly: false }, [[{ txt: 'a', upc: 'b' }, false, {
                 message: '"txt" conflict with forbidden peer "upc"',
-                path: [],
-                type: 'object.without',
-                context: {
-                    main: 'txt',
-                    mainWithLabel: 'txt',
-                    peer: 'upc',
-                    peerWithLabel: 'upc',
-                    label: 'value',
-                    value: { txt: 'a', upc: 'b' }
-                }
-            }]);
+                details: [{
+                    message: '"txt" conflict with forbidden peer "upc"',
+                    path: [],
+                    type: 'object.without',
+                    context: {
+                        main: 'txt',
+                        mainWithLabel: 'txt',
+                        peer: 'upc',
+                        peerWithLabel: 'upc',
+                        label: 'value',
+                        value: { txt: 'a', upc: 'b' }
+                    }
+                }]
+            }]]);
 
             Helper.validate(schema, [
                 [{ upc: 'test' }, true],
@@ -4015,9 +3989,7 @@ describe('object', () => {
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
             }).without('a', ['b']);
-            const error = schema.validate({ a: 1, b: 'b' }).error;
-            expect(error).to.be.an.error('"first" conflict with forbidden peer "second"');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1, b: 'b' }, false, {
                 message: '"first" conflict with forbidden peer "second"',
                 path: [],
                 type: 'object.without',
@@ -4029,7 +4001,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1, b: 'b' }
                 }
-            }]);
+            }]]);
         });
 
         it('allows nested objects', () => {
@@ -4043,24 +4015,22 @@ describe('object', () => {
             const sampleObject = { a: 'test', d: 9000 };
             const sampleObject2 = { a: 'test', b: { d: 80 } };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
-
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"a" conflict with forbidden peer "b.d"');
-            expect(error2.details).to.equal([{
-                message: '"a" conflict with forbidden peer "b.d"',
-                path: [],
-                type: 'object.without',
-                context: {
-                    main: 'a',
-                    mainWithLabel: 'a',
-                    peer: 'b.d',
-                    peerWithLabel: 'b.d',
-                    label: 'value',
-                    value: sampleObject2
-                }
-            }]);
+            Helper.validate(schema, [
+                [sampleObject, true],
+                [sampleObject2, false, {
+                    message: '"a" conflict with forbidden peer "b.d"',
+                    path: [],
+                    type: 'object.without',
+                    context: {
+                        main: 'a',
+                        mainWithLabel: 'a',
+                        peer: 'b.d',
+                        peerWithLabel: 'b.d',
+                        label: 'value',
+                        value: sampleObject2
+                    }
+                }]
+            ]);
         });
 
         it('allows nested keys in functions', () => {
@@ -4075,8 +4045,7 @@ describe('object', () => {
             const sampleObject = { a: 'test', d: 9000 };
             const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
+            Helper.validate(schema, [[sampleObject, true]]);
 
             const error2 = schema.validate(sampleObject2).error;
             expect(error2).to.be.an.error('"a" conflict with forbidden peer "b.d"');
@@ -4106,9 +4075,7 @@ describe('object', () => {
             })
                 .without('a', ['b.c']);
 
-            const error = schema.validate({ a: 1, b: { c: 'c' } }).error;
-            expect(error).to.be.an.error('"first" conflict with forbidden peer "b.second"');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1, b: { c: 'c' } }, false, {
                 message: '"first" conflict with forbidden peer "b.second"',
                 path: [],
                 type: 'object.without',
@@ -4120,7 +4087,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1, b: { c: 'c' } }
                 }
-            }]);
+            }]]);
         });
     });
 
@@ -4133,19 +4100,20 @@ describe('object', () => {
                 upc: Joi.string()
             }).xor('txt', 'upc');
 
-            const err = schema.validate({}, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"value" must contain at least one of [txt, upc]');
-            expect(err.details).to.equal([{
+            Helper.validate(schema, { abortEarly: false }, [[{}, false, {
                 message: '"value" must contain at least one of [txt, upc]',
-                path: [],
-                type: 'object.missing',
-                context: {
-                    peers: ['txt', 'upc'],
-                    peersWithLabels: ['txt', 'upc'],
-                    label: 'value',
-                    value: {}
-                }
-            }]);
+                details: [{
+                    message: '"value" must contain at least one of [txt, upc]',
+                    path: [],
+                    type: 'object.missing',
+                    context: {
+                        peers: ['txt', 'upc'],
+                        peersWithLabels: ['txt', 'upc'],
+                        label: 'value',
+                        value: {}
+                    }
+                }]
+            }]]);
 
             Helper.validate(schema, [
                 [{ upc: null }, false, {
@@ -4346,9 +4314,7 @@ describe('object', () => {
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
             }).xor('a', 'b');
-            const error = schema.validate({}).error;
-            expect(error).to.be.an.error('"value" must contain at least one of [first, second]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{}, false, {
                 message: '"value" must contain at least one of [first, second]',
                 path: [],
                 type: 'object.missing',
@@ -4358,7 +4324,7 @@ describe('object', () => {
                     label: 'value',
                     value: {}
                 }
-            }]);
+            }]]);
         });
 
         it('should apply labels with too many peers', () => {
@@ -4367,9 +4333,7 @@ describe('object', () => {
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
             }).xor('a', 'b');
-            const error = schema.validate({ a: 1, b: 'b' }).error;
-            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [first, second]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1, b: 'b' }, false, {
                 message: '"value" contains a conflict between exclusive peers [first, second]',
                 path: [],
                 type: 'object.xor',
@@ -4381,7 +4345,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1, b: 'b' }
                 }
-            }]);
+            }]]);
         });
 
         it('should apply labels with too many peers', () => {
@@ -4392,9 +4356,7 @@ describe('object', () => {
                 c: Joi.string().label('third'),
                 d: Joi.string().label('fourth')
             }).xor('a', 'b', 'c', 'd');
-            const error = schema.validate({ a: 1, b: 'b', d: 'd' }).error;
-            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [first, second, third, fourth]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1, b: 'b', d: 'd' }, false, {
                 message: '"value" contains a conflict between exclusive peers [first, second, third, fourth]',
                 path: [],
                 type: 'object.xor',
@@ -4406,7 +4368,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1, b: 'b', d: 'd' }
                 }
-            }]);
+            }]]);
         });
 
         it('allows nested objects', () => {
@@ -4420,12 +4382,11 @@ describe('object', () => {
             const sampleObject = { a: 'test', b: { d: 80 } };
             const sampleObject2 = { a: 'test', b: { c: 'test2' } };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
+            Helper.validate(schema, [[sampleObject, true]]);
 
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"value" contains a conflict between exclusive peers [a, b.c]');
-            expect(error2.details).to.equal([{
+            const error = schema.validate(sampleObject2).error;
+            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [a, b.c]');
+            expect(error.details).to.equal([{
                 message: '"value" contains a conflict between exclusive peers [a, b.c]',
                 path: [],
                 type: 'object.xor',
@@ -4451,8 +4412,7 @@ describe('object', () => {
             const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
             const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
 
-            const error = schema.validate(sampleObject).error;
-            expect(error).to.not.exist();
+            Helper.validate(schema, [[sampleObject, true]]);
 
             const error2 = schema.validate(sampleObject2).error;
             expect(error2).to.be.an.error('"value" contains a conflict between exclusive peers [a, b.c]');
@@ -4482,9 +4442,7 @@ describe('object', () => {
             })
                 .xor('a', 'b.c');
 
-            const error = schema.validate({}).error;
-            expect(error).to.be.an.error('"value" must contain at least one of [first, b.second]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{}, false, {
                 message: '"value" must contain at least one of [first, b.second]',
                 path: [],
                 type: 'object.missing',
@@ -4494,7 +4452,7 @@ describe('object', () => {
                     label: 'value',
                     value: {}
                 }
-            }]);
+            }]]);
         });
 
         it('should apply labels with too many nested peers', () => {
@@ -4508,9 +4466,7 @@ describe('object', () => {
             })
                 .xor('a', 'b.c');
 
-            const error = schema.validate({ a: 1, b: { c: 'c' } }).error;
-            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [first, b.second]');
-            expect(error.details).to.equal([{
+            Helper.validate(schema, [[{ a: 1, b: { c: 'c' } }, false, {
                 message: '"value" contains a conflict between exclusive peers [first, b.second]',
                 path: [],
                 type: 'object.xor',
@@ -4522,7 +4478,7 @@ describe('object', () => {
                     label: 'value',
                     value: { a: 1, b: { c: 'c' } }
                 }
-            }]);
+            }]]);
         });
 
         it('handles period in key names', () => {
@@ -4534,7 +4490,7 @@ describe('object', () => {
                 .xor('x.from', 'x.url', { separator: false });
 
             const test = { 'x.url': 'https://example.com' };
-            expect(schema.validate(test)).to.equal({ value: test });
+            Helper.validate(schema, [[test, true, test]]);
         });
     });
 });
